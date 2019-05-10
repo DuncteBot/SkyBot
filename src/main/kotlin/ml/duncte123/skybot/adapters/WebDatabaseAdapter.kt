@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.adapters
 
+import com.fasterxml.jackson.core.type.TypeReference
 import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
@@ -31,7 +32,6 @@ import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
-import org.json.JSONObject
 import java.sql.Date
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -45,14 +45,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 val array = variables.apis.getCustomCommands()
 
-                array.forEach { c ->
-                    val j = c as JSONObject
-
+                array.forEach { j ->
                     customCommands.add(CustomCommandImpl(
-                        j.getString("invoke"),
-                        j.getString("message"),
-                        j.getLong("guildId"),
-                        j.getBoolean("autoresponse")
+                        j.get("invoke").asText(),
+                        j.get("message").asText(),
+                        j.get("guildId").asLong(),
+                        j.get("autoresponse").asBoolean()
                     ))
                 }
 
@@ -88,14 +86,11 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
         variables.database.run {
             try {
-                val settings = arrayListOf<GuildSettings>()
+                val mapper = variables.jackson
+
                 val array = variables.apis.getGuildSettings()
 
-                array.forEach { c ->
-                    val json = c as JSONObject
-
-                    settings.add(GuildSettings.fromJSON(json))
-                }
+                val settings: List<GuildSettings> = mapper.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
 
                 callback.invoke(settings)
             } catch (e: Exception) {
@@ -107,7 +102,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
         variables.database.run {
             val item = variables.apis.getGuildSetting(guildId)
-            val setting = GuildSettings.fromJSON(item)
+            val setting = variables.jackson.readValue(item.traverse(), GuildSettings::class.java)
 
             callback.invoke(setting)
         }
@@ -158,9 +153,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val map = TLongIntHashMap()
 
             variables.apis.loadEmbedSettings().forEach {
-                val json = it as JSONObject
-
-                map.put(json.getLong("guild_id"), json.getInt("embed_color"))
+                map.put(it.get("guild_id").asLong(), it.get("embed_color").asInt())
             }
 
             callback.invoke(map)
@@ -178,9 +171,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val map = TLongLongHashMap()
 
             variables.apis.loadOneGuildPatrons().forEach {
-                val json = it as JSONObject
-
-                map.put(json.getLong("user_id"), json.getLong("guild_id"))
+                map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
             }
 
             callback.invoke(map)
@@ -202,9 +193,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val map = TLongLongHashMap()
 
             variables.apis.getOneGuildPatron(userId).forEach {
-                val json = it as JSONObject
-
-                map.put(json.getLong("user_id"), json.getLong("guild_id"))
+                map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
             }
 
             callback.invoke(map)
@@ -219,7 +208,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         variables.database.run {
-            val json = JSONObject()
+            val json = variables.jackson.createObjectNode()
                 .put("modUserId", modId.toString())
                 .put("Username", userName)
                 .put("discriminator", userDiscriminator)
@@ -239,7 +228,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
         variables.database.run {
-            val json = JSONObject()
+            val json = variables.jackson.createObjectNode()
                 .put("mod_id", modId.toString())
                 .put("user_id", userId.toString())
                 .put("user_tag", userTag)
@@ -255,16 +244,14 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val data = variables.apis.getWarningsForUser(userId, guildId)
             val items = arrayListOf<Warning>()
 
-            data.forEach {
-                val json = it as JSONObject
-
+            data.forEach {json ->
                 items.add(Warning(
-                    json.getInt("id"),
-                    Date.valueOf(json.getString("warn_date")),
-                    Date.valueOf(json.getString("expire_date")),
-                    json.getString("mod_id"),
-                    json.getString("reason"),
-                    json.getString("guild_id")
+                    json.get("id").asInt(),
+                    Date.valueOf(json.get("warn_date").asText()),
+                    Date.valueOf(json.get("expire_date").asText()),
+                    json.get("mod_id").asText(),
+                    json.get("reason").asText(),
+                    json.get("guild_id").asText()
                 ))
             }
 
@@ -286,37 +273,14 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
         variables.database.run {
-            val bans = arrayListOf<Ban>()
-            val mutes = arrayListOf<Mute>()
+            val mapper = variables.jackson
 
             val storedData = variables.apis.getExpiredBansAndMutes()
-            val storedBans = storedData.getJSONArray("bans")
-            val storedMutes = storedData.getJSONArray("mutes")
+            val storedBans = storedData.get("bans")
+            val storedMutes = storedData.get("mutes")
 
-            storedBans.forEach {
-                val json = it as JSONObject
-
-                bans.add(Ban(
-                    json.getInt("id"),
-                    json.getString("modUserId"),
-                    json.getString("userId"),
-                    json.getString("Username"),
-                    json.getString("discriminator"),
-                    json.getString("guildId")
-                ))
-            }
-
-            storedMutes.forEach {
-                val json = it as JSONObject
-
-                mutes.add(Mute(
-                    json.getInt("id"),
-                    json.getString("mod_id"),
-                    json.getString("user_id"),
-                    json.getString("user_tag"),
-                    json.getString("guild_id")
-                ))
-            }
+            val bans: List<Ban> = mapper.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
+            val mutes: List<Mute> = mapper.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
 
             callback.invoke(Pair(bans, mutes))
         }
@@ -324,18 +288,10 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
         variables.database.run {
+            val mapper = variables.jackson
+
             val storedData = variables.apis.getVcAutoRoles()
-            val converted = ArrayList<VcAutoRole>()
-
-            storedData.forEach {
-                val json = it as JSONObject
-
-                converted.add(VcAutoRole(
-                    json.getLong("guild_id"),
-                    json.getLong("voice_channel_id"),
-                    json.getLong("role_id")
-                ))
-            }
+            val converted: List<VcAutoRole> = mapper.readValue(storedData.traverse(), object : TypeReference<List<VcAutoRole>>() {})
 
             callback.invoke(converted)
         }

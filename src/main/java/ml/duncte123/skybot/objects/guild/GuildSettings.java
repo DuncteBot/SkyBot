@@ -18,20 +18,24 @@
 
 package ml.duncte123.skybot.objects.guild;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
 /**
  * This class will hold the settings for a guild
@@ -40,6 +44,7 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GuildSettings {
 
     private final long guildId;
@@ -69,7 +74,8 @@ public class GuildSettings {
      * @param guildId
      *         the id of the guild that the settings are for
      */
-    public GuildSettings(long guildId) {
+    @JsonCreator
+    public GuildSettings(@JsonProperty("guildId") long guildId) {
         this.guildId = guildId;
     }
 
@@ -355,10 +361,12 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("spamFilterState")
     public boolean isEnableSpamFilter() {
         return spamFilterState;
     }
 
+    @JsonProperty("spamFilterState")
     public GuildSettings setEnableSpamFilter(boolean newState) {
         spamFilterState = newState;
 
@@ -379,6 +387,13 @@ public class GuildSettings {
         return ratelimits;
     }
 
+    @JsonProperty("ratelimits")
+    public GuildSettings setRatelimits(JsonNode ratelimits) {
+        this.ratelimits = ratelimmitChecks(ratelimits.asText());
+
+        return this;
+    }
+
     public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
 
@@ -387,6 +402,7 @@ public class GuildSettings {
 
     @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
+    @JsonIgnore
     public Long[] getRateLimitsForTwig() {
         return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
     }
@@ -405,6 +421,19 @@ public class GuildSettings {
         return blacklistedWords;
     }
 
+    @JsonProperty("blacklisted_words")
+    public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
+        if (!blacklistedWords.isArray()) {
+            throw new IllegalArgumentException("Not an array");
+        }
+
+        blacklistedWords.forEach(
+            (json) -> this.blacklistedWords.add(json.get("word").asText())
+        );
+
+        return this;
+    }
+
     public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
         this.blacklistedWords.clear();
         this.blacklistedWords.addAll(blacklistedWords);
@@ -412,6 +441,7 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("leave_timeout")
     public int getLeaveTimeout() {
         return leave_timeout;
     }
@@ -422,6 +452,7 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("spam_threshold")
     public int getSpamThreshold() {
         return spam_threshold;
     }
@@ -442,9 +473,9 @@ public class GuildSettings {
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
-    public JSONObject toJson() {
+    public ObjectNode toJson(ObjectMapper mapper) {
         final GuildSettings obj = this;
-        final JSONObject j = new JSONObject();
+        ObjectNode j = mapper.createObjectNode();
 
         for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
@@ -455,7 +486,7 @@ public class GuildSettings {
                     continue;
                 }
 
-                Object value = field.get(obj);
+                final Object value = field.get(obj);
 
                 if ("ratelimits".equals(name)) {
                     j.put(name, convertJ2S((long[]) value));
@@ -463,44 +494,19 @@ public class GuildSettings {
                     continue;
                 }
 
-                if (value instanceof Long || value instanceof Integer) {
-                    value = String.valueOf(value);
+                if (value instanceof Boolean) {
+                    j.put(name, (boolean) value);
+
+                    continue;
                 }
 
-                j.put(name, value);
+                j.put(name, String.valueOf(value));
             }
-            catch (IllegalAccessException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         return j;
-    }
-
-    public static GuildSettings fromJSON(JSONObject json) {
-        return new GuildSettings(json.getLong("guildId"))
-            .setEnableJoinMessage(toBool(json.getInt("enableJoinMessage")))
-            .setEnableSwearFilter(toBool(json.getInt("enableSwearFilter")))
-            .setCustomJoinMessage(replaceNewLines(json.getString("customWelcomeMessage")))
-            .setCustomPrefix(json.getString("prefix"))
-            .setLogChannel(toLong(json.optString("logChannelId")))
-            .setWelcomeLeaveChannel(toLong(json.optString("welcomeLeaveChannel")))
-            .setCustomLeaveMessage(replaceNewLines(json.getString("customLeaveMessage")))
-            .setAutoroleRole(toLong(json.optString("autoRole")))
-            .setServerDesc(replaceNewLines(json.optString("serverDesc", null)))
-            .setAnnounceTracks(toBool(json.getInt("announceNextTrack")))
-            .setAutoDeHoist(toBool(json.getInt("autoDeHoist")))
-            .setFilterInvites(toBool(json.getInt("filterInvites")))
-            .setEnableSpamFilter(toBool(json.getInt("spamFilterState")))
-            .setMuteRoleId(toLong(json.optString("muteRoleId")))
-            .setRatelimits(ratelimmitChecks(json.getString("ratelimits")))
-            .setBlacklistedWords(parseBlacklistedWords(json.getJSONArray("blacklisted_words")))
-            .setKickState(toBool(json.getInt("kickInsteadState")))
-            .setLeaveTimeout(json.getInt("leave_timeout"))
-            .setSpamThreshold(json.getInt("spam_threshold"));
-    }
-
-    private static List<String> parseBlacklistedWords(JSONArray array) {
-        return array.toList().stream().map(it -> ((Map<String, Object>) it).get("word").toString()).collect(Collectors.toList());
     }
 }

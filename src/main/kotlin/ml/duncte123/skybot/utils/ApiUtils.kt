@@ -32,25 +32,25 @@ object ApiUtils {
     @JvmStatic
     fun getRandomLlama(): LlamaObject {
         val json = Variables.getInstance().apis
-            .executeDefaultGetRequest("llama", false).getJSONObject("data")
+            .executeDefaultGetRequest("llama", false).get("data")
 
-        return LlamaObject(json.getInt("id"), json.getString("file"))
+        return LlamaObject(json.get("id").asInt(), json.get("file").asText())
     }
 
     @JvmStatic
     fun getRandomAlpaca(callback: (AlpacaObject) -> Unit) {
         val json = Variables.getInstance().apis
-            .executeDefaultGetRequest("alpaca", false).getJSONObject("data")
+            .executeDefaultGetRequest("alpaca", false).get("data")
 
-        callback.invoke(AlpacaObject(json.getString("file")))
+        callback.invoke(AlpacaObject(json.get("file").asText()))
     }
 
     @JvmStatic
     fun getRandomSeal(callback: (String) -> Unit) {
         val json = Variables.getInstance().apis
-            .executeDefaultGetRequest("seal", false).getJSONObject("data")
+            .executeDefaultGetRequest("seal", false).get("data")
 
-        callback.invoke(json.getString("file"))
+        callback.invoke(json.get("file").asText())
     }
 
     @JvmStatic
@@ -59,13 +59,13 @@ object ApiUtils {
 
 
         val json = Variables.getInstance().apis
-            .executeDefaultGetRequest("kpop$path", false).getJSONObject("data")
+            .executeDefaultGetRequest("kpop$path", false).get("data")
 
         return KpopObject(
-            json.getInt("id"),
-            json.getString("name"),
-            json.getString("band"),
-            json.getString("img")
+            json.get("id").asInt(),
+            json.get("name").asText(),
+            json.get("band").asText(),
+            json.get("img").asText()
         )
     }
 
