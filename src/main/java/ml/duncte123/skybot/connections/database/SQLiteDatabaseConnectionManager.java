@@ -153,10 +153,9 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS `tags`" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "author VARCHAR(255) NOT NULL," +
-                    "authorId VARCHAR(255) NOT NULL," +
-                    "tagName VARCHAR(10) NOT NULL," +
-                    "tagText TEXT NOT NULL);"
+                    "owner_id VARCHAR(255) NOT NULL," +
+                    "name VARCHAR(10) NOT NULL," +
+                    "content TEXT NOT NULL);"
             );
 
             connection.createStatement().execute(

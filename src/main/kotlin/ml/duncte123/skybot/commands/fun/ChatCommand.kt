@@ -27,6 +27,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
@@ -43,7 +44,7 @@ import javax.xml.xpath.XPathFactory
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatCommand : Command() {
 
-    private val sessions = TLongObjectHashMap<ChatSession>()
+    private val sessions = MapUtils.newLongObjectMap<ChatSession>()
     private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
         "My prefix in this guild is *`{PREFIX}`*",

@@ -20,17 +20,17 @@ package ml.duncte123.skybot.objects.command;
 
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
-import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -42,7 +42,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
-    public static TLongLongMap cooldowns = new TLongLongHashMap();
+    public static TLongLongMap cooldowns = MapUtils.newLongLongMap();
     protected boolean withAutoJoin = false;
 
     static {

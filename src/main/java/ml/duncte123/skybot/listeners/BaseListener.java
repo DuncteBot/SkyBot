@@ -23,6 +23,7 @@ import gnu.trove.list.array.TLongArrayList;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class BaseListener extends ListenerAdapter {
     );
 
     // Keeps track of the guilds that we are leaving as botfarms so that we don't spam
-    static final TLongList guildsLeaving = new TLongArrayList();
+    static final TLongList guildsLeaving = MapUtils.newLongList();
 
     boolean isBotfarm(Guild guild) {
 

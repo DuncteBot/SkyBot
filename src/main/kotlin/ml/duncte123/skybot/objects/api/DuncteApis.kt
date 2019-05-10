@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.objects.api
 
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
-import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
@@ -303,26 +303,6 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
-    private fun paginateData(path: String): JSONArray {
-        val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
-
-        val data = page1.getJSONArray("data")
-
-        val totalPages = page1.getInt("last_page") + 1
-
-        for (i in 2 until totalPages) {
-            val page = executeRequest(defaultRequest("$path?page=$i")).getJSONObject("data")
-
-            val pageData = page.getJSONArray("data")
-
-            for (i2 in 0 until pageData.length()) {
-                data.put(pageData.get(i2))
-            }
-        }
-
-        return data
-    }
-
     fun decodeToken(token: String): JSONObject {
         val json = JSONObject().put("token", token)
 
@@ -397,6 +377,80 @@ class DuncteApis(private val apiKey: String) {
         val json = JSONObject().put("top", top).put("bottom", bottom)
 
         return postJSONBytes("memes/drakememe", json)
+    }
+
+    fun getAllTags(): JSONArray {
+        return paginateData("tags")
+    }
+
+    fun createTag(tag: JSONObject): Pair<Boolean, String> {
+        val response = postJSON("tags", tag)
+
+        if (!response.getBoolean("success")) {
+            val error = response.getJSONObject("error")
+
+            if (error.getString("type") == "ValidationException") {
+                return Pair(false, buildValidationErrorString(error))
+            }
+
+            logger.error("Failed to create a tag\n" +
+                "Response: {}", error.toString(4))
+
+            return Pair(false, error.getString("message"))
+        }
+
+        return Pair(true, "")
+    }
+
+    fun deleteTag(tagName: String): Pair<Boolean, String> {
+        val response = executeRequest(defaultRequest("tags/$tagName").delete())
+
+        if (!response.getBoolean("success")) {
+            val error = response.getJSONObject("error")
+
+            logger.error("Failed to create a tag\n" +
+                "Response: {}", error.toString(4))
+
+            return Pair(false, error.getString("message"))
+        }
+
+        return Pair(true, "")
+    }
+
+    private fun buildValidationErrorString(error: JSONObject): String {
+        val errors = error.getJSONObject("errors")
+
+        return buildString {
+            errors.keySet().forEach {
+                errors.getJSONArray(it).forEach { er ->
+                    appendln(er.toString())
+                }
+            }
+        }
+    }
+
+    private fun paginateData(path: String): JSONArray {
+        val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
+
+        val data = page1.getJSONArray("data")
+
+        if (page1.optString("next_page_url", null) == null) {
+            return data
+        }
+
+        val totalPages = page1.getInt("last_page") + 1
+
+        for (i in 2 until totalPages) {
+            val page = executeRequest(defaultRequest("$path?page=$i")).getJSONObject("data")
+
+            val pageData = page.getJSONArray("data")
+
+            for (i2 in 0 until pageData.length()) {
+                data.put(pageData.get(i2))
+            }
+        }
+
+        return data
     }
 
     private fun postJSONBytes(path: String, json: JSONObject): ByteArray {

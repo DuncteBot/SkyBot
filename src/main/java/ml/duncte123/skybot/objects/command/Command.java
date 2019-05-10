@@ -19,13 +19,12 @@
 package ml.duncte123.skybot.objects.command;
 
 import gnu.trove.map.TLongLongMap;
-import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -48,10 +47,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 })
 public abstract class Command implements ICommand {
 
-    public static final TLongSet patrons = new TLongHashSet();
-    public static final TLongSet guildPatrons = new TLongHashSet();
+    public static final TLongSet patrons = MapUtils.newLongSet();
+    public static final TLongSet guildPatrons = MapUtils.newLongSet();
     // Key: user_id Value: guild_id
-    public static final TLongLongMap oneGuildPatrons = new TLongLongHashMap();
+    public static final TLongLongMap oneGuildPatrons = MapUtils.newLongLongMap();
     public static final long supportGuildId = 191245668617158656L;
     public static final long guildPatronsRole = 470581447196147733L;
     public static final long patronsRole = 402497345721466892L;

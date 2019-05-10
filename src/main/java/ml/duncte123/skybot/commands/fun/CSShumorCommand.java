@@ -19,16 +19,17 @@
 package ml.duncte123.skybot.commands.fun;
 
 import gnu.trove.map.TLongIntMap;
-import gnu.trove.map.hash.TLongIntHashMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import org.jsoup.nodes.Element;
+
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
@@ -36,7 +37,7 @@ import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CSShumorCommand extends Command {
 
-    private final TLongIntMap cssIndex = new TLongIntHashMap();
+    private final TLongIntMap cssIndex = MapUtils.newLongIntMap();
 
     public CSShumorCommand() {
         this.category = CommandCategory.FUN;

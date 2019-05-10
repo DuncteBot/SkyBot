@@ -16,27 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.unstable.utils;
+package ml.duncte123.skybot.objects;
 
-import io.sentry.Sentry;
-import ml.duncte123.skybot.Author;
-import net.dv8tion.jda.annotations.ReplaceWith;
-
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class ComparatingUtils {
-
-    /**
-     * Used to do something
-     *
-     * @param t
-     *         something
-     *
-     * @deprecated Should be replaced with sentry
-     * @see io.sentry.Sentry#capture(Throwable)
-     */
-    @Deprecated()
-    @ReplaceWith(value = "io.sentry.Sentry#capture(Throwable)")
-    public static void execCheck(Throwable t) {
-        Sentry.capture(t);
-    }
+public class Tag {
+    public String name;
+    public String content;
+    public long owner_id;
 }
