@@ -193,8 +193,7 @@ class UpdateCommand : Command() {
                 .build({
                     return@build Jsoup.parse(it.body()!!.string())
                         .select("a[title=\"View Raw\"]")
-                        .first()
-                        .attr("href")
+                        .first().attr("href")
                         .replaceFirst("/raw", "")
                 }, WebParserUtils::handleError).execute()
 
