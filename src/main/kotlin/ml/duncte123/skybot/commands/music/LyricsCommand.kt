@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -29,7 +30,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import org.apache.commons.lang3.StringUtils
-import org.json.JSONObject
 import java.net.URLEncoder
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -39,13 +39,12 @@ class LyricsCommand : MusicCommand() {
     private val apiBase = "https://api.genius.com"
 
     override fun run(ctx: CommandContext) {
-
         val event = ctx.event
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         val search: String? = when {
-            !ctx.args.isEmpty() -> ctx.argsRaw
+            ctx.args.isNotEmpty() -> ctx.argsRaw
             player.playingTrack != null && !player.playingTrack.info.isStream ->
                 player.playingTrack.info.title.trim()
             else -> null
@@ -56,7 +55,7 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        searchForSong(search, ctx.config.genius) {
+        searchForSong(search, ctx.config.genius, ctx.variables.jackson) {
             if (it.isNullOrBlank()) {
                 sendMsg(event, "There where no lyrics found for the title of this song\n" +
                     "Alternatively you can try `${Settings.PREFIX}$name <song name>` to search for the lyrics on this song.\n" +
@@ -82,22 +81,24 @@ class LyricsCommand : MusicCommand() {
 
     override fun getName() = "lyrics"
 
-    private fun getAuthToken(config: DunctebotConfig.Genius): String {
+    private fun getAuthToken(config: DunctebotConfig.Genius, mapper: ObjectMapper): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
             formData["client_id"] = config.client_id
             formData["client_secret"] = config.client_secret
             formData["grant_type"] = "client_credentials"
+
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
-            this.authToken = JSONObject(raw).optString("access_token")
+
+            this.authToken = mapper.readTree(raw).get("access_token").asText("")
         }
 
         return "Bearer $authToken"
     }
 
-    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, mapper: ObjectMapper, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .header("Authorization", getAuthToken(config))
+            .header("Authorization", getAuthToken(config, mapper))
             .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
             WebParserUtils::toJSONObject).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")

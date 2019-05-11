@@ -48,6 +48,7 @@ class WebRouter(private val shardManager: ShardManager) {
     private val variables = Variables.getInstance()
 
     private val config = variables.config
+    private val mapper = variables.jackson
 
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
@@ -81,7 +82,7 @@ class WebRouter(private val shardManager: ShardManager) {
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
         post("/register-server") { request, _ ->
-            return@post OneGuildRegister.post(request, shardManager, variables, engine)
+            return@post OneGuildRegister.post(request, shardManager, variables, engine, mapper)
         }
 
         path("/") {
@@ -159,7 +160,7 @@ class WebRouter(private val shardManager: ShardManager) {
             }
 
             get("/getServerCount") { _, response ->
-                return@get MainApi.serverCount(response, shardManager)
+                return@get MainApi.serverCount(response, shardManager, mapper)
             }
 
             get("/joinGuild") { _, response ->
@@ -167,16 +168,16 @@ class WebRouter(private val shardManager: ShardManager) {
             }
 
             get("/getUserGuilds") { request, response ->
-                return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager)
+                return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager, mapper)
             }
 
             post("/suggest") { request, response ->
-                return@post Suggest.create(request, response, config)
+                return@post Suggest.create(request, response, config, mapper)
             }
 
             path("/customcommands/$GUILD_ID") {
                 before("") { request, response ->
-                    return@before CustomCommands.before(request, response)
+                    return@before CustomCommands.before(request, response, mapper)
                 }
 
                 get("") { request, response ->
@@ -197,7 +198,7 @@ class WebRouter(private val shardManager: ShardManager) {
             }
 
             post("/checkUserAndGuild") { request, response ->
-                return@post FindUserAndGuild.get(request, response, shardManager)
+                return@post FindUserAndGuild.get(request, response, shardManager, mapper)
             }
 
             after("/*") { _, response ->
@@ -211,11 +212,11 @@ class WebRouter(private val shardManager: ShardManager) {
         }
 
         notFound { request, response ->
-            return@notFound HttpErrorHandlers.notFound(request, response, engine)
+            return@notFound HttpErrorHandlers.notFound(request, response, engine, mapper)
         }
 
         internalServerError { request, response ->
-            return@internalServerError HttpErrorHandlers.internalServerError(request, response)
+            return@internalServerError HttpErrorHandlers.internalServerError(request, response, mapper)
         }
     }
 

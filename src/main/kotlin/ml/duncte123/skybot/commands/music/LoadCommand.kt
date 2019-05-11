@@ -18,14 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONTokener
 import java.util.*
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
@@ -36,7 +34,7 @@ class LoadCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-
+        val mapper = ctx.variables.jackson
         val event = ctx.event
         val attachments = event.message.attachments
 
@@ -58,11 +56,20 @@ class LoadCommand : MusicCommand() {
             try {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream
-                val array = JSONArray(JSONTokener(it))
+                val node = mapper.readTree(it)
+
+                if (!node.isArray) {
+                    sendMsg(ctx, "Provided file is not a valid JSON array")
+
+                    return@withInputStream
+                }
+
+                val array = node as ArrayNode
+
                 val musicManager = getMusicManager(event.guild, ctx.audioUtils)
                 var shouldAnnounce = true
 
-                sendMsg(event, "Loading ${array.length()} tracks, please wait...")
+                sendMsg(event, "Loading ${array.size()} tracks, please wait...")
 
                 array.filter(Objects::nonNull)
                     .forEach { obj ->
@@ -76,8 +83,8 @@ class LoadCommand : MusicCommand() {
                     }
 
                 sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,
-                    "Added ${array.length()} requested tracks."))
-            } catch (exception: JSONException) {
+                    "Added ${array.size()} requested tracks."))
+            } catch (exception: Exception) {
                 sendError(event.message)
                 sendMsg(event, "Invalid JSON file!")
             }

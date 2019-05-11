@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+
 import javax.annotation.Nonnull;
-import org.json.JSONObject;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface CustomCommand extends ICommand {
@@ -60,8 +62,8 @@ public interface CustomCommand extends ICommand {
         return false;
     }
 
-    default JSONObject toJSONObject() {
-        return new JSONObject()
+    default JsonNode toJSONObject(ObjectMapper mapper) {
+        return mapper.createObjectNode()
             .put("guildId", getGuildId())
             .put("name", getName())
             .put("autoresponse", isAutoResponse())

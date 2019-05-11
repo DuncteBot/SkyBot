@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
-import org.json.JSONObject
 import java.io.IOException
 
 class UnsortenCommand : Command() {
@@ -62,15 +61,15 @@ class UnsortenCommand : Command() {
                 try {
                     val res = body.string()
                     logger.debug("Unshorten: $res")
-                    val json = JSONObject(res).getJSONObject("data")
+                    val json = ctx.variables.jackson.readTree(res).get("data")
 
                     val embed = EmbedUtils.embedMessage("""Short url:
                             |```
-                            |${json.getString("short_url")}
+                            |${json.get("short_url").asText()}
                             |```
                             |Unshortened url:
                             |```
-                            |${json.getString("long_url")}
+                            |${json.get("long_url").asText()}
                             |```
                         """.trimMargin())
 

@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.web.controllers.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHelpers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.User
 import org.apache.http.client.utils.URLEncodedUtils
-import org.json.JSONObject
 import spark.Request
 import spark.Response
 import java.nio.charset.StandardCharsets
@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object FindUserAndGuild {
 
-    fun get(request: Request, response: Response, shardManager: ShardManager): Any {
+    fun get(request: Request, response: Response, shardManager: ShardManager, mapper: ObjectMapper): Any {
         val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
         val params = WebHelpers.toMap(pairs)
 
@@ -42,7 +42,7 @@ object FindUserAndGuild {
         if (userId.isNullOrEmpty() || guildId.isNullOrEmpty()) {
             response.status(406)
 
-            return JSONObject()
+            return mapper.createObjectNode()
                 .put("status", "failure")
                 .put("message", "missing_input")
                 .put("code", response.status())
@@ -54,7 +54,7 @@ object FindUserAndGuild {
         if (user == null) {
             response.status(404)
 
-            return JSONObject()
+            return mapper.createObjectNode()
                 .put("status", "failure")
                 .put("message", "no_user")
                 .put("code", response.status())
@@ -63,25 +63,28 @@ object FindUserAndGuild {
         if (guild == null) {
             response.status(404)
 
-            return JSONObject()
+            return mapper.createObjectNode()
                 .put("status", "failure")
                 .put("message", "no_guild")
                 .put("code", response.status())
         }
 
-        val guildJson = JSONObject()
+        val guildJson = mapper.createObjectNode()
             .put("id", guild.id)
             .put("name", guild.name)
 
-        val userJson = JSONObject()
+        val userJson = mapper.createObjectNode()
             .put("id", user.id)
             .put("name", user.name)
             .put("formatted", user.asTag)
 
-        return JSONObject()
+        val node = mapper.createObjectNode()
             .put("status", "success")
-            .put("guild", guildJson)
-            .put("user", userJson)
             .put("code", response.status())
+
+        node.set("user", userJson)
+        node.set("guild", guildJson)
+
+        return node
     }
 }

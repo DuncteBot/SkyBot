@@ -43,7 +43,7 @@ fetch("/api/getUserGuilds", {
             let members = "Bot not in server";
             let settingsLink = `<a href="https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}" target="_blank">Invite Bot</a>`;
 
-            if (guild.members) {
+            if (guild.members > -1) {
                 members = guild.members + " members";
                 settingsLink = `<a href="/server/${guild.id}/">Edit settings</a>`;
             }

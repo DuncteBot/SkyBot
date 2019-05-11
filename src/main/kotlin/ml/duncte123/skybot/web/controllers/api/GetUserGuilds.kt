@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.web.controllers.api
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import ml.duncte123.skybot.Author
@@ -25,44 +27,45 @@ import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
-import org.json.JSONObject
 import spark.Request
 import spark.Response
-import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object GetUserGuilds {
 
-    fun show(request: Request, response: Response, oAuth2Client: OAuth2Client, shardManager: ShardManager): Any {
+    fun show(request: Request, response: Response, oAuth2Client: OAuth2Client, shardManager: ShardManager, mapper: ObjectMapper): Any {
         val attributes = request.session().attributes()
 
         if (!attributes.contains(WebRouter.USER_ID) || !attributes.contains(WebRouter.SESSION_ID)) {
             request.session().invalidate()
 
-            return JSONObject()
+            return mapper.createObjectNode()
                 .put("status", "error")
                 .put("message", "SESSION_INVALID")
                 .put("code", response.status())
         }
 
-        val guilds = ArrayList<JSONObject>()
+        val guilds = mapper.createArrayNode()
         val guildsRequest = oAuth2Client.getGuilds(WebHelpers.getSession(request, oAuth2Client)).complete()
 
         guildsRequest.forEach {
             if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
-                guilds.add(guildToJson(it, shardManager))
+                guilds.add(guildToJson(it, shardManager, mapper))
             }
         }
 
-        return JSONObject()
+        val node = mapper.createObjectNode()
             .put("status", "success")
-            .put("guilds", guilds)
             .put("total", guildsRequest.size)
             .put("code", response.status())
+
+        node.set("guilds", guilds)
+
+        return node
     }
 
-    private fun guildToJson(guild: OAuth2Guild, shardManager: ShardManager): JSONObject {
+    private fun guildToJson(guild: OAuth2Guild, shardManager: ShardManager, mapper: ObjectMapper): JsonNode {
 
         val jdaGuild = shardManager.getGuildById(guild.id)
 
@@ -73,12 +76,12 @@ object GetUserGuilds {
             "https://cdn.discordapp.com/embed/avatars/$number.png"
         }
 
-        return JSONObject()
+        return mapper.createObjectNode()
             .put("name", guild.name)
             .put("iconId", guild.iconId)
             .put("iconUrl", icon)
             .put("owner", guild.isOwner)
-            .put("members", jdaGuild?.memberCache?.size() ?: false)
+            .put("members", jdaGuild?.memberCache?.size() ?: -1)
             .put("id", guild.id)
     }
 }
