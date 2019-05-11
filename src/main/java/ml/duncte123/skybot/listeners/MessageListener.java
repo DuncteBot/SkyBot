@@ -284,7 +284,8 @@ public class MessageListener extends BaseListener {
                 m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
 
             modLog(String.format(
-                "Message deleted in %s for profanity, message content was:```\n%s```",
+                "Message by %#s deleted in %s for profanity, message content was:```\n%s```",
+                messageToCheck.getAuthor(),
                 event.getChannel().getAsMention(),
                 display
             ), guild);
