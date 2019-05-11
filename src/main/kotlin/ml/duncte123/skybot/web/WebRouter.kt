@@ -74,7 +74,7 @@ class WebRouter(private val shardManager: ShardManager) {
         }
 
         get("/invite") { _, response ->
-            return@get response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
+            return@get response.redirect("https://lnk.dunctebot.com/invite")
         }
 
         get("/register-server", WebVariables()

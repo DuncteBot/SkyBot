@@ -22,6 +22,7 @@ import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.VcAutoRole
@@ -126,4 +127,13 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
     abstract fun removeVcAutoRole(voiceChannelId: Long)
 
     abstract fun removeVcAutoRoleForGuild(guildId: Long)
+
+    ///////
+    // Tags
+
+    abstract fun loadTags(callback: (List<Tag>) -> Unit)
+
+    abstract fun createTag(tag: Tag, callback: (Boolean, String) -> Unit)
+
+    abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
 }

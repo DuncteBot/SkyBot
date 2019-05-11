@@ -43,6 +43,7 @@ class RoleInfoCommand : Command() {
 
         val role = roles[0]
         val perms = role.permissions.map { it.getName() }.joinToString()
+        val memberCount = ctx.guild.memberCache.stream().filter { it.roles.contains(role) }.count()
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(role.colorRaw)
@@ -52,7 +53,7 @@ class RoleInfoCommand : Command() {
                 |**Id:** ${role.id}
                 |**Name:** ${role.name}
                 |**Position:** ${role.position}
-                |**Members with this role:** ${ctx.guild.getMembersWithRoles(role).size}
+                |**Members with this role:** $memberCount
                 |**Managed:** ${role.isManaged.toYN()}
                 |**Hoisted:** ${role.isHoisted.toYN()}
                 |**Mentionable:** ${role.isMentionable.toYN()}

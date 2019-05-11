@@ -64,7 +64,7 @@ class OneLinerCommands : Command() {
             }
 
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
-            "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1>")
+            "invite" -> sendMsg(event, "Invite me with this link:\n<https://lnk.dunctebot.com/invite>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 

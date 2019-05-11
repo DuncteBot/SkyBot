@@ -19,12 +19,14 @@
 package ml.duncte123.skybot.adapters
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.node.ObjectNode
 import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.VcAutoRole
@@ -299,6 +301,36 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun removeVcAutoRoleForGuild(guildId: Long) {
         variables.database.run {
             variables.apis.removeVcAutoRoleForGuild(guildId)
+        }
+    }
+
+    override fun loadTags(callback: (List<Tag>) -> Unit) {
+        variables.database.run {
+            val mapper = variables.jackson
+            val allTags = variables.apis.getAllTags()
+
+            callback.invoke(
+                mapper.readValue<List<Tag>>(allTags.toString(), object : TypeReference<List<Tag>>() {})
+            )
+        }
+    }
+
+    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        variables.database.run {
+            val json =  variables.jackson.valueToTree(tag) as ObjectNode
+            json.put("owner_id", json.get("owner_id").asText())
+
+            val response = variables.apis.createTag(json)
+
+            callback.invoke(response.first, response.second)
+        }
+    }
+
+    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        variables.database.run {
+            val response = variables.apis.deleteTag(tag.name)
+
+            callback.invoke(response.first, response.second)
         }
     }
 }

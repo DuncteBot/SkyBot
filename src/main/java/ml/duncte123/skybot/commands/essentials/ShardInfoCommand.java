@@ -138,6 +138,10 @@ public class ShardInfoCommand extends Command {
             widths[widths.length - 1] = statsString.length();
         }
 
+        if (widths[0] < 7) {
+            widths[0] = 7;
+        }
+
         sb.append("```").append("prolog").append("\n");
         final StringBuilder formatLine = new StringBuilder("║");
         for (final int width : widths) {

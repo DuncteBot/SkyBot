@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.weebJava.helpers.IOHelper
@@ -312,31 +313,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    private fun paginateData(path: String): ArrayNode {
-        val page1 = executeRequest(defaultRequest("$path?page=1")).get("data")
-
-        val data = page1.get("data") as ArrayNode
-
-        val totalPages = page1.get("last_page").asInt() + 1
-
-        for (i in 2 until totalPages) {
-            val page = executeRequest(defaultRequest("$path?page=$i")).get("data")
-
-            val pageData = page.get("data") as ArrayNode
-
-            data.addAll(pageData)
-
-            /*for (i2 in 0 until pageData.length()) {
-                data.addAll(pageData.get(i2))
-            }*/
-        }
-
-        return data
-    }
-
     fun decodeToken(token: String): JsonNode {
         val json = mapper.createObjectNode().put("token", token)
-
 
         return postJSON("token", json)
     }
@@ -410,6 +388,78 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put("top", top).put("bottom", bottom)
 
         return postJSONBytes("memes/drakememe", json)
+    }
+
+    fun getAllTags(): ArrayNode {
+        return paginateData("tags")
+    }
+
+    fun createTag(tag: ObjectNode): Pair<Boolean, String> {
+        val response = postJSON("tags", tag)
+
+        if (!response.get("success").asBoolean()) {
+            val error = response.get("error") as ObjectNode
+
+            if (error.get("type").asText() == "ValidationException") {
+                return Pair(false, buildValidationErrorString(error))
+            }
+
+            logger.error("Failed to create a tag\n" +
+                "Response: {}", error.toString())
+
+            return Pair(false, error.get("message").asText())
+        }
+
+        return Pair(true, "")
+    }
+
+    fun deleteTag(tagName: String): Pair<Boolean, String> {
+        val response = executeRequest(defaultRequest("tags/$tagName").delete())
+
+        if (!response.get("success").asBoolean()) {
+            val error = response.get("error")
+
+            logger.error("Failed to create a tag\n" +
+                "Response: {}", error.toString())
+
+            return Pair(false, error.get("message").asText())
+        }
+
+        return Pair(true, "")
+    }
+
+    private fun buildValidationErrorString(error: ObjectNode): String {
+        val errors = error.get("errors")
+
+        return buildString {
+            errors.fieldNames().forEach {
+                errors.get(it).forEach { er ->
+                    appendln(er.toString())
+                }
+            }
+        }
+    }
+
+    private fun paginateData(path: String): ArrayNode {
+        val page1 = executeRequest(defaultRequest("$path?page=1")).get("data")
+
+        val data = page1.get("data") as ArrayNode
+
+        val totalPages = page1.get("last_page").asInt() + 1
+
+        for (i in 2 until totalPages) {
+            val page = executeRequest(defaultRequest("$path?page=$i")).get("data")
+
+            val pageData = page.get("data") as ArrayNode
+
+            data.addAll(pageData)
+
+            /*for (i2 in 0 until pageData.length()) {
+                data.addAll(pageData.get(i2))
+            }*/
+        }
+
+        return data
     }
 
     private fun postJSONBytes(path: String, json: JsonNode): ByteArray {

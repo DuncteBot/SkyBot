@@ -21,19 +21,19 @@ package ml.duncte123.skybot.utils;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-public class Debouncer implements Consumer {
+public class Debouncer<T> implements Consumer<T> {
 
-    private final Consumer<Object> c;
+    private final Consumer<T> c;
     private final AtomicLong lastCalled = new AtomicLong(0);
-    private int interval;
+    private long interval;
 
-    public Debouncer(Consumer<Object> c, int interval) {
+    public Debouncer(Consumer<T> c, long interval) {
         this.c = c;
         this.interval = interval;
     }
 
     @Override
-    public void accept(Object arg) {
+    public void accept(T arg) {
         if(lastCalled.get() + interval < System.currentTimeMillis()) {
             lastCalled.set(System.currentTimeMillis());
             c.accept(arg);

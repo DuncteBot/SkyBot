@@ -19,7 +19,7 @@
 package ml.duncte123.skybot;
 
 import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
+import ml.duncte123.skybot.utils.MapUtils;
 
 import static java.lang.System.getProperty;
 
@@ -28,7 +28,7 @@ public class Settings {
 
     public static String PREFIX = "db!";
     public static final long OWNER_ID = 191231307290771456L;
-    public static final TLongList developers = new TLongArrayList();
+    public static final TLongList developers = MapUtils.newLongList();
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";

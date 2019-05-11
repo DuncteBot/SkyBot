@@ -29,7 +29,6 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
@@ -41,7 +40,6 @@ import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManag
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.utils.MiscUtil;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 
@@ -79,7 +77,7 @@ public class AudioUtils {
         this.config = config;
         this.variables = variables;
         initPlayerManager();
-        musicManagers = MiscUtil.newLongMap();
+        musicManagers = MapUtils.newLongObjectMap();
     }
 
     private void initPlayerManager() {
