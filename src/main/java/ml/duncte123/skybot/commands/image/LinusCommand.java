@@ -23,6 +23,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class LinusCommand extends ImageCommandBase {
 
@@ -36,8 +38,14 @@ public class LinusCommand extends ImageCommandBase {
         }
 
         final String url = getImageFromCommand(ctx);
+
         if (url != null) {
-            ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+            try {
+                ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+            }
+            catch (Exception e) {
+                sendMsg(ctx, "Linus is busy atm: " + e);
+            }
         }
     }
 

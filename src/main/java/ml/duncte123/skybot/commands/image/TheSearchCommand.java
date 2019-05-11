@@ -23,6 +23,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TheSearchCommand extends ImageCommandBase {
 
@@ -35,7 +37,12 @@ public class TheSearchCommand extends ImageCommandBase {
             return;
         }
 
-        ctx.getBlargbot().getTheSearch(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
+        try {
+            ctx.getBlargbot().getTheSearch(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
+        }
+        catch (Exception e) {
+            sendMsg(ctx, "Failed to search: " + e);
+        }
     }
 
     @Override

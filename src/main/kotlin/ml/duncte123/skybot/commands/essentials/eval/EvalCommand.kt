@@ -177,7 +177,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
-                return@launch eval(event, isRanByBotOwner, script, timeout)
+                return@launch eval(event, isRanByBotOwner, script, timeout, ctx)
             })
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
@@ -191,7 +191,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                return@launch eval(event, false, script, timeout)
+                return@launch eval(event, false, script, timeout, ctx)
             }
         }
     }
@@ -219,7 +219,7 @@ class EvalCommand : Command() {
     }*/
 
     @SinceSkybot("3.58.0")
-    private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
+    private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long, ctx: CommandContext) {
         val time = measureTimeMillis {
             withTimeoutOrNull(millis) {
                 if (!isRanByBotOwner) {
@@ -239,7 +239,7 @@ class EvalCommand : Command() {
                     ex
                 }
 
-                parseEvalResponse(out, event, isRanByBotOwner)
+                parseEvalResponse(out, event, isRanByBotOwner, ctx)
 
                 if (!isRanByBotOwner) {
                     filter.unregister()
@@ -251,7 +251,7 @@ class EvalCommand : Command() {
             "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}")
     }
 
-    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean) {
+    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, ctx: CommandContext) {
         when (out) {
             null -> {
                 sendSuccess(event.message)
@@ -278,7 +278,7 @@ class EvalCommand : Command() {
 
             is Throwable -> {
                 if (Settings.useJSON && isRanByBotOwner) {
-                    sendErrorJSON(event.message, out, true)
+                    sendErrorJSON(event.message, out, true, ctx.variables.jackson)
                 } else {
                     sendMsg(event, "ERROR: $out")
 //                        out.printStackTrace()

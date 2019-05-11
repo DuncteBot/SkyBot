@@ -34,6 +34,6 @@ public class Settings {
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
     public static final int defaultColour = 0x0751c6;
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
-    public static final boolean useJSON = false;
+    public static boolean useJSON = false;
 
 }

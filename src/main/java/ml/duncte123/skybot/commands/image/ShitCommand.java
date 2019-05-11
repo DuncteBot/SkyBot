@@ -24,6 +24,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ShitCommand extends NoPatronImageCommand {
     @Override
@@ -36,11 +38,17 @@ public class ShitCommand extends NoPatronImageCommand {
 
         final String text = parseTextArgsForImage(ctx);
 
-        if ("pluralshit".equals(ctx.getInvoke())) {
-            ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
-            return;
+        try {
+            if ("pluralshit".equals(ctx.getInvoke())) {
+                ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
+                return;
+            }
+
+            ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
         }
-        ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
+        catch (Exception e) {
+            sendMsg(ctx, "The shit went down: " + e);
+        }
     }
 
     @Override

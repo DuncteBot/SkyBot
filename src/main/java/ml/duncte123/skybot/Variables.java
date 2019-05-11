@@ -87,7 +87,7 @@ public final class Variables {
     public BlargBot getBlargBot() {
 
         if (this.blargBot == null) {
-            this.blargBot = new BlargBot(this.config.apis.blargbot);
+            this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
         }
 
         return this.blargBot;

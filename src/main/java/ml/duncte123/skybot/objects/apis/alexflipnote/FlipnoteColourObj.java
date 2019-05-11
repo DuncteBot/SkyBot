@@ -18,12 +18,11 @@
 
 package ml.duncte123.skybot.objects.apis.alexflipnote;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ml.duncte123.skybot.Author;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class FlipnoteColourObj {
+    public String blackorwhite_text;
     public int brightness;
     public String hex;
     public String image;
