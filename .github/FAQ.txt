@@ -1,5 +1,5 @@
 Q: How can I add the bot to my server?
-A: You can add the bot to your server by following the instructions on this page <https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1>
+A: You can add the bot to your server by following the instructions on this page <https://lnk.dunctebot.com/invite>
 
 Q: Is the bot open source?
 A: Yes, you can find the source at <https://github.com/DuncteBot>

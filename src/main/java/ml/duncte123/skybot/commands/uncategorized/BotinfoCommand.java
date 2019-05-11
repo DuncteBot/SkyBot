@@ -68,7 +68,7 @@ public class BotinfoCommand extends Command {
                 duncte + " and " + ramid + ".\n" +
                 "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                 "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://dunctebot.com/)** \u2022 " +
-                "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
+                "**[Invite me](https://lnk.dunctebot.com/invite)**" +
                 " \u2022 **[Twitter](https://twitter.com/DuncteBot)**  \u2022 **[Cheap hosting](https://billing.oxide.host/aff.php?aff=6)**" +
                 "\n\u200B", true)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
