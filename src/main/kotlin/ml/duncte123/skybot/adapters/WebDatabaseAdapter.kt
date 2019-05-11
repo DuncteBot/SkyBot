@@ -40,19 +40,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
         variables.database.run {
             try {
-
-                val customCommands = arrayListOf<CustomCommand>()
-
                 val array = variables.apis.getCustomCommands()
-
-                array.forEach { j ->
-                    customCommands.add(CustomCommandImpl(
-                        j.get("invoke").asText(),
-                        j.get("message").asText(),
-                        j.get("guildId").asLong(),
-                        j.get("autoresponse").asBoolean()
-                    ))
-                }
+                val customCommands: List<CustomCommand> = variables.jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
 
                 callback.invoke(customCommands)
             } catch (e: Exception) {
@@ -87,9 +76,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         variables.database.run {
             try {
                 val mapper = variables.jackson
-
                 val array = variables.apis.getGuildSettings()
-
                 val settings: List<GuildSettings> = mapper.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
 
                 callback.invoke(settings)
@@ -244,7 +231,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val data = variables.apis.getWarningsForUser(userId, guildId)
             val items = arrayListOf<Warning>()
 
-            data.forEach {json ->
+            data.forEach { json ->
                 items.add(Warning(
                     json.get("id").asInt(),
                     Date.valueOf(json.get("warn_date").asText()),

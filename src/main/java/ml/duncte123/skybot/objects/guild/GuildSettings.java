@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
 /**
@@ -215,6 +215,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("logChannelId")
     public GuildSettings setLogChannel(long tc) {
         this.logChannelId = tc;
 
@@ -421,6 +422,13 @@ public class GuildSettings {
         return blacklistedWords;
     }
 
+    public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
+        this.blacklistedWords.clear();
+        this.blacklistedWords.addAll(blacklistedWords);
+
+        return this;
+    }
+
     @JsonProperty("blacklisted_words")
     public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
         if (!blacklistedWords.isArray()) {
@@ -430,13 +438,6 @@ public class GuildSettings {
         blacklistedWords.forEach(
             (json) -> this.blacklistedWords.add(json.get("word").asText())
         );
-
-        return this;
-    }
-
-    public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
-        this.blacklistedWords.clear();
-        this.blacklistedWords.addAll(blacklistedWords);
 
         return this;
     }
