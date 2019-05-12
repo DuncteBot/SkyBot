@@ -170,7 +170,7 @@ public class HelpEmbeds {
             }
         }
 
-        return embed.addField("Other suff",
+        return embed.addField("Other stuff",
             "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                 "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
             .build();
