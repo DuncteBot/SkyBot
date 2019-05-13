@@ -29,6 +29,8 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -90,13 +92,15 @@ public class CleanupCommand extends ModBaseCommand {
             Stream<Message> msgStream = msgs.stream();
 
             if (keepPinnedFinal) {
-                msgStream = msgStream.filter(msg -> !msg.isPinned());
+                msgStream = msgStream.filter((msg) -> !msg.isPinned());
             }
             if (clearBotsFinal) {
-                msgStream = msgStream.filter(msg -> msg.getAuthor().isBot());
+                msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
             }
 
-            final List<Message> msgList = msgStream.collect(Collectors.toList());
+            final List<Message> msgList = msgStream
+                .filter((msg) -> !msg.getCreationTime().isAfter(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
+                .collect(Collectors.toList());
 
             channel.purgeMessages(msgList);
 
