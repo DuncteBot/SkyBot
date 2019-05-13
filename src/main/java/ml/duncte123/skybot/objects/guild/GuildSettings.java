@@ -84,6 +84,7 @@ public class GuildSettings {
      *
      * @return true if the join message is enabled
      */
+    @JsonProperty("enableJoinMessage")
     public boolean isEnableJoinMessage() {
         return enableJoinMessage;
     }
@@ -96,6 +97,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("enableJoinMessage")
     public GuildSettings setEnableJoinMessage(boolean enableJoinMessage) {
         this.enableJoinMessage = enableJoinMessage;
         return this;
@@ -106,6 +108,7 @@ public class GuildSettings {
      *
      * @return true if the filter is on for this guild
      */
+    @JsonProperty("enableSwearFilter")
     public boolean isEnableSwearFilter() {
         return enableSwearFilter;
     }
@@ -118,6 +121,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("enableSwearFilter")
     public GuildSettings setEnableSwearFilter(boolean enableSwearFilter) {
         this.enableSwearFilter = enableSwearFilter;
         return this;
@@ -128,6 +132,7 @@ public class GuildSettings {
      *
      * @return The id of that guild as a String
      */
+    @JsonIgnore
     public long getGuildId() {
         return guildId;
     }
@@ -137,6 +142,7 @@ public class GuildSettings {
      *
      * @return The custom join message
      */
+    @JsonProperty("customWelcomeMessage")
     public String getCustomJoinMessage() {
         return customWelcomeMessage;
     }
@@ -149,6 +155,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("customWelcomeMessage")
     public GuildSettings setCustomJoinMessage(String customJoinMessage) {
         this.customWelcomeMessage = customJoinMessage;
         return this;
@@ -159,6 +166,7 @@ public class GuildSettings {
      *
      * @return the custom leave message
      */
+    @JsonProperty("customLeaveMessage")
     public String getCustomLeaveMessage() {
         return customLeaveMessage;
     }
@@ -171,6 +179,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("customLeaveMessage")
     public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
         this.customLeaveMessage = customLeaveMessage;
         return this;
@@ -181,6 +190,7 @@ public class GuildSettings {
      *
      * @return The prefix that the guild is using
      */
+    @JsonProperty("prefix")
     public String getCustomPrefix() {
         return prefix;
     }
@@ -193,6 +203,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("prefix")
     public GuildSettings setCustomPrefix(String customPrefix) {
         this.prefix = customPrefix;
         return this;
@@ -203,6 +214,7 @@ public class GuildSettings {
      *
      * @return the channel to log in
      */
+    @JsonProperty("logChannelId")
     public long getLogChannel() {
         return logChannelId;
     }
@@ -215,7 +227,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
-    @JsonProperty("logChannelId")
+    @JsonProperty("autorole")
     public GuildSettings setLogChannel(long tc) {
         this.logChannelId = tc;
 
@@ -227,6 +239,7 @@ public class GuildSettings {
      *
      * @return the role id for the autorole feature
      */
+    @JsonProperty("autorole")
     public long getAutoroleRole() {
         return autoRole;
     }
@@ -239,12 +252,14 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("logChannelId")
     public GuildSettings setAutoroleRole(long autoroleRole) {
         this.autoRole = autoroleRole;
 
         return this;
     }
 
+    @JsonIgnore
     public boolean isAutoroleEnabled() {
         return this.autoRole > 0;
     }
@@ -254,6 +269,7 @@ public class GuildSettings {
      *
      * @return the channel in where the welcome or leave messages should display
      */
+    @JsonProperty("welcomeLeaveChannel")
     public long getWelcomeLeaveChannel() {
         return welcomeLeaveChannel;
     }
@@ -266,6 +282,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("welcomeLeaveChannel")
     public GuildSettings setWelcomeLeaveChannel(long welcomeLeaveChannel) {
         this.welcomeLeaveChannel = welcomeLeaveChannel;
 
@@ -277,6 +294,7 @@ public class GuildSettings {
      *
      * @return the custom server description
      */
+    @JsonProperty("serverDesc")
     public String getServerDesc() {
         return serverDesc;
     }
@@ -289,6 +307,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("serverDesc")
     public GuildSettings setServerDesc(String serverDesc) {
         this.serverDesc = serverDesc;
 
@@ -300,6 +319,7 @@ public class GuildSettings {
      *
      * @return if we should announce the next track
      */
+    @JsonProperty("announceNextTrack")
     public boolean isAnnounceTracks() {
         return announceNextTrack;
     }
@@ -312,6 +332,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("announceNextTrack")
     public GuildSettings setAnnounceTracks(boolean announceTracks) {
         this.announceNextTrack = announceTracks;
 
@@ -323,6 +344,7 @@ public class GuildSettings {
      *
      * @return if we should auto de-hoist people (soon™)
      */
+    @JsonProperty("autoDehoist")
     public boolean isAutoDeHoist() {
         return autoDeHoist;
     }
@@ -335,6 +357,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("autoDehoist")
     public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
         this.autoDeHoist = autoDeHoist;
 
@@ -346,6 +369,7 @@ public class GuildSettings {
      *
      * @return if we should filter discord invites
      */
+    @JsonProperty("filterInvites")
     public boolean isFilterInvites() {
         return filterInvites;
     }
@@ -356,6 +380,7 @@ public class GuildSettings {
      *
      * @return the current settings for chaining
      */
+    @JsonProperty("filterInvites")
     public GuildSettings setFilterInvites(boolean filterInvites) {
         this.filterInvites = filterInvites;
 
@@ -374,16 +399,19 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("muteRoleId")
     public long getMuteRoleId() {
         return muteRoleId;
     }
 
+    @JsonProperty("muteRoleId")
     public GuildSettings setMuteRoleId(long muteRoleId) {
         this.muteRoleId = muteRoleId;
 
         return this;
     }
 
+    @JsonProperty("logChannelId")
     public long[] getRatelimits() {
         return ratelimits;
     }
@@ -408,16 +436,19 @@ public class GuildSettings {
         return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
     }
 
+    @JsonProperty("kickInsteadState")
     public boolean getKickState() {
         return kickInsteadState;
     }
 
+    @JsonProperty("kickInsteadState")
     public GuildSettings setKickState(boolean newState) {
         kickInsteadState = newState;
 
         return this;
     }
 
+    @JsonProperty("logChannelId")
     public List<String> getBlacklistedWords() {
         return blacklistedWords;
     }
@@ -447,6 +478,7 @@ public class GuildSettings {
         return leave_timeout;
     }
 
+    @JsonProperty("leave_timeout")
     public GuildSettings setLeaveTimeout(int leaveTimeout) {
         this.leave_timeout = leaveTimeout;
 
@@ -458,6 +490,7 @@ public class GuildSettings {
         return spam_threshold;
     }
 
+    @JsonProperty("spam_threshold")
     public GuildSettings setSpamThreshold(int spamThreshold) {
         this.spam_threshold = spamThreshold;
 
