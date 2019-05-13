@@ -411,7 +411,7 @@ public class GuildSettings {
         return this;
     }
 
-    @JsonProperty("logChannelId")
+    @JsonProperty("ratelimits")
     public long[] getRatelimits() {
         return ratelimits;
     }
@@ -423,6 +423,7 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonIgnore
     public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
 
@@ -448,7 +449,7 @@ public class GuildSettings {
         return this;
     }
 
-    @JsonProperty("logChannelId")
+    @JsonProperty("blacklisted_words")
     public List<String> getBlacklistedWords() {
         return blacklistedWords;
     }
