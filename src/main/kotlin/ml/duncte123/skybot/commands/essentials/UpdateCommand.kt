@@ -37,6 +37,8 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -183,14 +185,15 @@ class UpdateCommand : Command() {
             val base = "https://paste.menudocs.org"
             val dataMap = hashMapOf<String, Any>()
 
-            dataMap["text"] = text
+            dataMap["text"] = URLEncoder.encode(text, StandardCharsets.UTF_8)
             dataMap["expire"] = expiration
             dataMap["lang"] = lang
 
-            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, EncodingType.TEXT_PLAIN)
+            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, EncodingType.TEXT_HTML)
                 .build({
                     return@build Jsoup.parse(it.body()!!.string())
-                        .select("a[title=\"View Raw\"]").first().attr("href")
+                        .select("a[title=\"View Raw\"]")
+                        .first().attr("href")
                         .replaceFirst("/raw", "")
                 }, WebParserUtils::handleError).execute()
 
