@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import org.json.JSONException
-import org.json.JSONObject
+import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class IssueCommand : Command() {
@@ -34,43 +33,52 @@ class IssueCommand : Command() {
 
     @Suppress()
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
 
-        val arg = event.message.contentRaw.split(regex, 2)
         when (ctx.args.size) {
             0 -> {
-                MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
+                sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve the issue faster.
                     |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin())
             }
             else -> {
                 try {
-                    val data = JSONObject(arg[1])
-                    val cmds = data.getJSONArray("lastCommands").toList().map {
-                        if ((it as String).contains(regex)) {
+                    val issue = ctx.variables.jackson.readValue(ctx.argsRaw, Issue::class.java)
+                    val cmds = issue.lastCommands.map {
+                        if (it.contains(regex)) {
                             val split = it.split(regex)
-                            return@map split[0] + " " + split.takeLastWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = { "<$it>" })
+                            return@map split[0] + " " + split.takeLastWhile { s -> split.indexOf(s) != 0 }.joinToString(separator = " ", transform = { "<$it>" })
                         } else {
                             return@map it
                         }
                     }.joinToString(", ")
-                    val embed = EmbedUtils.defaultEmbed()
 
-                    embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
+                    var invite = issue.inv
+
+                    if (issue.inv.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel, Permission.CREATE_INSTANT_INVITE)) {
+                        invite = event.channel.createInvite().complete().url
+                    }
+
+                    val embed = EmbedUtils.defaultEmbed()
+                    .setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
                         .setFooter(null, null)
                         .setDescription("""
-                            |Description: ${data.getString("description")}
-                            |Detailed report: ${data.getString("detailedReport")}
-                            |List of recent run commands: $cmds
+                            |Description: ${issue.description}
+                            |Detailed report: ${issue.detailedReport}
                             """.trimMargin())
-                        .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
+                        .addField("Invite:", invite, false)
+                        .addField("List of recent run commands:", cmds, false)
 
-                    sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed)
-                } catch (ex: JSONException) {
-                    val msg =
-                        """You malformed the JSON.
-                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/abcdefh"}"""
-                    MessageUtils.sendErrorWithMessage(event.message, msg.trimMargin())
+                    sendEmbed(ctx.shardManager.getTextChannelById(424146177626210305L), embed)
+
+                    sendMsg(ctx, "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
+                        "https://discord.gg/NKM9Xtk")
+                } catch (ex: Exception) {
+                    Sentry.capture(ex)
+
+                    val msg = """You malformed the JSON.
+                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "usr": "${ctx.author.asTag}"}"""
+
+                    sendErrorWithMessage(event.message, msg.trimMargin())
                 }
             }
         }
@@ -82,4 +90,13 @@ class IssueCommand : Command() {
     """.trimMargin()
 
     override fun getName(): String = "issue"
+
+    override fun getAliases() = arrayOf("bug", "bugreport")
+}
+
+class Issue {
+    lateinit var lastCommands: List<String>
+    lateinit var description: String
+    lateinit var detailedReport: String
+    var inv: String? = null
 }
