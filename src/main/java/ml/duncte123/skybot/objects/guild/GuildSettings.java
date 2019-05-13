@@ -227,7 +227,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
-    @JsonProperty("autorole")
+    @JsonProperty("logChannelId")
     public GuildSettings setLogChannel(long tc) {
         this.logChannelId = tc;
 
@@ -252,7 +252,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
-    @JsonProperty("logChannelId")
+    @JsonProperty("autorole")
     public GuildSettings setAutoroleRole(long autoroleRole) {
         this.autoRole = autoroleRole;
 
