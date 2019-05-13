@@ -128,9 +128,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
 
-    // Webhooks
-    implementation(group = "club.minnced", name = "discord-webhooks", version = "0.1.4")
-
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
 

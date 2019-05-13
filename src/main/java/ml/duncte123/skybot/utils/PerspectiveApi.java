@@ -25,6 +25,7 @@ import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Variables;
+import net.dv8tion.jda.core.exceptions.HttpException;
 
 import java.util.Objects;
 
@@ -45,7 +46,7 @@ public class PerspectiveApi {
                     return 0f;
                 }
 
-                throw new Exception("Error while handling perspective api request: " + json);
+                throw new HttpException("Error while handling perspective api request: " + json);
             }
 
             final JsonNode score = json.get("attributeScores").get("SEVERE_TOXICITY")
@@ -62,7 +63,7 @@ public class PerspectiveApi {
     }
 
     private static String genBody(String text, String channelId) {
-        StringBuilder builder = new StringBuilder()
+        final StringBuilder builder = new StringBuilder()
             .append("{\"comment\":{\"text\":\"");
 
         CharTypes.appendQuoted(builder, text);

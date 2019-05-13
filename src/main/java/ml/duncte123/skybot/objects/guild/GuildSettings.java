@@ -510,7 +510,7 @@ public class GuildSettings {
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
     public ObjectNode toJson(ObjectMapper mapper) {
         final GuildSettings obj = this;
-        ObjectNode j = mapper.createObjectNode();
+        final ObjectNode j = mapper.createObjectNode();
 
         for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
