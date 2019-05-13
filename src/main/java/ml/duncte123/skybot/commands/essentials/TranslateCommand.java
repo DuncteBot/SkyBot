@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
@@ -25,9 +26,8 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import org.json.JSONArray;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -51,14 +51,14 @@ public class TranslateCommand extends Command {
 
         final String targetLang = args.get(0);
         final String input = String.join(" ", args.subList(1, args.size()));
-        final JSONArray translatedJson = WebUtils.ins.translate("auto", targetLang, input);
+        final ArrayNode translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
-        if (translatedJson.length() < 1) {
+        if (translatedJson.size() < 1) {
             sendMsg(ctx.getEvent(), "No translation found");
             return;
         }
 
-        final String translation = translatedJson.getString(0);
+        final String translation = translatedJson.get(0).asText();
         final String message = "Original: " + input + "\n" +
             "Translation to " + targetLang + " : " + translation;
 

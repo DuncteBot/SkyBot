@@ -34,8 +34,6 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.json.JSONArray
-import org.json.JSONObject
 import java.time.OffsetDateTime
 import java.util.concurrent.ThreadLocalRandom
 
@@ -50,7 +48,7 @@ class EarthUtils {
          * This function generates a debug JSON that can help us to improve errors if we hide them.
          *
          * @param throwable a [Throwable] that provides data.
-         * @returns a [JSONObject] that contains all given details.
+         * @returns a [JsonNode] that contains all given details.
          *
          *
          * @see [EarthUtils.throwableArrayToJSONArray]
@@ -72,7 +70,7 @@ class EarthUtils {
         }
 
         /**
-         * This small function wraps [List]<[JSONObject]> into an [JSONArray]
+         * This small function wraps [List]<[Throwable]> into an [ArrayNode]
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
@@ -89,7 +87,7 @@ class EarthUtils {
         }
 
         /**
-         * This tiny function wraps [List]<[JSONObject]> into an [JSONArray]
+         * This tiny function wraps [List]<[StackTraceElement]> into an [ArrayNode]
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
@@ -105,7 +103,7 @@ class EarthUtils {
         }
 
         /**
-         * This is just a smaller function that converts [StackTraceElement]s into [JSONObject] that we use in the see tag
+         * This is just a smaller function that converts [StackTraceElement]s into [ObjectNode] that we use in the see tag
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
@@ -124,7 +122,7 @@ class EarthUtils {
          *
          * This function generates a debug JSON that can help us to improve audio and memory issues.
          *
-         * @returns a [JSONObject] that contains all given details.
+         * @returns a [ObjectNode] that contains all given details.
          *
          *
          * @see [EarthUtils.gMMtoJSON]
@@ -149,10 +147,10 @@ class EarthUtils {
         }
 
         /**
-         * This tiny function converts a [GuildMusicManager] into a [JSONObject]
+         * This tiny function converts a [GuildMusicManager] into a [ObjectNode]
          *
          * @param manager a [GuildMusicManager] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -171,10 +169,10 @@ class EarthUtils {
         }
 
         /**
-         * This is a little function that converts a [AudioPlayer] into a [JSONObject]
+         * This is a little function that converts a [AudioPlayer] into a [ObjectNode]
          *
          * @param player a [AudioPlayer] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -191,10 +189,10 @@ class EarthUtils {
         }
 
         /**
-         * This smaller function converts a [TrackScheduler] into a [JSONObject]
+         * This smaller function converts a [TrackScheduler] into a [ObjectNode]
          *
          * @param scheduler a [TrackScheduler] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -210,10 +208,10 @@ class EarthUtils {
         }
 
         /**
-         * This small function that converts a [AudioTrack] into a [JSONObject]
+         * This small function that converts a [AudioTrack] into a [ObjectNode]
          *
          * @param track a [AudioTrack] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -237,13 +235,11 @@ class EarthUtils {
             val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
 
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
-                val posts = it.getJSONObject("data").getJSONArray("children").filter { filter ->
-                    event.channel.isNSFW || !(filter as JSONObject).getJSONObject("data").getBoolean("over_18")
+                val posts = it.get("data").get("children").filter { filter ->
+                    event.channel.isNSFW || !filter.get("data").get("over_18").asBoolean()
                 }.filter { filter ->
-                    filter as JSONObject
-
-                    filter.getJSONObject("data").getString("selftext").length <= 550
-                        && filter.getJSONObject("data").getString("title").length <= 256
+                    filter.get("data").get("selftext").asText().length <= 550
+                        && filter.get("data").get("title").asText().length <= 256
                 }
 
                 if (posts.isEmpty()) {
@@ -265,25 +261,27 @@ class EarthUtils {
                     rand = ThreadLocalRandom.current().nextInt(0, posts.size)
                 }
 
-                val post: JSONObject = JSONArray(posts).getJSONObject(rand).getJSONObject("data")
+                val post = posts[rand].get("data")
 
                 index.put(event.guild.idLong, rand)
 
-                val title: String = post.getString("title")
-                val text: String = post.optString("selftext", "")
-                val url: String = post.getString("id")
+                val title: String = post.get("title").asText()
+                val text: String = post.get("selftext").asText("")
+                val url: String = post.get("id").asText()
                 val embed = defaultEmbed().setTitle(title, "https://redd.it/$url")
 
                 if (text.isNotEmpty()) {
                     embed.setDescription(text)
                 }
 
-                val imagesO = post.optJSONObject("preview")
-                val images = imagesO?.optJSONArray("images")
+                if (post.has("preview")){
+                    val imagesO = post.get("preview")
+                    val images = imagesO.get("images")
 
-                if (images != null) {
-                    val image = images.getJSONObject(0).getJSONObject("source").getString("url")
-                    embed.setImage(image.replaceFirst("preview", "i"))
+                    if (images != null) {
+                        val image = images.get(0).get("source").get("url").asText()
+                        embed.setImage(image.replaceFirst("preview", "i"))
+                    }
                 }
 
                 sendEmbed(event, embed)

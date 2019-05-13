@@ -32,9 +32,9 @@ public class YesNoCommand extends Command {
     public void executeCommand(@Nonnull CommandContext ctx) {
         WebUtils.ins.getJSONObject("https://yesno.wtf/api").async((it) ->
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle(
-                it.getString("answer"),
-                it.getString("image"),
-                it.getString("image"))
+                it.get("answer").asText(),
+                it.get("image").asText(),
+                it.get("image").asText())
             )
         );
     }

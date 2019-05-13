@@ -51,31 +51,31 @@ class NSFWCommands : Command() {
         when (ctx.invoke) {
             "carsandhentai" -> {
                 WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, "Cars and hentai")).async { jsonRaw ->
-                    val jsonArray = jsonRaw.getJSONArray("items")
-                    val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))
+                    val jsonArray = jsonRaw.get("items")
+                    val randomItem = jsonArray.get(ctx.random.nextInt(jsonArray.size()))
                     sendEmbed(event,
                         EmbedUtils.defaultEmbed()
-                            .setTitle(randomItem.getString("title"), randomItem.getJSONObject("image")
-                                .getString("contextLink"))
-                            .setImage(randomItem.getString("link"))
+                            .setTitle(randomItem.get("title").asText(), randomItem.get("image")
+                                .get("contextLink").asText())
+                            .setImage(randomItem.get("link").asText())
                     )
                 }
 
             }
             "lewdneko" -> {
                 WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
+                    sendEmbed(event, EmbedUtils.embedImage(it.get("url").asText()))
                 }
             }
             "lewdkitsune" -> {
                 WebUtils.ins.getJSONObject("${nekkobotBase}lewdkitsune").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.getString("message")))
+                    sendEmbed(event, EmbedUtils.embedImage(it.get("message").asText()))
                 }
             }
             "hentai" -> {
                 val t = if (ctx.random.nextInt(2) == 1) "hentai" else "hentai_anal"
                 WebUtils.ins.getJSONObject("$nekkobotBase$t").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.getString("message")))
+                    sendEmbed(event, EmbedUtils.embedImage(it.get("message").asText()))
                 }
             }
         }

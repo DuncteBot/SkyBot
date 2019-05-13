@@ -99,16 +99,17 @@ class LyricsCommand : MusicCommand() {
     private fun searchForSong(t: String?, config: DunctebotConfig.Genius, mapper: ObjectMapper, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
             .header("Authorization", getAuthToken(config, mapper))
-            .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-            WebParserUtils::toJSONObject).async {
-            val hits = it.getJSONObject("response").getJSONArray("hits")
-            if (hits.length() < 1) {
-                callback.invoke(null)
-            } else {
-                callback.invoke(
-                    hits.getJSONObject(0).getJSONObject("result").getString("path")
-                )
+            .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build()
+        ) { WebParserUtils.toJSONObject(it, mapper) }
+            .async {
+                val hits = it.get("response").get("hits")
+                if (hits.size() < 1) {
+                    callback.invoke(null)
+                } else {
+                    callback.invoke(
+                        hits.get(0).get("result").get("path").asText()
+                    )
+                }
             }
-        }
     }
 }

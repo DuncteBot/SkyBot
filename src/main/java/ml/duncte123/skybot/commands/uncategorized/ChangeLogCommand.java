@@ -27,8 +27,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import org.json.JSONObject;
+
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -64,9 +65,9 @@ public class ChangeLogCommand extends Command {
 
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
-            final String body = json.getString("body");
+            final String body = json.get("body").asText();
             final EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                .setTitle("Changelog for DuncteBot", json.getString("html_url"));
+                .setTitle("Changelog for DuncteBot", json.get("html_url").asText());
 
             for (final String item : body.split("\n")) {
                 final String hash = item.substring(0, 7);

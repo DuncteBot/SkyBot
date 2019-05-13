@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtils.EncodingType;
-import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -52,10 +53,10 @@ public class YodaSpeakCommand extends Command {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
             .url(builder.build())
             .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
-            .build(), WebParserUtils::toJSONObject).async(
+            .build(), (it) -> WebParserUtils.toJSONObject(it, ctx.getVariables().getJackson())).async(
             (json) -> {
                 logger.debug("Yoda response: " + json);
-                sendMsg(event, json.getString("data"));
+                sendMsg(event, json.get("data").asText());
             },
             error -> {
                 error.printStackTrace();

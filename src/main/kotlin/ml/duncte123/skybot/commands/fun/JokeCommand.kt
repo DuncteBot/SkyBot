@@ -68,7 +68,7 @@ class JokeCommand : Command() {
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
-            sendEmbed(event, EmbedUtils.embedMessage(it.getString("joke")))
+            sendEmbed(event, EmbedUtils.embedMessage(it.get("joke").asText()))
         }
     }
 }

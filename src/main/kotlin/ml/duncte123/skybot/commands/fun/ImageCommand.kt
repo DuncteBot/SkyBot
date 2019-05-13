@@ -46,13 +46,13 @@ class ImageCommand : Command() {
             }
             val keyword = ctx.args.joinToString("+")
             WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
-                val jsonArray = it.getJSONArray("items")
-                val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))
+                val jsonArray = it.get("items")
+                val randomItem = jsonArray.get(ctx.random.nextInt(jsonArray.size()))
                 sendEmbed(event,
                     EmbedUtils.defaultEmbed()
-                        .setTitle(randomItem.getString("title"), randomItem.getJSONObject("image")
-                            .getString("contextLink"))
-                        .setImage(randomItem.getString("link")).build()
+                        .setTitle(randomItem.get("title").asText(), randomItem.get("image")
+                            .get("contextLink").asText())
+                        .setImage(randomItem.get("link").asText()).build()
                 )
             }
 
