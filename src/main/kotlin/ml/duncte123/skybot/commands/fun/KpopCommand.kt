@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
@@ -44,7 +43,7 @@ class KpopCommand : Command() {
 
         try {
             val queryString = if (ctx.args.isNotEmpty()) ctx.argsRaw else ""
-            val member = getRandomKpopMember(queryString, ctx.variables.apis, ctx.variables.jackson)
+            val member = getRandomKpopMember(queryString, ctx.variables.apis)
 
             val eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is a kpop member from the group ${member.band}")
@@ -63,10 +62,15 @@ class KpopCommand : Command() {
 
     override fun getName() = "kpop"
 
-    private fun getRandomKpopMember(search: String, apis: DuncteApis, mapper: ObjectMapper): KpopObject {
+    private fun getRandomKpopMember(search: String, apis: DuncteApis): KpopObject {
         val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
         val json = apis.executeDefaultGetRequest("kpop$path", false).get("data")
 
-        return mapper.readValue(json.traverse(), KpopObject::class.java)
+        return KpopObject(
+            json.get("id").asInt(),
+            json.get("name").asText(),
+            json.get("band").asText(),
+            json.get("img").asText()
+        )
     }
 }

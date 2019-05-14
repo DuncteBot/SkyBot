@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
@@ -75,7 +76,7 @@ class LoadCommand : MusicCommand() {
                     .forEach { obj ->
                         // This probably announces it to the channel
                         ctx.audioUtils.loadAndPlay(musicManager,
-                            obj.toString(),
+                            (obj as JsonNode).asText(),
                             ctx,
                             shouldAnnounce).get()
 

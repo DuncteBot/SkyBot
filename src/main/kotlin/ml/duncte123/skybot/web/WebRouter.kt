@@ -147,6 +147,14 @@ class WebRouter(private val shardManager: ShardManager) {
             post("/messages") { request, response ->
                 return@post MessageSettings.save(request, response, shardManager, variables)
             }
+
+            /*get("/music") { request, _ ->
+                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+                    ?: return@get """{"message": "No guild? WOT"}"""
+                val mng = variables.audioUtils.getMusicManager(guild)
+
+                EarthUtils.gMMtoJSON(mng, variables.jackson)
+            }*/
         }
 
         // Api routes
