@@ -45,7 +45,6 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         if (ctx.invoke == "meme") {
             sendRedditPost("memes", memeIndex, ctx.event)
 

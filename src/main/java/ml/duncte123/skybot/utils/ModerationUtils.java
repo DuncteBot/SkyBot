@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
+import ml.duncte123.skybot.objects.api.Warning;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -173,8 +176,16 @@ public class ModerationUtils {
      *
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) {
-        return ApiUtils.getWarnsForUser(adapter, u.getIdLong(), g.getIdLong()).getWarnings().size();
+    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) throws ExecutionException, InterruptedException {
+        final CompletableFuture<List<Warning>> future = new CompletableFuture<>();
+
+        adapter.getWarningsForUser(u.getIdLong(), g.getIdLong(), (it) -> {
+            future.complete(it);
+
+            return null;
+        });
+
+        return future.get().size();
     }
 
     /**

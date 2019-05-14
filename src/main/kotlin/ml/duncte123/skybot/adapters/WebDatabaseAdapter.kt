@@ -68,7 +68,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit) {
+    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
         variables.database.run {
             callback.invoke(variables.apis.deleteCustomCommand(guildId, invoke))
         }

@@ -76,7 +76,7 @@ class IssueCommand : Command() {
                     Sentry.capture(ex)
 
                     val msg = """You malformed the JSON.
-                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "usr": "${ctx.author.asTag}"}"""
+                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/asdfsa"}"""
 
                     sendErrorWithMessage(event.message, msg.trimMargin())
                 }

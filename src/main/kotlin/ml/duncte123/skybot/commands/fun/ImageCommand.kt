@@ -36,7 +36,6 @@ class ImageCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
 
         if (isUserOrGuildPatron(event)) {
@@ -44,7 +43,9 @@ class ImageCommand : Command() {
                 MessageUtils.sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <search term>`")
                 return
             }
+
             val keyword = ctx.args.joinToString("+")
+
             WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonArray = it.get("items")
                 val randomItem = jsonArray.get(ctx.random.nextInt(jsonArray.size()))
@@ -55,7 +56,6 @@ class ImageCommand : Command() {
                         .setImage(randomItem.get("link").asText()).build()
                 )
             }
-
         }
     }
 

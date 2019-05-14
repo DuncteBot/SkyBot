@@ -36,43 +36,48 @@ class VoiceKickCommand : ModBaseCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-
         val event = ctx.event
-
         val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
         val controller = ctx.guild.controller
 
         if (channels.isNotEmpty()) {
             val channel = channels[0]
+
             channel.createCopy().queue {
                 channel.delete().queue()
             }
+
             sendSuccess(ctx.message)
+
             return
         }
 
         if (ctx.message.mentionedMembers.isNotEmpty()) {
             val member = ctx.message.mentionedMembers[0]
+
             if (member.voiceState.channel == null) {
                 sendMsg(event, "That member is not in a voice channel")
                 return
             }
-            controller.createVoiceChannel("temp_voicekick_${System.currentTimeMillis()}").queue { channel ->
 
+            controller.createVoiceChannel("temp_voicekick_${System.currentTimeMillis()}").queue { channel ->
                 if (channel !is VoiceChannel) {
-                    logger.error("Created a Voice Channel but the result wasn't a voice channel (received ${channel.javaClass.name})")
+                    logger.error("Created a Voice Channel but the result wasn't a voice channel (received ${channel.type.name.toLowerCase()})")
+
                     return@queue
                 }
+
                 controller.moveVoiceMember(member, channel).queue {
                     channel.delete().queue()
                 }
             }
+
             sendSuccess(ctx.message)
+
             return
         }
 
         sendMsg(event, "I could not find any Voice Channel or member to kick from voice")
-
     }
 
     override fun getName() = "voicekick"
