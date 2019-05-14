@@ -278,7 +278,7 @@ class EvalCommand : Command() {
 
             is Throwable -> {
                 if (Settings.useJSON && isRanByBotOwner) {
-                    sendErrorJSON(event.message, out, true, ctx.variables.jackson)
+                    sendErrorJSON(event.message, out, false, ctx.variables.jackson)
                 } else {
                     sendMsg(event, "ERROR: $out")
 //                        out.printStackTrace()

@@ -78,11 +78,7 @@ public final class SkyBot {
                 .setTimestamp(Instant.now())
         );
 
-        final String configPrefix = config.discord.prefix;
-        if (!Settings.PREFIX.equals(configPrefix)) {
-            Settings.PREFIX = configPrefix;
-        }
-
+        Settings.PREFIX = config.discord.prefix;
         RestAction.setPassContext(true);
 
         if (variables.useApi()) {
