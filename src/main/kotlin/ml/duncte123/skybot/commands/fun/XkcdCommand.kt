@@ -25,9 +25,14 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class XkcdCommand : Command() {
+    init {
+        this.category = CommandCategory.FUN
+    }
+
     override fun executeCommand(ctx: CommandContext) {
         val args = ctx.args
 

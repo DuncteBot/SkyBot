@@ -27,7 +27,7 @@ import static java.lang.System.getProperty;
 public class Settings {
 
     public static String PREFIX = "db!";
-    public static boolean useJSON = true;
+    public static boolean useJSON = false;
     public static final long OWNER_ID = 191231307290771456L;
     public static final TLongList developers = MapUtils.newLongList();
     public static final String OTHER_PREFIX = "db.";
