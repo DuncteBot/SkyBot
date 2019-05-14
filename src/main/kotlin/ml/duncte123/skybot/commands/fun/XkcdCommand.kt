@@ -19,48 +19,71 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.natanbc.reliqua.request.PendingRequest
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class XkcdCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
-        getRandom { num ->
-            getInfo(num).async {
-                val embed = EmbedUtils.defaultEmbed()
-                    .setTitle(
-                        it.get("safe_title").asText(),
-                        "http://xkcd.com/$num/"
-                    )
-                    .setImage(it.get("img").asText())
+        val args = ctx.args
 
-                sendEmbed(ctx, embed)
+        if (args.isEmpty()) {
+            return sendComic(getLatest(), ctx)
+        }
+
+        when (args[0]) {
+            "latest" -> sendComic(getLatest(), ctx)
+            "random" -> sendComic(getInfo(getRandom()), ctx)
+            else -> try {
+                val comicId = args[0].toInt()
+
+                sendComic(getInfo(comicId), ctx)
+            } catch (ignored: NumberFormatException) {
+                sendMsg(ctx, "The provided comic id is not a number")
+            } catch (other: Exception) {
+                sendMsg(ctx, "That comic could not be found")
             }
         }
     }
 
     override fun getName() = "xkcd"
 
-    override fun help() = "Shows a random xkcd comic"
+    override fun help() = "Sends the latest xkcd comic\n" +
+        "Usage: `${Settings.PREFIX}$name [latest/random/number]`"
 
-    private fun getInfo(id: Int): PendingRequest<ObjectNode> {
-        return WebUtils.ins.getJSONObject("http://xkcd.com/$id/info.0.json")
+    private fun sendComic(it: ObjectNode, ctx: CommandContext) {
+        val embed = EmbedUtils.defaultEmbed()
+            .setTitle(
+                it.get("safe_title").asText(),
+                "http://xkcd.com/${it.get("num").asInt()}/"
+            )
+            .setImage(it.get("img").asText())
+
+        sendEmbed(ctx, embed)
     }
 
-    private fun getRandom(callback: (Int) -> Unit) {
-        WebUtils.ins.getJSONObject("http://xkcd.com/info.0.json").async {
-            val max = it.get("num").asInt()
-            var selected = max.maxRand()
+    private fun getInfo(id: Int): ObjectNode {
+        return WebUtils.ins.getJSONObject("http://xkcd.com/$id/info.0.json").execute()
+    }
 
-            while (selected == 404) {
-                selected = max.maxRand()
-            }
+    private fun getLatest(): ObjectNode {
+        return WebUtils.ins.getJSONObject("http://xkcd.com/info.0.json").execute()
+    }
 
-            callback.invoke(selected)
+    private fun getRandom(): Int {
+        val it = getLatest()
+        val max = it.get("num").asInt()
+        var selected = max.maxRand()
+
+        while (selected == 404) {
+            selected = max.maxRand()
         }
+
+        return selected
     }
 
     private fun Int.maxRand() = Math.floor(Math.random() * this).toInt()
