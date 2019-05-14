@@ -76,7 +76,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "com.github.duncte123", name = "botCommons", version = "275e6860bd")
+    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.18")
 
     //JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_463") {

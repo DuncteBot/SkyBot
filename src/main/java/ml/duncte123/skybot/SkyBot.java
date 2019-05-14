@@ -20,6 +20,7 @@ package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -61,6 +62,8 @@ public final class SkyBot {
     private final IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
+        MessageUtils.setErrorReaction("<a:_no:577795484060483584>");
+        MessageUtils.setSuccessReaction("<a:_yes:577795293546938369>");
 
         final Variables variables = Variables.getInstance();
         final DunctebotConfig config = variables.getConfig();
