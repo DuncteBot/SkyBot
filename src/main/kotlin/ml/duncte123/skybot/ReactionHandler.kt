@@ -52,26 +52,27 @@ class ReactionHandler : ListenerAdapter() {
 
         if (cacheElement.equals(ctx.reactionEvent)) {
             val event = ctx.reactionEvent
+            val channel = ctx.channel
             val content = event.message.contentRaw.toLowerCase()
             val index = AirUtils.parseIntSafe(content)
             val msgId = cacheElement.msgID
 
             if (content == "cancel") {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue(null, {})
+                channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue(null, {})
                 requirementsCache = requirementsCache - cacheElement
 
                 return@BiConsumer
             }
 
-            if (index == -1 || index > resSet.size) {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
+            if (index < 1 || index > resSet.size) {
+                channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
 
                 return@BiConsumer
             }
 
             val res = resSet.getOrNull(index - 1)
             if (res == null) {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
+                channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
 
                 return@BiConsumer
             }
@@ -80,14 +81,14 @@ class ReactionHandler : ListenerAdapter() {
                 "https://www.youtube.com/watch?v=${res.id.videoId}", ctx)
             requirementsCache = requirementsCache - cacheElement
 
-            ctx.channel.deleteMessageById(msgId).queue(null, {}) // Ignore the error if the message has already been deleted
+            channel.deleteMessageById(msgId).queue(null, {}) // Ignore the error if the message has already been deleted
         }
 
     }
 
-    fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, context: CommandContext, resultSet: List<SearchResult>) {
+    fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, ctx: CommandContext, resultSet: List<SearchResult>) {
         val cacheElement = ReactionCacheElement(msg.idLong, userId)
-        val pair = userId to (context.applySentId(userId) to resultSet)
+        val pair = userId to (ctx.applySentId(userId) to resultSet)
 
         requirementsCache = requirementsCache + cacheElement
         consumerCache = consumerCache + pair
@@ -97,14 +98,15 @@ class ReactionHandler : ListenerAdapter() {
                 requirementsCache = requirementsCache - cacheElement
                 consumerCache = consumerCache - userId
 
-                context.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue()
+                ctx.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue(null, {})
             }
         }, timeoutInMillis, TimeUnit.MILLISECONDS)
     }
 
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         val checkId = event.author.idLong
-        val intCheck = AirUtils.isInt(event.message.contentRaw) || event.message.contentRaw.toLowerCase() == "cancel"
+        val content = event.message.contentRaw
+        val intCheck = AirUtils.isInt(content) || content.toLowerCase() == "cancel"
 
         if (!consumerCache.containsKey(checkId) && !intCheck) {
             return
