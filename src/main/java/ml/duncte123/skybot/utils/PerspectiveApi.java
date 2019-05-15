@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.fasterxml.jackson.core.io.CharTypes;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.RequestException;
@@ -63,16 +62,9 @@ public class PerspectiveApi {
     }
 
     private static String genBody(String text, String channelId) {
-        final StringBuilder builder = new StringBuilder()
-            .append("{\"comment\":{\"text\":\"");
-
-        CharTypes.appendQuoted(builder, text);
-
-        builder.append("\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"")
-            .append(channelId)
-            .append("\"}");
-
-        return builder.toString();
+        return "{\"comment\":{\"text\":" +
+            JSONQuoter.quote(text) +
+            "},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
     }
 
     private static String genUrl(String apiKey) {

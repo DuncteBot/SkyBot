@@ -64,7 +64,7 @@ public class JSONMessageErrorsHelper {
             }
         }
 
-        message.addReaction("<a:_no:577795484060483584>").queue(null, (ignored) -> {});
+        message.addReaction("a:_no:577795484060483584").queue(null, (ignored) -> {});
 
         try {
             message.getChannel()
