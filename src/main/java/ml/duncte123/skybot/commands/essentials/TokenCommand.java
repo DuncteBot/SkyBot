@@ -72,10 +72,9 @@ public class TokenCommand extends Command {
         }
 
         final DuncteApis apis = ctx.getVariables().getApis();
-
         final JsonNode json = apis.decodeToken(args.get(0));
 
-        if (json.has("success") && json.get("success").asBoolean()) {
+        if (json.get("success").asBoolean()) {
             handleSuccess(args.get(0), (ObjectNode) json.get("data"), event);
 
             return;

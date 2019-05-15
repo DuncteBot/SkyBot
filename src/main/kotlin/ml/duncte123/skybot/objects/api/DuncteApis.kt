@@ -484,22 +484,16 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             return Triple(first = false, second = false, third = true)
         }
 
-        if (type == "ValidationException") {
-            val errors = response.get("error").get("errors")
+        if (type !== "ValidationException") {
+            return Triple(first = false, second = false, third = false)
+        }
 
-            for (key in errors.fieldNames()) {
-                val reasons = errors.get(key) as ArrayNode
+        val errors = response.get("error").get("errors")
 
-                for (reason in reasons) {
-                    val txt = reason.asText()
-
-                    if (txt.contains("The invoke has already been taken.")) {
-                        return Triple(first = false, second = true, third = false)
-                    }
-
-                    if (txt.contains("The message may not be greater than 4000 characters.")) {
-                        return Triple(first = false, second = false, third = false)
-                    }
+        for (key in errors.fieldNames()) {
+            errors.get(key).forEach { reason ->
+                if (reason.asText().contains("The invoke has already been taken.")) {
+                    return Triple(first = false, second = true, third = false)
                 }
             }
         }

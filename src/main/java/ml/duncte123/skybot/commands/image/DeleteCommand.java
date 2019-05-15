@@ -21,9 +21,8 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class DeleteCommand extends ImageCommandBase {
@@ -37,12 +36,7 @@ public class DeleteCommand extends ImageCommandBase {
             return;
         }
 
-        try {
-            ctx.getBlargbot().getDelete(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
-        }
-        catch (Exception e) {
-            sendMsg(ctx, "Could not delete: " + e);
-        }
+        ctx.getBlargbot().getDelete(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

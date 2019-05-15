@@ -185,7 +185,7 @@ class UpdateCommand : Command() {
             val base = "https://paste.menudocs.org"
             val dataMap = hashMapOf<String, Any>()
 
-            dataMap["text"] = URLEncoder.encode(text, StandardCharsets.UTF_8)
+            dataMap["text"] = text
             dataMap["expire"] = expiration
             dataMap["lang"] = lang
 

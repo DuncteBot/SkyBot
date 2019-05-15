@@ -416,6 +416,7 @@ public class GuildSettings {
         return ratelimits;
     }
 
+    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("ratelimits")
     public GuildSettings setRatelimits(JsonNode ratelimits) {
         this.ratelimits = ratelimmitChecks(ratelimits.asText());
@@ -449,11 +450,12 @@ public class GuildSettings {
         return this;
     }
 
-    @JsonProperty("blacklisted_words")
+    @JsonIgnore
     public List<String> getBlacklistedWords() {
         return blacklistedWords;
     }
 
+    @JsonIgnore
     public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
         this.blacklistedWords.clear();
         this.blacklistedWords.addAll(blacklistedWords);
@@ -461,6 +463,7 @@ public class GuildSettings {
         return this;
     }
 
+    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("blacklisted_words")
     public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
         if (!blacklistedWords.isArray()) {

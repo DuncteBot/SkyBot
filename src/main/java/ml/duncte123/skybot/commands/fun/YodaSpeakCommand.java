@@ -56,7 +56,7 @@ public class YodaSpeakCommand extends Command {
             .build(), (it) -> WebParserUtils.toJSONObject(it, ctx.getVariables().getJackson())).async(
             (json) -> {
                 logger.debug("Yoda response: " + json);
-                sendMsg(event, json.get("data").asText());
+                sendMsg(event, "<:yoda:578198258351079438> " + json.get("data").asText());
             },
             error -> {
                 error.printStackTrace();

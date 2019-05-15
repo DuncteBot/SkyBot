@@ -62,8 +62,8 @@ public final class SkyBot {
     private final IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
-        MessageUtils.setErrorReaction("<a:_no:577795484060483584");
-        MessageUtils.setSuccessReaction("<a:_yes:577795293546938369");
+        MessageUtils.setErrorReaction("a:_no:577795484060483584");
+        MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
 
         final Variables variables = Variables.getInstance();
         final DunctebotConfig config = variables.getConfig();

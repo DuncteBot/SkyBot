@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.apis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.PendingRequest;
@@ -42,44 +43,52 @@ public class BlargBot {
         this.mapper = mapper;
     }
 
-    public PendingRequest<byte[]> getClint(String imageUrl) throws Exception {
+    public PendingRequest<byte[]> getClint(String imageUrl) {
         return makeRequest("image/clint", mapper.createObjectNode().put("image", imageUrl));
     }
 
-    public PendingRequest<byte[]> getLinus(String imageUrl) throws Exception {
+    public PendingRequest<byte[]> getLinus(String imageUrl) {
         return makeRequest("image/linus", mapper.createObjectNode().put("image", imageUrl));
     }
 
-    public PendingRequest<byte[]> getDelete(String text) throws Exception {
+    public PendingRequest<byte[]> getDelete(String text) {
         return makeRequest("image/delete", mapper.createObjectNode().put("text", text));
     }
 
-    public PendingRequest<byte[]> getPcCheck(String text) throws Exception {
+    public PendingRequest<byte[]> getPcCheck(String text) {
         return makeRequest("image/pccheck", mapper.createObjectNode().put("text", text));
     }
 
-    public PendingRequest<byte[]> getShit(String text) throws Exception {
+    public PendingRequest<byte[]> getShit(String text) {
         return getShit(text, false);
     }
 
-    public PendingRequest<byte[]> getShit(String text, boolean plural) throws Exception {
+    public PendingRequest<byte[]> getShit(String text, boolean plural) {
         return makeRequest("image/shit", mapper.createObjectNode().put("text", text).put("plural", plural));
     }
 
-    public PendingRequest<byte[]> getTheSearch(String text) throws Exception {
+    public PendingRequest<byte[]> getTheSearch(String text) {
         return makeRequest("image/thesearch", mapper.createObjectNode().put("text", text));
     }
 
 
-    private PendingRequest<byte[]> makeRequest(String path, JsonNode body) throws Exception {
+    private PendingRequest<byte[]> makeRequest(String path, JsonNode body) {
         return WebUtils.ins.prepareRaw(
             defaultRequest()
                 .url("https://api.blargbot.xyz/api/v1/" + path)
-                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), mapper.writeValueAsString(body)))
+                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), jsonToString(body)))
                 .addHeader("Authorization", token)
                 .build(),
             IOHelper::read
         );
     }
-
+    
+    private String jsonToString(JsonNode body) {
+        try {
+            return mapper.writeValueAsString(body);
+        }
+        catch (JsonProcessingException ignored) {
+            return ""; // Should never happen
+        }
+    }
 }
