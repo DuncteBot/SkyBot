@@ -51,10 +51,12 @@ public abstract class Command implements ICommand {
     public static final TLongSet guildPatrons = MapUtils.newLongSet();
     // Key: user_id Value: guild_id
     public static final TLongLongMap oneGuildPatrons = MapUtils.newLongLongMap();
+    public static final TLongSet tagPatrons = MapUtils.newLongSet();
     public static final long supportGuildId = 191245668617158656L;
     public static final long guildPatronsRole = 470581447196147733L;
     public static final long patronsRole = 402497345721466892L;
     public static final long oneGuildPatronsRole = 490859976475148298L;
+    public static final long tagPatronsRole = 578660495738011658L;
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(10,

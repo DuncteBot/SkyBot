@@ -26,7 +26,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
@@ -221,8 +223,9 @@ public class TagCommand extends Command {
     }
 
     private void createTag(CommandContext ctx) {
-        if (!isPatron(ctx.getAuthor(), null)) {
-            sendMsg(ctx, "Unfortunately only our patrons are able to create tags. You can become one for as little as $1/month: <https://patreon.com/DuncteBot>");
+        if (!isTagPatron(ctx.getMember())) {
+            sendMsg(ctx, "Unfortunately only our tag tier patrons are able to create tags.\n" +
+                "You can become one for $5/month over at <https://patreon.com/DuncteBot>");
 
             return;
         }
@@ -261,6 +264,29 @@ public class TagCommand extends Command {
 
             return null;
         });
+    }
+
+    private boolean isTagPatron(Member member) {
+        final User u = member.getUser();
+
+        if (isDev(u) || tagPatrons.contains(u.getIdLong())) {
+            return true;
+        }
+
+        if (member.getGuild().getIdLong() != supportGuildId) {
+            return false;
+        }
+
+        final boolean hasRole = member.getRoles()
+            .stream()
+            .map(Role::getIdLong)
+            .anyMatch((it) -> it == tagPatronsRole);
+
+        if (hasRole) {
+            tagPatrons.add(u.getIdLong());
+        }
+
+        return hasRole;
     }
 
     @Override
