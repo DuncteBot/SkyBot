@@ -33,6 +33,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
+
 import javax.annotation.Nonnull;
 
 import java.util.List;
@@ -81,10 +82,11 @@ public class ReadyShutdownListener extends MessageListener {
 
         final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
 
-        final List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
-            .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
-
-        Command.patrons.addAll(patronsList);
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+            .stream()
+            .map(Member::getUser)
+            .map(User::getIdLong)
+            .forEach(Command.patrons::add);
 
         logger.info("Found {} normal patrons", Command.patrons.size());
 
@@ -106,6 +108,14 @@ public class ReadyShutdownListener extends MessageListener {
         Command.guildPatrons.addAll(patronGuildsTrove);
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
+
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.tagPatronsRole))
+            .stream()
+            .map(Member::getUser)
+            .map(User::getIdLong)
+            .forEach(Command.tagPatrons::add);
+
+        logger.info("Found {} tag patrons", Command.tagPatrons.size());
 
         GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
     }
