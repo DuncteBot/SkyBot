@@ -24,7 +24,7 @@ import java.io.Writer;
 
 class JSONQuoter {
     static String quote(String string) {
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
         synchronized (sw.getBuffer()) {
             try {
                 return quote(string, sw).toString();
@@ -45,7 +45,7 @@ class JSONQuoter {
         char c = 0;
         String hhhh;
         int i;
-        int len = string.length();
+        final int len = string.length();
 
         w.write('"');
         for (i = 0; i < len; i += 1) {
@@ -88,6 +88,7 @@ class JSONQuoter {
                     } else {
                         w.write(c);
                     }
+                    break;
             }
         }
         w.write('"');
