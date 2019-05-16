@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
@@ -54,9 +55,9 @@ class RoleInfoCommand : Command() {
                 |**Name:** ${role.name}
                 |**Position:** ${role.position}
                 |**Members with this role:** $memberCount
-                |**Managed:** ${role.isManaged.toYN()}
-                |**Hoisted:** ${role.isHoisted.toYN()}
-                |**Mentionable:** ${role.isMentionable.toYN()}
+                |**Managed:** ${role.isManaged.toEmoji()}
+                |**Hoisted:** ${role.isHoisted.toEmoji()}
+                |**Mentionable:** ${role.isMentionable.toEmoji()}
                 |**Permissions:** $perms
             """.trimMargin())
 
@@ -70,6 +71,4 @@ class RoleInfoCommand : Command() {
     override fun help() = """Displays info about a specified role or the highest role that you have
         |Usage `${Settings.PREFIX}$name [role]`
     """.trimMargin()
-
-    private fun Boolean.toYN(): String  = if (this) "Yes" else "No"
 }
