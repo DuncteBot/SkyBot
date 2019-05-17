@@ -236,12 +236,16 @@ tasks.withType<Wrapper> {
 }
 
 githubRelease {
+    val files = arrayListOf<File>()
+    files.addAll(shadowJar.outputs.files.toList())
+    files.addAll(File("static_files").listFiles())
+
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    releaseAssets(shadowJar.outputs.files.toList())
+    releaseAssets(files)
     overwrite(true)
-    prerelease(false)
+    prerelease(true)
 }
 
 fun getGitHash(): String {

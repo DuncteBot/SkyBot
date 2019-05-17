@@ -58,7 +58,7 @@ public class CommandParser {
             Arrays.stream(command.getAliases()).forEach(aliases::add);
         }
 
-        final File outputFile = new File("commands.json");
+        final File outputFile = new File("static_files/commands.json");
 
         if (!outputFile.exists()) outputFile.createNewFile();
 
@@ -88,7 +88,7 @@ public class CommandParser {
 
         builder.append("];\n");
 
-        final File outputFile = new File("commands.php");
+        final File outputFile = new File("static_files/commands.php");
 
         if (!outputFile.exists()) outputFile.createNewFile();
 
@@ -121,7 +121,7 @@ public class CommandParser {
         builder.append("---\n\n{{ content }}\n");
 
 
-        final File outputFile = new File("command_storage.html");
+        final File outputFile = new File("static_files/command_storage.html");
 
         if (!outputFile.exists()) outputFile.createNewFile();
 
