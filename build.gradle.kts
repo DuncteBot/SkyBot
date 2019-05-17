@@ -142,6 +142,7 @@ dependencies {
 
     //JUnit for hacky stuff
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.4.2")
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.1")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -233,6 +234,10 @@ shadowJar.apply {
 
 tasks.withType<Wrapper> {
     gradleVersion = "5.4.1"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 githubRelease {

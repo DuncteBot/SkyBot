@@ -41,6 +41,10 @@ jobs:
                   key: v1-dependencies-{{ checksum "build.gradle.kts" }}
 
             - run:
+                name: "\"test\""
+                command: ./gradlew test
+
+            - run:
                   name: "Build bot"
                   command: ./gradlew build
 
