@@ -241,16 +241,20 @@ tasks.withType<Test> {
 }
 
 githubRelease {
-    val files = arrayListOf<File>()
-    files.addAll(shadowJar.outputs.files.toList())
-    files.addAll(File("static_files").listFiles())
-
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    releaseAssets(files)
+    releaseAssets(getUploadFiles())
     overwrite(true)
     prerelease(true)
+}
+
+fun getUploadFiles(): List<File> {
+    val files = arrayListOf<File>()
+    files.addAll(shadowJar.outputs.files.toList())
+    files.addAll(file("static_files").listFiles().filter { !it.name.startsWith(".") })
+
+    return files
 }
 
 fun getGitHash(): String {
