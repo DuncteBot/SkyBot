@@ -139,6 +139,9 @@ dependencies {
 
     // A nice duration parser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.14")
+
+    //JUnit for hacky stuff
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.4.2")
 }
 
 val compileKotlin: KotlinCompile by tasks
