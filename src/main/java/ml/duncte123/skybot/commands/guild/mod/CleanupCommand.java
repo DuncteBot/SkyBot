@@ -29,8 +29,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -99,7 +97,8 @@ public class CleanupCommand extends ModBaseCommand {
             }
 
             final List<Message> msgList = msgStream
-                .filter((msg) -> !msg.getCreationTime().isAfter(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
+                //TODO: Still needed?
+//                .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
                 .collect(Collectors.toList());
 
             channel.purgeMessages(msgList);
