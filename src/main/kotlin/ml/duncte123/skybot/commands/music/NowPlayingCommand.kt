@@ -49,12 +49,12 @@ class NowPlayingCommand : MusicCommand() {
                 if (stream is ILoveStream) {
                     val json = WebUtils.ins
                         .getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                    val channelData = json.getJSONObject("channel-${stream.npChannel}")
+                    val channelData = json.get("channel-${stream.npChannel}")
 
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channelData.getString("title")}]" +
-                        "(${stream.url}) by ${channelData.getString("artist")}**")
-                        .setThumbnail("https://www.iloveradio.de${channelData.getString("cover")}")
-                        .setColor(Color.decode(channelData.getString("color")))
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channelData.get("title").asText()}]" +
+                        "(${stream.url}) by ${channelData.get("artist").asText()}**")
+                        .setThumbnail("https://www.iloveradio.de${channelData.get("cover").asText()}")
+                        .setColor(Color.decode(channelData.get("color").asText()))
                 } else {
                     embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})")
                 }

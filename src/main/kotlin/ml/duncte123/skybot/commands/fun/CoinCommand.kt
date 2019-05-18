@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
@@ -37,14 +37,8 @@ class CoinCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
-        val event = ctx.event
-
-        event.channel.sendTyping().queue {
-            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
-                sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
-                    + imagesArr[ctx.random.nextInt(2)]))
-            }
+        ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
+            sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
         }
     }
 

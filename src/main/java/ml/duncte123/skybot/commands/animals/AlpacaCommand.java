@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.ApiUtils;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedImage;
@@ -37,12 +38,9 @@ public class AlpacaCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
+        final JsonNode json = ctx.getApis().executeDefaultGetRequest("alpaca", false).get("data");
 
-        ApiUtils.getRandomAlpaca((alpaca) -> {
-            sendEmbed(ctx.getEvent(), embedImage(alpaca.getFile()));
-
-            return null;
-        });
+        sendEmbed(ctx.getEvent(), embedImage(json.get("file").asText()));
     }
 
     @Override

@@ -23,10 +23,13 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.api.DuncteApis
+import ml.duncte123.skybot.objects.api.KpopObject
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.ApiUtils
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.sql.SQLException
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -39,8 +42,8 @@ class KpopCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
 
         try {
-            val queryString = if (!ctx.args.isEmpty()) ctx.argsRaw else ""
-            val member = ApiUtils.getRandomKpopMember(queryString)
+            val queryString = if (ctx.args.isNotEmpty()) ctx.argsRaw else ""
+            val member = getRandomKpopMember(queryString, ctx.variables.apis)
 
             val eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is a kpop member from the group ${member.band}")
@@ -58,4 +61,16 @@ class KpopCommand : Command() {
         "Usage: `${Settings.PREFIX}$name [search term]`"
 
     override fun getName() = "kpop"
+
+    private fun getRandomKpopMember(search: String, apis: DuncteApis): KpopObject {
+        val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
+        val json = apis.executeDefaultGetRequest("kpop$path", false).get("data")
+
+        return KpopObject(
+            json.get("id").asInt(),
+            json.get("name").asText(),
+            json.get("band").asText(),
+            json.get("img").asText()
+        )
+    }
 }

@@ -18,6 +18,10 @@
 
 package ml.duncte123.skybot.utils
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import gnu.trove.map.TLongIntMap
@@ -30,10 +34,6 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
 import java.time.OffsetDateTime
 import java.util.concurrent.ThreadLocalRandom
 
@@ -48,7 +48,7 @@ class EarthUtils {
          * This function generates a debug JSON that can help us to improve errors if we hide them.
          *
          * @param throwable a [Throwable] that provides data.
-         * @returns a [JSONObject] that contains all given details.
+         * @returns a [JsonNode] that contains all given details.
          *
          *
          * @see [EarthUtils.throwableArrayToJSONArray]
@@ -56,17 +56,21 @@ class EarthUtils {
          * @see [EarthUtils.stackTraceToJSONObject]
          */
         @JvmStatic
-        fun throwableToJSONObject(throwable: Throwable): JSONObject {
-            return JSONObject().put("className", throwable::class.java.name)
+        fun throwableToJSONObject(throwable: Throwable, mapper: ObjectMapper): JsonNode {
+            val node = mapper.createObjectNode()
+                .put("className", throwable::class.java.name)
                 .put("message", throwable.message)
                 .put("localiziedMessage", throwable.localizedMessage)
-                .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
-                .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
-                .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
+
+            node.set("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace, mapper))
+            node.set("supressed", throwableArrayToJSONArray(throwable.suppressed, mapper))
+            node.set("cause", throwable.cause?.let { throwableToJSONObject(it, mapper) })
+
+            return node
         }
 
         /**
-         * This small function wraps [List]<[JSONObject]> into an [JSONArray]
+         * This small function wraps [List]<[Throwable]> into an [ArrayNode]
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
@@ -74,51 +78,51 @@ class EarthUtils {
          * @see [EarthUtils.stackTraceToJSONObject]
          */
         @JvmStatic
-        private fun throwableArrayToJSONArray(throwables: Array<Throwable>) =
-            JSONArray(throwables.map { throwableToJSONObject(it) })
+        private fun throwableArrayToJSONArray(throwables: Array<Throwable>, mapper: ObjectMapper): ArrayNode {
+            val array = mapper.createArrayNode()
+
+            array.addAll(throwables.map { throwableToJSONObject(it, mapper) })
+
+            return array
+        }
 
         /**
-         * This tiny function wraps [List]<[JSONObject]> into an [JSONArray]
+         * This tiny function wraps [List]<[StackTraceElement]> into an [ArrayNode]
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
          * @see [EarthUtils.stackTraceToJSONObject]
          */
         @JvmStatic
-        private fun stacktraceArrayToJSONArray(stackTraces: Array<StackTraceElement>): JSONArray =
-            JSONArray(stackTraces.map { stackTraceToJSONObject(it) })
+        private fun stacktraceArrayToJSONArray(stackTraces: Array<StackTraceElement>, mapper: ObjectMapper): ArrayNode {
+            val array = mapper.createArrayNode()
+
+            array.addAll(stackTraces.map { stackTraceToJSONObject(it, mapper) })
+
+            return array
+        }
 
         /**
-         * This is just a smaller function that converts [StackTraceElement]s into [JSONObject] that we use in the see tag
+         * This is just a smaller function that converts [StackTraceElement]s into [ObjectNode] that we use in the see tag
          *
          *
          * @see [EarthUtils.throwableToJSONObject]
          * @see [EarthUtils.stacktraceArrayToJSONArray]
          */
         @JvmStatic
-        private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement) =
-            JSONObject().put("className", stackTraceElement.className)
+        private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement, mapper: ObjectMapper): ObjectNode {
+            return mapper.createObjectNode()
+                .put("className", stackTraceElement.className)
                 .put("methodName", stackTraceElement.methodName)
                 .put("lineNumber", stackTraceElement.lineNumber)
                 .put("isNative", stackTraceElement.isNativeMethod)
-
-        @JvmStatic
-        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
-        fun write(a_file: String, content: String) {
-            val file = File(a_file)
-
-            if (!file.exists()) {
-                file.createNewFile()
-            }
-
-            FileOutputStream(file).write(content.toByteArray())
         }
 
         /**
          *
          * This function generates a debug JSON that can help us to improve audio and memory issues.
          *
-         * @returns a [JSONObject] that contains all given details.
+         * @returns a [ObjectNode] that contains all given details.
          *
          *
          * @see [EarthUtils.gMMtoJSON]
@@ -127,21 +131,26 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        fun audioJSON(audioUtils: AudioUtils): JSONObject {
-            val json = JSONObject().put("time", OffsetDateTime.now())
+        fun audioJSON(audioUtils: AudioUtils, mapper: ObjectMapper): ObjectNode {
+            val json = mapper.createObjectNode().put("time", OffsetDateTime.now().toString())
 
             audioUtils.musicManagers.forEachEntry { key, value ->
-                json.put(key.toString(), JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
+                json.set(key.toString(),
+                    mapper.createObjectNode()
+                        .put("guildId", key)
+                        .set("manager", gMMtoJSON(value, mapper))
+                )
+
                 return@forEachEntry true
             }
             return json
         }
 
         /**
-         * This tiny function converts a [GuildMusicManager] into a [JSONObject]
+         * This tiny function converts a [GuildMusicManager] into a [ObjectNode]
          *
          * @param manager a [GuildMusicManager] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -150,14 +159,20 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        private fun gMMtoJSON(manager: GuildMusicManager): JSONObject =
-            JSONObject().put("fredboat/audio/player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
+        private fun gMMtoJSON(manager: GuildMusicManager, mapper: ObjectMapper): ObjectNode {
+            val node = mapper.createObjectNode()
+
+            node.set("scheduler", schedulerToJSON(manager.scheduler, mapper))
+            node.set("fredboat/audio/player", playerToJSON(manager.player, mapper))
+
+            return node
+        }
 
         /**
-         * This is a little function that converts a [AudioPlayer] into a [JSONObject]
+         * This is a little function that converts a [AudioPlayer] into a [ObjectNode]
          *
          * @param player a [AudioPlayer] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -166,15 +181,18 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        private fun playerToJSON(player: IPlayer): JSONObject =
-            JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused", player.isPaused)
+        private fun playerToJSON(player: IPlayer, mapper: ObjectMapper): ObjectNode {
+            return mapper.createObjectNode()
+                .put("paused", player.isPaused)
                 .put("volume", player.volume)
+                .set("currentTrack", player.playingTrack?.let { trackToJSON(it, mapper) }) as ObjectNode
+        }
 
         /**
-         * This smaller function converts a [TrackScheduler] into a [JSONObject]
+         * This smaller function converts a [TrackScheduler] into a [ObjectNode]
          *
          * @param scheduler a [TrackScheduler] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -183,14 +201,17 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        private fun schedulerToJSON(scheduler: TrackScheduler): JSONObject =
-            JSONObject().put("repeating", scheduler.isRepeating).put("queue_size", scheduler.queue.size)
+        private fun schedulerToJSON(scheduler: TrackScheduler, mapper: ObjectMapper): ObjectNode {
+            return mapper.createObjectNode()
+                .put("repeating", scheduler.isRepeating)
+                .put("queue_size", scheduler.queue.size)
+        }
 
         /**
-         * This small function that converts a [AudioTrack] into a [JSONObject]
+         * This small function that converts a [AudioTrack] into a [ObjectNode]
          *
          * @param track a [AudioTrack] that provides data.
-         * @returns a [JSONObject] with all the converted data.
+         * @returns a [ObjectNode] with all the converted data.
          *
          *
          * @see [EarthUtils.audioJSON]
@@ -199,23 +220,26 @@ class EarthUtils {
          * @see [EarthUtils.schedulerToJSON]
          */
         @JvmStatic
-        private fun trackToJSON(track: AudioTrack): JSONObject =
-            JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
-                .put("stream", track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
+        private fun trackToJSON(track: AudioTrack, mapper: ObjectMapper): ObjectNode {
+            return mapper.createObjectNode()
+                .put("source", track.sourceManager.sourceName)
+                .put("position", track.position)
+                .put("stream", track.info.isStream)
+                .put("uri", track.info.uri)
+                .put("length", track.info.length)
                 .put("title", track.info.title)
+        }
 
         @JvmStatic
         fun sendRedditPost(reddit: String, index: TLongIntMap, event: GuildMessageReceivedEvent, all: Boolean = false) {
             val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
 
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
-                val posts = it.getJSONObject("data").getJSONArray("children").filter { filter ->
-                    event.channel.isNSFW || !(filter as JSONObject).getJSONObject("data").getBoolean("over_18")
+                val posts = it.get("data").get("children").filter { filter ->
+                    event.channel.isNSFW || !filter.get("data").get("over_18").asBoolean()
                 }.filter { filter ->
-                    filter as JSONObject
-
-                    filter.getJSONObject("data").getString("selftext").length <= 550
-                        && filter.getJSONObject("data").getString("title").length <= 256
+                    filter.get("data").get("selftext").asText().length <= 550
+                        && filter.get("data").get("title").asText().length <= 256
                 }
 
                 if (posts.isEmpty()) {
@@ -237,25 +261,27 @@ class EarthUtils {
                     rand = ThreadLocalRandom.current().nextInt(0, posts.size)
                 }
 
-                val post: JSONObject = JSONArray(posts).getJSONObject(rand).getJSONObject("data")
+                val post = posts[rand].get("data")
 
                 index.put(event.guild.idLong, rand)
 
-                val title: String = post.getString("title")
-                val text: String = post.optString("selftext", "")
-                val url: String = post.getString("id")
+                val title: String = post.get("title").asText()
+                val text: String = post.get("selftext").asText("")
+                val url: String = post.get("id").asText()
                 val embed = defaultEmbed().setTitle(title, "https://redd.it/$url")
 
                 if (text.isNotEmpty()) {
                     embed.setDescription(text)
                 }
 
-                val imagesO = post.optJSONObject("preview")
-                val images = imagesO?.optJSONArray("images")
+                if (post.has("preview")){
+                    val imagesO = post.get("preview")
+                    val images = imagesO.get("images")
 
-                if (images != null) {
-                    val image = images.getJSONObject(0).getJSONObject("source").getString("url")
-                    embed.setImage(image.replaceFirst("preview", "i"))
+                    if (images != null) {
+                        val image = images.get(0).get("source").get("url").asText()
+                        embed.setImage(image.replaceFirst("preview", "i"))
+                    }
                 }
 
                 sendEmbed(event, embed)

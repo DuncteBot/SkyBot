@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
@@ -29,9 +30,8 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -65,11 +65,11 @@ public class LoveCommand extends Command {
         final Member target1 = AirUtils.getMentionedMember(name1, ctx.getGuild());
         final Member target2 = AirUtils.getMentionedMember(name2, ctx.getGuild());
 
-        final JSONObject response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
+        final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
 
         final EmbedBuilder embed = EmbedUtils.defaultEmbed()
-            .setTitle(response.getString("names"), "https://patreon.com/DuncteBot")
-            .addField(response.getString("score"), response.getString("message"), false);
+            .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
+            .addField(response.get("score").asText(), response.get("message").asText(), false);
 
         final TextChannel channel = ctx.getChannel();
 

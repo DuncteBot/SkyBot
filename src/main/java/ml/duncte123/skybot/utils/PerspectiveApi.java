@@ -18,11 +18,15 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
-import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import org.json.JSONObject;
+import ml.duncte123.skybot.Variables;
+import net.dv8tion.jda.core.exceptions.HttpException;
+
+import java.util.Objects;
 
 public class PerspectiveApi {
 
@@ -32,22 +36,22 @@ public class PerspectiveApi {
         }
 
         try {
-            final JSONObject json = makeRequest(text, channelId, apiKey);
+            final JsonNode json = makeRequest(text, channelId, apiKey, Variables.getInstance().getJackson());
 
             if (json.has("error")) {
-                final String error = json.getJSONObject("error").getString("message");
+                final String error = json.get("error").get("message").asText();
 
                 if (error.contains("does not support request languages")) {
                     return 0f;
                 }
 
-                throw new Exception("Error while handling perspective api request: " + json);
+                throw new HttpException("Error while handling perspective api request: " + json);
             }
 
-            final JSONObject score = json.getJSONObject("attributeScores").getJSONObject("SEVERE_TOXICITY")
-                .getJSONObject("summaryScore");
+            final JsonNode score = json.get("attributeScores").get("SEVERE_TOXICITY")
+                .get("summaryScore");
 
-            return score.getFloat("value");
+            return Float.valueOf(score.get("value").asText());
         }
         catch (Exception e) {
             Sentry.capture(e);
@@ -58,7 +62,8 @@ public class PerspectiveApi {
     }
 
     private static String genBody(String text, String channelId) {
-        return "{\"comment\":{\"text\":" + JSONObject.quote(text) +
+        return "{\"comment\":{\"text\":" +
+            JSONQuoter.quote(text) +
             "},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
     }
 
@@ -66,7 +71,9 @@ public class PerspectiveApi {
         return "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey;
     }
 
-    private static JSONObject makeRequest(String text, String channelId, String apiKey) throws RequestException {
-        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId), WebParserUtils::toJSONObject).execute();
+    private static JsonNode makeRequest(String text, String channelId, String apiKey, ObjectMapper mapper) throws RequestException {
+        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId),
+            (it) -> mapper.readTree(Objects.requireNonNull(it.body()).byteStream())
+        ).execute();
     }
 }

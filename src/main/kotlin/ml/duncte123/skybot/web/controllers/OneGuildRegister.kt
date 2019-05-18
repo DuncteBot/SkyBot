@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web.controllers
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
@@ -38,7 +39,7 @@ import java.nio.charset.StandardCharsets
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object OneGuildRegister {
 
-    fun post(request: Request, shardManager: ShardManager, variables: Variables, engine: JtwigTemplateEngine): Any {
+    fun post(request: Request, shardManager: ShardManager, variables: Variables, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
         val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
         val params = WebHelpers.toMap(pairs)
 
@@ -69,9 +70,9 @@ object OneGuildRegister {
             return renderPage(WebVariables().put("message", "This user is already registered, please contact a bot admin to have it changed."), variables.config, engine)
         }
 
-        val cap = WebHelpers.verifyCapcha(captcha, variables.config.apis.chapta.secret)
+        val cap = WebHelpers.verifyCapcha(captcha, variables.config.apis.chapta.secret, mapper)
 
-        if (!cap.getBoolean("success")) {
+        if (!cap.get("success").asBoolean()) {
             return renderPage(WebVariables().put("message", "Captcha error: Please try again later"), variables.config, engine)
         }
 

@@ -47,8 +47,8 @@ public class ColorCommand extends Command {
                 .setColor(decode(hex))
                 .setThumbnail(image);
 
-            final String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
-                name, hex, integer, rgb, brightness);
+            final String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s%nText Color: %s",
+                name, hex, integer, rgb, brightness, data.blackorwhite_text);
             embed.setDescription(desc);
 
             sendEmbedRaw(ctx.getChannel(), embed.build(), null);

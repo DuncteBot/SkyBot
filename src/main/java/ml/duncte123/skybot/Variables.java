@@ -87,7 +87,7 @@ public final class Variables {
     public BlargBot getBlargBot() {
 
         if (this.blargBot == null) {
-            this.blargBot = new BlargBot(this.config.apis.blargbot);
+            this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
         }
 
         return this.blargBot;
@@ -177,7 +177,7 @@ public final class Variables {
     public DuncteApis getApis() {
 
         if (this.apis == null) {
-            this.apis = new DuncteApis("Bot " + this.config.discord.token);
+            this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         }
 
         return this.apis;

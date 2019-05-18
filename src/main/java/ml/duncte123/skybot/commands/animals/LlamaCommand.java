@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.api.LlamaObject;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.ApiUtils;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -38,10 +38,9 @@ public class LlamaCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
+        final JsonNode json = ctx.getApis().executeDefaultGetRequest("llama", false).get("data");
 
-        final LlamaObject llama = ApiUtils.getRandomLlama();
-
-        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
+        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(json.get("file").asText()));
     }
 
     @Override

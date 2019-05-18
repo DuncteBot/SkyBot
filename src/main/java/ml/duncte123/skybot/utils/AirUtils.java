@@ -119,11 +119,12 @@ public class AirUtils {
         final int months = longToInt(time / 2592000000L % 12);
         final int days = longToInt(time / 86400000L % 30);
 
+        final StringBuilder builder = new StringBuilder();
+
         //Get the years, months and days
-        String uptimeString = "";
-        uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
-        uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
-        uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
+        builder.append(formatTimeWord("Year", years, true));
+        builder.append(formatTimeWord("Month", months, true));
+        builder.append(formatTimeWord("Day", days, false));
 
         //If we want the time added we pass in true
         if (withTime) {
@@ -131,12 +132,34 @@ public class AirUtils {
             final int minutes = longToInt(time / 60000L % 60);
             final int seconds = longToInt(time / 1000L % 60);
 
-            uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", ");
-            uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
-            uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
+            builder.append(", ");
+            builder.append(formatTimeWord("Hour", hours, true));
+            builder.append(formatTimeWord("Minute", minutes, true));
+            builder.append(formatTimeWord("Second", seconds, false));
         }
 
+        final String uptimeString = builder.toString();
+
         return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
+    }
+
+    private static String formatTimeWord(String word, int amount, boolean withComma) {
+        if (amount == 0) {
+            return "";
+        }
+
+        final StringBuilder builder = new StringBuilder()
+            .append(amount).append(' ').append(word);
+
+        if (amount > 1) {
+            builder.append('s');
+        }
+
+        if (withComma) {
+            builder.append(", ");
+        }
+
+        return builder.toString();
     }
 
     /**

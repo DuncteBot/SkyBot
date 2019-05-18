@@ -18,20 +18,24 @@
 
 package ml.duncte123.skybot.objects.guild;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
 /**
  * This class will hold the settings for a guild
@@ -40,6 +44,7 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GuildSettings {
 
     private final long guildId;
@@ -69,7 +74,8 @@ public class GuildSettings {
      * @param guildId
      *         the id of the guild that the settings are for
      */
-    public GuildSettings(long guildId) {
+    @JsonCreator
+    public GuildSettings(@JsonProperty("guildId") long guildId) {
         this.guildId = guildId;
     }
 
@@ -78,6 +84,7 @@ public class GuildSettings {
      *
      * @return true if the join message is enabled
      */
+    @JsonProperty("enableJoinMessage")
     public boolean isEnableJoinMessage() {
         return enableJoinMessage;
     }
@@ -90,6 +97,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("enableJoinMessage")
     public GuildSettings setEnableJoinMessage(boolean enableJoinMessage) {
         this.enableJoinMessage = enableJoinMessage;
         return this;
@@ -100,6 +108,7 @@ public class GuildSettings {
      *
      * @return true if the filter is on for this guild
      */
+    @JsonProperty("enableSwearFilter")
     public boolean isEnableSwearFilter() {
         return enableSwearFilter;
     }
@@ -112,6 +121,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("enableSwearFilter")
     public GuildSettings setEnableSwearFilter(boolean enableSwearFilter) {
         this.enableSwearFilter = enableSwearFilter;
         return this;
@@ -122,6 +132,7 @@ public class GuildSettings {
      *
      * @return The id of that guild as a String
      */
+    @JsonIgnore
     public long getGuildId() {
         return guildId;
     }
@@ -131,6 +142,7 @@ public class GuildSettings {
      *
      * @return The custom join message
      */
+    @JsonProperty("customWelcomeMessage")
     public String getCustomJoinMessage() {
         return customWelcomeMessage;
     }
@@ -143,6 +155,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("customWelcomeMessage")
     public GuildSettings setCustomJoinMessage(String customJoinMessage) {
         this.customWelcomeMessage = customJoinMessage;
         return this;
@@ -153,6 +166,7 @@ public class GuildSettings {
      *
      * @return the custom leave message
      */
+    @JsonProperty("customLeaveMessage")
     public String getCustomLeaveMessage() {
         return customLeaveMessage;
     }
@@ -165,6 +179,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("customLeaveMessage")
     public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
         this.customLeaveMessage = customLeaveMessage;
         return this;
@@ -175,6 +190,7 @@ public class GuildSettings {
      *
      * @return The prefix that the guild is using
      */
+    @JsonProperty("prefix")
     public String getCustomPrefix() {
         return prefix;
     }
@@ -187,6 +203,7 @@ public class GuildSettings {
      *
      * @return The current {@link GuildSettings}
      */
+    @JsonProperty("prefix")
     public GuildSettings setCustomPrefix(String customPrefix) {
         this.prefix = customPrefix;
         return this;
@@ -197,6 +214,7 @@ public class GuildSettings {
      *
      * @return the channel to log in
      */
+    @JsonProperty("logChannelId")
     public long getLogChannel() {
         return logChannelId;
     }
@@ -209,6 +227,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("logChannelId")
     public GuildSettings setLogChannel(long tc) {
         this.logChannelId = tc;
 
@@ -220,6 +239,7 @@ public class GuildSettings {
      *
      * @return the role id for the autorole feature
      */
+    @JsonProperty("autorole")
     public long getAutoroleRole() {
         return autoRole;
     }
@@ -232,12 +252,14 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("autorole")
     public GuildSettings setAutoroleRole(long autoroleRole) {
         this.autoRole = autoroleRole;
 
         return this;
     }
 
+    @JsonIgnore
     public boolean isAutoroleEnabled() {
         return this.autoRole > 0;
     }
@@ -247,6 +269,7 @@ public class GuildSettings {
      *
      * @return the channel in where the welcome or leave messages should display
      */
+    @JsonProperty("welcomeLeaveChannel")
     public long getWelcomeLeaveChannel() {
         return welcomeLeaveChannel;
     }
@@ -259,6 +282,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("welcomeLeaveChannel")
     public GuildSettings setWelcomeLeaveChannel(long welcomeLeaveChannel) {
         this.welcomeLeaveChannel = welcomeLeaveChannel;
 
@@ -270,6 +294,7 @@ public class GuildSettings {
      *
      * @return the custom server description
      */
+    @JsonProperty("serverDesc")
     public String getServerDesc() {
         return serverDesc;
     }
@@ -282,6 +307,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("serverDesc")
     public GuildSettings setServerDesc(String serverDesc) {
         this.serverDesc = serverDesc;
 
@@ -293,6 +319,7 @@ public class GuildSettings {
      *
      * @return if we should announce the next track
      */
+    @JsonProperty("announceNextTrack")
     public boolean isAnnounceTracks() {
         return announceNextTrack;
     }
@@ -305,6 +332,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("announceNextTrack")
     public GuildSettings setAnnounceTracks(boolean announceTracks) {
         this.announceNextTrack = announceTracks;
 
@@ -316,6 +344,7 @@ public class GuildSettings {
      *
      * @return if we should auto de-hoist people (soon™)
      */
+    @JsonProperty("autoDehoist")
     public boolean isAutoDeHoist() {
         return autoDeHoist;
     }
@@ -328,6 +357,7 @@ public class GuildSettings {
      *
      * @return the current {@link GuildSettings}
      */
+    @JsonProperty("autoDehoist")
     public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
         this.autoDeHoist = autoDeHoist;
 
@@ -339,6 +369,7 @@ public class GuildSettings {
      *
      * @return if we should filter discord invites
      */
+    @JsonProperty("filterInvites")
     public boolean isFilterInvites() {
         return filterInvites;
     }
@@ -349,36 +380,51 @@ public class GuildSettings {
      *
      * @return the current settings for chaining
      */
+    @JsonProperty("filterInvites")
     public GuildSettings setFilterInvites(boolean filterInvites) {
         this.filterInvites = filterInvites;
 
         return this;
     }
 
+    @JsonProperty("spamFilterState")
     public boolean isEnableSpamFilter() {
         return spamFilterState;
     }
 
+    @JsonProperty("spamFilterState")
     public GuildSettings setEnableSpamFilter(boolean newState) {
         spamFilterState = newState;
 
         return this;
     }
 
+    @JsonProperty("muteRoleId")
     public long getMuteRoleId() {
         return muteRoleId;
     }
 
+    @JsonProperty("muteRoleId")
     public GuildSettings setMuteRoleId(long muteRoleId) {
         this.muteRoleId = muteRoleId;
 
         return this;
     }
 
+    @JsonProperty("ratelimits")
     public long[] getRatelimits() {
         return ratelimits;
     }
 
+    @SuppressWarnings("unused") // Used to deserialize data
+    @JsonProperty("ratelimits")
+    public GuildSettings setRatelimits(JsonNode ratelimits) {
+        this.ratelimits = ratelimmitChecks(ratelimits.asText());
+
+        return this;
+    }
+
+    @JsonIgnore
     public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
 
@@ -387,24 +433,29 @@ public class GuildSettings {
 
     @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
+    @JsonIgnore
     public Long[] getRateLimitsForTwig() {
         return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
     }
 
+    @JsonProperty("kickInsteadState")
     public boolean getKickState() {
         return kickInsteadState;
     }
 
+    @JsonProperty("kickInsteadState")
     public GuildSettings setKickState(boolean newState) {
         kickInsteadState = newState;
 
         return this;
     }
 
+    @JsonIgnore
     public List<String> getBlacklistedWords() {
         return blacklistedWords;
     }
 
+    @JsonIgnore
     public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
         this.blacklistedWords.clear();
         this.blacklistedWords.addAll(blacklistedWords);
@@ -412,20 +463,38 @@ public class GuildSettings {
         return this;
     }
 
+    @SuppressWarnings("unused") // Used to deserialize data
+    @JsonProperty("blacklisted_words")
+    public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
+        if (!blacklistedWords.isArray()) {
+            throw new IllegalArgumentException("Not an array");
+        }
+
+        blacklistedWords.forEach(
+            (json) -> this.blacklistedWords.add(json.get("word").asText())
+        );
+
+        return this;
+    }
+
+    @JsonProperty("leave_timeout")
     public int getLeaveTimeout() {
         return leave_timeout;
     }
 
+    @JsonProperty("leave_timeout")
     public GuildSettings setLeaveTimeout(int leaveTimeout) {
         this.leave_timeout = leaveTimeout;
 
         return this;
     }
 
+    @JsonProperty("spam_threshold")
     public int getSpamThreshold() {
         return spam_threshold;
     }
 
+    @JsonProperty("spam_threshold")
     public GuildSettings setSpamThreshold(int spamThreshold) {
         this.spam_threshold = spamThreshold;
 
@@ -442,9 +511,9 @@ public class GuildSettings {
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
-    public JSONObject toJson() {
+    public ObjectNode toJson(ObjectMapper mapper) {
         final GuildSettings obj = this;
-        final JSONObject j = new JSONObject();
+        final ObjectNode j = mapper.createObjectNode();
 
         for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
@@ -455,7 +524,7 @@ public class GuildSettings {
                     continue;
                 }
 
-                Object value = field.get(obj);
+                final Object value = field.get(obj);
 
                 if ("ratelimits".equals(name)) {
                     j.put(name, convertJ2S((long[]) value));
@@ -463,44 +532,19 @@ public class GuildSettings {
                     continue;
                 }
 
-                if (value instanceof Long || value instanceof Integer) {
-                    value = String.valueOf(value);
+                if (value instanceof Boolean) {
+                    j.put(name, (boolean) value);
+
+                    continue;
                 }
 
-                j.put(name, value);
+                j.put(name, String.valueOf(value));
             }
-            catch (IllegalAccessException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         return j;
-    }
-
-    public static GuildSettings fromJSON(JSONObject json) {
-        return new GuildSettings(json.getLong("guildId"))
-            .setEnableJoinMessage(toBool(json.getInt("enableJoinMessage")))
-            .setEnableSwearFilter(toBool(json.getInt("enableSwearFilter")))
-            .setCustomJoinMessage(replaceNewLines(json.getString("customWelcomeMessage")))
-            .setCustomPrefix(json.getString("prefix"))
-            .setLogChannel(toLong(json.optString("logChannelId")))
-            .setWelcomeLeaveChannel(toLong(json.optString("welcomeLeaveChannel")))
-            .setCustomLeaveMessage(replaceNewLines(json.getString("customLeaveMessage")))
-            .setAutoroleRole(toLong(json.optString("autoRole")))
-            .setServerDesc(replaceNewLines(json.optString("serverDesc", null)))
-            .setAnnounceTracks(toBool(json.getInt("announceNextTrack")))
-            .setAutoDeHoist(toBool(json.getInt("autoDeHoist")))
-            .setFilterInvites(toBool(json.getInt("filterInvites")))
-            .setEnableSpamFilter(toBool(json.getInt("spamFilterState")))
-            .setMuteRoleId(toLong(json.optString("muteRoleId")))
-            .setRatelimits(ratelimmitChecks(json.getString("ratelimits")))
-            .setBlacklistedWords(parseBlacklistedWords(json.getJSONArray("blacklisted_words")))
-            .setKickState(toBool(json.getInt("kickInsteadState")))
-            .setLeaveTimeout(json.getInt("leave_timeout"))
-            .setSpamThreshold(json.getInt("spam_threshold"));
-    }
-
-    private static List<String> parseBlacklistedWords(JSONArray array) {
-        return array.toList().stream().map(it -> ((Map<String, Object>) it).get("word").toString()).collect(Collectors.toList());
     }
 }

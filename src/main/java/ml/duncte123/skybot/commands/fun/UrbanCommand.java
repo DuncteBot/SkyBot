@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
@@ -26,8 +27,8 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import javax.annotation.Nonnull;
-import org.json.JSONObject;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -51,23 +52,23 @@ public class UrbanCommand extends Command {
         final String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async((json) -> {
-            if (json.getJSONArray("list").length() < 1) {
+            if (json.get("list").size() < 1) {
                 sendMsg(ctx.getEvent(), "Nothing found");
                 return;
             }
 
-            final JSONObject item = json.getJSONArray("list").getJSONObject(0);
-            final String permaLink = item.getString("permalink");
+            final JsonNode item = json.get("list").get(0);
+            final String permaLink = item.get("permalink").asText();
 
             final EmbedBuilder eb = EmbedUtils.defaultEmbed()
 //                    .setTitle("term", webUrl)
-                .setAuthor("Author: " + item.getString("author"))
+                .setAuthor("Author: " + item.get("author").asText())
                 .setDescription("_TOP DEFINITION:_\n\n")
-                .appendDescription(item.getString("definition"))
+                .appendDescription(item.get("definition").asText())
                 .appendDescription("\n\n")
-                .addField("Example", item.getString("example"), false)
-                .addField("Upvotes:", item.getInt("thumbs_up") + "", true)
-                .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
+                .addField("Example", item.get("example").asText(), false)
+                .addField("Upvotes:", item.get("thumbs_up").asInt() + "", true)
+                .addField("Downvotes:", item.get("thumbs_down").asInt() + "", true)
                 .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
             sendEmbed(ctx.getEvent(), eb.build());
         });

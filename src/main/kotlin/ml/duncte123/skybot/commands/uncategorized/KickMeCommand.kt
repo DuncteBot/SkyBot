@@ -41,7 +41,7 @@ class KickMeCommand : Command() {
                     """.trimMargin()
         if (args.isEmpty() || args[0] != "YESIMSURE") {
             MessageUtils.sendMsg(event, warningMsg)
-        } else if (!args.isEmpty() && args[0] == "YESIMSURE") {
+        } else if (args.isNotEmpty() && args[0] == "YESIMSURE") {
             //Check for perms
             if (event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
                 MessageUtils.sendSuccess(event.message)

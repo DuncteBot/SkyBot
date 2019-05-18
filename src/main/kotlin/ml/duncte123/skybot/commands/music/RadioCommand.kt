@@ -74,7 +74,7 @@ class RadioCommand : MusicCommand() {
 
                         mng.player.stopTrack();
                         scheduler.queue.clear()
-                        ctx.audioUtils.loadAndPlay(mng, radio.url, ctx, false)
+                        ctx.audioUtils.loadAndPlay(mng, radio.url, ctx)
                     }
                 }
             }

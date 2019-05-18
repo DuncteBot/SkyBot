@@ -45,7 +45,6 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         if (ctx.invoke == "meme") {
             sendRedditPost("memes", memeIndex, ctx.event)
 
@@ -68,7 +67,7 @@ class JokeCommand : Command() {
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
-            sendEmbed(event, EmbedUtils.embedMessage(it.getString("joke")))
+            sendEmbed(event, EmbedUtils.embedMessage(it.get("joke").asText()))
         }
     }
 }

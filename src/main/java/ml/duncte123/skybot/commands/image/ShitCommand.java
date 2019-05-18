@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -40,6 +41,7 @@ public class ShitCommand extends NoPatronImageCommand {
             ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
             return;
         }
+
         ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
     }
 

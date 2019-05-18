@@ -80,7 +80,7 @@ public class MessageListener extends BaseListener {
 
             final ShardManager manager = event.getJDA().asBot().getShardManager();
 
-            event.getMessage().addReaction("✅").queue(
+            event.getMessage().addReaction("a:_yes:577795293546938369").queue(
                 success -> killAllShards(manager),
                 failure -> killAllShards(manager)
             );

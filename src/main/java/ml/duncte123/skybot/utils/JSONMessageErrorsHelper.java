@@ -18,9 +18,10 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
@@ -29,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@SuppressWarnings({"unused"})
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -49,7 +50,7 @@ public class JSONMessageErrorsHelper {
      * @param error
      *         the cause
      */
-    public static void sendErrorJSON(Message message, Throwable error, final boolean print) {
+    public static void sendErrorJSON(Message message, Throwable error, final boolean print, ObjectMapper mapper) {
         if (print) {
             logger.error(error.getLocalizedMessage(), error);
         }
@@ -63,12 +64,23 @@ public class JSONMessageErrorsHelper {
             }
         }
 
-        message.addReaction("❌").queue(null, (ignored) -> {});
+        message.addReaction("a:_no:577795484060483584").queue(null, (ignored) -> {});
 
-        message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
-            new MessageBuilder().setEmbed(defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
-                error.getClass().getSimpleName())).build()).build()
-        ).queue();
+        try {
+            message.getChannel()
+                .sendFile(
+                    mapper.writerWithDefaultPrettyPrinter()
+                        .writeValueAsBytes(EarthUtils.throwableToJSONObject(error, mapper)),
+                    "error.json"
+                ).embed(
+                defaultEmbed().setTitle("We got an error!")
+                    .setDescription(String.format("Error type: %s",
+                        error.getClass().getSimpleName())).build()
+            ).queue();
+        }
+        catch (JsonProcessingException e) {
+            sendMsg(message.getTextChannel(), "Error while sending file: " + e);
+        }
     }
 
 }

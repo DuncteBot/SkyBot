@@ -37,7 +37,7 @@ public class YoutubeUtils {
     static {
         try {
             youtube = new YouTube.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {})
+                GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null)
                 .setApplicationName("SkyBot-youtube-search")
                 .build();
         }
