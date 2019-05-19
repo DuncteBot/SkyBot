@@ -192,6 +192,7 @@ class UserinfoCommand : Command() {
                         |
                         |**Username + Discriminator:** ${u.asTag}
                         |**User Id:** ${u.id}
+                        |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
                         |$nitroUserLink ${isNitro(u).toEmoji()}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
