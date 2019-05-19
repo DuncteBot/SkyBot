@@ -59,7 +59,7 @@ public class ReadyShutdownListener extends MessageListener {
         if (!unbanTimerRunning) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 5, 5, TimeUnit.MINUTES);
+            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 2, 2, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
