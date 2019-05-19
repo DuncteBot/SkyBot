@@ -51,6 +51,14 @@ public class DiscordMethods {
                 (env, in) -> getMemberFromInput(env, in).getUser().getName()
             ),
 
+            new Method("usertag", (env) -> {
+                final User u = env.get("user");
+
+                return u.getAsTag();
+            },
+                (env, in) -> getMemberFromInput(env, in).getUser().getAsTag()
+            ),
+
             new Method("nick", (env) -> {
                 final User u = env.get("user");
                 final Guild g = env.get("guild");
