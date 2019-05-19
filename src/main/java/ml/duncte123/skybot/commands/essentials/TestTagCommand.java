@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -55,12 +56,7 @@ public class TestTagCommand extends Command {
             return;
         }
 
-        final String output = CustomCommandUtils.PARSER.clear()
-            .put("user", event.getAuthor())
-            .put("channel", event.getChannel())
-            .put("guild", event.getGuild())
-            .put("args", ctx.getArgsJoined())
-            .parse(input);
+        final String output = CustomCommandUtils.parse(ctx, input);
 
         final String message = new MessageBuilder()
             .append("**Input:**")
