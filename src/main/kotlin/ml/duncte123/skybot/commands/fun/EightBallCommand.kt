@@ -18,33 +18,53 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import ml.duncte123.skybot.Author
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.concurrent.TimeUnit
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-class CoinCommand : Command() {
-
-    private val imagesArr = arrayOf("heads.png", "tails.png")
+class EightBallCommand : Command() {
+    private val eightBallResponses = arrayOf(
+        "It is certain.",
+        "It is decidedly so.",
+        "Without a doubt.",
+        "Yes - definitely.",
+        "You may rely on it.",
+        "As I see it, yes.",
+        "Most likely.",
+        "Outlook good.",
+        "Yes.",
+        "Signs point to yes.",
+        "Reply hazy, try again.",
+        "Ask again later.",
+        "Better not tell you now.",
+        "Cannot predict now.",
+        "Concentrate and ask again.",
+        "Don't count on it.",
+        "My reply is no.",
+        "My sources say no.",
+        "Outlook not so good.",
+        "Very doubtful."
+    )
 
     init {
         this.category = CommandCategory.FUN
     }
 
     override fun executeCommand(ctx: CommandContext) {
-        ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
-            sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
+        if (ctx.argsWithQuotes.isEmpty()) {
+            sendMsg(ctx, "Missing arguments: `${Settings.PREFIX}$name <question>`")
+
+            return
         }
+
+        sendMsg(ctx, "\uD83C\uDFB1 " + eightBallResponses[ctx.random.nextInt(eightBallResponses.size)])
     }
 
-    override fun help() = "flips a coin.\nUsage: `${Settings.PREFIX}$name`"
+    override fun getName() = "8ball"
 
-    override fun getName() = "coin"
-
-    override fun getAliases() = arrayOf("coinflip", "cf")
+    override fun help() = """Ask a question to the 8ball
+        |Usage: `${Settings.PREFIX}$name <question>`
+    """.trimMargin()
 }

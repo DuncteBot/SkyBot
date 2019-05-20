@@ -61,7 +61,7 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
 
-    abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit)
+    abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?)
 
     /////////////////
     // Guild settings

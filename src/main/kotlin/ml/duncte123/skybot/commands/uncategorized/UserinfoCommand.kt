@@ -26,10 +26,10 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
+import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildUtils
-import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
@@ -49,7 +49,7 @@ import java.util.stream.Collectors
 class UserinfoCommand : Command() {
 
     private val prettyTime = PrettyTime()
-    private val nitroUserLink = "[**Nitro User?**](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")"
+    private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
 
     override fun executeCommand(ctx: CommandContext) {
         val event = ctx.event
@@ -126,7 +126,7 @@ class UserinfoCommand : Command() {
                         |**Display Name:** ${user.name}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
                         |$nitroUserLink ${isNitro(user)}
-                        |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
+                        |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
@@ -194,12 +194,12 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(u)}
+                        |$nitroUserLink ${isNitro(u).toEmoji()}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
                         |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
-                        |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
+                        |**Bot Account:** ${u.isBot.toEmoji()}
                         |
                         |_Use `${ctx.guildSettings.customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
@@ -212,9 +212,9 @@ class UserinfoCommand : Command() {
 
         ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
             u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
-            event.channel.sendFile(it, "stat.png",
-                MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-            ).queue(null) {
+            event.channel.sendFile(it, "stat.png")
+                .embed(embed.setThumbnail("attachment://stat.png").build())
+                .queue(null) {
                 sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
             }
         }
@@ -241,12 +241,8 @@ class UserinfoCommand : Command() {
         }
     }
 
-    private fun isNitro(user: User): String {
-        return if (user.avatarId != null && user.avatarId.startsWith("a_")) {
-            "Yes"
-        } else {
-            "No"
-        }
+    private fun isNitro(user: User): Boolean {
+        return user.avatarId != null && user.avatarId.startsWith("a_")
     }
 
     private fun convertStatus(status: OnlineStatus): String {

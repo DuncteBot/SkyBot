@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import com.jagrosh.jagtag.Parser;
+import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -182,6 +183,7 @@ public class CommandManager {
             }
             catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                Sentry.capture(e);
             }
         }
 
@@ -213,10 +215,7 @@ public class CommandManager {
 
         try {
             final CompletableFuture<Boolean> future = new CompletableFuture<>();
-            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
-                future.complete(bool);
-                return null;
-            });
+            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, future::complete);
 
             final boolean result = future.get();
 
@@ -362,21 +361,11 @@ public class CommandManager {
                 try {
                     MDC.put("command.custom.message", cc.getMessage());
 
-                    final Parser parser = CustomCommandUtils.PARSER;
-
-                    final String message = parser.clear()
-                        .put("messageId", event.getMessage().getId())
-                        .put("user", event.getAuthor())
-                        .put("channel", channel)
-                        .put("guild", event.getGuild())
-                        .put("args", String.join(" ", args))
-                        .parse(cc.getMessage());
+                    final String message = CustomCommandUtils.parse(new CommandContext(invoke, args, event), cc.getMessage());
 
                     if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);
                     }
-
-                    parser.clear();
                 }
                 catch (Exception e) {
                     sendMsg(event, "Error with parsing custom command: " + e.getMessage());

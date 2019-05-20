@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
@@ -33,14 +33,11 @@ class FlipCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
-
         var uname = event.member.effectiveName
-        var output = ""
 
-        if (event.message.mentionedUsers.size > 0) {
-            uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
+        if (event.message.mentionedMembers.isNotEmpty()) {
+            uname = event.message.mentionedMembers[0].effectiveName
         } else if (ctx.args.isNotEmpty()) {
             uname = ctx.argsJoined
         }
@@ -54,16 +51,17 @@ class FlipCommand : Command() {
         normal += "0123456789"
         split += "0ƖᄅƐㄣϛ9ㄥ86"
 
-
         uname = uname.reversed()
 
-        for (letter in uname.iterator()) {
+        val output = buildString {
+            for (letter in uname.iterator()) {
+                val a = normal.indexOf(letter.toString(), 0)
 
-            val a = normal.indexOf(letter.toString(), 0)
-            output += if (a != -1) split[a] else letter
+                append(if (a != -1) split[a] else letter)
+            }
         }
 
-        MessageUtils.sendMsg(event, "(╯°□°）╯︵ $output")
+        sendMsg(event, "(╯°□°）╯︵ $output")
     }
 
     override fun help() = "Flips a user.\n" +

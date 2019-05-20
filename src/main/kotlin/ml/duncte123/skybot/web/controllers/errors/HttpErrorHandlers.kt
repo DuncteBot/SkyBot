@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.web.controllers.errors
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.WebVariables
-import org.json.JSONObject
 import spark.ModelAndView
 import spark.Request
 import spark.Response
@@ -28,7 +28,7 @@ import spark.template.jtwig.JtwigTemplateEngine
 
 object HttpErrorHandlers {
 
-    fun notFound(request: Request, response: Response, engine: JtwigTemplateEngine): Any {
+    fun notFound(request: Request, response: Response, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
 
@@ -38,20 +38,21 @@ object HttpErrorHandlers {
 
         response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
 
-        return JSONObject()
+        return mapper.createObjectNode()
             .put("status", "failure")
             .put("message", "'${request.pathInfo()}' was not found")
             .put("code", response.status())
     }
 
-    fun internalServerError(request: Request, response: Response): Any {
+    fun internalServerError(request: Request, response: Response, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
             return "<html><body><h1>Internal server error</h1></body></html>"
         }
 
         response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
-        return JSONObject()
+
+        return mapper.createObjectNode()
             .put("status", "failure")
             .put("message", "Internal server error")
             .put("code", response.status())

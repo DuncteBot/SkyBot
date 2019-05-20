@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.api.DuncteApis;
@@ -25,10 +27,9 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -71,18 +72,17 @@ public class TokenCommand extends Command {
         }
 
         final DuncteApis apis = ctx.getVariables().getApis();
+        final JsonNode json = apis.decodeToken(args.get(0));
 
-        final JSONObject json = apis.decodeToken(args.get(0));
-
-        if (json.getBoolean("success")) {
-            handleSuccess(args.get(0), json.getJSONObject("data"), event);
+        if (json.get("success").asBoolean()) {
+            handleSuccess(args.get(0), (ObjectNode) json.get("data"), event);
 
             return;
         }
 
-        final JSONObject error = json.getJSONObject("error");
-        final String errorType = error.getString("type");
-        final String errorMessage = error.getString("message");
+        final JsonNode error = json.get("error");
+        final String errorType = error.get("type").asText();
+        final String errorMessage = error.get("message").asText();
 
         sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
@@ -121,9 +121,9 @@ public class TokenCommand extends Command {
         }
     }
 
-    private void handleSuccess(String arg, JSONObject data, GuildMessageReceivedEvent event) {
-        final String id = data.getString("id");
-        final OffsetDateTime time = toTimeStamp(data.getLong("timestamp"));
+    private void handleSuccess(String arg, ObjectNode data, GuildMessageReceivedEvent event) {
+        final String id = data.get("id").asText();
+        final OffsetDateTime time = toTimeStamp(data.get("timestamp").asLong());
 
         if (time == null) {
             sendMsg(event, "Could not decode timestamp.");

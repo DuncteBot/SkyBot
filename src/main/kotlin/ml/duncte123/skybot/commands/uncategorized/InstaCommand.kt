@@ -42,19 +42,19 @@ class InstaCommand : Command() {
 
         WebUtils.ins.getJSONObject("$API_HOST/insta/$username").async {
 
-            if (!it.getBoolean("success")) {
+            if (!it.get("success").asBoolean()) {
                 MessageUtils.sendMsg(event, "No data found for this user")
                 return@async
             }
 
-            val img = it.getJSONArray("images").getJSONObject(0)
-            val user = it.getJSONObject("user")
+            val img = it.get("images").get(0)
+            val user = it.get("user")
 
             val embed = EmbedUtils.defaultEmbed()
-                .setAuthor(user.getString("username"), "https://instagram.com/$username/", user.getString("profile_pic_url"))
+                .setAuthor(user.get("username").asText(), "https://instagram.com/$username/", user.get("profile_pic_url").asText())
                 .setTitle("Latest picture of $username", "https://instagram.com/$username/")
-                .setDescription(img.getString("caption"))
-                .setImage(img.getString("url"))
+                .setDescription(img.get("caption").asText())
+                .setImage(img.get("url").asText())
 
             MessageUtils.sendEmbed(event, embed)
         }

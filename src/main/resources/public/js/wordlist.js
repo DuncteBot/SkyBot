@@ -19,6 +19,8 @@
 window.wordList = [
     "{user}",
     "{user:SEARCH}",
+    "{usertag}",
+    "{usertag:SEARCH}",
     "{nick}",
     "{nick:SEARCH}",
     "{discrim}",

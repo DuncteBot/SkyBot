@@ -18,8 +18,12 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandImpl implements CustomCommand {
 
@@ -28,7 +32,9 @@ public class CustomCommandImpl implements CustomCommand {
     private final long guildId;
     private final boolean autoresponse;
 
-    public CustomCommandImpl(String invoke, String message, long guildId, boolean autoresponse) {
+    @JsonCreator
+    public CustomCommandImpl(@JsonProperty("invoke") String invoke, @JsonProperty("message") String message,
+                             @JsonProperty("guildId") long guildId, @JsonProperty("autoresponse") boolean autoresponse) {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;

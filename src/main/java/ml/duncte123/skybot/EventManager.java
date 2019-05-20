@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import io.sentry.Sentry;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
@@ -99,6 +100,8 @@ public class EventManager implements IEventManager {
                 listener.onEvent(event);
             }
             catch (Throwable thr) {
+                Sentry.capture(thr);
+
                 logger.error("Error while handling event {}({}); {}",
                     event.getClass().getName(),
                     listener.getClass().getSimpleName(),

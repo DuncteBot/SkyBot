@@ -18,33 +18,34 @@
 
 package ml.duncte123.skybot.web
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
-import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebParserUtils
+import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.entities.Guild
 import org.apache.http.NameValuePair
-import org.json.JSONObject
 import spark.Request
 import java.util.*
 
 object WebHelpers {
 
-    fun verifyCapcha(response: String, secret: String): JSONObject {
+    fun verifyCapcha(response: String, secret: String, mapper: ObjectMapper): JsonNode {
         val fields = HashMap<String, Any>()
         fields["secret"] = secret
         fields["response"] = response
         val req = WebUtils.ins.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
             WebUtils.EncodingType.APPLICATION_JSON)
-            .build(WebParserUtils::toJSONObject, WebParserUtils::handleError)
+            .build({ mapper.readTree(it.body()!!.byteStream()) }, WebParserUtils::handleError)
 
         return req.execute()
     }
 
-    fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello): JSONObject {
+    fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello, mapper: ObjectMapper): JsonNode {
         val query = QueryBuilder()
             .append("https://api.trello.com/1/cards")
             .append("name", name)
@@ -56,7 +57,8 @@ object WebHelpers {
             .append("token", config.token)
 
         val t = WebUtils.ins.preparePost(query.build()).execute()
-        return JSONObject(t)
+
+        return mapper.readTree(t)
     }
 
     fun toMap(pairs: List<NameValuePair>): Map<String, String> {

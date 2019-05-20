@@ -43,8 +43,8 @@ class TextToBricksCommand : Command() {
 
         val message = ctx.argsRaw
             .toLowerCase()
-            .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
-            .replace(Regex("([0-9])"), "\$1\u20E3")
+            .replace("([a-zA-Z])".toRegex(), ":regional_indicator_\$1:")
+            .replace("([0-9])".toRegex(), "\$1\u20E3")
             .replace("!!", ":bangbang:")
             .replace("!", ":exclamation:")
             .replace("?", ":question:")
@@ -55,9 +55,7 @@ class TextToBricksCommand : Command() {
             return
         }
 
-        sendEmbed(ctx.event,
-            EmbedUtils.embedMessage(message)
-        )
+        sendEmbed(ctx.event, EmbedUtils.embedMessage(message))
     }
 
     override fun help() = "Convert your text to bricks"

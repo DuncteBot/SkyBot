@@ -76,7 +76,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "com.github.duncte123", name = "botCommons", version = "f4348d4")
+    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.18")
 
     //JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_463") {
@@ -127,9 +127,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
-
-    // Webhooks
-    implementation(group = "club.minnced", name = "discord-webhooks", version = "0.1.4")
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")

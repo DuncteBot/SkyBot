@@ -18,12 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.ApiUtils;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -37,11 +38,9 @@ public class SealCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-        ApiUtils.getRandomSeal((seal) -> {
-            sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(seal));
+        final JsonNode data = ctx.getApis().executeDefaultGetRequest("seal", false).get("data");
 
-            return null;
-        });
+        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(data.get("file").asText()));
     }
 
     @Override

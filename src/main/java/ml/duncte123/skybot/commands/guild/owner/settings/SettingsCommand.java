@@ -32,29 +32,26 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends SettingsBase {
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
-
-        //true <:check:314349398811475968>
-        //false <:xmark:314349398824058880>
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
         final TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
         final Role autoRole = guild.getRoleById(settings.getAutoroleRole());
         final Role muteRole = guild.getRoleById(settings.getMuteRoleId());
 
         final EmbedBuilder message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-            "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
-            "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
-            "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
-            "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
-            "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
-            "**Spamfilter:** " + boolToEmoji(settings.isEnableSpamFilter()) + "\n" +
+            "**Show join/leave messages:** " + toEmoji(settings.isEnableJoinMessage()) + "\n" +
+            "**Swearword filter:** " + toEmoji(settings.isEnableSwearFilter()) + "\n" +
+            "**Announce next track:** " + toEmoji(settings.isAnnounceTracks()) + "\n" +
+            "**Auto de-hoist:** " + toEmoji(settings.isAutoDeHoist()) + "\n" +
+            "**Filter Discord invites:** " + toEmoji(settings.isFilterInvites()) + "\n" +
+            "**Spamfilter:** " + toEmoji(settings.isEnableSpamFilter()) + "\n" +
             "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
 
             "**MuteRole:** " + (settings.getMuteRoleId() <= 0
@@ -89,9 +86,5 @@ public class SettingsCommand extends SettingsBase {
     public String help() {
         return "Shows the current settings\n" +
             "Usage: `" + Settings.PREFIX + getName() + "`";
-    }
-
-    private String boolToEmoji(boolean flag) {
-        return flag ? "<:check:414777605141561344>" : "<:xmark:414777605250875402>";
     }
 }

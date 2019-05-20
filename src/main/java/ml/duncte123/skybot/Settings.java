@@ -27,6 +27,7 @@ import static java.lang.System.getProperty;
 public class Settings {
 
     public static String PREFIX = "db!";
+    public static boolean useJSON = false;
     public static final long OWNER_ID = 191231307290771456L;
     public static final TLongList developers = MapUtils.newLongList();
     public static final String OTHER_PREFIX = "db.";
@@ -34,6 +35,5 @@ public class Settings {
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
     public static final int defaultColour = 0x0751c6;
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
-    public static final boolean useJSON = false;
 
 }

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
@@ -25,8 +26,8 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
-import org.json.JSONObject;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.getMentionedUser;
@@ -40,7 +41,7 @@ public class PronounsCheckCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final User target = getMentionedUser(ctx);
         final long userId = target.getIdLong();
-        final JSONObject json = ctx.getApis().getPronouns(userId);
+        final JsonNode json = ctx.getApis().getPronouns(userId);
         final boolean isSelf = userId == ctx.getAuthor().getIdLong();
 
         if (json == null) {
@@ -48,8 +49,8 @@ public class PronounsCheckCommand extends Command {
             return;
         }
 
-        final String pronouns = json.getString("pronouns");
-        final String singular = json.getBoolean("singular") ? "Singular" : "Plural";
+        final String pronouns = json.get("pronouns").asText();
+        final String singular = json.get("singular").asBoolean() ? "Singular" : "Plural";
         final String userName = isSelf ? "Your" : target.getName() + "'s";
 
         final String format = "%s current pronouns are:%n**%s** (%s)";

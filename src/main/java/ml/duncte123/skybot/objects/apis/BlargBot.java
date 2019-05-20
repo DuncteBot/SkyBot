@@ -18,14 +18,17 @@
 
 package ml.duncte123.skybot.objects.apis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtils.EncodingType;
 import me.duncte123.weebJava.helpers.IOHelper;
 import ml.duncte123.skybot.Author;
 import okhttp3.RequestBody;
+
 import javax.annotation.Nonnull;
-import org.json.JSONObject;
 
 import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 
@@ -33,25 +36,27 @@ import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 public class BlargBot {
 
     private final String token;
+    private final ObjectMapper mapper;
 
-    public BlargBot(@Nonnull String token) {
+    public BlargBot(@Nonnull String token, @Nonnull ObjectMapper mapper) {
         this.token = token;
+        this.mapper = mapper;
     }
 
     public PendingRequest<byte[]> getClint(String imageUrl) {
-        return makeRequest("image/clint", new JSONObject().put("image", imageUrl));
+        return makeRequest("image/clint", mapper.createObjectNode().put("image", imageUrl));
     }
 
     public PendingRequest<byte[]> getLinus(String imageUrl) {
-        return makeRequest("image/linus", new JSONObject().put("image", imageUrl));
+        return makeRequest("image/linus", mapper.createObjectNode().put("image", imageUrl));
     }
 
     public PendingRequest<byte[]> getDelete(String text) {
-        return makeRequest("image/delete", new JSONObject().put("text", text));
+        return makeRequest("image/delete", mapper.createObjectNode().put("text", text));
     }
 
     public PendingRequest<byte[]> getPcCheck(String text) {
-        return makeRequest("image/pccheck", new JSONObject().put("text", text));
+        return makeRequest("image/pccheck", mapper.createObjectNode().put("text", text));
     }
 
     public PendingRequest<byte[]> getShit(String text) {
@@ -59,23 +64,31 @@ public class BlargBot {
     }
 
     public PendingRequest<byte[]> getShit(String text, boolean plural) {
-        return makeRequest("image/shit", new JSONObject().put("text", text).put("plural", plural));
+        return makeRequest("image/shit", mapper.createObjectNode().put("text", text).put("plural", plural));
     }
 
     public PendingRequest<byte[]> getTheSearch(String text) {
-        return makeRequest("image/thesearch", new JSONObject().put("text", text));
+        return makeRequest("image/thesearch", mapper.createObjectNode().put("text", text));
     }
 
 
-    private PendingRequest<byte[]> makeRequest(String path, JSONObject body) {
+    private PendingRequest<byte[]> makeRequest(String path, JsonNode body) {
         return WebUtils.ins.prepareRaw(
             defaultRequest()
                 .url("https://api.blargbot.xyz/api/v1/" + path)
-                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), body.toString()))
+                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), jsonToString(body)))
                 .addHeader("Authorization", token)
                 .build(),
             IOHelper::read
         );
     }
-
+    
+    private String jsonToString(JsonNode body) {
+        try {
+            return mapper.writeValueAsString(body);
+        }
+        catch (JsonProcessingException ignored) {
+            return ""; // Should never happen
+        }
+    }
 }

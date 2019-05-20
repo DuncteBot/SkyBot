@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.CustomCommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -36,8 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 public class TagCommand extends Command {
 
@@ -109,7 +109,15 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.containsKey(subCmd)) {
-            sendMsg(ctx, this.tagStore.get(subCmd).content);
+            final String parsed = CustomCommandUtils.parse(ctx, this.tagStore.get(subCmd).content);
+
+            if (parsed.length() > 2000) {
+                sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");
+
+                return;
+            }
+
+            sendMsg(ctx, parsed);
 
             return;
         }
@@ -156,7 +164,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        if (this.tagStore.size() < 13) {
+        if (this.tagStore.size() < 100) {
             sendMsgFormat(ctx, "Here is the current tag list: `%s`", String.join("`, `", this.tagStore.keySet()));
 
             return;

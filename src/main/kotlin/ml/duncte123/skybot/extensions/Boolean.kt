@@ -16,25 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.controllers.api
+package ml.duncte123.skybot.extensions
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import ml.duncte123.skybot.Author
-import net.dv8tion.jda.bot.sharding.ShardManager
-import spark.Response
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-object MainApi {
-
-    fun serverCount(response: Response, shardManager: ShardManager, mapper: ObjectMapper): Any {
-        return mapper.createObjectNode()
-            .put("status", "success")
-            .put("server_count", shardManager.guildCache.size())
-            .put("shard_count", shardManager.shardsTotal)
-            .put("code", response.status())
-    }
-
-    fun joinGuild(response: Response) {
-        response.redirect("https://discord.gg/NKM9Xtk")
-    }
-}
+fun Boolean.toEmoji() = if (this) "<:yes_:578487429783355393>" else "<:no_:578487579842969601>"

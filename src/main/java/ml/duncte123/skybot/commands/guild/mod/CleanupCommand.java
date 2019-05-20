@@ -90,13 +90,16 @@ public class CleanupCommand extends ModBaseCommand {
             Stream<Message> msgStream = msgs.stream();
 
             if (keepPinnedFinal) {
-                msgStream = msgStream.filter(msg -> !msg.isPinned());
+                msgStream = msgStream.filter((msg) -> !msg.isPinned());
             }
             if (clearBotsFinal) {
-                msgStream = msgStream.filter(msg -> msg.getAuthor().isBot());
+                msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
             }
 
-            final List<Message> msgList = msgStream.collect(Collectors.toList());
+            final List<Message> msgList = msgStream
+                //TODO: Still needed?
+//                .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
+                .collect(Collectors.toList());
 
             channel.purgeMessages(msgList);
 

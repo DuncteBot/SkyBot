@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -25,8 +26,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Guild
-import org.json.JSONArray
-import java.nio.charset.StandardCharsets.UTF_8
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
@@ -36,7 +35,7 @@ class SaveCommand : MusicCommand() {
         val event = ctx.event
 
         event.channel.sendFile(
-            toByteArray(event.guild, ctx.audioUtils),
+            toByteArray(event.guild, ctx.audioUtils, ctx.variables.jackson),
             "playlist.json",
             MessageBuilder()
                 .append(event.author)
@@ -44,8 +43,8 @@ class SaveCommand : MusicCommand() {
                 .build()).queue()
     }
 
-    private fun toByteArray(guild: Guild?, audioUtils: AudioUtils): ByteArray {
-        val array = JSONArray()
+    private fun toByteArray(guild: Guild?, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {
+        val array = mapper.createArrayNode()
         val manager = getMusicManager(guild, audioUtils)
 
         val urls = manager.scheduler.queue
@@ -57,10 +56,10 @@ class SaveCommand : MusicCommand() {
         }
 
         for (url in urls) {
-            array.put(url)
+            array.add(url)
         }
 
-        return array.toString(2).toByteArray(UTF_8)
+        return mapper.writeValueAsBytes(array)
     }
 
     override fun getName() = "save"

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 import com.jagrosh.jagtag.JagTag;
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -29,4 +30,18 @@ public class CustomCommandUtils {
     public static final Parser PARSER = JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
         .build();
+
+
+    public static String parse(CommandContext ctx, String content) {
+        final Parser parser = PARSER.clear()
+            .put("messageId", ctx.getMessage().getId())
+            .put("user", ctx.getAuthor())
+            .put("channel", ctx.getChannel())
+            .put("guild", ctx.getGuild())
+            .put("args", ctx.getArgsJoined());
+        final String parsed = parser.parse(content);
+        parser.clear();
+
+        return parsed;
+    }
 }

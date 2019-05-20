@@ -89,7 +89,7 @@ class RestartShardCommand : Command() {
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON) {
-                JSONMessageErrorsHelper.sendErrorJSON(event.message, ex, false)
+                JSONMessageErrorsHelper.sendErrorJSON(event.message, ex, false, ctx.variables.jackson)
             } else {
                 MessageUtils.sendError(event.message)
             }
