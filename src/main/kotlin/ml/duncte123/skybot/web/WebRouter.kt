@@ -227,11 +227,15 @@ class WebRouter(private val shardManager: ShardManager) {
                 return@get CommandTransformers.toJson(variables.commandManager, mapper)
             }
 
-            get("/commands.php") { _, _ ->
+            get("/commands.php") { _, response ->
+                response.type(WebUtils.EncodingType.TEXT_PLAIN.type)
+
                 return@get CommandTransformers.toPHP(variables.commandManager)
             }
 
-            get("/command_storage.html") { _, _ ->
+            get("/command_storage.html") { _, response ->
+                response.type(WebUtils.EncodingType.TEXT_PLAIN.type)
+
                 return@get CommandTransformers.toJekyll(variables.commandManager)
             }
         }
