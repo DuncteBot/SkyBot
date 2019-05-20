@@ -136,10 +136,6 @@ dependencies {
 
     // A nice duration parser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.14")
-
-    //JUnit for hacky stuff
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.4.2")
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.1")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -233,25 +229,13 @@ tasks.withType<Wrapper> {
     gradleVersion = "5.4.1"
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    releaseAssets(getUploadFiles())
+    releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
-    prerelease(true)
-}
-
-fun getUploadFiles(): List<File> {
-    val files = arrayListOf<File>()
-    files.addAll(shadowJar.outputs.files.toList())
-    files.addAll(file("static_files").listFiles().filter { !it.name.startsWith(".") })
-
-    return files
+    prerelease(false)
 }
 
 fun getGitHash(): String {

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
@@ -62,6 +63,14 @@ class WebRouter(private val shardManager: ShardManager) {
         port(2000)
 
         staticFiles.location("/public")
+
+        defaultResponseTransformer {
+            if (it is JsonNode) {
+                return@defaultResponseTransformer mapper.writeValueAsString(it)
+            }
+
+            return@defaultResponseTransformer it.toString()
+        }
 
         get("/callback") { request, response ->
             return@get Callback.handle(request, response, oAuth2Client)
@@ -161,6 +170,11 @@ class WebRouter(private val shardManager: ShardManager) {
         path("/api") {
             before("/*") { _, response ->
                 response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
+                response.header("Access-Control-Allow-Origin", "*")
+                response.header("Access-Control-Allow-Credentials", "true")
+                response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
+                response.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+                response.header("Access-Control-Max-Age", "3600")
             }
 
             options("/*") { _, _ ->
@@ -209,14 +223,17 @@ class WebRouter(private val shardManager: ShardManager) {
                 return@post FindUserAndGuild.get(request, response, shardManager, mapper)
             }
 
-            after("/*") { _, response ->
-                response.header("Access-Control-Allow-Origin", "*")
-                response.header("Access-Control-Allow-Credentials", "true")
-                response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
-                response.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
-                response.header("Access-Control-Max-Age", "3600")
+            get("/commands.json") { _, _ ->
+                return@get CommandTransformers.toJson(variables.commandManager, mapper)
             }
 
+            get("/commands.php") { _, _ ->
+                return@get CommandTransformers.toPHP(variables.commandManager)
+            }
+
+            get("/command_storage.html") { _, _ ->
+                return@get CommandTransformers.toJekyll(variables.commandManager)
+            }
         }
 
         notFound { request, response ->

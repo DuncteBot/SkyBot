@@ -95,4 +95,4 @@ workflows:
                     - build
                 filters:
                     branches:
-                        only: commands-json
+                        only: master
