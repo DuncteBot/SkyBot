@@ -39,13 +39,15 @@
 
     <div id="commandModal" class="modal discord not-black">
         <div class="modal-content">
-            <div class="input-field">
-                <input type="text" id="commandName" name="commandName" placeholder="Name your command" maxlength="25">
-                <label for="commandName">Command name</label>
+            <span id="prefix">{{ settings.getCustomPrefix() }}</span>
+            <div class="input-field inline">
+                <input type="text" id="commandName" name="commandName" placeholder="" maxlength="25">
+                <label for="commandName">Command name:</label>
             </div>
             <br/>
 
             <div>
+                <p>Command content:</p>
                 <div id="editor"></div>
                 <div class="right"><span id="chars">0</span>/4000</div>
                 <br/>
