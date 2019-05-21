@@ -306,7 +306,7 @@ public class TagCommand extends Command {
     public String help() {
         return "Store it in a tag\n" +
             "Usage: `" + Settings.PREFIX + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
-            "**Note:** The tag content are plain text and will not be parsed like welcome messages and custom commands";
+            "The tags follow the same parsing as custom commands and the join/leave messages";
     }
 
     @Override

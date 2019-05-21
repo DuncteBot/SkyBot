@@ -28,8 +28,8 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.*;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -164,7 +164,7 @@ public class GuildMemberListener extends BaseListener {
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
-        final Parser parser = CustomCommandUtils.PARSER;
+        final Parser parser = CustomCommandUtils.PARSER_SUPPLIER.get();
 
         final String message = parser.put("user", event.getUser())
             .put("guild", event.getGuild())
