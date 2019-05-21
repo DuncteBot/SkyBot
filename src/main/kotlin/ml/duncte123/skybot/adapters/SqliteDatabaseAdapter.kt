@@ -589,14 +589,13 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 val conn = it.connection
 
                 try {
-                    conn.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
-                        .apply {
-                            setLong(1, tag.owner_id)
-                            setString(2, tag.name)
-                            setString(3, tag.content)
+                    val smt = conn.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
+                    smt.setLong(1, tag.owner_id)
+                    smt.setString(2, tag.name)
+                    smt.setString(3, tag.content)
 
-                            executeUpdate()
-                        }
+                    smt.executeUpdate()
+                    smt.close()
 
                     callback.invoke(true, "")
                 } catch (e: SQLException) {
@@ -612,12 +611,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 val conn = it.connection
 
                 try {
-                    conn.prepareStatement("DELETE FROM tags where name = ?")
-                        .apply {
-                            setString(1, tag.name)
-
-                            executeUpdate()
-                        }
+                    val smt = conn.prepareStatement("DELETE FROM tags where name = ?")
+                    smt.setString(1, tag.name)
+                    smt.executeUpdate()
+                    smt.close()
 
                     callback.invoke(true, "")
                 } catch (e: SQLException) {

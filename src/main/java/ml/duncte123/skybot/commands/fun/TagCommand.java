@@ -80,26 +80,8 @@ public class TagCommand extends Command {
             }
         }
 
-        if (args.size() == 2) {
-            final String tagName = args.get(1);
-
-            if (subCmd.equalsIgnoreCase("author") || subCmd.equalsIgnoreCase("owner") || subCmd.equalsIgnoreCase("who")) {
-                sendTagOwner(ctx, tagName);
-
-                return;
-            }
-
-            if (subCmd.equalsIgnoreCase("delete") || subCmd.equalsIgnoreCase("remove")) {
-                removeTag(ctx, tagName);
-
-                return;
-            }
-
-            if (subCmd.equalsIgnoreCase("raw")) {
-                sendTagRaw(ctx, tagName);
-
-                return;
-            }
+        if (args.size() == 2 && handleTwoArgs(ctx, subCmd)) {
+            return;
         }
 
         if (subCmd.equalsIgnoreCase("create") || subCmd.equalsIgnoreCase("new")) {
@@ -109,21 +91,49 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.containsKey(subCmd)) {
-            final String parsed = CustomCommandUtils.parse(ctx, this.tagStore.get(subCmd).content);
-
-            if (parsed.length() > 2000) {
-                sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");
-
-                return;
-            }
-
-            sendMsg(ctx, parsed);
+            sendTag(ctx, subCmd);
 
             return;
         }
 
         sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" +
             ctx.getGuildSettings().getCustomPrefix() + ctx.getInvoke() + " help`");
+    }
+
+    private boolean handleTwoArgs(CommandContext ctx, String subCmd) {
+        final String tagName = ctx.getArgs().get(1);
+
+        if (subCmd.equalsIgnoreCase("author") || subCmd.equalsIgnoreCase("owner") || subCmd.equalsIgnoreCase("who")) {
+            sendTagOwner(ctx, tagName);
+
+            return true;
+        }
+
+        if (subCmd.equalsIgnoreCase("delete") || subCmd.equalsIgnoreCase("remove")) {
+            removeTag(ctx, tagName);
+
+            return true;
+        }
+
+        if (subCmd.equalsIgnoreCase("raw")) {
+            sendTagRaw(ctx, tagName);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void sendTag(CommandContext ctx, String subCmd) {
+        final String parsed = CustomCommandUtils.parse(ctx, this.tagStore.get(subCmd).content);
+
+        if (parsed.length() > 2000) {
+            sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");
+
+            return;
+        }
+
+        sendMsg(ctx, parsed);
     }
 
     private void sendTagHelp(CommandContext ctx) {

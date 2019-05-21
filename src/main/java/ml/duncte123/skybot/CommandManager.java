@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import com.jagrosh.jagtag.Parser;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.DoomedException;
