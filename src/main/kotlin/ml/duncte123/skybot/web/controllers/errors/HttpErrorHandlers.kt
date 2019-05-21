@@ -31,6 +31,7 @@ object HttpErrorHandlers {
     fun notFound(request: Request, response: Response, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
+            response.type(WebUtils.EncodingType.TEXT_HTML.type)
 
             return engine.render(ModelAndView(WebVariables()
                 .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
@@ -47,6 +48,8 @@ object HttpErrorHandlers {
     fun internalServerError(request: Request, response: Response, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
+            response.type(WebUtils.EncodingType.TEXT_HTML.type)
+
             return "<html><body><h1>Internal server error</h1></body></html>"
         }
 
