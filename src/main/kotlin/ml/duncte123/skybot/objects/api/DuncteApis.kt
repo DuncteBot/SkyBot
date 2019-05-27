@@ -240,6 +240,16 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return response.get("data") as ArrayNode
     }
 
+    fun removeLatestWarningForUser(userId: Long, guildId: Long): JsonNode? {
+        val response = executeRequest(defaultRequest("warns/$userId/$guildId/latest").delete())
+
+        if (!response.get("success").asBoolean() && response.get("error").get("type").asText() == "WarningNotFoundException") {
+            return null
+        }
+
+        return response.get("data")
+    }
+
     fun getExpiredBansAndMutes(): JsonNode {
         val response = executeRequest(defaultRequest("expiredbansandmutes"))
 

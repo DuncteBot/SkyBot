@@ -35,6 +35,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.sql.Date
+import java.text.SimpleDateFormat
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
@@ -228,6 +229,27 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
+        variables.database.run {
+            val json = variables.apis.removeLatestWarningForUser(userId, guildId)
+
+            if (json == null) {
+                callback.invoke(null)
+
+                return@run
+            }
+
+            callback.invoke(Warning(
+                json.get("id").asInt(),
+                json.get("warn_date").asText().toDate(),
+                json.get("expire_date").asText().toDate(),
+                json.get("mod_id").asText(),
+                json.get("reason").asText(),
+                json.get("guild_id").asText()
+            ))
+        }
+    }
+
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         variables.database.run {
             val data = variables.apis.getWarningsForUser(userId, guildId)
@@ -236,8 +258,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             data.forEach { json ->
                 items.add(Warning(
                     json.get("id").asInt(),
-                    Date.valueOf(json.get("warn_date").asText()),
-                    Date.valueOf(json.get("expire_date").asText()),
+                    json.get("warn_date").asText().toDate(),
+                    json.get("expire_date").asText().toDate(),
                     json.get("mod_id").asText(),
                     json.get("reason").asText(),
                     json.get("guild_id").asText()
@@ -332,5 +354,11 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(response.first, response.second)
         }
+    }
+
+    private fun String.toDate(): Date {
+        return Date(
+            SimpleDateFormat("yyyy-mm-dd").parse(this).time
+        )
     }
 }

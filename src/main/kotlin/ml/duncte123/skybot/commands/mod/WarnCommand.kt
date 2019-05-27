@@ -23,8 +23,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.ModerationUtils
-import ml.duncte123.skybot.utils.ModerationUtils.canInteract
+import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -40,7 +39,7 @@ class WarnCommand : ModBaseCommand() {
         val args = ctx.args
         val mentioned = ctx.mentionedMembers
 
-        if (ctx.args.isEmpty() || mentioned.isEmpty()) {
+        if (args.isEmpty() || mentioned.isEmpty()) {
             MessageUtils.sendMsg(event, "Must mention a member")
             MessageUtils.sendError(event.message)
             return
@@ -57,14 +56,14 @@ class WarnCommand : ModBaseCommand() {
             return
         }
 
-        if (ModerationUtils.getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
+        if (getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
-            ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
+            modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
             return
         }
 
         var reason = ""
-        if (ctx.args.size > 1) {
+        if (args.size > 1) {
             reason = args.subList(1, args.size).joinToString(separator = " ")
         }
 
@@ -72,8 +71,8 @@ class WarnCommand : ModBaseCommand() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        ModerationUtils.addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
-        ModerationUtils.modLog(event.author, target.user, "warned", reason, ctx.guild)
+        addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
+        modLog(event.author, target.user, "warned", reason, ctx.guild)
 
         if (!target.user.isBot) {
             target.user.openPrivateChannel().queue {

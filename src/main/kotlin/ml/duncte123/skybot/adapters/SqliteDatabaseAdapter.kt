@@ -426,7 +426,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 conn.prepareStatement(
                     "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )").apply {
+                        "VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )").apply {
 
                     setString(1, modId.toString())
                     setString(2, userId.toString())
@@ -442,6 +442,49 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         // Api only
     }
 
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
+        variables.database.run {
+            connManager.use {
+                val conn = it.connection
+
+                val smt = conn.prepareStatement(
+                    "SELECT * FROM warnings WHERE user_id=? AND guild_id=? ORDER BY id DESC LIMIT 1"
+                ).apply {
+                    setString(1, userId.toString())
+                    setString(2, guildId.toString())
+                }
+
+                val result = smt.executeQuery()
+                var ret: Warning? = null
+
+                while (result.next()) {
+                    ret = Warning(
+                        result.getInt("id"),
+                        result.getDate("warn_date"),
+                        result.getDate("expire_date"),
+                        result.getString("mod_id"),
+                        result.getString("reason"),
+                        result.getString("guild_id")
+                    )
+                }
+
+                if (ret != null) {
+                    conn.prepareStatement(
+                        "DELETE FROM warnings WHERE id=?"
+                    ).apply {
+                        setInt(1, ret.id)
+                        executeUpdate()
+                        closeOnCompletion()
+                    }
+                }
+
+                smt.close()
+                result.close()
+                callback.invoke(ret)
+            }
+        }
+    }
+
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         variables.database.run {
             val warnings = ArrayList<Warning>()
@@ -450,7 +493,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 val conn = it.connection
 
                 val smt = conn.prepareStatement(
-                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURRENT_DATE <= DATE(expire_date, '+3 day'))"
+                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
                 ).apply {
                     setString(1, userId.toString())
                     setString(2, guildId.toString())

@@ -111,6 +111,8 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
 
+    abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
+
     abstract fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit)
 
     abstract fun purgeBans(ids: List<Int>)
