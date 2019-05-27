@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.ICommand
 object CommandTransformers {
 
     fun toJson(commandManager: CommandManager, mapper: ObjectMapper): Any {
-        val commands = commandManager.commands
+        val commands = commandManager.getCommandsList()
         val output = mapper.createArrayNode()
 
         for (command in commands) {
@@ -49,7 +49,7 @@ object CommandTransformers {
             appendln("<?php")
             appendln("\$a = [")
 
-            for (command in commandManager.commands) {
+            for (command in commandManager.getCommandsList()) {
                 val cls = command.javaClass
                 val clsPath = cls.name.replace("\\.".toRegex(), "/")
                 val clsName = cls.simpleName
@@ -66,8 +66,7 @@ object CommandTransformers {
     }
 
     fun toJekyll(commandManager: CommandManager): Any {
-        val names = commandManager.commands
-            .filter { it.category != CommandCategory.UNLISTED }
+        val names = commandManager.getCommandsList()
             .map(ICommand::getName)
             .sorted()
             .toList()
@@ -104,6 +103,10 @@ object CommandTransformers {
         }
 
         return s
+    }
+
+    private fun CommandManager.getCommandsList(): List<ICommand> {
+        return this.commands.filter { it.category != CommandCategory.UNLISTED }
     }
 
     private fun Class<*>.isKotlinClass(): Boolean {

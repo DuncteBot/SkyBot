@@ -24,6 +24,7 @@ import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -34,6 +35,10 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class ClearLeftGuildsCommand extends Command {
+    public ClearLeftGuildsCommand() {
+        this.category = CommandCategory.UNLISTED;
+    }
+
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
 
