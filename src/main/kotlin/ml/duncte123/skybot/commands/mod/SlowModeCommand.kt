@@ -68,8 +68,8 @@ class SlowModeCommand : ModBaseCommand() {
 
         val intDelay = delay.toInt()
 
-        if (intDelay < 1 || intDelay > 21600) {
-            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 1-21600 (21600 is 6 hours in seconds)")
+        if (intDelay < 0 || intDelay > 21600) {
+            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-21600 (21600 is 6 hours in seconds)")
             return
         }
 
