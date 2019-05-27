@@ -81,8 +81,8 @@ object CommandTransformers {
                 val command = commandManager.getCommand(name)
                 val help = parseHelp(command).replace("\"", "\\\"")
 
-                appendln("   - name: $name")
-                appendln("     description: \"$help\"")
+                appendln("  - name: $name")
+                appendln("    description: \"$help\"")
             }
 
             appendln("---\n\n{{ content }}")
