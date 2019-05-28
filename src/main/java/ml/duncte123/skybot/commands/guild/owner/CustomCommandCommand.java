@@ -159,20 +159,15 @@ public class CustomCommandCommand extends Command {
         final long guildId = event.getGuild().getIdLong();
 
         if (commandExists(commandName, guildId, manager)) {
-
-            if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
-                sendMsg(event, "A command already exists for this server.");
-
-                return;
-            }
-            if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
-                sendMsg(event, "The command has been updated.");
-                return;
-            }
+            editCustomCommand(args, event, manager, commandName, commandAction, guildId);
 
             return;
         }
 
+        createCustomCommand(event, manager, commandName, commandAction, guildId);
+    }
+
+    private void createCustomCommand(GuildMessageReceivedEvent event, CommandManager manager, String commandName, String commandAction, long guildId) {
         try {
             final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
@@ -198,7 +193,18 @@ public class CustomCommandCommand extends Command {
         catch (DoomedException e) {
             sendMsg(event, "Could not add command: " + e.getMessage());
         }
+    }
 
+    private void editCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager, String commandName, String commandAction, long guildId) {
+        if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
+            sendMsg(event, "A command already exists for this server.");
+
+            return;
+        }
+
+        if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
+            sendMsg(event, "The command has been updated.");
+        }
     }
 
     @Override
