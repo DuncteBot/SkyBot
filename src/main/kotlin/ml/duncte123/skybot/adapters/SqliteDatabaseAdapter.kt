@@ -460,8 +460,6 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 while (result.next()) {
                     ret = Warning(
                         result.getInt("id"),
-                        result.getDate("warn_date"),
-                        result.getDate("expire_date"),
                         result.getString("mod_id"),
                         result.getString("reason"),
                         result.getString("guild_id")
@@ -504,8 +502,6 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 while (result.next()) {
                     warnings.add(Warning(
                         result.getInt("id"),
-                        result.getDate("warn_date"),
-                        result.getDate("expire_date"),
                         result.getString("mod_id"),
                         result.getString("reason"),
                         result.getString("guild_id")

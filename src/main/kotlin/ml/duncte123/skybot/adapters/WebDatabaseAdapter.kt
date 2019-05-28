@@ -34,8 +34,6 @@ import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
-import java.sql.Date
-import java.text.SimpleDateFormat
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
@@ -241,8 +239,6 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(Warning(
                 json.get("id").asInt(),
-                json.get("warn_date").asText().toDate(),
-                json.get("expire_date").asText().toDate(),
                 json.get("mod_id").asText(),
                 json.get("reason").asText(),
                 json.get("guild_id").asText()
@@ -258,8 +254,6 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             data.forEach { json ->
                 items.add(Warning(
                     json.get("id").asInt(),
-                    json.get("warn_date").asText().toDate(),
-                    json.get("expire_date").asText().toDate(),
                     json.get("mod_id").asText(),
                     json.get("reason").asText(),
                     json.get("guild_id").asText()
@@ -354,11 +348,5 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(response.first, response.second)
         }
-    }
-
-    private fun String.toDate(): Date {
-        return Date(
-            SimpleDateFormat("yyyy-mm-dd").parse(this).time
-        )
     }
 }
