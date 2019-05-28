@@ -196,6 +196,6 @@ public abstract class Command implements ICommand {
 
         final Command command = (Command) obj;
 
-        return this.help().equals(command.help()) && this.getName().equals(command.getName());
+        return this.help(Settings.OTHER_PREFIX).equals(command.help(Settings.OTHER_PREFIX)) && this.getName().equals(command.getName());
     }
 }
