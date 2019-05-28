@@ -35,7 +35,7 @@ class ShortenCommand : Command() {
         val args = ctx.args
 
         if (args.isEmpty() || args[0].isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <link to shorten>`")
+            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <link to shorten>`")
             return
         }
 
@@ -51,8 +51,8 @@ class ShortenCommand : Command() {
         })
     }
 
-    override fun help(): String = """Shortens a url
-            |Usage: `${Settings.PREFIX}$name <link to shorten>`""".trimMargin()
+    override fun help(prefix: String): String? = """Shortens a url
+            |Usage: `$prefix$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"
 

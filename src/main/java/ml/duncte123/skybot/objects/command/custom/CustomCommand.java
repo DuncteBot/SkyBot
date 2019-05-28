@@ -48,7 +48,7 @@ public interface CustomCommand extends ICommand {
     }
 
     @Override
-    default String help() {
+    default String help(String prefix) {
         return null;
     }
 

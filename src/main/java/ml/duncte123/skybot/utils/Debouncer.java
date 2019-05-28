@@ -34,7 +34,7 @@ public class Debouncer<T> implements Consumer<T> {
 
     @Override
     public void accept(T arg) {
-        if(lastCalled.get() + interval < System.currentTimeMillis()) {
+        if (lastCalled.get() + interval < System.currentTimeMillis()) {
             lastCalled.set(System.currentTimeMillis());
             c.accept(arg);
         }

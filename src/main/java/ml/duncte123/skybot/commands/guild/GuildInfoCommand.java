@@ -31,9 +31,9 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -88,7 +88,7 @@ public class GuildInfoCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Show some stats";
     }
 

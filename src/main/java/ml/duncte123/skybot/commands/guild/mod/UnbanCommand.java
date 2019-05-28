@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -77,9 +77,9 @@ public class UnbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Unbans a user\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <user>`";
+            "Usage: `" + prefix + getName() + " <user>`";
     }
 
     @Override

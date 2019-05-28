@@ -20,15 +20,14 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,7 @@ public class AutoRoleCommand extends SettingsBase {
         }
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + Settings.PREFIX + "autorole <role name/disable>`");
+            sendMsg(event, "Incorrect usage: `" + ctx.getPrefix() + "autorole <role name/disable>`");
             return;
         }
 
@@ -90,8 +89,8 @@ public class AutoRoleCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Gives members a role when they join\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <role>`";
+            "Usage: `" + prefix + getName() + " <role>`";
     }
 }

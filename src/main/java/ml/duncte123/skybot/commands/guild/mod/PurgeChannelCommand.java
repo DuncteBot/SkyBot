@@ -19,13 +19,12 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
@@ -48,7 +47,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
         final List<TextChannel> channels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
 
         if (channels.isEmpty()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <#text-channel>`");
+            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <#text-channel>`");
             return;
         }
 
@@ -77,8 +76,8 @@ public class PurgeChannelCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Purges a text channel.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <#text-channel>`";
+            "Usage: `" + prefix + getName() + " <#text-channel>`";
     }
 }

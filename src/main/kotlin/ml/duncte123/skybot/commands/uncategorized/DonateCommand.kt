@@ -33,13 +33,13 @@ class DonateCommand : Command() {
                         |**Patreon:** <https://patreon.com/DuncteBot>
                         |**PayPal:** <https://paypal.me/duncte123$amount>
                         |
-                        |All donations will go directly into development of the bot and the servers that the bot is hosted on ❤
+                        |All donations will go directly into development of the bot ❤
                     """.trimMargin())
     }
 
     override fun getName() = "donate"
 
-    override fun help() = """Help keeping the bot up by donating
-        |Usage: `${Settings.PREFIX}$name [amount]`
+    override fun help(prefix: String): String? = """Help keeping the bot up by donating
+        |Usage: `$prefix$name [amount]`
     """.trimMargin()
 }

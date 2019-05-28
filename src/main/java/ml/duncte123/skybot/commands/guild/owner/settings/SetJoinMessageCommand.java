@@ -19,8 +19,8 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -30,7 +30,7 @@ public class SetJoinMessageCommand extends SettingsBase {
     @Override
     public void run(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + Settings.PREFIX + "setJoinMessage <new join message>`");
+            sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setJoinMessage <new join message>`");
             return;
         }
 
@@ -50,8 +50,8 @@ public class SetJoinMessageCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Sets the message that the bot shows when a new member joins\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <join message>`";
+            "Usage: `" + prefix + getName() + " <join message>`";
     }
 }

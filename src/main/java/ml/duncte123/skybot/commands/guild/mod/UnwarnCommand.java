@@ -79,8 +79,8 @@ public class UnwarnCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Removes the latest warning of a user\n" +
-            "Usage: `db!unwarn <@user>`";
+            "Usage: `" + prefix + "unwarn <@user>`";
     }
 }

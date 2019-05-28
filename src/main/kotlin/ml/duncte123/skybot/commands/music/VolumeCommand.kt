@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
@@ -56,8 +55,8 @@ class VolumeCommand : MusicCommand() {
 
     }
 
-    override fun help() = """Sets the new volume on the player.
-        |Usage: `${Settings.PREFIX}$name [new volume]`
+    override fun help(prefix: String): String? = """Sets the new volume on the player.
+        |Usage: `$prefix$name [new volume]`
     """.trimMargin()
 
     override fun getName() = "volume"

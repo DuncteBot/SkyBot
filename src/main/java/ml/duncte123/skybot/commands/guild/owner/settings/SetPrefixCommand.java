@@ -19,8 +19,8 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -30,7 +30,7 @@ public class SetPrefixCommand extends SettingsBase {
     @Override
     public void run(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + Settings.PREFIX + "setPrefix <new prefix>`");
+            sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setPrefix <new prefix>`");
             return;
         }
 
@@ -45,8 +45,8 @@ public class SetPrefixCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Sets the new prefix\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <prefix>`";
+            "Usage: `" + prefix + getName() + " <prefix>`";
     }
 }

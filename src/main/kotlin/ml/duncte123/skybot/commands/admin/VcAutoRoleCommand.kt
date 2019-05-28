@@ -23,7 +23,6 @@ import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -56,7 +55,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             if (args[0] != "off") {
-                sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
+                sendMsg(event, "Missing arguments, check `${ctx.prefix}help $name`")
                 return
             }
 
@@ -81,17 +80,17 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
         }
 
-        sendMsg(event, "Unknown operation, check `${Settings.PREFIX}$name`")
+        sendMsg(event, "Unknown operation, check `${ctx.prefix}$name`")
 
     }
 
     override fun getName() = "vcautorole"
 
-    override fun help() = """Gives a role to a user when they join a specified voice channel
-        |Usage: `${Settings.PREFIX}$name add <voice channel> <role>`
-        |`${Settings.PREFIX}$name remove <voice channel>`
-        |`${Settings.PREFIX}$name off`
-        |`${Settings.PREFIX}$name list`
+    override fun help(prefix: String): String? = """Gives a role to a user when they join a specified voice channel
+        |Usage: `$prefix$name add <voice channel> <role>`
+        |`$prefix$name remove <voice channel>`
+        |`$prefix$name off`
+        |`$prefix$name list`
     """.trimMargin()
 
     private fun removeVcAutoRole(ctx: CommandContext) {
@@ -146,7 +145,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
         val targetRole = foundRoles[0].idLong
 
-        var cache:TLongLongMap? = vcAutoRoleCache.get(guild.idLong)
+        var cache: TLongLongMap? = vcAutoRoleCache.get(guild.idLong)
 
         if (cache == null) {
             cache = vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())

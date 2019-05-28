@@ -20,9 +20,9 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -46,8 +46,8 @@ public class YesNoCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Chooses between yes or no\n" +
-            "Usage: `" + Settings.PREFIX + getName() + '`';
+            "Usage: `" + prefix + getName() + '`';
     }
 }

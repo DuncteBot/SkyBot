@@ -37,7 +37,7 @@ class TextToBricksCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            sendMsg(ctx.event, "Correct usage: `${Settings.PREFIX}${ctx.invoke} <words>`")
+            sendMsg(ctx.event, "Correct usage: `${ctx.prefix}${ctx.invoke} <words>`")
             return
         }
 
@@ -58,7 +58,8 @@ class TextToBricksCommand : Command() {
         sendEmbed(ctx.event, EmbedUtils.embedMessage(message))
     }
 
-    override fun help() = "Convert your text to bricks"
+    override fun help(prefix: String) = "Convert your text to bricks\n" +
+        "Usage: `$prefix$name <text>`"
 
     override fun getName() = "ttb"
 }

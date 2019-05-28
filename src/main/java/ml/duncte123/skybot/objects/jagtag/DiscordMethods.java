@@ -27,8 +27,8 @@ import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.MiscUtil;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;

@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.YoutubeUtils
@@ -40,7 +39,7 @@ class SearchCommand : MusicCommand() {
         val event = ctx.event
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Correct usage: `${Settings.PREFIX}$name [search term]`")
+            sendMsg(event, "Correct usage: `${ctx.prefix}$name [search term]`")
             return
         }
 
@@ -48,8 +47,7 @@ class SearchCommand : MusicCommand() {
         val isPatron = isUserOrGuildPatron(event, false)
 
         val timeout = when {
-            isDev(event.author) -> 60L
-            isPatron -> 30L
+            isDev(event.author) || isPatron -> 60L
             else -> 15L
         }
 
@@ -80,6 +78,6 @@ class SearchCommand : MusicCommand() {
 
     override fun getName(): String = "search"
 
-    override fun help(): String = """Make the bot play song.
-            |Usage: `${Settings.PREFIX}$name [search term]`""".trimMargin()
+    override fun help(prefix: String): String? = """Search for a song to play
+            |Usage: `$prefix$name <search term>`""".trimMargin()
 }

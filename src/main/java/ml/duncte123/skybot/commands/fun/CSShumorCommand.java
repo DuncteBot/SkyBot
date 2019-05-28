@@ -46,16 +46,11 @@ public class CSShumorCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-
-        switch (ctx.getRandom().nextInt(2)) {
-            case 1:
-                sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
-                break;
-            default:
-                sendCssJoke(ctx.getEvent());
-                break;
+        if (ctx.getRandom().nextInt(2) == 1) {
+            sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
+        } else {
+            sendCssJoke(ctx.getEvent());
         }
-
     }
 
     @Author(nickname = "ramidzkh", author = "Ramid Khan") // Thanks for the regex bud
@@ -77,7 +72,7 @@ public class CSShumorCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Gives you a funny css joke";
     }
 

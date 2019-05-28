@@ -20,10 +20,9 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -43,7 +42,7 @@ public class SetColorCommand extends SettingsBase {
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage: `" + Settings.PREFIX + getName() + " <hex color>`");
+            sendMsg(ctx.getEvent(), "Correct usage: `" + ctx.getPrefix() + getName() + " <hex color>`");
             return;
         }
 
@@ -72,12 +71,12 @@ public class SetColorCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"setembedcolor"};
+        return new String[]{"setembedcolor"};
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Sets the colors of the embeds from the bot.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <hex color>`";
+            "Usage: `" + prefix + getName() + " <hex color>`";
     }
 }

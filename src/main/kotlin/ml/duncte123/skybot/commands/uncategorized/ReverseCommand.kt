@@ -41,7 +41,7 @@ class ReverseCommand : Command() {
 
     override fun getName() = "reverse"
 
-    override fun help() = """reverses a string
-        |Usage: `${Settings.PREFIX}$name <text>`
+    override fun help(prefix: String): String? = """reverses a string
+        |Usage: `$prefix$name <text>`
     """.trimMargin()
 }

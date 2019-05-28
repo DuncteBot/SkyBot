@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.fun;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -50,7 +49,7 @@ public class LoveCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <user 1> [user 2]`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <user 1> [user 2]`");
             return;
         }
 
@@ -102,8 +101,8 @@ public class LoveCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Ship 2 people\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <@user>`";
+            "Usage: `" + prefix + getName() + " <@user> <@user>`";
     }
 }

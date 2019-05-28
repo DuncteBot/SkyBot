@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -81,32 +80,32 @@ class NSFWCommands : Command() {
         }
     }
 
-    override fun help() = """`${Settings.PREFIX}lewdneko` => Gives a very lewd neko
-        |`${Settings.PREFIX}carsandhentai` => Delet this
-        |`${Settings.PREFIX}lewdkitsune` => Shows you a lewd kitsune
-        |`${Settings.PREFIX}hentai` => Just some hentai
+    override fun help(prefix: String): String? = """`${prefix}lewdneko` => Gives a very lewd neko
+        |`${prefix}carsandhentai` => Delet this
+        |`${prefix}lewdkitsune` => Shows you a lewd kitsune
+        |`${prefix}hentai` => Just some hentai
     """.trimMargin()
 
-    override fun help(invoke: String?): String {
+    override fun help(invoke: String, prefix: String): String? {
         return when (invoke) {
             "lewdneko" -> {
                 """Gives a very lewd neko
-                    |Usage `${Settings.PREFIX}$invoke`
+                    |Usage `$prefix$invoke`
                 """.trimMargin()
             }
             "carsandhentai" -> {
                 """Delet this
-                    |Usage `${Settings.PREFIX}$invoke`
+                    |Usage `$prefix$invoke`
                 """.trimMargin()
             }
             "lewdkitsune" -> {
                 """Shows you a lewd kitsune
-                    |Usage `${Settings.PREFIX}$invoke`
+                    |Usage `$prefix$invoke`
                 """.trimMargin()
             }
             "hentai" -> {
                 """Just some hentai
-                    |Usage `${Settings.PREFIX}$invoke`
+                    |Usage `$prefix$invoke`
                 """.trimMargin()
             }
             else -> "No U"

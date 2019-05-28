@@ -39,7 +39,7 @@ class PPlayCommand : MusicCommand() {
         val mng = getMusicManager(guild, ctx.audioUtils)
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "To few arguments, use `${Settings.PREFIX}$name <media link>`")
+            sendMsg(event, "To few arguments, use `${ctx.prefix}$name <media link>`")
             return
         }
 
@@ -57,7 +57,7 @@ class PPlayCommand : MusicCommand() {
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
 
-    override fun help(): String = "Add a playlist to the queue."
+    override fun help(prefix: String): String? = "Add a playlist to the queue."
 
     override fun getName(): String = "pplay"
 }

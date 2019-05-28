@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -28,8 +27,8 @@ import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +61,7 @@ public class LockEmoteCommand extends Command {
         }
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote> <@role...>`");
             return;
         }
 
@@ -77,7 +76,7 @@ public class LockEmoteCommand extends Command {
         }
 
         if (mentionedEmotes.isEmpty() || mentionedRoles.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote> <@role...>`");
             return;
         }
 
@@ -99,9 +98,9 @@ public class LockEmoteCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Lock an emote to some roles.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`\n" +
+            "Usage: `" + prefix + getName() + " <emote> <@role...>`\n" +
             "Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
             "even if you have administrator permission";
     }

@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
@@ -52,7 +51,7 @@ class RepeatCommand : MusicCommand() {
                 }
 
                 else -> {
-                    sendMsg(event, "Unknown argument, check `${Settings.PREFIX}help $name`")
+                    sendMsg(event, "Unknown argument, check `${ctx.prefix}help $name`")
 
                     return
                 }
@@ -68,9 +67,9 @@ class RepeatCommand : MusicCommand() {
             "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
 
-    override fun help(): String = "Makes the player repeat the currently playing song\n" +
-        "Use `${Settings.PREFIX}$name playlist` to repeat the current queue\n" +
-        "Use `${Settings.PREFIX}$name status` for the current status"
+    override fun help(prefix: String): String? = "Makes the player repeat the currently playing song\n" +
+        "Use `$prefix$name playlist` to repeat the current queue\n" +
+        "Use `$prefix$name status` for the current status"
 
     override fun getName(): String = "repeat"
 

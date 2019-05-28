@@ -40,9 +40,9 @@ public class TheSearchCommand extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Go on a journey to find intelligent life.\n" +
-            "Usage: `db!thesearch <message>`";
+            "Usage: `" + prefix + "thesearch <message>`";
     }
 
     @Override

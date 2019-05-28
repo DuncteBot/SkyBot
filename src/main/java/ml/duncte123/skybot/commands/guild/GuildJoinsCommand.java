@@ -107,7 +107,7 @@ public class GuildJoinsCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Shows a graph with the joins for this server.\n" +
             "This is not a full history as it only looks at the members that are currently in the server.";
     }

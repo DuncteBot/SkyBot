@@ -21,15 +21,14 @@ package ml.duncte123.skybot.commands.essentials;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongObjectMap;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -98,8 +97,8 @@ public class ClearLeftGuildsCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Clears the guilds that we have left from the cache and/or database\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [--clear-db]`";
+            "Usage: `" + prefix + getName() + " [--clear-db]`";
     }
 }

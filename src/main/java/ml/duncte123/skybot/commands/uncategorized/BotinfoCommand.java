@@ -25,7 +25,6 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.weebJava.WeebInfo;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.JDAInfo;
@@ -84,8 +83,8 @@ public class BotinfoCommand extends Command {
     }
 
     @Override
-    public String help() {
-        return "Gets some info about the bot\nUsage: `" + Settings.PREFIX + getName() + "`";
+    public String help(String prefix) {
+        return "Gets some info about the bot\nUsage: `" + prefix + getName() + "`";
     }
 
     @Override

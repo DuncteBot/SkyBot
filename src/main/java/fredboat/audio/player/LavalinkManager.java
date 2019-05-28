@@ -28,8 +28,8 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;

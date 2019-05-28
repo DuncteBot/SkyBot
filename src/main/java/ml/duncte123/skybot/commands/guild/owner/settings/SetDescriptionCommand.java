@@ -19,13 +19,12 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
@@ -42,7 +41,7 @@ public class SetDescriptionCommand extends SettingsBase {
 
         if (args.isEmpty()) {
             sendErrorWithMessage(ctx.getMessage(), "Incorrect usage\n" +
-                "Correct usage : `" + Settings.PREFIX + getName() + " <description>`");
+                "Correct usage : `" + ctx.getPrefix() + getName() + " <description>`");
             return;
         }
 
@@ -55,7 +54,7 @@ public class SetDescriptionCommand extends SettingsBase {
         final String description = ctx.getArgsRaw().replaceAll("\n", "\\\\n");
         guild.setSettings(settings.setServerDesc(description));
 
-        sendMsg(event, "Description has been updated, check `" + Settings.PREFIX + "guildinfo` to see your description");
+        sendMsg(event, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
     }
 
     @Override
@@ -64,8 +63,8 @@ public class SetDescriptionCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
-        return "Set a custom description in " + Settings.PREFIX + "guildinfo\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <description>`";
+    public String help(String prefix) {
+        return "Set a custom description in " + prefix + "guildinfo\n" +
+            "Usage: `" + prefix + getName() + " <description>`";
     }
 }

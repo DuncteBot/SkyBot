@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.essentials;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -88,9 +87,9 @@ public class TokenCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Tries to get as much info about a token as possible\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <token of a discord bot>`";
+            "Usage: `" + prefix + getName() + " <token of a discord bot>`";
     }
 
     @Override

@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -50,7 +49,7 @@ public class SoftbanCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
+            sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> [Reason]");
             return;
         }
 
@@ -86,8 +85,9 @@ public class SoftbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
-        return "Kicks a user from the guild **(THIS WILL DELETE MESSAGES)**";
+    public String help(String prefix) {
+        return "Kicks a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
+            "Usage: `" + prefix + getName() + " <@user> [reason]`";
     }
 
     @Override

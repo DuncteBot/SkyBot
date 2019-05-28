@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.lgbtq;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -74,9 +73,9 @@ public class PronounsCheckCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Check someones pronouns.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [user]`\n" +
-            "Pronouns can be set via `" + Settings.PREFIX + "setpronouns`";
+            "Usage: `" + prefix + getName() + " [user]`\n" +
+            "Pronouns can be set via `" + prefix + "setpronouns`";
     }
 }

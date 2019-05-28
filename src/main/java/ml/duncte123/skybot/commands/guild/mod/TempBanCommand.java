@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
@@ -47,7 +46,7 @@ public class TempBanCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
+            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
@@ -63,7 +62,7 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        final Duration duration = getDuration(args.get(1), getName(), event);
+        final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -96,13 +95,13 @@ public class TempBanCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
+            "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 
     @Nullable
-    static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event) {
+    static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
         Optional<Duration> optionalDuration;
 
         try {
@@ -113,7 +112,7 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         if (!optionalDuration.isPresent()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + name + " <@user> <time><w/d/h/m/s> [Reason]`");
+            sendMsg(event, "Usage is `" + prefix + name + " <@user> <time><w/d/h/m/s> [Reason]`");
 
             return null;
         }

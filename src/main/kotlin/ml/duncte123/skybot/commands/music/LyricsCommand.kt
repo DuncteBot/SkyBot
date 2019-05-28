@@ -58,7 +58,7 @@ class LyricsCommand : MusicCommand() {
         searchForSong(search, ctx.config.genius, ctx.variables.jackson) {
             if (it.isNullOrBlank()) {
                 sendMsg(event, "There where no lyrics found for the title of this song\n" +
-                    "Alternatively you can try `${Settings.PREFIX}$name <song name>` to search for the lyrics on this song.\n" +
+                    "Alternatively you can try `${ctx.prefix}$name <song name>` to search for the lyrics on this song.\n" +
                     "(sometimes the song names in the player are incorrect)")
             } else {
                 val url = "https://genius.com$it"
@@ -77,7 +77,7 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    override fun help() = "Shows the lyrics to the current song"
+    override fun help(prefix: String): String? = "Shows the lyrics to the current song"
 
     override fun getName() = "lyrics"
 

@@ -19,11 +19,11 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -58,8 +58,8 @@ public class ToggleSpamFilterCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Toggles whether we should handle your incoming spam.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + "`";
+            "Usage: `" + prefix + getName() + "`";
     }
 }

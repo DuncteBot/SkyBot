@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
@@ -47,12 +46,12 @@ public class TempMuteCommand extends TempBanCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
+            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
+            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!spamrole <Role>` to set it");
             return;
         }
 
@@ -68,7 +67,7 @@ public class TempMuteCommand extends TempBanCommand {
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        final Duration duration = getDuration(args.get(1), getName(), event);
+        final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -95,6 +94,17 @@ public class TempMuteCommand extends TempBanCommand {
             );
     }
 
+    @Override
+    public String getName() {
+        return "tempmute";
+    }
+
+    @Override
+    public String help(String prefix) {
+        return "Temporally mutes a user on the guild\n" +
+            "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
+    }
+
     static boolean canNotProceed(@Nonnull CommandContext ctx, GuildMessageReceivedEvent event, Member mod, Member toMute, Role role, Member self) {
         if (role == null) {
             sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
@@ -113,16 +123,5 @@ public class TempMuteCommand extends TempBanCommand {
         }
 
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return "tempmute";
-    }
-
-    @Override
-    public String help() {
-        return "Temporally mutes a user on the guild\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 }

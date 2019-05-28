@@ -19,13 +19,12 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +44,7 @@ public class BanCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <Reason>");
+            sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> <Reason>");
             return;
         }
 
@@ -73,9 +72,9 @@ public class BanCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <Reason>`";
+            "Usage: `" + prefix + getName() + " <@user> <Reason>`";
     }
 
     @Override

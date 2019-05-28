@@ -89,7 +89,7 @@ class StatsCommand : Command() {
 
     override fun getName() = "stats"
 
-    override fun help() = "Shows some nerdy stats about the bot"
+    override fun help(prefix: String) = "Shows some nerdy stats about the bot"
 
     override fun getCategory() = CommandCategory.NERD_STUFF
 }

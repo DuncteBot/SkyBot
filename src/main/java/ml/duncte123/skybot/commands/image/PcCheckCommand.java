@@ -40,9 +40,9 @@ public class PcCheckCommand extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "WHoops get your pc checked\n" +
-            "Usage: `db!pccheck <reason>`";
+            "Usage: `" + prefix + "pccheck <reason>`";
     }
 
     @Override

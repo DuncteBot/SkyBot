@@ -24,7 +24,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
@@ -201,7 +200,7 @@ class UserinfoCommand : Command() {
                         |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
                         |**Bot Account:** ${u.isBot.toEmoji()}
                         |
-                        |_Use `${ctx.guildSettings.customPrefix}avatar [user]` to get a user's avatar_
+                        |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
@@ -215,12 +214,13 @@ class UserinfoCommand : Command() {
             event.channel.sendFile(it, "stat.png")
                 .embed(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
-                sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
-            }
+                    sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
+                }
         }
     }
 
-    override fun help() = "Get information from yourself or from another user.\nUsage: `${Settings.PREFIX}$name [username]`"
+    override fun help(prefix: String): String? = "Get information from yourself or from another user.\n" +
+        "Usage: `$prefix$name [username]`"
 
     override fun getName() = "userinfo"
 

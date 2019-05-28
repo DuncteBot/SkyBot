@@ -94,5 +94,5 @@ class LoadCommand : MusicCommand() {
 
     override fun getName() = "load"
 
-    override fun help() = "Loads a given playlist file"
+    override fun help(prefix: String): String? = "Loads a given playlist file"
 }

@@ -20,12 +20,11 @@ package ml.duncte123.skybot.commands.music;
 
 import lavalink.client.player.IPlayer;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,8 +34,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SeekCommand extends MusicCommand {
 
-    private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2})" +
-        ":(\\d{2})");
+    private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2}):(\\d{2})");
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
@@ -44,7 +42,7 @@ public class SeekCommand extends MusicCommand {
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
+            sendMsg(event, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + "`");
             return;
         }
 
@@ -90,10 +88,10 @@ public class SeekCommand extends MusicCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "seek in the currently playing track\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <minutes:seconds>`\n" +
-            "Examples: `" + Settings.PREFIX + getName() + " 04:20`\n" +
-            "`" + Settings.PREFIX + getName() + " 00:50`\n";
+            "Usage: `" + prefix + getName() + " <minutes:seconds>`\n" +
+            "Examples: `" + prefix + getName() + " 04:20`\n" +
+            "`" + prefix + getName() + " 00:50`\n";
     }
 }

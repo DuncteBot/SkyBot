@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +32,12 @@ public abstract class NoPatronImageCommand extends ImageCommandBase {
         final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
+            sendMsg(ctx.getEvent(), "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + "`");
             return null;
         }
 
         if (split[0].trim().equals("") || split[1].trim().equals("")) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
+            sendMsg(ctx.getEvent(), "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + "`");
             return null;
         }
 

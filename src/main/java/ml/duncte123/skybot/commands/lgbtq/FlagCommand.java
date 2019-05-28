@@ -20,14 +20,13 @@ package ml.duncte123.skybot.commands.lgbtq;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -91,8 +90,8 @@ public class FlagCommand extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Overlay your profile picture with a pride flag.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <flag/list> [username]`";
+            "Usage: `" + prefix + getName() + " <flag/list> [username]`";
     }
 }

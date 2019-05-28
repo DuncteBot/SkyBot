@@ -63,7 +63,7 @@ public class PingCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Shows the delay from the bot to the discord servers.";
     }
 }

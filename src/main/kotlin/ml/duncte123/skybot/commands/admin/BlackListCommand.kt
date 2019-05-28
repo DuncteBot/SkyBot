@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.admin
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
@@ -39,7 +38,7 @@ class BlackListCommand : ModBaseCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val args  = ctx.args
+        val args = ctx.args
 
         if (args[0] == "list") {
             listBlackList(ctx.guild.getSettings().blacklistedWords, event)
@@ -54,17 +53,17 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         if (args.size < 2) {
-            sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
+            sendMsg(event, "Missing arguments, check `${ctx.prefix}help $name`")
 
             return
         }
 
-        when(args[0]) {
+        when (args[0]) {
             "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
 
             "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
 
-            else -> sendMsg(event, "Unknown argument `${args[0]}` check `${Settings.PREFIX}help $name`")
+            else -> sendMsg(event, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }
 
@@ -134,12 +133,12 @@ class BlackListCommand : ModBaseCommand() {
 
     override fun getName() = "blacklist"
 
-    override fun help() = """Control the blacklisted words on your server
+    override fun help(prefix: String): String? = """Control the blacklisted words on your server
         |Note: **People that have the kick members permission will bypass the blacklist**
         |
-        |Usage:```${Settings.PREFIX}$name list => Gives you a list of the current blacklisted words
-        |${Settings.PREFIX}$name clear => Clears the blacklist
-        |${Settings.PREFIX}$name add <word> => Adds a word to the blacklist
-        |${Settings.PREFIX}$name remove <word> => Removes a word from the blacklist```
+        |Usage:```$prefix$name list => Gives you a list of the current blacklisted words
+        |$prefix$name clear => Clears the blacklist
+        |$prefix$name add <word> => Adds a word to the blacklist
+        |$prefix$name remove <word> => Removes a word from the blacklist```
     """.trimMargin()
 }

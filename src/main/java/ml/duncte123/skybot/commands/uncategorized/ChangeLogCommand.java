@@ -54,7 +54,7 @@ public class ChangeLogCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "shows the changelog on the bot";
     }
 

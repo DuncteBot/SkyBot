@@ -24,7 +24,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.getString
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -79,47 +78,47 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help(invoke: String?): String {
+    override fun help(invoke: String, prefix: String): String? {
 
         return when (invoke) {
             "cookie" -> {
                 """blobnomcookie
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "trigger" -> {
                 """Use when you are triggered.
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "spam" -> {
                 """What do you think 😏
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "wam" -> {
                 """you need more WAM!
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "mineh" -> {
                 """HERE COMES MINEH!
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "invite" -> {
                 """Gives you the bot invite
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "uptime" -> {
                 """Shows the bot uptime
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
             "quote" -> {
                 """Shows an inspiring quote
-                    |Usage: `${Settings.PREFIX}$invoke`
+                    |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
 
@@ -127,14 +126,14 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help() = """`${Settings.PREFIX}cookie` => blobnomcookie.
-            |`${Settings.PREFIX}trigger` => Use when you are triggered.
-            |`${Settings.PREFIX}spam` => What do you think 😏
-            |`${Settings.PREFIX}wam` => You need more WAM!.
-            |`${Settings.PREFIX}mineh` => HERE COMES MINEH!
-            |`${Settings.PREFIX}invite` => Gives you the bot invite
-            |`${Settings.PREFIX}uptime` => Shows the bot uptime
-            |`${Settings.PREFIX}quote` => Shows an inspiring quote
+    override fun help(prefix: String): String? = """`${prefix}cookie` => blobnomcookie.
+            |`${prefix}trigger` => Use when you are triggered.
+            |`${prefix}spam` => What do you think 😏
+            |`${prefix}wam` => You need more WAM!.
+            |`${prefix}mineh` => HERE COMES MINEH!
+            |`${prefix}invite` => Gives you the bot invite
+            |`${prefix}uptime` => Shows the bot uptime
+            |`${prefix}quote` => Shows an inspiring quote
     """.trimMargin()
 
     override fun getName() = "cookie"

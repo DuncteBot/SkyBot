@@ -29,8 +29,8 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -49,28 +49,29 @@ public class HelpCommand extends Command {
     public void executeCommand(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
+        final String prefix = ctx.getPrefix();
 
         if (!ctx.getArgs().isEmpty()) {
             final String toSearch = ctx.getArgsRaw().toLowerCase()
                 .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
                     Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                    Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
+                    Pattern.quote(prefix) + ")", "");
 
             if (isCategory(toSearch)) {
-                sendCategoryHelp(event, ctx.getGuild().getSettings().getCustomPrefix(), toSearch.toUpperCase());
+                sendCategoryHelp(event, prefix, toSearch.toUpperCase());
                 return;
             }
 
-            sendCommandHelp(event, toSearch, ctx.getCommandManager());
+            sendCommandHelp(event, toSearch, ctx.getCommandManager(), prefix);
 
             return;
         }
-        sendHelp(event, HelpEmbeds.generateCommandEmbed(ctx.getGuildSettings().getCustomPrefix()));
+        sendHelp(event, HelpEmbeds.generateCommandEmbed(prefix));
     }
 
     @Override
-    public String help() {
-        return "Shows a list of all the commands.\nUsage: `" + Settings.PREFIX + "help [command]`";
+    public String help(String prefix) {
+        return "Shows a list of all the commands.\nUsage: `" + prefix + "help [command]`";
     }
 
     @Override
@@ -112,22 +113,22 @@ public class HelpCommand extends Command {
         );
     }
 
-    private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
+    private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager, String prefix) {
 
         final ICommand cmd = manager.getCommand(toSearch);
 
         if (cmd != null) {
-            sendMsg(event, getCommandHelpMessage(cmd));
+            sendMsg(event, getCommandHelpMessage(cmd, prefix));
 
             return;
         }
 
-        sendMsg(event, "That command could not be found, try `" + Settings.PREFIX + "help` for a list of commands");
+        sendMsg(event, "That command could not be found, try `" + prefix + "help` for a list of commands");
     }
 
-    private String getCommandHelpMessage(ICommand cmd) {
+    private String getCommandHelpMessage(ICommand cmd, String prefix) {
         return "Command help for `" +
-            cmd.getName() + "` (`<required argument>` `[optional argument]`):\n\n" + cmd.help(cmd.getName()) +
+            cmd.getName() + "` (`<required argument>` `[optional argument]`):\n\n" + cmd.help(cmd.getName(), prefix) +
             (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
             "\n\nSource code: <https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName() + '>';
     }

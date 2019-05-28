@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class SaltyCommand extends NoPatronImageCommand {
@@ -41,8 +41,8 @@ public class SaltyCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Someones being salty today\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [@user/url]`";
+            "Usage: `" + prefix + getName() + " [@user/url]`";
     }
 }

@@ -57,8 +57,8 @@ class KpopCommand : Command() {
         }
     }
 
-    override fun help() = "Gives you a random kpop member, command suggestion by Exa\n" +
-        "Usage: `${Settings.PREFIX}$name [search term]`"
+    override fun help(prefix: String) = "Gives you a random kpop member, command suggestion by Exa\n" +
+        "Usage: `$prefix$name [search term]`"
 
     override fun getName() = "kpop"
 

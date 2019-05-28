@@ -40,9 +40,9 @@ public class DeleteCommand extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Creates a Delete button.\n" +
-            "Usage: `db!delete <text>`";
+            "Usage: `" + prefix + "delete <text>`";
     }
 
     @Override

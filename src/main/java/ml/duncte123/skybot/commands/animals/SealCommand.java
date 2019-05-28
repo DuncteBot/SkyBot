@@ -44,7 +44,7 @@ public class SealCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Here is a nice seal";
     }
 

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -33,7 +33,7 @@ class JoinCommand : MusicCommand() {
         val event = ctx.event
 
         if (!event.member.voiceState.inVoiceChannel()) {
-            MessageUtils.sendMsg(event, "Please join a voice channel first.")
+            sendMsg(event, "Please join a voice channel first.")
             return
         }
 
@@ -44,9 +44,9 @@ class JoinCommand : MusicCommand() {
         mng.lastChannel = event.channel.idLong
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
-            MessageUtils.sendMsg(event, """I still have cooldown!
+            sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            MessageUtils.sendError(event.message)
+            sendError(event.message)
             return
         }
 
@@ -55,25 +55,25 @@ class JoinCommand : MusicCommand() {
         val lavalink = getLavalinkManager()
 
         if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
-            MessageUtils.sendMsg(event, "I'm already in a channel.")
+            sendMsg(event, "I'm already in a channel.")
             return
         }
 
         try {
             lavalink.openConnection(vc)
-            MusicCommand.addCooldown(guild.idLong)
-            MessageUtils.sendSuccess(event.message)
+            addCooldown(guild.idLong)
+            sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                MessageUtils.sendMsg(event, "I don't have permission to join `${vc?.name}`")
+                sendMsg(event, "I don't have permission to join `${vc?.name}`")
             } else {
-                MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
+                sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
         }
 
     }
 
-    override fun help(): String = "Makes the bot join the voice channel that you are in."
+    override fun help(prefix: String): String? = "Makes the bot join the voice channel that you are in."
 
     override fun getName(): String = "join"
 

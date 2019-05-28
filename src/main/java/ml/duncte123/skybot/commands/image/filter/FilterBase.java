@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 public abstract class FilterBase extends ImageCommandBase {
@@ -60,8 +60,8 @@ public abstract class FilterBase extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Overlays a " + getFilterName() + " filter to the provided image.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [image url]`";
+            "Usage: `" + prefix + getName() + " [image url]`";
     }
 }

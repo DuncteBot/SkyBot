@@ -28,7 +28,8 @@ class JSONQuoter {
         synchronized (sw.getBuffer()) {
             try {
                 return quote(string, sw).toString();
-            } catch (IOException ignored) {
+            }
+            catch (IOException ignored) {
                 // will never happen - we are writing to a string writer
                 return "";
             }

@@ -24,8 +24,8 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -70,7 +70,7 @@ public class LoadingBarCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Displays a progress bar that shows how much of the year has passed";
     }
 }
