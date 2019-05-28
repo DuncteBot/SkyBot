@@ -22,7 +22,6 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
@@ -36,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.canNotProceed;
 import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.cannotInteractWithEmote;
 
 public class LockEmoteCommand extends Command {
@@ -50,13 +50,7 @@ public class LockEmoteCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
-        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
-            sendMsg(event, "You need administrator perms to run this command.");
-            return;
-        }
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
-            sendMsg(event, "I need the manage emotes permission in order to lock the emotes to roles");
+        if (canNotProceed(ctx)) {
             return;
         }
 

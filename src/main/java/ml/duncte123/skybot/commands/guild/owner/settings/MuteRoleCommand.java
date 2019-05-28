@@ -18,72 +18,53 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.commands.guild.owner.settings.AutoRoleCommand.getFoundRoleOrNull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MuteRoleCommand extends SettingsBase {
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
+        if (rolePermCheck(ctx)) {
             return;
         }
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + ctx.getPrefix() + "spamrole <role name/disable>`");
+            sendMsg(ctx, "Incorrect usage: `" + ctx.getPrefix() + "spamrole <role name/disable>`");
             return;
         }
 
 
         if ("disable".equals(args.get(0))) {
-            sendMsg(event, "SpamRole feature & SpamFilter has been disabled");
+            sendMsg(ctx, "SpamRole feature & SpamFilter has been disabled");
             //Never clean the role's id so activating the filter wont cause issues.
             //GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(0L));
             guild.setSettings(settings.setEnableSpamFilter(false));
             return;
         }
 
-        final List<Role> selfRoles = ctx.getSelfMember().getRoles();
+        final Role foundRole = getFoundRoleOrNull(ctx);
 
-        if (selfRoles.isEmpty()) {
-            sendMsg(event, "I need a role above the specified role in order for this feature to work.");
+        if (foundRole == null) {
             return;
         }
 
-        final List<Role> foundRoles = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
-            .stream().filter(
-                (role) -> role.getPosition() < selfRoles.get(0).getPosition()
-            ).collect(Collectors.toList());
-
-        if (foundRoles.isEmpty()) {
-            sendMsg(event, "I'm sorry but I could not find any roles for your input, " +
-                "make sure that the target role is below my role.");
-            return;
-        }
-
-        final Role foundRole = foundRoles.get(0);
         guild.setSettings(settings.setMuteRoleId(foundRole.getIdLong()));
 
-        sendMsg(event, "SpamRole has been set to " + foundRole.getAsMention());
+        sendMsg(ctx, "SpamRole has been set to " + foundRole.getAsMention());
     }
 
     @Override

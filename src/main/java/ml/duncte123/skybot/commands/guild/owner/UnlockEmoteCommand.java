@@ -46,13 +46,7 @@ public class UnlockEmoteCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
-        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
-            sendMsg(event, "You need administrator perms to run this command.");
-            return;
-        }
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
-            sendMsg(event, "I need the manage emotes permission in order to lock the emotes to roles");
+        if (canNotProceed(ctx)) {
             return;
         }
 
@@ -86,6 +80,21 @@ public class UnlockEmoteCommand extends Command {
         return "Unlocks an emote if it was locked\n" +
             "Usage: `" + prefix + getName() + " <:emote:>`\n" +
             "Please note that you have to mention the emote due the bot not caching emotes for their names";
+    }
+
+    static boolean canNotProceed(CommandContext ctx) {
+        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
+            sendMsg(ctx, "You need administrator perms to run this command.");
+            return true;
+        }
+
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
+            sendMsg(ctx, "I need the manage emotes permission in order to lock the emotes to roles");
+
+            return true;
+        }
+
+        return false;
     }
 
     static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {

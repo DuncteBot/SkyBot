@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,24 @@ abstract class SettingsBase extends Command {
     }
 
     public abstract void run(@Nonnull CommandContext ctx);
+
+    boolean rolePermCheck(CommandContext ctx) {
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+            sendMsg(ctx, "I need the _Manage Roles_ permission in order for this feature to work.");
+
+            return true;
+        }
+
+        final List<Role> selfRoles = ctx.getSelfMember().getRoles();
+
+        if (selfRoles.isEmpty()) {
+            sendMsg(ctx, "I need a role above the specified role in order for this feature to work.");
+
+            return true;
+        }
+
+        return false;
+    }
 
     @Nullable
     protected TextChannel findTextChannel(@Nonnull CommandContext ctx) {
