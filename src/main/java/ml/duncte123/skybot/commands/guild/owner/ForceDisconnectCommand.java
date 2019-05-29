@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -53,7 +54,7 @@ public class ForceDisconnectCommand extends MusicCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Force disconnects the bot from music for when the bot is stuck";
     }
 

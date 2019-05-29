@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class DidYouMeanCommand extends NoPatronImageCommand {
@@ -47,8 +47,8 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Did you type your search wrong?\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <Top text>|<Bottom text>`";
+            "Usage: `" + prefix + getName() + " <Top text>|<Bottom text>`";
     }
 }

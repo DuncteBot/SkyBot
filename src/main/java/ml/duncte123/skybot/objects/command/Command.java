@@ -92,7 +92,7 @@ public abstract class Command implements ICommand {
      *
      * @return true if the user is a patron
      */
-    protected boolean isPatron(@Nonnull User u, TextChannel tc) {
+    protected static boolean isPatron(@Nonnull User u, TextChannel tc) {
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
@@ -125,12 +125,12 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    private boolean isPatron(@Nonnull User u, TextChannel tc, boolean reply) {
+    private static boolean isPatron(@Nonnull User u, TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
-    private boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+    private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
 
         if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
@@ -157,17 +157,17 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    protected boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event, boolean reply) {
+    protected static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event, boolean reply) {
         final boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
-    protected boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent e) {
+    protected static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent e) {
         return isUserOrGuildPatron(e, true);
     }
 
 
-    protected boolean isDev(@Nonnull User u) {
+    protected static boolean isDev(@Nonnull User u) {
         return Settings.developers.contains(u.getIdLong());
     }
 
@@ -196,6 +196,6 @@ public abstract class Command implements ICommand {
 
         final Command command = (Command) obj;
 
-        return this.help().equals(command.help()) && this.getName().equals(command.getName());
+        return this.help(Settings.OTHER_PREFIX).equals(command.help(Settings.OTHER_PREFIX)) && this.getName().equals(command.getName());
     }
 }

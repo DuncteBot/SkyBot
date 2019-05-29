@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
@@ -41,7 +40,7 @@ class ReverseCommand : Command() {
 
     override fun getName() = "reverse"
 
-    override fun help() = """reverses a string
-        |Usage: `${Settings.PREFIX}$name <text>`
+    override fun help(prefix: String): String? = """reverses a string
+        |Usage: `$prefix$name <text>`
     """.trimMargin()
 }

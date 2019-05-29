@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.Author;
+
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -32,10 +33,10 @@ public interface ICommand {
         return new String[0];
     }
 
-    String help();
+    String help(String prefix);
 
-    default String help(String invoke) {
-        return help();
+    default String help(String invoke, String prefix) {
+        return help(prefix);
     }
 
     CommandCategory getCategory();

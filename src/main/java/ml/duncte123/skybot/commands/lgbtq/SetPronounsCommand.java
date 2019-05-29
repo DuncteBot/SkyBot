@@ -19,13 +19,12 @@
 package ml.duncte123.skybot.commands.lgbtq;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +54,7 @@ public class SetPronounsCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <pronouns> [--plural]`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <pronouns> [--plural]`");
             return;
         }
 
@@ -63,7 +62,7 @@ public class SetPronounsCommand extends Command {
         final Matcher matcher = pattern.matcher(ctx.getArgsRaw());
 
         if (!matcher.matches()) {
-            sendMsg(event, "Incorrect format, check `" + Settings.PREFIX + "help " + getName() + '`');
+            sendMsg(event, "Incorrect format, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return;
         }
 
@@ -102,9 +101,9 @@ public class SetPronounsCommand extends Command {
     }
 
     @Override
-    public String help() {
-        return "Set your pronouns to people can check them with `" + Settings.PREFIX + "pronounscheck`\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <pronouns> [--plural]`\n" +
+    public String help(String prefix) {
+        return "Set your pronouns to people can check them with `" + prefix + "pronounscheck`\n" +
+            "Usage: `" + prefix + getName() + " <pronouns> [--plural]`\n" +
             "Examples of pronouns are:\n" +
             "```they/them/their/theirs\n" +
             "she/her/her/hers\n" +

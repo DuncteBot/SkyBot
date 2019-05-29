@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class FactsCommand extends NoPatronImageCommand {
@@ -39,8 +39,8 @@ public class FactsCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Show show the facts\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+            "Usage: `" + prefix + getName() + " <text>`";
     }
 }

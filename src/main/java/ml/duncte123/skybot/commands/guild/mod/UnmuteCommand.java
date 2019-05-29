@@ -18,15 +18,14 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -45,14 +44,14 @@ public class UnmuteCommand extends ModBaseCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty() || args.isEmpty()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user>`");
+            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user>`");
             return;
         }
 
         final Member toMute = mentioned.get(0);
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `db!muterole <Role>` to set it");
+            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");
             return;
         }
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
@@ -86,8 +85,8 @@ public class UnmuteCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Unmutes a user if they are muted\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user>`";
+            "Usage: `" + prefix + getName() + " <@user>`";
     }
 }

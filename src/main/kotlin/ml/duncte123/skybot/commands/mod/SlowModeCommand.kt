@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
@@ -80,8 +79,8 @@ class SlowModeCommand : ModBaseCommand() {
 
     override fun getName() = "slowmode"
 
-    override fun help() = """Enable slowmode on in the current channel.
-        |Usage: `${Settings.PREFIX}$name <seconds (1-120)>`
-        |Use `${Settings.PREFIX}$name off` to turn slowmode off
+    override fun help(prefix: String): String? = """Enable slowmode on in the current channel.
+        |Usage: `$prefix$name <seconds (1-120)>`
+        |Use `$prefix$name off` to turn slowmode off
     """.trimMargin()
 }

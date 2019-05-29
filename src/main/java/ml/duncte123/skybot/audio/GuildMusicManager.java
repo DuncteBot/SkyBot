@@ -34,10 +34,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GuildMusicManager {
 
     /**
-     * This is the text channel were we will announce our songs
-     */
-    private final AtomicLong lastChannel = new AtomicLong(-1);
-    /**
      * This is our player
      */
     public final IPlayer player;
@@ -45,6 +41,10 @@ public class GuildMusicManager {
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
+    /**
+     * This is the text channel were we will announce our songs
+     */
+    private final AtomicLong lastChannel = new AtomicLong(-1);
     private final GuildSettings settings;
 
     /**

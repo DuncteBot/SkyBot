@@ -61,7 +61,7 @@ class ReaddCommand : MusicCommand() {
         sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
     }
 
-    override fun help() = "Readd the current track to the end of the queue"
+    override fun help(prefix: String): String? = "Readd the current track to the end of the queue"
 
     override fun getName() = "readd"
 }

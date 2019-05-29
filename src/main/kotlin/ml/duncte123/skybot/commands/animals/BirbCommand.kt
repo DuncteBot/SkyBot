@@ -48,7 +48,7 @@ class BirbCommand : Command() {
 
     override fun getName() = "birb"
 
-    override fun help() = "Here is a birb"
+    override fun help(prefix: String): String? = "Here is a birb"
 
     override fun getAliases() = arrayOf("bird")
 }

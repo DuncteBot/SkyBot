@@ -28,10 +28,10 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -226,7 +226,7 @@ public class GuildUtils {
                 Command.oneGuildPatrons.put(userId, guildId);
             }
 
-            return  null;
+            return null;
         });
     }
 }

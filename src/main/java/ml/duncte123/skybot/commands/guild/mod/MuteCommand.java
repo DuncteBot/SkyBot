@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
@@ -44,14 +43,14 @@ public class MuteCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <reason>`");
+            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <reason>`");
             return;
         }
 
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `db!muterole <Role>` to set it");
+            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
             return;
         }
 
@@ -75,9 +74,9 @@ public class MuteCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Mute a user.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <reason>`";
+            "Usage: `" + prefix + getName() + " <@user> <reason>`";
     }
 
     @Override

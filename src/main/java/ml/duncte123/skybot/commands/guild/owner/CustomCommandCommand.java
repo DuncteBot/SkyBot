@@ -22,7 +22,6 @@ import kotlin.Triple;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -60,7 +59,7 @@ public class CustomCommandCommand extends Command {
         final CommandManager manager = ctx.getCommandManager();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Insufficient arguments use `db!help customcommand`");
+            sendMsg(event, "Insufficient arguments use `" + ctx.getPrefix() + "help customcommand`");
             return;
         }
 
@@ -70,12 +69,12 @@ public class CustomCommandCommand extends Command {
                 break;
 
             case 2:
-                deleteOrShowCustomCommand(args, event, manager);
+                deleteOrShowCustomCommand(args, event, manager, ctx.getPrefix());
                 //sendMsg(event, "Insufficient arguments");
                 break;
 
             default:
-                addOrEditCustomCommand(args, event, manager);
+                addOrEditCustomCommand(args, event, manager, ctx.getPrefix());
                 break;
         }
     }
@@ -95,11 +94,11 @@ public class CustomCommandCommand extends Command {
             sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
                 .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
-            sendMsg(event, "Insufficient arguments use `db!help customcommand`");
+            sendMsg(event, "Insufficient arguments use `" + ctx.getPrefix() + "help customcommand`");
         }
     }
 
-    private void deleteOrShowCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager) {
+    private void deleteOrShowCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager, String prefix) {
         final String commandName = args.get(1);
         final long guildid = event.getGuild().getIdLong();
 
@@ -133,14 +132,14 @@ public class CustomCommandCommand extends Command {
             }
             sendSuccess(msg);
         } else {
-            sendMsg(event, "Invalid arguments use `db!help customcommand`");
+            sendMsg(event, "Invalid arguments use `" + prefix + "help customcommand`");
         }
     }
 
-    private void addOrEditCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager) {
+    private void addOrEditCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager, String prefix) {
 
         if (args.size() < 3 && !systemInvokes.contains(args.get(0))) {
-            sendMsg(event, "Invalid arguments use `db!help customcommand`");
+            sendMsg(event, "Invalid arguments use `" + prefix + "help customcommand`");
             return;
         }
 
@@ -160,20 +159,15 @@ public class CustomCommandCommand extends Command {
         final long guildId = event.getGuild().getIdLong();
 
         if (commandExists(commandName, guildId, manager)) {
-
-            if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
-                sendMsg(event, "A command already exists for this server.");
-
-                return;
-            }
-            if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
-                sendMsg(event, "The command has been updated.");
-                return;
-            }
+            editCustomCommand(args, event, manager, commandName, commandAction, guildId);
 
             return;
         }
 
+        createCustomCommand(event, manager, commandName, commandAction, guildId);
+    }
+
+    private void createCustomCommand(GuildMessageReceivedEvent event, CommandManager manager, String commandName, String commandAction, long guildId) {
         try {
             final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
@@ -199,17 +193,28 @@ public class CustomCommandCommand extends Command {
         catch (DoomedException e) {
             sendMsg(event, "Could not add command: " + e.getMessage());
         }
+    }
 
+    private void editCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager, String commandName, String commandAction, long guildId) {
+        if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
+            sendMsg(event, "A command already exists for this server.");
+
+            return;
+        }
+
+        if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
+            sendMsg(event, "The command has been updated.");
+        }
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Create, run and delete custom commands\n" +
-            "`" + Settings.PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
-            "`" + Settings.PREFIX + getName() + " new <name> <text>` => Creates a new custom command\n" +
-            "`" + Settings.PREFIX + getName() + " edit <name> <text>` => Edits a custom command\n" +
-            "`" + Settings.PREFIX + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
-            "`" + Settings.PREFIX + getName() + " delete <name>` => Deletes a custom command";
+            "`" + prefix + getName() + " list` => Shows a list of all the custom commands\n" +
+            "`" + prefix + getName() + " new <name> <text>` => Creates a new custom command\n" +
+            "`" + prefix + getName() + " edit <name> <text>` => Edits a custom command\n" +
+            "`" + prefix + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
+            "`" + prefix + getName() + " delete <name>` => Deletes a custom command";
     }
 
     @Override

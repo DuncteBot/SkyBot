@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -58,8 +57,8 @@ class JokeCommand : Command() {
 
     }
 
-    override fun help() = "See a funny joke. Dad's love them!\n" +
-        "Usage: `${Settings.PREFIX}$name`"
+    override fun help(prefix: String) = "See a funny joke. Dad's love them!\n" +
+        "Usage: `$prefix$name`"
 
     override fun getName() = "joke"
 

@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class JokeoverheadCommand extends NoPatronImageCommand {
@@ -46,8 +46,8 @@ public class JokeoverheadCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "You just got wooshed\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [@user/url]`";
+            "Usage: `" + prefix + getName() + " [@user/url]`";
     }
 }

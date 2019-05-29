@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.music
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
@@ -64,5 +63,5 @@ class SaveCommand : MusicCommand() {
 
     override fun getName() = "save"
 
-    override fun help() = "Saves a playlist into a file with can be loaded with ${Settings.PREFIX}load"
+    override fun help(prefix: String): String? = "Saves a playlist into a file with can be loaded with ${prefix}load"
 }

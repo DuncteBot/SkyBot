@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendError
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -31,29 +32,29 @@ class LeaveCommand : MusicCommand() {
         val guild = event.guild
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
-            MessageUtils.sendMsg(event, """I still have cooldown!
+            sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            MessageUtils.sendError(event.message)
+            sendError(event.message)
             return
         }
 
         val manager = getMusicManager(guild, ctx.audioUtils)
 
         if (!getLavalinkManager().isConnected(guild)) {
-            MessageUtils.sendMsg(event, "I'm not connected to any channels.")
+            sendMsg(event, "I'm not connected to any channels.")
             return
         }
 
         manager.player.stopTrack()
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
-        MusicCommand.addCooldown(guild.idLong)
+        addCooldown(guild.idLong)
 
-        MessageUtils.sendMsg(event, "Leaving your channel")
+        sendMsg(event, "Leaving your channel")
 
     }
 
-    override fun help(): String = "Makes the bot leave your channel."
+    override fun help(prefix: String): String? = "Makes the bot leave your channel."
 
     override fun getName(): String = "leave"
 

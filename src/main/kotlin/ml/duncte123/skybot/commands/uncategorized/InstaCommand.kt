@@ -21,20 +21,17 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class InstaCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
-
         val args = ctx.args
         val event = ctx.event
 
-
         if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Correct usage: `${Settings.PREFIX}$name <username>`")
+            MessageUtils.sendMsg(event, "Correct usage: `${ctx.prefix}$name <username>`")
             return
         }
 
@@ -63,7 +60,7 @@ class InstaCommand : Command() {
 
     override fun getName() = "insta"
 
-    override fun help() = """Get the latest picture of someones profile
-                    |Usage: `${Settings.PREFIX}$name <username>`
+    override fun help(prefix: String): String? = """Get the latest picture of someones profile
+                    |Usage: `$prefix$name <username>`
                 """.trimMargin()
 }

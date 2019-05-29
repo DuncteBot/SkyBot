@@ -19,14 +19,13 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class SetRateLimitsCommand extends SettingsBase {
         final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + Settings.PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
+            sendMsg(event, "Incorrect usage: `" + ctx.getPrefix() + "setratelimits <1|2|3|4|5|6/default>`");
             return;
         }
 
@@ -55,7 +54,7 @@ public class SetRateLimitsCommand extends SettingsBase {
 
         final long[] rates = GuildSettingsUtils.ratelimmitChecks(String.join("", args));
 
-        if (rates.length < 6 || rates.length > 6) {
+        if (rates.length != 6) {
             sendMsg(event, "Invalid rate limit settings");
             return;
         }
@@ -73,9 +72,9 @@ public class SetRateLimitsCommand extends SettingsBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <1|2|3|4|5|6>`\n" +
-            "Example: " + Settings.PREFIX + getName() + " 20|45|60|120|240|2400";
+            "Usage: `" + prefix + getName() + " <1|2|3|4|5|6>`\n" +
+            "Example: " + prefix + getName() + " 20|45|60|120|240|2400";
     }
 }

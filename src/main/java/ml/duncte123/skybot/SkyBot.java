@@ -124,9 +124,9 @@ public final class SkyBot {
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
-                .connectTimeout(30L, TimeUnit.SECONDS)
-                .readTimeout(30L, TimeUnit.SECONDS)
-                .writeTimeout(30L, TimeUnit.SECONDS)
+                    .connectTimeout(30L, TimeUnit.SECONDS)
+                    .readTimeout(30L, TimeUnit.SECONDS)
+                    .writeTimeout(30L, TimeUnit.SECONDS)
             )
             .build();
 

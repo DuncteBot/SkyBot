@@ -33,5 +33,5 @@ class RolesCommand : Command() {
 
     override fun getName() = "roles"
 
-    override fun help() = "Returns a list of roles in the server"
+    override fun help(prefix: String): String? = "Returns a list of roles in the server"
 }

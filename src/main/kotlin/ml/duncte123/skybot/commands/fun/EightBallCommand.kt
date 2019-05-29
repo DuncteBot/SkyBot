@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -54,7 +53,7 @@ class EightBallCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         if (ctx.argsWithQuotes.isEmpty()) {
-            sendMsg(ctx, "Missing arguments: `${Settings.PREFIX}$name <question>`")
+            sendMsg(ctx, "Missing arguments: `${ctx.prefix}$name <question>`")
 
             return
         }
@@ -64,7 +63,7 @@ class EightBallCommand : Command() {
 
     override fun getName() = "8ball"
 
-    override fun help() = """Ask a question to the 8ball
-        |Usage: `${Settings.PREFIX}$name <question>`
+    override fun help(prefix: String): String? = """Ask a question to the 8ball
+        |Usage: `$prefix$name <question>`
     """.trimMargin()
 }

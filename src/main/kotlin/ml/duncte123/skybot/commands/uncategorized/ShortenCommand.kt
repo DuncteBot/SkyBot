@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.isURL
@@ -35,7 +34,7 @@ class ShortenCommand : Command() {
         val args = ctx.args
 
         if (args.isEmpty() || args[0].isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <link to shorten>`")
+            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <link to shorten>`")
             return
         }
 
@@ -51,8 +50,8 @@ class ShortenCommand : Command() {
         })
     }
 
-    override fun help(): String = """Shortens a url
-            |Usage: `${Settings.PREFIX}$name <link to shorten>`""".trimMargin()
+    override fun help(prefix: String): String? = """Shortens a url
+            |Usage: `$prefix$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"
 

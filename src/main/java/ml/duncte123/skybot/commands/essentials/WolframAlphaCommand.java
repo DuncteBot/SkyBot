@@ -31,8 +31,8 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.editMsg;
@@ -154,7 +154,7 @@ public class WolframAlphaCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Ask Wolfram|Alpha all your geeky questions";
     }
 

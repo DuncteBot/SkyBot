@@ -20,10 +20,9 @@ package ml.duncte123.skybot.commands.`fun`
 
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -78,13 +77,13 @@ class ChatCommand : Command() {
         val event = ctx.event
 
         if (event.message.contentRaw.contains("prefix")) {
-            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                .replace("{PREFIX}", ctx.guildSettings.customPrefix))
+            sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
+                .replace("{PREFIX}", ctx.prefix))
             return
         }
 
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <message>`")
+            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <message>`")
             return
         }
 
@@ -113,10 +112,10 @@ class ChatCommand : Command() {
             response = parseATags(response, withAds)
             if (withAds) {
                 response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/DuncteBot)."
-                MessageUtils.sendMsg(event, MessageBuilder().append(event.author)
+                sendMsg(event, MessageBuilder().append(event.author)
                     .setEmbed(EmbedUtils.embedMessage(response).build()).build())
             } else {
-                MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+                sendMsg(event, "${event.author.asMention}, $response")
             }
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
@@ -156,8 +155,8 @@ class ChatCommand : Command() {
         return message
     }
 
-    override fun help() = "Have a chat with dunctebot\n" +
-        "Usage: `${Settings.PREFIX}$name <message>`"
+    override fun help(prefix: String) = "Have a chat with dunctebot\n" +
+        "Usage: `$prefix$name <message>`"
 
     override fun getName() = "chat"
 }
@@ -182,8 +181,7 @@ class ChatSession(userId: Long) {
         WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
             try {
                 response.invoke(xPathSearch(it, "//result/that/text()"))
-            }
-            catch(e: Exception) {
+            } catch (e: Exception) {
                 response.invoke("""An Error occurred, please report this message my developers
                     |```
                     |${e.message}

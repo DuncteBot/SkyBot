@@ -84,7 +84,7 @@ class IssueCommand : Command() {
         }
     }
 
-    override fun help(): String = """Reports heavy and weird issues to the developers.
+    override fun help(prefix: String): String? = """Reports heavy and weird issues to the developers.
         |This will create an invite to your server, so we can join and help you directly.
         |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
     """.trimMargin()

@@ -31,8 +31,8 @@ public class ComparatingUtils {
      * @param t
      *         something
      *
-     * @deprecated Should be replaced with sentry
      * @see io.sentry.Sentry#capture(Throwable)
+     * @deprecated Should be replaced with sentry
      */
     @Deprecated()
     @ReplaceWith(value = "io.sentry.Sentry#capture(Throwable)")

@@ -31,8 +31,8 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,7 +92,7 @@ public class ShardInfoCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Get information about all things shards";
     }
 

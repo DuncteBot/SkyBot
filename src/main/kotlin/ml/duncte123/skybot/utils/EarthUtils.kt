@@ -37,7 +37,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.time.OffsetDateTime
 import java.util.concurrent.ThreadLocalRandom
 
-
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class EarthUtils {
@@ -274,7 +273,7 @@ class EarthUtils {
                     embed.setDescription(text)
                 }
 
-                if (post.has("preview")){
+                if (post.has("preview")) {
                     val imagesO = post.get("preview")
                     val images = imagesO.get("images")
 

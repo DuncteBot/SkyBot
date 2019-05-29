@@ -19,8 +19,8 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -42,8 +42,8 @@ public class AchievementCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "You got an achievement!\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+            "Usage: `" + prefix + getName() + " <text>`";
     }
 }

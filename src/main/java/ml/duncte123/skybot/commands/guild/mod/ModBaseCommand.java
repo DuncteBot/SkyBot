@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.StringUtils;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -68,7 +67,7 @@ public abstract class ModBaseCommand extends Command {
         }
 
         if (argscheck && args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + '`');
+            sendMsg(event, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
 
             return;
         }

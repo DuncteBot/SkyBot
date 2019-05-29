@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
@@ -29,8 +28,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.util.*
-import kotlin.collections.ArrayList
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
@@ -52,7 +49,7 @@ class RadioCommand : MusicCommand() {
 
         when (ctx.args.size) {
             0 -> {
-                sendMsg(event, "Insufficient args, usage: `${Settings.PREFIX}$name <(full)list/station name>`")
+                sendMsg(event, "Insufficient args, usage: `${ctx.prefix}$name <(full)list/station name>`")
             }
             1 -> {
                 when (ctx.args[0]) {
@@ -72,22 +69,21 @@ class RadioCommand : MusicCommand() {
                             return
                         }
 
-                        mng.player.stopTrack();
+                        mng.player.stopTrack()
                         scheduler.queue.clear()
                         ctx.audioUtils.loadAndPlay(mng, radio.url, ctx)
                     }
                 }
             }
             else -> {
-                sendErrorWithMessage(event.message, "The stream name is too long! Type `${Settings.PREFIX}$name (full)list` for a list of available streams!")
+                sendErrorWithMessage(event.message, "The stream name is too long! Type `${ctx.prefix}$name (full)list` for a list of available streams!")
             }
         }
     }
 
-    override fun help(): String = """Adds a radio http stream to your queue and goes to it!
-        |**YOU HAVE TO UPVOTE!**
+    override fun help(prefix: String): String? = """Adds a radio http stream to your queue and goes to it!
         |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
-        |Usage: `${Settings.PREFIX}$name <(full)list/station name>`""".trimMargin()
+        |Usage: `$prefix$name <(full)list/station name>`""".trimMargin()
 
     override fun getName(): String = "radio"
 

@@ -19,12 +19,11 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,9 +78,9 @@ public class HackbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Ban a user before he/she can join your guild.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <userId...>`";
+            "Usage: `" + prefix + getName() + " <userId...>`";
     }
 
     @Override

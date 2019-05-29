@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,6 +29,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
@@ -48,7 +48,7 @@ public class AnnounceCommand extends ModBaseCommand {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (event.getMessage().getMentionedChannels().isEmpty()) {
-            sendMsg(event, "Correct usage is `" + Settings.PREFIX + getName() + " <#Channel> <Message>`");
+            sendMsg(event, "Correct usage is `" + ctx.getPrefix() + getName() + " <#Channel> <Message>`");
             return;
         }
 
@@ -99,9 +99,9 @@ public class AnnounceCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Announces a message.\n" +
-            "Usage `" + Settings.PREFIX + getName() + " <#channel> <message>`";
+            "Usage `" + prefix + getName() + " <#channel> <message>`";
     }
 
     @Override

@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -49,7 +50,7 @@ public class KittyCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "A alternative cat command with more kitties";
     }
 

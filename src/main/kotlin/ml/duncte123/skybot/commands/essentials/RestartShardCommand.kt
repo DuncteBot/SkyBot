@@ -96,7 +96,7 @@ class RestartShardCommand : Command() {
         }
     }
 
-    override fun help() = "Restart the bot or a shard\nUsage: ${Settings.PREFIX}$name [shard id]`"
+    override fun help(prefix: String): String? = "Restart the bot or a shard\nUsage: $prefix$name [shard id]`"
 
     override fun getName() = "restartshard"
 

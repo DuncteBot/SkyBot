@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -31,7 +30,6 @@ import net.dv8tion.jda.core.exceptions.HierarchyException;
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
@@ -51,7 +49,7 @@ public class KickCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
+            MessageUtils.sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> [Reason]");
             return;
         }
 
@@ -96,9 +94,9 @@ public class KickCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Kicks a user.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> [reason]`";
+            "Usage: `" + prefix + getName() + " <@user> [reason]`";
     }
 
     @Override

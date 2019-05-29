@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -27,8 +26,8 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -76,7 +75,7 @@ public class CleanupCommand extends ModBaseCommand {
                 }
                 if (total < 1 || total > 1000) {
                     sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
-                        "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`");
+                        "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`");
                     return;
                 }
             }
@@ -123,10 +122,10 @@ public class CleanupCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Performs a cleanup in the channel where the command is run.\n" +
-            "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " [ammount] [keep-pinned] [bots-only]`";
+            "To clear an entire channel it's better to use `" + prefix + "purgechannel`\n" +
+            "Usage: `" + prefix + getName() + " [ammount] [keep-pinned] [bots-only]`";
     }
 
     @Override

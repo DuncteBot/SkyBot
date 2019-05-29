@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import javax.annotation.Nonnull;
 
 import static java.awt.Color.decode;
@@ -56,7 +57,7 @@ public class ColorCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Shows a random colour.";
     }
 

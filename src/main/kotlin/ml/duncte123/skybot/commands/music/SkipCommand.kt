@@ -77,7 +77,8 @@ class SkipCommand : MusicCommand() {
         mng.lastChannel = event.channel.idLong
     }
 
-    override fun help(): String = "Skips the current track."
+    override fun help(prefix: String): String? = "Skips the current track.\n" +
+        "Usage: `$prefix$name [skip amount]`"
 
     override fun getName(): String = "skip"
 

@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class ScrollCommand extends ImageCommandBase {
@@ -39,8 +39,8 @@ public class ScrollCommand extends ImageCommandBase {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "The scroll of truth\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+            "Usage: `" + prefix + getName() + " <text>`";
     }
 }

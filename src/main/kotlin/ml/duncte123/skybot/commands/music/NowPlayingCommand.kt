@@ -67,7 +67,7 @@ class NowPlayingCommand : MusicCommand() {
         sendEmbed(event, msg)
     }
 
-    override fun help(): String = "Prints information about the currently playing song (title, current time)"
+    override fun help(prefix: String): String? = "Prints information about the currently playing song (title, current time)"
 
     override fun getName(): String = "nowplaying"
 

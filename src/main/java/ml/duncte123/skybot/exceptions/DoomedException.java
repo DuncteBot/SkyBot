@@ -19,7 +19,8 @@
 package ml.duncte123.skybot.exceptions;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.utils.AirUtils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Made this for the memes
@@ -51,6 +52,21 @@ public class DoomedException extends SecurityException {
 
     @Override
     public String toString() {
-        return "skybot.exceptions." + AirUtils.flipTable() + ": " + getMessage();
+        return "skybot.exceptions." + flipTable() + ": " + getMessage();
+    }
+
+    private String flipTable() {
+        switch (ThreadLocalRandom.current().nextInt(4)) {
+            case 0:
+                return "(╯°□°)╯︵┻━┻";
+            case 1:
+                return "(ノ゜Д゜)ノ︵┻━┻";
+            case 2:
+                return "(ノಥ益ಥ)ノ︵┻━┻";
+            case 3:
+                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+            default:
+                return "I CAN'T FLIP THIS TABLE";
+        }
     }
 }

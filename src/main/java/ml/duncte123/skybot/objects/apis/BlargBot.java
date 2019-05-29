@@ -82,7 +82,7 @@ public class BlargBot {
             IOHelper::read
         );
     }
-    
+
     private String jsonToString(JsonNode body) {
         try {
             return mapper.writeValueAsString(body);

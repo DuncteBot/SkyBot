@@ -89,7 +89,7 @@ object CommandTransformers {
     }
 
     private fun parseHelp(cmd: ICommand): String {
-        var s = cmd.help()
+        var s = cmd.help(Settings.PREFIX)
             .replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")

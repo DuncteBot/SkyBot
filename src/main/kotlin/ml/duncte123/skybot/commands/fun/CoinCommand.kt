@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.`fun`
 import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -42,7 +41,7 @@ class CoinCommand : Command() {
         }
     }
 
-    override fun help() = "flips a coin.\nUsage: `${Settings.PREFIX}$name`"
+    override fun help(prefix: String): String? = "flips a coin.\nUsage: `$prefix$name`"
 
     override fun getName() = "coin"
 

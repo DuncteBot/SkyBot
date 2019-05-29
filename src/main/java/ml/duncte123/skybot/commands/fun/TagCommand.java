@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.fun;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
@@ -58,8 +57,7 @@ public class TagCommand extends Command {
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(ctx, "Missing arguments, check `" +
-                ctx.getGuildSettings().getCustomPrefix() + ctx.getInvoke() + " help`");
+            sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + ctx.getInvoke() + " help`");
 
             return;
         }
@@ -96,8 +94,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" +
-            ctx.getGuildSettings().getCustomPrefix() + ctx.getInvoke() + " help`");
+        sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" + ctx.getPrefix() + ctx.getInvoke() + " help`");
     }
 
     private boolean handleTwoArgs(CommandContext ctx, String subCmd) {
@@ -313,9 +310,9 @@ public class TagCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Store it in a tag\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
+            "Usage: `" + prefix + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
             "The tags follow the same parsing as custom commands and the join/leave messages";
     }
 

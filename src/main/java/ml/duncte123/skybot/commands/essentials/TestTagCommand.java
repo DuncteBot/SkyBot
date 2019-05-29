@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -44,7 +43,7 @@ public class TestTagCommand extends Command {
     public void executeCommand(@Nonnull CommandContext ctx) {
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Usage: `" + getName() + " <JagTag syntax>");
+            sendMsg(ctx.getEvent(), "Usage: `" + ctx.getPrefix() + getName() + " <JagTag syntax>");
             return;
         }
 
@@ -81,8 +80,8 @@ public class TestTagCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Test your jagtag format before you save it as custom command etc.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <JagTag syntax>`";
+            "Usage: `" + prefix + getName() + " <JagTag syntax>`";
     }
 }

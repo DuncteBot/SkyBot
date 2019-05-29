@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
 
 public class CaptchaCommand extends NoPatronImageCommand {
@@ -39,8 +39,8 @@ public class CaptchaCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Checks if you are a robot\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+            "Usage: `" + prefix + getName() + " <text>`";
     }
 }

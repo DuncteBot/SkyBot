@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.essentials;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -45,7 +44,7 @@ public class TranslateCommand extends Command {
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <destination language code> <text>`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <destination language code> <text>`");
             return;
         }
 
@@ -71,8 +70,8 @@ public class TranslateCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Translate a text from English to another language\n"
-            + "Usage: `" + Settings.PREFIX + getName() + " <destination language> <text>`";
+            + "Usage: `" + prefix + getName() + " <destination language> <text>`";
     }
 }

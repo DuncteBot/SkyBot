@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -27,8 +26,8 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,18 +46,12 @@ public class UnlockEmoteCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
-        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
-            sendMsg(event, "You need administrator perms to run this command.");
-            return;
-        }
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
-            sendMsg(event, "I need the manage emotes permission in order to lock the emotes to roles");
+        if (canNotProceed(ctx)) {
             return;
         }
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote/emote name>`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote/emote name>`");
             return;
         }
 
@@ -83,10 +76,25 @@ public class UnlockEmoteCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Unlocks an emote if it was locked\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <:emote:>`\n" +
+            "Usage: `" + prefix + getName() + " <:emote:>`\n" +
             "Please note that you have to mention the emote due the bot not caching emotes for their names";
+    }
+
+    static boolean canNotProceed(CommandContext ctx) {
+        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
+            sendMsg(ctx, "You need administrator perms to run this command.");
+            return true;
+        }
+
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
+            sendMsg(ctx, "I need the manage emotes permission in order to lock the emotes to roles");
+
+            return true;
+        }
+
+        return false;
     }
 
     static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {

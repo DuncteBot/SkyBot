@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils.sendError
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
@@ -39,7 +38,7 @@ class PPlayCommand : MusicCommand() {
         val mng = getMusicManager(guild, ctx.audioUtils)
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "To few arguments, use `${Settings.PREFIX}$name <media link>`")
+            sendMsg(event, "To few arguments, use `${ctx.prefix}$name <media link>`")
             return
         }
 
@@ -57,7 +56,7 @@ class PPlayCommand : MusicCommand() {
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
 
-    override fun help(): String = "Add a playlist to the queue."
+    override fun help(prefix: String): String? = "Add a playlist to the queue."
 
     override fun getName(): String = "pplay"
 }

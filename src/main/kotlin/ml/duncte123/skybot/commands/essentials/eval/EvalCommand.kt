@@ -196,15 +196,13 @@ class EvalCommand : Command() {
         }
     }
 
-    override fun help() = """Evaluate java code on the bot
-        |Usage: `${Settings.PREFIX}$name <java/groovy code>`
+    override fun help(prefix: String) = """Evaluate java code on the bot
+        |Usage: `$prefix$name <java/groovy code>`
     """.trimMargin()
 
     override fun getName() = "eval"
 
-    override fun getAliases(): Array<String> {
-        return arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
-    }
+    override fun getAliases() = arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
 
     /*fun toggleFilter(): Boolean {
         val ret = runIfNotOwner

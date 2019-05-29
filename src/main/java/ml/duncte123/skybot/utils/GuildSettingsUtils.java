@@ -259,8 +259,4 @@ public class GuildSettingsUtils {
             return 0L;
         }
     }
-
-    public static boolean toBool(int s) {
-        return s == 1;
-    }
 }

@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -57,8 +56,8 @@ class XkcdCommand : Command() {
 
     override fun getName() = "xkcd"
 
-    override fun help() = "Sends the latest xkcd comic\n" +
-        "Usage: `${Settings.PREFIX}$name [latest/random/number]`"
+    override fun help(prefix: String) = "Sends the latest xkcd comic\n" +
+        "Usage: `$prefix$name [latest/random/number]`"
 
     private fun sendComic(it: ObjectNode, ctx: CommandContext) {
         val embed = EmbedUtils.defaultEmbed()

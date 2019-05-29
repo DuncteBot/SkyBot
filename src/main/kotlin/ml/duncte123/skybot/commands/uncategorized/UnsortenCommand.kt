@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -36,7 +35,7 @@ class UnsortenCommand : Command() {
         val event = ctx.event
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Missing arguments: `${Settings.PREFIX}$name <short url>`")
+            sendMsg(event, "Missing arguments: `${ctx.prefix}$name <short url>`")
             return
         }
 
@@ -90,7 +89,7 @@ class UnsortenCommand : Command() {
 
     override fun getName() = "unshorten"
 
-    override fun help() = """Unshorten a short url
-        |Usage: `${Settings.PREFIX}$name <short url>`
+    override fun help(prefix: String): String? = """Unshorten a short url
+        |Usage: `$prefix$name <short url>`
     """.trimMargin()
 }

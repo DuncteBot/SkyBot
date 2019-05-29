@@ -44,9 +44,8 @@ import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     /**
      * This stores all our commands
      */

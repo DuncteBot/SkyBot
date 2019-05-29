@@ -23,7 +23,6 @@ import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtils.EncodingType;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -41,7 +40,7 @@ public class YodaSpeakCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <A sentence.>`");
+            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <A sentence.>`");
             return;
         }
 
@@ -67,9 +66,9 @@ public class YodaSpeakCommand extends Command {
     }
 
     @Override
-    public String help() {
+    public String help(String prefix) {
         return "Convert your sentences into yoda speak.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <A sentence.>`";
+            "Usage: `" + prefix + getName() + " <A sentence.>`";
     }
 
     @Override

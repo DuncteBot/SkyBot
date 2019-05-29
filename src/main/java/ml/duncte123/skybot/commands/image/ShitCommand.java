@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -56,25 +55,25 @@ public class ShitCommand extends NoPatronImageCommand {
     }
 
     @Override
-    public String help() {
-        return "`" + Settings.PREFIX + "shit <message>` => Exclaim that something is shit." +
-            "`" + Settings.PREFIX + "pluralshit <message>` => Exclaim that things are shit.";
+    public String help(String prefix) {
+        return "`" + prefix + "shit <message>` => Exclaim that something is shit." +
+            "`" + prefix + "pluralshit <message>` => Exclaim that things are shit.";
     }
 
     @Override
-    public String help(String invoke) {
-
+    public String help(String invoke, String prefix) {
         switch (invoke) {
             case "shit": {
                 return "Exclaim that something is shit.\n" +
-                    "Usage: `" + Settings.PREFIX + "shit <message>`";
+                    "Usage: `" + prefix + "shit <message>`";
             }
             case "pluralshit": {
                 return "Exclaim that things are shit.\n" +
-                    "Usage: `" + Settings.PREFIX + "pluralshit <message>`";
+                    "Usage: `" + prefix + "pluralshit <message>`";
+            }
+            default: {
+                return null;
             }
         }
-
-        return null;
     }
 }

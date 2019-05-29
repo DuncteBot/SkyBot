@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.entities.User
@@ -51,8 +50,8 @@ class AvatarCommand : Command() {
 
     override fun getName() = "avatar"
 
-    override fun help() = """Shows the avatar for a you or the specified user
-        |Usage: `${Settings.PREFIX}$name [@user]`
+    override fun help(prefix: String): String? = """Shows the avatar for a you or the specified user
+        |Usage: `$prefix$name [@user]`
     """.trimMargin()
 
 }

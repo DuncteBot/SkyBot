@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
@@ -82,7 +81,7 @@ class VoiceKickCommand : ModBaseCommand() {
 
     override fun getName() = "voicekick"
 
-    override fun help() = """Kicks a user from the voice channel
-        |Usage: `${Settings.PREFIX}$name <@user/voice channel>`
+    override fun help(prefix: String): String? = """Kicks a user from the voice channel
+        |Usage: `$prefix$name <@user/voice channel>`
     """.trimMargin()
 }
