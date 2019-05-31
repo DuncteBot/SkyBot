@@ -22,7 +22,6 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -67,7 +66,7 @@ public abstract class MusicCommand extends Command {
     public void executeCommand(@Nonnull CommandContext ctx) {
         if (this.withAutoJoin) {
             runWithAutoJoin(ctx);
-        } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {
+        } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils(), ctx.getPrefix())) {
             run(ctx);
         }
     }
@@ -79,7 +78,7 @@ public abstract class MusicCommand extends Command {
     private void runWithAutoJoin(@Nonnull CommandContext ctx) {
         if (isAbleToJoinChannel(ctx.getEvent())) {
             ctx.getCommandManager().getCommand("join").executeCommand(ctx);
-        } else if (!channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {
+        } else if (!channelChecks(ctx.getEvent(), ctx.getAudioUtils(), ctx.getPrefix())) {
             return;
         }
 
@@ -109,7 +108,7 @@ public abstract class MusicCommand extends Command {
      *
      * @return true if the checks pass
      */
-    protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply) {
+    private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply, String prefix) {
 
         if (!event.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(event, "Please join a voice channel first");
@@ -121,7 +120,7 @@ public abstract class MusicCommand extends Command {
 
         if (!lavalinkManager.isConnected(guild)) {
             if (reply) {
-                sendMsg(event, "I'm not in a voice channel, use `" + Settings.PREFIX + "join` to make me join a channel\n\n" +
+                sendMsg(event, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
                     "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
 
@@ -151,11 +150,11 @@ public abstract class MusicCommand extends Command {
      *
      * @return true if the checks pass
      */
-    protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils) {
-        return channelChecks(event, audioUtils, true);
+    private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, String prefix) {
+        return channelChecks(event, audioUtils, true, prefix);
     }
 
-    protected boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {
+    private boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {
         if (isUserOrGuildPatron(event, false)) {
             //If the member is not connected
             if (!event.getMember().getVoiceState().inVoiceChannel()) {
