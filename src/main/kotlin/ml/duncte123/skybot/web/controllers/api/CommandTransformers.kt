@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.ICommand
 object CommandTransformers {
 
     fun toJson(commandManager: CommandManager, mapper: ObjectMapper): Any {
-        val commands = commandManager.getCommandsList()
+        val commands = commandManager.getCommandsList().sortedBy { it.name }
         val output = mapper.createArrayNode()
 
         for (command in commands) {
