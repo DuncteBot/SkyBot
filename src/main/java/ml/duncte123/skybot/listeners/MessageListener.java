@@ -65,7 +65,7 @@ public class MessageListener extends BaseListener {
         }
 
         //We only want to respond to members/users
-        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null) {
+        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.isWebhookMessage()) {
             return;
         }
 
