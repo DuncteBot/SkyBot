@@ -37,7 +37,6 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.apache.http.MethodNotSupportedException
 import java.io.File
-import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -45,7 +44,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     private val connManager = SQLiteDatabaseConnectionManager(File("database.db"))
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
-        variables.database.run {
+        run {
             val customCommands = arrayListOf<CustomCommand>()
 
             connManager.use { manager ->
@@ -69,7 +68,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
-        variables.database.run {
+        run {
             val res = changeCommand(guildId, invoke, message, false)
 
             callback.invoke(res)
@@ -77,7 +76,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
-        variables.database.run {
+        run {
             val res = changeCommand(guildId, invoke, message, true)
 
             callback.invoke(res)
@@ -85,7 +84,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
-        variables.database.run {
+        run {
 
             connManager.use { manager ->
                 val con = manager.connection
@@ -102,7 +101,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
-        variables.database.run {
+        run {
 
             val settings = arrayListOf<GuildSettings>()
 
@@ -145,7 +144,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun addWordToBlacklist(guildId: Long, word: String) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -161,7 +160,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -177,7 +176,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun clearBlacklist(guildId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -191,7 +190,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteGuildSetting(guildId: Long) {
-        variables.database.run {
+        run {
 
             connManager.use { manager ->
                 val connection = manager.connection
@@ -202,7 +201,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -254,7 +253,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
-        variables.database.run {
+        run {
             val guildId = guildSettings.guildId
 
             connManager.use { manager ->
@@ -286,7 +285,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
-        variables.database.run {
+        run {
             val map = TLongIntHashMap()
 
             connManager.use { manager ->
@@ -305,7 +304,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -323,7 +322,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
-        variables.database.run {
+        run {
             val map = TLongLongHashMap()
 
             connManager.use { manager ->
@@ -341,7 +340,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -363,7 +362,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
         val map = TLongLongHashMap()
 
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -387,7 +386,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeOneGuildPatron(userId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val connection = manager.connection
 
@@ -398,7 +397,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val conn = manager.connection
 
@@ -420,7 +419,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val conn = manager.connection
 
@@ -443,7 +442,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
-        variables.database.run {
+        run {
             connManager.use {
                 val conn = it.connection
 
@@ -484,7 +483,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
-        variables.database.run {
+        run {
             val warnings = ArrayList<Warning>()
 
             connManager.use {
@@ -526,7 +525,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
-        variables.database.run {
+        run {
             val items = ArrayList<VcAutoRole>()
 
             connManager.use {
@@ -548,7 +547,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val conn = manager.connection
 
@@ -566,7 +565,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeVcAutoRole(voiceChannelId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val conn = manager.connection
 
@@ -582,7 +581,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeVcAutoRoleForGuild(guildId: Long) {
-        variables.database.run {
+        run {
             connManager.use { manager ->
                 val conn = manager.connection
 
@@ -597,7 +596,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun loadTags(callback: (List<Tag>) -> Unit) {
-        variables.database.run {
+        run {
             val tags = arrayListOf<Tag>()
 
             connManager.use {
@@ -605,7 +604,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 val res = conn.createStatement().executeQuery("SELECT * FROM tags")
 
-                while(res.next()) {
+                while (res.next()) {
                     val tag = Tag()
 
                     tag.owner_id = res.getLong("owner_id")
@@ -623,42 +622,33 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        variables.database.run {
+        run {
             connManager.use {
                 val conn = it.connection
 
-                try {
-                    val smt = conn.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
-                    smt.setLong(1, tag.owner_id)
-                    smt.setString(2, tag.name)
-                    smt.setString(3, tag.content)
+                val smt = conn.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
+                smt.setLong(1, tag.owner_id)
+                smt.setString(2, tag.name)
+                smt.setString(3, tag.content)
 
-                    smt.executeUpdate()
-                    smt.close()
+                smt.executeUpdate()
+                smt.close()
 
-                    callback.invoke(true, "")
-                } catch (e: SQLException) {
-                    callback.invoke(false, e.message ?: "Unknown reason")
-                }
+                callback.invoke(true, "")
             }
         }
     }
 
     override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        variables.database.run {
+        run {
             connManager.use {
                 val conn = it.connection
+                val smt = conn.prepareStatement("DELETE FROM tags where name = ?")
+                smt.setString(1, tag.name)
+                smt.executeUpdate()
+                smt.close()
 
-                try {
-                    val smt = conn.prepareStatement("DELETE FROM tags where name = ?")
-                    smt.setString(1, tag.name)
-                    smt.executeUpdate()
-                    smt.close()
-
-                    callback.invoke(true, "")
-                } catch (e: SQLException) {
-                    callback.invoke(false, e.message ?: "Unknown reason")
-                }
+                callback.invoke(true, "")
             }
         }
     }

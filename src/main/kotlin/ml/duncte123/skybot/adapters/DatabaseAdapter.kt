@@ -20,6 +20,7 @@ package ml.duncte123.skybot.adapters
 
 import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
+import io.sentry.Sentry
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Tag
@@ -29,9 +30,10 @@ import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import java.util.concurrent.Future
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val variables: Variables) {
+abstract class DatabaseAdapter(protected val variables: Variables) {
 
     //////////////////
     // Custom commands
@@ -138,4 +140,16 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
     abstract fun createTag(tag: Tag, callback: (Boolean, String) -> Unit)
 
     abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
+
+    protected fun run(r: Runnable) {
+        variables.database.run {
+            try {
+                r.run()
+            }
+            catch (thr: Throwable) {
+                Sentry.capture(thr)
+                thr.printStackTrace()
+            }
+        }
+    }
 }
