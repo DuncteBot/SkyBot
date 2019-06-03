@@ -59,6 +59,12 @@ class JoinCommand : MusicCommand() {
             return
         }
 
+        if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
+            sendMsg(event, "I cannot connect to <#${vc.id}>")
+
+            return
+        }
+
         try {
             lavalink.openConnection(vc)
             addCooldown(guild.idLong)
