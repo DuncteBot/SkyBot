@@ -221,12 +221,12 @@ public class CommandContext implements ICommandContext {
     }
 
     private String parseRawArgs(String in, boolean fixlines) {
-        final String out = in.replaceFirst(
+        final String prefixRemoved = in.replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
                 Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(this.getGuildSettings().getCustomPrefix()),
-            "")
-            .split("\\s+", 2)[1];
+            "");
+        final String out = prefixRemoved.substring(prefixRemoved.indexOf(this.invoke) + this.invoke.length()).trim();
 
         if (fixlines) {
             return out.replaceAll("\\\\n", "\n");
