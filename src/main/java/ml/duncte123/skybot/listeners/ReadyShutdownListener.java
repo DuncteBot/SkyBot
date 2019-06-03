@@ -128,12 +128,11 @@ public class ReadyShutdownListener extends MessageListener {
         MusicCommand.shutdown();
 
         //Kill other things
-        //((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
         if (unbanTimerRunning && isCacheCleanerActive) {
             this.systemPool.shutdown();
         }
 
-        AirUtils.stop(variables.getDatabase(), variables.getAudioUtils());
+        AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), event.getJDA().asBot().getShardManager());
         variables.getCommandManager().shutdown();
 
         /*

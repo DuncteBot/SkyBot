@@ -76,7 +76,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that may be using resources
-                    AirUtils.stop(ctx.variables.database, ctx.audioUtils)
+                    AirUtils.stop(ctx.variables.database, ctx.audioUtils, ctx.shardManager)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
@@ -96,7 +96,7 @@ class UpdateCommand : Command() {
         }
     }
 
-    override fun help(prefix: String) = "Update the bot and restart"
+    override fun help(prefix: String): String? = "Update the bot and restart"
 
     override fun getName() = "update"
 
@@ -143,10 +143,11 @@ class UpdateCommand : Command() {
                 event.channel.deleteMessageById(id).queue()
                 if (version.isNotEmpty()) {
                     // This will also shutdown eval
-                    event.jda.asBot().shardManager.shutdown()
+                    val shardManager = event.jda.asBot().shardManager
+                    shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop(database, audioUtils)
+                    AirUtils.stop(database, audioUtils, shardManager)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x64)

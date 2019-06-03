@@ -58,7 +58,7 @@ class DialogCommand : Command() {
         MessageUtils.sendMsg(ctx.event, sb.toString())
     }
 
-    override fun help(prefix: String) = "Gives you a nice dialog\n" +
+    override fun help(prefix: String): String? = "Gives you a nice dialog\n" +
         "Usage: `$prefix}$name <text>`"
 
     override fun getName() = "dialog"

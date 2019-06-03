@@ -196,7 +196,7 @@ class EvalCommand : Command() {
         }
     }
 
-    override fun help(prefix: String) = """Evaluate java code on the bot
+    override fun help(prefix: String): String? = """Evaluate java code on the bot
         |Usage: `$prefix$name <java/groovy code>`
     """.trimMargin()
 

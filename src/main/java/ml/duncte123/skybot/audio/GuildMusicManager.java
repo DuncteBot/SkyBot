@@ -54,9 +54,9 @@ public class GuildMusicManager {
      *         The guild that we want the manager for
      */
     public GuildMusicManager(Guild g, Variables variables) {
-        player = LavalinkManager.ins.createPlayer(g.getIdLong());
-        scheduler = new TrackScheduler(player, this);
-        player.addListener(scheduler);
+        this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
+        this.scheduler = new TrackScheduler(this.player, this);
+        this.player.addListener(this.scheduler);
         this.settings = GuildSettingsUtils.getGuild(g, variables);
     }
 
@@ -66,15 +66,15 @@ public class GuildMusicManager {
      * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
      */
     public AudioPlayerSenderHandler getSendHandler() {
-        return new AudioPlayerSenderHandler(player);
+        return new AudioPlayerSenderHandler(this.player);
     }
 
     boolean isAnnounceTracks() {
-        return settings.isAnnounceTracks();
+        return this.settings.isAnnounceTracks();
     }
 
     public long getLastChannel() {
-        return lastChannel.get();
+        return this.lastChannel.get();
     }
 
     public void setLastChannel(long lastChannel) {

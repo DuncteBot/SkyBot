@@ -30,9 +30,12 @@ import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
 import kotlin.math.floor
+import oshi.SystemInfo
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
+    private val oshi = SystemInfo().hardware.processor
+
     override fun executeCommand(ctx: CommandContext) {
 
         val shardManager = ctx.shardManager
@@ -44,7 +47,7 @@ class StatsCommand : Command() {
 
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
         val uptimeTime = Time(uptimeLong - 3600000)
-        val serverUptimeString = AirUtils.getSystemUptime()
+        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime, true)
         val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
@@ -89,7 +92,7 @@ class StatsCommand : Command() {
 
     override fun getName() = "stats"
 
-    override fun help(prefix: String) = "Shows some nerdy stats about the bot"
+    override fun help(prefix: String): String? = "Shows some nerdy stats about the bot"
 
     override fun getCategory() = CommandCategory.NERD_STUFF
 }

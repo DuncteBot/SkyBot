@@ -57,7 +57,7 @@ class JokeCommand : Command() {
 
     }
 
-    override fun help(prefix: String) = "See a funny joke. Dad's love them!\n" +
+    override fun help(prefix: String): String? = "See a funny joke. Dad's love them!\n" +
         "Usage: `$prefix$name`"
 
     override fun getName() = "joke"

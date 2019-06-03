@@ -38,7 +38,7 @@ class DeletCommand : WeebCommandBase() {
         }
     }
 
-    override fun help(prefix: String) = """Delet this
+    override fun help(prefix: String): String? = """Delet this
         |Usage: `$prefix$name`
     """.trimMargin()
 

@@ -61,7 +61,7 @@ class DeHoistCommand : Command() {
         sendSuccess(event.message)
     }
 
-    override fun help(prefix: String) = """De-hoists a user
+    override fun help(prefix: String): String? = """De-hoists a user
         |Usage: `$prefix$name <@user>`
     """.trimMargin()
 

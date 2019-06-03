@@ -155,7 +155,7 @@ class ChatCommand : Command() {
         return message
     }
 
-    override fun help(prefix: String) = "Have a chat with dunctebot\n" +
+    override fun help(prefix: String): String? = "Have a chat with dunctebot\n" +
         "Usage: `$prefix$name <message>`"
 
     override fun getName() = "chat"

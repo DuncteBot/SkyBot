@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
@@ -29,6 +30,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -36,10 +38,7 @@ import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Authors(authors = {
@@ -48,7 +47,6 @@ import java.util.regex.Pattern;
     @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class AirUtils {
-    private static final Pattern UNIX_UPTIME_PATTERN = Pattern.compile("(?:.*)up(.*)[0-9] users(?:.*)");
 
     /**
      * This will validate a link
@@ -164,19 +162,24 @@ public class AirUtils {
     /**
      * Stops everything
      */
-    public static void stop(DBManager database, AudioUtils audioUtils) {
+    public static void stop(DBManager database, AudioUtils audioUtils, ShardManager manager) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (final long key : temp.keys()) {
-
             final GuildMusicManager mng = audioUtils.musicManagers.get(key);
+            final Guild guild = manager.getGuildById(key);
+            final LavalinkManager lavalinkManager = LavalinkManager.ins;
 
             if (mng.player.getPlayingTrack() != null) {
                 mng.player.stopTrack();
             }
+
+            if (guild != null && lavalinkManager.isConnected(guild)) {
+                lavalinkManager.closeConnection(guild);
+            }
         }
 
-        database.getService().shutdown();
+        database.getService().shutdownNow();
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {
@@ -193,7 +196,7 @@ public class AirUtils {
      *
      * @return the channel
      */
-    public static TextChannel getLogChannel(String channelId, Guild guild) {
+    private static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
         final List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
@@ -219,30 +222,6 @@ public class AirUtils {
         }
 
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-    }
-
-    /**
-     * Returns the system uptime
-     *
-     * @return String lala
-     *
-     * @throws Exception
-     */
-    public static String getSystemUptime() throws Exception {
-        final String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
-//            Process uptimeProc = Runtime.getRuntime().exec("uptime | awk -F'( |,|:)+' '{print $6,$7\",\",$8,\"hours,\",$9,\"minutes\"}'");
-            final Process uptimeProc = Runtime.getRuntime().exec("uptime");
-            final BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
-            final String line = in.readLine();
-            if (line != null) {
-                final Matcher matcher = UNIX_UPTIME_PATTERN.matcher(line);
-                if (matcher.find()) {
-                    return matcher.group(matcher.groupCount());
-                }
-            }
-        }
-        return "";
     }
 
     public static User getMentionedUser(CommandContext ctx) {
