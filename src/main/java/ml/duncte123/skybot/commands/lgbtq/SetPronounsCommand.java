@@ -28,15 +28,11 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetPronounsCommand extends Command {
-
-    private static final String PRONOUNS_REGEX = "([a-z]+\\/[a-z]+\\/[a-z]+\\/[a-z]+)(?:.*)";
 
     private final String[] messages = {
         "%6$s went into the kitchen.\n" +
@@ -58,15 +54,13 @@ public class SetPronounsCommand extends Command {
             return;
         }
 
-        final Pattern pattern = Pattern.compile(PRONOUNS_REGEX);
-        final Matcher matcher = pattern.matcher(ctx.getArgsRaw());
+        final String pronouns = ctx.getArgsRaw();
+        final String[] pronounsSplit = pronouns.split("/");
 
-        if (!matcher.matches()) {
+        if (pronounsSplit.length != 4) {
             sendMsg(event, "Incorrect format, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return;
         }
-
-        final String pronouns = matcher.group(1);
 
         if (pronouns.length() > 30) {
             sendMsg(event, "Maximum length for pronouns is 30 characters, " +
@@ -74,7 +68,6 @@ public class SetPronounsCommand extends Command {
             return;
         }
 
-        final String[] pronounsSplit = pronouns.split("/");
         final boolean singular = !ctx.getArgsRaw().contains("--plural");
         final String format = this.messages[ctx.getRandom().nextInt(messages.length)];
         final List<String> items = new ArrayList<>(Arrays.asList(pronounsSplit));
