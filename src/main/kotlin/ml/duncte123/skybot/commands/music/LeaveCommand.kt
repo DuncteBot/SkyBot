@@ -18,8 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils.sendError
-import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -50,8 +49,7 @@ class LeaveCommand : MusicCommand() {
         guild.audioManager.sendingHandler = null
         addCooldown(guild.idLong)
 
-        sendMsg(event, "Leaving your channel")
-
+        sendSuccess(ctx.message)
     }
 
     override fun help(prefix: String): String? = "Makes the bot leave your channel."

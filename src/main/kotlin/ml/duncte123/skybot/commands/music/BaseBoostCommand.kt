@@ -61,9 +61,7 @@ class BaseBoostCommand : MusicCommand() {
 
         sendMsg(ctx, "Set the base boost to `${args[0]}`")
 
-        val mng = getMusicManager(ctx.guild, ctx.audioUtils)
-        val player = mng.player as LavalinkPlayer
-        val node = player.link.getNode(false) ?: return
+        val node = (getMusicManager(ctx.guild, ctx.audioUtils).player as LavalinkPlayer).link.getNode(false) ?: return
         val jackson = ctx.variables.jackson
 
         val json = jackson.createObjectNode()
@@ -71,18 +69,12 @@ class BaseBoostCommand : MusicCommand() {
         json.put("op", "equalizer")
         json.put("guildId", ctx.guild.id)
 
-        val band1 = jackson.createObjectNode()
-            .put("band", 0)
-            .put("gain", gain)
-        array.add(band1)
-        val band2 = jackson.createObjectNode()
-            .put("band", 1)
-            .put("gain", gain)
-        array.add(band2)
-        val band3 = jackson.createObjectNode()
-            .put("band", 2)
-            .put("gain", gain)
-        array.add(band3)
+        for (i in 0..2) {
+            val band = jackson.createObjectNode()
+                .put("band", i)
+                .put("gain", gain)
+            array.add(band)
+        }
 
         node.send(jackson.writeValueAsString(json))
     }
