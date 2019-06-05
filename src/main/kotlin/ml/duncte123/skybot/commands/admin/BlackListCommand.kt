@@ -81,11 +81,12 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         val listBytes = blacklist.joinToString("\n").toByteArray()
+        val isOwner = event.author.idLong == event.guild.ownerIdLong
 
         event.channel.sendFile(
             listBytes,
             "blacklist_${event.guild.id}.txt",
-            MessageBuilder().setContent("Here is the current black list for this server").build()
+            MessageBuilder().setContent("Here is the current black list for ${if (isOwner) "your" else "this"} server").build()
         ).queue(null) {
             sendMsg(event, "This command requires me to be able to upload files to this channel")
         }
