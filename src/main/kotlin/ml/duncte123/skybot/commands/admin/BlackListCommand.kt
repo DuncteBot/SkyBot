@@ -85,7 +85,7 @@ class BlackListCommand : ModBaseCommand() {
         event.channel.sendFile(
             listBytes,
             "blacklist_${event.guild.id}.txt",
-            MessageBuilder().setContent("Here is the current black list for your server").build()
+            MessageBuilder().setContent("Here is the current black list for this server").build()
         ).queue(null) {
             sendMsg(event, "This command requires me to be able to upload files to this channel")
         }
