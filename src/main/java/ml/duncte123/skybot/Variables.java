@@ -64,7 +64,6 @@ public final class Variables {
     private DatabaseAdapter databaseAdapter;
     private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
-        .expireAfterWrite(1, TimeUnit.HOURS)
         .build((guildId) -> {
             final CompletableFuture<GuildSettings> future = new CompletableFuture<>();
             getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
