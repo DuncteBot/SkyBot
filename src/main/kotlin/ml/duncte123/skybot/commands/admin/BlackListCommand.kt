@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.commands.admin
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
@@ -40,16 +43,10 @@ class BlackListCommand : ModBaseCommand() {
         val event = ctx.event
         val args = ctx.args
 
-        if (args[0] == "list") {
-            listBlackList(ctx.guild.getSettings().blacklistedWords, event)
-
-            return
-        }
-
-        if (args[0] == "clear") {
-            clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
-
-            return
+        when (args[0]) {
+            "list", "export" -> listBlackList(ctx.guild.getSettings().blacklistedWords, event, ctx.variables.jackson)
+            "clear" -> clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
+            "import" -> importBlackList(ctx)
         }
 
         if (args.size < 2) {
@@ -60,14 +57,12 @@ class BlackListCommand : ModBaseCommand() {
 
         when (args[0]) {
             "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
-
             "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
-
             else -> sendMsg(event, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }
 
-    private fun listBlackList(blacklist: List<String>, event: GuildMessageReceivedEvent) {
+    private fun listBlackList(blacklist: List<String>, event: GuildMessageReceivedEvent, jackson: ObjectMapper) {
         if (blacklist.isEmpty()) {
             sendMsg(event, "The current blacklist is empty")
 
@@ -80,7 +75,7 @@ class BlackListCommand : ModBaseCommand() {
             return
         }
 
-        val listBytes = blacklist.joinToString("\n").toByteArray()
+        val listBytes = jackson.writeValueAsBytes(blacklist)
         val isOwner = event.author.idLong == event.guild.ownerIdLong
 
         event.channel.sendFile(
@@ -98,6 +93,35 @@ class BlackListCommand : ModBaseCommand() {
         guild.getSettings().blacklistedWords.clear()
 
         sendMsg(event, "The blacklist has been cleared")
+    }
+
+    private fun importBlackList(ctx: CommandContext) {
+        val message = ctx.message
+        val attachments = message.attachments
+
+        if (attachments.isEmpty()) {
+            sendMsg(ctx, "Please attach an exported blacklist file, you can get this with `${ctx.prefix}$name list`")
+
+            return
+        }
+
+        val jackson = ctx.variables.jackson
+        val current = ctx.guildSettings.blacklistedWords
+        val guildId = ctx.guild.idLong
+        val adapter = ctx.databaseAdapter
+        attachments[0].withInputStream {
+            try {
+                val importedBlacklist = jackson.readValue<List<String>>(it, object : TypeReference<List<String>>() {})
+
+                importedBlacklist.filter { w -> !current.contains(w) }.forEach { w ->
+                    current.add(w)
+                    adapter.addWordToBlacklist(guildId, w)
+                }
+            } catch (e: Exception) {
+                Sentry.capture(e)
+                sendMsg(ctx, "Error while importing blacklist: ${e.message}")
+            }
+        }
     }
 
     private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
@@ -139,6 +163,7 @@ class BlackListCommand : ModBaseCommand() {
         |
         |Usage:```$prefix$name list => Gives you a list of the current blacklisted words
         |$prefix$name clear => Clears the blacklist
+        |$prefix$name import => Imports an exported blacklist
         |$prefix$name add <word> => Adds a word to the blacklist
         |$prefix$name remove <word> => Removes a word from the blacklist```
     """.trimMargin()
