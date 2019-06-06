@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.concurrent.atomic.AtomicLong
 
 class BlackListCommand : ModBaseCommand() {
 
@@ -44,9 +45,18 @@ class BlackListCommand : ModBaseCommand() {
         val args = ctx.args
 
         when (args[0]) {
-            "list", "export" -> listBlackList(ctx.guild.getSettings().blacklistedWords, event, ctx.variables.jackson)
-            "clear" -> clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
-            "import" -> importBlackList(ctx)
+            "list", "export" -> {
+                listBlackList(ctx.guild.getSettings().blacklistedWords, event, ctx.variables.jackson)
+                return
+            }
+            "clear" -> {
+                clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
+                return
+            }
+            "import" -> {
+                importBlackList(ctx)
+                return
+            }
         }
 
         if (args.size < 2) {
@@ -80,7 +90,7 @@ class BlackListCommand : ModBaseCommand() {
 
         event.channel.sendFile(
             listBytes,
-            "blacklist_${event.guild.id}.txt",
+            "blacklist_${event.guild.id}.json",
             MessageBuilder().setContent("Here is the current black list for ${if (isOwner) "your" else "this"} server").build()
         ).queue(null) {
             sendMsg(event, "This command requires me to be able to upload files to this channel")
@@ -105,6 +115,11 @@ class BlackListCommand : ModBaseCommand() {
             return
         }
 
+        val msgId = AtomicLong() // Bad ideas with duncte123 episode 5
+        sendMsg(ctx, "Importing....") {
+            msgId.set(it.idLong)
+        }
+
         val jackson = ctx.variables.jackson
         val current = ctx.guildSettings.blacklistedWords
         val guildId = ctx.guild.idLong
@@ -115,7 +130,15 @@ class BlackListCommand : ModBaseCommand() {
 
                 importedBlacklist.filter { w -> !current.contains(w) }.forEach { w ->
                     current.add(w)
-                    adapter.addWordToBlacklist(guildId, w)
+                    adapter.addWordToBlacklist(guildId, w) //TODO: Allow for mass updates
+                }
+
+                val msgToEdit = msgId.get()
+
+                if (msgToEdit > 0) {
+                    ctx.channel.editMessageById(msgToEdit, "Blacklist successfully imported").queue()
+                } else {
+                    sendMsg(ctx, "Blacklist successfully imported")
                 }
             } catch (e: Exception) {
                 Sentry.capture(e)

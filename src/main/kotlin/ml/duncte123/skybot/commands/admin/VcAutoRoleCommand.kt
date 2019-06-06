@@ -154,7 +154,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         if (args[1].toLowerCase() == "all") {
             guild.voiceChannelCache.forEach {
                 cache!!.put(it.idLong, targetRole)
-                ctx.databaseAdapter.setVcAutoRole(guild.idLong, it.idLong, targetRole)
+                ctx.databaseAdapter.setVcAutoRole(guild.idLong, it.idLong, targetRole) // TODO: Allow for mass update
             }
 
             sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join any voice channel")
