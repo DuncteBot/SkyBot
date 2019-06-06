@@ -79,9 +79,15 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
         run {
             val item = variables.apis.getGuildSetting(guildId)
+
+            if (item == null) {
+                callback.invoke(null)
+                return@run
+            }
+
             val setting = variables.jackson.readValue(item.traverse(), GuildSettings::class.java)
 
             callback.invoke(setting)

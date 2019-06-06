@@ -90,7 +90,7 @@ class EvalFunctions {
         @JvmStatic
         fun loadGuildSetting(guildId: Long, variables: Variables) {
             variables.databaseAdapter.loadGuildSetting(guildId) {
-                variables.guildSettings.put(guildId, it)
+                variables.guildSettingsCache.put(guildId, it!!)
             }
         }
 

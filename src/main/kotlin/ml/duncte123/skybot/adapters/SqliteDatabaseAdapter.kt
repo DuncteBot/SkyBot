@@ -61,6 +61,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         res.getBoolean("autoresponse")
                     ))
                 }
+
+                con.close()
             }
 
             callback.invoke(customCommands)
@@ -93,7 +95,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(1, invoke)
                     setString(2, guildId.toString())
                     execute()
+                    closeOnCompletion()
                 }
+
+                con.close()
             }
 
             callback.invoke(true)
@@ -139,6 +144,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     )
                 }
                 callback.invoke(settings)
+                connection.close()
             }
         }
     }
@@ -154,7 +160,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(2, word)
 
                     executeUpdate()
+                    closeOnCompletion()
                 }
+
+                connection.close()
             }
         }
     }
@@ -170,7 +179,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(2, word)
 
                     executeUpdate()
+                    closeOnCompletion()
                 }
+
+                connection.close()
             }
         }
     }
@@ -181,12 +193,55 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 val connection = manager.connection
 
                 connection.createStatement().execute("DELETE FROM blacklists where guild_id = '$guildId'")
+
+                connection.close()
             }
         }
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
-        throw MethodNotSupportedException("Not supported for SQLite")
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
+        run {
+            connManager.use { manager ->
+                val connection = manager.connection
+
+                val res = connection.createStatement().executeQuery("SELECT * FROM guildSettings WHERE guildId = '$guildId'")
+
+                while (res.next()) {
+                    val blackList = getBlackListsForGuild(guildId)
+
+                    callback.invoke(
+                        GuildSettings(guildId)
+                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                        .setCustomPrefix(res.getString("prefix"))
+                        .setLogChannel(toLong(res.getString("logChannelId")))
+                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                        .setAutoroleRole(toLong(res.getString("autoRole")))
+                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                        .setFilterInvites(res.getBoolean("filterInvites"))
+                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                        .setKickState(res.getBoolean("kickInsteadState"))
+                        .setLeaveTimeout(res.getInt("leave_timeout"))
+                        .setSpamThreshold(res.getInt("spam_threshold"))
+                        .setBlacklistedWords(blackList)
+                    )
+
+                    connection.close()
+
+                    return@run
+                }
+
+
+                connection.close()
+                callback.invoke(null)
+            }
+        }
     }
 
     override fun deleteGuildSetting(guildId: Long) {
@@ -278,6 +333,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
                     smt.execute()
                 }
+
+                connection.close()
             }
 
             callback.invoke(true)
@@ -299,6 +356,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 }
 
                 callback.invoke(map)
+
+                connection.close()
             }
         }
     }
@@ -316,7 +375,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setInt(3, color)
 
                     executeUpdate()
+                    closeOnCompletion()
                 }
+
+                connection.close()
             }
         }
     }
@@ -334,6 +396,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
                 }
 
+                connection.close()
                 callback.invoke(map)
             }
         }
@@ -352,7 +415,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setLong(3, guildId)
 
                     executeUpdate()
+                    closeOnCompletion()
                 }
+
+                connection.close()
             }
 
             callback.invoke(userId, guildId)
@@ -370,6 +436,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     "SELECT * FROM oneGuildPatrons WHERE user_id = ? LIMIT 1"
                 ).apply {
                     setLong(1, userId)
+                    closeOnCompletion()
                 }
 
                 val resultSet = statement.executeQuery()
@@ -379,6 +446,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     map.put(userId, guildId)
                 }
+
+                connection.close()
             }
 
             callback.invoke(map)
@@ -392,6 +461,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 connection.createStatement()
                     .execute("DELETE FROM oneGuildPatrons WHERE user_id = $userId")
+
+                connection.close()
             }
         }
     }
@@ -413,7 +484,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(5, unbanDate)
                     setString(6, guildId.toString())
                     execute()
+                    closeOnCompletion()
                 }
+
+                conn.close()
             }
         }
     }
@@ -432,7 +506,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(3, reason)
                     setString(4, guildId.toString())
                     executeUpdate()
+                    closeOnCompletion()
                 }
+
+                conn.close()
             }
         }
     }
@@ -477,6 +554,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 smt.close()
                 result.close()
+                conn.close()
                 callback.invoke(ret)
             }
         }
@@ -494,6 +572,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 ).apply {
                     setString(1, userId.toString())
                     setString(2, guildId.toString())
+                    closeOnCompletion()
                 }
 
                 val result = smt.executeQuery()
@@ -506,6 +585,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         result.getString("guild_id")
                     ))
                 }
+
+                conn.close()
             }
 
             callback.invoke(warnings)
@@ -540,6 +621,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         result.getLong("role_id")
                     ))
                 }
+
+                conn.close()
             }
 
             callback.invoke(items)
@@ -559,6 +642,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     setString(2, voiceChannelId.toString())
                     setString(3, roleId.toString())
                     executeUpdate()
+                    closeOnCompletion()
                 }
             }
         }
@@ -575,6 +659,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     setString(1, voiceChannelId.toString())
                     executeUpdate()
+                    closeOnCompletion()
                 }
             }
         }
@@ -590,6 +675,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 ).apply {
                     setString(1, guildId.toString())
                     executeUpdate()
+                    closeOnCompletion()
                 }
             }
         }
@@ -615,6 +701,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 }
 
                 res.close()
+                conn.close()
             }
 
             callback.invoke(tags)
@@ -632,7 +719,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 smt.setString(3, tag.content)
 
                 smt.executeUpdate()
-                smt.close()
+                smt.closeOnCompletion()
 
                 callback.invoke(true, "")
             }
@@ -646,7 +733,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 val smt = conn.prepareStatement("DELETE FROM tags where name = ?")
                 smt.setString(1, tag.name)
                 smt.executeUpdate()
-                smt.close()
+                smt.closeOnCompletion()
 
                 callback.invoke(true, "")
             }
@@ -670,6 +757,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 setString(if (isEdit) 1 else 3, message)
                 setBoolean(if (isEdit) 2 else 4, autoresponse)
                 execute()
+                closeOnCompletion()
             }
         }
 

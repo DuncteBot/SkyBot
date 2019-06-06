@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
@@ -48,13 +49,13 @@ public class GuildSettingsUtils {
 
 
     public static void loadAllSettings(Variables variables) {
-        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettings());
+        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
         loadEmbedColors(variables.getDatabaseAdapter());
         loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
 
-    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, TLongObjectMap<GuildSettings> guildSettings) {
+    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSettings> guildSettings) {
         logger.info("Loading Guild settings.");
 
         databaseAdapter.getGuildSettings(
@@ -64,7 +65,7 @@ public class GuildSettingsUtils {
                     (setting) -> guildSettings.put(setting.getGuildId(), setting)
                 );
 
-                logger.info("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
+                logger.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
 
                 return null;
             }
@@ -129,13 +130,13 @@ public class GuildSettingsUtils {
      */
     @Nonnull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
-        final TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
+        final GuildSettings setting = variables.getGuildSettingsCache().get(guild.getIdLong());
 
-        if (!guildSettings.containsKey(guild.getIdLong())) {
+        if (setting == null) {
             return registerNewGuild(guild, variables);
         }
 
-        return guildSettings.get(guild.getIdLong());
+        return setting;
 
     }
 
@@ -148,32 +149,28 @@ public class GuildSettingsUtils {
      *         the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
-        if (!variables.getGuildSettings().containsKey(settings.getGuildId())) {
-            registerNewGuild(guild, variables);
+        if (variables.getGuildSettingsCache().get(settings.getGuildId()) == null) {
+            registerNewGuild(guild, variables, settings);
             return;
         }
 
         variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
     }
 
-    /**
-     * This will register a new guild with their settings on bot join
-     *
-     * @param g
-     *         The guild that we are joining
-     *
-     * @return The new guild
-     */
     public static GuildSettings registerNewGuild(Guild g, Variables variables) {
-        final TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
+        return registerNewGuild(g, variables, new GuildSettings(g.getIdLong()));
+    }
 
-        if (guildSettings.containsKey(g.getIdLong())) {
-            return guildSettings.get(g.getIdLong());
+    public static GuildSettings registerNewGuild(Guild g, Variables variables, GuildSettings newGuildSettings) {
+        final LoadingCache<Long, GuildSettings> guildSettingsCache = variables.getGuildSettingsCache();
+        final GuildSettings settingForGuild = guildSettingsCache.get(g.getIdLong());
+
+        if (settingForGuild != null) {
+            return settingForGuild;
         }
 
-        final GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
         variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
-        guildSettings.put(g.getIdLong(), newGuildSettings);
+        variables.getGuildSettingsCache().put(g.getIdLong(), newGuildSettings);
 
         return newGuildSettings;
     }
@@ -181,28 +178,6 @@ public class GuildSettingsUtils {
     public static void updateEmbedColor(Guild g, int color, Variables variables) {
         variables.getDatabaseAdapter().updateOrCreateEmbedColor(g.getIdLong(), color);
     }
-
-    /*
-     * This will attempt to remove a guild when we leave it
-     *
-     * @param g
-     *         the guild to remove from the database
-     */
-    /*public static void deleteGuild(Guild g, Variables variables) {
-        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
-        DBManager database = variables.getDatabase();
-        guildSettings.remove(g.getIdLong());
-        database.run(() -> {
-            String dbName = database.getName();
-
-            try (Connection connection = database.getConnManager().getConnection()) {
-                Statement smt = connection.createStatement();
-                smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
 
     public static String replaceNewLines(String entery) {
         if (entery == null || entery.isEmpty())
