@@ -140,8 +140,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     fun addBatchToBlacklist(guildId: Long, words: List<String>) {
-        val json = mapper.createObjectNode().putArray("words")
-        words.forEach { json.add(it) }
+        val json = mapper.createObjectNode()
+        val array = json.putArray("words")
+        words.forEach { array.add(it) }
         val response = postJSON("guildsettings/$guildId/blacklist/batch", json)
 
         if (!response.get("success").asBoolean()) {

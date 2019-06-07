@@ -297,10 +297,16 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
         run {
-            val mapper = variables.jackson
-
             val storedData = variables.apis.getVcAutoRoles()
-            val converted: List<VcAutoRole> = mapper.readValue(storedData.traverse(), object : TypeReference<List<VcAutoRole>>() {})
+            val converted = arrayListOf<VcAutoRole>()
+
+            for (item in storedData) {
+                converted.add(VcAutoRole(
+                    item.get("guild_id").asLong(),
+                    item.get("voice_channel_id").asLong(),
+                    item.get("role_id").asLong()
+                ))
+            }
 
             callback.invoke(converted)
         }
