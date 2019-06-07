@@ -69,7 +69,7 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     abstract fun getGuildSettings(callback: (List<GuildSettings>) -> Unit)
 
-    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit)
+    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit)
 
     abstract fun deleteGuildSetting(guildId: Long)
 

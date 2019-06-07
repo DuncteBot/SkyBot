@@ -19,6 +19,8 @@
 package ml.duncte123.skybot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
@@ -40,6 +42,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
@@ -48,7 +52,6 @@ public final class Variables {
     private final ObjectMapper mapper = new ObjectMapper();
     private final String googleBaseUrl;
     private final boolean isSql;
-    private final TLongObjectMap<GuildSettings> guildSettings = MapUtils.newLongObjectMap();
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
@@ -59,6 +62,17 @@ public final class Variables {
     private DunctebotConfig config;
     private DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
+    private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
+        .expireAfterAccess(1, TimeUnit.HOURS)
+        .build((guildId) -> {
+            final CompletableFuture<GuildSettings> future = new CompletableFuture<>();
+            getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
+                future.complete(setting);
+                return null;
+            });
+
+            return future.get();
+        });
 
 
     private Variables() {
@@ -115,8 +129,8 @@ public final class Variables {
         return this.database;
     }
 
-    public TLongObjectMap<GuildSettings> getGuildSettings() {
-        return this.guildSettings;
+    public LoadingCache<Long, GuildSettings> getGuildSettingsCache() {
+        return guildSettingsCache;
     }
 
     /**

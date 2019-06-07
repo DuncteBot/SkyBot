@@ -88,13 +88,6 @@ class EvalFunctions {
         }
 
         @JvmStatic
-        fun loadGuildSetting(guildId: Long, variables: Variables) {
-            variables.databaseAdapter.loadGuildSetting(guildId) {
-                variables.guildSettings.put(guildId, it)
-            }
-        }
-
-        @JvmStatic
         fun restoreCustomCommand(commandId: Int): String {
             val variables = Variables.getInstance()
 

@@ -18,7 +18,7 @@ Pull Request Etiquette
 -->
 
 <!-- Replace "NaN" with an issue number if this is a response to an issue -->
-Fixes # .
+Fixes NaN
 
 - [ ] I have tested my changes.
 - [ ] I didn't test my changes. I will do that in the following 7 days and agree that this Pull request will be closed if I don't test it in the named time span.
@@ -27,4 +27,4 @@ Fixes # .
 Description
 ---
 
-Replace this sentence with general description of what your Pull Request does.
+Replace this sentence with a general description of what your Pull Request does.
