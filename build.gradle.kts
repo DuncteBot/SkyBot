@@ -137,6 +137,7 @@ dependencies {
     // A nice duration parser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.14")
     implementation(group = "com.github.oshi", name = "oshi-core", version = "3.13.2")
+    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.7.0")
 }
 
 val compileKotlin: KotlinCompile by tasks

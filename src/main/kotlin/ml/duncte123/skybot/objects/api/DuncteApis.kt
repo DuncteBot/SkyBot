@@ -88,8 +88,14 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return paginateData("guildsettings")
     }
 
-    fun getGuildSetting(guildId: Long): JsonNode {
-        return executeRequest(defaultRequest("guildsettings/$guildId")).get("data")
+    fun getGuildSetting(guildId: Long): JsonNode? {
+        val res = executeRequest(defaultRequest("guildsettings/$guildId"))
+
+        if (!res.get("success").asBoolean()) {
+            return null
+        }
+
+        return res.get("data")
     }
 
     fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
