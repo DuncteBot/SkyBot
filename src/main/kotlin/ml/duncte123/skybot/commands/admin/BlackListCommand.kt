@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.atomic.AtomicLong
 
@@ -127,22 +128,15 @@ class BlackListCommand : ModBaseCommand() {
         attachments[0].withInputStream {
             try {
                 val importedBlacklist = jackson.readValue<List<String>>(it, object : TypeReference<List<String>>() {})
+                val filtered = importedBlacklist.filter { w -> !current.contains(w) }
 
-                importedBlacklist.filter { w -> !current.contains(w) }.forEach { w ->
-                    current.add(w)
-                    adapter.addWordToBlacklist(guildId, w) //TODO: Allow for mass updates
-                }
+                current.addAll(filtered)
+                adapter.addWordsToBlacklist(guildId, filtered)
 
-                val msgToEdit = msgId.get()
-
-                if (msgToEdit > 0) {
-                    ctx.channel.editMessageById(msgToEdit, "Blacklist successfully imported").queue()
-                } else {
-                    sendMsg(ctx, "Blacklist successfully imported")
-                }
+                ctx.channel.edit(msgId, "Blacklist successfully imported")
             } catch (e: Exception) {
                 Sentry.capture(e)
-                sendMsg(ctx, "Error while importing blacklist: ${e.message}")
+                ctx.channel.edit(msgId, "Error while importing blacklist: ${e.message}")
             }
         }
     }
@@ -190,4 +184,14 @@ class BlackListCommand : ModBaseCommand() {
         |$prefix$name add <word> => Adds a word to the blacklist
         |$prefix$name remove <word> => Removes a word from the blacklist```
     """.trimMargin()
+
+    private fun TextChannel.edit(id: AtomicLong, content: String) {
+        val msg = id.get()
+
+        if (msg > 0) {
+            this.editMessageById(msg, content).queue()
+        } else {
+            sendMsg(this, content)
+        }
+    }
 }

@@ -133,6 +133,17 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
+    fun addBatchToBlacklist(guildId: Long, words: List<String>) {
+        val json = mapper.createObjectNode().putArray("words")
+        words.forEach { json.add(it) }
+        val response = postJSON("guildsettings/$guildId/blacklist/batch", json)
+
+        if (!response.get("success").asBoolean()) {
+            logger.error("Failed to batch add to blacklist for guild {}\nResponse: {}",
+                guildId, response.get("error").toString())
+        }
+    }
+
     fun removeWordFromBlacklist(guildId: Long, word: String) {
         val json = mapper.createObjectNode().put("word", word)
         val response = deleteJSON("guildsettings/$guildId/blacklist", json)
@@ -299,6 +310,20 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         if (!response.get("success").asBoolean()) {
             logger.error("Failed to set vc autorole\n" +
+                "Response: {}", response.get("error").toString())
+        }
+    }
+
+    fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
+        val json = mapper.createObjectNode()
+            .put("role_id", roleId.toString())
+        val array = json.putArray("voice_channel_ids")
+        voiceChannelIds.forEach { array.add(it) }
+
+        val response = postJSON("vcautoroles/$guildId", json)
+
+        if (!response.get("success").asBoolean()) {
+            logger.error("Failed to set vc autorole in batch\n" +
                 "Response: {}", response.get("error").toString())
         }
     }

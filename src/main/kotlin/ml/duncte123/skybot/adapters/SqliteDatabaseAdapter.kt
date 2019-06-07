@@ -159,6 +159,12 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) {
+        words.forEach {
+            addWordToBlacklist(guildId, it)
+        }
+    }
+
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
         run {
             connManager.use { manager ->
@@ -561,6 +567,12 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     executeUpdate()
                 }
             }
+        }
+    }
+
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
+        voiceChannelIds.forEach {
+            setVcAutoRole(guildId, it, roleId)
         }
     }
 

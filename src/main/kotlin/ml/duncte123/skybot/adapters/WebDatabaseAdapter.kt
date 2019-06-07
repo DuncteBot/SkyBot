@@ -116,6 +116,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) {
+        run {
+            variables.apis.addBatchToBlacklist(guildId, words)
+        }
+    }
+
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
         run {
             variables.apis.removeWordFromBlacklist(guildId, word)
@@ -297,6 +303,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
         run {
             variables.apis.setVcAutoRole(guildId, voiceChannelId, roleId)
+        }
+    }
+
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
+        run {
+            variables.apis.setVcAutoRoleBatch(guildId, voiceChannelIds, roleId)
         }
     }
 

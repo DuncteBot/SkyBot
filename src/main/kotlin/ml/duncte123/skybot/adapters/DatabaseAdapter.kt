@@ -79,6 +79,8 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     abstract fun addWordToBlacklist(guildId: Long, word: String)
 
+    abstract fun addWordsToBlacklist(guildId: Long, words: List<String>)
+
     abstract fun removeWordFromBlacklist(guildId: Long, word: String)
 
     abstract fun clearBlacklist(guildId: Long)
@@ -126,6 +128,8 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
     abstract fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit)
 
     abstract fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long)
+
+    abstract fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long)
 
     abstract fun removeVcAutoRole(voiceChannelId: Long)
 
