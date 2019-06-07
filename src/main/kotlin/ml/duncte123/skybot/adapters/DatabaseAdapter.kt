@@ -144,10 +144,10 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
 
-    protected fun run(r: Runnable) {
+    protected fun runOnThread(r: () -> Unit) {
         variables.database.run {
             try {
-                r.run()
+                r.invoke()
             }
             catch (thr: Throwable) {
                 Sentry.capture(thr)
