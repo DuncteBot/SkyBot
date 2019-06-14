@@ -65,7 +65,7 @@ public final class SkyBot {
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
         MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
 
-        final Variables variables = Variables.getInstance();
+        final Variables variables = new Variables();
         final DunctebotConfig config = variables.getConfig();
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
@@ -114,7 +114,7 @@ public final class SkyBot {
 
 
         //Set up sharding for the bot
-        final EventManager eventManager = new EventManager();
+        final EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
             .setToken(token)
             .setShardsTotal(totalShards)
@@ -137,7 +137,7 @@ public final class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebRouter(shardManager);
+            new WebRouter(shardManager, variables);
         }
 
         // Check shard activity

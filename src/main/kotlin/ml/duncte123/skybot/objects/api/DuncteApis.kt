@@ -62,7 +62,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return executeRequest(request).get("success").asBoolean()
     }
 
-    fun restoreCustomCommand(commandId: Int): Boolean {
+    fun restoreCustomCommand(commandId: Int, variables: Variables): Boolean {
         val request = defaultRequest("customcommands/$commandId")
             .put(RequestBody.create(null, "{}"))
         val response = executeRequest(request)
@@ -72,7 +72,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
 
         val command = response.get("data")
-        val commandManager = Variables.getInstance().commandManager
+        val commandManager = variables.commandManager
 
         commandManager.customCommands.add(CustomCommandImpl(
             command.get("invoke").asText(),

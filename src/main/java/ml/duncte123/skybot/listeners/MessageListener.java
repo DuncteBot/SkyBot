@@ -22,6 +22,7 @@ import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -37,7 +38,9 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -54,7 +57,24 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    final SpamFilter spamFilter = new SpamFilter();
+    final SpamFilter spamFilter = new SpamFilter(variables);
+
+    MessageListener(Variables variables) {
+        super(variables);
+    }
+
+    @Override
+    public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        variables.getDatabase().run(() -> {
+            final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+
+            if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                !event.getMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                guild.getSettings().isEnableSwearFilter()) {
+                checkSwearFilter(event.getMessage(), event, guild);
+            }
+        });
+    }
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -93,14 +113,12 @@ public class MessageListener extends BaseListener {
                 final String selfMember = guild.getSelfMember().getAsMention();
                 final String selfUser = event.getJDA().getSelfUser().getAsMention();
                 final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
-                final String rwLower = rw.toLowerCase();
 
-                if (doAutoModChecks(event, settings, rw)) {
+                if (doAutoModChecks(event, settings, rw) && doesNotStartWithPrefix(event, settings)) {
                     return;
                 }
 
-                if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) &&
-                    (rw.equals(selfMember) || rw.equals(selfUser))) {
+                if (rw.equals(selfMember) || rw.equals(selfUser)) {
                     sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                         event.getAuthor(),
                         settings.getCustomPrefix())
@@ -126,11 +144,7 @@ public class MessageListener extends BaseListener {
 
                 }
 
-                if (!rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
-                    !rw.startsWith(settings.getCustomPrefix())
-                    && !rw.startsWith(selfMember)
-                    && !rw.startsWith(selfUser)
-                    && !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
+                if (doesNotStartWithPrefix(event, settings)) {
                     return;
                 }
 
@@ -150,7 +164,8 @@ public class MessageListener extends BaseListener {
                     cmd.executeCommand(new CommandContext(
                         "chat",
                         Arrays.asList(split).subList(1, split.length),
-                        event
+                        event,
+                        variables
                     ));
                 }
             }
@@ -159,6 +174,19 @@ public class MessageListener extends BaseListener {
                 e.printStackTrace();
             }
         });
+    }
+
+    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, GuildSettings settings) {
+        final String rwLower = event.getMessage().getContentRaw().toLowerCase();
+        final String selfMember = event.getGuild().getSelfMember().getAsMention();
+        final String selfUser = event.getJDA().getSelfUser().getAsMention();
+        final String customPrefix = settings.getCustomPrefix();
+
+        return !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase()) &&
+            !rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
+            !rwLower.startsWith(customPrefix) &&
+            !rwLower.startsWith(selfMember) &&
+            !rwLower.startsWith(selfUser);
     }
 
     private boolean shouldBlockCommand(@Nonnull GuildSettings settings, @Nonnull String rw, @Nonnull String s) {
@@ -216,11 +244,6 @@ public class MessageListener extends BaseListener {
                     return false;
                 }
 
-                /*if (shouldBlockCommand(settings, rw, s)) {
-                    return false;
-                }
-
-                return true;*/
                 return !shouldBlockCommand(settings, rw, s);
             }
 
@@ -259,14 +282,15 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, DunctebotGuild guild) {
+    private boolean checkSwearFilter(Message messageToCheck, GenericGuildMessageEvent event, DunctebotGuild guild) {
         final GuildSettings settings = guild.getSettings();
 
         if (settings.isEnableSwearFilter()) {
             final float score = PerspectiveApi.checkSevereToxicity(
                 messageToCheck.getContentStripped(),
                 event.getChannel().getId(),
-                variables.getConfig().apis.googl);
+                variables.getConfig().apis.googl,
+                variables.getJackson());
 
             if (score < 0.7f) {
                 return false;
@@ -277,11 +301,11 @@ public class MessageListener extends BaseListener {
             messageToCheck.delete().reason("Blocked for swearing: " + display)
                 .queue(null, (t) -> {});
 
-            sendMsg(event,
+            sendMsg(event.getChannel(),
                 String.format("Hello there, %s please do not use cursive language within this Discord.",
-                    event.getAuthor().getAsMention()
+                    messageToCheck.getAuthor().getAsMention()
                 ),
-                m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
+                (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
 
             modLog(String.format(
                 "Message by %#s deleted in %s for profanity, message content was:```\n%s```",
@@ -352,7 +376,7 @@ public class MessageListener extends BaseListener {
             checkMessageForInvites(guild, event, settings, rw);
 
             final Message messageToCheck = event.getMessage();
-            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
+            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild(), variables);
 
             if (checkSwearFilter(messageToCheck, event, dbG)) {
                 return true;

@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
 
-    private static Variables instance;
     private final ObjectMapper mapper = new ObjectMapper();
     private final String googleBaseUrl;
     private final boolean isSql;
@@ -75,7 +74,7 @@ public final class Variables {
         });
 
 
-    private Variables() {
+    Variables() {
         try {
             this.config = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
@@ -214,14 +213,5 @@ public final class Variables {
         }
 
         return this.databaseAdapter;
-    }
-
-    public static synchronized Variables getInstance() {
-
-        if (instance == null) {
-            instance = new Variables();
-        }
-
-        return instance;
     }
 }

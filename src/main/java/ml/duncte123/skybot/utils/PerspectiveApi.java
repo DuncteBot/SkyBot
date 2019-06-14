@@ -23,20 +23,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.Variables;
 import net.dv8tion.jda.core.exceptions.HttpException;
 
 import java.util.Objects;
 
 public class PerspectiveApi {
 
-    public static float checkSevereToxicity(String text, String channelId, String apiKey) {
+    public static float checkSevereToxicity(String text, String channelId, String apiKey, ObjectMapper mapper) {
         if (text.isEmpty()) {
             return 0f;
         }
 
         try {
-            final JsonNode json = makeRequest(text, channelId, apiKey, Variables.getInstance().getJackson());
+            final JsonNode json = makeRequest(text, channelId, apiKey, mapper);
 
             if (json.has("error")) {
                 final String error = json.get("error").get("message").asText();

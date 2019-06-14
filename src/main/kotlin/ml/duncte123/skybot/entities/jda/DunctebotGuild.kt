@@ -28,23 +28,23 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class DunctebotGuild(private val guild: Guild) : Guild by guild {
+class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
 
     /**
      * Gets the settings for a guild
      */
-    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, Variables.getInstance())
+    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)
 
     /**
      * Sets the settings for a guild
      */
     fun setSettings(settings: GuildSettings) {
-        GuildSettingsUtils.updateGuildSettings(this.guild, settings, Variables.getInstance())
+        GuildSettingsUtils.updateGuildSettings(this.guild, settings, variables)
     }
 
     fun setColor(color: Int) {
         EmbedUtils.addColor(idLong, color)
-        GuildSettingsUtils.updateEmbedColor(this.guild, color, Variables.getInstance())
+        GuildSettingsUtils.updateEmbedColor(this.guild, color, variables)
     }
 
     fun getColor(): Int {

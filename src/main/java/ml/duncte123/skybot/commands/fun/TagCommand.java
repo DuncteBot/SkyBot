@@ -42,10 +42,10 @@ public class TagCommand extends Command {
 
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
 
-    public TagCommand() {
+    public TagCommand(Variables variables) {
         this.category = CommandCategory.FUN;
 
-        Variables.getInstance().getDatabaseAdapter().loadTags((tags) -> {
+        variables.getDatabaseAdapter().loadTags((tags) -> {
             tags.forEach((tag) -> this.tagStore.put(tag.name, tag));
 
             return null;

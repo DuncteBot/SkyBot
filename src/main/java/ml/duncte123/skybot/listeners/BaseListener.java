@@ -36,7 +36,7 @@ public class BaseListener extends ListenerAdapter {
     public static boolean isUpdating = false;
     protected static boolean shuttingDown = false;
     protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
-    protected final Variables variables = Variables.getInstance();
+    protected final Variables variables;
     // A list of servers that list bots
     private static final TLongList botLists = new TLongArrayList(
         new long[]{
@@ -56,6 +56,10 @@ public class BaseListener extends ListenerAdapter {
 
     // Keeps track of the guilds that we are leaving as botfarms so that we don't spam
     static final TLongList guildsLeaving = MapUtils.newLongList();
+
+    BaseListener(Variables variables) {
+        this.variables = variables;
+    }
 
     boolean isBotfarm(Guild guild) {
 

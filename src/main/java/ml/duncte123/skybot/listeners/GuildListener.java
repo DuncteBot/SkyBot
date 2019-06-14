@@ -22,6 +22,7 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -40,6 +41,10 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 public class GuildListener extends BaseListener {
+
+    public GuildListener(Variables variables) {
+        super(variables);
+    }
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
