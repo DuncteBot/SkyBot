@@ -116,7 +116,7 @@ public class CleanupCommand extends ModBaseCommand {
         }).whenCompleteAsync((count, thr) -> {
             sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!", count);
 
-            modLog(String.format("%d messages removed in %s", count, channel), ctx.getGuild());
+            modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });
         // End of the annotation
     }
