@@ -39,7 +39,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
-        run {
+        runOnThread {
             val array = variables.apis.getCustomCommands()
             val customCommands: List<CustomCommand> = variables.jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
 
@@ -48,7 +48,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
-        run {
+        runOnThread {
             callback.invoke(
                 variables.apis.createCustomCommand(guildId, invoke, message)
             )
@@ -56,7 +56,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
-        run {
+        runOnThread {
             callback.invoke(
                 variables.apis.updateCustomCommand(guildId, invoke, message, autoresponse)
             )
@@ -64,13 +64,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
-        run {
+        runOnThread {
             callback.invoke(variables.apis.deleteCustomCommand(guildId, invoke))
         }
     }
 
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
-        run {
+        runOnThread {
             val mapper = variables.jackson
             val array = variables.apis.getGuildSettings()
             val settings: List<GuildSettings> = mapper.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
@@ -80,12 +80,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
-        run {
+        runOnThread {
             val item = variables.apis.getGuildSetting(guildId)
 
             if (item == null) {
                 callback.invoke(null)
-                return@run
+                return@runOnThread
             }
 
             val setting = variables.jackson.readValue(item.traverse(), GuildSettings::class.java)
@@ -95,7 +95,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
-        run {
+        runOnThread {
             callback.invoke(
                 variables.apis.updateGuildSettings(guildSettings)
             )
@@ -103,13 +103,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteGuildSetting(guildId: Long) {
-        run {
+        runOnThread {
             variables.apis.deleteGuildSetting(guildId)
         }
     }
 
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
-        run {
+        runOnThread {
             callback.invoke(
                 variables.apis.registerNewGuildSettings(guildSettings)
             )
@@ -117,25 +117,31 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun addWordToBlacklist(guildId: Long, word: String) {
-        run {
+        runOnThread {
             variables.apis.addWordToBlacklist(guildId, word)
         }
     }
 
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) {
+        runOnThread {
+            variables.apis.addBatchToBlacklist(guildId, words)
+        }
+    }
+
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
-        run {
+        runOnThread {
             variables.apis.removeWordFromBlacklist(guildId, word)
         }
     }
 
     override fun clearBlacklist(guildId: Long) {
-        run {
+        runOnThread {
             variables.apis.clearBlacklist(guildId)
         }
     }
 
     override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
-        run {
+        runOnThread {
             val map = TLongIntHashMap()
 
             variables.apis.loadEmbedSettings().forEach {
@@ -147,13 +153,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
-        run {
+        runOnThread {
             variables.apis.updateOrCreateEmbedColor(guildId, color)
         }
     }
 
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
-        run {
+        runOnThread {
             val map = TLongLongHashMap()
 
             variables.apis.loadOneGuildPatrons().forEach {
@@ -165,7 +171,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
-        run {
+        runOnThread {
             val status = variables.apis.updateOrCreateOneGuildPatron(userId, guildId)
 
             if (status) {
@@ -175,7 +181,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
-        run {
+        runOnThread {
             val map = TLongLongHashMap()
 
             variables.apis.getOneGuildPatron(userId).forEach {
@@ -187,13 +193,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeOneGuildPatron(userId: Long) {
-        run {
+        runOnThread {
             variables.apis.removeOneGuildPatron(userId)
         }
     }
 
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
-        run {
+        runOnThread {
             val json = variables.jackson.createObjectNode()
                 .put("modUserId", modId.toString())
                 .put("Username", userName)
@@ -207,13 +213,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
-        run {
+        runOnThread {
             variables.apis.createWarning(modId, userId, guildId, reason)
         }
     }
 
     override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
-        run {
+        runOnThread {
             val json = variables.jackson.createObjectNode()
                 .put("mod_id", modId.toString())
                 .put("user_id", userId.toString())
@@ -226,13 +232,13 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
-        run {
+        runOnThread {
             val json = variables.apis.removeLatestWarningForUser(userId, guildId)
 
             if (json == null) {
                 callback.invoke(null)
 
-                return@run
+                return@runOnThread
             }
 
             callback.invoke(Warning(
@@ -245,7 +251,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
-        run {
+        runOnThread {
             val data = variables.apis.getWarningsForUser(userId, guildId)
             val items = arrayListOf<Warning>()
 
@@ -263,19 +269,19 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun purgeBans(ids: List<Int>) {
-        run {
+        runOnThread {
             variables.apis.purgeBans(ids)
         }
     }
 
     override fun purgeMutes(ids: List<Int>) {
-        run {
+        runOnThread {
             variables.apis.purgeMutes(ids)
         }
     }
 
     override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
-        run {
+        runOnThread {
             val mapper = variables.jackson
 
             val storedData = variables.apis.getExpiredBansAndMutes()
@@ -290,36 +296,48 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
-        run {
-            val mapper = variables.jackson
-
+        runOnThread {
             val storedData = variables.apis.getVcAutoRoles()
-            val converted: List<VcAutoRole> = mapper.readValue(storedData.traverse(), object : TypeReference<List<VcAutoRole>>() {})
+            val converted = arrayListOf<VcAutoRole>()
+
+            for (item in storedData) {
+                converted.add(VcAutoRole(
+                    item.get("guild_id").asLong(),
+                    item.get("voice_channel_id").asLong(),
+                    item.get("role_id").asLong()
+                ))
+            }
 
             callback.invoke(converted)
         }
     }
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
-        run {
+        runOnThread {
             variables.apis.setVcAutoRole(guildId, voiceChannelId, roleId)
         }
     }
 
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
+        runOnThread {
+            variables.apis.setVcAutoRoleBatch(guildId, voiceChannelIds, roleId)
+        }
+    }
+
     override fun removeVcAutoRole(voiceChannelId: Long) {
-        run {
+        runOnThread {
             variables.apis.removeVcAutoRole(voiceChannelId)
         }
     }
 
     override fun removeVcAutoRoleForGuild(guildId: Long) {
-        run {
+        runOnThread {
             variables.apis.removeVcAutoRoleForGuild(guildId)
         }
     }
 
     override fun loadTags(callback: (List<Tag>) -> Unit) {
-        run {
+        runOnThread {
             val mapper = variables.jackson
             val allTags = variables.apis.getAllTags()
 
@@ -330,7 +348,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        run {
+        runOnThread {
             val json = variables.jackson.valueToTree(tag) as ObjectNode
             json.put("owner_id", json.get("owner_id").asText())
 
@@ -341,7 +359,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        run {
+        runOnThread {
             val response = variables.apis.deleteTag(tag.name)
 
             callback.invoke(response.first, response.second)

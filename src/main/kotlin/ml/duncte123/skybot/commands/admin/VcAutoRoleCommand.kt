@@ -27,6 +27,8 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.VoiceChannel
+import java.util.stream.Collectors
 
 class VcAutoRoleCommand : ModBaseCommand() {
 
@@ -143,21 +145,25 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
             return
         }
-        val targetRole = foundRoles[0].idLong
 
+        val targetRole = foundRoles[0].idLong
         var cache: TLongLongMap? = vcAutoRoleCache.get(guild.idLong)
 
         if (cache == null) {
-            cache = vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+            val new = TLongLongHashMap()
+
+            vcAutoRoleCache.put(guild.idLong, new)
+            cache = new
         }
 
         if (args[1].toLowerCase() == "all") {
-            guild.voiceChannelCache.forEach {
-                cache!!.put(it.idLong, targetRole)
-                ctx.databaseAdapter.setVcAutoRole(guild.idLong, it.idLong, targetRole) // TODO: Allow for mass update
-            }
+            val ids = guild.voiceChannelCache.stream().map(VoiceChannel::getIdLong).collect(Collectors.toList())
 
-            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join any voice channel")
+            ctx.databaseAdapter.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
+            ids.forEach { cache.put(it, targetRole) }
+
+            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
+                "(excluding ones that are created after the command was ran)")
         } else {
             val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
 
