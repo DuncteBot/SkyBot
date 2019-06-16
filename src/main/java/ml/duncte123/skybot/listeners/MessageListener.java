@@ -114,7 +114,7 @@ public class MessageListener extends BaseListener {
                 final String selfUser = event.getJDA().getSelfUser().getAsMention();
                 final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-                if (doAutoModChecks(event, settings, rw) && doesNotStartWithPrefix(event, settings)) {
+                if (doesNotStartWithPrefix(event, settings) && doAutoModChecks(event, settings, rw)) {
                     return;
                 }
 
@@ -182,11 +182,23 @@ public class MessageListener extends BaseListener {
         final String selfUser = event.getJDA().getSelfUser().getAsMention();
         final String customPrefix = settings.getCustomPrefix();
 
-        return !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase()) &&
-            !rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
-            !rwLower.startsWith(customPrefix) &&
-            !rwLower.startsWith(selfMember) &&
-            !rwLower.startsWith(selfUser);
+        if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
+            return false;
+        }
+
+        if (rwLower.startsWith(Settings.PREFIX.toLowerCase())) {
+            return false;
+        }
+
+        if (rwLower.startsWith(customPrefix)) {
+            return false;
+        }
+
+        if (rwLower.startsWith(selfMember)) {
+            return false;
+        }
+
+        return !rwLower.startsWith(selfUser);
     }
 
     private boolean shouldBlockCommand(@Nonnull GuildSettings settings, @Nonnull String rw, @Nonnull String s) {
