@@ -18,18 +18,19 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import java.util.concurrent.TimeUnit;
 
 public class BaseListener extends ListenerAdapter {
 
@@ -54,13 +55,19 @@ public class BaseListener extends ListenerAdapter {
         }
     );
 
-    // Keeps track of the guilds that we are leaving as botfarms so that we don't spam
-    static final TLongList guildsLeaving = MapUtils.newLongList();
+    // Keeps track of the guilds that we are leaving as botfarms so that we don't have to check every time
+    private static final Cache<Long, Character> botfarmCache = Caffeine.newBuilder()
+        .expireAfterAccess(5, TimeUnit.MINUTES)
+        .build();
 
     boolean isBotfarm(Guild guild) {
 
-        if (botLists.contains(guild.getIdLong()) || guildsLeaving.contains(guild.getIdLong())) {
+        if (botLists.contains(guild.getIdLong())) {
             return false;
+        }
+
+        if (botfarmCache.asMap().containsKey(guild.getIdLong())) {
+            return true;
         }
 
         // How many members should we at least have in the server
@@ -76,21 +83,12 @@ public class BaseListener extends ListenerAdapter {
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
         logger.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));
         logger.debug("botToUserRatio[1] <= maxBotPercentage " + (botToUserRatio[1] <= maxBotPercentage));
+
         if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > minTotalMembers)) {
             return false;
         }
 
-        sendMsg(GuildUtils.getPublicChannel(guild),
-            String.format("Hello %s, this server is now blacklisted as botfarm and the bot will leave the guild (%s humans / %s bots).",
-                guild.getOwner().getAsMention(),
-                counts[0],
-                counts[1]
-            ),
-            message -> guild.leave().queue(),
-            er -> guild.leave().queue()
-        );
-
-        logger.info("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
+        logger.debug("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
             TextColor.RED,
             guild,
             botToUserRatio[1],
@@ -99,7 +97,7 @@ public class BaseListener extends ListenerAdapter {
             TextColor.RESET
         );
 
-        guildsLeaving.add(guild.getIdLong());
+        botfarmCache.put(guild.getIdLong(), 'a');
 
         return true;
     }
