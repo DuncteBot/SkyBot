@@ -114,7 +114,7 @@ public class MessageListener extends BaseListener {
                 final String selfUser = event.getJDA().getSelfUser().getAsMention();
                 final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-                if (doAutoModChecks(event, settings, rw)) {
+                if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
                     return;
                 }
 

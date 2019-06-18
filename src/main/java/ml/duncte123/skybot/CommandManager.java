@@ -113,6 +113,22 @@ public class CommandManager {
         return found;
     }
 
+    public boolean isCommand(String customPrefix, String message) {
+        final String[] split = message.toLowerCase().replaceFirst(
+            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                Pattern.quote(customPrefix),
+            "").split("\\s+", 2);
+
+        if (split.length >= 1) {
+            final String invoke = split[0];
+
+            return getCommand(invoke) != null;
+        }
+
+
+        return false;
+    }
+
     public List<ICommand> getCommands(CommandCategory category) {
         return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
