@@ -88,10 +88,8 @@ class EvalFunctions {
         }
 
         @JvmStatic
-        fun restoreCustomCommand(commandId: Int): String {
-            val variables = Variables.getInstance()
-
-            val bool = variables.apis.restoreCustomCommand(commandId)
+        fun restoreCustomCommand(commandId: Int, variables: Variables): String {
+            val bool = variables.apis.restoreCustomCommand(commandId, variables)
 
             if (bool) {
                 return "Command Restored"

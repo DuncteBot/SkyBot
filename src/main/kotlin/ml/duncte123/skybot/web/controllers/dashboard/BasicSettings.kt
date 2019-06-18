@@ -52,7 +52,7 @@ object BasicSettings {
             leaveTimeout = 1
         }
 
-        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!)
+        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!, variables)
         guild.setColor(color)
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)

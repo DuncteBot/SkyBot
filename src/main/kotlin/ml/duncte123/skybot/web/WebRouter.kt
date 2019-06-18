@@ -44,10 +44,7 @@ import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class WebRouter(private val shardManager: ShardManager) {
-
-    private val variables = Variables.getInstance()
-
+class WebRouter(private val shardManager: ShardManager, private val variables: Variables) {
     private val config = variables.config
     private val mapper = variables.jackson
 

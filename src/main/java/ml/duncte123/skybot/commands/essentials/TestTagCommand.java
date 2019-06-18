@@ -43,7 +43,7 @@ public class TestTagCommand extends Command {
     public void executeCommand(@Nonnull CommandContext ctx) {
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Usage: `" + ctx.getPrefix() + getName() + " <JagTag syntax>");
+            sendMsg(ctx.getEvent(), "Usage: `" + ctx.getPrefix() + getName() + " <JagTag syntax>`");
             return;
         }
 

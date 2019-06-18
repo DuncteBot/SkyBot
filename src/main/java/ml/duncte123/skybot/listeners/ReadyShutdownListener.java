@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -48,6 +49,10 @@ public class ReadyShutdownListener extends MessageListener {
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
     private byte shardsReady = 0;
+
+    public ReadyShutdownListener(Variables variables) {
+        super(variables);
+    }
 
     @Override
     public void onReady(ReadyEvent event) {

@@ -213,15 +213,15 @@ public class ModerationUtils {
                 final List<Ban> bans = bansAndMutes.getFirst();
                 final List<Mute> mutes = bansAndMutes.getSecond();
 
-                handleUnban(bans, adapter);
-                handleUnmute(mutes, adapter);
+                handleUnban(bans, adapter, variables);
+                handleUnmute(mutes, adapter, variables);
 
                 return null;
             }
         );
     }
 
-    private static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter) {
+    private static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -246,7 +246,7 @@ public class ModerationUtils {
 
             logger.debug("Unmuting " + mute.getUserTag());
 
-            final DunctebotGuild dbGuild = new DunctebotGuild(guild);
+            final DunctebotGuild dbGuild = new DunctebotGuild(guild, variables);
             final long muteRoleId = dbGuild.getSettings().getMuteRoleId();
 
             if (muteRoleId < 1L) {
@@ -277,7 +277,7 @@ public class ModerationUtils {
         }
     }
 
-    private static void handleUnban(List<Ban> bans, DatabaseAdapter adapter) {
+    private static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unban");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -299,7 +299,7 @@ public class ModerationUtils {
                 Short.valueOf(ban.getDiscriminator())
             );
 
-            modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild));
+            modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild, variables));
 
         }
 

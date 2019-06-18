@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SpamFilter : TLongObjectHashMap<SpamCache>() {
+class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
 
     private lateinit var rates: LongArray
-    private val adapter = Variables.getInstance().databaseAdapter
+    private val adapter = variables.databaseAdapter
     private val logger = LoggerFactory.getLogger(SpamFilter::class.java)
 
     @Throws(IllegalArgumentException::class)
@@ -90,7 +90,7 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
      */
     infix fun check(data: Triple<Member, Message, Boolean>): Boolean {
         val author = data.first
-        val guild = DunctebotGuild(author.guild)
+        val guild = DunctebotGuild(author.guild, variables)
         val user = author.user
         val msg = data.second
         val jda = msg.jda

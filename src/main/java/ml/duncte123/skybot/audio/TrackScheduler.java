@@ -55,7 +55,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
-    private final Variables variables = Variables.getInstance();
+    private final Variables variables;
     private final Debouncer<String> messageDebouncer;
     private final Debouncer<Exception> exceptionDebouncer;
     private boolean repeating = false;
@@ -68,7 +68,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * @param player
      *         Our audio player
      */
-    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager, Variables variables) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
@@ -76,6 +76,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg)
             , DEBOUNCE_INTERVAL);
         this.exceptionDebouncer = new Debouncer<>(Sentry::capture, DEBOUNCE_INTERVAL);
+        this.variables = variables;
     }
 
     /**

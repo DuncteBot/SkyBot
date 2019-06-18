@@ -113,6 +113,22 @@ public class CommandManager {
         return found;
     }
 
+    public boolean isCommand(String customPrefix, String message) {
+        final String[] split = message.toLowerCase().replaceFirst(
+            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                Pattern.quote(customPrefix),
+            "").split("\\s+", 2);
+
+        if (split.length >= 1) {
+            final String invoke = split[0];
+
+            return getCommand(invoke) != null;
+        }
+
+
+        return false;
+    }
+
     public List<ICommand> getCommands(CommandCategory category) {
         return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
@@ -344,7 +360,7 @@ public class CommandManager {
                     MDC.put("command.class", cmd.getClass().getName());
 
                     cmd.executeCommand(
-                        new CommandContext(invoke, args, event)
+                        new CommandContext(invoke, args, event, variables)
                     );
 
                     return;
@@ -359,7 +375,7 @@ public class CommandManager {
                 try {
                     MDC.put("command.custom.message", cc.getMessage());
 
-                    final String message = CustomCommandUtils.parse(new CommandContext(invoke, args, event), cc.getMessage());
+                    final String message = CustomCommandUtils.parse(new CommandContext(invoke, args, event, variables), cc.getMessage());
 
                     if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);
@@ -382,9 +398,14 @@ public class CommandManager {
         //Loop over them commands
         for (final Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
             try {
-                final ICommand command = cmd.getDeclaredConstructor().newInstance();
-//                System.out.println(command.getName());
-                //Add the command
+                final ICommand command;
+
+                if (cmd.getSimpleName().equals("TagCommand")) {
+                    command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
+                } else {
+                    command = cmd.getDeclaredConstructor().newInstance();
+                }
+
                 this.addCommand(command);
             }
             catch (Exception ignored) {
