@@ -114,7 +114,7 @@ public class MessageListener extends BaseListener {
                 final String selfUser = event.getJDA().getSelfUser().getAsMention();
                 final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-                if (doesNotStartWithPrefix(event, settings) && doAutoModChecks(event, settings, rw)) {
+                if (doAutoModChecks(event, settings, rw)) {
                     return;
                 }
 
@@ -340,7 +340,7 @@ public class MessageListener extends BaseListener {
         final String[] split = messageToCheck.getContentRaw().toLowerCase().split("\\s+");
 
         for (final String foundWord : split) {
-            if (blacklist.contains(foundWord)) {
+            if (blacklist.stream().anyMatch((w) -> foundWord.contains(w) || w.contains(foundWord))) {
                 messageToCheck.delete()
                     .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
 
