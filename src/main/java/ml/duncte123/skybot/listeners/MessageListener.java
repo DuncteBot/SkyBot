@@ -337,10 +337,10 @@ public class MessageListener extends BaseListener {
             return false;
         }
 
-        final String[] split = messageToCheck.getContentRaw().toLowerCase().split("\\s+");
+        final String rw = messageToCheck.getContentRaw().toLowerCase();
 
-        for (final String foundWord : split) {
-            if (blacklist.stream().anyMatch((w) -> foundWord.contains(w) || w.contains(foundWord))) {
+        for (final String foundWord : blacklist) {
+            if (Pattern.compile("\\b" + foundWord + "\\b").matcher(rw).find()) {
                 messageToCheck.delete()
                     .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
 
