@@ -26,9 +26,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 
 import javax.annotation.Nonnull;
 
-import static java.awt.Color.decode;
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
+import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ColorCommand extends Command {
@@ -45,7 +45,7 @@ public class ColorCommand extends Command {
             final String rgb = data.rgb;
 
             final EmbedBuilder embed = defaultEmbed()
-                .setColor(decode(hex))
+                .setColor(colorToInt(hex))
                 .setThumbnail(image);
 
             final String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s%nText Color: %s",

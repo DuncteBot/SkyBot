@@ -50,7 +50,7 @@ class RoleInfoCommand : Command() {
             .setColor(role.colorRaw)
             .setDescription("""__Role info for ${role.asMention}__
                 |
-                |**Color:** ${colorToHex(role.color)}
+                |**Color:** ${colorToHex(role.colorRaw)}
                 |**Id:** ${role.id}
                 |**Name:** ${role.name}
                 |**Position:** ${role.position}

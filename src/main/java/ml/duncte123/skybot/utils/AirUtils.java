@@ -36,8 +36,6 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -213,15 +211,17 @@ public class AirUtils {
     }
 
     public static String colorToHex(int hex) {
-        return colorToHex(new Color(hex));
+        final int r = (hex & 0xFF0000) >> 16;
+        final int g = (hex & 0xFF00) >> 8;
+        final int b = (hex & 0xFF);
+
+        return String.format("#%02x%02x%02x", r, g, b);
     }
 
-    public static String colorToHex(@Nullable Color color) {
-        if (color == null) {
-            return "#1FFFFFF";
-        }
+    public static int colorToInt(String hex) {
+        final String hexValue = "0x" + hex.replaceFirst("#", "");
 
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        return Integer.decode(hexValue);
     }
 
     public static User getMentionedUser(CommandContext ctx) {

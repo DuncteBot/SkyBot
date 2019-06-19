@@ -18,16 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
-import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
@@ -43,22 +39,8 @@ class NowPlayingCommand : MusicCommand() {
 
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val trackinfo = player.playingTrack.info
-                val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
-                    .radioStreams.first { it.url == trackinfo.uri }
 
-                if (stream is ILoveStream) {
-                    val json = WebUtils.ins
-                        .getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                    val channelData = json.get("channel-${stream.npChannel}")
-
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channelData.get("title").asText()}]" +
-                        "(${stream.url}) by ${channelData.get("artist").asText()}**")
-                        .setThumbnail("https://www.iloveradio.de${channelData.get("cover").asText()}")
-                        .setColor(Color.decode(channelData.get("color").asText()))
-                } else {
-                    embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})")
-                }
-
+                embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})")
             }
 
             else -> embedMessage("The player is not currently playing anything!")

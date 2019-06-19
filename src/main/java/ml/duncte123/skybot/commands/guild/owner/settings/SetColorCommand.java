@@ -23,13 +23,13 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetColorCommand extends SettingsBase {
@@ -55,7 +55,7 @@ public class SetColorCommand extends SettingsBase {
             return;
         }
 
-        final int colorInt = Color.decode(colorString).getRGB();
+        final int colorInt = colorToInt(colorString);
 
         ctx.getGuild().setColor(colorInt);
 

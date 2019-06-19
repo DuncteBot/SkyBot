@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
+import ml.duncte123.skybot.utils.AirUtils.colorToInt
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
@@ -29,7 +30,6 @@ import net.dv8tion.jda.bot.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
-import java.awt.Color
 import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -45,7 +45,7 @@ object BasicSettings {
         val autorole = params["autoRoleRole"]
         //val autoRoleEnabled = params["autoRoleRoleCB"]
         val announceTracks = paramToBoolean(params["announceTracks"])
-        val color = Color.decode(params["embedColor"]).rgb
+        val color = colorToInt(params["embedColor"])
         var leaveTimeout = GuildSettingsUtils.toLong(params["leaveTimeout"]).toInt()
 
         if (leaveTimeout < 1 || leaveTimeout > 60) {
