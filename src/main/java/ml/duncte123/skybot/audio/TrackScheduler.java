@@ -216,7 +216,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 getInstance().getShardManager().getUserById(userData.getUserId());
             final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
 
-            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message);
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message, null, (t) -> {});
         }
     }
 
