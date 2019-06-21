@@ -50,6 +50,12 @@ public class YodaSpeakCommand extends Command {
             final JsonNode response = ctx.getApis().executeDefaultGetRequest(builder.toString(), false);
 
             logger.debug("Yoda response: " + response);
+
+            if (!response.get("success").asBoolean()) {
+                sendMsg(event, "Could not connect to yoda service, try again in a few hours");
+                return;
+            }
+
             sendMsg(event, "<:yoda:578198258351079438> " + response.get("data").asText());
         }
         catch (Exception e) {
