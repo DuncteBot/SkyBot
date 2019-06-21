@@ -22,13 +22,16 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.core.MessageBuilder.SplitPolicy
 
 class RolesCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
         val rolesString = ctx.guild.roleCache.map { "@${it.name} - ${it.id}" }.joinToString(separator = "\n")
-        val message = MessageBuilder().appendCodeBlock(rolesString, "").build()
+        val messages = MessageBuilder().appendCodeBlock(rolesString, "").buildAll(SplitPolicy.NEWLINE)
 
-        sendMsg(ctx, message)
+        messages.forEach {
+            sendMsg(ctx, it)
+        }
     }
 
     override fun getName() = "roles"
