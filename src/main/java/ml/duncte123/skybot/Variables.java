@@ -93,7 +93,9 @@ public final class Variables {
         this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
-            Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION);
+            //noinspection ConstantConditions
+            final String env = "&environment=" + (Settings.VERSION.equals("@versionObj@") ? "local" : "production");
+            Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION + env);
         }
     }
 
