@@ -74,6 +74,8 @@ class OneLinerCommands : Command() {
             "screenfetch" -> sendMsg(event, "```\n${Runtime.getRuntime().exec("screenfetch -N")
                 .getString().replace("`", "​'").replace("\u001B\\[[;\\d]*m", "")}```")
 
+            "website" -> sendMsg(event, "My website is <https://dunctebot.com>")
+
             else -> println("Invoke was invalid: ${ctx.invoke}")
         }
     }
@@ -121,6 +123,11 @@ class OneLinerCommands : Command() {
                     |Usage: `$prefix$invoke`
                 """.trimMargin()
             }
+            "website" -> {
+                """Shows the bots website
+                    |Usage: `$prefix$invoke`
+                """.trimMargin()
+            }
 
             else -> "invalid invoke"
         }
@@ -134,9 +141,10 @@ class OneLinerCommands : Command() {
             |`${prefix}invite` => Gives you the bot invite
             |`${prefix}uptime` => Shows the bot uptime
             |`${prefix}quote` => Shows an inspiring quote
+            |`${prefix}website` => Shows the bots website
     """.trimMargin()
 
     override fun getName() = "cookie"
 
-    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "xkcd", "screenfetch")
+    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "xkcd", "screenfetch", "website")
 }
