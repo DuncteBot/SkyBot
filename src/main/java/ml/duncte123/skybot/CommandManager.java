@@ -30,6 +30,8 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.util.*;
@@ -44,6 +46,7 @@ import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     /**
@@ -358,6 +361,8 @@ public class CommandManager {
                     }
 
                     MDC.put("command.class", cmd.getClass().getName());
+
+                    LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
 
                     cmd.executeCommand(
                         new CommandContext(invoke, args, event, variables)
