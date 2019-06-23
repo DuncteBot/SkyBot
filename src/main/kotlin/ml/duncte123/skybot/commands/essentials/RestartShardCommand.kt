@@ -56,7 +56,7 @@ class RestartShardCommand : Command() {
                     MessageUtils.sendMsg(ctx.event, "All shards will restart in 15 seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
-                    terminate(-1, event.jda.asBot().shardManager)
+                    terminate(-1, shardManager)
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart()
@@ -68,7 +68,7 @@ class RestartShardCommand : Command() {
                 1 -> {
                     val id = ctx.args[0].toInt()
 
-                    if (id > ctx.shardManager.shardsTotal) {
+                    if (id > shardManager.shardsTotal - 1) {
                         MessageUtils.sendMsg(ctx.event, "$id is an invalid shard id")
                         return
                     }
@@ -76,7 +76,7 @@ class RestartShardCommand : Command() {
                     MessageUtils.sendMsg(ctx.event, "Shard $id will restart in 15 seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
-                    terminate(id, event.jda.asBot().shardManager)
+                    terminate(id, shardManager)
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart(id)
