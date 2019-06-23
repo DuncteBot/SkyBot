@@ -22,18 +22,13 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import io.sentry.Sentry;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -57,7 +52,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private final GuildMusicManager guildMusicManager;
     private final Variables variables;
     private final Debouncer<String> messageDebouncer;
-    private final Debouncer<Exception> exceptionDebouncer;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -75,7 +69,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.messageDebouncer = new Debouncer<>((msg) ->
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
             , DEBOUNCE_INTERVAL);
-        this.exceptionDebouncer = new Debouncer<>(Sentry::capture, DEBOUNCE_INTERVAL);
         this.variables = variables;
     }
 
@@ -223,8 +216,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            final TextChannel tc = guildMusicManager.getLatestChannel();
-
+            /*final TextChannel tc = guildMusicManager.getLatestChannel();
             final Guild g = tc == null ? null : tc.getGuild();
 
             if (g != null) {
@@ -240,7 +232,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 );
 
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            }
+            }*/
 
             final Throwable rootCause = ExceptionUtils.getRootCause(exception);
             final Throwable finalCause = rootCause != null ? rootCause : exception;
@@ -251,7 +243,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
             this.messageDebouncer.accept("Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
                 "Details: " + finalCause);
-            this.exceptionDebouncer.accept(exception);
         }
     }
 }
