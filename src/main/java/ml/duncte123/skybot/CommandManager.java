@@ -340,6 +340,7 @@ public class CommandManager {
             MDC.put("user.tag", event.getAuthor().getAsTag());
             MDC.put("user.id", event.getAuthor().getId());
             MDC.put("guild", event.getGuild().toString());
+            MDC.put("jda.shard", Objects.requireNonNull(event.getJDA().getShardInfo()).getShardString());
 
             final TextChannel channel = event.getChannel();
 
