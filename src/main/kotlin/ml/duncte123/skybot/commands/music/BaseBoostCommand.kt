@@ -50,7 +50,7 @@ class BaseBoostCommand : MusicCommand() {
             "off", "none" -> 0.0
 
             else -> {
-                sendMsg(ctx, "Unknown base boost preset ${args[0]}, please choose from high/med/low/off")
+                sendMsg(ctx, "Unknown bassboost preset ${args[0]}, please choose from high/med/low/off")
                 -1.0
             }
         }
@@ -59,7 +59,7 @@ class BaseBoostCommand : MusicCommand() {
             return
         }
 
-        sendMsg(ctx, "Set the base boost to `${args[0]}`")
+        sendMsg(ctx, "Set the bassboost to `${args[0]}`")
 
         val node = (getMusicManager(ctx.guild, ctx.audioUtils).player as LavalinkPlayer).link.getNode(false) ?: return
         val jackson = ctx.variables.jackson
@@ -83,7 +83,7 @@ class BaseBoostCommand : MusicCommand() {
 
     override fun getAliases() = arrayOf("bb", "bassboost")
 
-    override fun help(prefix: String) = """Sets the base boost on the player
-        |Usage: `${prefix}baseboost <high/med/low/off>`
+    override fun help(prefix: String) = """Sets the bassboost on the player
+        |Usage: `${prefix}bassboost <high/med/low/off>`
     """.trimMargin()
 }
