@@ -177,7 +177,7 @@ public class AirUtils {
             }
         }
 
-        database.getService().shutdownNow();
+        database.getService().shutdown();
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {
