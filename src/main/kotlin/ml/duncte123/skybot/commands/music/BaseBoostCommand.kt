@@ -81,7 +81,7 @@ class BaseBoostCommand : MusicCommand() {
 
     override fun getName() = "baseboost"
 
-    override fun getAliases() = arrayOf("bb")
+    override fun getAliases() = arrayOf("bb", "bassboost")
 
     override fun help(prefix: String) = """Sets the base boost on the player
         |Usage: `${prefix}baseboost <high/med/low/off>`
