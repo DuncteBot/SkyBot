@@ -24,6 +24,7 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -36,6 +37,9 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -246,5 +250,14 @@ public class AirUtils {
         }
 
         return foundMembers.get(0);
+    }
+
+    public static String getDatabaseDateFormat(Duration duration) {
+        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Calendar c = Calendar.getInstance();
+
+        c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
+
+        return df.format(c.getTime());
     }
 }

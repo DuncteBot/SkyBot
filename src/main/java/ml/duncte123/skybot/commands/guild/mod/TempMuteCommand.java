@@ -22,6 +22,7 @@ import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
@@ -74,7 +75,7 @@ public class TempMuteCommand extends TempBanCommand {
         }
 
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
-        final String finalDate = getBanDateFormat(duration);
+        final String finalDate = AirUtils.getDatabaseDateFormat(duration);
 
         ctx.getDatabaseAdapter().createMute(
             author.getIdLong(),
