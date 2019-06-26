@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import lavalink.client.player.LavalinkPlayer
+import lavalink.client.player.LavaplayerPlayerWrapper
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -60,7 +61,18 @@ class BaseBoostCommand : MusicCommand() {
         }
 
         sendMsg(ctx, "Set the bassboost to `${args[0]}`")
+        setLavalinkEQ(gain, ctx)
+    }
 
+    override fun getName() = "baseboost"
+
+    override fun getAliases() = arrayOf("bb", "bassboost")
+
+    override fun help(prefix: String) = """Sets the bassboost on the player
+        |Usage: `${prefix}bassboost <high/med/low/off>`
+    """.trimMargin()
+
+    private fun setLavalinkEQ(gain: Double, ctx: CommandContext) {
         val node = (getMusicManager(ctx.guild, ctx.audioUtils).player as LavalinkPlayer).link.getNode(false) ?: return
         val jackson = ctx.variables.jackson
 
@@ -78,12 +90,4 @@ class BaseBoostCommand : MusicCommand() {
 
         node.send(jackson.writeValueAsString(json))
     }
-
-    override fun getName() = "baseboost"
-
-    override fun getAliases() = arrayOf("bb", "bassboost")
-
-    override fun help(prefix: String) = """Sets the bassboost on the player
-        |Usage: `${prefix}bassboost <high/med/low/off>`
-    """.trimMargin()
 }
