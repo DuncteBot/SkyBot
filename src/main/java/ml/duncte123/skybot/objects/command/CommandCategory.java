@@ -29,7 +29,7 @@ public enum CommandCategory {
     MUSIC("music"),
     MODERATION("mod"),
     ADMINISTRATION("admin"),
-    NERD_STUFF("nerd stuff"),
+    UTILS("utils"),
     PATRON("patron"),
     WEEB("weeb"),
     NSFW("nsfw"),

@@ -35,7 +35,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class TranslateCommand extends Command {
 
     public TranslateCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     @Override

@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ShardInfoCommand extends Command {
 
     public ShardInfoCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     @Override
