@@ -109,7 +109,7 @@ public class TempBanCommand extends ModBaseCommand {
             optionalDuration = Optional.empty();
         }
 
-        if (!optionalDuration.isPresent()) {
+        if (optionalDuration.isEmpty()) {
             sendMsg(event, "Usage is `" + prefix + name + " <@user> <time><w/d/h/m/s> [Reason]`");
 
             return null;

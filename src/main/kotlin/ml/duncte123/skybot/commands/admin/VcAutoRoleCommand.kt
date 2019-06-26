@@ -180,7 +180,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
             val targetChannel = foundVoiceChannels[0].idLong
 
-            cache!!.put(targetChannel, targetRole)
+            cache.put(targetChannel, targetRole)
             ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
 
             sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
