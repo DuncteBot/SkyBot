@@ -42,5 +42,7 @@ class PauseCommand : MusicCommand() {
 
     override fun help(prefix: String): String? = "Pauses the current song"
 
+    override fun getAliases() = arrayOf("resume")
+
     override fun getName(): String = "pause"
 }
