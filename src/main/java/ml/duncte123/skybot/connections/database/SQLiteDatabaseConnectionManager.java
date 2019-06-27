@@ -210,6 +210,14 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
                     "word VARCHAR(255) NOT NULL);"
             );
 
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS reminders" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "user_id VARCHAR(255) NOT NULL," +
+                    "reminder TEXT NOT NULL," +
+                    "remind_date DATE NOT NULL);"
+            );
+
             close();
         }
         catch (SQLException | IOException e) {

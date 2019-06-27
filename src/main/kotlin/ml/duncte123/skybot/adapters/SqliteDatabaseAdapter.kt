@@ -36,6 +36,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
+import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -751,10 +752,36 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+        runOnThread {
+            connManager.use {
+                val conn = it.connection
+                val smt = conn.prepareStatement("INSERT INTO reminders(user_id, reminder, remind_date) VALUES (? , ? , ?)")
+
+                smt.setString(1, userId.toString())
+                smt.setString(2, reminder)
+                smt.setDate(3, expireDate.toSQL())
+
+                try {
+                    smt.execute()
+                    callback.invoke(true)
+                } catch (ignored: SQLException) {
+                    callback.invoke(false)
+                }
+            }
+        }
+    }
+
+    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val sqlQuerry = if (isEdit) {
+            //language=SQLite
             "UPDATE customCommands SET message = ? , autoresponse = ? WHERE guildId = ? AND invoke = ?"
         } else {
+            //language=SQLite
             "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
 
@@ -793,4 +820,6 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         return list
     }
+
+    private fun Date.toSQL() = java.sql.Date(this.time)
 }

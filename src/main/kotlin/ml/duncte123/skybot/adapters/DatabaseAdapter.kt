@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(protected val variables: Variables) {
@@ -143,6 +144,12 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
     abstract fun createTag(tag: Tag, callback: (Boolean, String) -> Unit)
 
     abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
+
+    // Reminders
+
+    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit)
+
+    abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
 
     protected fun runOnThread(r: () -> Unit) {
         variables.database.run {

@@ -46,7 +46,7 @@ public class HelpEmbeds {
     private static String WEEB_COMMANDS = "";
     private static String LGBTQ_COMMANDS = "";
     private static String FUN_COMMANDS = "";
-    private static String UTIL_COMMANDS = "";
+    private static String UTILS_COMMANDS = "";
     private static String MODERATION_COMMANDS = "";
     private static String ADMINISTRATION_COMMANDS = "";
     private static String PATRON_COMMANDS = "";
@@ -119,7 +119,7 @@ public class HelpEmbeds {
                 .addField("Weeb commands", WEEB_COMMANDS, INLINE)
                 .addField("LGBTQ+ commands", LGBTQ_COMMANDS, INLINE)
                 .addField("Fun commands", FUN_COMMANDS, INLINE)
-                .addField("Util commands", UTIL_COMMANDS, INLINE)
+                .addField("Util commands", UTILS_COMMANDS, INLINE)
                 .addField("Mod commands", MODERATION_COMMANDS, INLINE)
                 .addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE)
                 .addField("Patron only commands", PATRON_COMMANDS, INLINE)
@@ -151,7 +151,7 @@ public class HelpEmbeds {
                     embed.addField("Fun commands", FUN_COMMANDS, INLINE);
                     break;
                 case UTILS:
-                    embed.addField("Util commands", UTIL_COMMANDS, INLINE);
+                    embed.addField("Util commands", UTILS_COMMANDS, INLINE);
                     break;
                 case MODERATION:
                     embed.addField("Mod commands", MODERATION_COMMANDS, INLINE);
