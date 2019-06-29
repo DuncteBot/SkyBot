@@ -27,10 +27,7 @@ import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Tag
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.VcAutoRole
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
@@ -372,6 +369,10 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

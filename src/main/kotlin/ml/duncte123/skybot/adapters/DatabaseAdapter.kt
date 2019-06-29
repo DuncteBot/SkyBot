@@ -24,10 +24,7 @@ import io.sentry.Sentry
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Tag
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.VcAutoRole
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.util.*
@@ -150,6 +147,8 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
     abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit)
 
     abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
+
+    abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
 
     protected fun runOnThread(r: () -> Unit) {
         variables.database.run {

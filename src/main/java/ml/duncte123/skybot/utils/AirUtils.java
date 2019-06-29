@@ -40,6 +40,7 @@ import net.dv8tion.jda.core.entities.User;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -259,5 +260,13 @@ public class AirUtils {
         c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
 
         return df.format(c.getTime());
+    }
+
+    public static Date getDatabaseDate(Duration duration) {
+        final Calendar c = Calendar.getInstance();
+
+        c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
+
+        return Date.from(c.toInstant());
     }
 }

@@ -23,8 +23,10 @@ import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +78,12 @@ public class RemindmeCommand extends Command {
         }
 
         final String reminder = String.join(" ", args.subList(1, args.size()));
+        final Date expireDate = AirUtils.getDatabaseDate(duration);
+
+        ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
+
+            return null;
+        });
 
         sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
     }

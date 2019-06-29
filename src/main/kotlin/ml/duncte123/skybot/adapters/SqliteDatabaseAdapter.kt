@@ -27,16 +27,14 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.VcAutoRole
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
 import java.sql.SQLException
+import java.text.DateFormat
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -774,6 +772,37 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
+        runOnThread {
+            val reminders = ArrayList<Reminder>()
+
+            connManager.use {
+                val conn = it.connection
+
+                val smt = conn.prepareStatement(
+                    "SELECT * FROM `reminders` WHERE (DATE('now') <= DATE(remind_date))"
+                ).apply {
+                    closeOnCompletion()
+                }
+
+                val result = smt.executeQuery()
+
+                while (result.next()) {
+                    reminders.add(Reminder(
+                        result.getInt("id"),
+                        result.getLong("user_id"),
+                        result.getString("reminder"),
+                        result.getDate("remind_date")
+                    ))
+                }
+
+                conn.close()
+            }
+
+            callback.invoke(reminders)
+        }
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {

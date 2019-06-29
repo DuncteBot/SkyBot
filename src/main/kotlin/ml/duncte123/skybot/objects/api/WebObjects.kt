@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.objects.api
 
 import ml.duncte123.skybot.Author
+import java.util.*
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
@@ -31,4 +32,6 @@ data class Ban(val id: Int, val modId: String, val userId: String, val userName:
 data class Mute(val id: Int, val modId: String, val userId: String, val userTag: String, val guildId: String)
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
+
+data class Reminder(val id: Int, val user_id: Long, val reminder: String, val reminder_date: Date)
 
