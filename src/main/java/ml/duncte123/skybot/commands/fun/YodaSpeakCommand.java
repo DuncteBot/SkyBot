@@ -47,7 +47,7 @@ public class YodaSpeakCommand extends Command {
             final QueryBuilder builder = new QueryBuilder()
                 .append("yoda")
                 .append("sentence", ctx.getArgsDisplay());
-            final JsonNode response = ctx.getApis().executeDefaultGetRequest(builder.toString(), false);
+            final JsonNode response = ctx.getApis().executeDefaultGetRequest(builder.build(), false);
 
             logger.debug("Yoda response: " + response);
 
