@@ -144,7 +144,11 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     // Reminders
 
-    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit)
+    fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+        createReminder(userId, reminder, expireDate, 0, callback)
+    }
+
+    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit)
 
     abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
 

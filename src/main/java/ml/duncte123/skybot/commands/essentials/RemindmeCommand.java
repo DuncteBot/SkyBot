@@ -82,6 +82,12 @@ public class RemindmeCommand extends Command {
 
         ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
 
+            if (success) {
+                sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
+            } else {
+                sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
+            }
+
             return null;
         });
 

@@ -33,5 +33,5 @@ data class Mute(val id: Int, val modId: String, val userId: String, val userTag:
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
 
-data class Reminder(val id: Int, val user_id: Long, val reminder: String, val reminder_date: Date)
+data class Reminder(val id: Int, val user_id: Long, val reminder: String, val reminder_date: Date, val channel_id: Long)
 

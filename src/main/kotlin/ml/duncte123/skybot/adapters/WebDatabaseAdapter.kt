@@ -364,7 +364,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

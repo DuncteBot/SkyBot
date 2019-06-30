@@ -34,7 +34,6 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
 import java.sql.SQLException
-import java.text.DateFormat
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -750,15 +749,27 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
         runOnThread {
+            val sql = if (channelId > 0) {
+                //language=SQLite
+                "INSERT INTO reminders(user_id, reminder, remind_date, channel_id) VALUES (? , ? , ?, ?)"
+            } else {
+                //language=SQLite
+                "INSERT INTO reminders(user_id, reminder, remind_date) VALUES (? , ? , ?)"
+            }
+
             connManager.use {
                 val conn = it.connection
-                val smt = conn.prepareStatement("INSERT INTO reminders(user_id, reminder, remind_date) VALUES (? , ? , ?)")
+                val smt = conn.prepareStatement(sql)
 
                 smt.setString(1, userId.toString())
                 smt.setString(2, reminder)
                 smt.setDate(3, expireDate.toSQL())
+
+                if (channelId > 0) {
+                    smt.setString(4, channelId.toString())
+                }
 
                 try {
                     smt.execute()
@@ -774,18 +785,17 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    // TODO: not used
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val reminders = ArrayList<Reminder>()
 
             connManager.use {
                 val conn = it.connection
-
                 val smt = conn.prepareStatement(
-                    "SELECT * FROM `reminders` WHERE (DATE('now') <= DATE(remind_date))"
-                ).apply {
-                    closeOnCompletion()
-                }
+                    "SELECT * FROM `reminders` WHERE (DATE(remind_date) <= DATE('now'))")
+
+                smt.closeOnCompletion()
 
                 val result = smt.executeQuery()
 
@@ -794,7 +804,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         result.getInt("id"),
                         result.getLong("user_id"),
                         result.getString("reminder"),
-                        result.getDate("remind_date")
+                        result.getDate("remind_date"),
+                        result.getLong("channel_id")
                     ))
                 }
 
