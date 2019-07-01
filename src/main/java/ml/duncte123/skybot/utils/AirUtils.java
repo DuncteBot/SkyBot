@@ -27,15 +27,19 @@ import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,6 +47,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -268,5 +274,34 @@ public class AirUtils {
         c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
 
         return Date.from(c.toInstant());
+    }
+
+    public static void handleExpiredReminders(List<Reminder> reminders, Variables variables) {
+        final PrettyTime prettyTime = new PrettyTime();
+        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+
+        for (final Reminder reminder : reminders) {
+            final String message = String.format(
+                "%s you asked me to remind you about %s",
+                prettyTime.format(reminder.getReminder_date()),
+                reminder.getReminder()
+            );
+
+            final long channelId = reminder.getChannel_id();
+
+            if (channelId > 0) {
+                final TextChannel channel = shardManager.getTextChannelById(channelId);
+
+                sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
+            } else {
+                final User user = shardManager.getUserById(reminder.getUser_id());
+
+                if (user != null) {
+                    user.openPrivateChannel().queue(
+                        (channel) -> channel.sendMessage(message).queue()
+                    );
+                }
+            }
+        }
     }
 }

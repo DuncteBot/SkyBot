@@ -785,7 +785,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    // TODO: not used
+    override fun removeReminders(ids: List<Int>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val reminders = ArrayList<Reminder>()
@@ -812,7 +815,9 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 conn.close()
             }
 
-            callback.invoke(reminders)
+            if (reminders.isNotEmpty()) {
+                callback.invoke(reminders)
+            }
         }
     }
 

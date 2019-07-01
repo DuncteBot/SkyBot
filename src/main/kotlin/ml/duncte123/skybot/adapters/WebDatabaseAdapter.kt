@@ -372,6 +372,10 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun removeReminders(ids: List<Int>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
