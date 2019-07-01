@@ -785,8 +785,19 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun removeReminders(ids: List<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun purgeReminders(ids: List<Int>) {
+        runOnThread {
+            val inClause = '(' + ids.joinToString() + ')'
+            //language=SQLite
+            val sql = "DELETE FROM reminders WHERE id IN $inClause"
+
+            connManager.use {
+                val smt = it.connection.createStatement()
+
+                smt.execute(sql)
+                smt.closeOnCompletion()
+            }
+        }
     }
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {

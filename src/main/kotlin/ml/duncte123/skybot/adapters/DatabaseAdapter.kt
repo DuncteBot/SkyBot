@@ -152,7 +152,7 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
 
-    abstract fun removeReminders(ids: List<Int>)
+    abstract fun purgeReminders(ids: List<Int>)
 
     /**
      * Important: Callback must not be called if the list is empty

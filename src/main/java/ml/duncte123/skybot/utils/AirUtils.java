@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
+import gnu.trove.list.TIntList;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
@@ -29,6 +30,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
@@ -43,10 +45,12 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
@@ -276,9 +280,10 @@ public class AirUtils {
         return Date.from(c.toInstant());
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, Variables variables) {
+    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
         final PrettyTime prettyTime = new PrettyTime();
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final List<Integer> toPurge = new ArrayList<>();
 
         for (final Reminder reminder : reminders) {
             final String message = String.format(
@@ -292,16 +297,34 @@ public class AirUtils {
             if (channelId > 0) {
                 final TextChannel channel = shardManager.getTextChannelById(channelId);
 
-                sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
+                if (channel != null) {
+                    toPurge.add(reminder.getId());
+                    sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
+                }
             } else {
                 final User user = shardManager.getUserById(reminder.getUser_id());
 
                 if (user != null) {
+                    toPurge.add(reminder.getId());
                     user.openPrivateChannel().queue(
                         (channel) -> channel.sendMessage(message).queue()
                     );
                 }
             }
         }
+
+        // Remove any reminders that have not been removed after 2 days
+        final Calendar calendarDateAfter = Calendar.getInstance();
+        calendarDateAfter.add(Calendar.DAY_OF_YEAR, 2);
+
+        final Date dateAfter = calendarDateAfter.getTime();
+
+        final List<Integer> extraRemoval = reminders.stream()
+            .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
+            .map(Reminder::getId)
+            .collect(Collectors.toList());
+
+        toPurge.addAll(extraRemoval);
+        adapter.purgeReminders(toPurge);
     }
 }

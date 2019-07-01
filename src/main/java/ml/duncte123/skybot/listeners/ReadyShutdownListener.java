@@ -77,11 +77,10 @@ public class ReadyShutdownListener extends MessageListener {
         if (!reminderCheckActive) {
             systemPool.scheduleAtFixedRate(
                 () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
-                    AirUtils.handleExpiredReminders(reminders, variables);
+                    AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter());
 
                     return null;
-                })
-                , 2, 2, TimeUnit.MINUTES);
+                }), 2, 2, TimeUnit.MINUTES);
             reminderCheckActive = true;
         }
 
