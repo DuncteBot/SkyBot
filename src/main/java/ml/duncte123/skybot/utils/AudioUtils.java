@@ -85,7 +85,7 @@ public class AudioUtils {
             playerManager = new DefaultAudioPlayerManager();
             //playerManager.enableGcMonitoring();
 
-            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
             youtubeAudioSourceManager.configureRequests(
                 (config) -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build()
             );

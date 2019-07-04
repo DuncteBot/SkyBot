@@ -33,6 +33,7 @@ import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,6 +167,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final Playlist spotifyPlaylist = spotifyApi.getPlaylist(playListId).build().execute();
 
             for (final PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
+                if (finalPlaylist.size() > TrackScheduler.QUEUE_SIZE) {
+                    break;
+                }
+
                 final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
                     + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
 
