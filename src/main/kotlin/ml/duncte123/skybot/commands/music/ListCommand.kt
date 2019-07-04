@@ -40,7 +40,7 @@ class ListCommand : MusicCommand() {
             if (queue.isEmpty()) {
                 sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, "The queue is currently empty!"))
             } else {
-                var queueLength: Long = 0
+                val queueLength = queue.map { it.duration }.sum()
                 val maxTracks = 10
                 val sb = StringBuilder()
 
@@ -51,7 +51,6 @@ class ListCommand : MusicCommand() {
                         break
                     }
 
-                    queueLength += track.duration
                     sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                     sb.append(track.info.title).append("\n")
                 }

@@ -21,8 +21,10 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import org.java_websocket.exceptions.LimitExedeedException
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {
@@ -56,9 +58,13 @@ class ReaddCommand : MusicCommand() {
             msg += "\nand the Player has started playing;"
         }
 
-        manager.scheduler.queue(track)
-        sendSuccess(event.message)
-        sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
+        try {
+            manager.scheduler.queue(track)
+            sendSuccess(event.message)
+            sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
+        } catch (e: LimitReachedException) {
+            sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")
+        }
     }
 
     override fun help(prefix: String): String? = "Readd the current track to the end of the queue"

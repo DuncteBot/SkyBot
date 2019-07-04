@@ -24,6 +24,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -38,6 +39,7 @@ import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
@@ -64,21 +66,25 @@ public class AudioLoader implements AudioLoadResultHandler {
         final String title = getSteamTitle(track, track.getInfo().title, this.ctx.getCommandManager());
 
         track.setUserData(new TrackUserData(this.requester));
-        this.mng.scheduler.queue(track);
+        try {
+            this.mng.scheduler.queue(track);
 
-        if (this.announce) {
-            String msg = "Adding to queue: " + title;
-            if (this.mng.player.getPlayingTrack() == null) {
-                msg += "\nand the Player has started playing;";
+            if (this.announce) {
+                String msg = "Adding to queue: " + title;
+                if (this.mng.player.getPlayingTrack() == null) {
+                    msg += "\nand the Player has started playing;";
+                }
+
+                sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
             }
-
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
+        }
+        catch (LimitReachedException e) {
+            sendMsgFormat(ctx, "You exceeded the maximum queue size of %s tracks", e.getSize());
         }
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-//        AudioTrack firstTrack = playlist.getSelectedTrack();
         final List<AudioTrack> tracks = new ArrayList<>();
         final TrackUserData userData = new TrackUserData(this.requester);
 
@@ -91,37 +97,30 @@ public class AudioLoader implements AudioLoadResultHandler {
             sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
 
             return;
-        } /*else if (firstTrack == null) {
-            firstTrack = playlist.getTracks().get(0);
-        }*/
+        }
 
-        tracks.forEach(this.mng.scheduler::queue);
+        try {
+            final TrackScheduler trackScheduler = this.mng.scheduler;
 
-        /*if (this.addPlaylist) {
-            tracks.forEach(this.mng.scheduler::queue);
-        } else {
-            this.mng.scheduler.queue(firstTrack);
-        }*/
-
-        if (this.announce) {
-            String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-
-            /*if (this.addPlaylist) {
-                msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-            } else {
-                final String prefix = GuildSettingsUtils.getGuild(this.channel.getGuild(), this.ctx.getVariables()).getCustomPrefix();
-
-                msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
-                    "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
-
-            }*/
-
-            if (this.mng.player.getPlayingTrack() == null) {
-                msg += "\nand the Player has started playing;";
+            for (final AudioTrack track : tracks) {
+                trackScheduler.queue(track);
             }
 
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
+            if (this.announce) {
+                String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
+
+                if (this.mng.player.getPlayingTrack() == null) {
+                    msg += "\nand the Player has started playing;";
+                }
+
+                sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
+            }
+        } catch (LimitReachedException e) {
+            if (this.announce) {
+                sendMsgFormat(ctx, "The first %s tracks have been queued up", e.getSize());
+            }
         }
+
     }
 
     @Override
@@ -146,11 +145,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         @Nullable Throwable root = ExceptionUtils.getRootCause(exception);
 
         if (root == null) {
-            // It can return null so shush
-            // noinspection UnusedAssignment
             root = exception;
-
-            return;
         }
 
         sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + root.getMessage()
