@@ -215,7 +215,7 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "user_id VARCHAR(255) NOT NULL," +
                     "reminder TEXT NOT NULL," +
-                    "remind_date DATE NOT NULL," +
+                    "remind_date DATETIME NOT NULL," +
                     "channel_id VARCHAR(255) DEFAULT NULL);"
             );
 

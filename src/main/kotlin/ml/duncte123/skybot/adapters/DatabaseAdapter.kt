@@ -160,12 +160,19 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
     abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
 
     protected fun runOnThread(r: () -> Unit) {
+        runOnThread(r) {
+            //
+        }
+    }
+
+    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
         variables.database.run {
             try {
                 r.invoke()
             }
             catch (thr: Throwable) {
                 Sentry.capture(thr)
+                onFail.invoke(thr)
                 thr.printStackTrace()
             }
         }

@@ -45,10 +45,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -281,7 +278,7 @@ public class AirUtils {
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
-        final PrettyTime prettyTime = new PrettyTime();
+        final PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
 

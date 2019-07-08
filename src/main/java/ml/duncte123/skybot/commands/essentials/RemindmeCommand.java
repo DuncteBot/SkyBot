@@ -108,6 +108,6 @@ public class RemindmeCommand extends Command {
     public String help(String prefix) {
         return "Creates a reminder for you\n" +
             "Usage: `" + prefix + "remind <number><w/d/h/m/s> <reminder>`\n" +
-            "Example: `" + prefix + "remind 1d5m Do the dishes`";
+            "Example: `" + prefix + "remind 1d5m Clean your room :/`";
     }
 }

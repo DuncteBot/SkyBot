@@ -214,25 +214,25 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     callback.invoke(
                         GuildSettings(guildId)
-                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
-                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
-                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
-                        .setCustomPrefix(res.getString("prefix"))
-                        .setLogChannel(toLong(res.getString("logChannelId")))
-                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
-                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                        .setAutoroleRole(toLong(res.getString("autoRole")))
-                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
-                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
-                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
-                        .setFilterInvites(res.getBoolean("filterInvites"))
-                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
-                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
-                        .setKickState(res.getBoolean("kickInsteadState"))
-                        .setLeaveTimeout(res.getInt("leave_timeout"))
-                        .setSpamThreshold(res.getInt("spam_threshold"))
-                        .setBlacklistedWords(blackList)
+                            .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                            .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                            .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                            .setCustomPrefix(res.getString("prefix"))
+                            .setLogChannel(toLong(res.getString("logChannelId")))
+                            .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                            .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                            .setAutoroleRole(toLong(res.getString("autoRole")))
+                            .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                            .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                            .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                            .setFilterInvites(res.getBoolean("filterInvites"))
+                            .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                            .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                            .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                            .setKickState(res.getBoolean("kickInsteadState"))
+                            .setLeaveTimeout(res.getInt("leave_timeout"))
+                            .setSpamThreshold(res.getInt("spam_threshold"))
+                            .setBlacklistedWords(blackList)
                     )
 
                     connection.close()
@@ -782,7 +782,19 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        runOnThread({
+            connManager.use {
+                val con = it.connection
+                val smt = con.createStatement()
+
+                smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
+                smt.closeOnCompletion()
+
+                callback.invoke(true)
+            }
+        }, {
+            callback.invoke(false)
+        })
     }
 
     override fun purgeReminders(ids: List<Int>) {
@@ -807,7 +819,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             connManager.use {
                 val conn = it.connection
                 val smt = conn.prepareStatement(
-                    "SELECT * FROM `reminders` WHERE (DATE(remind_date) <= DATE('now'))")
+                    "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000000, 'unixepoch'))")
 
                 smt.closeOnCompletion()
 
