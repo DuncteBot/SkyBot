@@ -71,8 +71,8 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        if (duration.getMinutes() < 5) {
-            sendMsg(ctx, "Minimum duration is 5 minutes");
+        if (duration.getMinutes() < 2) {
+            sendMsg(ctx, "Minimum duration is 2 minutes");
 
             return;
         }
@@ -81,7 +81,6 @@ public class RemindmeCommand extends Command {
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
         ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
-
             if (success) {
                 sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
             } else {
@@ -90,8 +89,6 @@ public class RemindmeCommand extends Command {
 
             return null;
         });
-
-        sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
     }
 
     @Override

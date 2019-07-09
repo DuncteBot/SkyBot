@@ -277,8 +277,7 @@ public class AirUtils {
         return Date.from(c.toInstant());
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
-        final PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
+    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
 

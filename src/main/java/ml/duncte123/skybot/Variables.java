@@ -37,6 +37,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -49,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 public final class Variables {
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
     private final boolean isSql;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
@@ -215,5 +217,9 @@ public final class Variables {
         }
 
         return this.databaseAdapter;
+    }
+
+    public PrettyTime getPrettyTime() {
+        return prettyTime;
     }
 }

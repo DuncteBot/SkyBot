@@ -756,7 +756,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 "INSERT INTO reminders(user_id, reminder, remind_date, channel_id) VALUES (? , ? , ?, ?)"
             } else {
                 //language=SQLite
-                "INSERT INTO reminders(user_id, reminder, remind_date) VALUES (? , ? , ?)"
+                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date) VALUES (? , ? , ?, ?)"
             }
 
             connManager.use {
@@ -766,6 +766,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 smt.setString(1, userId.toString())
                 smt.setString(2, reminder)
                 smt.setDate(3, expireDate.toSQL())
+                smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
 
                 if (channelId > 0) {
                     smt.setString(4, channelId.toString())
@@ -819,7 +820,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             connManager.use {
                 val conn = it.connection
                 val smt = conn.prepareStatement(
-                    "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000000, 'unixepoch'))")
+                    "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000, 'unixepoch'))")
 
                 smt.closeOnCompletion()
 
@@ -830,7 +831,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         result.getInt("id"),
                         result.getLong("user_id"),
                         result.getString("reminder"),
-                        result.getDate("remind_date"),
+                        result.getDate("remind_create_date"),
                         result.getLong("channel_id")
                     ))
                 }

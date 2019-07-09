@@ -46,8 +46,6 @@ import java.util.stream.Collectors
     Author(nickname = "duncte123", author = "Duncan Sterken")
 ])
 class UserinfoCommand : Command() {
-
-    private val prettyTime = PrettyTime()
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
 
     override fun executeCommand(ctx: CommandContext) {
@@ -62,7 +60,7 @@ class UserinfoCommand : Command() {
             }
 
             ctx.jda.retrieveUserById(args[0]).queue({
-                renderUserEmbed(event, it, ctx.guild)
+                renderUserEmbed(event, it, ctx.guild, ctx.variables.prettyTime)
             }, {
                 sendMsg(ctx, "Could not get user info: ${it.message}")
             })
@@ -95,7 +93,7 @@ class UserinfoCommand : Command() {
         }
 
         if (u != null && m == null) {
-            renderUserEmbed(event, u, ctx.guild)
+            renderUserEmbed(event, u, ctx.guild, ctx.variables.prettyTime)
 
             return
         }
@@ -108,7 +106,7 @@ class UserinfoCommand : Command() {
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
 
         val createTime = user.creationTime
         val createTimeDate = Date.from(createTime.toInstant())
@@ -136,6 +134,7 @@ class UserinfoCommand : Command() {
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, ctx: CommandContext) {
 
+        val prettyTime = ctx.variables.prettyTime
         val u = m.user
         val joinOrder = StringBuilder()
         val joins = event.guild.memberCache.stream().sorted(

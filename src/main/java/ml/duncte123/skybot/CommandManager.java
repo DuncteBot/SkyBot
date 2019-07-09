@@ -123,7 +123,7 @@ public class CommandManager {
             "").split("\\s+", 2);
 
         if (split.length >= 1) {
-            final String invoke = split[0];
+            final String invoke = split[0].toLowerCase();
 
             return getCommand(invoke) != null;
         }
@@ -302,7 +302,7 @@ public class CommandManager {
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(customPrefix),
             "").split("\\s+", 2);
-        final String invoke = split[0].toLowerCase();
+        final String invoke = split[0];
 
         final List<String> args = new ArrayList<>();
 
@@ -318,7 +318,7 @@ public class CommandManager {
     }
 
     private void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        ICommand cmd = getCommand(invoke);
+        ICommand cmd = getCommand(invoke.toLowerCase());
 
         if (cmd == null) {
             cmd = getCustomCommand(invoke, event.getGuild().getIdLong());
