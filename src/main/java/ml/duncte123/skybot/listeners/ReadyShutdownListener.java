@@ -48,6 +48,7 @@ public class ReadyShutdownListener extends MessageListener {
         r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
+    private boolean reminderCheckActive = false;
     private byte shardsReady = 0;
 
     public ReadyShutdownListener(Variables variables) {
@@ -71,6 +72,16 @@ public class ReadyShutdownListener extends MessageListener {
             logger.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
             isCacheCleanerActive = true;
+        }
+
+        if (!reminderCheckActive) {
+            systemPool.scheduleAtFixedRate(
+                () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
+                    AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
+
+                    return null;
+                }), 2, 2, TimeUnit.MINUTES);
+            reminderCheckActive = true;
         }
 
         shardsReady++;

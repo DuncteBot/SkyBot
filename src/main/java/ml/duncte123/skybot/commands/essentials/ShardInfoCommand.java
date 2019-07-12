@@ -49,7 +49,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 public class ShardInfoCommand extends Command {
 
     public ShardInfoCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     @Override

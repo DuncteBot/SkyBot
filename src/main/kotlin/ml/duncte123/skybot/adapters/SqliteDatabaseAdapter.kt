@@ -27,15 +27,13 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.VcAutoRole
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
+import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -216,25 +214,25 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     callback.invoke(
                         GuildSettings(guildId)
-                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
-                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
-                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
-                        .setCustomPrefix(res.getString("prefix"))
-                        .setLogChannel(toLong(res.getString("logChannelId")))
-                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
-                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                        .setAutoroleRole(toLong(res.getString("autoRole")))
-                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
-                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
-                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
-                        .setFilterInvites(res.getBoolean("filterInvites"))
-                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
-                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
-                        .setKickState(res.getBoolean("kickInsteadState"))
-                        .setLeaveTimeout(res.getInt("leave_timeout"))
-                        .setSpamThreshold(res.getInt("spam_threshold"))
-                        .setBlacklistedWords(blackList)
+                            .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                            .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                            .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                            .setCustomPrefix(res.getString("prefix"))
+                            .setLogChannel(toLong(res.getString("logChannelId")))
+                            .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                            .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                            .setAutoroleRole(toLong(res.getString("autoRole")))
+                            .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                            .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                            .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                            .setFilterInvites(res.getBoolean("filterInvites"))
+                            .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                            .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                            .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                            .setKickState(res.getBoolean("kickInsteadState"))
+                            .setLeaveTimeout(res.getInt("leave_timeout"))
+                            .setSpamThreshold(res.getInt("spam_threshold"))
+                            .setBlacklistedWords(blackList)
                     )
 
                     connection.close()
@@ -255,7 +253,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             connManager.use { manager ->
                 val connection = manager.connection
 
-                connection.createStatement().executeQuery("DELETE FROM guildSettings where guildId = '$guildId'")
+                connection.createStatement().execute("DELETE FROM guildSettings where guildId = '$guildId'")
             }
         }
     }
@@ -751,10 +749,109 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
+        runOnThread {
+            val sql = if (channelId > 0) {
+                //language=SQLite
+                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date, channel_id) VALUES (? , ? , ? , ? , ?)"
+            } else {
+                //language=SQLite
+                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date) VALUES (? , ? , ?, ?)"
+            }
+
+            connManager.use {
+                val conn = it.connection
+                val smt = conn.prepareStatement(sql)
+
+                smt.setString(1, userId.toString())
+                smt.setString(2, reminder)
+                smt.setDate(3, expireDate.toSQL())
+                smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
+
+                if (channelId > 0) {
+                    smt.setString(5, channelId.toString())
+                }
+
+                try {
+                    smt.execute()
+                    callback.invoke(true)
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                    callback.invoke(false)
+                }
+            }
+        }
+    }
+
+    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
+        runOnThread({
+            connManager.use {
+                val con = it.connection
+                val smt = con.createStatement()
+
+                smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
+                smt.closeOnCompletion()
+
+                callback.invoke(true)
+            }
+        }, {
+            callback.invoke(false)
+        })
+    }
+
+    override fun purgeReminders(ids: List<Int>) {
+        runOnThread {
+            val inClause = '(' + ids.joinToString() + ')'
+            //language=SQLite
+            val sql = "DELETE FROM reminders WHERE id IN $inClause"
+
+            connManager.use {
+                val smt = it.connection.createStatement()
+
+                smt.execute(sql)
+                smt.closeOnCompletion()
+            }
+        }
+    }
+
+    override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
+        runOnThread {
+            val reminders = ArrayList<Reminder>()
+
+            connManager.use {
+                val conn = it.connection
+                val smt = conn.prepareStatement(
+                    "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000, 'unixepoch'))")
+
+                smt.closeOnCompletion()
+
+                val result = smt.executeQuery()
+
+                while (result.next()) {
+                    reminders.add(Reminder(
+                        result.getInt("id"),
+                        result.getLong("user_id"),
+                        result.getString("reminder"),
+                        result.getDate("remind_create_date"),
+                        result.getLong("channel_id")
+                    ))
+                }
+
+                conn.close()
+            }
+
+            if (reminders.isNotEmpty()) {
+                callback.invoke(reminders)
+            }
+        }
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val sqlQuerry = if (isEdit) {
+            //language=SQLite
             "UPDATE customCommands SET message = ? , autoresponse = ? WHERE guildId = ? AND invoke = ?"
         } else {
+            //language=SQLite
             "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
 
@@ -793,4 +890,6 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         return list
     }
+
+    private fun Date.toSQL() = java.sql.Date(this.time)
 }

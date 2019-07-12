@@ -45,8 +45,8 @@ project.version = "3.87.2_${getGitHash()}"
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_10
-    targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 repositories {
@@ -79,7 +79,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.18")
 
     //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_463") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_464") {
         exclude(module = "opus-java")
     }
 
@@ -135,7 +135,7 @@ dependencies {
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
     // A nice duration parser
-    implementation(group = "me.duncte123", name = "durationParser", version = "1.0.14")
+    implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
     implementation(group = "com.github.oshi", name = "oshi-core", version = "3.13.2")
     implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.7.0")
 }

@@ -45,7 +45,7 @@ public class WolframAlphaCommand extends Command {
     private WAEngine waEngine = null;
 
     public WolframAlphaCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     /**

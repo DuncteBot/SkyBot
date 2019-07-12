@@ -21,15 +21,13 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,7 +66,7 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
-        final String finalUnbanDate = getBanDateFormat(duration);
+        final String finalUnbanDate = AirUtils.getDatabaseDateFormat(duration);
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
         final User toBan = toBanMember.getUser();
 
@@ -111,7 +109,7 @@ public class TempBanCommand extends ModBaseCommand {
             optionalDuration = Optional.empty();
         }
 
-        if (!optionalDuration.isPresent()) {
+        if (optionalDuration.isEmpty()) {
             sendMsg(event, "Usage is `" + prefix + name + " <@user> <time><w/d/h/m/s> [Reason]`");
 
             return null;
@@ -132,14 +130,5 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         return duration;
-    }
-
-    static String getBanDateFormat(Duration duration) {
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final Calendar c = Calendar.getInstance();
-
-        c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
-
-        return df.format(c.getTime());
     }
 }

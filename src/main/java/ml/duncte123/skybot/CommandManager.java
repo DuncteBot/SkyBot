@@ -123,7 +123,7 @@ public class CommandManager {
             "").split("\\s+", 2);
 
         if (split.length >= 1) {
-            final String invoke = split[0];
+            final String invoke = split[0].toLowerCase();
 
             return getCommand(invoke) != null;
         }

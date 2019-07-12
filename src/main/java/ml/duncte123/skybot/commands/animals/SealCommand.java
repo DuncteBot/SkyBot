@@ -38,6 +38,7 @@ public class SealCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
+        // https://apis.duncte123.me/animal/seal
         final JsonNode data = ctx.getApis().executeDefaultGetRequest("seal", false).get("data");
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(data.get("file").asText()));

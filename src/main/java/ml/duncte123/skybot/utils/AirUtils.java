@@ -24,20 +24,30 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import org.ocpsoft.prettytime.PrettyTime;
 
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -246,5 +256,82 @@ public class AirUtils {
         }
 
         return foundMembers.get(0);
+    }
+
+    private static SimpleDateFormat getFormatter() {
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        return format;
+    }
+
+    public static String getDatabaseDateFormat(Duration duration) {
+        return getFormatter().format(getDatabaseDate(duration));
+    }
+
+    public static String getDatabaseDateFormat(Date date) {
+        return getFormatter().format(date);
+    }
+
+    public static Date fromDatabaseFormat(String date) {
+        try {
+            return getFormatter().parse(date);
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+
+            return new Date();
+        }
+    }
+
+    public static Date getDatabaseDate(Duration duration) {
+        return new Date(System.currentTimeMillis() + duration.getMilis());
+    }
+
+    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
+        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final List<Integer> toPurge = new ArrayList<>();
+
+        for (final Reminder reminder : reminders) {
+            final String message = String.format(
+                "%s you asked me to remind you about %s",
+                prettyTime.format(reminder.getReminder_date()),
+                reminder.getReminder().trim()
+            );
+
+            final long channelId = reminder.getChannel_id();
+
+            if (channelId > 0) {
+                final TextChannel channel = shardManager.getTextChannelById(channelId);
+
+                if (channel != null) {
+                    toPurge.add(reminder.getId());
+                    sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
+                }
+            } else {
+                final User user = shardManager.getUserById(reminder.getUser_id());
+
+                if (user != null) {
+                    toPurge.add(reminder.getId());
+                    user.openPrivateChannel().queue(
+                        (channel) -> channel.sendMessage(message).queue()
+                    );
+                }
+            }
+        }
+
+        // Remove any reminders that have not been removed after 2 days
+        final Calendar calendarDateAfter = Calendar.getInstance();
+        calendarDateAfter.add(Calendar.DAY_OF_YEAR, 2);
+
+        final Date dateAfter = calendarDateAfter.getTime();
+
+        final List<Integer> extraRemoval = reminders.stream()
+            .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
+            .map(Reminder::getId)
+            .collect(Collectors.toList());
+
+        toPurge.addAll(extraRemoval);
+        adapter.purgeReminders(toPurge);
     }
 }

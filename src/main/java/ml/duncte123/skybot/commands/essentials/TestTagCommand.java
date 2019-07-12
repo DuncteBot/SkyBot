@@ -36,7 +36,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class TestTagCommand extends Command {
 
     public TestTagCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     @Override

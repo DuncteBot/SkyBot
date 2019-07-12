@@ -49,7 +49,7 @@ public class TokenCommand extends Command {
         "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
 
     public TokenCommand() {
-        this.category = CommandCategory.NERD_STUFF;
+        this.category = CommandCategory.UTILS;
     }
 
     @Override

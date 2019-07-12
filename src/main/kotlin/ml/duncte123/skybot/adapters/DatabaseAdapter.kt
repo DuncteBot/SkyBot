@@ -24,12 +24,10 @@ import io.sentry.Sentry
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Tag
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.VcAutoRole
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(protected val variables: Variables) {
@@ -144,13 +142,37 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
 
+    // Reminders
+
+    fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+        createReminder(userId, reminder, expireDate, 0, callback)
+    }
+
+    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit)
+
+    abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
+
+    abstract fun purgeReminders(ids: List<Int>)
+
+    /**
+     * Important: Callback must not be called if the list is empty
+     */
+    abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
+
     protected fun runOnThread(r: () -> Unit) {
+        runOnThread(r) {
+            //
+        }
+    }
+
+    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
         variables.database.run {
             try {
                 r.invoke()
             }
             catch (thr: Throwable) {
                 Sentry.capture(thr)
+                onFail.invoke(thr)
                 thr.printStackTrace()
             }
         }
