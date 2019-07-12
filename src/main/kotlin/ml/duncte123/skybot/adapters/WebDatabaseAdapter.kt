@@ -31,6 +31,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.AirUtils
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -340,7 +341,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val allTags = variables.apis.getAllTags()
 
             callback.invoke(
-                mapper.readValue<List<Tag>>(allTags.toString(), object : TypeReference<List<Tag>>() {})
+                mapper.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
             )
         }
     }
@@ -365,7 +366,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       runOnThread {
+           val date = AirUtils.getDatabaseDateFormat(expireDate)
+           val res = variables.apis.createReminder(userId, reminder, date, channelId)
+
+           callback.invoke(res)
+       }
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
@@ -373,10 +379,20 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun purgeReminders(ids: List<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        runOnThread {
+            variables.apis.purgeReminders(ids)
+        }
     }
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        runOnThread {
+            val mapper = variables.jackson
+            val expiredReminders = variables.apis.getExpiredReminders()
+            val reminders = mapper.readValue<List<Reminder>>(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+
+            if (reminders.isNotEmpty()) {
+                callback.invoke(reminders)
+            }
+        }
     }
 }

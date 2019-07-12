@@ -38,6 +38,7 @@ public class AlpacaCommand extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
+        // https://apis.duncte123.me/animal/alpaca
         final JsonNode json = ctx.getApis().executeDefaultGetRequest("alpaca", false).get("data");
 
         sendEmbed(ctx.getEvent(), embedImage(json.get("file").asText()));

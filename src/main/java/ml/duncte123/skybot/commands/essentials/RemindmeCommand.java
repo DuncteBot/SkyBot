@@ -80,6 +80,25 @@ public class RemindmeCommand extends Command {
         final String reminder = String.join(" ", args.subList(1, args.size()));
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
+        if (reminder.contains("--channel")) {
+            ctx.getDatabaseAdapter().createReminder(
+                ctx.getAuthor().getIdLong(),
+                reminder.replace("--channel", "").trim(),
+                expireDate,
+                ctx.getChannel().getIdLong(),
+                (success) -> {
+                    if (success) {
+                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminder + "\"");
+                    } else {
+                        sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
+                    }
+
+                    return null;
+                });
+
+            return;
+        }
+
         ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
             if (success) {
                 sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
@@ -103,8 +122,8 @@ public class RemindmeCommand extends Command {
 
     @Override
     public String help(String prefix) {
-        return "Creates a reminder for you\n" +
-            "Usage: `" + prefix + "remind <number><w/d/h/m/s> <reminder>`\n" +
+        return "Creates a reminder for you, add `--channel` to remind you in the current channel\n" +
+            "Usage: `" + prefix + "remind <number><w/d/h/m/s> [--channel] <reminder>`\n" +
             "Example: `" + prefix + "remind 1d5m Clean your room :/`";
     }
 }

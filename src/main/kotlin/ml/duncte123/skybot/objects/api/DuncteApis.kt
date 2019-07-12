@@ -29,9 +29,11 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.AirUtils
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
@@ -470,6 +472,60 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return Pair(true, "")
     }
 
+    fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long): Boolean {
+        val obj = mapper.createObjectNode()
+            .put("user_id", userId.toString())
+            .put("reminder", reminder)
+            .put("remind_date", expireDate)
+            .put("remind_create_date", AirUtils.getDatabaseDateFormat(Date()))
+
+        if (channelId > 0) {
+            obj.put("channel_id", channelId.toString())
+        }
+
+        val response = postJSON("reminders", obj)
+
+        if (!response.get("success").asBoolean()) {
+            val error = response.get("error")
+
+            logger.error("Failed to create a reminder\n" +
+                "Response: {}", error.toString())
+
+            return false
+        }
+
+        return true
+    }
+
+    fun getExpiredReminders(): JsonNode {
+        val response = executeRequest(defaultRequest("reminders/expired"))
+
+        if (!response.get("success").asBoolean()) {
+            val error = response.get("error")
+
+            logger.error("Failed to get expired reminders\n" +
+                "Response: {}", error.toString())
+
+            return mapper.createArrayNode()
+        }
+
+        return response.get("data")
+    }
+
+    fun purgeReminders(ids: List<Int>) {
+        val json = mapper.createObjectNode()
+        val arr = json.putArray("ids")
+
+        ids.forEach { arr.add(it) }
+
+        val response = deleteJSON("reminders/purge", json)
+
+        if (!response.get("success").asBoolean()) {
+            logger.error("Failed to purge mutes\n" +
+                "Response: {}", response.get("error").toString())
+        }
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error.get("errors")
 
@@ -589,7 +645,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun JsonNode.toJsonString() = mapper.writeValueAsString(this)
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.local"
+//        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://localhost:8081"
     }
 }

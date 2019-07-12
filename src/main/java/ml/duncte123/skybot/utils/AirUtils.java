@@ -44,6 +44,7 @@ import net.dv8tion.jda.core.entities.User;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -269,12 +270,27 @@ public class AirUtils {
         return df.format(c.getTime());
     }
 
+    public static String getDatabaseDateFormat(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    }
+
+    public static Date fromDatabaseFormat(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+
+            return new Date();
+        }
+    }
+
     public static Date getDatabaseDate(Duration duration) {
         final Calendar c = Calendar.getInstance();
 
         c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
 
-        return Date.from(c.toInstant());
+        return c.getTime();
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
@@ -285,7 +301,7 @@ public class AirUtils {
             final String message = String.format(
                 "%s you asked me to remind you about %s",
                 prettyTime.format(reminder.getReminder_date()),
-                reminder.getReminder()
+                reminder.getReminder().trim()
             );
 
             final long channelId = reminder.getChannel_id();
