@@ -775,7 +775,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 try {
                     smt.execute()
                     callback.invoke(true)
-                } catch (ignored: SQLException) {
+                } catch (e: SQLException) {
+                    e.printStackTrace()
                     callback.invoke(false)
                 }
             }

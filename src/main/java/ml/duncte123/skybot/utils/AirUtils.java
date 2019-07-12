@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
-import gnu.trove.list.TIntList;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
@@ -29,7 +28,6 @@ import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -43,7 +41,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -262,21 +259,25 @@ public class AirUtils {
     }
 
     public static String getDatabaseDateFormat(Duration duration) {
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final Calendar c = Calendar.getInstance();
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
-
-        return df.format(c.getTime());
+        return format.format(getDatabaseDate(duration));
     }
 
     public static String getDatabaseDateFormat(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        return format.format(date);
     }
 
     public static Date fromDatabaseFormat(String date) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            format.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+            return format.parse(date);
         }
         catch (ParseException e) {
             e.printStackTrace();
@@ -286,11 +287,7 @@ public class AirUtils {
     }
 
     public static Date getDatabaseDate(Duration duration) {
-        final Calendar c = Calendar.getInstance();
-
-        c.setTimeInMillis(System.currentTimeMillis() + duration.getMilis());
-
-        return c.getTime();
+        return new Date(System.currentTimeMillis() + duration.getMilis());
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {

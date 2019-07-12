@@ -81,14 +81,16 @@ public class RemindmeCommand extends Command {
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
         if (reminder.contains("--channel")) {
+            final String reminderNew = reminder.replace("--channel", "").trim();
+
             ctx.getDatabaseAdapter().createReminder(
                 ctx.getAuthor().getIdLong(),
-                reminder.replace("--channel", "").trim(),
+                reminderNew,
                 expireDate,
                 ctx.getChannel().getIdLong(),
                 (success) -> {
                     if (success) {
-                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminder + "\"");
+                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminderNew + "\"");
                     } else {
                         sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
                     }

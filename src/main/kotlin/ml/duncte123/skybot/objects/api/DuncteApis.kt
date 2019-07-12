@@ -645,7 +645,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun JsonNode.toJsonString() = mapper.writeValueAsString(this)
 
     companion object {
-//        const val API_HOST = "https://apis.duncte123.me"
-        const val API_HOST = "http://localhost:8081"
+        const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://localhost:8081"
     }
 }
