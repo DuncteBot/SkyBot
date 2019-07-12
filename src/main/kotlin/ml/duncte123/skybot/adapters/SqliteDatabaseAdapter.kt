@@ -753,7 +753,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         runOnThread {
             val sql = if (channelId > 0) {
                 //language=SQLite
-                "INSERT INTO reminders(user_id, reminder, remind_date, channel_id) VALUES (? , ? , ?, ?)"
+                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date, channel_id) VALUES (? , ? , ? , ? , ?)"
             } else {
                 //language=SQLite
                 "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date) VALUES (? , ? , ?, ?)"
@@ -769,7 +769,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
 
                 if (channelId > 0) {
-                    smt.setString(4, channelId.toString())
+                    smt.setString(5, channelId.toString())
                 }
 
                 try {
