@@ -27,6 +27,7 @@ import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.core.entities.User;
@@ -45,6 +46,7 @@ import static ml.duncte123.skybot.SkyBot.getInstance;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
+    public static final int QUEUE_SIZE = 50;
     public final Queue<AudioTrack> queue;
     private static long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
@@ -77,8 +79,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      *
      * @param track
      *         The {@link AudioTrack AudioTrack} to queue
+     *
+     * @throws LimitReachedException when the queue is full
      */
-    public void queue(AudioTrack track) {
+    public void queue(AudioTrack track) throws LimitReachedException {
+        if (queue.size() >= QUEUE_SIZE) {
+            throw new LimitReachedException("The queue is full", QUEUE_SIZE);
+        }
+
         if (player.getPlayingTrack() != null) {
             queue.offer(track);
         } else {

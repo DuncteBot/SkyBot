@@ -40,8 +40,6 @@ import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManag
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -85,10 +83,7 @@ public class AudioUtils {
             playerManager = new DefaultAudioPlayerManager();
             //playerManager.enableGcMonitoring();
 
-            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-            youtubeAudioSourceManager.configureRequests(
-                (config) -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build()
-            );
+            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
