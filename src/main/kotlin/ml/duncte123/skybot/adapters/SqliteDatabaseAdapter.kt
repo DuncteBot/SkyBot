@@ -253,7 +253,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             connManager.use { manager ->
                 val connection = manager.connection
 
-                connection.createStatement().executeQuery("DELETE FROM guildSettings where guildId = '$guildId'")
+                connection.createStatement().execute("DELETE FROM guildSettings where guildId = '$guildId'")
             }
         }
     }
