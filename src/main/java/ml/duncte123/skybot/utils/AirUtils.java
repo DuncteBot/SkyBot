@@ -258,26 +258,24 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    public static String getDatabaseDateFormat(Duration duration) {
+    private static SimpleDateFormat getFormatter() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        return format.format(getDatabaseDate(duration));
+        return format;
+    }
+
+    public static String getDatabaseDateFormat(Duration duration) {
+        return getFormatter().format(getDatabaseDate(duration));
     }
 
     public static String getDatabaseDateFormat(Date date) {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        return format.format(date);
+        return getFormatter().format(date);
     }
 
     public static Date fromDatabaseFormat(String date) {
         try {
-            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            format.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-            return format.parse(date);
+            return getFormatter().parse(date);
         }
         catch (ParseException e) {
             e.printStackTrace();
