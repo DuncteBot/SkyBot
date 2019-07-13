@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -86,13 +87,15 @@ public class LockEmoteCommand extends Command {
             "following roles: `" + String.join("`, `", roleNames) + "`");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "lockemote";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Lock an emote to some roles.\n" +
             "Usage: `" + prefix + getName() + " <emote> <@role...>`\n" +
             "Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +

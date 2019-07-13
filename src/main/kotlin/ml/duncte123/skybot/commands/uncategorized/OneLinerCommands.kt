@@ -80,7 +80,7 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help(invoke: String, prefix: String): String? {
+    override fun help(invoke: String, prefix: String): String {
 
         return when (invoke) {
             "cookie" -> {
@@ -133,7 +133,7 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = """`${prefix}cookie` => blobnomcookie.
+    override fun help(prefix: String) = """`${prefix}cookie` => blobnomcookie.
             |`${prefix}trigger` => Use when you are triggered.
             |`${prefix}spam` => What do you think 😏
             |`${prefix}wam` => You need more WAM!.

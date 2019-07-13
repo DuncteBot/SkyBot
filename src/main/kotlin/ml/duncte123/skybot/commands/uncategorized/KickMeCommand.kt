@@ -63,7 +63,7 @@ class KickMeCommand : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = """Kickes you off the server
+    override fun help(prefix: String) = """Kickes you off the server
                     |Usage: `$prefix$name`
                 """.trimMargin()
 

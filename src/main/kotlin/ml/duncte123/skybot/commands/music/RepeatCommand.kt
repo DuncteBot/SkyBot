@@ -67,7 +67,7 @@ class RepeatCommand : MusicCommand() {
             "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
 
-    override fun help(prefix: String): String? = "Makes the player repeat the currently playing song\n" +
+    override fun help(prefix: String) = "Makes the player repeat the currently playing song\n" +
         "Use `$prefix$name playlist` to repeat the current queue\n" +
         "Use `$prefix$name status` for the current status"
 

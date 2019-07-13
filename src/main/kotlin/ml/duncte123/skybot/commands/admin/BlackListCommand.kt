@@ -175,7 +175,7 @@ class BlackListCommand : ModBaseCommand() {
 
     override fun getName() = "blacklist"
 
-    override fun help(prefix: String): String? = """Control the blacklisted words on your server
+    override fun help(prefix: String) = """Control the blacklisted words on your server
         |Note: **People that have the kick members permission will bypass the blacklist**
         |
         |Usage:```$prefix$name list => Gives you a list of the current blacklisted words

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -39,13 +40,15 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
             + (shouldFilterInvites ? "enabled" : "disabled") + "**");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "togglefilterinvites";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Toggles if the bot should delete messages that contain invites\n" +
             "Usage: `" + prefix + getName() + "`";
     }

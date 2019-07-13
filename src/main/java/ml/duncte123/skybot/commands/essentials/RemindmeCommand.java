@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
@@ -112,18 +113,21 @@ public class RemindmeCommand extends Command {
         });
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "remind";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"remindme"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Creates a reminder for you, add `--channel` to remind you in the current channel\n" +
             "Usage: `" + prefix + "remind <number><w/d/h/m/s> [--channel] <reminder>`\n" +
             "Example: `" + prefix + "remind 1d5m Clean your room :/`";

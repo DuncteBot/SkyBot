@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,13 +88,15 @@ public class TempBanCommand extends ModBaseCommand {
         sendSuccess(event.getMessage());
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "tempban";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
             "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }

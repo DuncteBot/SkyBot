@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -62,11 +63,13 @@ public class DogCommand extends Command {
 
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "here is a dog.";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "dog";

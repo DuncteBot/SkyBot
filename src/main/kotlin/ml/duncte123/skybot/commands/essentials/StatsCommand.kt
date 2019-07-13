@@ -26,11 +26,11 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import oshi.SystemInfo
 import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
 import kotlin.math.floor
-import oshi.SystemInfo
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
@@ -92,7 +92,7 @@ class StatsCommand : Command() {
 
     override fun getName() = "stats"
 
-    override fun help(prefix: String): String? = "Shows some nerdy stats about the bot"
+    override fun help(prefix: String) = "Shows some nerdy stats about the bot"
 
     override fun getCategory() = CommandCategory.UTILS
 }

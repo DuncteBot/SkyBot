@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message.Attachment;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,6 +87,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.PATRON;

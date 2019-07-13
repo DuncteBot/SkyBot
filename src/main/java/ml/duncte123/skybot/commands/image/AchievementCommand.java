@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -36,13 +37,15 @@ public class AchievementCommand extends NoPatronImageCommand {
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "achievement";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "You got an achievement!\n" +
             "Usage: `" + prefix + getName() + " <text>`";
     }

@@ -63,7 +63,7 @@ class FlipCommand : Command() {
         sendMsg(event, "(╯°□°）╯︵ $output")
     }
 
-    override fun help(prefix: String): String? = "Flips a user.\n" +
+    override fun help(prefix: String) = "Flips a user.\n" +
         "Usage: `$prefix$name [@user]`"
 
     override fun getName() = "flip"

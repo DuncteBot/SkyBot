@@ -60,7 +60,7 @@ class InstaCommand : Command() {
 
     override fun getName() = "insta"
 
-    override fun help(prefix: String): String? = """Get the latest picture of someones profile
+    override fun help(prefix: String) = """Get the latest picture of someones profile
                     |Usage: `$prefix$name <username>`
                 """.trimMargin()
 }

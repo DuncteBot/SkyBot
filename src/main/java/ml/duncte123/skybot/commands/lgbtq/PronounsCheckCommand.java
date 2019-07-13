@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -57,23 +58,27 @@ public class PronounsCheckCommand extends Command {
         sendMsg(event, String.format(format, userName, pronouns, singular));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "pronounscheck";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"pronouns"};
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.LGBTQ;
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Check someones pronouns.\n" +
             "Usage: `" + prefix + getName() + " [user]`\n" +
             "Pronouns can be set via `" + prefix + "setpronouns`";

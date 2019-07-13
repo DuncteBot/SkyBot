@@ -81,7 +81,7 @@ class VoiceKickCommand : ModBaseCommand() {
 
     override fun getName() = "voicekick"
 
-    override fun help(prefix: String): String? = """Kicks a user from the voice channel
+    override fun help(prefix: String) = """Kicks a user from the voice channel
         |Usage: `$prefix$name <@user/voice channel>`
     """.trimMargin()
 }

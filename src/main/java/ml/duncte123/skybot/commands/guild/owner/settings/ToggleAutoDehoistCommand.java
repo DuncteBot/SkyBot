@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,13 +42,15 @@ public class ToggleAutoDehoistCommand extends SettingsBase {
             + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "toggleautodehoist";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Toggles if if the bot should auto de-hoist users\n" +
             "Usage: `" + prefix + getName() + "`";
     }

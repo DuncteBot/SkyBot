@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -40,13 +41,15 @@ public class SetLeaveMessageCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The new leave message has been set to `" + newLeaveMessage + "`");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setleavemessage";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets the message that the bot shows when a member leaves\n" +
             "Usage: `" + prefix + getName() + " <leave message>`";
     }

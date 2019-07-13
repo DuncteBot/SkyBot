@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -71,18 +72,21 @@ public class SettingsCommand extends SettingsBase {
         sendEmbed(ctx.getEvent(), message);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "settings";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"options"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Shows the current settings\n" +
             "Usage: `" + prefix + getName() + "`";
     }

@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -84,12 +85,14 @@ public class SoftbanCommand extends ModBaseCommand {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Kicks a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
             "Usage: `" + prefix + getName() + " <@user> [reason]`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "softban";

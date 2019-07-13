@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -70,13 +71,15 @@ public class PurgeChannelCommand extends ModBaseCommand {
             );
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "purgechannel";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Purges a text channel.\n" +
             "Usage: `" + prefix + getName() + " <#text-channel>`";
     }

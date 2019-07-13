@@ -23,6 +23,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -82,13 +83,15 @@ public class SeekCommand extends MusicCommand {
 
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "seek";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "seek in the currently playing track\n" +
             "Usage: `" + prefix + getName() + " <minutes:seconds>`\n" +
             "Examples: `" + prefix + getName() + " 04:20`\n" +

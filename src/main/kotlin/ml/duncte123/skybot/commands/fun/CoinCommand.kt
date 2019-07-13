@@ -41,7 +41,7 @@ class CoinCommand : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = "flips a coin.\nUsage: `$prefix$name`"
+    override fun help(prefix: String) = "flips a coin.\nUsage: `$prefix$name`"
 
     override fun getName() = "coin"
 

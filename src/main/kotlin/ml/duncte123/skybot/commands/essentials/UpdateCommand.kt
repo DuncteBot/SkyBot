@@ -96,7 +96,7 @@ class UpdateCommand : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = "Update the bot and restart"
+    override fun help(prefix: String) = "Update the bot and restart"
 
     override fun getName() = "update"
 

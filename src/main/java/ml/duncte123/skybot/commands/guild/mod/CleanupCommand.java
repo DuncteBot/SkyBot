@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -121,18 +122,21 @@ public class CleanupCommand extends ModBaseCommand {
         // End of the annotation
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Performs a cleanup in the channel where the command is run.\n" +
             "To clear an entire channel it's better to use `" + prefix + "purgechannel`\n" +
             "Usage: `" + prefix + getName() + " [ammount] [keep-pinned] [bots-only]`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "cleanup";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"clear", "purge", "wipe"};

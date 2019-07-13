@@ -40,7 +40,7 @@ class ReverseCommand : Command() {
 
     override fun getName() = "reverse"
 
-    override fun help(prefix: String): String? = """reverses a string
+    override fun help(prefix: String) = """reverses a string
         |Usage: `$prefix$name <text>`
     """.trimMargin()
 }

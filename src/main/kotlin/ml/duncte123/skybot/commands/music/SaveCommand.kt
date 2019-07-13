@@ -63,5 +63,5 @@ class SaveCommand : MusicCommand() {
 
     override fun getName() = "save"
 
-    override fun help(prefix: String): String? = "Saves a playlist into a file with can be loaded with ${prefix}load"
+    override fun help(prefix: String) = "Saves a playlist into a file with can be loaded with ${prefix}load"
 }

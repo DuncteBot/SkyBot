@@ -79,7 +79,7 @@ class JoinCommand : MusicCommand() {
 
     }
 
-    override fun help(prefix: String): String? = "Makes the bot join the voice channel that you are in."
+    override fun help(prefix: String) = "Makes the bot join the voice channel that you are in."
 
     override fun getName(): String = "join"
 

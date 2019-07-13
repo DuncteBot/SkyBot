@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -304,18 +305,21 @@ public class TagCommand extends Command {
         return hasRole;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "tag";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Store it in a tag\n" +
             "Usage: `" + prefix + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
             "The tags follow the same parsing as custom commands and the join/leave messages";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"pasta", "tags", "t"};

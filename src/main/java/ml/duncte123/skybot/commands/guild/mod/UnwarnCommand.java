@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -73,13 +74,15 @@ public class UnwarnCommand extends ModBaseCommand {
             });
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "unwarn";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Removes the latest warning of a user\n" +
             "Usage: `" + prefix + "unwarn <@user>`";
     }

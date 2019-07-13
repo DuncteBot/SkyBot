@@ -38,7 +38,7 @@ class DiscordMemesCommand : WeebCommandBase() {
         }
     }
 
-    override fun help(prefix: String): String? = """Gives you a discord meme
+    override fun help(prefix: String) = """Gives you a discord meme
         |Usage: `$prefix$name`
     """.trimMargin()
 

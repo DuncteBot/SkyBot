@@ -33,6 +33,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -207,8 +208,9 @@ public class CustomCommandCommand extends Command {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Create, run and delete custom commands\n" +
             "`" + prefix + getName() + " list` => Shows a list of all the custom commands\n" +
             "`" + prefix + getName() + " new <name> <text>` => Creates a new custom command\n" +
@@ -217,11 +219,13 @@ public class CustomCommandCommand extends Command {
             "`" + prefix + getName() + " delete <name>` => Deletes a custom command";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "customcommand";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"cc", "customcommands"};

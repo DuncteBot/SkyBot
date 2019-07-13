@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -93,12 +94,14 @@ public class KickCommand extends ModBaseCommand {
 
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Kicks a user.\n" +
             "Usage: `" + prefix + getName() + " <@user> [reason]`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "kick";

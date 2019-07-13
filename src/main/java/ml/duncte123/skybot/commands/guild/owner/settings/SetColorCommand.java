@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -64,18 +65,21 @@ public class SetColorCommand extends SettingsBase {
         sendEmbed(ctx.getEvent(), EmbedUtils.embedMessage(msg));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setcolor";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"setembedcolor"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets the colors of the embeds from the bot.\n" +
             "Usage: `" + prefix + getName() + " <hex color>`";
     }

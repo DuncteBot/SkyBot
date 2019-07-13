@@ -58,7 +58,7 @@ class ImageCommand : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = """Searches for an image on google
+    override fun help(prefix: String) = """Searches for an image on google
         |Usage: `$prefix$name <search term>`""".trimMargin()
 
     override fun getName() = "image"

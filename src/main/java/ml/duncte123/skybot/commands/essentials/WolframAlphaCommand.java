@@ -33,10 +33,12 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
@@ -155,16 +157,19 @@ public class WolframAlphaCommand extends Command {
             .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Ask Wolfram|Alpha all your geeky questions";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "alpha";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"wolfram", "wa", "wolframalpha"};

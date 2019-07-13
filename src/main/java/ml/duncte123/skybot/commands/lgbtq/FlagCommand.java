@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -79,18 +80,21 @@ public class FlagCommand extends ImageCommandBase {
 
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.LGBTQ;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "flag";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Overlay your profile picture with a pride flag.\n" +
             "Usage: `" + prefix + getName() + " <flag/list> [username]`";
     }

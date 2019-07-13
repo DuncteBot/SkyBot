@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -70,13 +71,15 @@ public class UnlockEmoteCommand extends Command {
         sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "unlockemote";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Unlocks an emote if it was locked\n" +
             "Usage: `" + prefix + getName() + " <:emote:>`\n" +
             "Please note that you have to mention the emote due the bot not caching emotes for their names";

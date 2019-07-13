@@ -31,6 +31,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
@@ -87,16 +88,19 @@ public class GuildInfoCommand extends Command {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Show some stats";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "guildinfo";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"serverinfo", "server", "guild", "gi", "si"};

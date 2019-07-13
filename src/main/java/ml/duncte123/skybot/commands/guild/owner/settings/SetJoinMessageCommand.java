@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -39,18 +40,21 @@ public class SetJoinMessageCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The new join message has been set to `" + newJoinMessage + "`");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setjoinmessage";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"setwelcomemessage"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets the message that the bot shows when a new member joins\n" +
             "Usage: `" + prefix + getName() + " <join message>`";
     }

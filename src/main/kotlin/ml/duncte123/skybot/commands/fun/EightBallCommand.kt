@@ -63,7 +63,7 @@ class EightBallCommand : Command() {
 
     override fun getName() = "8ball"
 
-    override fun help(prefix: String): String? = """Ask a question to the 8ball
+    override fun help(prefix: String) = """Ask a question to the 8ball
         |Usage: `$prefix$name <question>`
     """.trimMargin()
 }

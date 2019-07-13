@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
 import javax.annotation.Nonnull;
@@ -71,16 +72,19 @@ public class CSShumorCommand extends Command {
         });
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Gives you a funny css joke";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "csshumor";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"cssjoke"};

@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -59,18 +60,21 @@ public class LoadingBarCommand extends Command {
 
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "loadingbar";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"progress", "progressbar", "lb"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Displays a progress bar that shows how much of the year has passed";
     }
 }

@@ -80,13 +80,13 @@ class NSFWCommands : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = """`${prefix}lewdneko` => Gives a very lewd neko
+    override fun help(prefix: String) = """`${prefix}lewdneko` => Gives a very lewd neko
         |`${prefix}carsandhentai` => Delet this
         |`${prefix}lewdkitsune` => Shows you a lewd kitsune
         |`${prefix}hentai` => Just some hentai
     """.trimMargin()
 
-    override fun help(invoke: String, prefix: String): String? {
+    override fun help(invoke: String, prefix: String): String {
         return when (invoke) {
             "lewdneko" -> {
                 """Gives a very lewd neko

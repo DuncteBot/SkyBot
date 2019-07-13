@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -64,17 +65,20 @@ public class YodaSpeakCommand extends Command {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Convert your sentences into yoda speak.\n" +
             "Usage: `" + prefix + getName() + " <A sentence.>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "yoda";
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.FUN;

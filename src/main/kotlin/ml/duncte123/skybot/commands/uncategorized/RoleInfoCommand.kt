@@ -68,7 +68,7 @@ class RoleInfoCommand : Command() {
 
     override fun getAliases() = arrayOf("role", "ri")
 
-    override fun help(prefix: String): String? = """Displays info about a specified role or the highest role that you have
+    override fun help(prefix: String) = """Displays info about a specified role or the highest role that you have
         |Usage `$prefix$name [role]`
     """.trimMargin()
 }

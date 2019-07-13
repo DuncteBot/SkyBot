@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -101,13 +102,15 @@ public class GuildJoinsCommand extends Command {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "serverjoins";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Shows a graph with the joins for this server.\n" +
             "This is not a full history as it only looks at the members that are currently in the server.";
     }

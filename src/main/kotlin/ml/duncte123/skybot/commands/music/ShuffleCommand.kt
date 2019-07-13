@@ -41,7 +41,7 @@ class ShuffleCommand : MusicCommand() {
         MessageUtils.sendMsg(event, "The queue has been shuffled!")
     }
 
-    override fun help(prefix: String): String? = "Shuffles the current queue"
+    override fun help(prefix: String) = "Shuffles the current queue"
 
     override fun getName(): String = "shuffle"
 }

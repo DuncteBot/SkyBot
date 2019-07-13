@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,11 +42,13 @@ public class ToggleJoinMessageCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The join and leave messages have been " + (isEnabled ? "enabled" : "disabled") + ".");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "togglejoinmessage";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{
@@ -54,8 +57,9 @@ public class ToggleJoinMessageCommand extends SettingsBase {
         };
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Turns the join message on or off\n" +
             "Usage: `" + prefix + getName() + "`";
     }

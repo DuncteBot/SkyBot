@@ -47,7 +47,7 @@ class RestartCommand : MusicCommand() {
         sendSuccess(event.message)
     }
 
-    override fun help(prefix: String): String? = "Start the current track back to the beginning"
+    override fun help(prefix: String) = "Start the current track back to the beginning"
 
     override fun getName() = "restart"
 }

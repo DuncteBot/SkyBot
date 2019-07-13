@@ -45,7 +45,7 @@ class StopCommand : MusicCommand() {
         sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
-    override fun help(prefix: String): String? = "Stops the music player."
+    override fun help(prefix: String) = "Stops the music player."
 
     override fun getName(): String = "stop"
 }

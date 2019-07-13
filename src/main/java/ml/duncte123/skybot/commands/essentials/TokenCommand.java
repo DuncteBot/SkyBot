@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -86,12 +87,14 @@ public class TokenCommand extends Command {
         sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Tries to get as much info about a token as possible\n" +
             "Usage: `" + prefix + getName() + " <token of a discord bot>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "token";

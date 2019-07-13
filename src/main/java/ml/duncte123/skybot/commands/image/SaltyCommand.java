@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,13 +36,15 @@ public class SaltyCommand extends NoPatronImageCommand {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "salty";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Someones being salty today\n" +
             "Usage: `" + prefix + getName() + " [@user/url]`";
     }

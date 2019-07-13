@@ -218,7 +218,7 @@ class UserinfoCommand : Command() {
         }
     }
 
-    override fun help(prefix: String): String? = "Get information from yourself or from another user.\n" +
+    override fun help(prefix: String) = "Get information from yourself or from another user.\n" +
         "Usage: `$prefix$name [username]`"
 
     override fun getName() = "userinfo"

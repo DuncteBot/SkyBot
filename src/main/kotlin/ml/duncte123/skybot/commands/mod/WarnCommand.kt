@@ -84,7 +84,7 @@ class WarnCommand : ModBaseCommand() {
 
     }
 
-    override fun help(prefix: String): String? = """Warns a member.
+    override fun help(prefix: String) = """Warns a member.
         |When a member has 3 warnings he/she will be kicked
         |Usage: `$prefix$name <@user> [reason]`
     """.trimMargin()

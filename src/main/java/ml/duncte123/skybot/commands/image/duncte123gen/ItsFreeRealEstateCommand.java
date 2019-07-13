@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,13 +36,15 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
         handleBasicImage(ctx.getEvent(), image);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "freerealestate";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "It's free real estate\n" +
             "Usage: `" + prefix + getName() + " <text>`";
     }

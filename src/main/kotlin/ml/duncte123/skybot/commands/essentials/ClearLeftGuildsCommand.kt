@@ -61,5 +61,5 @@ class ClearLeftGuildsCommand : Command() {
 
     override fun getName() = "clearleftguilds"
 
-    override fun help(prefix: String?) = "Clears the guilds from the db that the bot is no longer in"
+    override fun help(prefix: String) = "Clears the guilds from the db that the bot is no longer in"
 }

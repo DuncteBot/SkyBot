@@ -31,6 +31,7 @@ import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -82,16 +83,19 @@ public class BotinfoCommand extends Command {
         sendEmbed(event, eb);
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Gets some info about the bot\nUsage: `" + prefix + getName() + "`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "botinfo";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"about", "support", "bi"};

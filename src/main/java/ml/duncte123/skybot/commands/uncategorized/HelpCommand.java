@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -69,16 +70,19 @@ public class HelpCommand extends Command {
         sendHelp(event, HelpEmbeds.generateCommandEmbed(prefix));
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Shows a list of all the commands.\nUsage: `" + prefix + "help [command]`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "help";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"commands", "h"};

@@ -57,7 +57,7 @@ class TextToBricksCommand : Command() {
         sendEmbed(ctx.event, EmbedUtils.embedMessage(message))
     }
 
-    override fun help(prefix: String): String? = "Convert your text to bricks\n" +
+    override fun help(prefix: String) = "Convert your text to bricks\n" +
         "Usage: `$prefix$name <text>`"
 
     override fun getName() = "ttb"

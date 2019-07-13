@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -47,18 +48,21 @@ public class SetWelcomeChannelCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The new welcome channel has been set to " + channel.getAsMention());
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setwelcomechannel";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"setleavechannel"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets the channel that displays the welcome and leave messages\n" +
             "Usage: `" + prefix + getName() + " <channel>`";
     }

@@ -29,6 +29,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -90,18 +91,21 @@ public class LoveCommand extends Command {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "ship";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"love", "loveship"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Ship 2 people\n" +
             "Usage: `" + prefix + getName() + " <@user> <@user>`";
     }

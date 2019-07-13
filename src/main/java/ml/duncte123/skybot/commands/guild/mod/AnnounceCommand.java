@@ -29,6 +29,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -98,17 +99,20 @@ public class AnnounceCommand extends ModBaseCommand {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Announces a message.\n" +
             "Usage `" + prefix + getName() + " <#channel> <message>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "announce";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"announce1", "announce2", "announce3"};

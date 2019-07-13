@@ -34,5 +34,5 @@ class SuggestCommand : Command() {
 
     override fun getName() = "suggest"
 
-    override fun help(prefix: String): String? = "Suggest something to be in Dunctebot!"
+    override fun help(prefix: String) = "Suggest something to be in Dunctebot!"
 }

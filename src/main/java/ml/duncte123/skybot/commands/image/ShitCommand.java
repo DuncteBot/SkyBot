@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -44,24 +45,28 @@ public class ShitCommand extends NoPatronImageCommand {
         ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "shit";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"pluralshit"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "`" + prefix + "shit <message>` => Exclaim that something is shit." +
             "`" + prefix + "pluralshit <message>` => Exclaim that things are shit.";
     }
 
+    @NotNull
     @Override
-    public String help(String invoke, String prefix) {
+    public String help(@NotNull String invoke, @NotNull String prefix) {
         switch (invoke) {
             case "shit": {
                 return "Exclaim that something is shit.\n" +

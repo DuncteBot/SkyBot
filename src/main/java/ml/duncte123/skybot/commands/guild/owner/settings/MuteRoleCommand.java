@@ -23,6 +23,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -67,18 +68,21 @@ public class MuteRoleCommand extends SettingsBase {
         sendMsg(ctx, "SpamRole has been set to " + foundRole.getAsMention());
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "muterole";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"spamrole"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Gives members a role when they spam.\n" +
             "Usage: `" + prefix + getName() + " <role>`";
     }

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -44,6 +45,7 @@ public abstract class NoPatronImageCommand extends ImageCommandBase {
         return split;
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.FUN;

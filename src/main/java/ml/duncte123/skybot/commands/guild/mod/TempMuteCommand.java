@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -95,13 +96,15 @@ public class TempMuteCommand extends TempBanCommand {
             );
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "tempmute";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Temporally mutes a user on the guild\n" +
             "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }

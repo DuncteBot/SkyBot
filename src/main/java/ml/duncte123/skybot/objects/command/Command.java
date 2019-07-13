@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,35 @@ public abstract class Command implements ICommand {
     @Override
     public boolean shouldDisplayAliasesInHelp() {
         return displayAliasesInHelp;
+    }
+
+    /**
+     * Returns the current category of the command
+     *
+     * @return the current category of the command
+     */
+    @NotNull
+    public CommandCategory getCategory() {
+        return this.category;
+    }
+
+    @Override
+    public String toString() {
+        return "Command[" + getName() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
+            return false;
+        }
+
+        final Command command = (Command) obj;
+
+        return this.help(Settings.OTHER_PREFIX).equals(command.help(Settings.OTHER_PREFIX)) && this.getName().equals(command.getName());
     }
 
     /**
@@ -166,36 +196,7 @@ public abstract class Command implements ICommand {
         return isUserOrGuildPatron(e, true);
     }
 
-
     protected static boolean isDev(@Nonnull User u) {
         return Settings.developers.contains(u.getIdLong());
-    }
-
-    /**
-     * Returns the current category of the command
-     *
-     * @return the current category of the command
-     */
-    public CommandCategory getCategory() {
-        return this.category;
-    }
-
-    @Override
-    public String toString() {
-        return "Command[" + getName() + "]";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
-            return false;
-        }
-
-        final Command command = (Command) obj;
-
-        return this.help(Settings.OTHER_PREFIX).equals(command.help(Settings.OTHER_PREFIX)) && this.getName().equals(command.getName());
     }
 }

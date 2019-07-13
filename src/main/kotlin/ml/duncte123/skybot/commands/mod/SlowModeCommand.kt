@@ -79,7 +79,7 @@ class SlowModeCommand : ModBaseCommand() {
 
     override fun getName() = "slowmode"
 
-    override fun help(prefix: String): String? = """Enable slowmode on in the current channel.
+    override fun help(prefix: String) = """Enable slowmode on in the current channel.
         |Usage: `$prefix$name <seconds (1-120)>`
         |Use `$prefix$name off` to turn slowmode off
     """.trimMargin()

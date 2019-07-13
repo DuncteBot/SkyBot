@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,13 +42,15 @@ public class ToggleAnnounceTracksCommand extends SettingsBase {
             + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "toggleannouncetracks";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Toggles if the player should announce the next playing track\n" +
             "Usage: `" + prefix + getName() + "`";
     }

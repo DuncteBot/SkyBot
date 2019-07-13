@@ -40,7 +40,7 @@ class PauseCommand : MusicCommand() {
         sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
-    override fun help(prefix: String): String? = "Pauses the current song"
+    override fun help(prefix: String) = "Pauses the current song"
 
     override fun getAliases() = arrayOf("resume")
 

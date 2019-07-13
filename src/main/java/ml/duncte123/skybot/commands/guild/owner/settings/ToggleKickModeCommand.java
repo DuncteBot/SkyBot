@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -40,13 +41,15 @@ public class ToggleKickModeCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "togglekickmode";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Toggles whether we should kick or assign a role for spammers.\n" +
             "Usage: `" + prefix + getName() + "`";
     }

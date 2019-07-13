@@ -32,6 +32,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
@@ -64,16 +65,19 @@ public class ShardInfoCommand extends Command {
         asciiInfo(ctx);
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Get information about all things shards";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "shardinfo";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"shards"};

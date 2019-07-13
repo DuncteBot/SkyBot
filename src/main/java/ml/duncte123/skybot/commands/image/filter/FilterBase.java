@@ -22,6 +22,7 @@ import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -54,13 +55,15 @@ public abstract class FilterBase extends ImageCommandBase {
         return commandName;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return commandName;
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Overlays a " + getFilterName() + " filter to the provided image.\n" +
             "Usage: `" + prefix + getName() + " [image url]`";
     }

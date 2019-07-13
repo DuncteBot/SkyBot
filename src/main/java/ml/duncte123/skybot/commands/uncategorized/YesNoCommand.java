@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -40,13 +41,15 @@ public class YesNoCommand extends Command {
     }
 
 
+    @NotNull
     @Override
     public String getName() {
         return "yesno";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Chooses between yes or no\n" +
             "Usage: `" + prefix + getName() + '`';
     }

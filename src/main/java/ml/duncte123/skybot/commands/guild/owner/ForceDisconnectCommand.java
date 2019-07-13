@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -53,16 +54,19 @@ public class ForceDisconnectCommand extends MusicCommand {
 
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Force disconnects the bot from music for when the bot is stuck";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "forcedisconnect";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"forceleave"};

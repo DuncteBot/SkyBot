@@ -88,7 +88,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
     override fun getName() = "vcautorole"
 
-    override fun help(prefix: String): String? = """Gives a role to a user when they join a specified voice channel
+    override fun help(prefix: String) = """Gives a role to a user when they join a specified voice channel
         |Usage: `$prefix$name add <voice channel> <role>`
         |`$prefix$name remove <voice channel>`
         |`$prefix$name off`

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,13 +36,15 @@ public class IWantToDieCommand extends NoPatronImageCommand {
         handleBasicImage(ctx.getEvent(), image);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "iwanttodie";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "You have decided that you want to die\n" +
             "Usage: `" + prefix + getName() + " <text>`";
     }

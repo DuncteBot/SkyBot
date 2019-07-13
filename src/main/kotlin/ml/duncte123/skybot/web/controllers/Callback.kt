@@ -55,8 +55,7 @@ object Callback {
             }
 
             response.redirect("/")
-        }
-        catch(stateEx: InvalidStateException) {
+        } catch (stateEx: InvalidStateException) {
             "<h1>${stateEx.message}</h1><br /><a href=\"https://dunctebot.com\">Click here to go back home</a>"
         }
     }

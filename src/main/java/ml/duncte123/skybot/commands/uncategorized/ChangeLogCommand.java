@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -53,11 +54,13 @@ public class ChangeLogCommand extends Command {
         sendEmbed(ctx.getEvent(), embed);
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "shows the changelog on the bot";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "changelog";

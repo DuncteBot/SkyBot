@@ -43,7 +43,7 @@ class BaseBoostCommand : MusicCommand() {
             return
         }
 
-        val gain = when(args[0]) {
+        val gain = when (args[0]) {
             "high" -> 0.25
             "med" -> 0.15
             "low" -> 0.05

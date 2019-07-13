@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,13 +42,15 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
 
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "didyoumean";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Did you type your search wrong?\n" +
             "Usage: `" + prefix + getName() + " <Top text>|<Bottom text>`";
     }

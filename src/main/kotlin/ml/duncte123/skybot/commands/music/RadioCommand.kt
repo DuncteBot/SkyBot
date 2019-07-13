@@ -81,7 +81,7 @@ class RadioCommand : MusicCommand() {
         }
     }
 
-    override fun help(prefix: String): String? = """Adds a radio http stream to your queue and goes to it!
+    override fun help(prefix: String) = """Adds a radio http stream to your queue and goes to it!
         |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
         |Usage: `$prefix$name <(full)list/station name>`""".trimMargin()
 

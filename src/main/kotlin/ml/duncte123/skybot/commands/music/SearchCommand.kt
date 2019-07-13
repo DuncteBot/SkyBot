@@ -78,6 +78,6 @@ class SearchCommand : MusicCommand() {
 
     override fun getName(): String = "search"
 
-    override fun help(prefix: String): String? = """Search for a song to play
+    override fun help(prefix: String) = """Search for a song to play
             |Usage: `$prefix$name <search term>`""".trimMargin()
 }

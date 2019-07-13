@@ -23,6 +23,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -57,13 +58,15 @@ public class SetDescriptionCommand extends SettingsBase {
         sendMsg(event, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setdescription";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Set a custom description in " + prefix + "guildinfo\n" +
             "Usage: `" + prefix + getName() + " <description>`";
     }

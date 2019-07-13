@@ -38,7 +38,7 @@ class DonateCommand : Command() {
 
     override fun getName() = "donate"
 
-    override fun help(prefix: String): String? = """Help keeping the bot up by donating
+    override fun help(prefix: String) = """Help keeping the bot up by donating
         |Usage: `$prefix$name [amount]`
     """.trimMargin()
 }

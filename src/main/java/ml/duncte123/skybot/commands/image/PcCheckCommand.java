@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -39,12 +40,14 @@ public class PcCheckCommand extends ImageCommandBase {
         ctx.getBlargbot().getPcCheck(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "WHoops get your pc checked\n" +
             "Usage: `" + prefix + "pccheck <reason>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "pccheck";

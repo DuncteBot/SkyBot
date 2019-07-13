@@ -52,7 +52,7 @@ class LeaveCommand : MusicCommand() {
         sendSuccess(ctx.message)
     }
 
-    override fun help(prefix: String): String? = "Makes the bot leave your channel."
+    override fun help(prefix: String) = "Makes the bot leave your channel."
 
     override fun getName(): String = "leave"
 

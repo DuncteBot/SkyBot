@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,11 +42,13 @@ public class ToggleSwearFilterCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The swearword filter has been " + (isEnabled ? "enabled" : "disabled") + ".");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "toggleswearfilter";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{
@@ -54,8 +57,9 @@ public class ToggleSwearFilterCommand extends SettingsBase {
         };
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Turns the swearword filter on or off\n" +
             "Usage: `" + prefix + getName() + "`";
     }

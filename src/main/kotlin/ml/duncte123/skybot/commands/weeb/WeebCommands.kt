@@ -83,7 +83,7 @@ class WeebCommands : WeebCommandBase() {
     }
 
 
-    override fun help(prefix: String): String? = """`${prefix}hug` => Hug a user
+    override fun help(prefix: String) = """`${prefix}hug` => Hug a user
         |`${prefix}lewd` => When things get to lewd
         |`${prefix}pat` => Pat a user
         |`${prefix}punch` => Punch a user in their face
@@ -93,7 +93,7 @@ class WeebCommands : WeebCommandBase() {
         |`${prefix}weeb <category>` => Gives you a random image from weeb.sh with that type
     """.trimMargin()
 
-    override fun help(invoke: String, prefix: String): String? {
+    override fun help(invoke: String, prefix: String): String {
         return when (invoke) {
             "hug" -> {
                 """Hug a user.

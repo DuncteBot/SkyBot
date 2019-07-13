@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import org.java_websocket.exceptions.LimitExedeedException
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {
@@ -67,7 +66,7 @@ class ReaddCommand : MusicCommand() {
         }
     }
 
-    override fun help(prefix: String): String? = "Readd the current track to the end of the queue"
+    override fun help(prefix: String) = "Readd the current track to the end of the queue"
 
     override fun getName() = "readd"
 }

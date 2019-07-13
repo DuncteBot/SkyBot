@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -53,13 +54,15 @@ public class SetLogChannelCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setlogchannel";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets the channel to log messages in\n" +
             "Usage: `" + prefix + getName() + " <text channel>`";
     }

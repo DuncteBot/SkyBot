@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,18 +36,21 @@ public class JokeoverheadCommand extends NoPatronImageCommand {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "jokeoverhead";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"woosh"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "You just got wooshed\n" +
             "Usage: `" + prefix + getName() + " [@user/url]`";
     }

@@ -50,7 +50,7 @@ class AvatarCommand : Command() {
 
     override fun getName() = "avatar"
 
-    override fun help(prefix: String): String? = """Shows the avatar for a you or the specified user
+    override fun help(prefix: String) = """Shows the avatar for a you or the specified user
         |Usage: `$prefix$name [@user]`
     """.trimMargin()
 

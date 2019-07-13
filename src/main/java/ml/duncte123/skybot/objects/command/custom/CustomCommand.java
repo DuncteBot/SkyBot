@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -47,11 +48,13 @@ public interface CustomCommand extends ICommand {
         // Custom commands are executed in a different way
     }
 
+    @NotNull
     @Override
-    default String help(String prefix) {
+    default String help(@NotNull String prefix) {
         return null;
     }
 
+    @NotNull
     @Override
     default CommandCategory getCategory() {
         return null;

@@ -55,7 +55,7 @@ class VolumeCommand : MusicCommand() {
 
     }
 
-    override fun help(prefix: String): String? = """Sets the new volume on the player.
+    override fun help(prefix: String) = """Sets the new volume on the player.
         |Usage: `$prefix$name [new volume]`
     """.trimMargin()
 

@@ -56,7 +56,7 @@ class XkcdCommand : Command() {
 
     override fun getName() = "xkcd"
 
-    override fun help(prefix: String): String? = "Sends the latest xkcd comic\n" +
+    override fun help(prefix: String) = "Sends the latest xkcd comic\n" +
         "Usage: `$prefix$name [latest/random/number]`"
 
     private fun sendComic(it: ObjectNode, ctx: CommandContext) {

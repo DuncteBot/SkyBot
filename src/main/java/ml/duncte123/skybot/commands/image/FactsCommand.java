@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -33,13 +34,15 @@ public class FactsCommand extends NoPatronImageCommand {
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "facts";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Show show the facts\n" +
             "Usage: `" + prefix + getName() + " <text>`";
     }

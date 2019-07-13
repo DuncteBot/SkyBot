@@ -23,6 +23,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -52,13 +53,15 @@ public class ToggleSpamFilterCommand extends SettingsBase {
         sendMsg(ctx.getEvent(), message);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "togglespamfilter";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Toggles whether we should handle your incoming spam.\n" +
             "Usage: `" + prefix + getName() + "`";
     }

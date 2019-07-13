@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -66,13 +67,15 @@ public class SetRateLimitsCommand extends SettingsBase {
         sendMsg(event, "The new rates are " + steps);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setratelimits";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
             "Usage: `" + prefix + getName() + " <1|2|3|4|5|6>`\n" +
             "Example: " + prefix + getName() + " 20|45|60|120|240|2400";

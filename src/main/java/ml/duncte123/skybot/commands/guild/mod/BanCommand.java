@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -71,17 +72,20 @@ public class BanCommand extends ModBaseCommand {
         );
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
             "Usage: `" + prefix + getName() + " <@user> <Reason>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "ban";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"dabon"};

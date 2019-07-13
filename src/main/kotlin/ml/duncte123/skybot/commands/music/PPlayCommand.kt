@@ -56,7 +56,7 @@ class PPlayCommand : MusicCommand() {
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
 
-    override fun help(prefix: String): String? = "Add a playlist to the queue."
+    override fun help(prefix: String) = "Add a playlist to the queue."
 
     override fun getName(): String = "pplay"
 }

@@ -77,7 +77,7 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    override fun help(prefix: String): String? = "Shows the lyrics to the current song"
+    override fun help(prefix: String) = "Shows the lyrics to the current song"
 
     override fun getName() = "lyrics"
 

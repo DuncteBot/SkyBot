@@ -61,7 +61,7 @@ class ListCommand : MusicCommand() {
         }
     }
 
-    override fun help(prefix: String): String? = "shows the current queue"
+    override fun help(prefix: String) = "shows the current queue"
 
     override fun getName(): String = "list"
 

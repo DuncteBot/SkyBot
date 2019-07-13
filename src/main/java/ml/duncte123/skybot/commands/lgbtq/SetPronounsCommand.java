@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -83,18 +84,21 @@ public class SetPronounsCommand extends Command {
         ctx.getApis().setPronouns(ctx.getAuthor().getIdLong(), pronouns, singular);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "setpronouns";
     }
 
+    @NotNull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.LGBTQ;
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Set your pronouns to people can check them with `" + prefix + "pronounscheck`\n" +
             "Usage: `" + prefix + getName() + " <pronouns> [--plural]`\n" +
             "Examples of pronouns are:\n" +

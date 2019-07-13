@@ -95,7 +95,7 @@ open class PlayCommand : MusicCommand() {
     }
 
 
-    override fun help(prefix: String): String? = """Make the bot play song.
+    override fun help(prefix: String) = """Make the bot play song.
             |Usage: `$prefix$name [url/search term]`""".trimMargin()
 
     override fun getName(): String = "play"

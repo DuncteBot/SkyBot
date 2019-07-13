@@ -24,6 +24,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,13 +66,15 @@ public class AutoRoleCommand extends SettingsBase {
         sendMsg(ctx, "AutoRole has been set to " + foundRole.getAsMention());
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "autorole";
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Gives members a role when they join\n" +
             "Usage: `" + prefix + getName() + " <role>`";
     }

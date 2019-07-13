@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -51,18 +52,21 @@ public class DrakeCommand extends NoPatronImageCommand {
         handleBasicImage(ctx.getEvent(), image);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "drake";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"ddrake", "dddrake"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Did you type your search wrong?\n" +
             "Usage: `" + prefix + getName() + " <Top text>|<Bottom text>`";
     }

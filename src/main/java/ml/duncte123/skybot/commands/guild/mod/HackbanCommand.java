@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -77,12 +78,14 @@ public class HackbanCommand extends ModBaseCommand {
         sendMsg(event, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Ban a user before he/she can join your guild.\n" +
             "Usage: `" + prefix + getName() + " <userId...>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "hackban";

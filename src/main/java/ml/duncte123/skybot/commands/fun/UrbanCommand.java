@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -74,12 +75,14 @@ public class UrbanCommand extends Command {
 
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Search the urban dictionary.\n" +
             "Usage: `" + prefix + getName() + " <search term>`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "urban";

@@ -89,7 +89,7 @@ class UnsortenCommand : Command() {
 
     override fun getName() = "unshorten"
 
-    override fun help(prefix: String): String? = """Unshorten a short url
+    override fun help(prefix: String) = """Unshorten a short url
         |Usage: `$prefix$name <short url>`
     """.trimMargin()
 }

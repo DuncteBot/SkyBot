@@ -366,12 +366,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
-       runOnThread {
-           val date = AirUtils.getDatabaseDateFormat(expireDate)
-           val res = variables.apis.createReminder(userId, reminder, date, channelId)
+        runOnThread {
+            val date = AirUtils.getDatabaseDateFormat(expireDate)
+            val res = variables.apis.createReminder(userId, reminder, date, channelId)
 
-           callback.invoke(res)
-       }
+            callback.invoke(res)
+        }
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {

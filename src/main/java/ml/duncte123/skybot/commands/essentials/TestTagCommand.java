@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -69,18 +70,21 @@ public class TestTagCommand extends Command {
 
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "testtag";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"tt"};
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Test your jagtag format before you save it as custom command etc.\n" +
             "Usage: `" + prefix + getName() + " <JagTag syntax>`";
     }

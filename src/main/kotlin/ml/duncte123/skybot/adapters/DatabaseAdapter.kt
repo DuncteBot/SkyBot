@@ -169,8 +169,7 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
         variables.database.run {
             try {
                 r.invoke()
-            }
-            catch (thr: Throwable) {
+            } catch (thr: Throwable) {
                 Sentry.capture(thr)
                 onFail.invoke(thr)
                 thr.printStackTrace()

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -43,12 +44,14 @@ public class LinusCommand extends ImageCommandBase {
         }
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "Shows a picture of Linus pointing to something on a monitor.\n" +
             "Usage: `" + prefix + "linus [image url]`";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "linus";

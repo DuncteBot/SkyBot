@@ -115,7 +115,8 @@ public class AudioLoader implements AudioLoadResultHandler {
 
                 sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
             }
-        } catch (LimitReachedException e) {
+        }
+        catch (LimitReachedException e) {
             if (this.announce) {
                 sendMsgFormat(ctx, "The first %s tracks have been queued up", e.getSize());
             }

@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -49,16 +50,19 @@ public class KittyCommand extends Command {
         });
     }
 
+    @NotNull
     @Override
-    public String help(String prefix) {
+    public String help(@NotNull String prefix) {
         return "A alternative cat command with more kitties";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "kitty";
     }
 
+    @NotNull
     @Override
     public String[] getAliases() {
         return new String[]{"cat"};
