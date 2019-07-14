@@ -47,7 +47,7 @@ class StatsCommand : Command() {
 
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
         val uptimeTime = Time(uptimeLong - 3600000)
-        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime, true)
+        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime * 1000, true)
         val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
