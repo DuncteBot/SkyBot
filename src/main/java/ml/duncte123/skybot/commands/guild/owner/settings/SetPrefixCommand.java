@@ -37,7 +37,7 @@ public class SetPrefixCommand extends SettingsBase {
 
         final String newPrefix = ctx.getArgsJoined();
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
-        sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + "`");
+        sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + '`');
     }
 
     @NotNull

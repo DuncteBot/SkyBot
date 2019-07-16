@@ -88,6 +88,6 @@ public class SettingsCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Shows the current settings\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }

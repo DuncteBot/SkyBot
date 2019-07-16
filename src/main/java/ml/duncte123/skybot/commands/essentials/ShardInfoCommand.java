@@ -150,7 +150,7 @@ public class ShardInfoCommand extends Command {
     }
 
     private String getShardStatus(JDA shard) {
-        return WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " "));
+        return WordUtils.capitalizeFully(shard.getStatus().toString().replace('_', ' '));
     }
 
     /*

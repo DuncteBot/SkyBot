@@ -118,7 +118,7 @@ public class CommandManager {
 
     public boolean isCommand(String customPrefix, String message) {
         final String[] split = message.toLowerCase().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
                 Pattern.quote(customPrefix),
             "").split("\\s+", 2);
 
@@ -299,7 +299,7 @@ public class CommandManager {
     public void runCommand(GuildMessageReceivedEvent event) {
         final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
                 Pattern.quote(customPrefix),
             "").split("\\s+", 2);
         final String invoke = split[0];

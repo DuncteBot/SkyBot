@@ -55,7 +55,7 @@ public abstract class Command implements ICommand {
 
     @Override
     public String toString() {
-        return "Command[" + getName() + "]";
+        return "Command[" + getName() + ']';
     }
 
     @Override

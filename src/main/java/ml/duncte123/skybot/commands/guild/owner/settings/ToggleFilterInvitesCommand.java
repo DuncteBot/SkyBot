@@ -50,6 +50,6 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Toggles if the bot should delete messages that contain invites\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }

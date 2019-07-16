@@ -63,6 +63,6 @@ public class ToggleSpamFilterCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Toggles whether we should handle your incoming spam.\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }

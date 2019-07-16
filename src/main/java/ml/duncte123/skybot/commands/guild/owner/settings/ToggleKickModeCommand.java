@@ -51,6 +51,6 @@ public class ToggleKickModeCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Toggles whether we should kick or assign a role for spammers.\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }

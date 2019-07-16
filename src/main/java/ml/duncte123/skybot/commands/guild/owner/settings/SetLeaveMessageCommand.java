@@ -38,7 +38,7 @@ public class SetLeaveMessageCommand extends SettingsBase {
         final String newLeaveMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n")/*.replaceAll("\n", "\r\n")*/;
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomLeaveMessage(newLeaveMessage));
 
-        sendMsg(ctx.getEvent(), "The new leave message has been set to `" + newLeaveMessage + "`");
+        sendMsg(ctx.getEvent(), "The new leave message has been set to `" + newLeaveMessage + '`');
     }
 
     @NotNull

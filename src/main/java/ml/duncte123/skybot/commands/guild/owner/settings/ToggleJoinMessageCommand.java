@@ -39,7 +39,7 @@ public class ToggleJoinMessageCommand extends SettingsBase {
         final boolean isEnabled = !settings.isEnableJoinMessage();
         guild.setSettings(settings.setEnableJoinMessage(isEnabled));
 
-        sendMsg(ctx.getEvent(), "The join and leave messages have been " + (isEnabled ? "enabled" : "disabled") + ".");
+        sendMsg(ctx.getEvent(), "The join and leave messages have been " + (isEnabled ? "enabled" : "disabled") + '.');
     }
 
     @NotNull
@@ -61,6 +61,6 @@ public class ToggleJoinMessageCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Turns the join message on or off\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }

@@ -52,6 +52,6 @@ public class ToggleAutoDehoistCommand extends SettingsBase {
     @Override
     public String help(@NotNull String prefix) {
         return "Toggles if if the bot should auto de-hoist users\n" +
-            "Usage: `" + prefix + getName() + "`";
+            "Usage: `" + prefix + getName() + '`';
     }
 }
