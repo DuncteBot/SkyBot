@@ -93,9 +93,6 @@ dependencies {
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
 
-    //groovy sandbox
-    implementation(group = "org.kohsuke", name = "groovy-sandbox", version = "1.21")
-
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 

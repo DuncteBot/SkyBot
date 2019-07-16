@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 import java.util.concurrent.CompletableFuture
 
 class ClearLeftGuildsCommand : Command() {

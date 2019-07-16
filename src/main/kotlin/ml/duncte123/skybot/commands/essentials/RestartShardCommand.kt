@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials
 
-import fredboat.audio.player.LavalinkManager
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
@@ -28,6 +27,9 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.AudioUtils
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RestartShardCommand : Command() {
+
+    private val restartInSec = 5L
 
     init {
         this.category = CommandCategory.UNLISTED
@@ -53,12 +57,12 @@ class RestartShardCommand : Command() {
         try {
             when (ctx.args.size) {
                 0 -> {
-                    MessageUtils.sendMsg(ctx.event, "All shards will restart in 15 seconds")
+                    MessageUtils.sendMsg(ctx.event, "All shards will restart in $restartInSec seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
-                    terminate(-1, shardManager)
+                    terminate(-1, shardManager, ctx.audioUtils)
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(15))
+                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart()
 
                         EventManager.restartingShard = -32
@@ -73,12 +77,12 @@ class RestartShardCommand : Command() {
                         return
                     }
 
-                    MessageUtils.sendMsg(ctx.event, "Shard $id will restart in 15 seconds")
+                    MessageUtils.sendMsg(ctx.event, "Shard $id will restart in $restartInSec seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
-                    terminate(id, shardManager)
+                    terminate(id, shardManager, ctx.audioUtils)
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(15))
+                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart(id)
 
                         EventManager.restartingShard = -32
@@ -102,16 +106,14 @@ class RestartShardCommand : Command() {
 
     override fun getAliases() = arrayOf("shardrestart")
 
-    private fun terminate(shard: Int, shardManager: ShardManager) {
+    private fun terminate(shard: Int, shardManager: ShardManager, audioUtils: AudioUtils) {
         for (jda in shardManager.shardCache) {
             if (jda.shardInfo.shardId != shard && shard != -1) {
                 continue
             }
 
             for (guild in jda.guildCache) {
-                if (LavalinkManager.ins.isConnected(guild)) {
-                    LavalinkManager.ins.closeConnection(guild)
-                }
+                AirUtils.stopMusic(guild, audioUtils)
             }
         }
     }

@@ -171,23 +171,39 @@ public class AirUtils {
      * Stops everything
      */
     public static void stop(DBManager database, AudioUtils audioUtils, ShardManager manager) {
+        stopMusic(audioUtils, manager);
+
+        database.getService().shutdown();
+    }
+
+    public static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (final long key : temp.keys()) {
-            final GuildMusicManager mng = audioUtils.musicManagers.get(key);
             final Guild guild = manager.getGuildById(key);
-            final LavalinkManager lavalinkManager = LavalinkManager.ins;
 
-            if (mng.player.getPlayingTrack() != null) {
-                mng.player.stopTrack();
-            }
-
-            if (guild != null && lavalinkManager.isConnected(guild)) {
-                lavalinkManager.closeConnection(guild);
+            if (guild != null) {
+                stopMusic(guild, audioUtils);
             }
         }
+    }
 
-        database.getService().shutdown();
+    public static void stopMusic(Guild guild, AudioUtils audioUtils) {
+        final GuildMusicManager mng = audioUtils.musicManagers.get(guild.getIdLong());
+
+        if (mng == null) {
+            return;
+        }
+
+        final LavalinkManager lavalinkManager = LavalinkManager.ins;
+
+        if (mng.player.getPlayingTrack() != null) {
+            mng.player.stopTrack();
+        }
+
+        if (lavalinkManager.isConnected(guild)) {
+            lavalinkManager.closeConnection(guild);
+        }
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {

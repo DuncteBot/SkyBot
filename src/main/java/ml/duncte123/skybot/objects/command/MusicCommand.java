@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),

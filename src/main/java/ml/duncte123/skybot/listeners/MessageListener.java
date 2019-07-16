@@ -96,8 +96,6 @@ public class MessageListener extends BaseListener {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
-            commandManager.shutdown();
-
             final ShardManager manager = event.getJDA().asBot().getShardManager();
 
             event.getMessage().addReaction("a:_yes:577795293546938369").queue(
@@ -406,10 +404,16 @@ public class MessageListener extends BaseListener {
     }
 
     private void killAllShards(@Nonnull ShardManager manager) {
+
+        manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
+
+        try {
+            // Sleep for 3 seconds
+            Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+        }
+        catch (InterruptedException ignored) {
+        }
+
         manager.shutdown();
-        /*manager.getShards().forEach(jda -> {
-            logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
-            jda.shutdown();
-        });*/
     }
 }

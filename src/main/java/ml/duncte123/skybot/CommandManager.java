@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.utils.CustomCommandUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -302,7 +302,7 @@ public class CommandManager {
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(customPrefix),
             "").split("\\s+", 2);
-        final String invoke = split[0].toLowerCase();
+        final String invoke = split[0];
 
         final List<String> args = new ArrayList<>();
 
@@ -314,14 +314,14 @@ public class CommandManager {
             }
         }
 
-        dispatchCommand(invoke, args, event);
+        dispatchCommand(invoke, invoke.toLowerCase(), args, event);
     }
 
-    private void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        ICommand cmd = getCommand(invoke);
+    private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
+        ICommand cmd = getCommand(invokeLower);
 
         if (cmd == null) {
-            cmd = getCustomCommand(invoke, event.getGuild().getIdLong());
+            cmd = getCustomCommand(invokeLower, event.getGuild().getIdLong());
         }
 
         dispatchCommand(cmd, invoke, args, event);
@@ -381,7 +381,7 @@ public class CommandManager {
                 try {
                     MDC.put("command.custom.message", cc.getMessage());
 
-                    final String message = CustomCommandUtils.parse(new CommandContext(invoke, args, event, variables), cc.getMessage());
+                    final String message = CommandUtils.parseJagTag(new CommandContext(invoke, args, event, variables), cc.getMessage());
 
                     if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);

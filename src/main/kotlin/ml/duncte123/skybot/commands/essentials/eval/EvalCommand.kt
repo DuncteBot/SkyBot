@@ -22,25 +22,22 @@ import groovy.lang.GroovyShell
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
+import me.duncte123.botcommons.web.WebParserUtils
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.commands.essentials.UpdateCommand.Companion.makeHastePost
-import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
-import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.DoomedException
-import ml.duncte123.skybot.objects.ClojureFilter
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
-import org.codehaus.groovy.control.CompilationFailedException
-import org.codehaus.groovy.control.CompilerConfiguration
-import org.kohsuke.groovy.sandbox.SandboxTransformer
+import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
 import javax.script.ScriptException
@@ -52,42 +49,14 @@ import kotlin.system.measureTimeMillis
     Author(nickname = "ramidzkh", author = "Ramid Khan")
 ])
 class EvalCommand : Command() {
-
-    private val protectedShell: GroovyShell
     private val engine: GroovyShell
     private val importString: String
-    private val filter = EvalFilter()
-    private val clojureFilter = ClojureFilter()
 
-    private var runIfNotOwner = false
-
-    /**
-     * This initialises the engine
-     */
     init {
-        this.category = CommandCategory.PATRON
-        // The GroovyShell is for the public eval
-        protectedShell = object : GroovyShell(
-            CompilerConfiguration()
-                .addCompilationCustomizers(SandboxTransformer())) {
-            @Throws(CompilationFailedException::class)
-            override fun evaluate(scriptText: String): Any? {
-                if (scriptText.isEmpty()) {
-                    return null
-                }
+        this.category = CommandCategory.UNLISTED
 
-                if (filter.filterArrays(scriptText)) {
-                    throw DoomedException("Arrays are not allowed")
-                }
-
-                if (filter.filterLoops(scriptText)) {
-                    throw DoomedException("Loops are not allowed")
-                }
-
-                return super.evaluate(scriptText)
-            }
-        }
         engine = GroovyShell()
+
         val packageImports = listOf(
             "java.io",
             "java.lang",
@@ -103,7 +72,8 @@ class EvalCommand : Command() {
             "ml.duncte123.skybot.entities",
             "ml.duncte123.skybot.entities.delegate",
             "ml.duncte123.skybot",
-            "ml.duncte123.skybot.objects.command")
+            "ml.duncte123.skybot.objects.command"
+        )
 
         val classImports = listOf(
             "ml.duncte123.skybot.exceptions.DoomedException",
@@ -124,20 +94,14 @@ class EvalCommand : Command() {
 
     @ExperimentalCoroutinesApi
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
 
-        val isRanByBotOwner = isDev(event.author) || event.author.idLong == Settings.OWNER_ID
-
-        if (!isRanByBotOwner && !runIfNotOwner) {
-            return
-        }
-
-        if (!isRanByBotOwner && !isUserOrGuildPatron(event)) {
+        if (!isDev(event.author) || event.author.idLong == Settings.OWNER_ID) {
             return
         }
 
         val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
+
         if (userInput.size < 2) {
             sendSuccess(event.message)
             return
@@ -154,46 +118,26 @@ class EvalCommand : Command() {
         val script = importString + userIn
 
 
-        var timeout = 5000L
+        engine.setVariable("commandManager", ctx.commandManager)
 
-        if (isRanByBotOwner && ctx.invoke.toLowerCase() != "safeeval") {
-            timeout = 60000L
+        engine.setVariable("message", ctx.message)
+        engine.setVariable("channel", ctx.message.textChannel)
+        engine.setVariable("guild", ctx.guild)
+        engine.setVariable("member", ctx.member)
+        engine.setVariable("author", ctx.author)
+        engine.setVariable("jda", ctx.jda)
+        engine.setVariable("shardManager", ctx.jda.asBot().shardManager)
+        engine.setVariable("event", event)
 
-            engine.setVariable("commandManager", ctx.commandManager)
+        engine.setVariable("skraa", script)
+        engine.setVariable("args", ctx.args)
+        engine.setVariable("ctx", ctx)
+        engine.setVariable("variables", ctx.variables)
 
-            engine.setVariable("message", ctx.message)
-            engine.setVariable("channel", ctx.message.textChannel)
-            engine.setVariable("guild", ctx.guild)
-            engine.setVariable("member", ctx.member)
-            engine.setVariable("author", ctx.author)
-            engine.setVariable("jda", ctx.jda)
-            engine.setVariable("shardManager", ctx.jda.asBot().shardManager)
-            engine.setVariable("event", event)
-
-            engine.setVariable("skraa", script)
-            engine.setVariable("args", ctx.args)
-            engine.setVariable("ctx", ctx)
-            engine.setVariable("variables", ctx.variables)
-
-            @SinceSkybot("3.58.0")
-            GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
-                return@launch eval(event, isRanByBotOwner, script, timeout, ctx)
-            })
-        } else {
-            protectedShell.setVariable("author", UserDelegate(event.author))
-            protectedShell.setVariable("guild", GuildDelegate(event.guild))
-            protectedShell.setVariable("member", MemberDelegate(event.member))
-            protectedShell.setVariable("channel", TextChannelDelegate(event.channel))
-
-            if (event.channel.parent != null) {
-                protectedShell.setVariable("category", CategoryDelegate(event.channel.parent))
-            }
-
-            @SinceSkybot("3.58.0")
-            GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                return@launch eval(event, false, script, timeout, ctx)
-            }
-        }
+        @SinceSkybot("3.58.0")
+        GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
+            return@launch eval(event, script, 60000L, ctx)
+        })
     }
 
     override fun help(prefix: String) = """Evaluate java code on the bot
@@ -202,46 +146,22 @@ class EvalCommand : Command() {
 
     override fun getName() = "eval"
 
-    override fun getAliases() = arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
-
-    /*fun toggleFilter(): Boolean {
-        val ret = runIfNotOwner
-        runIfNotOwner = !runIfNotOwner
-        return ret
-    }
-
-    fun setFilter(status: Boolean): Boolean {
-        val ret = runIfNotOwner
-        runIfNotOwner = status
-        return ret
-    }*/
+    override fun getAliases() = arrayOf("eval™", "evaluate", "evan", "eva;")
 
     @SinceSkybot("3.58.0")
-    private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long, ctx: CommandContext) {
+    private suspend fun eval(event: GuildMessageReceivedEvent, script: String, millis: Long, ctx: CommandContext) {
         val time = measureTimeMillis {
             withTimeoutOrNull(millis) {
-                if (!isRanByBotOwner) {
-                    filter.register()
-                }
-
                 val out = try {
                     engine.setVariable("scope", this)
 
-                    if (isRanByBotOwner) {
-                        engine.evaluate(script)
-                    } else {
-                        protectedShell.evaluate(clojureFilter.filterClojures(script))
-                    }
+                    engine.evaluate(script)
 
                 } catch (ex: Throwable) {
                     ex
                 }
 
-                parseEvalResponse(out, event, isRanByBotOwner, ctx)
-
-                if (!isRanByBotOwner) {
-                    filter.unregister()
-                }
+                parseEvalResponse(out, event, ctx)
             }
         }
 
@@ -249,7 +169,7 @@ class EvalCommand : Command() {
             "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}")
     }
 
-    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, ctx: CommandContext) {
+    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, ctx: CommandContext) {
         when (out) {
             null -> {
                 sendSuccess(event.message)
@@ -275,7 +195,7 @@ class EvalCommand : Command() {
             }
 
             is Throwable -> {
-                if (Settings.useJSON && isRanByBotOwner) {
+                if (Settings.useJSON) {
                     sendErrorJSON(event.message, out, false, ctx.variables.jackson)
                 } else {
                     sendMsg(event, "ERROR: $out")
@@ -294,24 +214,33 @@ class EvalCommand : Command() {
                     return
                 }
 
-                if (isRanByBotOwner) {
-                    MessageBuilder()
-                        .appendCodeBlock(out.toString(), "")
-                        .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                        .forEach { sendMsg(event, it) }
-                    return
-                }
-
-                if (filter.containsMentions(out.toString())) {
-                    sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
-                } else {
-                    sendMsg(event, "**" + event.author.name
-                        + ":** " + out.toString()
-                        .replace("@here".toRegex(), "@h\u0435re")
-                        .replace("@everyone".toRegex(), "@\u0435veryone"))
-                }
+                MessageBuilder()
+                    .appendCodeBlock(out.toString(), "")
+                    .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                    .forEach { sendMsg(event, it) }
 
             }
+        }
+    }
+
+    companion object {
+        fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
+            val base = "https://paste.menudocs.org"
+            val dataMap = hashMapOf<String, Any>()
+
+            dataMap["text"] = text
+            dataMap["expire"] = expiration
+            dataMap["lang"] = lang
+
+            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, WebUtils.EncodingType.TEXT_HTML)
+                .build({
+                    return@build Jsoup.parse(it.body()!!.string())
+                        .select("a[title=\"View Raw\"]")
+                        .first().attr("href")
+                        .replaceFirst("/raw", "")
+                }, WebParserUtils::handleError).execute()
+
+            return base + loc
         }
     }
 }

@@ -32,13 +32,10 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * A single event listener container
- */
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
@@ -50,7 +47,7 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
         final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
@@ -68,7 +65,6 @@ public class EventManager implements IEventManager {
             this.listeners.add(LavalinkManager.ins.getLavalink());
         }
     }
-
 
     @Override
     public void register(Object listener) {
@@ -116,11 +112,6 @@ public class EventManager implements IEventManager {
         return Collections.singletonList(this.listeners);
     }
 
-    /**
-     * Returns our reaction handler
-     *
-     * @return our reaction handler
-     */
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
     }

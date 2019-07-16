@@ -32,6 +32,7 @@ import ml.duncte123.skybot.utils.GuildUtils
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
+import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -131,29 +132,24 @@ class UserinfoCommand : Command() {
         sendEmbed(event.channel, embed)
     }
 
-
-    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, ctx: CommandContext) {
-
-        val prettyTime = ctx.variables.prettyTime
-        val u = m.user
-        val joinOrder = StringBuilder()
-        val joins = event.guild.memberCache.stream().sorted(
+    private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
+        val joins = guild.memberCache.stream().sorted(
             Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
         ).collect(Collectors.toList())
 
-        var index = joins.indexOf(m)
+        var index = joins.indexOf(member)
         index -= 3
 
         if (index < 0) {
             index = 0
         }
 
-        joinOrder.append("\n")
+        appendln()
 
-        if (joins[index] == m) {
-            joinOrder.append("[${joins[index].effectiveName}](https://dunctebot.com/)")
+        if (joins[index] == member) {
+            append("[${joins[index].effectiveName}](https://dunctebot.com/)")
         } else {
-            joinOrder.append(joins[index].effectiveName)
+            append(joins[index].effectiveName)
         }
 
         for (i in index + 1 until index + 7) {
@@ -161,43 +157,50 @@ class UserinfoCommand : Command() {
                 break
             }
 
-            val usr = joins[i]
-            var usrName = usr.effectiveName
+            val mbr = joins[i]
+            var usrName = mbr.effectiveName.replace("_", "\\_")
 
-            if (usr == m) {
+            if (mbr == member) {
                 usrName = "[$usrName](https://dunctebot.com/)"
             }
 
-            joinOrder.append(" > ").append(usrName)
+            append(" > ")
+            append(usrName)
         }
+    }
 
-        val createTime = u.creationTime
+    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
+        val prettyTime = ctx.variables.prettyTime
+        val user = member.user
+        val guild = ctx.guild
+
+        val createTime = user.creationTime
         val createTimeDate = Date.from(createTime.toInstant())
         val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val createTimeHuman = prettyTime.format(createTimeDate)
 
-        val joinTime = m.joinDate
+        val joinTime = member.joinDate
         val joinTimeDate = Date.from(joinTime.toInstant())
         val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val joinTimeHuman = prettyTime.format(joinTimeDate)
 
-        val mStatus = m.onlineStatus
+        val mStatus = member.onlineStatus
 
         val embed = EmbedUtils.defaultEmbed()
-            .setColor(m.color)
-            .setThumbnail(u.effectiveAvatarUrl.replace(".gif", ".png"))
-            .setDescription("""User info for ${m.asMention}
+            .setColor(member.color)
+            .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
+            .setDescription("""User info for ${member.asMention}
                         |
-                        |**Username + Discriminator:** ${u.asTag}
-                        |**User Id:** ${u.id}
-                        |**Display Name:** ${m.effectiveName}
+                        |**Username + Discriminator:** ${user.asTag}
+                        |**User Id:** ${user.id}
+                        |**Display Name:** ${member.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(u).toEmoji()}
+                        |$nitroUserLink ${isNitro(user).toEmoji()}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
-                        |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
-                        |**Join Order:** $joinOrder
+                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
+                        |**Join Order:** ${generateJoinOrder(guild, member)}
                         |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
-                        |**Bot Account:** ${u.isBot.toEmoji()}
+                        |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
@@ -208,12 +211,12 @@ class UserinfoCommand : Command() {
             return
         }
 
-        ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
-            u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
+        ctx.weebApi.generateDiscordStatus(toWeebshStatus(member),
+            user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
             event.channel.sendFile(it, "stat.png")
                 .embed(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
-                    sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
+                    sendEmbedRaw(event.channel, embed.setThumbnail(user.effectiveAvatarUrl).build(), null)
                 }
         }
     }

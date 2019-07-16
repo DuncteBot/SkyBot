@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ForceDisconnectCommand extends MusicCommand {

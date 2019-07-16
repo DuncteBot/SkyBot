@@ -23,7 +23,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.CustomCommandUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class TestTagCommand extends Command {
             return;
         }
 
-        final String output = CustomCommandUtils.parse(ctx, input);
+        final String output = CommandUtils.parseJagTag(ctx, input);
 
         final String message = new MessageBuilder()
             .append("**Input:**")

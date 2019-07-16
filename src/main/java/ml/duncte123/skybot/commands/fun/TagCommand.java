@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.CustomCommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -38,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static ml.duncte123.skybot.utils.CommandUtils.*;
 
 public class TagCommand extends Command {
 
@@ -123,7 +123,7 @@ public class TagCommand extends Command {
     }
 
     private void sendTag(CommandContext ctx, String subCmd) {
-        final String parsed = CustomCommandUtils.parse(ctx, this.tagStore.get(subCmd).content);
+        final String parsed = parseJagTag(ctx, this.tagStore.get(subCmd).content);
 
         if (parsed.length() > 2000) {
             sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");

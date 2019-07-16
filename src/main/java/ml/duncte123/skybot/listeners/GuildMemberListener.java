@@ -20,9 +20,8 @@ package ml.duncte123.skybot.listeners;
 
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.CustomCommandUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -94,7 +93,7 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        if (guild.getIdLong() == Command.supportGuildId) {
+        if (guild.getIdLong() == CommandUtils.supportGuildId) {
             handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
     }
@@ -102,14 +101,14 @@ public class GuildMemberListener extends BaseListener {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+        if (event.getGuild().getIdLong() != CommandUtils.supportGuildId) {
             return;
         }
 
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
 
-            if (roleId != Command.patronsRole && roleId != Command.guildPatronsRole && roleId != Command.oneGuildPatronsRole) {
+            if (roleId != CommandUtils.patronsRole && roleId != CommandUtils.guildPatronsRole && roleId != CommandUtils.oneGuildPatronsRole) {
                 continue;
             }
 
@@ -120,7 +119,7 @@ public class GuildMemberListener extends BaseListener {
     @Override
     public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
 
-        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+        if (event.getGuild().getIdLong() != CommandUtils.supportGuildId) {
             return;
         }
 
@@ -131,11 +130,11 @@ public class GuildMemberListener extends BaseListener {
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
 
-            if (roleId == Command.patronsRole) {
-                Command.patrons.add(userId);
+            if (roleId == CommandUtils.patronsRole) {
+                CommandUtils.patrons.add(userId);
             }
 
-            if (roleId == Command.guildPatronsRole) {
+            if (roleId == CommandUtils.guildPatronsRole) {
                 final List<Long> guilds = manager.getMutualGuilds(user).stream()
                     .filter((it) -> {
                         Member member = it.getMember(user);
@@ -145,10 +144,10 @@ public class GuildMemberListener extends BaseListener {
                     .map(Guild::getIdLong)
                     .collect(Collectors.toList());
 
-                Command.guildPatrons.addAll(guilds);
+                CommandUtils.guildPatrons.addAll(guilds);
             }
 
-            if (roleId == Command.oneGuildPatronsRole) {
+            if (roleId == CommandUtils.oneGuildPatronsRole) {
                 handleNewOneGuildPatron(userId);
             }
         }
@@ -169,7 +168,7 @@ public class GuildMemberListener extends BaseListener {
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
-        final Parser parser = CustomCommandUtils.PARSER_SUPPLIER.get();
+        final Parser parser = CommandUtils.PARSER_SUPPLIER.get();
 
         final String message = parser.put("user", event.getUser())
             .put("guild", event.getGuild())
@@ -184,11 +183,11 @@ public class GuildMemberListener extends BaseListener {
 
     private void handlePatronRemoval(long userId, ShardManager manager) {
         // Remove the user from the patrons list
-        Command.patrons.remove(userId);
+        CommandUtils.patrons.remove(userId);
 
-        if (Command.oneGuildPatrons.containsKey(userId)) {
+        if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
             // Remove the user from the one guild patrons
-            Command.oneGuildPatrons.remove(userId);
+            CommandUtils.oneGuildPatrons.remove(userId);
             GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
         }
 
@@ -196,7 +195,7 @@ public class GuildMemberListener extends BaseListener {
 
         if (user != null) {
             manager.getMutualGuilds(user).forEach(
-                (guild) -> Command.guildPatrons.remove(guild.getIdLong())
+                (guild) -> CommandUtils.guildPatrons.remove(guild.getIdLong())
             );
         }
     }
@@ -206,7 +205,7 @@ public class GuildMemberListener extends BaseListener {
             (results) -> {
                 results.forEachEntry(
                     (a, guildId) -> {
-                        Command.oneGuildPatrons.put(userId, guildId);
+                        CommandUtils.oneGuildPatrons.put(userId, guildId);
 
                         return true;
                     }

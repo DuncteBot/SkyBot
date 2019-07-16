@@ -22,6 +22,7 @@ import lavalink.client.player.LavalinkPlayer
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 
 class BaseBoostCommand : MusicCommand() {
     override fun run(ctx: CommandContext) {

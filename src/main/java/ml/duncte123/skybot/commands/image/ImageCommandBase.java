@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public abstract class ImageCommandBase extends Command {

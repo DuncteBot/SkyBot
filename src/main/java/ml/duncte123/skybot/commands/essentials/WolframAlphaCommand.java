@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
+import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class WolframAlphaCommand extends Command {

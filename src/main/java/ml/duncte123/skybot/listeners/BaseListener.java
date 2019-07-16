@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class BaseListener extends ListenerAdapter {
 
     public static boolean isUpdating = false;
-    protected static boolean shuttingDown = false;
+    public static boolean shuttingDown = false;
     protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
     protected final Variables variables;
     // A list of servers that list bots

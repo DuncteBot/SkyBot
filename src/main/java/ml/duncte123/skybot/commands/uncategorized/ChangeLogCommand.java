@@ -79,6 +79,11 @@ public class ChangeLogCommand extends Command {
                 eb.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
             }
 
+            // fallback if with url is too long
+            if (eb.getDescriptionBuilder().length() > MessageEmbed.TEXT_MAX_LENGTH) {
+                eb.setDescription(body);
+            }
+
             final MessageEmbed embed = eb.build();
 
             embedJson = embed.toJSONObject()

@@ -96,7 +96,7 @@ public final class Variables {
 
         if (config.sentry.enabled) {
             //noinspection ConstantConditions
-            final String env = "&environment=" + (Settings.VERSION.equals("@versionObj@") ? "local" : "production");
+            final String env = "&environment=" + ("@versionObj@".equals(Settings.VERSION) ? "local" : "production");
             Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION + env);
         }
     }

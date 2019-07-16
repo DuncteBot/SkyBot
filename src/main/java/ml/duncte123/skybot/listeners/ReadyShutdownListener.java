@@ -21,9 +21,9 @@ package ml.duncte123.skybot.listeners;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -95,17 +95,23 @@ public class ReadyShutdownListener extends MessageListener {
     private void loadPatrons(@Nonnull ShardManager manager) {
         logger.info("Collecting patrons");
 
-        final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        final Guild supportGuild = manager.getGuildById(CommandUtils.supportGuildId);
 
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+        if (supportGuild == null) {
+            logger.error("Could not find support guild");
+
+            return;
+        }
+
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.patronsRole))
             .stream()
             .map(Member::getUser)
             .map(User::getIdLong)
-            .forEach(Command.patrons::add);
+            .forEach(CommandUtils.patrons::add);
 
-        logger.info("Found {} normal patrons", Command.patrons.size());
+        logger.info("Found {} normal patrons", CommandUtils.patrons.size());
 
-        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
+        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
         final TLongList patronGuildsTrove = new TLongArrayList();
@@ -120,17 +126,17 @@ public class ReadyShutdownListener extends MessageListener {
             patronGuildsTrove.addAll(guilds);
         });
 
-        Command.guildPatrons.addAll(patronGuildsTrove);
+        CommandUtils.guildPatrons.addAll(patronGuildsTrove);
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.tagPatronsRole))
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.tagPatronsRole))
             .stream()
             .map(Member::getUser)
             .map(User::getIdLong)
-            .forEach(Command.tagPatrons::add);
+            .forEach(CommandUtils.tagPatrons::add);
 
-        logger.info("Found {} tag patrons", Command.tagPatrons.size());
+        logger.info("Found {} tag patrons", CommandUtils.tagPatrons.size());
 
         GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
     }
@@ -142,6 +148,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         MusicCommand.shutdown();
+        variables.getCommandManager().shutdown();
 
         //Kill other things
         if (unbanTimerRunning && isCacheCleanerActive) {
@@ -149,7 +156,6 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), event.getJDA().asBot().getShardManager());
-        variables.getCommandManager().shutdown();
 
         /*
          * Only shut down if we are not updating

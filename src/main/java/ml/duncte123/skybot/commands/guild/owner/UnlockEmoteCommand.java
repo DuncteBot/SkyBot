@@ -34,6 +34,7 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 public class UnlockEmoteCommand extends Command {
 

@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
@@ -176,8 +175,8 @@ public class GuildUtils {
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading one guild patrons");
 
-        final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-        final Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
+        final Guild supportGuild = manager.getGuildById(CommandUtils.supportGuildId);
+        final Role oneGuildRole = supportGuild.getRoleById(CommandUtils.oneGuildPatronsRole);
 
         adapter.loadOneGuildPatrons(
             (patrons) -> {
@@ -186,13 +185,13 @@ public class GuildUtils {
                     final Member memberInServer = supportGuild.getMemberById(userId);
 
                     if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
-                        Command.oneGuildPatrons.put(userId, guildId);
+                        CommandUtils.oneGuildPatrons.put(userId, guildId);
                     }
 
                     return true;
                 });
 
-                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
+                logger.info("Found {} one guild patrons", CommandUtils.oneGuildPatrons.keySet().size());
 
                 return null;
             }
@@ -206,7 +205,7 @@ public class GuildUtils {
     public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {
         variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
             final SkyBot instance = SkyBot.getInstance();
-            final Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
+            final Guild dbGuild = instance.getShardManager().getGuildById(CommandUtils.supportGuildId);
 
             if (dbGuild == null) {
                 return null;
@@ -220,10 +219,10 @@ public class GuildUtils {
 
             final boolean hasRole = newPatron.getRoles().stream()
                 .map(Role::getIdLong)
-                .anyMatch((role) -> role == Command.oneGuildPatronsRole);
+                .anyMatch((role) -> role == CommandUtils.oneGuildPatronsRole);
 
             if (hasRole) {
-                Command.oneGuildPatrons.put(userId, guildId);
+                CommandUtils.oneGuildPatrons.put(userId, guildId);
             }
 
             return null;

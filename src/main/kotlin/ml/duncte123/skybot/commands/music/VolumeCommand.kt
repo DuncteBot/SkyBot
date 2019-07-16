@@ -22,6 +22,9 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import kotlin.math.max
+import kotlin.math.min
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class VolumeCommand : MusicCommand() {
@@ -43,7 +46,7 @@ class VolumeCommand : MusicCommand() {
         }
 
         try {
-            val newVolume = Math.max(5, Math.min(1000, Integer.parseInt(args[0])))
+            val newVolume = max(5, min(1000, Integer.parseInt(args[0])))
             val oldVolume = player.volume
 
             player.volume = newVolume
