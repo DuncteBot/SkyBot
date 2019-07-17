@@ -29,9 +29,7 @@ import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-open class PlayCommand : MusicCommand() {
-
-    protected var skipParsing: Boolean = false
+open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
 
     init {
         this.withAutoJoin = true
