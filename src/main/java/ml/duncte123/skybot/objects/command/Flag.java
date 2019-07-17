@@ -18,38 +18,30 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.Author;
+public class Flag {
+    private final char ch;
+    private final String word;
+    private final String desc;
 
-import javax.annotation.Nonnull;
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public interface ICommand {
-
-    void executeCommand(@Nonnull CommandContext ctx);
-
-    @Nonnull
-    String getName();
-
-    @Nonnull
-    default String[] getAliases() {
-        return new String[0];
+    public Flag(char ch, String word, String desc) {
+        this.ch = ch;
+        this.word = word;
+        this.desc = desc;
     }
 
-    @Nonnull
-    String help(@Nonnull String prefix);
-
-    @Nonnull
-    default String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return help(prefix);
+    public Flag(char ch, String desc) {
+        this(ch, null, desc);
     }
 
-    @Nonnull
-    CommandCategory getCategory();
-
-    default boolean isCustom() {
-        return false;
+    public char getChar() {
+        return ch;
     }
 
-    boolean shouldDisplayAliasesInHelp();
+    public String getWord() {
+        return word;
+    }
 
+    public String getDesc() {
+        return desc;
+    }
 }

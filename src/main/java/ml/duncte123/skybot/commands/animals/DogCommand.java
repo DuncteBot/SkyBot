@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -37,10 +36,12 @@ public class DogCommand extends Command {
 
     public DogCommand() {
         this.category = CommandCategory.ANIMALS;
+        this.name = "dog";
+        this.helpFunction = (invoke, prefix) -> "Shows a dog";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final String base = "https://random.dog/";
         final GuildMessageReceivedEvent event = ctx.getEvent();
         try {
@@ -61,17 +62,5 @@ public class DogCommand extends Command {
             ComparatingUtils.execCheck(e);
         }
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "here is a dog.";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "dog";
     }
 }

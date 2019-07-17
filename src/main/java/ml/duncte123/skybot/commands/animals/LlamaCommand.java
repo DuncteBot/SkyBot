@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,25 +34,15 @@ public class LlamaCommand extends Command {
 
     public LlamaCommand() {
         this.category = CommandCategory.ANIMALS;
+        this.name = "llama";
+        this.helpFunction = (invoke, prefix) -> "Shows a llama";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         // https://apis.duncte123.me/animal/llama
         final JsonNode json = ctx.getApis().executeDefaultGetRequest("llama", false).get("data");
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(json.get("file").asText()));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Here is a llama";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "llama";
     }
 }

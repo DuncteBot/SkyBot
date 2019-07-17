@@ -40,7 +40,7 @@ public class AnnounceCommand extends ModBaseCommand {
 
     public AnnounceCommand() {
         this.category = CommandCategory.ADMINISTRATION;
-        this.perms = new Permission[]{Permission.ADMINISTRATOR};
+        this.userPermissions = new Permission[]{Permission.ADMINISTRATOR};
     }
 
     @Override
