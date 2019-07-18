@@ -38,7 +38,7 @@ public class SealCommand extends Command {
         this.aliases = new String[] {
             "zeehond",
         };
-        this.helpFunction = (invoke, prefix) -> "Shows a seal";
+        this.helpFunction = (invoke) -> "Shows a seal";
     }
 
     @Override

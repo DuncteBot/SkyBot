@@ -23,8 +23,8 @@ import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
@@ -37,14 +37,32 @@ public class RemindmeCommand extends Command {
 
     public RemindmeCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "remind";
+        this.aliases = new String[] {
+            "remindme",
+        };
+        this.helpFunction = (invoke) -> "Creates a reminder for you, add `--channel` to remind you in the current channel";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <number><w/d/h/m/s> [--channel] <reminder>`\n" +
+            "Example: `" + prefix + "remind 1d5m Clean your room :/`";
+        this.flags = new Flag[] {
+            new Flag(
+                't',
+                "time",
+                "Sets the time for the reminder"
+            ),
+            new Flag(
+                "channel",
+                "Tells the reminder to remind you in this channel"
+            ),
+        };
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
 
         if (args.size() < 2) {
-            sendMsg(ctx, "Correct usage: `" + ctx.getPrefix() + ctx.getInvoke() + " <number><w/d/h/m/s> <reminder>`");
+            this.sendUsageInstructions(ctx);
 
             return;
         }
@@ -111,25 +129,5 @@ public class RemindmeCommand extends Command {
 
             return null;
         });
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "remind";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"remindme"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Creates a reminder for you, add `--channel` to remind you in the current channel\n" +
-            "Usage: `" + prefix + "remind <number><w/d/h/m/s> [--channel] <reminder>`\n" +
-            "Example: `" + prefix + "remind 1d5m Clean your room :/`";
     }
 }

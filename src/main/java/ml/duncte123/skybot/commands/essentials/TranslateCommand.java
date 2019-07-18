@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,15 +36,18 @@ public class TranslateCommand extends Command {
 
     public TranslateCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "translate";
+        this.helpFunction = (invoke) -> "Translate a text from English to another language";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <destination language> <text>`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <destination language code> <text>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -63,18 +65,5 @@ public class TranslateCommand extends Command {
             "Translation to " + targetLang + " : " + translation;
 
         sendMsg(event, message);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "translate";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Translate a text from English to another language\n"
-            + "Usage: `" + prefix + getName() + " <destination language> <text>`";
     }
 }

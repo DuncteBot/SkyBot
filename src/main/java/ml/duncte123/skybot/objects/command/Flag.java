@@ -23,7 +23,7 @@ public class Flag {
     private final String word;
     private final String desc;
 
-    public Flag(char ch, String word, String desc) {
+    public Flag(Character ch, String word, String desc) {
         this.ch = ch;
         this.word = word;
         this.desc = desc;
@@ -31,6 +31,10 @@ public class Flag {
 
     public Flag(char ch, String desc) {
         this(ch, null, desc);
+    }
+
+    public Flag(String word, String desc) {
+        this(null, word, desc);
     }
 
     public char getChar() {

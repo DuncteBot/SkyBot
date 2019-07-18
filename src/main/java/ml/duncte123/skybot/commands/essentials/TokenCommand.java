@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -51,16 +50,19 @@ public class TokenCommand extends Command {
 
     public TokenCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "token";
+        this.helpFunction = (invoke) -> "Deconstructs a token to get as much information as possible from it";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <token of a discord bot>`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Missing arguments");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -85,19 +87,6 @@ public class TokenCommand extends Command {
         final String errorMessage = error.get("message").asText();
 
         sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Tries to get as much info about a token as possible\n" +
-            "Usage: `" + prefix + getName() + " <token of a discord bot>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "token";
     }
 
     @Nullable

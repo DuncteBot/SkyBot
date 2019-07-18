@@ -49,8 +49,8 @@ public abstract class Command implements ICommand {
     protected CommandCategory category = CommandCategory.MAIN;
     protected boolean displayAliasesInHelp = false;
     protected String name = "null";
-    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
-    protected Function<String, String> usageInstructions = (prefix) -> prefix + this.getName();
+    protected Function<String, String> helpFunction = (invoke) -> "No help available";
+    protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> prefix + invoke;
     protected String[] aliases = new String[0];
     protected Flag[] flags = new Flag[0];
     protected Permission[] userPermissions = new Permission[0];
@@ -98,7 +98,7 @@ public abstract class Command implements ICommand {
 
     @Override
     public @Nonnull String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.helpFunction.apply(invoke, prefix);
+        return this.helpFunction.apply(invoke);
     }
 
     @Override
@@ -111,8 +111,12 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    public final String getUsageInstructions(String prefix) {
-        return this.usageInstructions.apply(prefix);
+    public final String getUsageInstructions(String invoke, String prefix) {
+        return "Usage: " + this.usageInstructions.apply(invoke, prefix);
+    }
+
+    protected void sendUsageInstructions(CommandContext ctx) {
+        sendMsg(ctx, this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
     }
 
     @Override

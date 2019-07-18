@@ -49,18 +49,16 @@ public class WolframAlphaCommand extends Command {
 
     public WolframAlphaCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "alpha";
+        this.aliases = new String[] {
+            "wolfram",
+            "wa",
+            "wolframalpha",
+        };
+        this.helpFunction = (invoke) -> "Ask Wolfram|Alpha all your geeky questions";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <query>`";
     }
 
-    /**
-     * Generates an embed for the {@link WAQueryResult result of a computation}
-     *
-     * @param event
-     *         The event
-     * @param result
-     *         The result generated
-     *
-     * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
-     */
     private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey) {
         final Member m = event.getMember();
         final EmbedBuilder eb = EmbedUtils.defaultEmbed();
@@ -114,7 +112,7 @@ public class WolframAlphaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
@@ -156,24 +154,6 @@ public class WolframAlphaCommand extends Command {
 
         editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
             .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Ask Wolfram|Alpha all your geeky questions";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "alpha";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"wolfram", "wa", "wolframalpha"};
     }
 
     private void editMsg(AtomicReference<Message> ref, TextChannel channel, Message message) {

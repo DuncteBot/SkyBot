@@ -37,7 +37,7 @@ public class DogCommand extends Command {
     public DogCommand() {
         this.category = CommandCategory.ANIMALS;
         this.name = "dog";
-        this.helpFunction = (invoke, prefix) -> "Shows a dog";
+        this.helpFunction = (invoke) -> "Shows a dog";
     }
 
     @Override
