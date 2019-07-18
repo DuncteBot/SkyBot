@@ -52,7 +52,7 @@ public class KickCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "The reason for this kick"
+                "Sets the reason for this kick"
             ),
         };
     }

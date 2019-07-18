@@ -52,7 +52,7 @@ public class BanCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "Sets the reason for the ban"
+                "Sets the reason for this ban"
             ),
         };
     }

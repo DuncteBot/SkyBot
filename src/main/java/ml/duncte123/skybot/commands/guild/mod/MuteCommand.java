@@ -20,12 +20,13 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,6 +38,22 @@ import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProce
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends ModBaseCommand {
 
+    public MuteCommand() {
+        this.name = "mute";
+        this.helpFunction = (invoke, prefix) -> "Mutes a user";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]";
+        this.botPermissions = new Permission[] {
+            Permission.MANAGE_SERVER,
+        };
+        this.flags = new Flag[] {
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this mute"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
@@ -44,7 +61,7 @@ public class MuteCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <reason>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -72,18 +89,5 @@ public class MuteCommand extends ModBaseCommand {
             }
         );
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Mute a user.\n" +
-            "Usage: `" + prefix + getName() + " <@user> <reason>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "mute";
     }
 }

@@ -21,75 +21,61 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
-import java.io.IOException
+import java.util.function.BiFunction
 
-class UnsortenCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+class UnshortenCommand : Command() {
 
-        val event = ctx.event
+    init {
+        this.name = "unshorten"
+        this.helpFunction = BiFunction { _, _ -> "Gets the long url from a shortened url" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <short url>`" }
+    }
 
+    override fun execute(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Missing arguments: `${ctx.prefix}$name <short url>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
         val url = ctx.args[0]
 
         if (!AirUtils.isURL(url)) {
-            sendMsg(event, "`$url` is not a valid url")
+            sendMsg(ctx, "`$url` is not a valid url")
             return
         }
 
         val builder = QueryBuilder()
-            .append("https://apis.duncte123.me/unshorten")
+            .append("unshorten")
             .append("url", url)
-            .append("token", event.jda.token)
 
 
-        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .url(builder.build())
-            .addHeader("Accept", WebUtils.EncodingType.APPLICATION_JSON.type)
-            .build()) { it.body() }.async(
-            { body ->
-                try {
-                    val res = body.string()
-                    logger.debug("Unshorten: $res")
-                    val json = ctx.variables.jackson.readTree(res).get("data")
+        val json = ctx.apis.executeDefaultGetRequest(builder.build(), false)
 
-                    val embed = EmbedUtils.embedMessage("""Short url:
+        logger.debug("Unshorten: $json")
+
+        if (!json.get("success").asBoolean()) {
+            val error = json.get("error")
+            logger.error("Failed to unshorten $error")
+            sendMsg(ctx, "Could not unshorten url: " + error.get("message").asText())
+            return
+        }
+
+        val data = json.get("data")
+
+        val embed = EmbedUtils.embedMessage("""Short url:
                             |```
-                            |${json.get("short_url").asText()}
+                            |${data.get("short_url").asText()}
                             |```
                             |Unshortened url:
                             |```
-                            |${json.get("long_url").asText()}
+                            |${data.get("long_url").asText()}
                             |```
                         """.trimMargin())
 
-                    sendEmbed(event, embed)
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    sendMsg(event, "An unknown error occurred.")
-                }
-            },
-            { error ->
-                ComparatingUtils.execCheck(error)
-                sendMsg(event, "Something went wrong: `${error.message}`")
-            }
-        )
-
-
+        sendEmbed(ctx, embed)
     }
-
-    override fun getName() = "unshorten"
-
-    override fun help(prefix: String) = """Unshorten a short url
-        |Usage: `$prefix$name <short url>`
-    """.trimMargin()
 }

@@ -20,47 +20,56 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 class InstaCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    init {
+        this.name = "insta"
+        this.helpFunction = BiFunction { _, _ -> "Shows the latest picture on someones instagram account" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <username>`" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val args = ctx.args
         val event = ctx.event
 
         if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Correct usage: `${ctx.prefix}$name <username>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
         val username = args.joinToString(separator = "")
 
-        WebUtils.ins.getJSONObject("$API_HOST/insta/$username").async {
+        val it = ctx.apis.executeDefaultGetRequest("insta/$username", false)
 
-            if (!it.get("success").asBoolean()) {
-                MessageUtils.sendMsg(event, "No data found for this user")
-                return@async
-            }
-
-            val img = it.get("images").get(0)
-            val user = it.get("user")
-
-            val embed = EmbedUtils.defaultEmbed()
-                .setAuthor(user.get("username").asText(), "https://instagram.com/$username/", user.get("profile_pic_url").asText())
-                .setTitle("Latest picture of $username", "https://instagram.com/$username/")
-                .setDescription(img.get("caption").asText())
-                .setImage(img.get("url").asText())
-
-            MessageUtils.sendEmbed(event, embed)
+        if (!it.get("success").asBoolean()) {
+            sendMsg(event, "No data found for this user")
+            return
         }
 
+        val imagesArray = it.get("images")
+
+        if (imagesArray.size() == 0) {
+            sendMsg(ctx, "This user did not upload any images")
+            return
+        }
+
+        val img = imagesArray.get(0)
+        val user = it.get("user")
+
+        val embed = EmbedUtils.defaultEmbed()
+            .setAuthor(user.get("username").asText(), "https://instagram.com/$username/", user.get("profile_pic_url").asText())
+            .setTitle("Latest picture of $username", "https://instagram.com/$username/")
+            .setDescription(img.get("caption").asText())
+            .setImage(img.get("url").asText())
+
+        MessageUtils.sendEmbed(event, embed)
+
     }
-
-    override fun getName() = "insta"
-
-    override fun help(prefix: String) = """Get the latest picture of someones profile
-                    |Usage: `$prefix$name <username>`
-                """.trimMargin()
 }
