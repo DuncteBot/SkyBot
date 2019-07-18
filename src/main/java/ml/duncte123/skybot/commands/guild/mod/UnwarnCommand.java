@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -34,7 +33,10 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class UnwarnCommand extends ModBaseCommand {
     public UnwarnCommand() {
-        this.perms = new Permission[]{
+        this.name = "unwarn";
+        this.helpFunction = (invoke, prefix) -> "Removes the latest warning of a user in this server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user>`";
+        this.userPermissions = new Permission[] {
             Permission.KICK_MEMBERS,
         };
     }
@@ -72,18 +74,5 @@ public class UnwarnCommand extends ModBaseCommand {
 
                 return null;
             });
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "unwarn";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Removes the latest warning of a user\n" +
-            "Usage: `" + prefix + "unwarn <@user>`";
     }
 }

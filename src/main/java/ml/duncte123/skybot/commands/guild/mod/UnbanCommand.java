@@ -20,11 +20,11 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,16 +34,29 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class UnbanCommand extends ModBaseCommand {
 
+    public UnbanCommand() {
+        this.name = "unban";
+        this.aliases = new String[] {
+            "ban't",
+            "pardon",
+        };
+        this.helpFunction = (invoke, prefix) -> "Removes the ban for a user";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <user> [-r reason]`";
+        this.botPermissions = new Permission[] {
+            Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[] {
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!ctx.getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
-            sendMsg(event, "I need the ban members permission for this command to work");
-            return;
-        }
-
         final String argsJoined = ctx.getArgsJoined();
         final User mod = ctx.getAuthor();
 
@@ -75,24 +88,5 @@ public class UnbanCommand extends ModBaseCommand {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Unbans a user\n" +
-            "Usage: `" + prefix + getName() + " <user>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "unban";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"ban't"};
     }
 }
