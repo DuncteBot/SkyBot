@@ -21,12 +21,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -41,7 +41,33 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class CleanupCommand extends ModBaseCommand {
 
     public CleanupCommand() {
-        this.perms = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY};
+        this.name = "cleanup";
+        this.aliases = new String[] {
+            "clear",
+            "purge",
+            "wipe",
+        };
+        this.helpFunction = (invoke, prefix) -> "Performs a cleanup in the channel where the command is run.\n" +
+            "To clear an entire channel it's better to use `" + prefix + "purgechannel`";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [amount] [--keep-pinned] [--bots-only]`";
+        this.userPermissions = new Permission[] {
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_HISTORY,
+        };
+        this.botPermissions = new Permission[] {
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_HISTORY,
+        };
+        this.flags = new Flag[] {
+            new Flag(
+                "keep-pinned",
+                "If this flag is set the messages that are pinned in the channel will be skipped"
+            ),
+            new Flag(
+                "bots-only",
+                "If this flag is set only messages that are from bots will be deleted"
+            ),
+        };
     }
 
     @Override
@@ -55,7 +81,7 @@ public class CleanupCommand extends ModBaseCommand {
         boolean clearBots = false;
 
         if (args.size() > 3) {
-            sendErrorWithMessage(event.getMessage(), "You provided more than three arguments.");
+            sendErrorWithMessage(event.getMessage(), this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 
@@ -120,25 +146,5 @@ public class CleanupCommand extends ModBaseCommand {
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });
         // End of the annotation
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Performs a cleanup in the channel where the command is run.\n" +
-            "To clear an entire channel it's better to use `" + prefix + "purgechannel`\n" +
-            "Usage: `" + prefix + getName() + " [ammount] [keep-pinned] [bots-only]`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "cleanup";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"clear", "purge", "wipe"};
     }
 }

@@ -29,9 +29,9 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
@@ -39,8 +39,23 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 public class AnnounceCommand extends ModBaseCommand {
 
     public AnnounceCommand() {
+        this.displayAliasesInHelp = true;
         this.category = CommandCategory.ADMINISTRATION;
-        this.userPermissions = new Permission[]{Permission.ADMINISTRATOR};
+        this.name = "announce";
+        this.aliases = new String[] {
+            "announce1",
+            "announce2",
+            "announce3",
+        };
+        this.helpFunction = (invoke, prefix) -> "Sends an announcement in the specified channel";
+        // todo: replace with flags
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel> <message>`\n" +
+            "`announce1` and `announce` => Sends the message as plain text\n" +
+            "`announce2` => Sends the message as an embed with a small image (if uploaded with message)\n" +
+            "`announce3` => Sends the message as an embed with a large image (if uploaded with message)";
+        this.userPermissions = new Permission[] {
+            Permission.ADMINISTRATOR,
+        };
     }
 
     @Override
@@ -49,12 +64,20 @@ public class AnnounceCommand extends ModBaseCommand {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (event.getMessage().getMentionedChannels().isEmpty()) {
-            sendMsg(event, "Correct usage is `" + ctx.getPrefix() + getName() + " <#Channel> <Message>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
         try {
-            final TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
+            final List<TextChannel> mentioned = event.getMessage().getMentionedChannels();
+
+            if (mentioned.isEmpty()) {
+                sendMsg(ctx, "You did not specify a channel");
+
+                return;
+            }
+
+            final TextChannel targetChannel = mentioned.get(0);
 
             if (!ctx.getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
                 sendErrorWithMessage(event.getMessage(), "I can not talk in " + targetChannel.getAsMention());
@@ -97,24 +120,5 @@ public class AnnounceCommand extends ModBaseCommand {
             ComparatingUtils.execCheck(e);
             e.printStackTrace();
         }
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Announces a message.\n" +
-            "Usage `" + prefix + getName() + " <#channel> <message>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "announce";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"announce1", "announce2", "announce3"};
     }
 }

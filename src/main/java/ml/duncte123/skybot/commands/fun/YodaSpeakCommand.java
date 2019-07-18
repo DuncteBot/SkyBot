@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,13 +33,21 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YodaSpeakCommand extends Command {
+
+    public YodaSpeakCommand() {
+        this.category = CommandCategory.FUN;
+        this.name = "yoda";
+        this.helpFunction = (invoke, prefix) -> "Convert your input to how Yoda speaks";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <your sentence>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <A sentence.>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -63,24 +70,5 @@ public class YodaSpeakCommand extends Command {
             Sentry.capture(e);
             sendMsg(event, "Could not connect to yoda service, try again in a few hours");
         }
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Convert your sentences into yoda speak.\n" +
-            "Usage: `" + prefix + getName() + " <A sentence.>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "yoda";
-    }
-
-    @NotNull
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
     }
 }

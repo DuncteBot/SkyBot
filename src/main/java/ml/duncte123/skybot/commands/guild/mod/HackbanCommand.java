@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -33,6 +34,15 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HackbanCommand extends ModBaseCommand {
+
+    public HackbanCommand() {
+        this.name = "hackban";
+        this.helpFunction = (invoke, prefix) -> "Ban a user before they can join your server.";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + "<userId...>`";
+        this.botPermissions = new Permission[] {
+            Permission.BAN_MEMBERS,
+        };
+    }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
@@ -59,8 +69,8 @@ public class HackbanCommand extends ModBaseCommand {
             } else if (arg0.matches("\\d{17,20}")) {
                 id = arg0;
             } else {
-                sendMsg(event, "id `" + arg0 + "` does not match anything valid");
-                return;
+                sendMsg(event, "id `" + arg0 + "` does not match anything valid or is not a known user");
+                continue;
             }
 
             try {
@@ -69,25 +79,12 @@ public class HackbanCommand extends ModBaseCommand {
                 messages.add(id);
             }
             catch (Exception e) {
-                logger.error("Hackban Error", e);
+                Sentry.capture(e);
                 sendMsg(event, "ERROR: " + e.getMessage());
                 return;
             }
         }
 
         sendMsg(event, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Ban a user before he/she can join your guild.\n" +
-            "Usage: `" + prefix + getName() + " <userId...>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "hackban";
     }
 }

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -38,13 +37,16 @@ public class UrbanCommand extends Command {
 
     public UrbanCommand() {
         this.category = CommandCategory.NSFW;
+        this.name = "urban";
+        this.helpFunction = (invoke, prefix) -> "Searches the urban dictionary";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <search term>`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage: `" + ctx.getPrefix() + getName() + " <search term>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -73,18 +75,5 @@ public class UrbanCommand extends Command {
             sendEmbed(ctx.getEvent(), eb.build());
         });
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Search the urban dictionary.\n" +
-            "Usage: `" + prefix + getName() + " <search term>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "urban";
     }
 }

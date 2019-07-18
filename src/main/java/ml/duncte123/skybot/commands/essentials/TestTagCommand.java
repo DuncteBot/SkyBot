@@ -41,7 +41,7 @@ public class TestTagCommand extends Command {
         this.aliases = new String[] {
             "tt",
         };
-        this.helpFunction = (invoke) -> "Test your jagtag format before you save it as custom command etc.";
+        this.helpFunction = (invoke, prefix) -> "Test your jagtag format before you save it as custom command etc.";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <JagTag syntax>`";
     }
 

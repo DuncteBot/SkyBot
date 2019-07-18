@@ -55,7 +55,7 @@ public class ShardInfoCommand extends Command {
         this.aliases = new String[]{
             "shards",
         };
-        this.helpFunction = (invoke) -> "Get information about all things shards";
+        this.helpFunction = (invoke, prefix) -> "Get information about all things shards";
         this.flags = new Flag[]{
             new Flag(
                 "mobile",

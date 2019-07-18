@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
 import javax.annotation.Nonnull;
@@ -42,11 +41,16 @@ public class CSShumorCommand extends Command {
 
     public CSShumorCommand() {
         this.category = CommandCategory.FUN;
+        this.name = "csshumor";
+        this.aliases = new String[] {
+            "cssjoke",
+        };
+        this.helpFunction = (invoke, prefix) -> "Sends a css-related joke";
     }
 
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getRandom().nextInt(2) == 1) {
             sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
         } else {
@@ -70,23 +74,5 @@ public class CSShumorCommand extends Command {
                 .setDescription(message)
                 .build());
         });
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Gives you a funny css joke";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "csshumor";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"cssjoke"};
     }
 }

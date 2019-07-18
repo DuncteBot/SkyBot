@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,9 +33,17 @@ import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ColorCommand extends Command {
 
-    @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public ColorCommand() {
+        this.category = CommandCategory.FUN;
+        this.name = "color";
+        this.aliases = new String[] {
+            "color",
+        };
+        this.helpFunction = (invoke, prefix) -> "Shows a random color";
+    }
 
+    @Override
+    public void execute(@Nonnull CommandContext ctx) {
         ctx.getAlexFlipnote().getRandomColour().async((data) -> {
             final String hex = data.hex;
             final String image = data.image;
@@ -55,29 +62,5 @@ public class ColorCommand extends Command {
 
             sendEmbedRaw(ctx.getChannel(), embed.build(), null);
         });
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows a random colour.";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "colour";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"color"};
-    }
-
-    @NotNull
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
     }
 }

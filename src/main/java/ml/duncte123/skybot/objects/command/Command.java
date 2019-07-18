@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -49,7 +49,7 @@ public abstract class Command implements ICommand {
     protected CommandCategory category = CommandCategory.MAIN;
     protected boolean displayAliasesInHelp = false;
     protected String name = "null";
-    protected Function<String, String> helpFunction = (invoke) -> "No help available";
+    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
     protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> prefix + invoke;
     protected String[] aliases = new String[0];
     protected Flag[] flags = new Flag[0];
@@ -58,20 +58,24 @@ public abstract class Command implements ICommand {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-        if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(this.userPermissions)) {
+        if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(ctx.getChannel(), this.userPermissions)) {
             final String permissionsWord = "permission" + (this.userPermissions.length > 1 ? "s" : "");
 
-            sendMsg(ctx, "You need the `" + parsePerms(this.userPermissions) + "` " + permissionsWord + " for this command\n" +
-                "Please contact your server administrator if this is incorrect.");
+            sendMsgFormat(ctx,
+                "You need the `%s` %s for this command\nPlease contact your server administrator if this is incorrect.",
+                parsePerms(this.userPermissions), permissionsWord
+            );
 
             return;
         }
 
-        if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(this.botPermissions)) {
+        if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(ctx.getChannel(), this.botPermissions)) {
             final String permissionsWord = "permission" + (this.botPermissions.length > 1 ? "s" : "");
 
-            sendMsg(ctx, "I need the `" + parsePerms(this.botPermissions) + "` " + permissionsWord + " for this command to work\n" +
-                "Please contact your server administrator about this.");
+            sendMsgFormat(ctx,
+                "I need the `%s` %s for this command to work\nPlease contact your server administrator about this.",
+                parsePerms(this.botPermissions), permissionsWord
+            );
 
             return;
         }
@@ -82,23 +86,27 @@ public abstract class Command implements ICommand {
     public abstract void execute(@Nonnull CommandContext ctx);
 
     @Override
-    public final @Nonnull String getName() {
+    public final @Nonnull
+    String getName() {
         return this.name;
     }
 
     @Override
-    public final @Nonnull String[] getAliases() {
+    public final @Nonnull
+    String[] getAliases() {
         return this.aliases;
     }
 
     @Override
-    public @Nonnull String help(@Nonnull String prefix) {
+    public @Nonnull
+    String help(@Nonnull String prefix) {
         return this.help("", prefix);
     }
 
     @Override
-    public @Nonnull String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.helpFunction.apply(invoke);
+    public @Nonnull
+    String help(@Nonnull String invoke, @Nonnull String prefix) {
+        return this.helpFunction.apply(invoke, prefix);
     }
 
     @Override

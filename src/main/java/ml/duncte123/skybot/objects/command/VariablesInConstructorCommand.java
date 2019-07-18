@@ -18,37 +18,6 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import javax.annotation.Nullable;
-
-public class Flag {
-    private final Character ch;
-    private final String word;
-    private final String desc;
-
-    public Flag(@Nullable Character ch, String word, String desc) {
-        this.ch = ch;
-        this.word = word;
-        this.desc = desc;
-    }
-
-    public Flag(char ch, String desc) {
-        this(ch, null, desc);
-    }
-
-    public Flag(String word, String desc) {
-        this(null, word, desc);
-    }
-
-    @Nullable
-    public Character getChar() {
-        return ch;
-    }
-
-    public String getWord() {
-        return word;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
+public abstract class VariablesInConstructorCommand extends Command {
+    // Just a flag for the loading of commands
 }

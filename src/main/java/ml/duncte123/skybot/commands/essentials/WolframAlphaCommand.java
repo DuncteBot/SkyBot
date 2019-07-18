@@ -55,7 +55,7 @@ public class WolframAlphaCommand extends Command {
             "wa",
             "wolframalpha",
         };
-        this.helpFunction = (invoke) -> "Ask Wolfram|Alpha all your geeky questions";
+        this.helpFunction = (invoke, prefix) -> "Ask Wolfram|Alpha all your geeky questions";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <query>`";
     }
 

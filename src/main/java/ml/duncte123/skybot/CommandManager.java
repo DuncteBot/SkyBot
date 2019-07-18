@@ -24,6 +24,7 @@ import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -406,7 +407,11 @@ public class CommandManager {
             try {
                 final ICommand command;
 
-                if (cmd.getSimpleName().equals("TagCommand")) {
+                System.out.println(cmd);
+                System.out.println(cmd.getSuperclass());
+
+//                if (VariablesInConstructorCommand.class.isInstance(cmd)) {
+                if (cmd.isInstance(VariablesInConstructorCommand.class)) {
                     command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
                 } else {
                     command = cmd.getDeclaredConstructor().newInstance();
