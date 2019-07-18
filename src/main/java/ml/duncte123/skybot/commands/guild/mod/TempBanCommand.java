@@ -21,11 +21,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +39,22 @@ import static ml.duncte123.skybot.utils.ModerationUtils.*;
 
 public class TempBanCommand extends ModBaseCommand {
 
+    public TempBanCommand() {
+        this.name = "tempban";
+        this.helpFunction = (invoke, prefix) -> "Temporally bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r Reason]`";
+        this.botPermissions = new Permission[] {
+            Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[] {
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
@@ -45,7 +62,7 @@ public class TempBanCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -86,19 +103,6 @@ public class TempBanCommand extends ModBaseCommand {
         );
 
         sendSuccess(event.getMessage());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "tempban";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 
     @Nullable
