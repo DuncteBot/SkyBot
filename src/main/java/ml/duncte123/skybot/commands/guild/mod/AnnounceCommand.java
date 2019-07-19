@@ -54,7 +54,7 @@ public class AnnounceCommand extends ModBaseCommand {
             "`announce2` => Sends the message as an embed with a small image (if uploaded with message)\n" +
             "`announce3` => Sends the message as an embed with a large image (if uploaded with message)";
         this.userPermissions = new Permission[] {
-            Permission.ADMINISTRATOR,
+            Permission.MANAGE_SERVER,
         };
     }
 

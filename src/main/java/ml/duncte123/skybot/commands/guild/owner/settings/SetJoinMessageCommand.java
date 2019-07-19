@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -28,34 +27,25 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetJoinMessageCommand extends SettingsBase {
+
+    public SetJoinMessageCommand() {
+        this.name = "setjoinmessage";
+        this.aliases = new String[] {
+            "setwelcomemessage",
+        };
+        this.helpFunction = (invoke, prefix) -> "";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <join message>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setJoinMessage <new join message>`");
             return;
         }
 
-        final String newJoinMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n")/*.replaceAll("\n", "\r\n")*/;
+        final String newJoinMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n");
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomJoinMessage(newJoinMessage));
         sendMsg(ctx.getEvent(), "The new join message has been set to `" + newJoinMessage + '`');
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setjoinmessage";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"setwelcomemessage"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the message that the bot shows when a new member joins\n" +
-            "Usage: `" + prefix + getName() + " <join message>`";
     }
 }

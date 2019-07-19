@@ -34,8 +34,8 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
-        this.perms = arrayOf(Permission.MANAGE_SERVER)
-        this.selfPerms = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
+        this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
+        this.botPermissions = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
     }
 
     override fun run(ctx: CommandContext) {

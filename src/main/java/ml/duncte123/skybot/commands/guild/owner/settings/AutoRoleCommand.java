@@ -24,7 +24,6 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +33,15 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AutoRoleCommand extends SettingsBase {
+
+    public AutoRoleCommand() {
+        this.name = "autorole";
+        this.helpFunction = (invoke, prefix) -> "Sets the role that members get when they join the server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@role/disable>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -45,7 +51,7 @@ public class AutoRoleCommand extends SettingsBase {
         }
 
         if (args.isEmpty()) {
-            sendMsg(ctx, "Incorrect usage: `" + ctx.getPrefix() + "autorole <role name/disable>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -64,19 +70,6 @@ public class AutoRoleCommand extends SettingsBase {
         guild.setSettings(settings.setAutoroleRole(foundRole.getIdLong()));
 
         sendMsg(ctx, "AutoRole has been set to " + foundRole.getAsMention());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "autorole";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Gives members a role when they join\n" +
-            "Usage: `" + prefix + getName() + " <role>`";
     }
 
     @Nullable

@@ -50,6 +50,18 @@ We only use indentation of **4 spaces** consistently throughout SkyBot.
 
 In this section we guide you through a logically ordered and structure class under SkyBots's point of view.
 
+### Command constructor
+To maintain consistency between the constructors of the commands the following order has been given to the properties
+1. displayAliasesInHelp
+2. category
+3. name
+4. aliases
+5. helpFunction
+6. usageInstructions
+7. userPermissions
+8. botPermissions
+9. flags
+
 ### Access Modifiers
 
 Access Modifiers are the keywords such as `public`, `protected` and `private`. They restrict other members from

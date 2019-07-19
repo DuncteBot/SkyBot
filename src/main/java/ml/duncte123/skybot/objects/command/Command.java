@@ -46,15 +46,15 @@ public abstract class Command implements ICommand {
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
         r -> new Thread(r, "Command-Thread"));
 
-    protected CommandCategory category = CommandCategory.MAIN;
     protected boolean displayAliasesInHelp = false;
+    protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
-    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
-    protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> prefix + invoke;
     protected String[] aliases = new String[0];
-    protected Flag[] flags = new Flag[0];
+    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
+    protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + '`';
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
+    protected Flag[] flags = new Flag[0];
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
@@ -86,14 +86,12 @@ public abstract class Command implements ICommand {
     public abstract void execute(@Nonnull CommandContext ctx);
 
     @Override
-    public final @Nonnull
-    String getName() {
+    public @Nonnull String getName() {
         return this.name;
     }
 
     @Override
-    public final @Nonnull
-    String[] getAliases() {
+    public @Nonnull String[] getAliases() {
         return this.aliases;
     }
 

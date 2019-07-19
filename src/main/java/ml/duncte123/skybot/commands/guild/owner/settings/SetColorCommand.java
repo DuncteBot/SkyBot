@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,13 +36,22 @@ public class SetColorCommand extends SettingsBase {
 
     private static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
+    public SetColorCommand() {
+        this.name = "setcolor";
+        this.aliases = new String[] {
+            "setembedcolor",
+        };
+        this.helpFunction = (invoke, prefix) -> "Sets the color of the embeds that the bot sends";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <hex color>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage: `" + ctx.getPrefix() + getName() + " <hex color>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -63,24 +71,5 @@ public class SetColorCommand extends SettingsBase {
         final String msg = String.format("Embed color has been set to `%s`", colorString);
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedMessage(msg));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setcolor";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"setembedcolor"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the colors of the embeds from the bot.\n" +
-            "Usage: `" + prefix + getName() + " <hex color>`";
     }
 }

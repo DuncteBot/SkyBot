@@ -37,8 +37,8 @@ class BlackListCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
-        this.perms = arrayOf(Permission.MANAGE_SERVER)
-        this.selfPerms = arrayOf(Permission.MESSAGE_MANAGE)
+        this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
+        this.botPermissions = arrayOf(Permission.MESSAGE_MANAGE)
     }
 
     override fun run(ctx: CommandContext) {
