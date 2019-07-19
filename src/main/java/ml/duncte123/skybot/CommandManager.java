@@ -407,11 +407,9 @@ public class CommandManager {
             try {
                 final ICommand command;
 
-                System.out.println(cmd);
-                System.out.println(cmd.getSuperclass());
-
 //                if (VariablesInConstructorCommand.class.isInstance(cmd)) {
-                if (cmd.isInstance(VariablesInConstructorCommand.class)) {
+                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
+                    System.out.println(cmd);
                     command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
                 } else {
                     command = cmd.getDeclaredConstructor().newInstance();

@@ -57,10 +57,6 @@ abstract class SettingsBase extends Command {
         super.executeCommand(ctx);
     }
 
-    public void run(@Nonnull CommandContext ctx) {
-        //
-    }
-
     boolean rolePermCheck(CommandContext ctx) {
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             sendMsg(ctx, "I need the _Manage Roles_ permission in order for this feature to work.");
@@ -88,6 +84,8 @@ abstract class SettingsBase extends Command {
         }
 
         return foundChannels.stream()
-            .filter(TextChannel::canTalk).findFirst().orElse(null);
+            .filter(TextChannel::canTalk)
+            .findFirst()
+            .orElse(null);
     }
 }

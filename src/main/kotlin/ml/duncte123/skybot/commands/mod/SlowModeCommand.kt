@@ -30,18 +30,14 @@ import net.dv8tion.jda.core.Permission
 class SlowModeCommand : ModBaseCommand() {
 
     init {
-        this.perms = arrayOf(Permission.MESSAGE_MANAGE)
+        this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
+        this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
         this.argscheck = false
     }
 
     override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!ctx.selfMember.hasPermission(ctx.channel, Permission.MANAGE_CHANNEL)) {
-            sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
-            return
-        }
 
         if (ctx.args.isEmpty()) {
 

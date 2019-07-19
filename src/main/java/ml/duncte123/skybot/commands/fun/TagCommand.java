@@ -63,6 +63,13 @@ public class TagCommand extends VariablesInConstructorCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
+
+        if (ctx.getInvoke().equals("tags")) {
+            sendTagsList(ctx);
+
+            return;
+        }
+
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {

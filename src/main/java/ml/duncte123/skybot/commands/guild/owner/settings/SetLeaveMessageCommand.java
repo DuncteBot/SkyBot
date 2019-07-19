@@ -28,29 +28,23 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetLeaveMessageCommand extends SettingsBase {
+
+    public SetLeaveMessageCommand() {
+        this.name = "setleavemessage";
+        this.helpFunction = (invoke, prefix) -> "Sets the message that the bot shows when a member leaves";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <leave message>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setleavemessage <new leave message>`");
             return;
         }
 
-        final String newLeaveMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n")/*.replaceAll("\n", "\r\n")*/;
+        final String newLeaveMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n");
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomLeaveMessage(newLeaveMessage));
 
         sendMsg(ctx.getEvent(), "The new leave message has been set to `" + newLeaveMessage + '`');
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setleavemessage";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the message that the bot shows when a member leaves\n" +
-            "Usage: `" + prefix + getName() + " <leave message>`";
     }
 }

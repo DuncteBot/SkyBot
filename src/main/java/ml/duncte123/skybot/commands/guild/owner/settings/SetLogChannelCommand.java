@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -29,14 +28,24 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetLogChannelCommand extends SettingsBase {
+
+    public SetLogChannelCommand() {
+        this.name = "setlogchannel";
+        this.helpFunction = (invoke, prefix) -> "Sets the channel for the modlogs";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel/disable>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + ctx.getPrefix() + "setLogChannel [text channel]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
-        if ("null".equalsIgnoreCase(ctx.getArgsJoined()) || "none".equalsIgnoreCase(ctx.getArgsJoined()) || "off".equalsIgnoreCase(ctx.getArgsJoined())) {
+        final String in = ctx.getArgsJoined();
+
+        if ("null".equalsIgnoreCase(in) || "none".equalsIgnoreCase(in) ||
+            "off".equalsIgnoreCase(in) || "disable".equalsIgnoreCase(in)) {
             ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(0L));
             sendMsg(ctx.getEvent(), "Logging has been turned off");
             return;
@@ -52,18 +61,5 @@ public class SetLogChannelCommand extends SettingsBase {
 
         ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(channel.getIdLong()));
         sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setlogchannel";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the channel to log messages in\n" +
-            "Usage: `" + prefix + getName() + " <text channel>`";
     }
 }

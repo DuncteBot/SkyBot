@@ -30,8 +30,8 @@ import net.dv8tion.jda.core.entities.VoiceChannel
 class VoiceKickCommand : ModBaseCommand() {
 
     init {
-        this.perms = arrayOf(Permission.KICK_MEMBERS)
-        this.selfPerms = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
+        this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
+        this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
     }
 
     override fun run(ctx: CommandContext) {

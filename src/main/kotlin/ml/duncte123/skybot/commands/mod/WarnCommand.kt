@@ -29,7 +29,7 @@ import net.dv8tion.jda.core.Permission
 class WarnCommand : ModBaseCommand() {
 
     init {
-        this.perms = arrayOf(Permission.KICK_MEMBERS)
+        this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
     }
 
     override fun run(ctx: CommandContext) {

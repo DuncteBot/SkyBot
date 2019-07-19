@@ -33,14 +33,14 @@ public class SetJoinMessageCommand extends SettingsBase {
         this.aliases = new String[] {
             "setwelcomemessage",
         };
-        this.helpFunction = (invoke, prefix) -> "";
+        this.helpFunction = (invoke, prefix) -> "Sets the message that the bot shows when a new member joins";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <join message>`";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setJoinMessage <new join message>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
