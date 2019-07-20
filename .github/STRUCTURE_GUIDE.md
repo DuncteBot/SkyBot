@@ -56,8 +56,8 @@ To maintain consistency between the constructors of the commands the following o
 2. category
 3. name
 4. aliases
-5. helpFunction
-6. usageInstructions
+5. helpFunction (invoke, prefix)
+6. usageInstructions (invoke, prefix)
 7. userPermissions
 8. botPermissions
 9. flags

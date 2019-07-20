@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -34,26 +33,30 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 public class UnlockEmoteCommand extends Command {
 
     public UnlockEmoteCommand() {
         this.category = CommandCategory.ADMINISTRATION;
+        this.name = "unlockemote";
+        this.helpFunction = (invoke, prefix) -> "Unlocks an emote if it was locked";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <emote>";
+        this.userPermissions = new Permission[] {
+            Permission.ADMINISTRATOR,
+        };
+        this.botPermissions = new Permission[] {
+            Permission.MANAGE_EMOTES,
+        };
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
-        if (canNotProceed(ctx)) {
-            return;
-        }
-
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote/emote name>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -72,35 +75,6 @@ public class UnlockEmoteCommand extends Command {
         sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
-    @NotNull
-    @Override
-    public String getName() {
-        return "unlockemote";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Unlocks an emote if it was locked\n" +
-            "Usage: `" + prefix + getName() + " <:emote:>`\n" +
-            "Please note that you have to mention the emote due the bot not caching emotes for their names";
-    }
-
-    static boolean canNotProceed(CommandContext ctx) {
-        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
-            sendMsg(ctx, "You need administrator perms to run this command.");
-            return true;
-        }
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
-            sendMsg(ctx, "I need the manage emotes permission in order to lock the emotes to roles");
-
-            return true;
-        }
-
-        return false;
-    }
-
     static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {
         if (emote == null) {
             sendMsg(event, "I cannot access that emote");
@@ -117,6 +91,7 @@ public class UnlockEmoteCommand extends Command {
             sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
             return true;
         }
+
         return false;
     }
 }

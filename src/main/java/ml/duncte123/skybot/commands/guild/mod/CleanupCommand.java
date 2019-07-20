@@ -81,7 +81,7 @@ public class CleanupCommand extends ModBaseCommand {
         boolean clearBots = false;
 
         if (args.size() > 3) {
-            sendErrorWithMessage(event.getMessage(), this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendErrorWithMessage(event.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 

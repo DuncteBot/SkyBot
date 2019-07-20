@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -28,28 +27,22 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetPrefixCommand extends SettingsBase {
+
+    public SetPrefixCommand() {
+        this.name = "setprefix";
+        this.helpFunction = (invoke, prefix) -> "Sets the new prefix to use on this server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <prefix>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setPrefix <new prefix>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
         final String newPrefix = ctx.getArgsJoined();
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
         sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + '`');
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setprefix";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the new prefix\n" +
-            "Usage: `" + prefix + getName() + " <prefix>`";
     }
 }

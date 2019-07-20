@@ -47,7 +47,7 @@ public class SetDescriptionCommand extends SettingsBase {
         final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
-            sendErrorWithMessage(ctx.getMessage(), this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 

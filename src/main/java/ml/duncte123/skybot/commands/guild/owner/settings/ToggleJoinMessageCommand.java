@@ -22,7 +22,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,8 +29,18 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ToggleJoinMessageCommand extends SettingsBase {
+
+    public ToggleJoinMessageCommand() {
+        this.name = "togglejoinmessage";
+        this.aliases = new String[] {
+            "enablejoinmessage",
+            "disablejoinmessage",
+        };
+        this.helpFunction = (invoke, prefix) -> "Turns the join message on or off";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -40,27 +49,5 @@ public class ToggleJoinMessageCommand extends SettingsBase {
         guild.setSettings(settings.setEnableJoinMessage(isEnabled));
 
         sendMsg(ctx.getEvent(), "The join and leave messages have been " + (isEnabled ? "enabled" : "disabled") + '.');
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "togglejoinmessage";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{
-            "enablejoinmessage",
-            "disablejoinmessage"
-        };
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Turns the join message on or off\n" +
-            "Usage: `" + prefix + getName() + '`';
     }
 }

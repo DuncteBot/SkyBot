@@ -50,10 +50,21 @@ public class CustomCommandCommand extends Command {
 
     public CustomCommandCommand() {
         this.category = CommandCategory.ADMINISTRATION;
+        this.name = "customcommand";
+        this.aliases = new String[] {
+            "cc",
+            "customcommands",
+        };
+        this.helpFunction = (invoke, prefix) -> "Create, edit and delete custom commands";
+        this.usageInstructions = (invoke, prefix) -> "`" + prefix + invoke + " list` => Shows a list of all the custom commands\n" +
+            "`" + prefix + invoke + " new <name> <text>` => Creates a new custom command\n" +
+            "`" + prefix + invoke + " edit <name> <text>` => Edits a custom command\n" +
+            "`" + prefix + invoke + " raw <name>` => Shows the raw value of a custom command\n" +
+            "`" + prefix + invoke + " delete <name>` => Deletes a custom command";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgsWithQuotes();
@@ -71,7 +82,6 @@ public class CustomCommandCommand extends Command {
 
             case 2:
                 deleteOrShowCustomCommand(args, event, manager, ctx.getPrefix());
-                //sendMsg(event, "Insufficient arguments");
                 break;
 
             default:
@@ -208,29 +218,6 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Create, run and delete custom commands\n" +
-            "`" + prefix + getName() + " list` => Shows a list of all the custom commands\n" +
-            "`" + prefix + getName() + " new <name> <text>` => Creates a new custom command\n" +
-            "`" + prefix + getName() + " edit <name> <text>` => Edits a custom command\n" +
-            "`" + prefix + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
-            "`" + prefix + getName() + " delete <name>` => Deletes a custom command";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "customcommand";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"cc", "customcommands"};
-    }
-
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isAdmin(GuildMessageReceivedEvent event) {
         return event.getMember().hasPermission(event.getChannel(), Permission.ADMINISTRATOR);
@@ -261,6 +248,7 @@ public class CustomCommandCommand extends Command {
             customCommand.getGuildId(),
             autoresponse
         );
+
         return manager.editCustomCommand(cmd);
     }
 }

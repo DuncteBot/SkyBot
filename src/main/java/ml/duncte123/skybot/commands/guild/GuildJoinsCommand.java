@@ -42,14 +42,18 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildJoinsCommand extends Command {
+
+    public GuildJoinsCommand() {
+        this.name = "serverjoins";
+        this.helpFunction = (invoke, prefix) -> "Shows a graph with the joins for this server.\n" +
+            "This is not a full history as it only looks at the members that are currently in the server.";
+        this.botPermissions = new Permission[] {
+            Permission.MESSAGE_ATTACH_FILES,
+        };
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
-        if (!ctx.getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
-            sendMsg(ctx, "I need the `Attach Files` permission in order for this command to work");
-
-            return;
-        }
-
+    public void execute(@Nonnull CommandContext ctx) {
         final long startTime = ctx.getGuild().getCreationTime().toEpochSecond();
         final OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         final long currentTime = now.toEpochSecond();
@@ -100,18 +104,5 @@ public class GuildJoinsCommand extends Command {
         catch (IOException e) {
             sendMsg(ctx, "Could not generate join graph: " + e.getMessage());
         }
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "serverjoins";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows a graph with the joins for this server.\n" +
-            "This is not a full history as it only looks at the members that are currently in the server.";
     }
 }

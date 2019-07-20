@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -29,10 +28,21 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetWelcomeChannelCommand extends SettingsBase {
+
+    public SetWelcomeChannelCommand() {
+        this.name = "setwelcomechannel";
+        this.aliases = new String[] {
+            "setleavechannel",
+            "setwelcomeleavechannel",
+        };
+        this.helpFunction = (invoke, prefix) -> "Sets the channel that displays the welcome and leave messages";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#chanel>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + ctx.getPrefix() + "setwelcomechannel [text channel]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -46,24 +56,5 @@ public class SetWelcomeChannelCommand extends SettingsBase {
 
         ctx.getGuild().setSettings(ctx.getGuildSettings().setWelcomeLeaveChannel(channel.getIdLong()));
         sendMsg(ctx.getEvent(), "The new welcome channel has been set to " + channel.getAsMention());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setwelcomechannel";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"setleavechannel"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets the channel that displays the welcome and leave messages\n" +
-            "Usage: `" + prefix + getName() + " <channel>`";
     }
 }

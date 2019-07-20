@@ -22,7 +22,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,8 +29,14 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ToggleAnnounceTracksCommand extends SettingsBase {
+
+    public ToggleAnnounceTracksCommand() {
+        this.name = "toggleannouncetracks";
+        this.helpFunction = (invoke, prefix) -> "Toggles if the player should announce the next playing track";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
@@ -40,18 +45,5 @@ public class ToggleAnnounceTracksCommand extends SettingsBase {
 
         sendMsg(ctx.getEvent(), "Announcing the next track has been **"
             + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "toggleannouncetracks";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Toggles if the player should announce the next playing track\n" +
-            "Usage: `" + prefix + getName() + "`";
     }
 }
