@@ -28,8 +28,13 @@ import javax.annotation.Nonnull;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class PcCheckCommand extends ImageCommandBase {
 
+    public PcCheckCommand() {
+        this.name = "pccheck";
+        this.helpFunction = (invoke, prefix) -> "Your pc needs to be checked, but for what?";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 

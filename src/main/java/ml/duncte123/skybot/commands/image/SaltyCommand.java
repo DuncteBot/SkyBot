@@ -24,8 +24,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 public class SaltyCommand extends NoPatronImageCommand {
+
+    public SaltyCommand() {
+        this.name = "salty";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }

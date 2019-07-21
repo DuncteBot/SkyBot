@@ -19,31 +19,24 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class FactsCommand extends NoPatronImageCommand {
+
+    public FactsCommand() {
+        this.name = "facts";
+        this.helpFunction = (invoke, prefix) -> "Show people the facts";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
 
         ctx.getAlexFlipnote().getFacts(parseTextArgsForImage(ctx))
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "facts";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Show show the facts\n" +
-            "Usage: `" + prefix + getName() + " <text>`";
     }
 }

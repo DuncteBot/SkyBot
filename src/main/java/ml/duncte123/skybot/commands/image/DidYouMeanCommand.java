@@ -19,13 +19,19 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class DidYouMeanCommand extends NoPatronImageCommand {
+
+    public DidYouMeanCommand() {
+        this.name = "didyoumean";
+        this.helpFunction = (invoke, prefix) -> "Did you type your search wrong?";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <top text>|<bottom text>";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
@@ -40,18 +46,5 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
         ctx.getAlexFlipnote().getDidYouMean(split[0], split[1])
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
 
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "didyoumean";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Did you type your search wrong?\n" +
-            "Usage: `" + prefix + getName() + " <Top text>|<Bottom text>`";
     }
 }

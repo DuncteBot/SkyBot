@@ -19,13 +19,22 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class JokeoverheadCommand extends NoPatronImageCommand {
+
+    public JokeoverheadCommand() {
+        this.name = "jokeoverhead";
+        this.aliases = new String[] {
+            "woosh",
+        };
+        this.helpFunction = (invoke, prefix) -> "You just got wooshed";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user/url]`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }
@@ -34,24 +43,5 @@ public class JokeoverheadCommand extends NoPatronImageCommand {
         if (url != null) {
             ctx.getAlexFlipnote().getJokeoverhead(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
         }
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "jokeoverhead";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"woosh"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "You just got wooshed\n" +
-            "Usage: `" + prefix + getName() + " [@user/url]`";
     }
 }

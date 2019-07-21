@@ -20,13 +20,19 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
+
+    public ItsFreeRealEstateCommand() {
+        this.name = "freerealestate";
+        this.helpFunction = (invoke, prefix) -> "It's free real estate";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
@@ -34,18 +40,5 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
         final byte[] image = ctx.getApis().getFreeRealEstate(parseTextArgsForImage(ctx));
 
         handleBasicImage(ctx.getEvent(), image);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "freerealestate";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "It's free real estate\n" +
-            "Usage: `" + prefix + getName() + " <text>`";
     }
 }
