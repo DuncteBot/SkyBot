@@ -38,7 +38,7 @@ public class SettingsCommand extends SettingsBase {
 
     public SettingsCommand() {
         this.name = "settings";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "options",
         };
         this.helpFunction = (invoke, prefix) -> "SHows the current settings for this server";

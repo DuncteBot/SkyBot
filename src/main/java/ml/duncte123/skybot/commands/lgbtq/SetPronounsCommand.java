@@ -57,7 +57,7 @@ public class SetPronounsCommand extends Command {
             "ze/zir/zir/zirs\n" +
             "xe/xir/xir/xirs```";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + "  <pronouns> [--plural]`";
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 "plural",
                 "Marks your pronouns as being plural (is vs are)"

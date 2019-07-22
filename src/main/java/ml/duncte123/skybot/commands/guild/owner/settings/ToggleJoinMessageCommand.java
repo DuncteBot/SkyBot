@@ -32,7 +32,7 @@ public class ToggleJoinMessageCommand extends SettingsBase {
 
     public ToggleJoinMessageCommand() {
         this.name = "togglejoinmessage";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "enablejoinmessage",
             "disablejoinmessage",
         };

@@ -42,7 +42,7 @@ public class AnnounceCommand extends ModBaseCommand {
         this.displayAliasesInHelp = true;
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "announce";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "announce1",
             "announce2",
             "announce3",
@@ -53,7 +53,7 @@ public class AnnounceCommand extends ModBaseCommand {
             "`announce1` and `announce` => Sends the message as plain text\n" +
             "`announce2` => Sends the message as an embed with a small image (if uploaded with message)\n" +
             "`announce3` => Sends the message as an embed with a large image (if uploaded with message)";
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
     }

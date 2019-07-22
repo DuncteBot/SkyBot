@@ -31,7 +31,7 @@ public class SetWelcomeChannelCommand extends SettingsBase {
 
     public SetWelcomeChannelCommand() {
         this.name = "setwelcomechannel";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "setleavechannel",
             "setwelcomeleavechannel",
         };

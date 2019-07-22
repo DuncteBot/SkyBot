@@ -53,7 +53,7 @@ public class GuildInfoCommand extends Command {
 
     public GuildInfoCommand() {
         this.name = "guildinfo";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "serverinfo",
             "server",
             "guild",

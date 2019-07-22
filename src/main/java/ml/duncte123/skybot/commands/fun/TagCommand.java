@@ -45,7 +45,7 @@ public class TagCommand extends VariablesInConstructorCommand {
     public TagCommand(Variables variables) {
         this.category = CommandCategory.FUN;
         this.name = "tag";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "pasta",
             "tags",
             "t",

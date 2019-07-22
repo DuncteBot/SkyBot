@@ -38,13 +38,13 @@ public class RemindmeCommand extends Command {
     public RemindmeCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "remind";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "remindme",
         };
         this.helpFunction = (invoke, prefix) -> "Creates a reminder for you, add `--channel` to remind you in the current channel";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <number><w/d/h/m/s> [--channel] <reminder>`\n" +
             "Example: `" + prefix + "remind 1d5m Clean your room :/`";
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 't',
                 "time",

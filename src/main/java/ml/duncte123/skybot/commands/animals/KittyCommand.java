@@ -35,7 +35,7 @@ public class KittyCommand extends Command {
     public KittyCommand() {
         this.category = CommandCategory.ANIMALS;
         this.name = "cat";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "kitty",
         };
         this.helpFunction = (invoke, prefix) -> "Shows a cat";

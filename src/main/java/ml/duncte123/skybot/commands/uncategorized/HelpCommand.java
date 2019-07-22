@@ -18,18 +18,16 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.utils.HelpEmbeds;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -46,8 +44,19 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 })
 public class HelpCommand extends Command {
 
+    public HelpCommand() {
+        this.name = "help";
+        this.aliases = new String[]{
+            "commandlist",
+            "commands",
+            "h",
+        };
+        this.helpFunction = (invoke, prefix) -> "Sends you a list of all the commands";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [command]`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final String prefix = ctx.getPrefix();
@@ -68,24 +77,6 @@ public class HelpCommand extends Command {
             return;
         }
         sendHelp(event, HelpEmbeds.generateCommandEmbed(prefix));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows a list of all the commands.\nUsage: `" + prefix + "help [command]`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "help";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"commands", "h"};
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -122,7 +113,7 @@ public class HelpCommand extends Command {
         final ICommand cmd = manager.getCommand(toSearch);
 
         if (cmd != null) {
-            sendMsg(event, getCommandHelpMessage(cmd, prefix));
+            sendCommandHelpMessage(event, (Command) cmd, prefix, toSearch);
 
             return;
         }
@@ -130,7 +121,19 @@ public class HelpCommand extends Command {
         sendMsg(event, "That command could not be found, try `" + prefix + "help` for a list of commands");
     }
 
-    private String getCommandHelpMessage(ICommand cmd, String prefix) {
+    private String sendCommandHelpMessage(GuildMessageReceivedEvent event, Command cmd, String prefix, String invoke) {
+        EmbedBuilder builder = EmbedUtils
+            .defaultEmbed()
+            .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])",
+                "https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName())
+            .setDescription(cmd.help(invoke, prefix) +
+                "\nUsage: " + cmd.getUsageInstructions(invoke, prefix));
+
+        if (cmd.flags.length > 0) {
+            builder.addField("Flags", parseFlags(cmd.flags), false);
+        }
+
+
         return "Command help for `" +
             cmd.getName() + "` (`<required argument>` `[optional argument]`):\n\n" + cmd.help(cmd.getName(), prefix) +
             (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
@@ -141,6 +144,36 @@ public class HelpCommand extends Command {
         final CommandCategory cat = getCategory(toSearch);
         final MessageEmbed embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
         sendEmbed(event, embed);
+    }
+
+    private String parseFlags(Flag[] flags) {
+        final StringBuilder builder = new StringBuilder();
+
+        for (Flag flag : flags) {
+            if (flag.getChar() != null && flag.getWord() == null) {
+                builder.append("`-")
+                    .append(flag.getChar())
+                    .append("` > ")
+                    .append(flag.getDesc())
+                    .append('\n');
+            } else if (flag.getChar() == null && flag.getWord() != null) {
+                builder.append("`--")
+                    .append(flag.getWord())
+                    .append("` > ")
+                    .append(flag.getDesc())
+                    .append('\n');
+            } else {
+                builder.append("`-")
+                    .append(flag.getChar())
+                    .append('/')
+                    .append(flag.getWord())
+                    .append("` > ")
+                    .append(flag.getDesc())
+                    .append('\n');
+            }
+        }
+
+        return builder.toString();
     }
 
     private CommandCategory getCategory(String search) {

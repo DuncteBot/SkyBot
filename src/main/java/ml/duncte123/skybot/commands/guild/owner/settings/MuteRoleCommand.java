@@ -35,7 +35,7 @@ public class MuteRoleCommand extends SettingsBase {
 
     public MuteRoleCommand() {
         this.name = "muterole";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "spamrole"
         };
         this.helpFunction = (invoke, prefix) -> "Sets the role that the user gets when they are muted";

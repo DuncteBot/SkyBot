@@ -33,7 +33,6 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -51,7 +50,7 @@ public class CustomCommandCommand extends Command {
     public CustomCommandCommand() {
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "customcommand";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "cc",
             "customcommands",
         };

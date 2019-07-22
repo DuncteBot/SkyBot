@@ -37,13 +37,13 @@ public class LoadingBarCommand extends Command {
     public LoadingBarCommand() {
         this.category = CommandCategory.FUN;
         this.name = "loadingbar";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "progress",
             "progressbar",
             "lb",
         };
         this.helpFunction = (invoke, prefix) -> "Displays a progress bar that shows how much of the year has passed";
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.MESSAGE_ATTACH_FILES,
             Permission.MESSAGE_WRITE,
         };

@@ -38,7 +38,7 @@ public class TestTagCommand extends Command {
     public TestTagCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "testtag";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "tt",
         };
         this.helpFunction = (invoke, prefix) -> "Test your jagtag format before you save it as custom command etc.";

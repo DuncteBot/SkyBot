@@ -32,7 +32,7 @@ public class ToggleSwearFilterCommand extends SettingsBase {
 
     public ToggleSwearFilterCommand() {
         this.name = "toggleswearfilter";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "enableswearfilter",
             "disableswearfilter"
         };

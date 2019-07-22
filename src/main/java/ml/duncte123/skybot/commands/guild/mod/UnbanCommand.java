@@ -36,16 +36,16 @@ public class UnbanCommand extends ModBaseCommand {
 
     public UnbanCommand() {
         this.name = "unban";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "ban't",
             "pardon",
         };
         this.helpFunction = (invoke, prefix) -> "Removes the ban for a user";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <user> [-r reason]`";
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 'r',
                 "reason",

@@ -45,11 +45,11 @@ public class TempMuteCommand extends TempBanCommand {
         this.name = "tempmute";
         this.helpFunction = (invoke, prefix) -> "Temporally mutes a user in the server";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,
         };
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 'r',
                 "reason",

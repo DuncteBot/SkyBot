@@ -39,7 +39,7 @@ public class HackbanCommand extends ModBaseCommand {
         this.name = "hackban";
         this.helpFunction = (invoke, prefix) -> "Ban a user before they can join your server.";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + "<userId...>`";
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
     }

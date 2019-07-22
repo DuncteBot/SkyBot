@@ -30,7 +30,7 @@ public class SetJoinMessageCommand extends SettingsBase {
 
     public SetJoinMessageCommand() {
         this.name = "setjoinmessage";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "setwelcomemessage",
         };
         this.helpFunction = (invoke, prefix) -> "Sets the message that the bot shows when a new member joins";

@@ -40,7 +40,7 @@ public class LoveCommand extends Command {
     public LoveCommand() {
         this.category = CommandCategory.FUN;
         this.name = "ship";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "love",
             "loveship",
         };

@@ -64,7 +64,7 @@ public abstract class MusicCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (this.withAutoJoin) {
             runWithAutoJoin(ctx);
         } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils(), ctx.getPrefix())) {

@@ -22,15 +22,20 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 public class YesNoCommand extends Command {
+
+    public YesNoCommand() {
+        this.name = "yesno";
+        this.helpFunction = (invoke, prefix) -> "Chooses between yes or no";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         WebUtils.ins.getJSONObject("https://yesno.wtf/api").async((it) ->
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle(
                 it.get("answer").asText(),
@@ -38,19 +43,5 @@ public class YesNoCommand extends Command {
                 it.get("image").asText())
             )
         );
-    }
-
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "yesno";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Chooses between yes or no\n" +
-            "Usage: `" + prefix + getName() + '`';
     }
 }

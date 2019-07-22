@@ -36,7 +36,7 @@ public class UnwarnCommand extends ModBaseCommand {
         this.name = "unwarn";
         this.helpFunction = (invoke, prefix) -> "Removes the latest warning of a user in this server";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user>`";
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };
     }

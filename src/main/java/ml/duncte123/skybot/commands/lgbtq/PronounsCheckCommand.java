@@ -37,7 +37,7 @@ public class PronounsCheckCommand extends Command {
     public PronounsCheckCommand() {
         this.category = CommandCategory.LGBTQ;
         this.name = "pronounscheck";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "pronouns",
         };
         this.helpFunction = (invoke, prefix) -> "Check someones pronouns\n" +

@@ -35,7 +35,7 @@ public class SealCommand extends Command {
     public SealCommand() {
         this.category = CommandCategory.ANIMALS;
         this.name = "seal";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "zeehond",
         };
         this.helpFunction = (invoke, prefix) -> "Shows a seal";

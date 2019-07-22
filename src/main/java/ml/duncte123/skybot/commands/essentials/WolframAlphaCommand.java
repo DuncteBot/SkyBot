@@ -33,7 +33,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -50,7 +49,7 @@ public class WolframAlphaCommand extends Command {
     public WolframAlphaCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "alpha";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "wolfram",
             "wa",
             "wolframalpha",

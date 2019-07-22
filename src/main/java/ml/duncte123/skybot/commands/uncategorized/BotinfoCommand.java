@@ -31,7 +31,6 @@ import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -47,13 +46,23 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 })
 public class BotinfoCommand extends Command {
 
+    public BotinfoCommand() {
+        this.name = "botinfo";
+        this.aliases = new String[]{
+            "about",
+            "support",
+            "bi",
+        };
+        this.helpFunction = (invoke, prefix) -> "Displays some information about the bot";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if ("support".equals(ctx.getInvoke())) {
-            MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
+            MessageUtils.sendMsg(event, "You can join my support server here: <https://discord.gg/NKM9Xtk>");
             return;
         }
 
@@ -81,23 +90,5 @@ public class BotinfoCommand extends Command {
             .build();
 
         sendEmbed(event, eb);
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Gets some info about the bot\nUsage: `" + prefix + getName() + "`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "botinfo";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"about", "support", "bi"};
     }
 }

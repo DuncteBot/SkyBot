@@ -40,7 +40,7 @@ abstract class SettingsBase extends Command {
     public SettingsBase() {
         this.displayAliasesInHelp = true;
         this.category = CommandCategory.ADMINISTRATION;
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
     }

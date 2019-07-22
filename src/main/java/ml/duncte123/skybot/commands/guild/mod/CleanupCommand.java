@@ -42,7 +42,7 @@ public class CleanupCommand extends ModBaseCommand {
 
     public CleanupCommand() {
         this.name = "cleanup";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "clear",
             "purge",
             "wipe",
@@ -50,15 +50,15 @@ public class CleanupCommand extends ModBaseCommand {
         this.helpFunction = (invoke, prefix) -> "Performs a cleanup in the channel where the command is run.\n" +
             "To clear an entire channel it's better to use `" + prefix + "purgechannel`";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [amount] [--keep-pinned] [--bots-only]`";
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,
         };
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,
         };
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 "keep-pinned",
                 "If this flag is set the messages that are pinned in the channel will be skipped"

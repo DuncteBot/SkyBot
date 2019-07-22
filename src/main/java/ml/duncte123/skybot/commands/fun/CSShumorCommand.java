@@ -42,7 +42,7 @@ public class CSShumorCommand extends Command {
     public CSShumorCommand() {
         this.category = CommandCategory.FUN;
         this.name = "csshumor";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "cssjoke",
         };
         this.helpFunction = (invoke, prefix) -> "Sends a css-related joke";

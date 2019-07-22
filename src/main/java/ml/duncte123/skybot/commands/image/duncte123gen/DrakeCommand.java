@@ -30,7 +30,7 @@ public class DrakeCommand extends NoPatronImageCommand {
     public DrakeCommand() {
         this.displayAliasesInHelp = true;
         this.name = "drake";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "ddrake",
             "dddrake",
         };

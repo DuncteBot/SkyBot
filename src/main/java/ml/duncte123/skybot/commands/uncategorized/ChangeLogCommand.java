@@ -27,7 +27,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -39,8 +38,13 @@ public class ChangeLogCommand extends Command {
 
     private String embedJson = null;
 
+    public ChangeLogCommand() {
+        this.name = "changelog";
+        this.helpFunction = (invoke, prefix) -> "Shows the latest changelog from the bot";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         if (embedJson == null || embedJson.isEmpty()) {
             fetchLatetstGitHubCommits(ctx.getEvent());
@@ -52,18 +56,6 @@ public class ChangeLogCommand extends Command {
         final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(new JSONObject(embedJson));
 
         sendEmbed(ctx.getEvent(), embed);
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "shows the changelog on the bot";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "changelog";
     }
 
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {

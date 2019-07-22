@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,13 +36,21 @@ public class SeekCommand extends MusicCommand {
 
     private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2}):(\\d{2})");
 
+    public SeekCommand() {
+        this.name = "seek";
+        this.helpFunction = (invoke, prefix) -> "Seek in the currently playing track\n" +
+            "Examples: `" + prefix + invoke + " 04:20`\n" +
+            "`" + prefix + invoke + " 00:50`\n";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <minutes:seconds>`";
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + "`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -81,20 +88,5 @@ public class SeekCommand extends MusicCommand {
 
         ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
 
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "seek";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "seek in the currently playing track\n" +
-            "Usage: `" + prefix + getName() + " <minutes:seconds>`\n" +
-            "Examples: `" + prefix + getName() + " 04:20`\n" +
-            "`" + prefix + getName() + " 00:50`\n";
     }
 }

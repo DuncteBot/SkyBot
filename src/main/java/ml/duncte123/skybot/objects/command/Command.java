@@ -46,6 +46,7 @@ public abstract class Command implements ICommand {
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
         r -> new Thread(r, "Command-Thread"));
 
+    //@formatter:off
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
@@ -54,7 +55,9 @@ public abstract class Command implements ICommand {
     protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + '`';
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
-    protected Flag[] flags = new Flag[0];
+    public Flag[] flags = new Flag[0];
+
+    //@formatter:on
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
@@ -117,7 +120,7 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    public final String getUsageInstructions(String invoke, String prefix) {
+    public @Nonnull String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
         return this.usageInstructions.apply(invoke, prefix);
     }
 

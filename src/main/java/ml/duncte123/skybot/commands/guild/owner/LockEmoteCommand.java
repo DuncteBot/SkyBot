@@ -47,10 +47,10 @@ public class LockEmoteCommand extends Command {
             "_Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
             "even if you have administrator permission_";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <emote> <@role...>";
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.ADMINISTRATOR,
         };
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.MANAGE_EMOTES,
         };
     }

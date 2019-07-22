@@ -34,11 +34,11 @@ public class PurgeChannelCommand extends ModBaseCommand {
         this.name = "purgechannel";
         this.helpFunction = (invoke, prefix) -> "Purges an entire text channel";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel>`";
-        this.userPermissions = new Permission[] {
+        this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,
         };
-        this.botPermissions = new Permission[] {
+        this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
     }

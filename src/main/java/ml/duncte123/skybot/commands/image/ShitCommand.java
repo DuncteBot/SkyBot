@@ -30,12 +30,12 @@ public class ShitCommand extends NoPatronImageCommand {
 
     public ShitCommand() {
         this.name = "shit";
-        this.aliases = new String[] {
+        this.aliases = new String[]{
             "pluralshit",
         };
         this.helpFunction = (invoke, prefix) -> "Exclaim that something is shit";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text> [--plural]`";
-        this.flags = new Flag[] {
+        this.flags = new Flag[]{
             new Flag(
                 "plural",
                 "Make this exclamation plural (is vs are)"
