@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -38,8 +37,15 @@ public class FlagCommand extends ImageCommandBase {
     private final List<String> flags = List.of("agender", "aromantic", "asexual", "bear", "bi", "gay",
         "genderfluid", "nonbinary", "pan", "transgender", "demigirl", "lesbian");
 
+    public FlagCommand() {
+        this.category = CommandCategory.LGBTQ;
+        this.name = "flag";
+        this.helpFunction = (invoke, prefix) -> "Overlay your profile picture with a pride flag";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <flag/list> [@user]`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
@@ -80,22 +86,10 @@ public class FlagCommand extends ImageCommandBase {
 
     }
 
-    @NotNull
+    // Has to be overwritten here due to override in ImageCommandBase
+    @Nonnull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.LGBTQ;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "flag";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Overlay your profile picture with a pride flag.\n" +
-            "Usage: `" + prefix + getName() + " <flag/list> [username]`";
     }
 }

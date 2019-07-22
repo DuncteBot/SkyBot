@@ -20,15 +20,31 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ShitCommand extends NoPatronImageCommand {
+
+    public ShitCommand() {
+        this.name = "shit";
+        this.aliases = new String[] {
+            "pluralshit",
+        };
+        this.helpFunction = (invoke, prefix) -> "Exclaim that something is shit";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text> [--plural]`";
+        this.flags = new Flag[] {
+            new Flag(
+                "plural",
+                "Make this exclamation plural (is vs are)"
+            ),
+        };
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passes(event, ctx.getArgs(), false)) {
@@ -43,42 +59,5 @@ public class ShitCommand extends NoPatronImageCommand {
         }
 
         ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "shit";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"pluralshit"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "`" + prefix + "shit <message>` => Exclaim that something is shit." +
-            "`" + prefix + "pluralshit <message>` => Exclaim that things are shit.";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String invoke, @NotNull String prefix) {
-        switch (invoke) {
-            case "shit": {
-                return "Exclaim that something is shit.\n" +
-                    "Usage: `" + prefix + "shit <message>`";
-            }
-            case "pluralshit": {
-                return "Exclaim that things are shit.\n" +
-                    "Usage: `" + prefix + "pluralshit <message>`";
-            }
-            default: {
-                return null;
-            }
-        }
     }
 }

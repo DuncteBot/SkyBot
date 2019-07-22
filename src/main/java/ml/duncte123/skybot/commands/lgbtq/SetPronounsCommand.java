@@ -22,8 +22,8 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -46,8 +46,27 @@ public class SetPronounsCommand extends Command {
             "I like both **%2$s** and **%3$s** ideas."
     };
 
+    public SetPronounsCommand() {
+        this.category = CommandCategory.LGBTQ;
+        this.name = "setpronouns";
+        this.helpFunction = (invoke, prefix) -> "Set your pronouns to people can check them with `" + prefix + "pronounscheck`\n" +
+            "Examples of pronouns are:\n" +
+            "```they/them/their/theirs\n" +
+            "she/her/her/hers\n" +
+            "he/him/his/his\n" +
+            "ze/zir/zir/zirs\n" +
+            "xe/xir/xir/xirs```";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + "  <pronouns> [--plural]`";
+        this.flags = new Flag[] {
+            new Flag(
+                "plural",
+                "Marks your pronouns as being plural (is vs are)"
+            ),
+        };
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
@@ -82,31 +101,5 @@ public class SetPronounsCommand extends Command {
         sendMsg(event, message);
 
         ctx.getApis().setPronouns(ctx.getAuthor().getIdLong(), pronouns, singular);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setpronouns";
-    }
-
-    @NotNull
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.LGBTQ;
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Set your pronouns to people can check them with `" + prefix + "pronounscheck`\n" +
-            "Usage: `" + prefix + getName() + " <pronouns> [--plural]`\n" +
-            "Examples of pronouns are:\n" +
-            "```they/them/their/theirs\n" +
-            "she/her/her/hers\n" +
-            "he/him/his/his\n" +
-            "ze/zir/zir/zirs\n" +
-            "xe/xir/xir/xirs```\n" +
-            "Use the `--plural` flag to mark your pronouns as plural (is vs are)";
     }
 }

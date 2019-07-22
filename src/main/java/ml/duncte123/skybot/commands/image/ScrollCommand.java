@@ -19,31 +19,24 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class ScrollCommand extends ImageCommandBase {
+
+    public ScrollCommand() {
+        this.name = "scroll";
+        this.helpFunction = (invoke, prefix) -> "The scroll of truth";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passes(ctx.getEvent(), ctx.getArgs(), true)) {
             return;
         }
 
         ctx.getAlexFlipnote().getScroll(parseTextArgsForImage(ctx))
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "scroll";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "The scroll of truth\n" +
-            "Usage: `" + prefix + getName() + " <text>`";
     }
 }
