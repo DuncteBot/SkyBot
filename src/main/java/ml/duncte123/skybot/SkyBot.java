@@ -110,7 +110,7 @@ public final class SkyBot {
         );
 
         logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
-        LavalinkManager.ins.start(config, variables.getAudioUtils());
+        LavalinkManager.INSTANCE.start(config, variables.getAudioUtils());
 
 
         //Set up sharding for the bot

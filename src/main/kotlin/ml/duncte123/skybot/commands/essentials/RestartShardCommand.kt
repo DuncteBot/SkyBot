@@ -109,8 +109,8 @@ class RestartShardCommand : Command() {
             }
 
             for (guild in jda.guildCache) {
-                if (LavalinkManager.ins.isConnected(guild)) {
-                    LavalinkManager.ins.closeConnection(guild)
+                if (LavalinkManager.isConnected(guild)) {
+                    LavalinkManager.closeConnection(guild)
                 }
             }
         }

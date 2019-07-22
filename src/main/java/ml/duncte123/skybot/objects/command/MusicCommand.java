@@ -177,7 +177,7 @@ public abstract class MusicCommand extends Command {
      * @return the {@link LavalinkManager LavalinkManager}
      */
     protected static LavalinkManager getLavalinkManager() {
-        return LavalinkManager.ins;
+        return LavalinkManager.INSTANCE;
     }
 
     /**

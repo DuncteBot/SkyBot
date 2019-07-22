@@ -176,7 +176,7 @@ public class AirUtils {
         for (final long key : temp.keys()) {
             final GuildMusicManager mng = audioUtils.musicManagers.get(key);
             final Guild guild = manager.getGuildById(key);
-            final LavalinkManager lavalinkManager = LavalinkManager.ins;
+            final LavalinkManager lavalinkManager = LavalinkManager.INSTANCE;
 
             if (mng.player.getPlayingTrack() != null) {
                 mng.player.stopTrack();

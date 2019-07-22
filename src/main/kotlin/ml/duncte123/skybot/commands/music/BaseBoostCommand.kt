@@ -29,7 +29,7 @@ class BaseBoostCommand : MusicCommand() {
             return
         }
 
-        if (!getLavalinkManager().isEnabled) {
+        if (!getLavalinkManager().isEnabled()) {
             sendMsg(ctx, "Lavalink is required for this")
 
             return

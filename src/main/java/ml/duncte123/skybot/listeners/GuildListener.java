@@ -86,7 +86,7 @@ public class GuildListener extends BaseListener {
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         final Guild guild = event.getGuild();
-        final LavalinkManager manager = LavalinkManager.ins;
+        final LavalinkManager manager = LavalinkManager.INSTANCE;
 
         handleVcAutoRole(guild, event.getMember(), event.getChannelLeft(), true);
 
@@ -128,7 +128,7 @@ public class GuildListener extends BaseListener {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         final Guild guild = event.getGuild();
-        final LavalinkManager manager = LavalinkManager.ins;
+        final LavalinkManager manager = LavalinkManager.INSTANCE;
 
         if (!manager.isConnected(guild)) {
             return;
@@ -217,8 +217,8 @@ public class GuildListener extends BaseListener {
 
                 MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
 
-                if (LavalinkManager.ins.isConnected(guild)) {
-                    LavalinkManager.ins.closeConnection(guild);
+                if (LavalinkManager.INSTANCE.isConnected(guild)) {
+                    LavalinkManager.INSTANCE.closeConnection(guild);
                     variables.getAudioUtils().getMusicManagers().remove(guild.getIdLong());
                 }
             }

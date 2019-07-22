@@ -54,7 +54,7 @@ public class GuildMusicManager {
      *         The guild that we want the manager for
      */
     public GuildMusicManager(Guild g, Variables variables) {
-        this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
+        this.player = LavalinkManager.INSTANCE.createPlayer(g.getIdLong());
         this.scheduler = new TrackScheduler(this.player, this, variables);
         this.player.addListener(this.scheduler);
         this.settings = GuildSettingsUtils.getGuild(g, variables);

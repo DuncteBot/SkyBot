@@ -64,8 +64,8 @@ public class EventManager implements IEventManager {
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
 
-        if (LavalinkManager.ins.isEnabled()) {
-            this.listeners.add(LavalinkManager.ins.getLavalink());
+        if (LavalinkManager.INSTANCE.isEnabled()) {
+            this.listeners.add(LavalinkManager.INSTANCE.getLavalink());
         }
     }
 
