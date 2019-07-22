@@ -26,6 +26,7 @@ import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.TrackUserData;
@@ -40,8 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
-
-import static ml.duncte123.skybot.SkyBot.getInstance;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
@@ -214,8 +213,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
             final TrackUserData userData = (TrackUserData) track.getUserData();
             final User user = userData == null ?
-                getInstance().getShardManager().getShardById(0).getSelfUser() :
-                getInstance().getShardManager().getUserById(userData.getUserId());
+                SkyBot.INSTANCE.getShardManager().getShardById(0).getSelfUser() :
+                SkyBot.INSTANCE.getShardManager().getUserById(userData.getUserId());
             final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
 
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message, null, (t) -> {});

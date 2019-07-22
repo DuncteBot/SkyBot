@@ -223,7 +223,7 @@ public class ModerationUtils {
 
     private static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unmute");
-        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final ShardManager shardManager = SkyBot.INSTANCE.getShardManager();
 
         for (final Mute mute : mutes) {
             final Guild guild = shardManager.getGuildById(mute.getGuildId());
@@ -279,7 +279,7 @@ public class ModerationUtils {
 
     private static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unban");
-        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final ShardManager shardManager = SkyBot.INSTANCE.getShardManager();
 
         for (final Ban ban : bans) {
             final Guild guild = shardManager.getGuildById(ban.getGuildId());

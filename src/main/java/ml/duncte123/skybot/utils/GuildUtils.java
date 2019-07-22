@@ -205,7 +205,7 @@ public class GuildUtils {
 
     public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {
         variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
-            final SkyBot instance = SkyBot.getInstance();
+            final SkyBot instance = SkyBot.INSTANCE;
             final Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
 
             if (dbGuild == null) {

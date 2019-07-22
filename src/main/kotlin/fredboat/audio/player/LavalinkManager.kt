@@ -51,7 +51,7 @@ object LavalinkManager {
             lavalink = JdaLavalink(
                 userId,
                 config.discord.totalShards,
-                SkyBot.getInstance().shardManager::getShardById)
+                SkyBot.shardManager::getShardById)
 
             lavalink.nodes.clear()
             for (node in c.lavalink.nodes) {

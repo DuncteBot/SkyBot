@@ -289,7 +289,7 @@ public class AirUtils {
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
-        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final ShardManager shardManager = SkyBot.INSTANCE.getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
 
         for (final Reminder reminder : reminders) {

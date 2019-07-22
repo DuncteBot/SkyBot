@@ -88,6 +88,6 @@ public class GuildMusicManager {
             return null;
         }
 
-        return SkyBot.getInstance().getShardManager().getTextChannelById(last);
+        return SkyBot.INSTANCE.getShardManager().getTextChannelById(last);
     }
 }

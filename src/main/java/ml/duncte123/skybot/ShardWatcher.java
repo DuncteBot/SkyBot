@@ -43,8 +43,7 @@ class ShardWatcher {
     }
 
     private void checkShards() {
-
-        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+        final ShardManager shardManager = SkyBot.INSTANCE.getShardManager();
 
         logger.debug("Checking shards");
 
