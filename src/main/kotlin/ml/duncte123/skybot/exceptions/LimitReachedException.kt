@@ -16,18 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.exceptions;
+package ml.duncte123.skybot.exceptions
 
-public class LimitReachedException extends Exception {
-    private final int size;
-
-    public LimitReachedException(String message, int size) {
-        super(message);
-
-        this.size = size;
-    }
-
-    public int getSize() {
-        return size;
-    }
-}
+data class LimitReachedException(override var message: String, var size: Int): Exception()
