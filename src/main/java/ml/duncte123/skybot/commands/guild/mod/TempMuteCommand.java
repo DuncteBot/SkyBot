@@ -36,10 +36,11 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class TempMuteCommand extends TempBanCommand {
+public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {
         this.name = "tempmute";

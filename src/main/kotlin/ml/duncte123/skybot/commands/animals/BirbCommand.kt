@@ -20,35 +20,26 @@ package ml.duncte123.skybot.commands.animals
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.io.IOException
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class BirbCommand : Command() {
 
     init {
         this.category = CommandCategory.ANIMALS
+        this.name = "bird"
+        this.aliases = arrayOf("birb")
+        this.helpFunction = BiFunction { _, _ -> "Shows a bird" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
-        try {
-            WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
-                sendEmbed(ctx.event, EmbedUtils.embedImage(it.get(0).asText()))
-            }
-
-        } catch (e: IOException) {
-            sendMsg(ctx.event, "ERROR: " + e.message)
+    override fun execute(ctx: CommandContext) {
+        WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
+            sendEmbed(ctx.event, EmbedUtils.embedImage(it.get(0).asText()))
         }
     }
-
-    override fun getName() = "birb"
-
-    override fun help(prefix: String) = "Here is a birb"
-
-    override fun getAliases() = arrayOf("bird")
 }

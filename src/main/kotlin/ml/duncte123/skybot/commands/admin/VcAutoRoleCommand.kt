@@ -28,12 +28,22 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.VoiceChannel
+import java.util.function.BiFunction
 import java.util.stream.Collectors
 
 class VcAutoRoleCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
+        this.name = "vcautorole"
+        this.helpFunction = BiFunction { _, _ -> "Gives a role to a user when they join a specified voice channel" }
+        this.usageInstructions = BiFunction { invoke, prefix ->
+            """`$prefix$invoke add <voice channel> <role>`
+        |`$prefix$invoke remove <voice channel>`
+        |`$prefix$invoke off`
+        |`$prefix$invoke list`
+        """.trimMargin()
+        }
         this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
         this.botPermissions = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
     }
@@ -85,15 +95,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
         sendMsg(event, "Unknown operation, check `${ctx.prefix}$name`")
 
     }
-
-    override fun getName() = "vcautorole"
-
-    override fun help(prefix: String) = """Gives a role to a user when they join a specified voice channel
-        |Usage: `$prefix$name add <voice channel> <role>`
-        |`$prefix$name remove <voice channel>`
-        |`$prefix$name off`
-        |`$prefix$name list`
-    """.trimMargin()
 
     private fun removeVcAutoRole(ctx: CommandContext) {
         val event = ctx.event

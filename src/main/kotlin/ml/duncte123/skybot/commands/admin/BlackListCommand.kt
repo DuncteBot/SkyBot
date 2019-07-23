@@ -32,11 +32,25 @@ import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.atomic.AtomicLong
+import java.util.function.BiFunction
 
 class BlackListCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
+        this.name = "blacklist"
+        this.helpFunction = BiFunction { _, _ ->
+            """Control the blacklisted words on your server
+            |Note: **People that have the kick members permission will bypass the blacklist**""".trimMargin()
+        }
+        this.usageInstructions = BiFunction { invoke, prefix ->
+            """```$prefix$invoke list => Gives you a list of the current blacklisted words
+        |$prefix$invoke clear => Clears the blacklist
+        |$prefix$invoke import => Imports an exported blacklist
+        |$prefix$invoke add <word> => Adds a word to the blacklist
+        |$prefix$invoke remove <word> => Removes a word from the blacklist```
+        """.trimMargin()
+        }
         this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
         this.botPermissions = arrayOf(Permission.MESSAGE_MANAGE)
     }
@@ -172,18 +186,6 @@ class BlackListCommand : ModBaseCommand() {
 
         sendMsg(event, "`$word` has been removed from the blacklist")
     }
-
-    override fun getName() = "blacklist"
-
-    override fun help(prefix: String) = """Control the blacklisted words on your server
-        |Note: **People that have the kick members permission will bypass the blacklist**
-        |
-        |Usage:```$prefix$name list => Gives you a list of the current blacklisted words
-        |$prefix$name clear => Clears the blacklist
-        |$prefix$name import => Imports an exported blacklist
-        |$prefix$name add <word> => Adds a word to the blacklist
-        |$prefix$name remove <word> => Removes a word from the blacklist```
-    """.trimMargin()
 
     private fun TextChannel.edit(id: AtomicLong, content: String) {
         val msg = id.get()

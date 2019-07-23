@@ -33,6 +33,7 @@ import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -42,9 +43,13 @@ class RestartShardCommand : Command() {
 
     init {
         this.category = CommandCategory.UNLISTED
+        this.name = "restartshard"
+        this.aliases = arrayOf("shardrestart")
+        this.helpFunction = BiFunction {_,_ -> "Restart the bot or a shard"}
+        this.usageInstructions = BiFunction {invoke, prefix -> "`$prefix$invoke [shard id]`"}
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
 
         val event = ctx.event
 
@@ -99,12 +104,6 @@ class RestartShardCommand : Command() {
             }
         }
     }
-
-    override fun help(prefix: String) = "Restart the bot or a shard\nUsage: $prefix$name [shard id]`"
-
-    override fun getName() = "restartshard"
-
-    override fun getAliases() = arrayOf("shardrestart")
 
     private fun terminate(shard: Int, shardManager: ShardManager, audioUtils: AudioUtils) {
         for (jda in shardManager.shardCache) {
