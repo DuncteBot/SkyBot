@@ -137,7 +137,7 @@ object SkyBot {
         }
 
         // Check shard activity
-        ShardWatcher(this)
+        ShardWatcher()
     }
 
     @JvmStatic
