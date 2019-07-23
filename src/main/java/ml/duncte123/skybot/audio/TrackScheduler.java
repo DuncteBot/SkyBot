@@ -22,6 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import kotlin.Unit;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -30,7 +31,7 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.TrackUserData;
-import ml.duncte123.skybot.utils.Debouncer;
+import ml.duncte123.skybot.utils.DebounceKt;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
@@ -52,7 +54,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Variables variables;
-    private final Debouncer<String> messageDebouncer;
+    private final Consumer<String> messageDebouncer;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -67,9 +69,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
-        this.messageDebouncer = new Debouncer<>((msg) ->
-            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
-            , DEBOUNCE_INTERVAL);
+
+        // TODO: Fix when converted to Kotlin
+        this.messageDebouncer = DebounceKt.<String>debounce(DEBOUNCE_INTERVAL, (msg) -> {
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg, null, $ -> {});
+            return Unit.INSTANCE;
+        })::invoke;
         this.variables = variables;
     }
 

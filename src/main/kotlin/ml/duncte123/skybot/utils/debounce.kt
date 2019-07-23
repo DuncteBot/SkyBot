@@ -16,27 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot.utils
 
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicLong
 
-public class Debouncer<T> implements Consumer<T> {
+fun <T> debounce(interval: Long, consumer: (t: T) -> Unit): (t: T) -> Unit {
+    val lastCalled = AtomicLong(System.currentTimeMillis())
 
-    private final Consumer<T> c;
-    private final AtomicLong lastCalled = new AtomicLong(0);
-    private long interval;
-
-    public Debouncer(Consumer<T> c, long interval) {
-        this.c = c;
-        this.interval = interval;
-    }
-
-    @Override
-    public void accept(T arg) {
+    return {
         if (lastCalled.get() + interval < System.currentTimeMillis()) {
-            lastCalled.set(System.currentTimeMillis());
-            c.accept(arg);
+            lastCalled.set(System.currentTimeMillis())
+            consumer(it)
         }
     }
 }
