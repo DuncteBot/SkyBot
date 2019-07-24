@@ -22,9 +22,16 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PauseCommand : MusicCommand() {
+
+    init {
+        this.name = "pause"
+        this.aliases = arrayOf("resume")
+        this.helpFunction = BiFunction { _, _ -> "Pauses the current song" }
+    }
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
@@ -39,10 +46,4 @@ class PauseCommand : MusicCommand() {
         player.isPaused = !player.isPaused
         sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
-
-    override fun help(prefix: String) = "Pauses the current song"
-
-    override fun getAliases() = arrayOf("resume")
-
-    override fun getName(): String = "pause"
 }

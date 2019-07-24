@@ -24,12 +24,17 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {
 
-    override fun run(ctx: CommandContext) {
+    init {
+        this.name = "readd"
+        this.helpFunction = BiFunction { _, _ -> "Adds the currently playing track to the end of the queue" }
+    }
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val manager = getMusicManager(event.guild, ctx.audioUtils)
         val t = manager.player.playingTrack
@@ -65,8 +70,4 @@ class ReaddCommand : MusicCommand() {
             sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")
         }
     }
-
-    override fun help(prefix: String) = "Readd the current track to the end of the queue"
-
-    override fun getName() = "readd"
 }

@@ -397,6 +397,7 @@ public class CommandManager {
             catch (Throwable ex) {
                 execCheck(ex);
                 ex.printStackTrace();
+                sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
             }
         });
     }
@@ -409,7 +410,6 @@ public class CommandManager {
 
 //                if (VariablesInConstructorCommand.class.isInstance(cmd)) {
                 if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
-                    System.out.println(cmd);
                     command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
                 } else {
                     command = cmd.getDeclaredConstructor().newInstance();

@@ -25,9 +25,15 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Guild
+import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
+
+    init {
+        this.name = "save"
+        this.helpFunction = BiFunction { _, prefix -> "Saves a playlist into a file with can be loaded with `${prefix}load`" }
+    }
 
     override fun run(ctx: CommandContext) {
 
@@ -60,8 +66,4 @@ class SaveCommand : MusicCommand() {
 
         return mapper.writeValueAsBytes(array)
     }
-
-    override fun getName() = "save"
-
-    override fun help(prefix: String) = "Saves a playlist into a file with can be loaded with ${prefix}load"
 }

@@ -98,7 +98,11 @@ public class GuildUtils {
             botCountP
         );
 
-        return new double[]{Math.round(userCountP), Math.round(botCountP)};
+        return new double[]{
+            // https://stackoverflow.com/a/11701527
+            Math.round(userCountP * 100.0) / 100.0,
+            Math.round(botCountP * 100.0) / 100.0
+        };
     }
 
     /**

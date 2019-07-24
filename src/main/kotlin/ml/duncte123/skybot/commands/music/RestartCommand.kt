@@ -22,9 +22,15 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class RestartCommand : MusicCommand() {
+
+    init {
+        this.name = "restart"
+        this.helpFunction = BiFunction { _, _ -> "Start the current track from the beginning" }
+    }
 
     override fun run(ctx: CommandContext) {
 
@@ -46,8 +52,4 @@ class RestartCommand : MusicCommand() {
 
         sendSuccess(event.message)
     }
-
-    override fun help(prefix: String) = "Start the current track back to the beginning"
-
-    override fun getName() = "restart"
 }

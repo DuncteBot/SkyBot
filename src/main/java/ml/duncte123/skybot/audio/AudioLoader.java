@@ -137,6 +137,8 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
+        System.out.println(exception.getCause().getClass());
+
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
             sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));

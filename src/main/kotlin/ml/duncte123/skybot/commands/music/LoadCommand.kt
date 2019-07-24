@@ -26,12 +26,17 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import java.util.*
+import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class LoadCommand : MusicCommand() {
 
     init {
         this.withAutoJoin = true
+        this.name = "load"
+        this.helpFunction = BiFunction { _, prefix ->
+            "Loads the given playlist file\nThe playlist can be exported with ${prefix}save"
+        }
     }
 
     override fun run(ctx: CommandContext) {
@@ -91,8 +96,4 @@ class LoadCommand : MusicCommand() {
             }
         }
     }
-
-    override fun getName() = "load"
-
-    override fun help(prefix: String) = "Loads a given playlist file"
 }

@@ -30,7 +30,7 @@ open class RadioStream(var name: String, val url: String, val website: String?, 
     fun toEmbedString(): String = "[$name]($url) ${if (hasWebsite()) "from [$website]($website)" else ""}"
 }
 
-class ILoveStream(
+/*class ILoveStream(
     stationName: String,
     val channel: Int,
     val npChannel: Int = channel,
@@ -41,4 +41,4 @@ class ILoveStream(
     url = if (internal) "http://stream01.iloveradio.de/iloveradio$channel.mp3" else "http://streams.bigfm.de/${stationName.replace("ilove", "")}ilr-128-mp3",
     website = "http://www.iloveradio.de/streams/",
     public = public
-)
+)*/

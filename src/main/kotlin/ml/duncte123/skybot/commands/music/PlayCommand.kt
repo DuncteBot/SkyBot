@@ -27,12 +27,16 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
 
     init {
         this.withAutoJoin = true
+        this.name = "play"
+        this.helpFunction = BiFunction { _, _ -> "Plays a song on the bot or adds it to the queue" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [url/search term]`" }
     }
 
     override fun run(ctx: CommandContext) {
@@ -91,10 +95,4 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
-
-
-    override fun help(prefix: String) = """Make the bot play song.
-            |Usage: `$prefix$name [url/search term]`""".trimMargin()
-
-    override fun getName(): String = "play"
 }

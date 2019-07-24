@@ -31,6 +31,8 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import org.apache.commons.lang3.StringUtils
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class LyricsCommand : MusicCommand() {
@@ -38,26 +40,36 @@ class LyricsCommand : MusicCommand() {
     private var authToken = ""
     private val apiBase = "https://api.genius.com"
 
-    override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
-        val player = mng.player
+    init {
+        this.name = "lyrics"
+        this.helpFunction = BiFunction { _, _ -> "Search for song lyrics or show the ones for the currently playing song" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [song name]`" }
+    }
 
-        val search: String? = when {
-            ctx.args.isNotEmpty() -> ctx.argsRaw
-            player.playingTrack != null && !player.playingTrack.info.isStream ->
-                player.playingTrack.info.title.trim()
-            else -> null
-        }
+    override fun execute(ctx: CommandContext) {
+        val args = ctx.args
 
-        if (search.isNullOrBlank()) {
-            sendMsg(event, "The player is not currently playing anything!")
+        if (args.isNotEmpty()) {
+            handleSearch(ctx.argsRaw, ctx)
             return
         }
 
+
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val player = mng.player
+
+        if (player.playingTrack == null) {
+            sendMsg(ctx, "The player is not currently playing anything!")
+            return
+        }
+
+        handleSearch(player.playingTrack.info.title.trim(), ctx)
+    }
+
+    private fun handleSearch(search: String, ctx: CommandContext) {
         searchForSong(search, ctx.config.genius, ctx.variables.jackson) {
             if (it.isNullOrBlank()) {
-                sendMsg(event, "There where no lyrics found for the title of this song\n" +
+                sendMsg(ctx, "There where no lyrics found for `$search`\n" +
                     "Alternatively you can try `${ctx.prefix}$name <song name>` to search for the lyrics on this song.\n" +
                     "(sometimes the song names in the player are incorrect)")
             } else {
@@ -66,7 +78,7 @@ class LyricsCommand : MusicCommand() {
                     val text = doc.select("div.lyrics").first().child(0).wholeText()
                         .replace("<br>", "\n")
 
-                    sendEmbed(event, EmbedUtils.defaultEmbed()
+                    sendEmbed(ctx, EmbedUtils.defaultEmbed()
                         .setTitle("Lyrics for $search", url)
                         .setDescription(StringUtils.abbreviate(text, 1900))
                         .appendDescription("\n\n Full lyrics on [genius.com]($url)")
@@ -76,10 +88,6 @@ class LyricsCommand : MusicCommand() {
             }
         }
     }
-
-    override fun help(prefix: String) = "Shows the lyrics to the current song"
-
-    override fun getName() = "lyrics"
 
     private fun getAuthToken(config: DunctebotConfig.Genius, mapper: ObjectMapper): String {
         if (authToken.isBlank()) {
@@ -99,7 +107,7 @@ class LyricsCommand : MusicCommand() {
     private fun searchForSong(t: String?, config: DunctebotConfig.Genius, mapper: ObjectMapper, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
             .header("Authorization", getAuthToken(config, mapper))
-            .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build()
+            .url("$apiBase/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}").build()
         ) { WebParserUtils.toJSONObject(it, mapper) }
             .async {
                 val hits = it.get("response").get("hits")

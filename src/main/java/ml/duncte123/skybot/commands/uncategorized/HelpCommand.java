@@ -133,6 +133,7 @@ public class HelpCommand extends Command {
             builder.addField("Flags", parseFlags(cmd.flags), false);
         }
 
+        sendEmbed(event, builder);
 
         return "Command help for `" +
             cmd.getName() + "` (`<required argument>` `[optional argument]`):\n\n" + cmd.help(cmd.getName(), prefix) +
@@ -159,15 +160,15 @@ public class HelpCommand extends Command {
             } else if (flag.getChar() == null && flag.getWord() != null) {
                 builder.append("`--")
                     .append(flag.getWord())
-                    .append("` > ")
+                    .append("` : ")
                     .append(flag.getDesc())
                     .append('\n');
             } else {
                 builder.append("`-")
                     .append(flag.getChar())
-                    .append('/')
+                    .append("/--")
                     .append(flag.getWord())
-                    .append("` > ")
+                    .append("` : ")
                     .append(flag.getDesc())
                     .append('\n');
             }

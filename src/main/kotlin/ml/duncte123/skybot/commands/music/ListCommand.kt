@@ -26,9 +26,16 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import java.util.*
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
+
+    init {
+        this.name = "list"
+        this.aliases = arrayOf("queue", "q")
+        this.helpFunction = BiFunction {_,_ -> "Shows the current queue"}
+    }
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
@@ -60,11 +67,5 @@ class ListCommand : MusicCommand() {
             }
         }
     }
-
-    override fun help(prefix: String) = "shows the current queue"
-
-    override fun getName(): String = "list"
-
-    override fun getAliases(): Array<String> = arrayOf("queue", "q")
 
 }

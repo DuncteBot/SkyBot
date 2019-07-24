@@ -87,9 +87,11 @@ public abstract class Command implements ICommand {
         execute(ctx);
     }
 
-    public void execute(@Nonnull CommandContext ctx) {
+    /*public void execute(@Nonnull CommandContext ctx) {
         throw new NotImplementedException("This command has not been updated yet");
-    }
+    }*/
+
+    public abstract void execute(@Nonnull CommandContext ctx);
 
     @Override
     public @Nonnull String getName() {

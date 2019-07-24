@@ -34,7 +34,7 @@ object CommandTransformers {
             val obj = output.addObject()
 
             obj.put("name", command.name)
-                .put("help", parseHelp(command))
+                .put("help", command.parseHelp())
 
             val aliases = obj.putArray("aliases")
 
@@ -78,7 +78,7 @@ object CommandTransformers {
 
             for (name in names) {
                 val command = commandManager.getCommand(name)
-                val help = parseHelp(command).replace("\"", "\\\"")
+                val help = command.parseHelp(true).replace("\"", "\\\"")
 
                 appendln("  - name: $name")
                 appendln("    description: \"$help\"")
@@ -88,8 +88,8 @@ object CommandTransformers {
         }
     }
 
-    private fun parseHelp(cmd: ICommand): String {
-        var s = cmd.help(Settings.PREFIX)
+    private fun ICommand.parseHelp(forceAliases: Boolean = false): String {
+        var s = this.help(Settings.PREFIX)
             .replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")
@@ -98,8 +98,8 @@ object CommandTransformers {
             .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
 
-        if (cmd.aliases.isNotEmpty() && cmd.shouldDisplayAliasesInHelp()) {
-            s += "<br />Aliases: " + Settings.PREFIX + cmd.aliases.joinToString(", " + Settings.PREFIX)
+        if (forceAliases || (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp())) {
+            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
         }
 
         return s

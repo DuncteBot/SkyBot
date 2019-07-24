@@ -23,11 +23,18 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import java.util.function.BiFunction
 import kotlin.math.max
 import kotlin.math.min
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class VolumeCommand : MusicCommand() {
+
+    init {
+        this.name = "volume"
+        this.helpFunction = BiFunction { _, _ -> "Sets the volume on the music player" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [volume]`" }
+    }
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
@@ -57,10 +64,4 @@ class VolumeCommand : MusicCommand() {
         }
 
     }
-
-    override fun help(prefix: String) = """Sets the new volume on the player.
-        |Usage: `$prefix$name [new volume]`
-    """.trimMargin()
-
-    override fun getName() = "volume"
 }

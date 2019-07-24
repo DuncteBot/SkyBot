@@ -16,15 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:JvmName("DeHoistUtilsKt")
-
 package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.Permission
@@ -32,40 +30,42 @@ import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class DeHoistCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+class DeHoistCommand : ModBaseCommand() {
 
-        val event = ctx.event
-
-        if (event.message.mentionedMembers.size == 0) {
-            sendMsg(event, """"Incorrect usage
-                |Correct usage: `${ctx.prefix}$name <@user>`
-            """.trimMargin())
-            return
-        }
-        val toDehoist = event.message.mentionedMembers[0]
-        if (!event.guild.selfMember.canInteract(toDehoist)
-            || !event.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)) {
-            sendMsg(event, "I do not have the permission to change that members's nickname")
-            return
-        }
-        if (!event.member.canInteract(toDehoist) || !event.member.hasPermission(Permission.NICKNAME_MANAGE)) {
-            sendMsg(event, "You do not have enough permission to execute this command")
-            return
-        }
-
-        event.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
-            .reason("de-hoist by ${event.author.asTag}").queue()
-        sendSuccess(event.message)
+    init {
+        this.name = "dehoist"
+        this.helpFunction = BiFunction { _, _ -> "De-hoists a user" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user>`" }
+        this.userPermissions = arrayOf(Permission.NICKNAME_MANAGE)
+        this.botPermissions = arrayOf(Permission.NICKNAME_MANAGE)
     }
 
-    override fun help(prefix: String) = """De-hoists a user
-        |Usage: `$prefix$name <@user>`
-    """.trimMargin()
+    override fun run(ctx: CommandContext) {
+        if (ctx.message.mentionedMembers.size == 0) {
+            this.sendUsageInstructions(ctx)
+            return
+        }
 
-    override fun getName() = "dehoist"
+        val toDehoist = ctx.message.mentionedMembers[0]
+        val selfMember = ctx.guild.selfMember
+        val member = ctx.member
+
+        if (!selfMember.canInteract(toDehoist)) {
+            sendMsg(ctx, "I cannot alter that user")
+            return
+        }
+        if (!member.canInteract(toDehoist)) {
+            sendMsg(ctx, "You cannot change the nickname of that user")
+            return
+        }
+
+        ctx.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
+            .reason("de-hoist ctx ${ctx.author.asTag}").queue()
+        sendSuccess(ctx.message)
+    }
 }
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
