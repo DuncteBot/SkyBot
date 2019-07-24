@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -27,20 +26,24 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ImageCommand : Command() {
 
     init {
         this.category = CommandCategory.PATRON
+        this.name = "image"
+        this.helpFunction = BiFunction { _, _ -> "Searches for an image on google" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <search term>`" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         if (isUserOrGuildPatron(event)) {
             if (ctx.args.isEmpty()) {
-                MessageUtils.sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <search term>`")
+                this.sendUsageInstructions(ctx)
                 return
             }
 
@@ -58,9 +61,4 @@ class ImageCommand : Command() {
             }
         }
     }
-
-    override fun help(prefix: String) = """Searches for an image on google
-        |Usage: `$prefix$name <search term>`""".trimMargin()
-
-    override fun getName() = "image"
 }

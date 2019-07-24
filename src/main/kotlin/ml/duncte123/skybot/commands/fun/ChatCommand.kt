@@ -37,6 +37,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
+import java.util.function.BiFunction
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -56,6 +57,9 @@ class ChatCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "chat"
+        this.helpFunction = BiFunction { _, _ -> "Have a chat with DuncteBot" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <message>`" }
 
         commandService.scheduleAtFixedRate({
             val temp = TLongObjectHashMap<ChatSession>(sessions)
@@ -73,8 +77,7 @@ class ChatCommand : Command() {
     }
 
 
-    override fun executeCommand(ctx: CommandContext) {
-
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         if (event.message.contentRaw.contains("prefix")) {
@@ -84,7 +87,7 @@ class ChatCommand : Command() {
         }
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <message>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
@@ -155,11 +158,6 @@ class ChatCommand : Command() {
         message = message.replace("@here", "here").replace("@everyone", "everyone")
         return message
     }
-
-    override fun help(prefix: String) = "Have a chat with dunctebot\n" +
-        "Usage: `$prefix$name <message>`"
-
-    override fun getName() = "chat"
 }
 
 /**
@@ -192,6 +190,7 @@ class ChatSession(userId: Long) {
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun xPathSearch(input: String, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()

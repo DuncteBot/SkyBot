@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.command;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.Permission;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,9 @@ public abstract class Command implements ICommand {
         execute(ctx);
     }
 
-    public abstract void execute(@Nonnull CommandContext ctx);
+    public void execute(@Nonnull CommandContext ctx) {
+        throw new NotImplementedException("This command has not been updated yet");
+    }
 
     @Override
     public @Nonnull String getName() {

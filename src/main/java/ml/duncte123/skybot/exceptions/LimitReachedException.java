@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.exceptions;
 
-public class LimitReachedException extends Exception {
+public class LimitReachedException extends RuntimeException {
     private final int size;
 
     public LimitReachedException(String message, int size) {

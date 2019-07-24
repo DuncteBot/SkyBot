@@ -31,8 +31,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
     init {
-        this.category = CommandCategory.WEEB
         this.displayAliasesInHelp = true
+        this.category = CommandCategory.WEEB
     }
 
     private fun getDefaultWeebEmbed(): EmbedBuilder {

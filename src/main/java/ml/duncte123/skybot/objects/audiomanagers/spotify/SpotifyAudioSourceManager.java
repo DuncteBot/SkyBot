@@ -34,6 +34,7 @@ import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.TrackScheduler;
+import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,12 +166,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final List<AudioTrack> finalPlaylist = new ArrayList<>();
 
             final Playlist spotifyPlaylist = spotifyApi.getPlaylist(playListId).build().execute();
+            final PlaylistTrack[] playlistTracks = spotifyPlaylist.getTracks().getItems();
 
-            for (final PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
-                if (finalPlaylist.size() > TrackScheduler.QUEUE_SIZE) {
-                    break;
-                }
+            if (playlistTracks.length > TrackScheduler.QUEUE_SIZE) {
+                throw new LimitReachedException("", TrackScheduler.QUEUE_SIZE);
+            }
 
+            for (final PlaylistTrack playlistTrack : playlistTracks) {
                 final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
                     + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
 
@@ -181,6 +183,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
         catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
+        }
+        catch (LimitReachedException e) {
+            throw e;
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);

@@ -23,26 +23,22 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DeletCommand : WeebCommandBase() {
     init {
-        this.category = CommandCategory.FUN
         this.displayAliasesInHelp = false
+        this.category = CommandCategory.FUN
+        this.name = "delet"
+        this.aliases = arrayOf("deletthis", "deletethis")
+        this.helpFunction = BiFunction { _, _ -> "Delet this" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         //delet_this
         ctx.weebApi.getRandomImage("delet_this").async {
             sendEmbed(ctx.event, getWeebEmbedImage(it.url))
         }
     }
-
-    override fun help(prefix: String) = """Delet this
-        |Usage: `$prefix$name`
-    """.trimMargin()
-
-    override fun getName() = "delet"
-
-    override fun getAliases() = arrayOf("deletthis", "deletethis")
 }

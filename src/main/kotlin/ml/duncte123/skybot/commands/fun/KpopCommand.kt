@@ -30,41 +30,45 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.sql.SQLException
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class KpopCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "kpop"
+        this.helpFunction = BiFunction { _, _ -> "Gives you a random kpop member, command suggestion by Exa" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [search term]`" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
+        val queryString = if (ctx.args.isNotEmpty()) ctx.argsRaw else ""
+        val member = ctx.variables.apis.getRandomKpopMember(queryString)
 
-        try {
-            val queryString = if (ctx.args.isNotEmpty()) ctx.argsRaw else ""
-            val member = getRandomKpopMember(queryString, ctx.variables.apis)
-
-            val eb = EmbedUtils.defaultEmbed()
-                .setDescription("Here is a kpop member from the group ${member.band}")
-                .addField("Name of the member", member.name, false)
-                .setImage(member.image)
-                .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
-
-            sendEmbed(ctx.event, eb.build())
-        } catch (ignored: SQLException) {
-            MessageUtils.sendMsg(ctx.event, "Nothing found")
+        if (member == null) {
+            MessageUtils.sendMsg(ctx.event, "Nothing found, but we're open to suggestions")
+            return
         }
+
+        val eb = EmbedUtils.defaultEmbed()
+            .setDescription("Here is a kpop member from the group ${member.band}")
+            .addField("Name of the member", member.name, false)
+            .setImage(member.image)
+            .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
+
+        sendEmbed(ctx.event, eb.build())
     }
 
-    override fun help(prefix: String) = "Gives you a random kpop member, command suggestion by Exa\n" +
-        "Usage: `$prefix$name [search term]`"
-
-    override fun getName() = "kpop"
-
-    private fun getRandomKpopMember(search: String, apis: DuncteApis): KpopObject {
+    private fun DuncteApis.getRandomKpopMember(search: String): KpopObject? {
         val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
-        val json = apis.executeDefaultGetRequest("kpop$path", false).get("data")
+        val response = executeDefaultGetRequest("kpop$path", false)
+
+        if (!response.get("success").asBoolean()) {
+            return null
+        }
+
+        val json = response.get("data")
 
         return KpopObject(
             json.get("id").asInt(),
