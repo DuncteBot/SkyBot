@@ -312,7 +312,7 @@ public class AirUtils {
 
         for (final Reminder reminder : reminders) {
             final String message = String.format(
-                "%s you asked me to remind you about %s",
+                "%s you asked me to remind you about \"%s\"",
                 prettyTime.format(reminder.getReminder_date()),
                 reminder.getReminder().trim()
             );

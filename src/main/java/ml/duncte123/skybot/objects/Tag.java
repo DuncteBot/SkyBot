@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tag {
     public String name;
     public String content;

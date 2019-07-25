@@ -146,6 +146,7 @@ public class CommandUtils {
                         currentFlag = String.valueOf(tempFlag.charAt(i1));
                         output.put(currentFlag, new ArrayList<>());
                     }
+                    pushFlag = false;
                 }
             } else if (word.startsWith("\\-")) {
                 word = word.substring(1);
