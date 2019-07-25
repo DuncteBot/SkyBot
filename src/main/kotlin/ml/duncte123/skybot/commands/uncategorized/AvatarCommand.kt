@@ -23,9 +23,17 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.entities.User
+import java.util.function.BiFunction
 
 class AvatarCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    init {
+        this.name = "avatar"
+        this.helpFunction = BiFunction { _, _ -> "Shows your avatar or the one for the specified user" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@user]`" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         var user: User? = ctx.author
 
         if (ctx.args.isNotEmpty()) {
@@ -47,11 +55,5 @@ class AvatarCommand : Command() {
 
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
-
-    override fun getName() = "avatar"
-
-    override fun help(prefix: String) = """Shows the avatar for a you or the specified user
-        |Usage: `$prefix$name [@user]`
-    """.trimMargin()
 
 }

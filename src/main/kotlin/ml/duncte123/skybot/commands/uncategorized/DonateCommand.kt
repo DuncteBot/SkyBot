@@ -21,10 +21,16 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 class DonateCommand : Command() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "donate"
+        this.helpFunction = BiFunction { _, _ -> "Help keeping the bot up by donating" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val amount = if (ctx.args.isNotEmpty()) "/" + ctx.argsRaw else ""
 
         MessageUtils.sendMsg(ctx.event, """Hey there thank you for your interest in supporting the bot.
@@ -35,10 +41,4 @@ class DonateCommand : Command() {
                         |All donations will go directly into development of the bot ❤
                     """.trimMargin())
     }
-
-    override fun getName() = "donate"
-
-    override fun help(prefix: String) = """Help keeping the bot up by donating
-        |Usage: `$prefix$name [amount]`
-    """.trimMargin()
 }

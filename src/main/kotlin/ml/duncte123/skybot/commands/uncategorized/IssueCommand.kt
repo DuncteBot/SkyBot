@@ -25,20 +25,32 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class IssueCommand : Command() {
 
     val regex = "\\s+".toRegex()
 
-    @Suppress()
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "issue"
+        this.aliases = arrayOf("bug", "bugreport")
+        this.helpFunction = BiFunction { _, _ ->
+            """Reports heavy and weird issues to the developers.
+        |This will create an invite to your server, so we can join and help you directly.
+        |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
+    """.trimMargin()
+        }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <issue json>` (issue can be generated at https://dunctebot.com/issuegenerator" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         when (ctx.args.size) {
             0 -> {
                 sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve the issue faster.
-                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin())
+                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>>""".trimMargin())
             }
             else -> {
                 try {
@@ -83,15 +95,6 @@ class IssueCommand : Command() {
             }
         }
     }
-
-    override fun help(prefix: String) = """Reports heavy and weird issues to the developers.
-        |This will create an invite to your server, so we can join and help you directly.
-        |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
-    """.trimMargin()
-
-    override fun getName(): String = "issue"
-
-    override fun getAliases() = arrayOf("bug", "bugreport")
 }
 
 class Issue {

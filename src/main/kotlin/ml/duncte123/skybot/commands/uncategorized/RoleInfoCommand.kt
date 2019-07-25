@@ -27,9 +27,18 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import net.dv8tion.jda.core.entities.Role
+import java.util.function.BiFunction
 
 class RoleInfoCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    init {
+        this.name = "roleinfo"
+        this.aliases = arrayOf("role", "ri")
+        this.helpFunction = BiFunction { _, _ -> "Displays info about a specified role or the highest role that you have" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@role]`" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val roles: List<Role> = if (ctx.args.isEmpty()) {
             ctx.member.roles
         } else {
@@ -63,12 +72,4 @@ class RoleInfoCommand : Command() {
 
         sendEmbedRaw(ctx.channel, embed.build()) {}
     }
-
-    override fun getName() = "roleinfo"
-
-    override fun getAliases() = arrayOf("role", "ri")
-
-    override fun help(prefix: String) = """Displays info about a specified role or the highest role that you have
-        |Usage `$prefix$name [role]`
-    """.trimMargin()
 }

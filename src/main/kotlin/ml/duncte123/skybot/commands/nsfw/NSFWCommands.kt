@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class NSFWCommands : Command() {
@@ -33,12 +34,14 @@ class NSFWCommands : Command() {
     private val nekkobotBase = "https://nekobot.xyz/api/image?type="
 
     init {
-        this.category = CommandCategory.NSFW
         this.displayAliasesInHelp = true
+        this.category = CommandCategory.NSFW
+        this.name = "lewdneko"
+        this.aliases = arrayOf("carsandhentai", "lewdkitsune", "hentai")
+        this.helpFunction = BiFunction { invoke, _ -> this.parseCommandHelp(invoke) }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
-
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         if (!event.channel.isNSFW) {
@@ -80,39 +83,13 @@ class NSFWCommands : Command() {
         }
     }
 
-    override fun help(prefix: String) = """`${prefix}lewdneko` => Gives a very lewd neko
-        |`${prefix}carsandhentai` => Delet this
-        |`${prefix}lewdkitsune` => Shows you a lewd kitsune
-        |`${prefix}hentai` => Just some hentai
-    """.trimMargin()
-
-    override fun help(invoke: String, prefix: String): String {
+    private fun parseCommandHelp(invoke: String): String {
         return when (invoke) {
-            "lewdneko" -> {
-                """Gives a very lewd neko
-                    |Usage `$prefix$invoke`
-                """.trimMargin()
-            }
-            "carsandhentai" -> {
-                """Delet this
-                    |Usage `$prefix$invoke`
-                """.trimMargin()
-            }
-            "lewdkitsune" -> {
-                """Shows you a lewd kitsune
-                    |Usage `$prefix$invoke`
-                """.trimMargin()
-            }
-            "hentai" -> {
-                """Just some hentai
-                    |Usage `$prefix$invoke`
-                """.trimMargin()
-            }
+            "lewdneko" -> "Gives a very lewd neko"
+            "carsandhentai" -> "Delet this"
+            "lewdkitsune" -> "Shows you a lewd kitsune"
+            "hentai" -> "Just some hentai"
             else -> "No U"
         }
     }
-
-    override fun getName() = "lewdneko"
-
-    override fun getAliases() = arrayOf("carsandhentai", "lewdkitsune", "hentai")
 }

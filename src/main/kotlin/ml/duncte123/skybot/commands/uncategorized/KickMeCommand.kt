@@ -25,17 +25,24 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class KickMeCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    init {
+        this.name = "kickme"
+        this.helpFunction = BiFunction { _, _ -> "Kicks you off the server" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val prefix = ctx.prefix
         val event = ctx.event
         val args = ctx.args
 
         val warningMsg = """**WARNING** this command will kick you from this server
-                        |If you are sure that you want to kick yourself off this server use `${prefix}kickme YESIMSURE`
-                        |By running `${prefix}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
+                        |If you are sure that you want to kick yourself off this server use `$prefix$name YESIMSURE`
+                        |By running `$prefix$name YESIMSURE` you agree that you are responsible for the consequences of this command.
                         |DuncteBot and any of it's developers are not responsible for your own kick by running this command
                     """.trimMargin()
         if (args.isEmpty() || args[0] != "YESIMSURE") {
@@ -62,10 +69,4 @@ class KickMeCommand : Command() {
             MessageUtils.sendMsg(event, warningMsg)
         }
     }
-
-    override fun help(prefix: String) = """Kickes you off the server
-                    |Usage: `$prefix$name`
-                """.trimMargin()
-
-    override fun getName() = "kickme"
 }

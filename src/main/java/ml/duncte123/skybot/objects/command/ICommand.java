@@ -36,12 +36,7 @@ public interface ICommand {
     }
 
     @Nonnull
-    String help(@Nonnull String prefix);
-
-    @Nonnull
-    default String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return help(prefix);
-    }
+    String help(@Nonnull String invoke, @Nonnull String prefix);
 
     @Nonnull
     CommandCategory getCategory();

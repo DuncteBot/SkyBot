@@ -99,19 +99,12 @@ public abstract class Command implements ICommand {
     }
 
     @Override
-    public @Nonnull String[] getAliases() {
+    public final @Nonnull String[] getAliases() {
         return this.aliases;
     }
 
     @Override
-    public @Nonnull
-    String help(@Nonnull String prefix) {
-        return this.help("", prefix);
-    }
-
-    @Override
-    public @Nonnull
-    String help(@Nonnull String invoke, @Nonnull String prefix) {
+    public final @Nonnull String help(@Nonnull String invoke, @Nonnull String prefix) {
         return this.helpFunction.apply(invoke, prefix);
     }
 

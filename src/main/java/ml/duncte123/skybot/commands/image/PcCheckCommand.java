@@ -44,17 +44,4 @@ public class PcCheckCommand extends ImageCommandBase {
 
         ctx.getBlargbot().getPcCheck(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "WHoops get your pc checked\n" +
-            "Usage: `" + prefix + "pccheck <reason>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "pccheck";
-    }
 }

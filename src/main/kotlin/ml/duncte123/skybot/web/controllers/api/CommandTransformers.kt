@@ -89,7 +89,7 @@ object CommandTransformers {
     }
 
     private fun ICommand.parseHelp(forceAliases: Boolean = false): String {
-        var s = this.help(Settings.PREFIX)
+        var s = this.help(System.currentTimeMillis().toString(), Settings.PREFIX)
             .replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")

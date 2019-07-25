@@ -22,17 +22,19 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SuggestCommand : Command() {
 
-    override fun executeCommand(ctx: CommandContext) {
-        MessageUtils.sendMsg(ctx.event, """You can leave suggestions for the bot on his page: https://dunctebot.com/suggest
+    init {
+        this.name = "suggest"
+        this.helpFunction = BiFunction { _, _ -> "Suggest a new feature for DuncteBot!" }
+    }
+
+    override fun execute(ctx: CommandContext) {
+        MessageUtils.sendMsg(ctx.event, """You can leave you suggestions for the bot on his page: https://dunctebot.com/suggest
             |Make sure to join our server so we can contact you when needed: <https://discord.gg/NKM9Xtk>
         """.trimMargin())
     }
-
-    override fun getName() = "suggest"
-
-    override fun help(prefix: String) = "Suggest something to be in Dunctebot!"
 }
