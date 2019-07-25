@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -59,10 +58,8 @@ public class BanCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
+        final List<String> args = ctx.getArgs();
 
         if (mentioned.isEmpty() || args.size() < 2) {
             this.sendUsageInstructions(ctx);
@@ -76,9 +73,9 @@ public class BanCommand extends ModBaseCommand {
         }
 
         final User toBan = toBanMember.getUser();
-        if (toBan.equals(event.getAuthor()) &&
-            !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-            sendMsg(event, "You are not permitted to perform this action.");
+        if (toBan.equals(ctx.getAuthor()) &&
+            !ctx.getMember().canInteract(Objects.requireNonNull(ctx.getGuild().getMember(toBan)))) {
+            sendMsg(ctx, "You are not permitted to perform this action.");
             return;
         }
 
@@ -91,10 +88,10 @@ public class BanCommand extends ModBaseCommand {
 
         final String fReason = reason;
 
-        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+        ctx.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (m) -> {
-                modLog(event.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
-                sendSuccess(event.getMessage());
+                modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                sendSuccess(ctx.getMessage());
             }
         );
     }

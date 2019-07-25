@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -57,7 +56,6 @@ public class MuteCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
@@ -69,16 +67,16 @@ public class MuteCommand extends ModBaseCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
+            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
             return;
         }
 
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
         final Member toMute = mentioned.get(0);
-        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final Role role = ctx.getGuild().getRoleById(settings.getMuteRoleId());
 
-        if (canNotProceed(ctx, event, mod, toMute, role, self)) {
+        if (canNotProceed(ctx, ctx.getEvent(), mod, toMute, role, self)) {
             return;
         }
 
@@ -89,10 +87,10 @@ public class MuteCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by " + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
-                sendSuccess(event.getMessage());
+        ctx.getGuild().getController().addSingleRoleToMember(toMute, role)
+            .reason("Muted by " + ctx.getAuthor().getAsTag() + ": " + reason).queue(success -> {
+                ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+                sendSuccess(ctx.getMessage());
             }
         );
 

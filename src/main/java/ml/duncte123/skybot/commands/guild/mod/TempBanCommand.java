@@ -57,7 +57,6 @@ public class TempBanCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
@@ -68,8 +67,8 @@ public class TempBanCommand extends ModBaseCommand {
 
         final Member toBanMember = mentioned.get(0);
 
-        if (toBanMember.equals(event.getMember())) {
-            sendMsg(event, "You cannot ban yourself");
+        if (toBanMember.equals(ctx.getMember())) {
+            sendMsg(ctx, "You cannot ban yourself");
             return;
         }
 
@@ -84,7 +83,7 @@ public class TempBanCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
+        final Duration duration = getDuration(args.get(1), getName(), ctx.getEvent(), ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -94,21 +93,21 @@ public class TempBanCommand extends ModBaseCommand {
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        event.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
+        ctx.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
             (__) -> {
                 if (duration.getSeconds() > 0) {
-                    addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
-                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
+                    addBannedUserToDb(ctx.getDatabaseAdapter(), ctx.getAuthor().getIdLong(),
+                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, ctx.getGuild().getIdLong());
 
-                    modLog(event.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     logger.error("Perm ban code in temp ban ran {}", args);
-                    modLog(event.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 }
             }
         );
 
-        sendSuccess(event.getMessage());
+        sendSuccess(ctx.getMessage());
     }
 
     @Nullable
