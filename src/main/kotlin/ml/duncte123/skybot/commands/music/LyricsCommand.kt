@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -91,14 +92,16 @@ class LyricsCommand : MusicCommand() {
 
     private fun getAuthToken(config: DunctebotConfig.Genius, mapper: ObjectMapper): String {
         if (authToken.isBlank()) {
-            val formData = HashMap<String, Any>()
-            formData["client_id"] = config.client_id
-            formData["client_secret"] = config.client_secret
-            formData["grant_type"] = "client_credentials"
+            val formData = FormRequestBody()
+            formData.append("client_id", config.client_id)
+            formData.append("client_secret", config.client_secret)
+            formData.append("grant_type", "client_credentials")
 
-            val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
+            val json = WebUtils.ins.postRequest("$apiBase/oauth/token", formData)
+                .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
+                .execute()
 
-            this.authToken = mapper.readTree(raw).get("access_token").asText("")
+            this.authToken = json.get("access_token").asText("")
         }
 
         return "Bearer $authToken"

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.WebUtils;
-import me.duncte123.botcommons.web.WebUtils.EncodingType;
+import me.duncte123.botcommons.web.ContentType;
 import me.duncte123.weebJava.helpers.IOHelper;
 import ml.duncte123.skybot.Author;
 import okhttp3.RequestBody;
@@ -76,19 +76,20 @@ public class BlargBot {
         return WebUtils.ins.prepareRaw(
             defaultRequest()
                 .url("https://api.blargbot.xyz/api/v1/" + path)
-                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), jsonToString(body)))
+                .header("Content-Type", ContentType.JSON.getType())
+                .post(RequestBody.create(jsonToString(body)))
                 .addHeader("Authorization", token)
                 .build(),
             IOHelper::read
         );
     }
 
-    private String jsonToString(JsonNode body) {
+    private byte[] jsonToString(JsonNode body) {
         try {
-            return mapper.writeValueAsString(body);
+            return mapper.writeValueAsBytes(body);
         }
         catch (JsonProcessingException ignored) {
-            return ""; // Should never happen
+            return new byte[0]; // Should never happen
         }
     }
 }

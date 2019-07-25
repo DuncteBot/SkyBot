@@ -21,7 +21,9 @@ package ml.duncte123.skybot.commands.`fun`
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -165,19 +167,20 @@ class ChatCommand : Command() {
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatSession(userId: Long) {
-    private val vars: MutableMap<String, Any>
+    private val body = FormRequestBody()
 
     init {
-        vars = LinkedHashMap()
-        vars["botid"] = "b0dafd24ee35a477"
-        vars["custid"] = userId
+        body.append("botid", "b0dafd24ee35a477")
+        body.append("custid", userId.toString())
     }
 
     var time = Date()
 
     fun think(text: String, response: (String) -> Unit) {
-        vars["input"] = URLEncoder.encode(text, "UTF-8")
-        WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
+        body.append("input",text)
+        WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
+            .build({ it.body!!.string() }, WebParserUtils::handleError)
+            .async {
             try {
                 response.invoke(xPathSearch(it, "//result/that/text()"))
             } catch (e: Exception) {

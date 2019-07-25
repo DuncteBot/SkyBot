@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message.Attachment;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -140,6 +141,16 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public String parseTextArgsForImage(CommandContext ctx) {
-        return ctx.getArgsDisplay();
+        String text = ctx.getArgsDisplay();
+
+        for (final Flag f : this.flags) {
+            if (f.getWord() != null) {
+                text = text.replace("--" + f.getWord(), "");
+            }
+
+            text = text.replace("-" + f.getFlag(), "");
+        }
+
+        return text.trim();
     }
 }

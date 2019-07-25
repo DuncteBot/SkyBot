@@ -24,6 +24,7 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.StringUtils;
+import me.duncte123.botcommons.web.GoogleLinkLength;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
@@ -235,7 +236,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url, String googleKey) {
-        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey);
+        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey, GoogleLinkLength.SHORT);
     }
 
     public static String colorToHex(int hex) {

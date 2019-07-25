@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
@@ -223,15 +224,15 @@ class EvalCommand : Command() {
     companion object {
         fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
             val base = "https://paste.menudocs.org"
-            val dataMap = hashMapOf<String, Any>()
+            val body = FormRequestBody()
 
-            dataMap["text"] = text
-            dataMap["expire"] = expiration
-            dataMap["lang"] = lang
+            body.append("text", text)
+            body.append("expire", expiration)
+            body.append("lang", lang)
 
-            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, WebUtils.EncodingType.TEXT_HTML)
+            val loc = WebUtils.ins.postRequest("$base/paste/new", body)
                 .build({
-                    return@build Jsoup.parse(it.body()!!.string())
+                    return@build Jsoup.parse(it.body!!.string())
                         .select("a[title=\"View Raw\"]")
                         .first().attr("href")
                         .replaceFirst("/raw", "")

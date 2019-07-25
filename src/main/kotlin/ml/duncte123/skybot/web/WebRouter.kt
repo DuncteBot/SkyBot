@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.ContentType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
@@ -166,7 +166,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         // Api routes
         path("/api") {
             before("/*") { _, response ->
-                response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
+                response.type(ContentType.JSON.type)
                 response.header("Access-Control-Allow-Origin", "*")
                 response.header("Access-Control-Allow-Credentials", "true")
                 response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
@@ -225,13 +225,13 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             get("/commands.php") { _, response ->
-                response.type(WebUtils.EncodingType.TEXT_PLAIN.type)
+                response.type(ContentType.TEXT_PLAIN.type)
 
                 return@get CommandTransformers.toPHP(variables.commandManager)
             }
 
             get("/command_storage.html") { _, response ->
-                response.type(WebUtils.EncodingType.TEXT_PLAIN.type)
+                response.type(ContentType.TEXT_PLAIN.type)
 
                 return@get CommandTransformers.toJekyll(variables.commandManager)
             }

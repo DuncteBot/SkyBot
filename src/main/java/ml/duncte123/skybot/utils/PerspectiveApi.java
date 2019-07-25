@@ -18,11 +18,15 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import net.dv8tion.jda.core.exceptions.HttpException;
 
 import java.util.Objects;
@@ -50,7 +54,7 @@ public class PerspectiveApi {
             final JsonNode score = json.get("attributeScores").get("SEVERE_TOXICITY")
                 .get("summaryScore");
 
-            return Float.valueOf(score.get("value").asText());
+            return Float.parseFloat(score.get("value").asText());
         }
         catch (Exception e) {
             Sentry.capture(e);
@@ -60,10 +64,26 @@ public class PerspectiveApi {
         }
     }
 
-    private static String genBody(String text, String channelId) {
-        return "{\"comment\":{\"text\":" +
-            JSONQuoter.quote(text) +
-            "},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
+    private static JSONRequestBody genBody(String text, String channelId, ObjectMapper mapper) {
+        final ObjectNode mainNode = mapper.createObjectNode();
+        final ObjectNode commentNode = mapper.createObjectNode()
+            .put("text", text);
+
+        final ObjectNode requestedAttributesNode = mapper.createObjectNode();
+        requestedAttributesNode.set("SEVERE_TOXICITY", mapper.createObjectNode());
+
+        mainNode.set("comment", commentNode);
+        mainNode.set("requestedAttributes", requestedAttributesNode);
+        mainNode.put("sessionId", channelId);
+
+        try {
+            return JSONRequestBody.fromJackson(mainNode);
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private static String genUrl(String apiKey) {
@@ -71,8 +91,8 @@ public class PerspectiveApi {
     }
 
     private static JsonNode makeRequest(String text, String channelId, String apiKey, ObjectMapper mapper) throws RequestException {
-        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId),
-            (it) -> mapper.readTree(Objects.requireNonNull(it.body()).byteStream())
-        ).execute();
+        return WebUtils.ins.postRequest(genUrl(apiKey), Objects.requireNonNull(genBody(text, channelId, mapper)))
+            .build((it) -> WebParserUtils.toJSONObject(it, mapper), WebParserUtils::handleError)
+            .execute();
     }
 }
