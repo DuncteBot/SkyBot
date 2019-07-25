@@ -43,6 +43,11 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
+
+/**
+ * The methods {@link #splitInput(String)} and {@link #parseInput(Flag[], List)} have been rewritten in java from JavaScript
+ * The original methods are available at https://github.com/blargbot/blargbot/
+ */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandUtils {
     public static final TLongSet patrons = MapUtils.newLongSet();
