@@ -121,8 +121,8 @@ public class HelpCommand extends Command {
         sendMsg(event, "That command could not be found, try `" + prefix + "help` for a list of commands");
     }
 
-    private String sendCommandHelpMessage(GuildMessageReceivedEvent event, Command cmd, String prefix, String invoke) {
-        EmbedBuilder builder = EmbedUtils
+    private void sendCommandHelpMessage(GuildMessageReceivedEvent event, Command cmd, String prefix, String invoke) {
+        final EmbedBuilder builder = EmbedUtils
             .defaultEmbed()
             .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])",
                 "https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName())
@@ -134,11 +134,6 @@ public class HelpCommand extends Command {
         }
 
         sendEmbed(event, builder);
-
-        return "Command help for `" +
-            cmd.getName() + "` (`<required argument>` `[optional argument]`):\n\n" + cmd.help(cmd.getName(), prefix) +
-            (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
-            "\n\nSource code: <https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName() + '>';
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {
@@ -150,7 +145,7 @@ public class HelpCommand extends Command {
     private String parseFlags(Flag[] flags) {
         final StringBuilder builder = new StringBuilder();
 
-        for (Flag flag : flags) {
+        for (final Flag flag : flags) {
             if (flag.getWord() == null) {
                 builder.append("`-")
                     .append(flag.getFlag())

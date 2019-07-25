@@ -78,8 +78,6 @@ public class UnbanCommand extends ModBaseCommand {
                             reason = reason + ": " + String.join(" ", flags.get("r"));
                         }
 
-                        final String fReason = reason;
-
                         event.getGuild().getController().unban(bannedUser)
                             .reason(reason)
                             .queue();

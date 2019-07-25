@@ -33,11 +33,11 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -65,7 +65,7 @@ public class CommandUtils {
         .addMethods(DiscordMethods.getMethods())
         .build();
 
-    public static List<String> splitInput(@NotNull String content) {
+    /*public static List<String> splitInput(@Nonnull String content) {
         final List<String> input = new ArrayList<>(Arrays.asList(content.split("\\s+")));
 
         if (!input.isEmpty() && input.get(0).isBlank()) {
@@ -115,11 +115,11 @@ public class CommandUtils {
         }
 
         return words;
-    }
+    }*/
 
     @Nonnull
     public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
-        final Map<String, List<String>> output = new HashMap<>();
+        final Map<String, List<String>> output = new ConcurrentHashMap<>();
         output.put("undefined", new ArrayList<>());
         String  currentFlag = "";
 
@@ -130,7 +130,7 @@ public class CommandUtils {
             if (word.startsWith("--")) {
                 if (word.length() > 2) {
                     final String fWord = word;
-                    List<Flag> flags = Arrays.stream(map)
+                    final List<Flag> flags = Arrays.stream(map)
                         .filter((f) -> f.getWord() != null && f.getWord().equals(fWord.substring(2).toLowerCase()))
                         .collect(Collectors.toList());
 

@@ -21,8 +21,6 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.util.function.BiFunction

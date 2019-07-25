@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.apis.alexflipnote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;

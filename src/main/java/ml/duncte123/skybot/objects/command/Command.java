@@ -94,17 +94,20 @@ public abstract class Command implements ICommand {
     public abstract void execute(@Nonnull CommandContext ctx);
 
     @Override
-    public @Nonnull String getName() {
+    public @Nonnull
+    String getName() {
         return this.name;
     }
 
     @Override
-    public final @Nonnull String[] getAliases() {
+    public final @Nonnull
+    String[] getAliases() {
         return this.aliases;
     }
 
     @Override
-    public final @Nonnull String help(@Nonnull String invoke, @Nonnull String prefix) {
+    public final @Nonnull
+    String help(@Nonnull String invoke, @Nonnull String prefix) {
         return this.helpFunction.apply(invoke, prefix);
     }
 
@@ -118,7 +121,8 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    public @Nonnull String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
+    public @Nonnull
+    String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
         return this.usageInstructions.apply(invoke, prefix);
     }
 
