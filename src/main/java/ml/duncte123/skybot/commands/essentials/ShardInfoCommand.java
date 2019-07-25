@@ -58,6 +58,7 @@ public class ShardInfoCommand extends Command {
         this.helpFunction = (invoke, prefix) -> "Get information about all things shards";
         this.flags = new Flag[]{
             new Flag(
+                'm',
                 "mobile",
                 "Shows a mobile friendly embed instead"
             ),

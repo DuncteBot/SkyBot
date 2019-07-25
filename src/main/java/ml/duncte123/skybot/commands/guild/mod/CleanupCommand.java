@@ -60,10 +60,12 @@ public class CleanupCommand extends ModBaseCommand {
         };
         this.flags = new Flag[]{
             new Flag(
+                'p',
                 "keep-pinned",
                 "If this flag is set the messages that are pinned in the channel will be skipped"
             ),
             new Flag(
+                'b',
                 "bots-only",
                 "If this flag is set only messages that are from bots will be deleted"
             ),

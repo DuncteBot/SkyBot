@@ -59,6 +59,7 @@ public class SetPronounsCommand extends Command {
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + "  <pronouns> [--plural]`";
         this.flags = new Flag[]{
             new Flag(
+                'p',
                 "plural",
                 "Marks your pronouns as being plural (is vs are)"
             ),

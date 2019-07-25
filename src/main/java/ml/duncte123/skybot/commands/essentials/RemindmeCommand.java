@@ -51,6 +51,7 @@ public class RemindmeCommand extends Command {
                 "Sets the time for the reminder"
             ),
             new Flag(
+                'c',
                 "channel",
                 "Tells the reminder to remind you in this channel"
             ),

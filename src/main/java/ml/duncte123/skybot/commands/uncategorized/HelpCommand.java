@@ -151,21 +151,15 @@ public class HelpCommand extends Command {
         final StringBuilder builder = new StringBuilder();
 
         for (Flag flag : flags) {
-            if (flag.getChar() != null && flag.getWord() == null) {
+            if (flag.getWord() == null) {
                 builder.append("`-")
-                    .append(flag.getChar())
+                    .append(flag.getFlag())
                     .append("` > ")
-                    .append(flag.getDesc())
-                    .append('\n');
-            } else if (flag.getChar() == null && flag.getWord() != null) {
-                builder.append("`--")
-                    .append(flag.getWord())
-                    .append("` : ")
                     .append(flag.getDesc())
                     .append('\n');
             } else {
                 builder.append("`-")
-                    .append(flag.getChar())
+                    .append(flag.getFlag())
                     .append("/--")
                     .append(flag.getWord())
                     .append("` : ")

@@ -281,6 +281,15 @@ public class CommandManager {
                         command.getName()
                     ));
                 }
+
+                if (this.commands.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present for command (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.commands.get(alias).getClass().getSimpleName(),
+                        command.getClass().getSimpleName()
+                    ));
+                }
             }
 
             for (final String alias : lowerAliasses) {
@@ -416,6 +425,9 @@ public class CommandManager {
                 }
 
                 this.addCommand(command);
+            }
+            catch (IllegalArgumentException e) {
+                throw e;
             }
             catch (Exception ignored) {
             }

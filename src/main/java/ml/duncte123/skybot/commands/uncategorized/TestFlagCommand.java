@@ -24,24 +24,23 @@ import ml.duncte123.skybot.objects.command.Flag;
 
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 public class TestFlagCommand extends Command {
 
     public TestFlagCommand() {
-        this.name = "flag";
+        this.name = "testflag";
         this.flags = new Flag[] {
           new Flag(
               't',
+              "flag",
               "first test flag"
-          ),
-          new Flag(
-              "test",
-              "second test flag"
           ),
         };
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        //
+        sendMsg(ctx, ctx.getParsedFlags(this).toString());
     }
 }

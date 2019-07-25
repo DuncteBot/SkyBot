@@ -26,16 +26,20 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -55,6 +59,109 @@ public class CommandUtils {
     public static final Supplier<Parser> PARSER_SUPPLIER = () -> JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
         .build();
+
+    public static List<String> splitInput(@NotNull String content) {
+        final List<String> input = new ArrayList<>(Arrays.asList(content.split("\\s+")));
+
+        if (!input.isEmpty() && input.get(0).isBlank()) {
+            input.remove(0);
+        }
+        if (!input.isEmpty() && input.get(input.size() - 1).isBlank()) {
+            input.remove(input.size() - 1);
+        }
+
+        List<String> words = new ArrayList<>();
+        boolean inQuote = false;
+        StringBuilder quoted = new StringBuilder();
+
+        for (final String i : input) {
+            if (!inQuote) {
+                // Normal quote            Escaped quote
+                if (i.startsWith("\"") && !i.startsWith("\\\"")) {
+                    inQuote = true;
+                    if (i.endsWith("\"") && !i.endsWith("\\\"")) {
+                        inQuote = false;
+                        words.add(i.substring(1, i.length() - 1));
+                    } else {
+                        quoted = new StringBuilder();
+                        quoted.append(i.substring(1)).append(' ');
+                    }
+                } else {
+                    words.add(i);
+                }
+            } else { // inQuote
+                if (i.endsWith("\"") && !i.endsWith("\\\"")) {
+                    inQuote = false;
+                    //noinspection StringOperationCanBeSimplified
+                    quoted.append(i.substring(0, i.length() - 1));
+                    words.add(quoted.toString());
+                } else {
+                    quoted.append(i).append(' ');
+                }
+            }
+        }
+
+        if (inQuote) {
+            words = input;
+        }
+
+        for (int i = 0; i < words.size(); i++) {
+            words.set(i, words.get(i).replace("\"", ""));
+        }
+
+        return words;
+    }
+
+    @Nonnull
+    public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
+        final Map<String, List<String>> output = new HashMap<>();
+        output.put("undefined", new ArrayList<>());
+        String  currentFlag = "";
+
+        for (final String s : words) {
+            boolean pushFlag = true;
+            String word = s;
+
+            if (word.startsWith("--")) {
+                if (word.length() > 2) {
+                    final String fWord = word;
+                    List<Flag> flags = Arrays.stream(map)
+                        .filter((f) -> f.getWord() != null && f.getWord().equals(fWord.substring(2).toLowerCase()))
+                        .collect(Collectors.toList());
+
+                    if (!flags.isEmpty()) {
+                        currentFlag = String.valueOf(flags.get(0).getFlag());
+                        output.put(currentFlag, new ArrayList<>());
+                        pushFlag = false;
+                    }
+                } else {
+                    currentFlag = "";
+                    pushFlag = false;
+                }
+            } else if (word.startsWith("-")) {
+                if (word.length() > 1) {
+                    final String tempFlag = word.substring(1);
+
+                    for (int i1 = 0; i1 < tempFlag.length(); i1++) {
+                        currentFlag = String.valueOf(tempFlag.charAt(i1));
+                        output.put(currentFlag, new ArrayList<>());
+                    }
+                }
+            } else if (word.startsWith("\\-")) {
+                word = word.substring(1);
+            }
+
+            if (pushFlag) {
+                if (!currentFlag.isBlank()) {
+                    output.get(currentFlag).add(word);
+                } else {
+                    output.get("undefined").add(word);
+                }
+            }
+        }
+
+        return output;
+    }
 
     public static String parseJagTag(CommandContext ctx, String content) {
         final Parser parser = PARSER_SUPPLIER.get()

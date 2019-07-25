@@ -37,6 +37,7 @@ public class ShitCommand extends NoPatronImageCommand {
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text> [--plural]`";
         this.flags = new Flag[]{
             new Flag(
+                'p',
                 "plural",
                 "Make this exclamation plural (is vs are)"
             ),
