@@ -84,14 +84,18 @@ public class KickCommand extends ModBaseCommand {
                 return;
             }
 
-            final AuditableRestAction<Void> kickAction = event.getGuild().getController().kick(toKickMember);
+            final AuditableRestAction<Void> kickAction = event.getGuild()
+                .getController()
+                .kick(toKickMember)
+                .reason("Kicked by " + event.getAuthor().getAsTag());
+
             String reason = null;
+            final var flags = ctx.getParsedFlags(this);
 
-
-            if (!args.isEmpty()) {
-                reason = String.join(" ", args.subList(1, args.size()));
+            if (flags.containsKey("r")) {
+                reason = String.join(" ", flags.get("r"));
                 //noinspection ResultOfMethodCallIgnored
-                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason);
+                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + ": " + reason);
             }
 
             final String finalReason = reason;

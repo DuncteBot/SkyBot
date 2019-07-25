@@ -87,14 +87,20 @@ public class TempMuteCommand extends ModBaseCommand {
             return;
         }
 
-        final String reason = String.join(" ", args.subList(2, args.size()));
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
         final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
 
         if (duration == null) {
             return;
         }
 
-        final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final String fReason = reason;
         final String finalDate = AirUtils.getDatabaseDateFormat(duration);
 
         ctx.getDatabaseAdapter().createMute(

@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -79,21 +78,19 @@ public class CleanupCommand extends ModBaseCommand {
         final List<String> args = ctx.getArgs();
 
         int total = 5;
-        boolean keepPinned = false;
-        boolean clearBots = false;
 
         if (args.size() > 3) {
             sendErrorWithMessage(event.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 
+        final var flags = ctx.getParsedFlags(this);
+        final boolean keepPinned = flags.containsKey("p");
+        final boolean clearBots = flags.containsKey("b");
+
         // if size == 0 then this will just be skipped
         for (final String arg : args) {
-            if (arg.equalsIgnoreCase("keep-pinned")) {
-                keepPinned = true;
-            } else if (arg.equalsIgnoreCase("bots-only")) {
-                clearBots = true;
-            } else if (AirUtils.isInt(arg)) {
+            if (AirUtils.isInt(arg)) {
                 try {
                     total = Integer.parseInt(args.get(0));
                 }
@@ -110,17 +107,15 @@ public class CleanupCommand extends ModBaseCommand {
             }
         }
 
-        @SinceSkybot(version = "3.78.2") final boolean keepPinnedFinal = keepPinned;
-        final boolean clearBotsFinal = clearBots;
         final TextChannel channel = event.getChannel();
         // Start of the annotation
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();
 
-            if (keepPinnedFinal) {
+            if (keepPinned) {
                 msgStream = msgStream.filter((msg) -> !msg.isPinned());
             }
-            if (clearBotsFinal) {
+            if (clearBots) {
                 msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
             }
 

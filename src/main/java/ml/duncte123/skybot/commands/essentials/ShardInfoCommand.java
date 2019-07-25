@@ -68,8 +68,9 @@ public class ShardInfoCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
+        final var flags = ctx.getParsedFlags(this);
 
-        if (!args.isEmpty() && "--mobile".equalsIgnoreCase(args.get(0))) {
+        if (!args.isEmpty() && flags.containsKey("m")) {
             embedTable(ctx);
             return;
         }

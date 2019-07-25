@@ -71,7 +71,7 @@ public class SetPronounsCommand extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <pronouns> [--plural]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -89,7 +89,7 @@ public class SetPronounsCommand extends Command {
             return;
         }
 
-        final boolean singular = !ctx.getArgsRaw().contains("--plural");
+        final boolean singular = !ctx.getParsedFlags(this).containsKey("p");
         final String format = this.messages[ctx.getRandom().nextInt(messages.length)];
         final List<String> items = new ArrayList<>(Arrays.asList(pronounsSplit));
         items.add(singular ? "is" : "are");

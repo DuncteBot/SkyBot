@@ -42,7 +42,7 @@ public class RemindmeCommand extends Command {
             "remindme",
         };
         this.helpFunction = (invoke, prefix) -> "Creates a reminder for you, add `--channel` to remind you in the current channel";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <number><w/d/h/m/s> [--channel] <reminder>`\n" +
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <reminder> -t <number><w/d/h/m/s>`\n" +
             "Example: `" + prefix + "remind 1d5m Clean your room :/`";
         this.flags = new Flag[]{
             new Flag(
@@ -68,10 +68,24 @@ public class RemindmeCommand extends Command {
             return;
         }
 
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.get("undefined").isEmpty()) {
+            sendMsg(ctx, "What do you want me to remind you for?");
+            return;
+        }
+
+        if (!flags.containsKey("t")) {
+            sendMsg(ctx, "It looks like you forgot to add the time, you can do this with the `--time` flag");
+            return;
+        }
+
         Optional<Duration> optionalDuration;
 
         try {
-            optionalDuration = DurationParser.parse(args.get(0));
+            optionalDuration = DurationParser.parse(
+                String.join("", flags.get("t"))
+            );
         }
         catch (IllegalArgumentException ignored) {
             optionalDuration = Optional.empty();
@@ -97,20 +111,18 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        final String reminder = String.join(" ", args.subList(1, args.size()));
+        final String reminder = String.join(" ",flags.get("undefined"));
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
-        if (reminder.contains("--channel")) {
-            final String reminderNew = reminder.replace("--channel", "").trim();
-
+        if (flags.containsKey("c")) {
             ctx.getDatabaseAdapter().createReminder(
                 ctx.getAuthor().getIdLong(),
-                reminderNew,
+                reminder,
                 expireDate,
                 ctx.getChannel().getIdLong(),
                 (success) -> {
                     if (success) {
-                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminderNew + "\"");
+                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminder + "\"");
                     } else {
                         sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
                     }

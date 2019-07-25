@@ -75,12 +75,18 @@ public class MuteCommand extends ModBaseCommand {
 
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
-        final String reason = String.join("", args.subList(1, args.size()));
         final Member toMute = mentioned.get(0);
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         if (canNotProceed(ctx, event, mod, toMute, role, self)) {
             return;
+        }
+
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
         }
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)

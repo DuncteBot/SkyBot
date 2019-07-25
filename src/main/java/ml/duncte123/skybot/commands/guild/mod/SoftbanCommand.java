@@ -80,12 +80,19 @@ public class SoftbanCommand extends ModBaseCommand {
                 return;
             }
 
-            final String reason = String.join(" ", args.subList(1, args.size()));
+            String reason = "No reason given";
+            final var flags = ctx.getParsedFlags(this);
+
+            if (flags.containsKey("r")) {
+                reason = String.join(" ", flags.get("r"));
+            }
+
+            final String fReason = reason;
 
             ctx.getGuild().getController().ban(toBanMember, 1)
-                .reason("Kicked by: " + ctx.getAuthor().getAsTag() + "\nReason: " + reason).queue(
+                .reason("Kicked by: " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(
                 nothing -> {
-                    ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
+                    ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, ctx.getGuild());
                     MessageUtils.sendSuccess(ctx.getMessage());
                     ctx.getGuild().getController().unban(toBan.getId())
                         .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag()).queue();

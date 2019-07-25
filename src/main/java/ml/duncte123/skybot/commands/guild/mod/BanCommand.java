@@ -82,11 +82,18 @@ public class BanCommand extends ModBaseCommand {
             return;
         }
 
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
 
-        final String reason = String.join(" ", args.subList(1, args.size()));
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        final String fReason = reason;
+
         event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (m) -> {
-                modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
+                modLog(event.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );

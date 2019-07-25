@@ -89,9 +89,18 @@ public class UnmuteCommand extends ModBaseCommand {
             return;
         }
 
+        String reason = "";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        final String fReason = reason;
+
         event.getGuild().getController().removeSingleRoleFromMember(toMute, role)
-            .reason("Unmute by " + event.getAuthor().getAsTag()).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", ctx.getGuild());
+            .reason("Unmute by " + event.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
+                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", fReason, ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );

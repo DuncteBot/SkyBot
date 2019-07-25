@@ -57,7 +57,8 @@ public class UnbanCommand extends ModBaseCommand {
     @Override
     public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final String argsJoined = ctx.getArgsJoined();
+        final var flags = ctx.getParsedFlags(this);
+        final String argsJoined = String.join(" ", flags.get("undefined"));
         final User mod = ctx.getAuthor();
 
         try {
@@ -71,8 +72,16 @@ public class UnbanCommand extends ModBaseCommand {
                     if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||
                         userFormatted.equalsIgnoreCase(argsJoined)) {
 
+                        String reason = "Unbanned by " + mod.getAsTag();
+
+                        if (flags.containsKey("r")) {
+                            reason = reason + ": " + String.join(" ", flags.get("r"));
+                        }
+
+                        final String fReason = reason;
+
                         event.getGuild().getController().unban(bannedUser)
-                            .reason("Unbanned by " + mod.getAsTag())
+                            .reason(reason)
                             .queue();
 
                         sendMsg(event, "User " + userFormatted + " unbanned.");

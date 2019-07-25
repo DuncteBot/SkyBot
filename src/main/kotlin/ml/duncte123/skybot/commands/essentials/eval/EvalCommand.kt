@@ -101,7 +101,7 @@ class EvalCommand : Command() {
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
-        if (!isDev(event.author) || event.author.idLong == Settings.OWNER_ID) {
+        if (!isDev(event.author) || event.author.idLong != Settings.OWNER_ID) {
             return
         }
 

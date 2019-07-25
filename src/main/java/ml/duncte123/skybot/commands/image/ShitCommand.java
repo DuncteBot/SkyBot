@@ -54,7 +54,7 @@ public class ShitCommand extends NoPatronImageCommand {
 
         final String text = parseTextArgsForImage(ctx);
 
-        if ("pluralshit".equals(ctx.getInvoke())) {
+        if (ctx.getParsedFlags(this).containsKey("p")) {
             ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
             return;
         }
