@@ -21,7 +21,6 @@ package ml.duncte123.skybot.objects.command;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.Permission;
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
