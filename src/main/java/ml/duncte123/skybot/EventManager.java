@@ -82,7 +82,7 @@ public class EventManager implements IEventManager {
 
         if (shouldFakeBlock) {
             if (shardInfo == null) {
-                logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
+                logger.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
                 return;
             }
 

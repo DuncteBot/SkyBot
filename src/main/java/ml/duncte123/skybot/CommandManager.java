@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -98,7 +99,7 @@ public class CommandManager {
      * This tries to get a command with the provided name/alias
      *
      * @param name
-     *         the name of the command
+     *     the name of the command
      *
      * @return a possible null command for the name
      */
@@ -253,10 +254,10 @@ public class CommandManager {
      * This handles adding the command
      *
      * @param command
-     *         The command to add
+     *     The command to add
      *
      * @throws IllegalArgumentException
-     *         if the command or alias is already present
+     *     if the command or alias is already present
      */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
@@ -304,7 +305,7 @@ public class CommandManager {
      * This will run the command when we need them
      *
      * @param event
-     *         the event for the message
+     *     the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
@@ -412,12 +413,19 @@ public class CommandManager {
     }
 
     private void registerCommandsFromReflection(Reflections reflections) {
+
+        final List<Class<? extends ICommand>> filteredCommands = reflections
+            .getSubTypesOf(ICommand.class)
+            .stream()
+            // Remove abstract classes
+            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
+            .collect(Collectors.toList());
+
         //Loop over them commands
-        for (final Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
+        for (final Class<? extends ICommand> cmd : filteredCommands) {
             try {
                 final ICommand command;
 
-//                if (VariablesInConstructorCommand.class.isInstance(cmd)) {
                 if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
                     command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
                 } else {
@@ -429,7 +437,8 @@ public class CommandManager {
             catch (IllegalArgumentException e) {
                 throw e;
             }
-            catch (Exception ignored) {
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

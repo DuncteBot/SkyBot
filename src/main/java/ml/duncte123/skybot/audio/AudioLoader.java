@@ -38,8 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
@@ -133,11 +132,17 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        if (!this.announce) {
+
+        if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
+            final LimitReachedException ex = (LimitReachedException) exception.getCause();
+            sendMsgFormat(this.channel, "%s, maximum of %d tracks exceeded", ex.getMessage(), ex.getSize());
+
             return;
         }
 
-        System.out.println(exception.getCause().getClass());
+        if (!this.announce) {
+            return;
+        }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
             sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + this.trackUrl
