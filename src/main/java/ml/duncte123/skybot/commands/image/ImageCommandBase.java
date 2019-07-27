@@ -141,6 +141,6 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public String parseTextArgsForImage(CommandContext ctx) {
-        return StringKt.stripFlags(ctx.getArgsDisplay(), this).trim();
+        return StringKt.stripFlags(ctx.getArgsDisplay(), this);
     }
 }

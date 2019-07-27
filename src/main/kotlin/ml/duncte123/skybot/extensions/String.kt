@@ -31,5 +31,5 @@ fun String.stripFlags(command: Command): String {
         text = text.replace("-" + f.flag, "")
     }
 
-    return text
+    return text.trim()
 }

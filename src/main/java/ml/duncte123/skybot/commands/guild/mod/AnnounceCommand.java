@@ -20,10 +20,10 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.SinceSkybot;
+import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -48,77 +48,90 @@ public class AnnounceCommand extends ModBaseCommand {
             "announce3",
         };
         this.helpFunction = (invoke, prefix) -> "Sends an announcement in the specified channel";
-        // todo: replace with flags
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel> <message>`\n" +
-            "`announce1` and `announce` => Sends the message as plain text\n" +
-            "`announce2` => Sends the message as an embed with a small image (if uploaded with message)\n" +
-            "`announce3` => Sends the message as an embed with a large image (if uploaded with message)";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel> <message> [--noembed] [--thumbnail]`";
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'e',
+                "noembed",
+                "Displays the announcement as plain text instead of as embed"
+            ),
+            new Flag(
+                't',
+                "thumbnail",
+                "Displays the image as thumbnail instead of a large image"
+            ),
         };
     }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final String invoke = ctx.getInvoke();
         final GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (!ctx.getInvoke().equalsIgnoreCase(this.name)) {
+            sendMsg(ctx, "The usage of this command changed, please check `" + ctx.getPrefix() + "help " + this.name + '`');
+            return;
+        }
 
         if (event.getMessage().getMentionedChannels().isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
         }
 
-        try {
-            final List<TextChannel> mentioned = event.getMessage().getMentionedChannels();
+        final List<TextChannel> mentioned = event.getMessage().getMentionedChannels();
 
-            if (mentioned.isEmpty()) {
-                sendMsg(ctx, "You did not specify a channel");
+        if (mentioned.isEmpty()) {
+            sendMsg(ctx, "You did not specify a channel");
 
-                return;
-            }
-
-            final TextChannel targetChannel = mentioned.get(0);
-
-            if (!ctx.getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                sendErrorWithMessage(event.getMessage(), "I can not talk in " + targetChannel.getAsMention());
-                return;
-            }
-
-            @SinceSkybot(version = "3.68.0") final String msg = ctx.getArgsRaw().replaceAll(targetChannel.getAsMention() + " ", "");
-
-            switch (invoke) {
-                case "announce1":
-                case "announce":
-                    sendMsg(targetChannel, msg);
-                    sendSuccess(event.getMessage());
-                    break;
-
-                default:
-                    final EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
-
-                    if (!event.getMessage().getAttachments().isEmpty()) {
-                        event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
-                            if (invoke.endsWith("2")) {
-                                embed.setThumbnail(attachment.getUrl());
-                            } else if (invoke.endsWith("3")) {
-                                embed.setImage(attachment.getUrl());
-                            }
-                        });
-                    }
-
-                    sendEmbed(targetChannel, embed);
-                    sendSuccess(event.getMessage());
-                    break;
-            }
-
+            return;
         }
-        catch (ArrayIndexOutOfBoundsException ex) {
-            sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
+
+        final TextChannel targetChannel = mentioned.get(0);
+
+        if (!targetChannel.canTalk()) {
+            sendErrorWithMessage(event.getMessage(), "I can not talk in " + targetChannel.getAsMention());
+            return;
         }
-        catch (Exception e) {
-            sendMsg(event, "WHOOPS: " + e.getMessage());
-            ComparatingUtils.execCheck(e);
-            e.printStackTrace();
+
+        final var flags = ctx.getParsedFlags(this);
+        final List<String> text = flags.get("undefined");
+
+        if (text.isEmpty()) {
+            this.sendUsageInstructions(ctx);
+            return;
         }
+
+        final String msg = StringKt.stripFlags(
+            ctx.getArgsRaw()
+                .replace(targetChannel.getAsMention(), ""),
+            this
+        );
+
+        if (flags.containsKey("e")) {
+            sendMsg(targetChannel, msg);
+            sendSuccess(ctx.getMessage());
+
+            return;
+        }
+
+
+        final EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
+        final List<Message.Attachment> attachments = ctx.getMessage().getAttachments();
+
+        if (!attachments.isEmpty()) {
+            attachments.stream().filter(Message.Attachment::isImage).findFirst().ifPresent((attachment) -> {
+                if (flags.containsKey("t")) {
+                    embed.setImage(attachment.getUrl());
+                } else {
+                    embed.setImage(attachment.getUrl());
+                }
+            });
+        }
+
+        sendEmbed(targetChannel, embed);
+        sendSuccess(ctx.getMessage());
+
     }
 }

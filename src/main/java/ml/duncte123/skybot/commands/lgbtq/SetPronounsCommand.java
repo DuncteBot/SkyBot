@@ -76,7 +76,7 @@ public class SetPronounsCommand extends Command {
             return;
         }
 
-        final String pronouns = StringKt.stripFlags(ctx.getArgsRaw(), this).trim();
+        final String pronouns = StringKt.stripFlags(ctx.getArgsRaw(), this);
         final String[] pronounsSplit = pronouns.split("/");
 
         if (pronounsSplit.length != 4) {
