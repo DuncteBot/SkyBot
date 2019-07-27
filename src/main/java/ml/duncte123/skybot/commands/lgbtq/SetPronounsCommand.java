@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.lgbtq;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -75,7 +76,7 @@ public class SetPronounsCommand extends Command {
             return;
         }
 
-        final String pronouns = ctx.getArgsRaw();
+        final String pronouns = StringKt.stripFlags(ctx.getArgsRaw(), this).trim();
         final String[] pronounsSplit = pronouns.split("/");
 
         if (pronounsSplit.length != 4) {

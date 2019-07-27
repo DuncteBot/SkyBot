@@ -38,7 +38,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         this.name = "vcautorole"
         this.helpFunction = BiFunction { _, _ -> "Gives a role to a user when they join a specified voice channel" }
         this.usageInstructions = BiFunction { invoke, prefix ->
-            """`$prefix$invoke add <voice channel> <role>`
+            """`$prefix$invoke add <voice channel> <@role>`
         |`$prefix$invoke remove <voice channel>`
         |`$prefix$invoke off`
         |`$prefix$invoke list`

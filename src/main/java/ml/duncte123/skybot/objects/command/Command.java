@@ -91,21 +91,21 @@ public abstract class Command implements ICommand {
 
     public abstract void execute(@Nonnull CommandContext ctx);
 
+    @Nonnull
     @Override
-    public @Nonnull
-    String getName() {
+    public String getName() {
         return this.name;
     }
 
+    @Nonnull
     @Override
-    public final @Nonnull
-    String[] getAliases() {
+    public final String[] getAliases() {
         return this.aliases;
     }
 
+    @Nonnull
     @Override
-    public final @Nonnull
-    String help(@Nonnull String invoke, @Nonnull String prefix) {
+    public final String help(@Nonnull String invoke, @Nonnull String prefix) {
         return this.helpFunction.apply(invoke, prefix);
     }
 

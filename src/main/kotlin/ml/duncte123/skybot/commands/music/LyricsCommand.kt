@@ -70,9 +70,7 @@ class LyricsCommand : MusicCommand() {
     private fun handleSearch(search: String, ctx: CommandContext) {
         searchForSong(search, ctx.config.genius, ctx.variables.jackson) {
             if (it.isNullOrBlank()) {
-                sendMsg(ctx, "There where no lyrics found for `$search`\n" +
-                    "Alternatively you can try `${ctx.prefix}$name <song name>` to search for the lyrics on this song.\n" +
-                    "(sometimes the song names in the player are incorrect)")
+                sendMsg(ctx, "There where no lyrics found for `$search`")
             } else {
                 val url = "https://genius.com$it"
                 WebUtils.ins.scrapeWebPage(url).async { doc ->

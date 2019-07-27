@@ -73,8 +73,10 @@ class WarnCommand : ModBaseCommand() {
         }
 
         var reason = ""
-        if (args.size > 1) {
-            reason = args.subList(1, args.size).joinToString(separator = " ")
+        val flags = ctx.getParsedFlags(this)
+
+        if (flags.containsKey("r")) {
+            reason = flags["r"]!!.joinToString(" ")
         }
 
         val dmMessage = """You have been warned by ${event.author.asTag}

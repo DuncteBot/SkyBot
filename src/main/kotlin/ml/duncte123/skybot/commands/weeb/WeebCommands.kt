@@ -112,11 +112,7 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> this.basicUsage(invoke, prefix)
             "megumin" -> this.basicUsage(invoke, prefix)
             "weeb" -> "`$prefix$invoke <category>`"
-            else -> buildString {
-                aliases.forEach {
-                    appendln("`$prefix$invoke` -> ${parseUsageInstructions(it, prefix)}")
-                }
-            }
+            else ->  throw IllegalArgumentException("Invalid invoke provided")
         }
     }
 
@@ -131,11 +127,7 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> "OwO what's this"
             "megumin" -> "EXPLOSION!!!!!"
             "weeb" -> "Gives you a random image from weeb.sh with that type"
-            else -> buildString {
-                aliases.forEach {
-                    appendln("`$prefix$invoke` -> ${parseHelp(it, prefix)}")
-                }
-            }
+            else ->  throw IllegalArgumentException("Invalid invoke provided")
         }
     }
 }

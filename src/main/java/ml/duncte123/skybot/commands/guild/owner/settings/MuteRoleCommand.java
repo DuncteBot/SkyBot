@@ -39,7 +39,7 @@ public class MuteRoleCommand extends SettingsBase {
             "spamrole"
         };
         this.helpFunction = (invoke, prefix) -> "Sets the role that the user gets when they are muted";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <role/disable>`";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@role/disable>`";
     }
 
     @Override

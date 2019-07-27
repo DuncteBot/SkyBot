@@ -89,20 +89,29 @@ object CommandTransformers {
     }
 
     private fun ICommand.parseHelp(forceAliases: Boolean = false): String {
-        var s = this.help(System.currentTimeMillis().toString(), Settings.PREFIX)
-            .replace("&".toRegex(), "&amp;")
+        var s = this.help(this.name, Settings.PREFIX).mdToHtml()
+
+        if (forceAliases || (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp())) {
+            s += buildString {
+                this@parseHelp.aliases.forEach {
+                    append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                }
+            }
+
+            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
+        }
+
+        return s
+    }
+
+    private fun String.mdToHtml() :String {
+        return this.replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")
             .replace("\\n".toRegex(), "<br />")
             .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
             .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
-
-        if (forceAliases || (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp())) {
-            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
-        }
-
-        return s
     }
 
     private fun CommandManager.getCommandsList(): List<ICommand> {

@@ -97,11 +97,7 @@ class OneLinerCommands : Command() {
             "screenfetch" -> "Shows some info from screenfetch"
             "website" -> "Shows the bots website"
 
-            else -> buildString {
-                aliases.forEach {
-                    appendln("`$prefix$invoke` -> ${parseHelp(it, prefix)}")
-                }
-            }
+            else -> throw IllegalArgumentException("Invalid invoke provided")
         }
     }
 }

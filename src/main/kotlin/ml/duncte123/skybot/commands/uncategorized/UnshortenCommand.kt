@@ -52,7 +52,6 @@ class UnshortenCommand : Command() {
             .append("unshorten")
             .append("url", url)
 
-
         val json = ctx.apis.executeDefaultGetRequest(builder.build(), false)
 
         logger.debug("Unshorten: $json")
