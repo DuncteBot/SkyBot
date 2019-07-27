@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.controllers.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.ICommand
 
@@ -77,7 +78,7 @@ object CommandTransformers {
             appendln("commands:")
 
             for (name in names) {
-                val command = commandManager.getCommand(name)
+                val command = commandManager.getCommand(name) as Command
                 val help = command.parseHelp(true).replace("\"", "\\\"")
 
                 appendln("  - name: $name")
@@ -88,13 +89,15 @@ object CommandTransformers {
         }
     }
 
-    private fun ICommand.parseHelp(forceAliases: Boolean = false): String {
-        var s = this.help(this.name, Settings.PREFIX).mdToHtml()
+    private fun Command.parseHelp(forceAliases: Boolean = false): String {
+        var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
+            "<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
 
-        if (forceAliases || (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp())) {
+        if (this.aliases.isNotEmpty() && (forceAliases || this.shouldDisplayAliasesInHelp())) {
             s += buildString {
                 this@parseHelp.aliases.forEach {
                     append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                    append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
                 }
             }
 
@@ -114,8 +117,8 @@ object CommandTransformers {
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
     }
 
-    private fun CommandManager.getCommandsList(): List<ICommand> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }
+    private fun CommandManager.getCommandsList(): List<Command> {
+        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 
     private fun Class<*>.isKotlinClass(): Boolean {

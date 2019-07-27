@@ -47,7 +47,7 @@ class WeebCommands : WeebCommandBase() {
             "b1nzy",
             "megumin"
         )
-        this.helpFunction = BiFunction { invoke, prefix -> this.parseHelp(invoke, prefix) }
+        this.helpFunction = BiFunction { invoke, _ -> this.parseHelp(invoke) }
         this.usageInstructions = BiFunction { invoke, prefix -> this.parseUsageInstructions(invoke, prefix) }
     }
 
@@ -112,11 +112,12 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> this.basicUsage(invoke, prefix)
             "megumin" -> this.basicUsage(invoke, prefix)
             "weeb" -> "`$prefix$invoke <category>`"
-            else ->  throw IllegalArgumentException("Invalid invoke provided")
+            "b1nzy" -> this.basicUsage(invoke, prefix)
+            else ->  throw IllegalArgumentException("Invalid invoke provided ($invoke)")
         }
     }
 
-    private fun parseHelp(invoke: String, prefix: String): String {
+    private fun parseHelp(invoke: String): String {
         return when (invoke) {
             "hug" -> "Hug a user"
             "lewd" -> "Someones being a bit lewd"
@@ -127,7 +128,8 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> "OwO what's this"
             "megumin" -> "EXPLOSION!!!!!"
             "weeb" -> "Gives you a random image from weeb.sh with that type"
-            else ->  throw IllegalArgumentException("Invalid invoke provided")
+            "b1nzy" -> "Shows a b1nzy meme"
+            else ->  throw IllegalArgumentException("Invalid invoke provided ($invoke)")
         }
     }
 }
