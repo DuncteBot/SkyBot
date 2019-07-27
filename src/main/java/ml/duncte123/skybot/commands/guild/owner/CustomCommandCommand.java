@@ -55,11 +55,11 @@ public class CustomCommandCommand extends Command {
             "customcommands",
         };
         this.helpFunction = (invoke, prefix) -> "Create, edit and delete custom commands";
-        this.usageInstructions = (invoke, prefix) -> "`" + prefix + invoke + " list` => Shows a list of all the custom commands\n" +
-            "`" + prefix + invoke + " new <name> <text>` => Creates a new custom command\n" +
-            "`" + prefix + invoke + " edit <name> <text>` => Edits a custom command\n" +
-            "`" + prefix + invoke + " raw <name>` => Shows the raw value of a custom command\n" +
-            "`" + prefix + invoke + " delete <name>` => Deletes a custom command";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " list` => Shows a list of all the custom commands\n" +
+            '`' + prefix + invoke + " new <name> <text>` => Creates a new custom command\n" +
+            '`' + prefix + invoke + " edit <name> <text>` => Edits a custom command\n" +
+            '`' + prefix + invoke + " raw <name>` => Shows the raw value of a custom command\n" +
+            '`' + prefix + invoke + " delete <name>` => Deletes a custom command";
     }
 
     @Override
