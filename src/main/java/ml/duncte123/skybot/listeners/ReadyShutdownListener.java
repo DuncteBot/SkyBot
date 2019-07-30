@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -95,7 +96,7 @@ public class ReadyShutdownListener extends MessageListener {
     private void loadPatrons(@Nonnull ShardManager manager) {
         logger.info("Collecting patrons");
 
-        final Guild supportGuild = manager.getGuildById(CommandUtils.supportGuildId);
+        final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             logger.error("Could not find support guild");
@@ -103,7 +104,7 @@ public class ReadyShutdownListener extends MessageListener {
             return;
         }
 
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.patronsRole))
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.PATRONS_ROLE))
             .stream()
             .map(Member::getUser)
             .map(User::getIdLong)
@@ -111,7 +112,7 @@ public class ReadyShutdownListener extends MessageListener {
 
         logger.info("Found {} normal patrons", CommandUtils.patrons.size());
 
-        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.guildPatronsRole))
+        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
         final TLongList patronGuildsTrove = new TLongArrayList();
@@ -130,7 +131,7 @@ public class ReadyShutdownListener extends MessageListener {
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(CommandUtils.tagPatronsRole))
+        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.TAG_PATRONS_ROLE))
             .stream()
             .map(Member::getUser)
             .map(User::getIdLong)

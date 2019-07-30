@@ -260,7 +260,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                         guild.selfMember.canInteract(it) && it.name != "@everyone" && it.name != "@here"
                     }.filter { !it.isManaged }.toList()
 
-                    val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.defaultColour)
+                    val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.DEFAULT_COLOUR)
                     val currVcAutoRole = variables.vcAutoRoleCache.get(guild.idLong)
                         ?: variables.vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
 
@@ -284,7 +284,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 }
             }
 
-            map.put("color", colorToHex(Settings.defaultColour))
+            map.put("color", colorToHex(Settings.DEFAULT_COLOUR))
 
             engine.render(ModelAndView(map.map, model))
         }

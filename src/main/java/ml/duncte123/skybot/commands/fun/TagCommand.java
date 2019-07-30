@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -304,14 +305,14 @@ public class TagCommand extends VariablesInConstructorCommand {
             return true;
         }
 
-        if (member.getGuild().getIdLong() != supportGuildId) {
+        if (member.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return false;
         }
 
         final boolean hasRole = member.getRoles()
             .stream()
             .map(Role::getIdLong)
-            .anyMatch((it) -> it == tagPatronsRole);
+            .anyMatch((it) -> it == Settings.TAG_PATRONS_ROLE);
 
         if (hasRole) {
             tagPatrons.add(u.getIdLong());

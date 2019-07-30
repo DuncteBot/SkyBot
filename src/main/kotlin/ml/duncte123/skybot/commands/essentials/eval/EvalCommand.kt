@@ -193,7 +193,7 @@ class EvalCommand : Command() {
             }
 
             is Throwable -> {
-                if (Settings.useJSON) {
+                if (Settings.USE_JSON) {
                     sendErrorJSON(event.message, out, false, ctx.variables.jackson)
                 } else {
                     sendMsg(event, "ERROR: $out")

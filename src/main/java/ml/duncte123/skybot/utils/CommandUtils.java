@@ -36,7 +36,10 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -45,7 +48,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 
 /**
- * The methods {@link #splitInput(String)} and {@link #parseInput(Flag[], List)} have been rewritten in java from JavaScript
+ * The methods {@link #splitInput(String)} and {@link #parseInput(Flag[], List)} have been rewritten in java from
+ * JavaScript
  * The original methods are available at https://github.com/blargbot/blargbot/
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -55,11 +59,6 @@ public class CommandUtils {
     // Key: user_id Value: guild_id
     public static final TLongLongMap oneGuildPatrons = MapUtils.newLongLongMap();
     public static final TLongSet tagPatrons = MapUtils.newLongSet();
-    public static final long supportGuildId = 191245668617158656L;
-    public static final long guildPatronsRole = 470581447196147733L;
-    public static final long patronsRole = 402497345721466892L;
-    public static final long oneGuildPatronsRole = 490859976475148298L;
-    public static final long tagPatronsRole = 578660495738011658L;
 
     public static final Supplier<Parser> PARSER_SUPPLIER = () -> JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
@@ -121,7 +120,7 @@ public class CommandUtils {
     public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
         final Map<String, List<String>> output = new ConcurrentHashMap<>();
         output.put("undefined", new ArrayList<>());
-        String  currentFlag = "";
+        String currentFlag = "";
 
         for (final String s : words) {
             boolean pushFlag = true;
@@ -188,7 +187,7 @@ public class CommandUtils {
             return true;
         }
 
-        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             return false;
@@ -204,7 +203,7 @@ public class CommandUtils {
             return false;
         }
 
-        if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
+        if (!m.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."));
@@ -216,7 +215,7 @@ public class CommandUtils {
         return true;
     }
 
-    public static boolean isPatron(@Nonnull User u, @Nullable  TextChannel tc, boolean reply) {
+    public static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
@@ -227,7 +226,7 @@ public class CommandUtils {
             return true;
         }
 
-        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             return false;
@@ -239,7 +238,7 @@ public class CommandUtils {
             return false;
         }
 
-        if (!m.getRoles().contains(supportGuild.getRoleById(guildPatronsRole))) {
+        if (!m.getRoles().contains(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))) {
             return false;
         }
 
@@ -258,6 +257,6 @@ public class CommandUtils {
     }
 
     public static boolean isDev(@Nonnull User u) {
-        return Settings.developers.contains(u.getIdLong());
+        return Settings.DEVELOPERS.contains(u.getIdLong());
     }
 }

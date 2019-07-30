@@ -21,19 +21,21 @@ package ml.duncte123.skybot;
 import gnu.trove.list.TLongList;
 import ml.duncte123.skybot.utils.MapUtils;
 
-import static java.lang.System.getProperty;
-
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Settings {
 
     public static String PREFIX = "db!";
-    public static boolean useJSON = false;
+    public static boolean USE_JSON = false;
     public static final long OWNER_ID = 191231307290771456L;
-    public static final TLongList developers = MapUtils.newLongList();
+    public static final TLongList DEVELOPERS = MapUtils.newLongList();
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
-    public static final int defaultColour = 0x0751c6;
-    public static final boolean enableUpdaterCommand = getProperty("updater") != null;
+    public static final int DEFAULT_COLOUR = 0x0751c6;
 
+    public static final long SUPPORT_GUILD_ID = 191245668617158656L;
+    public static final long GUILD_PATRONS_ROLE = 470581447196147733L;
+    public static final long PATRONS_ROLE = 402497345721466892L;
+    public static final long ONE_GUILD_PATRONS_ROLE = 490859976475148298L;
+    public static final long TAG_PATRONS_ROLE = 578660495738011658L;
 }

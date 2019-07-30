@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
+import java.lang.System.getProperty
 import java.lang.Thread.sleep
 import java.util.function.BiFunction
 import kotlin.system.exitProcess
@@ -52,7 +53,7 @@ class UpdateCommand : Command() {
             return
         }
 
-        if (!Settings.enableUpdaterCommand) {
+        if (getProperty("updater") == null) {
             val message = "The updater is not enabled. " +
                 "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
             sendEmbed(event, EmbedUtils.embedMessage(message))

@@ -18,10 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.*;
@@ -179,8 +176,8 @@ public class GuildUtils {
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading one guild patrons");
 
-        final Guild supportGuild = manager.getGuildById(CommandUtils.supportGuildId);
-        final Role oneGuildRole = supportGuild.getRoleById(CommandUtils.oneGuildPatronsRole);
+        final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
 
         adapter.loadOneGuildPatrons(
             (patrons) -> {
@@ -209,7 +206,7 @@ public class GuildUtils {
     public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {
         variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
             final SkyBot instance = SkyBot.getInstance();
-            final Guild dbGuild = instance.getShardManager().getGuildById(CommandUtils.supportGuildId);
+            final Guild dbGuild = instance.getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
             if (dbGuild == null) {
                 return null;
@@ -223,7 +220,7 @@ public class GuildUtils {
 
             final boolean hasRole = newPatron.getRoles().stream()
                 .map(Role::getIdLong)
-                .anyMatch((role) -> role == CommandUtils.oneGuildPatronsRole);
+                .anyMatch((role) -> role == Settings.ONE_GUILD_PATRONS_ROLE);
 
             if (hasRole) {
                 CommandUtils.oneGuildPatrons.put(userId, guildId);
