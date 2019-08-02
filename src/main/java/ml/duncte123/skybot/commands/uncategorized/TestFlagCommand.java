@@ -16,32 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.guild.owner.settings;
+package ml.duncte123.skybot.commands.uncategorized;
 
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.objects.command.Flag;
 
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class ToggleFilterInvitesCommand extends SettingsBase {
+public class TestFlagCommand extends Command {
 
-    public ToggleFilterInvitesCommand() {
-        this.name = "togglefilterinvites";
-        this.helpFunction = (invoke, prefix) -> "Toggles if the bot should delete messages that contain invite links";
+    public TestFlagCommand() {
+        this.name = "testflag";
+        this.flags = new Flag[] {
+          new Flag(
+              't',
+              "flag",
+              "first test flag"
+          ),
+        };
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final boolean shouldFilterInvites = !settings.isFilterInvites();
-        guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
-
-        sendMsg(ctx.getEvent(), "Filtering discord invites has been **"
-            + (shouldFilterInvites ? "enabled" : "disabled") + "**");
+        sendMsg(ctx, ctx.getParsedFlags(this).toString());
     }
 }

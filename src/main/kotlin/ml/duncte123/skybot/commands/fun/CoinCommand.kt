@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class CoinCommand : Command() {
@@ -33,17 +34,14 @@ class CoinCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "coin"
+        this.aliases = arrayOf("coinflip", "cf")
+        this.helpFunction = BiFunction { _, _ -> "Flips a coin" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
             sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
         }
     }
-
-    override fun help(prefix: String) = "flips a coin.\nUsage: `$prefix$name`"
-
-    override fun getName() = "coin"
-
-    override fun getAliases() = arrayOf("coinflip", "cf")
 }

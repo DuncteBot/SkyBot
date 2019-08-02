@@ -20,13 +20,18 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.Settings;
-import org.jetbrains.annotations.NotNull;
+import net.dv8tion.jda.core.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiFunction;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
 @Authors(authors = {
@@ -40,22 +45,92 @@ public abstract class Command implements ICommand {
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
         r -> new Thread(r, "Command-Thread"));
 
-    protected CommandCategory category = CommandCategory.MAIN;
+    //@formatter:off
     protected boolean displayAliasesInHelp = false;
+    protected CommandCategory category = CommandCategory.MAIN;
+    protected String name = "null";
+    protected String[] aliases = new String[0];
+    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
+    protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + '`';
+    protected Permission[] userPermissions = new Permission[0];
+    protected Permission[] botPermissions = new Permission[0];
+    public Flag[] flags = new Flag[0];
+
+    //@formatter:on
 
     @Override
-    public boolean shouldDisplayAliasesInHelp() {
-        return displayAliasesInHelp;
+    public void executeCommand(@Nonnull CommandContext ctx) {
+        if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(ctx.getChannel(), this.userPermissions)) {
+            final String permissionsWord = "permission" + (this.userPermissions.length > 1 ? "s" : "");
+
+            sendMsgFormat(ctx,
+                "You need the `%s` %s for this command\nPlease contact your server administrator if this is incorrect.",
+                parsePerms(this.userPermissions), permissionsWord
+            );
+
+            return;
+        }
+
+        if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(ctx.getChannel(), this.botPermissions)) {
+            final String permissionsWord = "permission" + (this.botPermissions.length > 1 ? "s" : "");
+
+            sendMsgFormat(ctx,
+                "I need the `%s` %s for this command to work\nPlease contact your server administrator about this.",
+                parsePerms(this.botPermissions), permissionsWord
+            );
+
+            return;
+        }
+
+        execute(ctx);
     }
 
-    @NotNull
+    /*public void execute(@Nonnull CommandContext ctx) {
+        throw new NotImplementedException("This command has not been updated yet");
+    }*/
+
+    public abstract void execute(@Nonnull CommandContext ctx);
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Nonnull
+    @Override
+    public final String[] getAliases() {
+        return this.aliases;
+    }
+
+    @Nonnull
+    @Override
+    public final String help(@Nonnull String invoke, @Nonnull String prefix) {
+        return this.helpFunction.apply(invoke, prefix);
+    }
+
+    @Override
+    public final boolean shouldDisplayAliasesInHelp() {
+        return this.displayAliasesInHelp;
+    }
+
+    @Nonnull
     public CommandCategory getCategory() {
         return this.category;
     }
 
+    public @Nonnull
+    String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
+        return this.usageInstructions.apply(invoke, prefix);
+    }
+
+    protected void sendUsageInstructions(CommandContext ctx) {
+        sendMsg(ctx, "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+    }
+
     @Override
     public String toString() {
-        return "Command[" + getName() + ']';
+        return "Command[" + this.name + ']';
     }
 
     @Override
@@ -69,6 +144,6 @@ public abstract class Command implements ICommand {
 
         final Command command = (Command) obj;
 
-        return this.help(Settings.OTHER_PREFIX).equals(command.help(Settings.OTHER_PREFIX)) && this.getName().equals(command.getName());
+        return this.name.equals(command.getName());
     }
 }

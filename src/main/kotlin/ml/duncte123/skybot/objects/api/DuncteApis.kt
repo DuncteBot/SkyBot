@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import me.duncte123.botcommons.web.ContentType.JSON
 import me.duncte123.botcommons.web.WebUtils
-import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
@@ -539,7 +539,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun paginateData(path: String): ArrayNode {
-        val page1 = executeRequest(defaultRequest("$path?page=1")).get("data")
+        val res = executeRequest(defaultRequest("$path?page=1"))
+
+        val page1 = res.get("data")
 
         val data = page1.get("data") as ArrayNode
 
@@ -563,7 +565,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun postJSONBytes(path: String, json: JsonNode): ByteArray {
         val body = RequestBody.create(null, json.toJsonString())
         val request = defaultRequest(path, false)
-            .post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+            .post(body).addHeader("Content-Type", JSON.type)
 
         return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
     }
@@ -602,7 +604,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun patchJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
         val body = RequestBody.create(null, json.toJsonString())
         val request = defaultRequest(path, prefixBot)
-            .patch(body).addHeader("Content-Type", APPLICATION_JSON.type)
+            .patch(body).addHeader("Content-Type", JSON.type)
 
         return executeRequest(request)
     }
@@ -610,7 +612,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun postJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
         val body = RequestBody.create(null, json.toJsonString())
         val request = defaultRequest(path, prefixBot)
-            .post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+            .post(body).addHeader("Content-Type", JSON.type)
 
         return executeRequest(request)
     }
@@ -618,13 +620,13 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun deleteJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
         val body = RequestBody.create(null, json.toJsonString())
         val request = defaultRequest(path, prefixBot)
-            .delete(body).addHeader("Content-Type", APPLICATION_JSON.type)
+            .delete(body).addHeader("Content-Type", JSON.type)
 
         return executeRequest(request)
     }
 
     private fun executeRequest(request: Request.Builder): JsonNode {
-        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body()!!.byteStream()) }.execute()
+        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body!!.byteStream()) }.execute()
     }
 
     private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {

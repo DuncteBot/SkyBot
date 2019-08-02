@@ -25,12 +25,18 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.exceptions.PermissionException
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class JoinCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "join"
+        this.aliases = arrayOf("summon", "connect")
+        this.helpFunction = BiFunction { _, _ -> "Makes the bot join the voice channel that you are in." }
+    }
 
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         if (!event.member.voiceState.inVoiceChannel()) {
@@ -79,10 +85,4 @@ class JoinCommand : MusicCommand() {
         }
 
     }
-
-    override fun help(prefix: String) = "Makes the bot join the voice channel that you are in."
-
-    override fun getName(): String = "join"
-
-    override fun getAliases(): Array<String> = arrayOf("summon", "connect")
 }

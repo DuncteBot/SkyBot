@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.listeners;
 
 import com.jagrosh.jagtag.Parser;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
@@ -93,7 +94,7 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        if (guild.getIdLong() == CommandUtils.supportGuildId) {
+        if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
             handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
     }
@@ -101,14 +102,14 @@ public class GuildMemberListener extends BaseListener {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() != CommandUtils.supportGuildId) {
+        if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;
         }
 
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
 
-            if (roleId != CommandUtils.patronsRole && roleId != CommandUtils.guildPatronsRole && roleId != CommandUtils.oneGuildPatronsRole) {
+            if (roleId != Settings.PATRONS_ROLE && roleId != Settings.GUILD_PATRONS_ROLE && roleId != Settings.ONE_GUILD_PATRONS_ROLE) {
                 continue;
             }
 
@@ -119,7 +120,7 @@ public class GuildMemberListener extends BaseListener {
     @Override
     public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
 
-        if (event.getGuild().getIdLong() != CommandUtils.supportGuildId) {
+        if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;
         }
 
@@ -130,11 +131,11 @@ public class GuildMemberListener extends BaseListener {
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
 
-            if (roleId == CommandUtils.patronsRole) {
+            if (roleId == Settings.PATRONS_ROLE) {
                 CommandUtils.patrons.add(userId);
             }
 
-            if (roleId == CommandUtils.guildPatronsRole) {
+            if (roleId == Settings.GUILD_PATRONS_ROLE) {
                 final List<Long> guilds = manager.getMutualGuilds(user).stream()
                     .filter((it) -> {
                         Member member = it.getMember(user);
@@ -147,7 +148,7 @@ public class GuildMemberListener extends BaseListener {
                 CommandUtils.guildPatrons.addAll(guilds);
             }
 
-            if (roleId == CommandUtils.oneGuildPatronsRole) {
+            if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
                 handleNewOneGuildPatron(userId);
             }
         }

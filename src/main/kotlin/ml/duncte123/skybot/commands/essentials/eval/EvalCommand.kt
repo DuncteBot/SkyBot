@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
@@ -40,6 +41,7 @@ import net.dv8tion.jda.core.requests.RestAction
 import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
+import java.util.function.BiFunction
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
@@ -54,6 +56,10 @@ class EvalCommand : Command() {
 
     init {
         this.category = CommandCategory.UNLISTED
+        this.name = "eval"
+        this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
+        this.helpFunction = BiFunction { _, _ -> "Evaluate groovy/java code on the bot" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <java/groovy code>`" }
 
         engine = GroovyShell()
 
@@ -93,10 +99,10 @@ class EvalCommand : Command() {
     }
 
     @ExperimentalCoroutinesApi
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
-        if (!isDev(event.author) || event.author.idLong == Settings.OWNER_ID) {
+        if (!isDev(event.author) || event.author.idLong != Settings.OWNER_ID) {
             return
         }
 
@@ -139,14 +145,6 @@ class EvalCommand : Command() {
             return@launch eval(event, script, 60000L, ctx)
         })
     }
-
-    override fun help(prefix: String) = """Evaluate java code on the bot
-        |Usage: `$prefix$name <java/groovy code>`
-    """.trimMargin()
-
-    override fun getName() = "eval"
-
-    override fun getAliases() = arrayOf("eval™", "evaluate", "evan", "eva;")
 
     @SinceSkybot("3.58.0")
     private suspend fun eval(event: GuildMessageReceivedEvent, script: String, millis: Long, ctx: CommandContext) {
@@ -195,7 +193,7 @@ class EvalCommand : Command() {
             }
 
             is Throwable -> {
-                if (Settings.useJSON) {
+                if (Settings.USE_JSON) {
                     sendErrorJSON(event.message, out, false, ctx.variables.jackson)
                 } else {
                     sendMsg(event, "ERROR: $out")
@@ -226,15 +224,15 @@ class EvalCommand : Command() {
     companion object {
         fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
             val base = "https://paste.menudocs.org"
-            val dataMap = hashMapOf<String, Any>()
+            val body = FormRequestBody()
 
-            dataMap["text"] = text
-            dataMap["expire"] = expiration
-            dataMap["lang"] = lang
+            body.append("text", text)
+            body.append("expire", expiration)
+            body.append("lang", lang)
 
-            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, WebUtils.EncodingType.TEXT_HTML)
+            val loc = WebUtils.ins.postRequest("$base/paste/new", body)
                 .build({
-                    return@build Jsoup.parse(it.body()!!.string())
+                    return@build Jsoup.parse(it.body!!.string())
                         .select("a[title=\"View Raw\"]")
                         .first().attr("href")
                         .replaceFirst("/raw", "")

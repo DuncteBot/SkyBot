@@ -21,15 +21,20 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class PcCheckCommand extends ImageCommandBase {
 
+    public PcCheckCommand() {
+        this.name = "pccheck";
+        this.helpFunction = (invoke, prefix) -> "Your pc needs to be checked, but for what?";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
@@ -38,18 +43,5 @@ public class PcCheckCommand extends ImageCommandBase {
         }
 
         ctx.getBlargbot().getPcCheck(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "WHoops get your pc checked\n" +
-            "Usage: `" + prefix + "pccheck <reason>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "pccheck";
     }
 }

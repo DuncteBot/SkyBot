@@ -23,7 +23,6 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,16 +32,22 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetDescriptionCommand extends SettingsBase {
+
+    public SetDescriptionCommand() {
+        this.name = "setdescription";
+        this.helpFunction = (invoke, prefix) -> "Sets a custom description viewable in `" + prefix + "serverinfo`";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <description/disable>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
-            sendErrorWithMessage(ctx.getMessage(), "Incorrect usage\n" +
-                "Correct usage : `" + ctx.getPrefix() + getName() + " <description>`");
+            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 
@@ -52,22 +57,9 @@ public class SetDescriptionCommand extends SettingsBase {
             return;
         }
 
-        final String description = ctx.getArgsRaw().replaceAll("\n", "\\\\n");
+        final String description = ctx.getArgsRaw(false);
         guild.setSettings(settings.setServerDesc(description));
 
         sendMsg(event, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setdescription";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Set a custom description in " + prefix + "guildinfo\n" +
-            "Usage: `" + prefix + getName() + " <description>`";
     }
 }

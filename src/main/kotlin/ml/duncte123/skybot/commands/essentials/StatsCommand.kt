@@ -30,13 +30,20 @@ import oshi.SystemInfo
 import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
+import java.util.function.BiFunction
 import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
     private val oshi = SystemInfo().hardware.processor
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.category = CommandCategory.UTILS
+        this.name = "stats"
+        this.helpFunction = BiFunction {_, _ -> "Shows some nerdy stastistics about the bot" }
+    }
+
+    override fun execute(ctx: CommandContext) {
 
         val shardManager = ctx.shardManager
         val connectedVC = shardManager.shardCache.map { shard ->
@@ -89,10 +96,4 @@ class StatsCommand : Command() {
         sendEmbed(ctx.event, embed)
 
     }
-
-    override fun getName() = "stats"
-
-    override fun help(prefix: String) = "Shows some nerdy stats about the bot"
-
-    override fun getCategory() = CommandCategory.UTILS
 }

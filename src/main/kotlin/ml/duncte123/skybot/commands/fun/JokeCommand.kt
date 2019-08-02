@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.function.BiFunction
 
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -40,10 +41,19 @@ class JokeCommand : Command() {
     private val memeIndex = MapUtils.newLongIntMap()
 
     init {
+        this.displayAliasesInHelp = true
         this.category = CommandCategory.FUN
+        this.name = "joke"
+        this.aliases = arrayOf("meme")
+        this.helpFunction = BiFunction { invoke, _ ->
+            when (invoke) {
+                "meme" -> "See a funny meme"
+                else -> "See a funny joke. Dad's love them!"
+            }
+        }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         if (ctx.invoke == "meme") {
             sendRedditPost("memes", memeIndex, ctx.event)
 
@@ -56,13 +66,6 @@ class JokeCommand : Command() {
         }
 
     }
-
-    override fun help(prefix: String) = "See a funny joke. Dad's love them!\n" +
-        "Usage: `$prefix$name`"
-
-    override fun getName() = "joke"
-
-    override fun getAliases() = arrayOf("meme")
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {

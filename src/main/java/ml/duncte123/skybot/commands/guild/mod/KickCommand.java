@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -28,7 +29,6 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,7 +39,22 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
-        this.perms = new Permission[]{Permission.KICK_MEMBERS};
+        this.name = "kick";
+        this.helpFunction = (invoke, prefix) -> "Kicks a user from the server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
+        this.botPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this kick"
+            ),
+        };
     }
 
     @Override
@@ -50,7 +65,7 @@ public class KickCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> [Reason]");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -69,13 +84,18 @@ public class KickCommand extends ModBaseCommand {
                 return;
             }
 
-            final AuditableRestAction<Void> kickAction = event.getGuild().getController().kick(toKickMember);
+            final AuditableRestAction<Void> kickAction = event.getGuild()
+                .getController()
+                .kick(toKickMember)
+                .reason("Kicked by " + event.getAuthor().getAsTag());
+
             String reason = null;
+            final var flags = ctx.getParsedFlags(this);
 
-
-            if (!args.isEmpty()) {
-                reason = String.join(" ", args.subList(1, args.size()));
-                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason);
+            if (flags.containsKey("r")) {
+                reason = String.join(" ", flags.get("r"));
+                //noinspection ResultOfMethodCallIgnored
+                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + ": " + reason);
             }
 
             final String finalReason = reason;
@@ -92,18 +112,5 @@ public class KickCommand extends ModBaseCommand {
         }
 
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Kicks a user.\n" +
-            "Usage: `" + prefix + getName() + " <@user> [reason]`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "kick";
     }
 }

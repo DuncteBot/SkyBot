@@ -25,6 +25,7 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.bot.utils.cache.ShardCacheView;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -32,7 +33,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
@@ -51,36 +51,31 @@ public class ShardInfoCommand extends Command {
 
     public ShardInfoCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "shardinfo";
+        this.aliases = new String[]{
+            "shards",
+        };
+        this.helpFunction = (invoke, prefix) -> "Get information about all things shards";
+        this.flags = new Flag[]{
+            new Flag(
+                'm',
+                "mobile",
+                "Shows a mobile friendly embed instead"
+            ),
+        };
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
+        final var flags = ctx.getParsedFlags(this);
 
-        if (!args.isEmpty() && "--mobile".equalsIgnoreCase(args.get(0))) {
+        if (!args.isEmpty() && flags.containsKey("m")) {
             embedTable(ctx);
             return;
         }
 
         asciiInfo(ctx);
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Get information about all things shards";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "shardinfo";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"shards"};
     }
 
     private void embedTable(CommandContext ctx) {

@@ -24,9 +24,17 @@ import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {
+
+    init {
+        this.name = "skip"
+        this.aliases = arrayOf("next", "nexttrack", "skiptrack")
+        this.helpFunction = BiFunction { _, _ -> "Skips the current track" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [skip count]`" }
+    }
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
@@ -76,11 +84,4 @@ class SkipCommand : MusicCommand() {
 
         mng.lastChannel = event.channel.idLong
     }
-
-    override fun help(prefix: String) = "Skips the current track.\n" +
-        "Usage: `$prefix$name [skip amount]`"
-
-    override fun getName(): String = "skip"
-
-    override fun getAliases(): Array<String> = arrayOf("next", "nexttrack", "skiptrack")
 }

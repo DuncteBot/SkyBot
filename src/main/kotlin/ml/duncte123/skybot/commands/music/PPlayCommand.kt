@@ -23,12 +23,16 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PPlayCommand : MusicCommand() {
 
     init {
         this.withAutoJoin = true
+        this.name = "pplay"
+        this.helpFunction = BiFunction {_,_ -> "Adds a playlist to the queue"}
+        this.usageInstructions = BiFunction {invoke, prefix -> "`$prefix$invoke <playlist url>`"}
     }
 
     override fun run(ctx: CommandContext) {
@@ -55,8 +59,4 @@ class PPlayCommand : MusicCommand() {
 
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
-
-    override fun help(prefix: String) = "Add a playlist to the queue."
-
-    override fun getName(): String = "pplay"
 }

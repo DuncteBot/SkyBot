@@ -20,15 +20,20 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PingCommand extends Command {
+
+    public PingCommand() {
+        this.name = "ping";
+        this.helpFunction = (invoke, prefix) -> "Shows the delay from the bot to the discord servers";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!ctx.getChannel().canTalk()) {
             return;
         }
@@ -56,17 +61,5 @@ public class PingCommand extends Command {
                     ctx.getShardManager().getAveragePing()
                 ).queue();
             });
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "ping";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows the delay from the bot to the discord servers.";
     }
 }

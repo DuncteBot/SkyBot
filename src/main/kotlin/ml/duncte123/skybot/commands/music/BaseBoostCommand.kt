@@ -23,8 +23,17 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import java.util.function.BiFunction
 
 class BaseBoostCommand : MusicCommand() {
+
+    init {
+        this.name = "bassboost"
+        this.aliases = arrayOf("bb", "baseboost")
+        this.helpFunction = BiFunction { _, _ -> "Sets the bass boost on the music player" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <<high/med/low/off>>`" }
+    }
+
     override fun run(ctx: CommandContext) {
         if (!isUserOrGuildPatron(ctx.event)) {
             return
@@ -39,7 +48,7 @@ class BaseBoostCommand : MusicCommand() {
         val args = ctx.args
 
         if (args.isEmpty()) {
-            sendMsg(ctx, "Missing arguments: `${ctx.prefix}${ctx.invoke} <high/med/low/off>`")
+            this.sendUsageInstructions(ctx)
 
             return
         }
@@ -63,14 +72,6 @@ class BaseBoostCommand : MusicCommand() {
         sendMsg(ctx, "Set the bassboost to `${args[0]}`")
         setLavalinkEQ(gain, ctx)
     }
-
-    override fun getName() = "baseboost"
-
-    override fun getAliases() = arrayOf("bb", "bassboost")
-
-    override fun help(prefix: String) = """Sets the bassboost on the player
-        |Usage: `${prefix}bassboost <high/med/low/off>`
-    """.trimMargin()
 
     private fun setLavalinkEQ(gain: Double, ctx: CommandContext) {
         val node = (getMusicManager(ctx.guild, ctx.audioUtils).player as LavalinkPlayer).link.getNode(false) ?: return

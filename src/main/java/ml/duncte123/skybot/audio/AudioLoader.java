@@ -38,8 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
@@ -133,6 +132,14 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
+
+        if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
+            final LimitReachedException ex = (LimitReachedException) exception.getCause();
+            sendMsgFormat(this.channel, "%s, maximum of %d tracks exceeded", ex.getMessage(), ex.getSize());
+
+            return;
+        }
+
         if (!this.announce) {
             return;
         }

@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.MessageBuilder
 import java.lang.management.ManagementFactory
+import java.util.function.BiFunction
 
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -40,9 +41,12 @@ class OneLinerCommands : Command() {
 
     init {
         this.displayAliasesInHelp = true
+        this.name = "cookie"
+        this.aliases = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "screenfetch", "website")
+        this.helpFunction = BiFunction { invoke, prefix -> this.parseHelp(invoke, prefix) }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
 
         val event = ctx.event
 
@@ -80,71 +84,20 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help(invoke: String, prefix: String): String {
-
+    private fun parseHelp(invoke: String, prefix: String): String {
         return when (invoke) {
-            "cookie" -> {
-                """blobnomcookie
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "trigger" -> {
-                """Use when you are triggered.
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "spam" -> {
-                """What do you think 😏
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "wam" -> {
-                """you need more WAM!
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "mineh" -> {
-                """HERE COMES MINEH!
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "invite" -> {
-                """Gives you the bot invite
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "uptime" -> {
-                """Shows the bot uptime
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "quote" -> {
-                """Shows an inspiring quote
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "website" -> {
-                """Shows the bots website
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
+            "cookie" -> "blobnomcookie"
+            "trigger" -> "Use when you are triggered."
+            "spam" -> "What do you think \uD83D\uDE0F"
+            "wam" -> "you need more WAM!"
+            "mineh" -> "HERE COMES MINEH!"
+            "invite" -> "Gives you the bot invite link"
+            "uptime" -> "Shows the bot uptime"
+            "quote" -> "Shows an inspiring quote"
+            "screenfetch" -> "Shows some info from screenfetch"
+            "website" -> "Shows the bots website"
 
-            else -> "invalid invoke"
+            else -> throw IllegalArgumentException("Invalid invoke provided")
         }
     }
-
-    override fun help(prefix: String) = """`${prefix}cookie` => blobnomcookie.
-            |`${prefix}trigger` => Use when you are triggered.
-            |`${prefix}spam` => What do you think 😏
-            |`${prefix}wam` => You need more WAM!.
-            |`${prefix}mineh` => HERE COMES MINEH!
-            |`${prefix}invite` => Gives you the bot invite
-            |`${prefix}uptime` => Shows the bot uptime
-            |`${prefix}quote` => Shows an inspiring quote
-            |`${prefix}website` => Shows the bots website
-    """.trimMargin()
-
-    override fun getName() = "cookie"
-
-    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "xkcd", "screenfetch", "website")
 }

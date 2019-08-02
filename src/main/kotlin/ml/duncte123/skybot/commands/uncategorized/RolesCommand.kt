@@ -23,18 +23,21 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.MessageBuilder.SplitPolicy
+import java.util.function.BiFunction
 
 class RolesCommand : Command() {
-    override fun executeCommand(ctx: CommandContext) {
-        val rolesString = ctx.guild.roleCache.map { "@${it.name} - ${it.id}" }.joinToString(separator = "\n")
+
+    init {
+        this.name = "roles"
+        this.helpFunction = BiFunction { _, _ -> "Returns a list of roles on the server" }
+    }
+
+    override fun execute(ctx: CommandContext) {
+        val rolesString = ctx.guild.roleCache.joinToString(separator = "\n") { "@${it.name} - ${it.id}" }
         val messages = MessageBuilder().appendCodeBlock(rolesString, "").buildAll(SplitPolicy.NEWLINE)
 
         messages.forEach {
             sendMsg(ctx, it)
         }
     }
-
-    override fun getName() = "roles"
-
-    override fun help(prefix: String) = "Returns a list of roles in the server"
 }

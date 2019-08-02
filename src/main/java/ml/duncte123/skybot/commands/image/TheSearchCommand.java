@@ -21,15 +21,20 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TheSearchCommand extends ImageCommandBase {
 
+    public TheSearchCommand() {
+        this.name = "thesearch";
+        this.helpFunction = (invoke, prefix) -> "Go on a journey to find intelligent life";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
@@ -38,18 +43,5 @@ public class TheSearchCommand extends ImageCommandBase {
         }
 
         ctx.getBlargbot().getTheSearch(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Go on a journey to find intelligent life.\n" +
-            "Usage: `" + prefix + "thesearch <message>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "thesearch";
     }
 }

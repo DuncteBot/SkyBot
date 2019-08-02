@@ -25,17 +25,33 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommands : WeebCommandBase() {
 
-    val weebTags = java.util.ArrayList<String>()
+    val weebTags = ArrayList<String>()
 
     init {
+        this.displayAliasesInHelp = true;
         this.category = CommandCategory.WEEB
+        this.name = "hug"
+        this.aliases = arrayOf(
+            "lewd",
+            "pat",
+            "punch",
+            "shrug",
+            "lick",
+            "owo",
+            "weeb",
+            "b1nzy",
+            "megumin"
+        )
+        this.helpFunction = BiFunction { invoke, _ -> this.parseHelp(invoke) }
+        this.usageInstructions = BiFunction { invoke, prefix -> this.parseUsageInstructions(invoke, prefix) }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 
@@ -82,81 +98,38 @@ class WeebCommands : WeebCommandBase() {
         }
     }
 
+    private fun basicUsage(invoke: String, prefix: String) = "`$prefix$invoke`"
+    private fun userUsage(invoke: String, prefix: String) = "`$prefix$invoke [@user]`"
 
-    override fun help(prefix: String) = """`${prefix}hug` => Hug a user
-        |`${prefix}lewd` => When things get to lewd
-        |`${prefix}pat` => Pat a user
-        |`${prefix}punch` => Punch a user in their face
-        |`${prefix}shrug` => ¯\_(ツ)_/¯
-        |`${prefix}lick` => Lick a user
-        |`${prefix}owo` => OwO what's this
-        |`${prefix}weeb <category>` => Gives you a random image from weeb.sh with that type
-    """.trimMargin()
-
-    override fun help(invoke: String, prefix: String): String {
+    private fun parseUsageInstructions(invoke: String, prefix: String): String {
         return when (invoke) {
-            "hug" -> {
-                """Hug a user.
-                    |Usage: `$prefix$invoke [username/@user]`
-                """.trimMargin()
-            }
-            "lewd" -> {
-                """ehhhhh
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "pat" -> {
-                """Pats a user.
-                    |Usage `$prefix$invoke [username/@user]`
-                """.trimMargin()
-            }
-            "punch" -> {
-                """Punch a user in their face
-                    |Usage: `$prefix$invoke [username/@user]`
-                """.trimMargin()
-            }
-            "shrug" -> {
-                """¯\_(ツ)_/¯
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "lick" -> {
-                """Lick a user
-                    |Usage: `$prefix$invoke [username/@user]`
-                """.trimMargin()
-            }
-            "owo" -> {
-                """OwO what's this
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "megumin" -> {
-                """EXPLISION!!!!!
-                    |Usage: `$prefix$invoke`
-                """.trimMargin()
-            }
-            "weeb" -> {
-                """Gives you a random image from weeb.sh with that type
-                    |Usage: `$prefix$invoke <category>`
-                """.trimMargin()
-            }
-            else -> {
-                "Invoke `$invoke` not reconsigned"
-            }
+            "hug" -> this.userUsage(invoke, prefix)
+            "lewd" -> this.basicUsage(invoke, prefix)
+            "pat" -> this.userUsage(invoke, prefix)
+            "punch" -> this.userUsage(invoke, prefix)
+            "shrug" -> this.basicUsage(invoke, prefix)
+            "lick" -> this.userUsage(invoke, prefix)
+            "owo" -> this.basicUsage(invoke, prefix)
+            "megumin" -> this.basicUsage(invoke, prefix)
+            "weeb" -> "`$prefix$invoke <category>`"
+            "b1nzy" -> this.basicUsage(invoke, prefix)
+            else ->  throw IllegalArgumentException("Invalid invoke provided ($invoke)")
         }
     }
 
-    override fun getName() = "hug"
-
-    override fun getAliases() = arrayOf(
-        "lewd",
-        "pat",
-        "punch",
-        "shrug",
-        "lick",
-        "owo",
-        "weeb",
-        "b1nzy",
-        "megumin"
-    )
+    private fun parseHelp(invoke: String): String {
+        return when (invoke) {
+            "hug" -> "Hug a user"
+            "lewd" -> "Someones being a bit lewd"
+            "pat" -> "Pat someone"
+            "punch" -> "Punch someone in their face"
+            "shrug" -> "¯\\\\_(ツ)\\_/¯"
+            "lick" -> "Lick someone"
+            "owo" -> "OwO what's this"
+            "megumin" -> "EXPLOSION!!!!!"
+            "weeb" -> "Gives you a random image from weeb.sh with that type"
+            "b1nzy" -> "Shows a b1nzy meme"
+            else ->  throw IllegalArgumentException("Invalid invoke provided ($invoke)")
+        }
+    }
 }

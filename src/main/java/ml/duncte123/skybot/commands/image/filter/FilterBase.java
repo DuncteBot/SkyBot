@@ -22,21 +22,20 @@ import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public abstract class FilterBase extends ImageCommandBase {
 
-    private final String commandName;
-
     FilterBase() {
-        this.commandName = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
         this.category = CommandCategory.FUN;
+        this.name = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
+        this.helpFunction = (invoke, prefix) -> "Overlays a " + invoke + " filter over the provided image";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [image url]`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passesNoArgs(event, false)) {
@@ -52,19 +51,6 @@ public abstract class FilterBase extends ImageCommandBase {
     }
 
     String getFilterName() {
-        return commandName;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return commandName;
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Overlays a " + getFilterName() + " filter to the provided image.\n" +
-            "Usage: `" + prefix + getName() + " [image url]`";
+        return name;
     }
 }

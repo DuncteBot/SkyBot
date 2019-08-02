@@ -29,28 +29,33 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class LoveCommand extends Command {
 
     public LoveCommand() {
         this.category = CommandCategory.FUN;
+        this.name = "ship";
+        this.aliases = new String[]{
+            "love",
+            "loveship",
+        };
+        this.helpFunction = (invoke, prefix) -> "Ship two people and get their love score";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <@user>`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final List<String> args = ctx.getArgs();
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <user 1> [user 2]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -89,24 +94,5 @@ public class LoveCommand extends Command {
         } else {
             sendEmbed(event, embed);
         }
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "ship";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"love", "loveship"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Ship 2 people\n" +
-            "Usage: `" + prefix + getName() + " <@user> <@user>`";
     }
 }

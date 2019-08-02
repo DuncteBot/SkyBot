@@ -73,7 +73,7 @@ public final class SkyBot {
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
-                .setColor(Settings.defaultColour)
+                .setColor(Settings.DEFAULT_COLOUR)
                 .setFooter("DuncteBot", Settings.DEFAULT_ICON)
                 .setTimestamp(Instant.now())
         );

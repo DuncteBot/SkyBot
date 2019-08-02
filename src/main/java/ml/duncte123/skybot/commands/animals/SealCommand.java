@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,31 +34,18 @@ public class SealCommand extends Command {
 
     public SealCommand() {
         this.category = CommandCategory.ANIMALS;
+        this.name = "seal";
+        this.aliases = new String[]{
+            "zeehond",
+        };
+        this.helpFunction = (invoke, prefix) -> "Shows a seal";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         // https://apis.duncte123.me/animal/seal
         final JsonNode data = ctx.getApis().executeDefaultGetRequest("seal", false).get("data");
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(data.get("file").asText()));
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Here is a nice seal";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "seal";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"zeehond"};
     }
 }

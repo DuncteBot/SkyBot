@@ -22,9 +22,15 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShuffleCommand : MusicCommand() {
+
+    init {
+        this.name = "shuffle"
+        this.helpFunction = BiFunction { _, _ -> "Shuffles the current queue" }
+    }
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
@@ -40,8 +46,4 @@ class ShuffleCommand : MusicCommand() {
 
         MessageUtils.sendMsg(event, "The queue has been shuffled!")
     }
-
-    override fun help(prefix: String) = "Shuffles the current queue"
-
-    override fun getName(): String = "shuffle"
 }

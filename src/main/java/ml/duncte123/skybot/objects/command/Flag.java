@@ -16,13 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.objects.command;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.annotation.Nullable;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Tag {
-    public String name;
-    public String content;
-    public long owner_id;
+public class Flag {
+    private final char flag;
+    private final String word;
+    private final String desc;
+
+    public Flag(char flag, String word, String desc) {
+        this.flag = flag;
+        this.word = word;
+        this.desc = desc;
+    }
+
+    public Flag(char flag, String desc) {
+        this(flag, null, desc);
+    }
+
+    public char getFlag() {
+        return flag;
+    }
+
+    @Nullable
+    public String getWord() {
+        return word;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }

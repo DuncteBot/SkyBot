@@ -22,12 +22,12 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
@@ -36,8 +36,12 @@ class RadioCommand : MusicCommand() {
     var radioStreams: ArrayList<RadioStream> = ArrayList()
 
     init {
-        loadStations()
         this.withAutoJoin = true
+        this.name = "radio"
+        this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
+        this.helpFunction = BiFunction { _, _ -> "Adds a radio http stream to your queue and goes to it" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <(full)list/station name>`" }
+        loadStations()
     }
 
     override fun run(ctx: CommandContext) {
@@ -62,10 +66,11 @@ class RadioCommand : MusicCommand() {
                         return
                     }
                     else -> {
-                        val radio = radioStreams.firstOrNull { it.name == ctx.args[0].replace(oldValue = "❤", newValue = "love") }
+                        val search = ctx.args[0]
+                        val radio = radioStreams.firstOrNull { it.name == search }
 
                         if (radio == null) {
-                            sendErrorWithMessage(event.message, "The stream is invalid!")
+                            sendErrorWithMessage(event.message, "No stream found for \"$search\"")
                             return
                         }
 
@@ -81,14 +86,6 @@ class RadioCommand : MusicCommand() {
         }
     }
 
-    override fun help(prefix: String) = """Adds a radio http stream to your queue and goes to it!
-        |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
-        |Usage: `$prefix$name <(full)list/station name>`""".trimMargin()
-
-    override fun getName(): String = "radio"
-
-    override fun getAliases(): Array<String> = arrayOf("pstream", "stream", "webstream", "webradio")
-
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
         val string = streams.filter { if (!full) it.public else true }
@@ -102,6 +99,10 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
+        radioStreams.add(RadioStream("iloveradio", "http://stream01.iloveradio.de/iloveradio1.mp3", "http://www.iloveradio.de/streams/"))
+        // TODO: why so many
+        // TODO: Make a json file or api endpoint with all streams for easy updating
+        /*
         radioStreams.add(ILoveStream(stationName = "iloveradio", channel = 1))
         radioStreams.add(ILoveStream(stationName = "ilove2dance", channel = 2))
         radioStreams.add(ILoveStream(stationName = "ilovetop100charts", channel = 9))
@@ -122,7 +123,7 @@ class RadioCommand : MusicCommand() {
         radioStreams.add(ILoveStream(stationName = "iloveurban", channel = -1, npChannel = 12, internal = false, public = false))
         radioStreams.add(ILoveStream(stationName = "ilovegroove", channel = -1, npChannel = 13, internal = false, public = false))
         radioStreams.add(ILoveStream(stationName = "ilovenitroxedm", channel = -1, npChannel = 11, internal = false, public = false))
-        radioStreams.add(ILoveStream(stationName = "ilovenitroxdeep", channel = -1, npChannel = 24, internal = false, public = false))
+        radioStreams.add(ILoveStream(stationName = "ilovenitroxdeep", channel = -1, npChannel = 24, internal = false, public = false))*/
 
         //nl_NL radio stations
         radioStreams.add(RadioStream("slam", "http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/"))

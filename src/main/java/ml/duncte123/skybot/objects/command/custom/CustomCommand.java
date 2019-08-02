@@ -50,12 +50,6 @@ public interface CustomCommand extends ICommand {
 
     @NotNull
     @Override
-    default String help(@NotNull String prefix) {
-        return null;
-    }
-
-    @NotNull
-    @Override
     default CommandCategory getCategory() {
         return null;
     }

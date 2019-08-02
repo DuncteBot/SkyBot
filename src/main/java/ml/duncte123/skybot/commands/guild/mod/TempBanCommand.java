@@ -21,11 +21,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,21 +39,36 @@ import static ml.duncte123.skybot.utils.ModerationUtils.*;
 
 public class TempBanCommand extends ModBaseCommand {
 
+    public TempBanCommand() {
+        this.name = "tempban";
+        this.helpFunction = (invoke, prefix) -> "Temporally bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r Reason]`";
+        this.botPermissions = new Permission[]{
+            Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
         final Member toBanMember = mentioned.get(0);
 
-        if (toBanMember.equals(event.getMember())) {
-            sendMsg(event, "You cannot ban yourself");
+        if (toBanMember.equals(ctx.getMember())) {
+            sendMsg(ctx, "You cannot ban yourself");
             return;
         }
 
@@ -60,45 +76,38 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
-        final String reason = String.join(" ", args.subList(2, args.size()));
-        final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        final Duration duration = getDuration(args.get(1), getName(), ctx.getEvent(), ctx.getPrefix());
 
         if (duration == null) {
             return;
         }
 
         final String finalUnbanDate = AirUtils.getDatabaseDateFormat(duration);
-        final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        event.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
+        ctx.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
             (__) -> {
                 if (duration.getSeconds() > 0) {
-                    addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
-                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
+                    addBannedUserToDb(ctx.getDatabaseAdapter(), ctx.getAuthor().getIdLong(),
+                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, ctx.getGuild().getIdLong());
 
-                    modLog(event.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     logger.error("Perm ban code in temp ban ran {}", args);
-                    modLog(event.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 }
             }
         );
 
-        sendSuccess(event.getMessage());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "tempban";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
+        sendSuccess(ctx.getMessage());
     }
 
     @Nullable

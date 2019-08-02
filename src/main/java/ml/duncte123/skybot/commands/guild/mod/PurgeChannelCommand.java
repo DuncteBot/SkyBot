@@ -22,8 +22,6 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,29 +31,31 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 public class PurgeChannelCommand extends ModBaseCommand {
 
     public PurgeChannelCommand() {
-        this.perms = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY};
+        this.name = "purgechannel";
+        this.helpFunction = (invoke, prefix) -> "Purges an entire text channel";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <#channel>`";
+        this.userPermissions = new Permission[]{
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_HISTORY,
+        };
+        this.botPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+        };
     }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-            sendMsg(event, "I need the Manage Server permission for this command to work, please contact your server administrator about this");
-            return;
-        }
-
         final List<TextChannel> channels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
 
         if (channels.isEmpty()) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <#text-channel>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
         final TextChannel toPurge = channels.get(0);
 
         if (toPurge.equals(ctx.getChannel())) {
-            sendMsg(event, "For security reasons you can not use this command in the channel that you want to purge");
+            sendMsg(ctx, "For security reasons you can not use this command in the channel that you want to purge");
             return;
         }
 
@@ -69,18 +69,5 @@ public class PurgeChannelCommand extends ModBaseCommand {
                 },
                 (error) -> sendError(ctx.getMessage())
             );
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "purgechannel";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Purges a text channel.\n" +
-            "Usage: `" + prefix + getName() + " <#text-channel>`";
     }
 }

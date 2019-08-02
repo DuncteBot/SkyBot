@@ -25,28 +25,31 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.Permission
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class SlowModeCommand : ModBaseCommand() {
 
+    private val maxSeconds = 21600
+
     init {
-        this.perms = arrayOf(Permission.MESSAGE_MANAGE)
         this.argscheck = false
+        this.name = "slowmode"
+        this.aliases = arrayOf("sm")
+        this.helpFunction = BiFunction { _, _ -> "Sets the slowmode in the current channel" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <seconds (1-$maxSeconds)/off>`" }
+        this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
+        this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
     }
 
     override fun run(ctx: CommandContext) {
 
         val event = ctx.event
 
-        if (!ctx.selfMember.hasPermission(ctx.channel, Permission.MANAGE_CHANNEL)) {
-            sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
-            return
-        }
-
         if (ctx.args.isEmpty()) {
 
             val currentMode = ctx.channel.slowmode
-            val currentModeString = if (currentMode == 0) "off" else "$currentMode seconds"
+            val currentModeString = if (currentMode == 0) "disabled" else "$currentMode seconds"
 
             sendMsg(event, "Current slowmode is `$currentModeString`")
             return
@@ -67,20 +70,12 @@ class SlowModeCommand : ModBaseCommand() {
 
         val intDelay = delay.toInt()
 
-        if (intDelay < 0 || intDelay > 21600) {
-            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-21600 (21600 is 6 hours in seconds)")
+        if (intDelay < 0 || intDelay > maxSeconds) {
+            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-$maxSeconds (21600 is 6 hours in seconds)")
             return
         }
 
         ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
-
     }
-
-    override fun getName() = "slowmode"
-
-    override fun help(prefix: String) = """Enable slowmode on in the current channel.
-        |Usage: `$prefix$name <seconds (1-120)>`
-        |Use `$prefix$name off` to turn slowmode off
-    """.trimMargin()
 }

@@ -27,7 +27,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -36,8 +35,17 @@ import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends SettingsBase {
+
+    public SettingsCommand() {
+        this.name = "settings";
+        this.aliases = new String[]{
+            "options",
+        };
+        this.helpFunction = (invoke, prefix) -> "SHows the current settings for this server";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
@@ -64,30 +72,11 @@ public class SettingsCommand extends SettingsBase {
             ? "Not Set" : (autoRole == null ? "Not Set" : autoRole.getAsMention())) + "\n" +
 
             "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
-            "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
-            "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none") + "\n" +
+            "**Modlog Channel:** " + (logChan == null ? "Not set" : logChan.getAsMention()) + "\n" +
+            "**Welcome/Leave channel:** " + (welcomeLeaveChannel == null ? "Not set" : welcomeLeaveChannel.getAsMention()) + "\n" +
             "**Embed color code:** " + guild.getHexColor()
         );
 
         sendEmbed(ctx.getEvent(), message);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "settings";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"options"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows the current settings\n" +
-            "Usage: `" + prefix + getName() + '`';
     }
 }

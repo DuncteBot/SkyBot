@@ -24,6 +24,8 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.EmptyFromRequestBody
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.bot.sharding.ShardManager
@@ -35,12 +37,11 @@ import java.util.*
 object WebHelpers {
 
     fun verifyCapcha(response: String, secret: String, mapper: ObjectMapper): JsonNode {
-        val fields = HashMap<String, Any>()
-        fields["secret"] = secret
-        fields["response"] = response
-        val req = WebUtils.ins.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
-            WebUtils.EncodingType.APPLICATION_JSON)
-            .build({ mapper.readTree(it.body()!!.byteStream()) }, WebParserUtils::handleError)
+        val fields = FormRequestBody()
+        fields.append("secret", secret)
+        fields.append("response", response)
+        val req = WebUtils.ins.postRequest("https://www.google.com/recaptcha/api/siteverify", fields)
+            .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
 
         return req.execute()
     }
@@ -56,9 +57,9 @@ object WebHelpers {
             .append("key", config.key)
             .append("token", config.token)
 
-        val t = WebUtils.ins.preparePost(query.build()).execute()
-
-        return mapper.readTree(t)
+        return WebUtils.ins.postRequest(query.build(), EmptyFromRequestBody())
+            .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
+            .execute()
     }
 
     fun toMap(pairs: List<NameValuePair>): Map<String, String> {

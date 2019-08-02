@@ -22,11 +22,11 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -36,27 +36,33 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.canNotProceed;
 import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.cannotInteractWithEmote;
 
 public class LockEmoteCommand extends Command {
 
     public LockEmoteCommand() {
         this.category = CommandCategory.ADMINISTRATION;
+        this.name = "lockemote";
+        this.helpFunction = (invoke, prefix) -> "Lock an emote to some roles.\n" +
+            "_Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
+            "even if you have administrator permission_";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <emote> <@role...>";
+        this.userPermissions = new Permission[]{
+            Permission.ADMINISTRATOR,
+        };
+        this.botPermissions = new Permission[]{
+            Permission.MANAGE_EMOTES,
+        };
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
-        if (canNotProceed(ctx)) {
-            return;
-        }
-
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote> <@role...>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -71,7 +77,7 @@ public class LockEmoteCommand extends Command {
         }
 
         if (mentionedEmotes.isEmpty() || mentionedRoles.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + ctx.getPrefix() + getName() + " <emote> <@role...>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -85,20 +91,5 @@ public class LockEmoteCommand extends Command {
 
         sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
             "following roles: `" + String.join("`, `", roleNames) + "`");
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "lockemote";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Lock an emote to some roles.\n" +
-            "Usage: `" + prefix + getName() + " <emote> <@role...>`\n" +
-            "Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
-            "even if you have administrator permission";
     }
 }

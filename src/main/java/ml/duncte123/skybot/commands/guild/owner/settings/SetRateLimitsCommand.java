@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
@@ -24,7 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -35,15 +33,23 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetRateLimitsCommand extends SettingsBase {
+
+    public SetRateLimitsCommand() {
+        this.name = "setratelimits";
+        this.helpFunction = (invoke, prefix) -> "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
+            "Example: " + prefix + invoke + " 20|45|60|120|240|2400";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <1|2|3|4|5|6/default>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + ctx.getPrefix() + "setratelimits <1|2|3|4|5|6/default>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -65,19 +71,5 @@ public class SetRateLimitsCommand extends SettingsBase {
             .collect(Collectors.joining(", ", "", " minutes"));
 
         sendMsg(event, "The new rates are " + steps);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "setratelimits";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
-            "Usage: `" + prefix + getName() + " <1|2|3|4|5|6>`\n" +
-            "Example: " + prefix + getName() + " 20|45|60|120|240|2400";
     }
 }

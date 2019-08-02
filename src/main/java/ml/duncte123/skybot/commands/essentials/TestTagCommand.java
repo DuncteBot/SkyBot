@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -38,13 +37,19 @@ public class TestTagCommand extends Command {
 
     public TestTagCommand() {
         this.category = CommandCategory.UTILS;
+        this.name = "testtag";
+        this.aliases = new String[]{
+            "tt",
+        };
+        this.helpFunction = (invoke, prefix) -> "Test your jagtag format before you save it as custom command etc.";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <JagTag syntax>`";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Usage: `" + ctx.getPrefix() + getName() + " <JagTag syntax>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -68,24 +73,5 @@ public class TestTagCommand extends Command {
 
         sendEmbed(event, EmbedUtils.embedMessage(message));
 
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "testtag";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"tt"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Test your jagtag format before you save it as custom command etc.\n" +
-            "Usage: `" + prefix + getName() + " <JagTag syntax>`";
     }
 }

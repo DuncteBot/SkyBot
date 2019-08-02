@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import me.duncte123.botcommons.StringUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -26,45 +25,22 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ModBaseCommand extends Command {
-
-    protected Permission[] perms;
-    protected Permission[] selfPerms = {};
     protected boolean argscheck = true;
 
     public ModBaseCommand() {
         this.category = CommandCategory.MODERATION;
-        this.perms = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
+        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-
-        if (!event.getMember().hasPermission(this.perms)) {
-            final String permissionsWord = "permission" + (this.perms.length > 1 ? "s" : "");
-
-            sendMsg(event, "You need the `" + parsePerms(this.perms) + "` " + permissionsWord + " for this command\n" +
-                "Please contact your server administrator if this is incorrect.");
-
-            return;
-        }
-
-        if (this.selfPerms.length > 0 && !ctx.getSelfMember().hasPermission(this.selfPerms)) {
-            final String permissionsWord = "permission" + (this.selfPerms.length > 1 ? "s" : "");
-
-            sendMsg(event, "I need the `" + parsePerms(this.selfPerms) + "` " + permissionsWord + " for this command to work\n" +
-                "Please contact your server administrator about this.");
-
-            return;
-        }
 
         if (argscheck && args.isEmpty()) {
             sendMsg(event, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
@@ -77,11 +53,4 @@ public abstract class ModBaseCommand extends Command {
 
     public abstract void run(@Nonnull CommandContext ctx);
 
-    private String parsePerms(Permission[] perms) {
-        final String neededPerms = Arrays.stream(perms)
-            .map(Permission::getName)
-            .collect(Collectors.joining("`, `"));
-
-        return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
-    }
 }

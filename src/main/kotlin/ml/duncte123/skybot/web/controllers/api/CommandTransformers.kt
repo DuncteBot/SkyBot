@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.controllers.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.ICommand
 
@@ -34,7 +35,7 @@ object CommandTransformers {
             val obj = output.addObject()
 
             obj.put("name", command.name)
-                .put("help", parseHelp(command))
+                .put("help", command.parseHelp())
 
             val aliases = obj.putArray("aliases")
 
@@ -77,8 +78,8 @@ object CommandTransformers {
             appendln("commands:")
 
             for (name in names) {
-                val command = commandManager.getCommand(name)
-                val help = parseHelp(command).replace("\"", "\\\"")
+                val command = commandManager.getCommand(name) as Command
+                val help = command.parseHelp(true).replace("\"", "\\\"")
 
                 appendln("  - name: $name")
                 appendln("    description: \"$help\"")
@@ -88,25 +89,36 @@ object CommandTransformers {
         }
     }
 
-    private fun parseHelp(cmd: ICommand): String {
-        var s = cmd.help(Settings.PREFIX)
-            .replace("&".toRegex(), "&amp;")
+    private fun Command.parseHelp(forceAliases: Boolean = false): String {
+        var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
+            "<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
+
+        if (this.aliases.isNotEmpty() && (forceAliases || this.shouldDisplayAliasesInHelp())) {
+            s += buildString {
+                this@parseHelp.aliases.forEach {
+                    append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                    append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+                }
+            }
+
+            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
+        }
+
+        return s
+    }
+
+    private fun String.mdToHtml() :String {
+        return this.replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")
             .replace("\\n".toRegex(), "<br />")
             .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
             .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
-
-        if (cmd.aliases.isNotEmpty() && cmd.shouldDisplayAliasesInHelp()) {
-            s += "<br />Aliases: " + Settings.PREFIX + cmd.aliases.joinToString(", " + Settings.PREFIX)
-        }
-
-        return s
     }
 
-    private fun CommandManager.getCommandsList(): List<ICommand> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }
+    private fun CommandManager.getCommandsList(): List<Command> {
+        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 
     private fun Class<*>.isKotlinClass(): Boolean {

@@ -92,7 +92,7 @@ public class MessageListener extends BaseListener {
         final String rw = event.getMessage().getContentRaw();
 
         if (rw.equals(Settings.PREFIX + "shutdown")
-            && Settings.developers.contains(event.getAuthor().getIdLong())) {
+            && Settings.DEVELOPERS.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 

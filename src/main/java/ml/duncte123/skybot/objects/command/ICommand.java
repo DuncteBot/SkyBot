@@ -19,30 +19,26 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.Author;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface ICommand {
 
-    void executeCommand(@NotNull CommandContext ctx);
+    void executeCommand(@Nonnull CommandContext ctx);
 
-    @NotNull
+    @Nonnull
     String getName();
 
-    @NotNull
+    @Nonnull
     default String[] getAliases() {
         return new String[0];
     }
 
-    @NotNull
-    String help(@NotNull String prefix);
+    @Nonnull
+    String help(@Nonnull String invoke, @Nonnull String prefix);
 
-    @NotNull
-    default String help(@NotNull String invoke, @NotNull String prefix) {
-        return help(prefix);
-    }
-
-    @NotNull
+    @Nonnull
     CommandCategory getCategory();
 
     default boolean isCustom() {

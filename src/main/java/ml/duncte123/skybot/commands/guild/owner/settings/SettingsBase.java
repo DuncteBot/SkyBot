@@ -38,21 +38,24 @@ import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 abstract class SettingsBase extends Command {
 
     public SettingsBase() {
-        this.category = CommandCategory.ADMINISTRATION;
         this.displayAliasesInHelp = true;
+        this.category = CommandCategory.ADMINISTRATION;
+        this.userPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+        };
     }
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-        if (!ctx.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(ctx.getAuthor())) {
-            sendMsg(ctx.getEvent(), "You need the \"Manage Server\" permission to use this command");
+
+        if (isDev(ctx.getAuthor())) {
+            execute(ctx);
+
             return;
         }
 
-        run(ctx);
+        super.executeCommand(ctx);
     }
-
-    public abstract void run(@Nonnull CommandContext ctx);
 
     boolean rolePermCheck(CommandContext ctx) {
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
@@ -81,6 +84,8 @@ abstract class SettingsBase extends Command {
         }
 
         return foundChannels.stream()
-            .filter(TextChannel::canTalk).findFirst().orElse(null);
+            .filter(TextChannel::canTalk)
+            .findFirst()
+            .orElse(null);
     }
 }

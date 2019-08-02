@@ -23,26 +23,22 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DiscordMemesCommand : WeebCommandBase() {
 
     init {
-        this.category = CommandCategory.FUN
         this.displayAliasesInHelp = false
+        this.category = CommandCategory.FUN
+        this.name = "discordmeme"
+        this.aliases = arrayOf("dmeme", "discordmemes", "dmemes")
+        this.helpFunction = BiFunction { _, _ -> "Shows a discord meme" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         ctx.weebApi.getRandomImage("discord_memes").async {
             sendEmbed(ctx.event, getWeebEmbedImage(it.url))
         }
     }
-
-    override fun help(prefix: String) = """Gives you a discord meme
-        |Usage: `$prefix$name`
-    """.trimMargin()
-
-    override fun getName() = "discordmeme"
-
-    override fun getAliases() = arrayOf("dmeme", "discordmemes", "dmemes")
 }

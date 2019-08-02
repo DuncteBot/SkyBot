@@ -89,7 +89,7 @@ public final class Variables {
         }
 
         //set the devs
-        Settings.developers.addAll(this.config.discord.constantSuperUserIds);
+        Settings.DEVELOPERS.addAll(this.config.discord.constantSuperUserIds);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + this.config.apis.googl + "&safe=off";
         this.isSql = this.config.use_database;

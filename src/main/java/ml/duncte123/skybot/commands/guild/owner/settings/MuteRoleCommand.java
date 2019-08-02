@@ -23,7 +23,6 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Role;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -33,21 +32,32 @@ import static ml.duncte123.skybot.commands.guild.owner.settings.AutoRoleCommand.
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MuteRoleCommand extends SettingsBase {
+
+    public MuteRoleCommand() {
+        this.name = "muterole";
+        this.aliases = new String[]{
+            "spamrole"
+        };
+        this.helpFunction = (invoke, prefix) -> "Sets the role that the user gets when they are muted";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@role/disable>`";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
 
         if (rolePermCheck(ctx)) {
             return;
         }
 
         if (args.isEmpty()) {
-            sendMsg(ctx, "Incorrect usage: `" + ctx.getPrefix() + "spamrole <role name/disable>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
+
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
         if ("disable".equals(args.get(0))) {
             sendMsg(ctx, "SpamRole feature & SpamFilter has been disabled");
@@ -66,24 +76,5 @@ public class MuteRoleCommand extends SettingsBase {
         guild.setSettings(settings.setMuteRoleId(foundRole.getIdLong()));
 
         sendMsg(ctx, "SpamRole has been set to " + foundRole.getAsMention());
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "muterole";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"spamrole"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Gives members a role when they spam.\n" +
-            "Usage: `" + prefix + getName() + " <role>`";
     }
 }

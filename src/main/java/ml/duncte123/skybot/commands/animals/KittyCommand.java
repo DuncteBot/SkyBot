@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,10 +34,15 @@ public class KittyCommand extends Command {
 
     public KittyCommand() {
         this.category = CommandCategory.ANIMALS;
+        this.name = "cat";
+        this.aliases = new String[]{
+            "kitty",
+        };
+        this.helpFunction = (invoke, prefix) -> "Shows a cat";
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final String apiKey = ctx.getConfig().apis.thecatapi;
         final String url = "https://api.thecatapi.com/api/images/get?" +
             (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1";
@@ -48,23 +52,5 @@ public class KittyCommand extends Command {
             final String sourceUrl = doc.selectFirst("source_url").text();
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("Source", sourceUrl, fullUrl));
         });
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "A alternative cat command with more kitties";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "kitty";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"cat"};
     }
 }

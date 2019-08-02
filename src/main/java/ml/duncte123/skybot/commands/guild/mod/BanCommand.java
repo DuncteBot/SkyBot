@@ -20,10 +20,10 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,15 +37,32 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class BanCommand extends ModBaseCommand {
 
+    public BanCommand() {
+        this.name = "ban";
+        this.aliases = new String[]{
+            "dabon",
+        };
+        this.helpFunction = (invoke, prefix) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
+        this.botPermissions = new Permission[]{
+            Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
+        final List<String> args = ctx.getArgs();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> <Reason>");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -56,38 +73,26 @@ public class BanCommand extends ModBaseCommand {
         }
 
         final User toBan = toBanMember.getUser();
-        if (toBan.equals(event.getAuthor()) &&
-            !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-            sendMsg(event, "You are not permitted to perform this action.");
+        if (toBan.equals(ctx.getAuthor()) &&
+            !ctx.getMember().canInteract(Objects.requireNonNull(ctx.getGuild().getMember(toBan)))) {
+            sendMsg(ctx, "You are not permitted to perform this action.");
             return;
         }
 
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
 
-        final String reason = String.join(" ", args.subList(1, args.size()));
-        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        final String fReason = reason;
+
+        ctx.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (m) -> {
-                modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
-                sendSuccess(event.getMessage());
+                modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                sendSuccess(ctx.getMessage());
             }
         );
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + prefix + getName() + " <@user> <Reason>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "ban";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"dabon"};
     }
 }

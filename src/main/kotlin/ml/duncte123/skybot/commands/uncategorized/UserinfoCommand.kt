@@ -40,6 +40,7 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.function.BiFunction
 import java.util.stream.Collectors
 
 @Authors(authors = [
@@ -49,7 +50,14 @@ import java.util.stream.Collectors
 class UserinfoCommand : Command() {
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "userinfo"
+        this.aliases = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
+        this.helpFunction = BiFunction { _, _ -> "Get some information aobut yourself or from another user" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@user]`" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 
@@ -220,13 +228,6 @@ class UserinfoCommand : Command() {
                 }
         }
     }
-
-    override fun help(prefix: String) = "Get information from yourself or from another user.\n" +
-        "Usage: `$prefix$name [username]`"
-
-    override fun getName() = "userinfo"
-
-    override fun getAliases() = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING) {

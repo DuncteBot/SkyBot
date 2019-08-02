@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,9 +34,19 @@ import static ml.duncte123.skybot.utils.AirUtils.getMentionedUser;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class PronounsCheckCommand extends Command {
 
-    @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public PronounsCheckCommand() {
+        this.category = CommandCategory.LGBTQ;
+        this.name = "pronounscheck";
+        this.aliases = new String[]{
+            "pronouns",
+        };
+        this.helpFunction = (invoke, prefix) -> "Check someones pronouns\n" +
+            "Pronouns can be set via `" + prefix + "setpronouns`";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user]`";
+    }
 
+    @Override
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final User target = getMentionedUser(ctx);
         final long userId = target.getIdLong();
@@ -56,31 +65,5 @@ public class PronounsCheckCommand extends Command {
         final String format = "%s current pronouns are:%n**%s** (%s)";
 
         sendMsg(event, String.format(format, userName, pronouns, singular));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "pronounscheck";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"pronouns"};
-    }
-
-    @NotNull
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.LGBTQ;
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Check someones pronouns.\n" +
-            "Usage: `" + prefix + getName() + " [user]`\n" +
-            "Pronouns can be set via `" + prefix + "setpronouns`";
     }
 }

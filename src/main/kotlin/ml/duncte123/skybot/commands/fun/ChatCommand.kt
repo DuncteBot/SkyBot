@@ -21,7 +21,9 @@ package ml.duncte123.skybot.commands.`fun`
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -32,11 +34,11 @@ import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
-import java.net.URLEncoder
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
+import java.util.function.BiFunction
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -56,6 +58,9 @@ class ChatCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "chat"
+        this.helpFunction = BiFunction { _, _ -> "Have a chat with DuncteBot" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <message>`" }
 
         commandService.scheduleAtFixedRate({
             val temp = TLongObjectHashMap<ChatSession>(sessions)
@@ -73,8 +78,7 @@ class ChatCommand : Command() {
     }
 
 
-    override fun executeCommand(ctx: CommandContext) {
-
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
 
         if (event.message.contentRaw.contains("prefix")) {
@@ -84,7 +88,7 @@ class ChatCommand : Command() {
         }
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <message>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
@@ -155,11 +159,6 @@ class ChatCommand : Command() {
         message = message.replace("@here", "here").replace("@everyone", "everyone")
         return message
     }
-
-    override fun help(prefix: String) = "Have a chat with dunctebot\n" +
-        "Usage: `$prefix$name <message>`"
-
-    override fun getName() = "chat"
 }
 
 /**
@@ -167,19 +166,20 @@ class ChatCommand : Command() {
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatSession(userId: Long) {
-    private val vars: MutableMap<String, Any>
+    private val body = FormRequestBody()
 
     init {
-        vars = LinkedHashMap()
-        vars["botid"] = "b0dafd24ee35a477"
-        vars["custid"] = userId
+        body.append("botid", "b0dafd24ee35a477")
+        body.append("custid", userId.toString())
     }
 
     var time = Date()
 
     fun think(text: String, response: (String) -> Unit) {
-        vars["input"] = URLEncoder.encode(text, "UTF-8")
-        WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
+        body.append("input",text)
+        WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
+            .build({ it.body!!.string() }, WebParserUtils::handleError)
+            .async {
             try {
                 response.invoke(xPathSearch(it, "//result/that/text()"))
             } catch (e: Exception) {
@@ -192,6 +192,7 @@ class ChatSession(userId: Long) {
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun xPathSearch(input: String, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()

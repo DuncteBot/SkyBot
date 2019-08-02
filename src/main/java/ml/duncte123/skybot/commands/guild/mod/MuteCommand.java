@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,53 +37,62 @@ import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProce
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends ModBaseCommand {
 
+    public MuteCommand() {
+        this.name = "mute";
+        this.helpFunction = (invoke, prefix) -> "Mutes a user in the server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.botPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+            Permission.MANAGE_ROLES,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this mute"
+            ),
+        };
+    }
+
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <reason>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
+            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
             return;
         }
 
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
-        final String reason = String.join("", args.subList(1, args.size()));
         final Member toMute = mentioned.get(0);
-        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final Role role = ctx.getGuild().getRoleById(settings.getMuteRoleId());
 
-        if (canNotProceed(ctx, event, mod, toMute, role, self)) {
+        if (canNotProceed(ctx, ctx.getEvent(), mod, toMute, role, self)) {
             return;
         }
 
-        event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by " + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
-                sendSuccess(event.getMessage());
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        ctx.getGuild().getController().addSingleRoleToMember(toMute, role)
+            .reason("Muted by " + ctx.getAuthor().getAsTag() + ": " + reason).queue(success -> {
+                ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+                sendSuccess(ctx.getMessage());
             }
         );
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Mute a user.\n" +
-            "Usage: `" + prefix + getName() + " <@user> <reason>`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "mute";
     }
 }

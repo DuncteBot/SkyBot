@@ -22,7 +22,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,8 +29,14 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ToggleKickModeCommand extends SettingsBase {
+
+    public ToggleKickModeCommand() {
+        this.name = "togglekickmode";
+        this.helpFunction = (invoke, prefix) -> "Toggles whether we should kick spammers or assign a role to them";
+    }
+
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
@@ -39,18 +44,5 @@ public class ToggleKickModeCommand extends SettingsBase {
         guild.setSettings(settings.setKickState(kickState));
 
         sendMsg(ctx.getEvent(), "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "togglekickmode";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Toggles whether we should kick or assign a role for spammers.\n" +
-            "Usage: `" + prefix + getName() + '`';
     }
 }

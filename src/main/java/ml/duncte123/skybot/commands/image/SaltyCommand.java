@@ -19,13 +19,19 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public class SaltyCommand extends NoPatronImageCommand {
+
+    public SaltyCommand() {
+        this.name = "salty";
+        this.helpFunction = (invoke, prefix) -> "Someones being salty today";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user/url]`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }
@@ -34,18 +40,5 @@ public class SaltyCommand extends NoPatronImageCommand {
         if (url != null) {
             ctx.getAlexFlipnote().getSalty(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
         }
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "salty";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Someones being salty today\n" +
-            "Usage: `" + prefix + getName() + " [@user/url]`";
     }
 }

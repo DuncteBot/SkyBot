@@ -22,18 +22,29 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.core.Permission
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : ModBaseCommand() {
 
     init {
-        this.perms = arrayOf(Permission.KICK_MEMBERS)
+        this.name = "warn"
+        this.helpFunction = BiFunction { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user> [-r reason]`" }
+        this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
+        this.flags = arrayOf(
+            Flag(
+                'r',
+                "reason",
+                "Sets the reason for this warning"
+            )
+        )
     }
 
     override fun run(ctx: CommandContext) {
-
         val event = ctx.event
         val args = ctx.args
         val mentioned = ctx.mentionedMembers
@@ -62,8 +73,10 @@ class WarnCommand : ModBaseCommand() {
         }
 
         var reason = ""
-        if (args.size > 1) {
-            reason = args.subList(1, args.size).joinToString(separator = " ")
+        val flags = ctx.getParsedFlags(this)
+
+        if (flags.containsKey("r")) {
+            reason = flags["r"]!!.joinToString(" ")
         }
 
         val dmMessage = """You have been warned by ${event.author.asTag}
@@ -83,12 +96,5 @@ class WarnCommand : ModBaseCommand() {
         MessageUtils.sendSuccess(event.message)
 
     }
-
-    override fun help(prefix: String) = """Warns a member.
-        |When a member has 3 warnings he/she will be kicked
-        |Usage: `$prefix$name <@user> [reason]`
-    """.trimMargin()
-
-    override fun getName() = "warn"
 
 }

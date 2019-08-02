@@ -24,17 +24,21 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import org.apache.commons.text.WordUtils
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class DialogCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "dialog"
+        this.helpFunction = BiFunction { _, _ -> "Displays a confirmation dialog" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <text>`" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(ctx.event, "Correct usage: `${ctx.prefix}$name <words>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
@@ -42,24 +46,25 @@ class DialogCommand : Command() {
             ctx.argsDisplay.replace("`", "")
             , 25, null, true).split("\n")
 
-        val sb = StringBuilder()
-            .append("```")
-            .append("╔═══════════════════════════╗ \n")
-            .append("║ Alert                     ║\n")
-            .append("╠═══════════════════════════╣\n")
+        val string = buildString {
+            appendln("```")
+            appendln("╔═══════════════════════════╗ ")
+            appendln("║ Alert                     ║")
+            appendln("╠═══════════════════════════╣")
 
-        lines.stream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
+            lines.stream()
+                .map { it.trim() }
+                .map { String.format("%-25s", it) }
+                .map { "║ $it ║" }
+                .forEach { appendln(it) }
 
-        sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
-            .append("║  │   Yes   │  │   No   │  ║\n")
-            .append("║  └─────────┘  └────────┘  ║\n")
-            .append("╚═══════════════════════════╝\n")
-            .append("```")
-        MessageUtils.sendMsg(ctx.event, sb.toString())
+            appendln("║  ┌─────────┐  ┌────────┐  ║")
+            appendln("║  │   Yes   │  │   No   │  ║")
+            appendln("║  └─────────┘  └────────┘  ║")
+            appendln("╚═══════════════════════════╝")
+            appendln("```")
+        }
+
+        MessageUtils.sendMsg(ctx.event, string)
     }
-
-    override fun help(prefix: String) = "Gives you a nice dialog\n" +
-        "Usage: `$prefix}$name <text>`"
-
-    override fun getName() = "dialog"
 }

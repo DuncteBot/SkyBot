@@ -18,18 +18,18 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,12 +39,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.CommandUtils.*;
 
-public class TagCommand extends Command {
+public class TagCommand extends VariablesInConstructorCommand {
 
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
 
     public TagCommand(Variables variables) {
         this.category = CommandCategory.FUN;
+        this.name = "tag";
+        this.aliases = new String[]{
+            "pasta",
+            "tags",
+            "t",
+        };
+        this.helpFunction = (invoke, prefix) -> "Stores some text for later usage\n" +
+            "Tags follow the same parsing as custom commands and the join/leave messages";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`";
 
         variables.getDatabaseAdapter().loadTags((tags) -> {
             tags.forEach((tag) -> this.tagStore.put(tag.name, tag));
@@ -54,7 +63,14 @@ public class TagCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
+
+        if (ctx.getInvoke().equals("tags")) {
+            sendTagsList(ctx);
+
+            return;
+        }
+
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
@@ -289,39 +305,19 @@ public class TagCommand extends Command {
             return true;
         }
 
-        if (member.getGuild().getIdLong() != supportGuildId) {
+        if (member.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return false;
         }
 
         final boolean hasRole = member.getRoles()
             .stream()
             .map(Role::getIdLong)
-            .anyMatch((it) -> it == tagPatronsRole);
+            .anyMatch((it) -> it == Settings.TAG_PATRONS_ROLE);
 
         if (hasRole) {
             tagPatrons.add(u.getIdLong());
         }
 
         return hasRole;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "tag";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Store it in a tag\n" +
-            "Usage: `" + prefix + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
-            "The tags follow the same parsing as custom commands and the join/leave messages";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"pasta", "tags", "t"};
     }
 }

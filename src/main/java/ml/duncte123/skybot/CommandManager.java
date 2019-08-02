@@ -24,6 +24,7 @@ import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -97,7 +99,7 @@ public class CommandManager {
      * This tries to get a command with the provided name/alias
      *
      * @param name
-     *         the name of the command
+     *     the name of the command
      *
      * @return a possible null command for the name
      */
@@ -252,10 +254,10 @@ public class CommandManager {
      * This handles adding the command
      *
      * @param command
-     *         The command to add
+     *     The command to add
      *
      * @throws IllegalArgumentException
-     *         if the command or alias is already present
+     *     if the command or alias is already present
      */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
@@ -280,6 +282,15 @@ public class CommandManager {
                         command.getName()
                     ));
                 }
+
+                if (this.commands.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present for command (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.commands.get(alias).getClass().getSimpleName(),
+                        command.getClass().getSimpleName()
+                    ));
+                }
             }
 
             for (final String alias : lowerAliasses) {
@@ -294,7 +305,7 @@ public class CommandManager {
      * This will run the command when we need them
      *
      * @param event
-     *         the event for the message
+     *     the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
@@ -396,17 +407,26 @@ public class CommandManager {
             catch (Throwable ex) {
                 execCheck(ex);
                 ex.printStackTrace();
+                sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
             }
         });
     }
 
     private void registerCommandsFromReflection(Reflections reflections) {
+
+        final List<Class<? extends ICommand>> filteredCommands = reflections
+            .getSubTypesOf(ICommand.class)
+            .stream()
+            // Remove abstract classes
+            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
+            .collect(Collectors.toList());
+
         //Loop over them commands
-        for (final Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
+        for (final Class<? extends ICommand> cmd : filteredCommands) {
             try {
                 final ICommand command;
 
-                if (cmd.getSimpleName().equals("TagCommand")) {
+                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
                     command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
                 } else {
                     command = cmd.getDeclaredConstructor().newInstance();
@@ -414,7 +434,11 @@ public class CommandManager {
 
                 this.addCommand(command);
             }
-            catch (Exception ignored) {
+            catch (IllegalArgumentException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

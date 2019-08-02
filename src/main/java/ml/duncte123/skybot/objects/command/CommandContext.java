@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -37,6 +38,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -107,6 +109,10 @@ public class CommandContext implements ICommandContext {
 
     public DuncteApis getApis() {
         return variables.getApis();
+    }
+
+    public Map<String, List<String>> getParsedFlags(Command cmd) {
+        return CommandUtils.parseInput(cmd.flags, this.getArgs());
     }
 
     // --------------- Normal methods --------------- //

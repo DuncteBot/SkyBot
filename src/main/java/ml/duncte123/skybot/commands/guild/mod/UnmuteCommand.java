@@ -19,12 +19,13 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -34,6 +35,23 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 public class UnmuteCommand extends ModBaseCommand {
+
+    public UnmuteCommand() {
+        this.name = "unmute";
+        this.helpFunction = (invoke, prefix) -> "Removes the mute of a user if they are muted";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]";
+        this.botPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+            Permission.MANAGE_ROLES,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
@@ -45,7 +63,7 @@ public class UnmuteCommand extends ModBaseCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty() || args.isEmpty()) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user>`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -71,25 +89,20 @@ public class UnmuteCommand extends ModBaseCommand {
             return;
         }
 
+        String reason = "";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
+        final String fReason = reason;
+
         event.getGuild().getController().removeSingleRoleFromMember(toMute, role)
-            .reason("Unmute by " + event.getAuthor().getAsTag()).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", ctx.getGuild());
+            .reason("Unmute by " + event.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
+                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", fReason, ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );
-
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "unmute";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Unmutes a user if they are muted\n" +
-            "Usage: `" + prefix + getName() + " <@user>`";
     }
 }

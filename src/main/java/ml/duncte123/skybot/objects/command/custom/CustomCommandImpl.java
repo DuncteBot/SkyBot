@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandImpl implements CustomCommand {
@@ -56,6 +58,12 @@ public class CustomCommandImpl implements CustomCommand {
     @Override
     public String getName() {
         return invoke;
+    }
+
+    @Nonnull
+    @Override
+    public String help(@Nonnull String invoke, @Nonnull String prefix) {
+        return "null";
     }
 
     @Override

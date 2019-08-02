@@ -16,13 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.extensions
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ml.duncte123.skybot.objects.command.Command
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Tag {
-    public String name;
-    public String content;
-    public long owner_id;
+fun String.stripFlags(command: Command): String {
+    var text = this
+
+    for (f in command.flags) {
+        if (f.word != null) {
+            text = text.replace("--" + f.word!!, "")
+        }
+
+        text = text.replace("-" + f.flag, "")
+    }
+
+    return text.trim()
 }

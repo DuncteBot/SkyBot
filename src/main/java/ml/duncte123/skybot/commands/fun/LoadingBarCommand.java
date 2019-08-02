@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -37,16 +36,21 @@ public class LoadingBarCommand extends Command {
 
     public LoadingBarCommand() {
         this.category = CommandCategory.FUN;
+        this.name = "loadingbar";
+        this.aliases = new String[]{
+            "progress",
+            "progressbar",
+            "lb",
+        };
+        this.helpFunction = (invoke, prefix) -> "Displays a progress bar that shows how much of the year has passed";
+        this.botPermissions = new Permission[]{
+            Permission.MESSAGE_ATTACH_FILES,
+            Permission.MESSAGE_WRITE,
+        };
     }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
-
-        if (!ctx.getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_WRITE)) {
-            sendMsg(ctx.getEvent(), "I need the `Attach Files` permission for this command to work");
-            return;
-        }
-
+    public void execute(@Nonnull CommandContext ctx) {
         final double progress = LoadingBar.getPercentage();
         final int year = Calendar.getInstance().get(Calendar.YEAR);
 
@@ -58,23 +62,5 @@ public class LoadingBarCommand extends Command {
             sendMsg(ctx.getEvent(), "Something went wrong with generating the image.");
         }
 
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "loadingbar";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"progress", "progressbar", "lb"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Displays a progress bar that shows how much of the year has passed";
     }
 }

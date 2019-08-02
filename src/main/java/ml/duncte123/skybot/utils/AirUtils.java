@@ -23,6 +23,8 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import me.duncte123.botcommons.StringUtils;
+import me.duncte123.botcommons.web.GoogleLinkLength;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
@@ -35,6 +37,7 @@ import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -233,7 +236,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url, String googleKey) {
-        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey);
+        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey, GoogleLinkLength.SHORT);
     }
 
     public static String colorToHex(int hex) {
@@ -310,7 +313,7 @@ public class AirUtils {
 
         for (final Reminder reminder : reminders) {
             final String message = String.format(
-                "%s you asked me to remind you about %s",
+                "%s you asked me to remind you about \"%s\"",
                 prettyTime.format(reminder.getReminder_date()),
                 reminder.getReminder().trim()
             );
@@ -349,5 +352,13 @@ public class AirUtils {
 
         toPurge.addAll(extraRemoval);
         adapter.purgeReminders(toPurge);
+    }
+
+    public static String parsePerms(Permission[] perms) {
+        final String neededPerms = Arrays.stream(perms)
+            .map(Permission::getName)
+            .collect(Collectors.joining("`, `"));
+
+        return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
     }
 }

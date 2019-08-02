@@ -24,11 +24,18 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "nowplaying"
+        this.aliases = arrayOf("np", "song")
+        this.helpFunction = BiFunction { _, _ -> "Prints information about the currently playing song (title, current time)" }
+    }
+
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
@@ -40,7 +47,7 @@ class NowPlayingCommand : MusicCommand() {
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val trackinfo = player.playingTrack.info
 
-                embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})")
+                embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})**")
             }
 
             else -> embedMessage("The player is not currently playing anything!")
@@ -48,10 +55,4 @@ class NowPlayingCommand : MusicCommand() {
 
         sendEmbed(event, msg)
     }
-
-    override fun help(prefix: String) = "Prints information about the currently playing song (title, current time)"
-
-    override fun getName(): String = "nowplaying"
-
-    override fun getAliases(): Array<String> = arrayOf("np", "song")
 }

@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.objects.apis.alexflipnote;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
@@ -44,9 +44,7 @@ public class Alexflipnote {
         return WebUtils.ins.prepareRaw(
             makeRequest("colour/random"),
             (r) -> {
-                final ObjectNode node = (ObjectNode) mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
-                node.put("integer", node.get("int").asInt());
-                node.remove("int");
+                final JsonNode node = mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
 
                 return mapper.readValue(node.traverse(), FlipnoteColourObj.class);
             }

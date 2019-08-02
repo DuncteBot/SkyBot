@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -140,6 +141,6 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public String parseTextArgsForImage(CommandContext ctx) {
-        return ctx.getArgsDisplay();
+        return StringKt.stripFlags(ctx.getArgsDisplay(), this);
     }
 }

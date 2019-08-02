@@ -25,13 +25,17 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.VoiceChannel
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class VoiceKickCommand : ModBaseCommand() {
 
     init {
-        this.perms = arrayOf(Permission.KICK_MEMBERS)
-        this.selfPerms = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
+        this.name = "voicekick"
+        this.helpFunction = BiFunction { _, _ -> "Kicks a user from the voice channel that they are in" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user/voice channel>`" }
+        this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
+        this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
     }
 
     override fun run(ctx: CommandContext) {
@@ -66,6 +70,7 @@ class VoiceKickCommand : ModBaseCommand() {
                     return@queue
                 }
 
+                // TODO: may be null in v4
                 controller.moveVoiceMember(member, channel).queue {
                     channel.delete().queue()
                 }
@@ -78,10 +83,4 @@ class VoiceKickCommand : ModBaseCommand() {
 
         sendMsg(event, "I could not find any Voice Channel or member to kick from voice")
     }
-
-    override fun getName() = "voicekick"
-
-    override fun help(prefix: String) = """Kicks a user from the voice channel
-        |Usage: `$prefix$name <@user/voice channel>`
-    """.trimMargin()
 }

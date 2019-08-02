@@ -26,17 +26,21 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.entities.MessageEmbed
+import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class TextToBricksCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
+        this.name = "ttb"
+        this.helpFunction = BiFunction { _, _ -> "Converts your text into emoji bricks" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <text>`" }
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            sendMsg(ctx.event, "Correct usage: `${ctx.prefix}${ctx.invoke} <words>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
@@ -44,9 +48,9 @@ class TextToBricksCommand : Command() {
             .toLowerCase()
             .replace("([a-zA-Z])".toRegex(), ":regional_indicator_\$1:")
             .replace("([0-9])".toRegex(), "\$1\u20E3")
-            .replace("!!", ":bangbang:")
-            .replace("!", ":exclamation:")
-            .replace("?", ":question:")
+            .replace("!!", "\u203C")
+            .replace("!", "\u2757")
+            .replace("?", "\u2753")
 
         if (message.length > MessageEmbed.TEXT_MAX_LENGTH) {
             sendMsg(ctx.event, "Your input is too long, please limit it (${message.length} out of ${MessageEmbed.TEXT_MAX_LENGTH} max chars)")
@@ -56,9 +60,4 @@ class TextToBricksCommand : Command() {
 
         sendEmbed(ctx.event, EmbedUtils.embedMessage(message))
     }
-
-    override fun help(prefix: String) = "Convert your text to bricks\n" +
-        "Usage: `$prefix$name <text>`"
-
-    override fun getName() = "ttb"
 }

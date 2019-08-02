@@ -24,17 +24,24 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.isURL
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.name = "shorten"
+        this.aliases = arrayOf("short", "url", "bitly", "googl")
+        this.helpFunction = BiFunction {_,_ -> "Shortens a link"}
+        this.usageInstructions = BiFunction {invoke, prefix -> "`$prefix$invoke <link>`"}
+    }
 
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 
         if (args.isEmpty() || args[0].isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${ctx.prefix}$name <link to shorten>`")
+            this.sendUsageInstructions(ctx)
             return
         }
 
@@ -49,11 +56,4 @@ class ShortenCommand : Command() {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")
         })
     }
-
-    override fun help(prefix: String) = """Shortens a url
-            |Usage: `$prefix$name <link to shorten>`""".trimMargin()
-
-    override fun getName(): String = "shorten"
-
-    override fun getAliases(): Array<String> = arrayOf("short", "url", "bitly", "googl")
 }

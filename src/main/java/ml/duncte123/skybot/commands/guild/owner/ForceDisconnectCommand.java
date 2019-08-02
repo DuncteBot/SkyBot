@@ -24,8 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,42 +32,30 @@ import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ForceDisconnectCommand extends MusicCommand {
+
+    public ForceDisconnectCommand() {
+        this.name = "forcedisconnect";
+        this.aliases = new String[]{
+            "forceleave",
+        };
+        this.helpFunction = (invoke, prefix) -> "Force disconnects the bot from music for when the bot is stuck";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
+    public void execute(@Nonnull CommandContext ctx) {
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
-            sendMsg(event, "You need administrator perms to run this command.");
+            sendMsg(ctx, "You need administrator perms to run this command.");
             return;
         }
 
-        final Guild g = event.getGuild();
+        final Guild g = ctx.getGuild();
         final GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
         manager.player.stopTrack();
         manager.scheduler.queue.clear();
         getLavalinkManager().closeConnection(g);
 
-        sendMsg(event, "Successfully sent the disconnect signal to the server");
+        sendMsg(ctx, "Successfully sent the disconnect signal to the server");
 
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Force disconnects the bot from music for when the bot is stuck";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "forcedisconnect";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"forceleave"};
     }
 }

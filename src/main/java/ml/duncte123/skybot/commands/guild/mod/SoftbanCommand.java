@@ -21,13 +21,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,18 +38,31 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {
-        this.perms = new Permission[]{Permission.KICK_MEMBERS};
+        this.name = "softban";
+        this.helpFunction = (invoke, prefix) -> "Kicks a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
+        this.botPermissions = new Permission[]{
+            Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this kick"
+            ),
+        };
     }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is " + ctx.getPrefix() + getName() + " <@user> [Reason]");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -62,39 +74,33 @@ public class SoftbanCommand extends ModBaseCommand {
 
         try {
             final User toBan = toBanMember.getUser();
-            if (toBan.equals(event.getAuthor()) &&
-                !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
-                sendMsg(event, "You are not permitted to perform this action.");
+            if (toBan.equals(ctx.getAuthor()) &&
+                !ctx.getGuild().getMember(ctx.getAuthor()).canInteract(ctx.getGuild().getMember(toBan))) {
+                sendMsg(ctx, "You are not permitted to perform this action.");
                 return;
             }
 
-            final String reason = String.join(" ", args.subList(1, args.size()));
+            String reason = "No reason given";
+            final var flags = ctx.getParsedFlags(this);
 
-            event.getGuild().getController().ban(toBanMember, 1)
-                .reason("Kicked by: " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(
+            if (flags.containsKey("r")) {
+                reason = String.join(" ", flags.get("r"));
+            }
+
+            final String fReason = reason;
+
+            ctx.getGuild().getController().ban(toBanMember, 1)
+                .reason("Kicked by: " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(
                 nothing -> {
-                    ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
-                    MessageUtils.sendSuccess(event.getMessage());
-                    event.getGuild().getController().unban(toBan.getId())
-                        .reason("(softban) Kicked by: " + event.getAuthor().getAsTag()).queue();
+                    ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, ctx.getGuild());
+                    MessageUtils.sendSuccess(ctx.getMessage());
+                    ctx.getGuild().getController().unban(toBan.getId())
+                        .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag()).queue();
                 }
             );
         }
         catch (HierarchyException ignored) {
-            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
+            sendMsg(ctx, "I can't ban that member because his roles are above or equals to mine.");
         }
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Kicks a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + prefix + getName() + " <@user> [reason]`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "softban";
     }
 }

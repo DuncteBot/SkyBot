@@ -21,24 +21,43 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class TempMuteCommand extends TempBanCommand {
+public class TempMuteCommand extends ModBaseCommand {
+
+    public TempMuteCommand() {
+        this.name = "tempmute";
+        this.helpFunction = (invoke, prefix) -> "Temporally mutes a user in the server";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
+        this.botPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+            Permission.MANAGE_ROLES,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this ban"
+            ),
+        };
+    }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
@@ -48,7 +67,7 @@ public class TempMuteCommand extends TempBanCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + ctx.getPrefix() + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
+            this.sendUsageInstructions(ctx);
             return;
         }
 
@@ -68,14 +87,20 @@ public class TempMuteCommand extends TempBanCommand {
             return;
         }
 
-        final String reason = String.join(" ", args.subList(2, args.size()));
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
+
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        }
+
         final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
 
         if (duration == null) {
             return;
         }
 
-        final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final String fReason = reason;
         final String finalDate = AirUtils.getDatabaseDateFormat(duration);
 
         ctx.getDatabaseAdapter().createMute(
@@ -94,19 +119,6 @@ public class TempMuteCommand extends TempBanCommand {
                     sendSuccess(event.getMessage());
                 }
             );
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "tempmute";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Temporally mutes a user on the guild\n" +
-            "Usage: `" + prefix + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 
     static boolean canNotProceed(@Nonnull CommandContext ctx, GuildMessageReceivedEvent event, Member mod, Member toMute, Role role, Member self) {

@@ -21,15 +21,20 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class LinusCommand extends ImageCommandBase {
 
+    public LinusCommand() {
+        this.name = "linus";
+        this.helpFunction = (invoke, prefix) -> "Shows a picture of Linus pointing to something on a monitor.";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user/url]`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
@@ -42,18 +47,5 @@ public class LinusCommand extends ImageCommandBase {
         if (url != null) {
             ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
         }
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Shows a picture of Linus pointing to something on a monitor.\n" +
-            "Usage: `" + prefix + "linus [image url]`";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "linus";
     }
 }

@@ -16,13 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.objects.command;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Tag {
-    public String name;
-    public String content;
-    public long owner_id;
+public abstract class VariablesInConstructorCommand extends Command {
+    // Just a flag for the loading of commands
 }

@@ -1,3 +1,4 @@
+#!/bin/sh
 git push
 git checkout master
 git pull

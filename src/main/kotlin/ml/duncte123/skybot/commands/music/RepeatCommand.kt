@@ -22,12 +22,19 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
 
-    override fun run(ctx: CommandContext) {
+    init {
+        this.name = "repeat"
+        this.aliases = arrayOf("loop")
+        this.helpFunction = BiFunction { _, _ -> "Makes the player repeat the currently playing song" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [playlist/status]`" }
+    }
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
@@ -51,7 +58,7 @@ class RepeatCommand : MusicCommand() {
                 }
 
                 else -> {
-                    sendMsg(event, "Unknown argument, check `${ctx.prefix}help $name`")
+                    this.sendUsageInstructions(ctx)
 
                     return
                 }
@@ -66,12 +73,4 @@ class RepeatCommand : MusicCommand() {
         sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
             "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
-
-    override fun help(prefix: String) = "Makes the player repeat the currently playing song\n" +
-        "Use `$prefix$name playlist` to repeat the current queue\n" +
-        "Use `$prefix$name status` for the current status"
-
-    override fun getName(): String = "repeat"
-
-    override fun getAliases(): Array<String> = arrayOf("loop")
 }

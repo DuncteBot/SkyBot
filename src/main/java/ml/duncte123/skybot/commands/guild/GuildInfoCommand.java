@@ -31,8 +31,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
@@ -52,10 +50,21 @@ public class GuildInfoCommand extends Command {
 
     //https://stackoverflow.com/a/1915107/4453592
     private static final String INVITE_STRING_TEMPLATE = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
-    private final PrettyTime prettyTime = new PrettyTime();
+
+    public GuildInfoCommand() {
+        this.name = "guildinfo";
+        this.aliases = new String[]{
+            "serverinfo",
+            "server",
+            "guild",
+            "gi",
+            "si",
+        };
+        this.helpFunction = (invoke, prefix) -> "Shows some stats about the server";
+    }
 
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         try {
             final Guild g = event.getGuild();
@@ -88,24 +97,6 @@ public class GuildInfoCommand extends Command {
         }
     }
 
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Show some stats";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "guildinfo";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"serverinfo", "server", "guild", "gi", "si"};
-    }
-
     private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {
         final Guild g = event.getGuild();
         final double[] ratio = GuildUtils.getBotRatio(g);
@@ -115,7 +106,7 @@ public class GuildInfoCommand extends Command {
         final OffsetDateTime createTime = g.getCreationTime();
         final Date createTimeDate = Date.from(createTime.toInstant());
         final String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        final String createTimeHuman = prettyTime.format(createTimeDate);
+        final String createTimeHuman = ctx.getVariables().getPrettyTime().format(createTimeDate);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);

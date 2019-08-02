@@ -20,13 +20,26 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 public class DrakeCommand extends NoPatronImageCommand {
+
+    public DrakeCommand() {
+        this.displayAliasesInHelp = true;
+        this.name = "drake";
+        this.aliases = new String[]{
+            "ddrake",
+            "dddrake",
+        };
+        this.helpFunction = (invoke, prefix) -> "Generates the drake meme format";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <top text>|<bottom text>";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
@@ -34,6 +47,12 @@ public class DrakeCommand extends NoPatronImageCommand {
         final String[] split = splitString(ctx);
 
         if (split == null) {
+            return;
+        }
+
+        if (split[0].length() > 200 || split[1].length() > 200) {
+            sendMsg(ctx, "Please limit your input to 200 characters to either side of the bar");
+
             return;
         }
 
@@ -50,24 +69,5 @@ public class DrakeCommand extends NoPatronImageCommand {
 
         final byte[] image = ctx.getApis().getDrakeMeme(split[0], split[1]);
         handleBasicImage(ctx.getEvent(), image);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "drake";
-    }
-
-    @NotNull
-    @Override
-    public String[] getAliases() {
-        return new String[]{"ddrake", "dddrake"};
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "Did you type your search wrong?\n" +
-            "Usage: `" + prefix + getName() + " <Top text>|<Bottom text>`";
     }
 }

@@ -20,14 +20,20 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AchievementCommand extends NoPatronImageCommand {
+
+    public AchievementCommand() {
+        this.name = "achievement";
+        this.helpFunction = (invoke, prefix) -> "You got an achievement!";
+        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+    }
+
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
 
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
@@ -35,18 +41,5 @@ public class AchievementCommand extends NoPatronImageCommand {
 
         ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "achievement";
-    }
-
-    @NotNull
-    @Override
-    public String help(@NotNull String prefix) {
-        return "You got an achievement!\n" +
-            "Usage: `" + prefix + getName() + " <text>`";
     }
 }
