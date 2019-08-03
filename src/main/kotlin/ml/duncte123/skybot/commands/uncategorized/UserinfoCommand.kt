@@ -172,7 +172,7 @@ class UserinfoCommand : Command() {
                 usrName = "[$usrName](https://dunctebot.com/)"
             }
 
-            append(" > ")
+            append(" \\> ")
             append(usrName)
         }
     }
