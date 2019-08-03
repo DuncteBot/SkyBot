@@ -197,6 +197,7 @@ public class GuildListener extends BaseListener {
                 final long timeout = GuildSettingsUtils.getGuild(guild, variables).getLeaveTimeout();
                 Thread.sleep(TimeUnit.SECONDS.toMillis(timeout));
 
+                // Make sure to get the vc from JDA because the guild might now update
                 final VoiceChannel vc = guild.getJDA().getVoiceChannelById(voiceChannel.getIdLong());
 
                 if (vc == null) {
@@ -207,11 +208,10 @@ public class GuildListener extends BaseListener {
                     return;
                 }
 
-                final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild);
+                final GuildMusicManager manager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
 
                 if (manager != null) {
                     manager.player.stopTrack();
-                    manager.player.setPaused(false);
                     manager.scheduler.queue.clear();
                 }
 
