@@ -43,7 +43,7 @@ class OneLinerCommands : Command() {
         this.displayAliasesInHelp = true
         this.name = "cookie"
         this.aliases = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "screenfetch", "website")
-        this.helpFunction = BiFunction { invoke, prefix -> this.parseHelp(invoke, prefix) }
+        this.helpFunction = BiFunction { invoke, _ -> this.parseHelp(invoke) }
     }
 
     override fun execute(ctx: CommandContext) {
@@ -84,7 +84,7 @@ class OneLinerCommands : Command() {
         }
     }
 
-    private fun parseHelp(invoke: String, prefix: String): String {
+    private fun parseHelp(invoke: String): String {
         return when (invoke) {
             "cookie" -> "blobnomcookie"
             "trigger" -> "Use when you are triggered."
