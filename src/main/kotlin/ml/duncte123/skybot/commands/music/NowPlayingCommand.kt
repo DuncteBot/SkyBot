@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
@@ -41,13 +42,19 @@ class NowPlayingCommand : MusicCommand() {
         val player = mng.player
 
         val msg = when {
-            player.playingTrack != null && !player.playingTrack.info.isStream ->
-                embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + playerEmbed(mng))
+            player.playingTrack != null && !player.playingTrack.info.isStream -> {
+                val track = player.playingTrack
+                val info = track.info
+
+                embedMessage("**Playing** [${info.title}](${info.uri})\n" + playerEmbed(mng))
+                    .setThumbnail(track.getImageUrl())
+            }
 
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val trackinfo = player.playingTrack.info
 
                 embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})**")
+                    .setThumbnail(player.playingTrack.getImageUrl())
             }
 
             else -> embedMessage("The player is not currently playing anything!")

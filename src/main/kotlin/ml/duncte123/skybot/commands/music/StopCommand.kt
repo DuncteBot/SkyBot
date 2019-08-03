@@ -46,7 +46,6 @@ class StopCommand : MusicCommand() {
 
         scheduler.queue.clear()
         player.stopTrack()
-        player.isPaused = false
 
         sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }

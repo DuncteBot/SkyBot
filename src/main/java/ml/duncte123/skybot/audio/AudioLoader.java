@@ -25,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
+import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -38,7 +39,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
-import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
@@ -74,7 +76,10 @@ public class AudioLoader implements AudioLoadResultHandler {
                     msg += "\nand the Player has started playing;";
                 }
 
-                sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
+                sendEmbed(this.channel,
+                    embedField(this.audioUtils.embedTitle, msg)
+                        .setThumbnail(AudioTrackKt.getImageUrl(track, true))
+                );
             }
         }
         catch (LimitReachedException e) {
