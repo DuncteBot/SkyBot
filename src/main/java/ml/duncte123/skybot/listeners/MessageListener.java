@@ -113,6 +113,26 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
+        handleMessageEventChecked(rw, guild, event);
+    }
+
+    private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, GuildMessageReceivedEvent event) {
+        final String stripped = event.getMessage().getContentStripped().toLowerCase();
+
+        final Optional<CustomCommand> match = autoResponses.stream()
+            .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
+
+        if (match.isPresent()) {
+            final CustomCommand cmd = match.get();
+
+            commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
         variables.getDatabase().run(() -> {
             try {
                 final String selfMember = guild.getSelfMember().getAsMention();
@@ -134,19 +154,8 @@ public abstract class MessageListener extends BaseListener {
                 final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
                 final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
-                if (!autoResponses.isEmpty()) {
-                    final String stripped = event.getMessage().getContentStripped().toLowerCase();
-
-                    final Optional<CustomCommand> match = autoResponses.stream()
-                        .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
-
-                    if (match.isPresent()) {
-                        final CustomCommand cmd = match.get();
-
-                        commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
-                        return;
-                    }
-
+                if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
+                    return;
                 }
 
                 if (doesNotStartWithPrefix(event, settings)) {
@@ -162,17 +171,14 @@ public abstract class MessageListener extends BaseListener {
                     commandManager.runCommand(event);
                     return;
                 }
-                //Handle the chat command
-                final ICommand cmd = commandManager.getCommand("chat");
 
-                if (cmd != null) {
-                    cmd.executeCommand(new CommandContext(
-                        "chat",
-                        Arrays.asList(split).subList(1, split.length),
-                        event,
-                        variables
-                    ));
-                }
+                //Handle the chat command
+                commandManager.getCommand("chat").executeCommand(new CommandContext(
+                    "chat",
+                    Arrays.asList(split).subList(1, split.length),
+                    event,
+                    variables
+                ));
             }
             catch (Exception e) {
                 Sentry.capture(e);
