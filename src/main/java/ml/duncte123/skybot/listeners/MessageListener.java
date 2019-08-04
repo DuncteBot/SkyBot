@@ -113,7 +113,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        handleMessageEventChecked(rw, guild, event);
+        variables.getDatabase().run(() -> handleMessageEventChecked(rw, guild, event));
     }
 
     private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, GuildMessageReceivedEvent event) {
@@ -133,58 +133,52 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
-        variables.getDatabase().run(() -> {
-            try {
-                final String selfMember = guild.getSelfMember().getAsMention();
-                final String selfUser = event.getJDA().getSelfUser().getAsMention();
-                final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        try {
+            final String selfMember = guild.getSelfMember().getAsMention();
+            final String selfUser = event.getJDA().getSelfUser().getAsMention();
+            final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-                if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
-                    return;
-                }
-
-                if (rw.equals(selfMember) || rw.equals(selfUser)) {
-                    sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                        event.getAuthor(),
-                        settings.getCustomPrefix())
-                    );
-                    return;
-                }
-
-                final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-                final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
-
-                if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
-                    return;
-                }
-
-                if (doesNotStartWithPrefix(event, settings)) {
-                    return;
-                }
-
-                if (!canRunCommands(rw, settings, event)) {
-                    return;
-                }
-
-                if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
-                    //Handle the command
-                    commandManager.runCommand(event);
-                    return;
-                }
-
-                //Handle the chat command
-                commandManager.getCommand("chat").executeCommand(new CommandContext(
-                    "chat",
-                    Arrays.asList(split).subList(1, split.length),
-                    event,
-                    variables
-                ));
+            if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
+                return;
             }
-            catch (Exception e) {
-                Sentry.capture(e);
-                e.printStackTrace();
+
+            if (rw.equals(selfMember) || rw.equals(selfUser)) {
+                sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                    event.getAuthor(),
+                    settings.getCustomPrefix())
+                );
+                return;
             }
-        });
+
+            final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+            final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
+
+            if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
+                return;
+            }
+
+            if (doesNotStartWithPrefix(event, settings) || !canRunCommands(rw, settings, event)) {
+                return;
+            }
+
+            if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
+                //Handle the command
+                commandManager.runCommand(event);
+                return;
+            }
+
+            //Handle the chat command
+            commandManager.getCommand("chat").executeCommand(new CommandContext(
+                "chat",
+                Arrays.asList(split).subList(1, split.length),
+                event,
+                variables
+            ));
+        }
+        catch (Exception e) {
+            Sentry.capture(e);
+            e.printStackTrace();
+        }
     }
 
     private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, GuildSettings settings) {
