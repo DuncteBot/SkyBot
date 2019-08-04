@@ -430,7 +430,7 @@ public abstract class MessageListener extends BaseListener {
             variables.getCommandManager().shutdown();
             SkyBot.getInstance().getGameScheduler().shutdown();
 
-            WebRouter router = SkyBot.getInstance().getWebRouter();
+            final WebRouter router = SkyBot.getInstance().getWebRouter();
 
             if (router != null) {
                 router.shutdown();

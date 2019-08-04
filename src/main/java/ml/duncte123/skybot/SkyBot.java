@@ -38,15 +38,8 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
 import java.util.EnumSet;
-import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

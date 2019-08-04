@@ -40,7 +40,6 @@ import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import spark.ModelAndView
-import spark.Spark
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
 
