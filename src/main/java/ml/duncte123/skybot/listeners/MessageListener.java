@@ -161,19 +161,18 @@ public abstract class MessageListener extends BaseListener {
                 return;
             }
 
-            if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
+            if (rw.startsWith(selfMember) || rw.startsWith(selfUser)) {
+                //Handle the chat command
+                commandManager.getCommand("chat").executeCommand(new CommandContext(
+                    "chat",
+                    Arrays.asList(split).subList(1, split.length),
+                    event,
+                    variables
+                ));
+            } else {
                 //Handle the command
                 commandManager.runCommand(event);
-                return;
             }
-
-            //Handle the chat command
-            commandManager.getCommand("chat").executeCommand(new CommandContext(
-                "chat",
-                Arrays.asList(split).subList(1, split.length),
-                event,
-                variables
-            ));
         }
         catch (Exception e) {
             Sentry.capture(e);
