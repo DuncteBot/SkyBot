@@ -28,6 +28,7 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.guild.member.*;
 
 import javax.annotation.Nonnull;
@@ -43,7 +44,19 @@ public class GuildMemberListener extends BaseListener {
     }
 
     @Override
-    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+    public void onEvent(Event event) {
+        if (event instanceof GuildMemberJoinEvent) {
+            this.onGuildMemberJoin((GuildMemberJoinEvent) event);
+        } else if (event instanceof GuildMemberLeaveEvent) {
+            this.onGuildMemberLeave((GuildMemberLeaveEvent) event);
+        } else if (event instanceof GuildMemberRoleRemoveEvent) {
+            this.onGuildMemberRoleRemove((GuildMemberRoleRemoveEvent) event);
+        } else if (event instanceof GuildMemberRoleAddEvent) {
+            this.onGuildMemberRoleAdd((GuildMemberRoleAddEvent) event);
+        }
+    }
+
+    private void onGuildMemberJoin(GuildMemberJoinEvent event) {
         final Guild guild = event.getGuild();
         if (event.getMember().equals(guild.getSelfMember())) {
             return;
@@ -73,8 +86,7 @@ public class GuildMemberListener extends BaseListener {
         }
     }
 
-    @Override
-    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+    private void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         final Guild guild = event.getGuild();
 
         if (event.getMember().equals(guild.getSelfMember())) {
@@ -99,8 +111,7 @@ public class GuildMemberListener extends BaseListener {
         }
     }
 
-    @Override
-    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
+    private void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
         if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;
@@ -117,8 +128,7 @@ public class GuildMemberListener extends BaseListener {
         }
     }
 
-    @Override
-    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+    private void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
 
         if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;

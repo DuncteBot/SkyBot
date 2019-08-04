@@ -22,7 +22,6 @@ import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
@@ -33,20 +32,17 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ShutdownEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ReadyShutdownListener extends MessageListener {
-
-    private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
-        r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
     private boolean reminderCheckActive = false;
@@ -57,7 +53,17 @@ public class ReadyShutdownListener extends MessageListener {
     }
 
     @Override
-    public void onReady(ReadyEvent event) {
+    public void onEvent(Event event) {
+        if (event instanceof ReadyEvent) {
+            this.onReady((ReadyEvent) event);
+        } else if (event instanceof GuildMessageUpdateEvent) {
+            this.onGuildMessageUpdate((GuildMessageUpdateEvent) event);
+        } else if (event instanceof GuildMessageReceivedEvent) {
+            this.onGuildMessageReceived((GuildMessageReceivedEvent) event);
+        }
+    }
+
+    private void onReady(ReadyEvent event) {
         final JDA jda = event.getJDA();
         logger.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
 
@@ -140,29 +146,5 @@ public class ReadyShutdownListener extends MessageListener {
         logger.info("Found {} tag patrons", CommandUtils.tagPatrons.size());
 
         GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
-    }
-
-    @Override
-    public void onShutdown(ShutdownEvent event) {
-        if (!shuttingDown) {
-            return;
-        }
-
-        MusicCommand.shutdown();
-        variables.getCommandManager().shutdown();
-
-        //Kill other things
-        if (unbanTimerRunning && isCacheCleanerActive) {
-            this.systemPool.shutdown();
-        }
-
-        AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), event.getJDA().asBot().getShardManager());
-
-        /*
-         * Only shut down if we are not updating
-         */
-        if (!isUpdating) {
-            System.exit(0);
-        }
     }
 }

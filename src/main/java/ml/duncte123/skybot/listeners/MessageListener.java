@@ -20,18 +20,23 @@ package ml.duncte123.skybot.listeners;
 
 import io.sentry.Sentry;
 import kotlin.Triple;
+import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
+import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -46,6 +51,8 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,17 +61,18 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
-public class MessageListener extends BaseListener {
+public abstract class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
     final SpamFilter spamFilter = new SpamFilter(variables);
+    final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
+        r -> new Thread(r, "Bot-Service-Thread"));
 
     MessageListener(Variables variables) {
         super(variables);
     }
 
-    @Override
-    public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         variables.getDatabase().run(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
@@ -76,8 +84,7 @@ public class MessageListener extends BaseListener {
         });
     }
 
-    @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -403,7 +410,7 @@ public class MessageListener extends BaseListener {
         return false;
     }
 
-    private void killAllShards(@Nonnull ShardManager manager) {
+    public void killAllShards(@Nonnull ShardManager manager) {
 
         manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
@@ -415,5 +422,30 @@ public class MessageListener extends BaseListener {
         }
 
         manager.shutdown();
+
+        if (shuttingDown) {
+            // Kill all threads
+            MusicCommand.shutdown();
+            this.systemPool.shutdown();
+            variables.getCommandManager().shutdown();
+            SkyBot.getInstance().getGameScheduler().shutdown();
+
+            WebRouter router = SkyBot.getInstance().getWebRouter();
+
+            if (router != null) {
+                router.shutdown();
+            }
+
+            WebUtils.ins.getClient().connectionPool().evictAll();
+
+            AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
+
+            /*
+             * Only shut down if we are not updating
+             */
+            if (!isUpdating) {
+                System.exit(0);
+            }
+        }
     }
 }

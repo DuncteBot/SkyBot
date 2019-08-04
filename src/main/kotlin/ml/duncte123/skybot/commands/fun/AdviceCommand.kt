@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessageWithTitle
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils

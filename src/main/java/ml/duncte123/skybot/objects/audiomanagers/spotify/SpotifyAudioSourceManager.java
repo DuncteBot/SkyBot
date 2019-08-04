@@ -244,10 +244,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public void shutdown() {
-        if (this.youtubeAudioSourceManager != null) {
-            this.youtubeAudioSourceManager.shutdown();
-        }
-
         if (this.service != null) {
             this.service.shutdown();
         }

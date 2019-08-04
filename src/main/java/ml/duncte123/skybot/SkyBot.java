@@ -38,8 +38,15 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,9 +64,10 @@ public final class SkyBot {
     private static SkyBot instance;
     private final ShardManager shardManager;
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
-        (r) -> new Thread(r, "Bot-Service-Thread")
+        (r) -> new Thread(r, "Game-Update-Thread")
     );
     private final IntFunction<? extends Game> gameProvider;
+    private WebRouter webRouter = null;
 
     private SkyBot() throws Exception {
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
@@ -74,7 +82,7 @@ public final class SkyBot {
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
                 .setColor(Settings.DEFAULT_COLOUR)
-                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
+//                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
                 .setTimestamp(Instant.now())
         );
 
@@ -137,7 +145,7 @@ public final class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebRouter(shardManager, variables);
+            webRouter = new WebRouter(shardManager, variables);
         }
 
         // Check shard activity
@@ -171,5 +179,13 @@ public final class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
+    }
+
+    public ScheduledExecutorService getGameScheduler() {
+        return gameScheduler;
+    }
+
+    public WebRouter getWebRouter() {
+        return webRouter;
     }
 }
