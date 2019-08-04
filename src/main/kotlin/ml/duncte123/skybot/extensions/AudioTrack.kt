@@ -25,11 +25,17 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage
+import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack
 
 /**
  * @param onlyStatic If we only should return thumbnails that do not require an http request
  */
 fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
+
+    if (this is SpotifyAudioTrack && this.info is AudioTrackInfoWithImage) {
+        return (this.info as AudioTrackInfoWithImage).image
+    }
 
     if (this is YoutubeAudioTrack) {
         return "https://i.ytimg.com/vi/${this.identifier}/mqdefault.jpg"

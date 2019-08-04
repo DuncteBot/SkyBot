@@ -16,18 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audiomanagers.spotify;
+package ml.duncte123.skybot.objects.audiomanagers;
 
-
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import ml.duncte123.skybot.Author;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SpotifyAudioTrack extends YoutubeAudioTrack {
+public class AudioTrackInfoWithImage extends AudioTrackInfo {
 
-    SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
-        super(trackInfo, sourceManager);
+    private final String image;
+
+    public AudioTrackInfoWithImage(String title, String author, long length, String identifier, boolean isStream, String uri, String image) {
+        super(title, author, length, identifier, isStream, uri);
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
     }
 }

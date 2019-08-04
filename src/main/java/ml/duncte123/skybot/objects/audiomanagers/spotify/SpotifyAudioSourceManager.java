@@ -35,6 +35,7 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
+import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +142,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 final List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(),
                     config.googl, 1L);
 
-                playList.addAll(doThingWithPlaylist(results));
+                playList.addAll(doThingWithPlaylist(results, album.getImages()));
             }
 
             return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
@@ -176,7 +177,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
                     + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
 
-                finalPlaylist.addAll(doThingWithPlaylist(results));
+                finalPlaylist.addAll(doThingWithPlaylist(results, playlistTrack.getTrack().getAlbum().getImages()));
             }
 
             return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
@@ -214,7 +215,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
             final Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
 
-            return audioTrackFromVideo(v);
+            return audioTrackFromVideo(v, track.getAlbum().getImages());
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
@@ -289,7 +290,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results) throws Exception {
+    private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results, Image[] images) throws Exception {
         final List<AudioTrack> playList = new ArrayList<>();
         if (!results.isEmpty()) {
             final SearchResult video = results.get(0);
@@ -298,21 +299,22 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             if (rId.getKind().equals("youtube#video")) {
                 final Video videoById = getVideoById(video.getId().getVideoId(), config.googl);
 
-                playList.add(audioTrackFromVideo(videoById));
+                playList.add(audioTrackFromVideo(videoById, images));
             }
         }
 
         return playList;
     }
 
-    private AudioTrack audioTrackFromVideo(Video v) {
-        return new SpotifyAudioTrack(new AudioTrackInfo(
+    private AudioTrack audioTrackFromVideo(Video v, Image[] images) {
+        return new SpotifyAudioTrack(new AudioTrackInfoWithImage(
             v.getSnippet().getTitle(),
             v.getSnippet().getChannelId(),
             toLongDuration(v.getContentDetails().getDuration()),
             v.getId(),
             false,
-            "https://youtube.com/watch?v=" + v.getId()
+            "https://youtube.com/watch?v=" + v.getId(),
+            images[0].getUrl()
         ), youtubeAudioSourceManager);
     }
 
