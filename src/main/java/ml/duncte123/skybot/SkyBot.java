@@ -57,9 +57,10 @@ public final class SkyBot {
     private static SkyBot instance;
     private final ShardManager shardManager;
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
-        (r) -> new Thread(r, "Bot-Service-Thread")
+        (r) -> new Thread(r, "Game-Update-Thread")
     );
     private final IntFunction<? extends Game> gameProvider;
+    private WebRouter webRouter = null;
 
     private SkyBot() throws Exception {
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
@@ -74,7 +75,7 @@ public final class SkyBot {
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
                 .setColor(Settings.DEFAULT_COLOUR)
-                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
+//                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
                 .setTimestamp(Instant.now())
         );
 
@@ -137,7 +138,7 @@ public final class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebRouter(shardManager, variables);
+            webRouter = new WebRouter(shardManager, variables);
         }
 
         // Check shard activity
@@ -171,5 +172,13 @@ public final class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
+    }
+
+    public ScheduledExecutorService getGameScheduler() {
+        return gameScheduler;
+    }
+
+    public WebRouter getWebRouter() {
+        return webRouter;
     }
 }

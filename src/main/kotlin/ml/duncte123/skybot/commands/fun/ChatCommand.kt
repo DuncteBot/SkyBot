@@ -80,6 +80,9 @@ class ChatCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
+        ctx.channel.sendTyping().queue(null) {
+            //
+        }
 
         if (event.message.contentRaw.contains("prefix")) {
             sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
@@ -93,7 +96,7 @@ class ChatCommand : Command() {
         }
 
         val time = System.currentTimeMillis()
-        var message = ctx.argsRaw
+        var message = ctx.argsJoined
 
         message = replaceStuff(event, message)
 

@@ -25,6 +25,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.listeners.BaseListener
+import ml.duncte123.skybot.listeners.MessageListener
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -68,9 +69,11 @@ class UpdateCommand : Command() {
 
         sendMsg(event, "✅ Updating") {
             // This will also shutdown eval
-            event.jda.asBot().shardManager.shutdown()
+            val listener = event.jda.eventManager.registeredListeners.find { it.javaClass == MessageListener::class.java } as MessageListener
 
-            // Wait for 2 seconds to allow JDA to shut down
+            listener.killAllShards(event.jda.asBot().shardManager)
+
+            // Wait for 2 seconds to allow everything to shut down
             sleep(2000)
 
             // Magic code. Tell the updater to update

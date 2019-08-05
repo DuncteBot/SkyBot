@@ -290,6 +290,10 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
     }
 
+    fun shutdown() {
+        awaitStop()
+    }
+
     companion object {
         const val FLASH_MESSAGE = "FLASH_MESSAGE"
         const val OLD_PAGE = "OLD_PAGE"

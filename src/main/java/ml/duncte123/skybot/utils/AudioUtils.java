@@ -58,7 +58,7 @@ public class AudioUtils {
     /**
      * This will hold the manager for the audio player
      */
-    private static AudioPlayerManager playerManager;
+    private AudioPlayerManager playerManager;
     /**
      * This is the default volume that the player will play at
      * I've set it to 100 to save some resources

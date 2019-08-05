@@ -39,8 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 public class AudioLoader implements AudioLoadResultHandler {
 

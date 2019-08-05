@@ -177,6 +177,8 @@ public class AirUtils {
         stopMusic(audioUtils, manager);
 
         database.getService().shutdown();
+
+        audioUtils.getPlayerManager().shutdown();
     }
 
     public static void stopMusic(AudioUtils audioUtils, ShardManager manager) {

@@ -20,18 +20,23 @@ package ml.duncte123.skybot.listeners;
 
 import io.sentry.Sentry;
 import kotlin.Triple;
+import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
+import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -46,6 +51,8 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,17 +61,18 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
-public class MessageListener extends BaseListener {
+public abstract class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
     final SpamFilter spamFilter = new SpamFilter(variables);
+    final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
+        r -> new Thread(r, "Bot-Service-Thread"));
 
     MessageListener(Variables variables) {
         super(variables);
     }
 
-    @Override
-    public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         variables.getDatabase().run(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
@@ -76,8 +84,7 @@ public class MessageListener extends BaseListener {
         });
     }
 
-    @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -106,72 +113,71 @@ public class MessageListener extends BaseListener {
             return;
         }
 
-        variables.getDatabase().run(() -> {
-            try {
-                final String selfMember = guild.getSelfMember().getAsMention();
-                final String selfUser = event.getJDA().getSelfUser().getAsMention();
-                final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        variables.getDatabase().run(() -> handleMessageEventChecked(rw, guild, event));
+    }
 
-                if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
-                    return;
-                }
+    private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, GuildMessageReceivedEvent event) {
+        final String stripped = event.getMessage().getContentStripped().toLowerCase();
 
-                if (rw.equals(selfMember) || rw.equals(selfUser)) {
-                    sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                        event.getAuthor(),
-                        settings.getCustomPrefix())
-                    );
-                    return;
-                }
+        final Optional<CustomCommand> match = autoResponses.stream()
+            .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
 
-                final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-                final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
+        if (match.isPresent()) {
+            final CustomCommand cmd = match.get();
 
-                if (!autoResponses.isEmpty()) {
-                    final String stripped = event.getMessage().getContentStripped().toLowerCase();
+            commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
+            return true;
+        }
 
-                    final Optional<CustomCommand> match = autoResponses.stream()
-                        .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
+        return false;
+    }
 
-                    if (match.isPresent()) {
-                        final CustomCommand cmd = match.get();
+    private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
+        try {
+            final String selfMember = guild.getSelfMember().getAsMention();
+            final String selfUser = event.getJDA().getSelfUser().getAsMention();
+            final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-                        commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
-                        return;
-                    }
+            if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
+                return;
+            }
 
-                }
+            if (rw.equals(selfMember) || rw.equals(selfUser)) {
+                sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                    event.getAuthor(),
+                    settings.getCustomPrefix())
+                );
+                return;
+            }
 
-                if (doesNotStartWithPrefix(event, settings)) {
-                    return;
-                }
+            final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+            final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
-                if (!canRunCommands(rw, settings, event)) {
-                    return;
-                }
+            if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
+                return;
+            }
 
-                if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
-                    //Handle the command
-                    commandManager.runCommand(event);
-                    return;
-                }
+            if (doesNotStartWithPrefix(event, settings) || !canRunCommands(rw, settings, event)) {
+                return;
+            }
+
+            if (rw.startsWith(selfMember) || rw.startsWith(selfUser)) {
                 //Handle the chat command
-                final ICommand cmd = commandManager.getCommand("chat");
-
-                if (cmd != null) {
-                    cmd.executeCommand(new CommandContext(
-                        "chat",
-                        Arrays.asList(split).subList(1, split.length),
-                        event,
-                        variables
-                    ));
-                }
+                commandManager.getCommand("chat").executeCommand(new CommandContext(
+                    "chat",
+                    Arrays.asList(split).subList(1, split.length),
+                    event,
+                    variables
+                ));
+            } else {
+                //Handle the command
+                commandManager.runCommand(event);
             }
-            catch (Exception e) {
-                Sentry.capture(e);
-                e.printStackTrace();
-            }
-        });
+        }
+        catch (Exception e) {
+            Sentry.capture(e);
+            e.printStackTrace();
+        }
     }
 
     private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, GuildSettings settings) {
@@ -403,7 +409,7 @@ public class MessageListener extends BaseListener {
         return false;
     }
 
-    private void killAllShards(@Nonnull ShardManager manager) {
+    public void killAllShards(@Nonnull ShardManager manager) {
 
         manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
@@ -415,5 +421,30 @@ public class MessageListener extends BaseListener {
         }
 
         manager.shutdown();
+
+        if (shuttingDown) {
+            // Kill all threads
+            MusicCommand.shutdown();
+            this.systemPool.shutdown();
+            variables.getCommandManager().shutdown();
+            SkyBot.getInstance().getGameScheduler().shutdown();
+
+            final WebRouter router = SkyBot.getInstance().getWebRouter();
+
+            if (router != null) {
+                router.shutdown();
+            }
+
+            WebUtils.ins.getClient().connectionPool().evictAll();
+
+            AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
+
+            /*
+             * Only shut down if we are not updating
+             */
+            if (!isUpdating) {
+                System.exit(0);
+            }
+        }
     }
 }

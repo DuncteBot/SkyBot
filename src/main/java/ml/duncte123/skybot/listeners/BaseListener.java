@@ -26,13 +26,13 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.hooks.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class BaseListener extends ListenerAdapter {
+public abstract class BaseListener implements EventListener {
 
     public static boolean isUpdating = false;
     public static boolean shuttingDown = false;

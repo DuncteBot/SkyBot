@@ -31,6 +31,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
@@ -47,7 +48,21 @@ public class GuildListener extends BaseListener {
     }
 
     @Override
-    public void onGuildJoin(GuildJoinEvent event) {
+    public void onEvent(Event event) {
+        if (event instanceof GuildJoinEvent) {
+            this.onGuildJoin((GuildJoinEvent) event);
+        } else if (event instanceof GuildLeaveEvent) {
+            this.onGuildLeave((GuildLeaveEvent) event);
+        } else if (event instanceof GuildVoiceLeaveEvent) {
+            this.onGuildVoiceLeave((GuildVoiceLeaveEvent) event);
+        } else if (event instanceof GuildVoiceJoinEvent) {
+            this.onGuildVoiceJoin((GuildVoiceJoinEvent) event);
+        } else if (event instanceof GuildVoiceMoveEvent) {
+            this.onGuildVoiceMove((GuildVoiceMoveEvent) event);
+        }
+    }
+
+    private void onGuildJoin(GuildJoinEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -65,8 +80,7 @@ public class GuildListener extends BaseListener {
         GuildSettingsUtils.registerNewGuild(guild, variables);
     }
 
-    @Override
-    public void onGuildLeave(GuildLeaveEvent event) {
+    private void onGuildLeave(GuildLeaveEvent event) {
         final Guild guild = event.getGuild();
         final GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
 
@@ -83,8 +97,7 @@ public class GuildListener extends BaseListener {
         );
     }
 
-    @Override
-    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+    private void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         final Guild guild = event.getGuild();
         final LavalinkManager manager = LavalinkManager.ins;
 
@@ -111,8 +124,7 @@ public class GuildListener extends BaseListener {
         channelCheckThing(guild, event.getChannelLeft());
     }
 
-    @Override
-    public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+    private void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
         final Guild guild = event.getGuild();
         final Member member = event.getMember();
         final Member self = guild.getSelfMember();
@@ -125,8 +137,7 @@ public class GuildListener extends BaseListener {
         handleVcAutoRole(guild, member, channel, false);
     }
 
-    @Override
-    public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+    private void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         final Guild guild = event.getGuild();
         final LavalinkManager manager = LavalinkManager.ins;
 
@@ -182,14 +193,6 @@ public class GuildListener extends BaseListener {
         }
     }
 
-    /**
-     * This handles the guild leave/ join events to deferments if the channel is empty
-     *
-     * @param guild
-     *         the guild
-     * @param voiceChannel
-     *         the voice channel
-     */
     private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel voiceChannel) {
         variables.getDatabase().run(() -> {
             try {
