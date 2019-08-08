@@ -28,8 +28,10 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
+import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -41,6 +43,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -217,9 +221,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 getInstance().getShardManager().getShardById(0).getSelfUser() :
                 getInstance().getShardManager().getUserById(userData.getUserId());
             final String userTag = user == null ? "Unknown#0000" : user.getAsTag();
-            final String message = String.format("Now playing: %s %s%nRequester: %s", title, (repeated ? "(repeated)" : ""), userTag);
+            final EmbedBuilder message = embedMessage(
+                String.format("Now playing: %s %s%nRequester: %s", title, (repeated ? "(repeated)" : ""), userTag)
+            ).setThumbnail(AudioTrackKt.getImageUrl(track, false));
 
-            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message, null, (t) -> {});
+            sendEmbed(guildMusicManager.getLatestChannel(), message);
         }
     }
 

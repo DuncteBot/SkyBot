@@ -18,8 +18,11 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -73,10 +76,13 @@ class SkipCommand : MusicCommand() {
                 ctx.author
             }
 
+            val track = mng.player.playingTrack
 
-            sendMsg(event, "Successfully skipped $count tracks.\n" +
-                "Now playing: ${mng.player.playingTrack.info.title}\n" +
+            sendEmbed(event, embedMessage("Successfully skipped $count tracks.\n" +
+                "Now playing: ${track.info.title}\n" +
                 "Requester: ${user.asTag}")
+                .setThumbnail(track.getImageUrl())
+            )
         } else {
             sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Queue is now empty.")

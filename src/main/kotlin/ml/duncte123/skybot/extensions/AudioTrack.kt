@@ -24,6 +24,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import io.sentry.Sentry
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack
@@ -62,7 +63,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
             json.get("thumbnail_small").asText()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Sentry.capture(e)
             null
         }
     }
