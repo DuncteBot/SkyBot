@@ -30,6 +30,10 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -76,7 +80,9 @@ public class ChangeLogCommand extends Command {
                 eb.setDescription(body);
             }
 
-            final MessageEmbed embed = eb.build();
+            final MessageEmbed embed = eb.setFooter("Released at", null)
+                .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())))
+                .build();
 
             embedJson = embed.toJSONObject()
                 .put("type", "rich")
@@ -84,5 +90,19 @@ public class ChangeLogCommand extends Command {
 
             sendEmbed(event, embed);
         });
+    }
+
+    private long parseTimeStamp(String timestamp) {
+        try {
+            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            final Date parsed = format.parse(timestamp);
+
+            return parsed.getTime();
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0L;
     }
 }
