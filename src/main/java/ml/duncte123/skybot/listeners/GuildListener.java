@@ -85,7 +85,7 @@ public class GuildListener extends BaseListener {
         final GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
 
         if (musicManager != null) {
-            musicManager.player.stopTrack();
+            if (musicManager.player.getPlayingTrack() != null) musicManager.player.stopTrack();
             musicManager.scheduler.queue.clear();
         }
 

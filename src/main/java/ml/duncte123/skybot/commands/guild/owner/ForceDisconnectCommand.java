@@ -51,7 +51,10 @@ public class ForceDisconnectCommand extends MusicCommand {
         final Guild g = ctx.getGuild();
         final GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
-        manager.player.stopTrack();
+        if (manager.player.getPlayingTrack() != null) {
+            manager.player.stopTrack();
+        }
+
         manager.scheduler.queue.clear();
         getLavalinkManager().closeConnection(g);
 

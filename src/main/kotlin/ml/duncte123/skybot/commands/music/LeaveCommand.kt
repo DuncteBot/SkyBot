@@ -52,7 +52,10 @@ class LeaveCommand : MusicCommand() {
             return
         }
 
-        manager.player.stopTrack()
+        if (manager.player.playingTrack != null) {
+            manager.player.stopTrack()
+        }
+
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
         addCooldown(guild.idLong)
