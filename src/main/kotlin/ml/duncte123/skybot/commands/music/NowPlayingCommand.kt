@@ -18,16 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.audio.GuildMusicManager
-import ml.duncte123.skybot.extensions.getImageUrl
+import ml.duncte123.skybot.extensions.toEmbed
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
-import net.dv8tion.jda.core.EmbedBuilder
 import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -44,22 +40,10 @@ class NowPlayingCommand : MusicCommand() {
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
-        val msg = when {
-            player.playingTrack != null -> player.playingTrack.toEmbed(mng)
+        sendEmbed(event, when {
+            player.playingTrack != null -> player.playingTrack.toEmbed(mng, ctx.shardManager)
 
             else -> embedMessage("The player is not currently playing anything!")
-        }
-
-        sendEmbed(event, msg)
-    }
-
-    private fun AudioTrack.toEmbed(mng: GuildMusicManager): EmbedBuilder {
-        if (this.info.isStream) {
-            return embedMessage("**Playing [${this.info.title}](${this.info.uri})**")
-                .setThumbnail(this.getImageUrl())
-        }
-
-        return  embedMessage("**Playing** [${this.info.title}](${this.info.uri})\n" + playerEmbed(mng))
-            .setThumbnail(this.getImageUrl())
+        })
     }
 }

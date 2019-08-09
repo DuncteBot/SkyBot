@@ -165,7 +165,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     }
 
-    static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {
+    private static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {
         String title = rawTitle;
 
         if (track.getInfo().isStream) {

@@ -29,10 +29,8 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
-import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +41,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
@@ -66,7 +63,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * This instantiates our player
      *
      * @param player
-     *         Our audio player
+     *     Our audio player
      */
     TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager, Variables variables) {
         this.player = player;
@@ -82,10 +79,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Queue a track
      *
      * @param track
-     *         The {@link AudioTrack AudioTrack} to queue
+     *     The {@link AudioTrack AudioTrack} to queue
      *
      * @throws LimitReachedException
-     *         when the queue is full
+     *     when the queue is full
      */
     public void queue(AudioTrack track) throws LimitReachedException {
         if (queue.size() >= QUEUE_SIZE) {
@@ -120,11 +117,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Gets run when a track ends
      *
      * @param player
-     *         The {@link AudioPlayer AudioTrack} for that guild
+     *     The {@link AudioPlayer AudioTrack} for that guild
      * @param lastTrack
-     *         The {@link AudioTrack AudioTrack} that ended
+     *     The {@link AudioTrack AudioTrack} that ended
      * @param endReason
-     *         Why did this track end?
+     *     Why did this track end?
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
@@ -174,7 +171,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * tell the player if needs to repeat
      *
      * @param repeating
-     *         if the player needs to repeat
+     *     if the player needs to repeat
      */
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
@@ -193,7 +190,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * tell the player if needs to repeat playlists
      *
      * @param repeatingPlaylists
-     *         if the player needs to repeat playlists
+     *     if the player needs to repeat playlists
      */
     public void setRepeatingPlaylists(boolean repeatingPlaylists) {
         this.repeatPlayList = repeatingPlaylists;
@@ -212,18 +209,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     private void announceNextTrack(AudioTrack track, boolean repeated) {
         if (guildMusicManager.isAnnounceTracks()) {
-
-            String title = track.getInfo().title;
-            title = AudioLoader.getSteamTitle(track, title, variables.getCommandManager());
-
-            final TrackUserData userData = (TrackUserData) track.getUserData();
-            final User user = userData == null ?
-                getInstance().getShardManager().getShardById(0).getSelfUser() :
-                getInstance().getShardManager().getUserById(userData.getUserId());
-            final String userTag = user == null ? "Unknown#0000" : user.getAsTag();
-            final EmbedBuilder message = embedMessage(
-                String.format("Now playing: %s %s%nRequester: %s", title, (repeated ? "(repeated)" : ""), userTag)
-            ).setThumbnail(AudioTrackKt.getImageUrl(track, false));
+            final EmbedBuilder message = AudioTrackKt.toEmbed(
+                track,
+                this.guildMusicManager,
+                getInstance().getShardManager(),
+                false
+            );
 
             sendEmbed(guildMusicManager.getLatestChannel(), message);
         }

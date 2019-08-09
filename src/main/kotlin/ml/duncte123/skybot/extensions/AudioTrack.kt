@@ -25,9 +25,41 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.sentry.Sentry
+import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.audio.GuildMusicManager
+import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack
+import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
+import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.core.EmbedBuilder
+
+fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
+    val userData = this.userData
+    var requester = "Unknown"
+
+    if (userData != null && userData is TrackUserData) {
+        val userId = userData.userId
+        val user = shardManager.getUserById(userId)
+
+        if (user != null) {
+            requester = user.asTag
+        }
+    }
+
+    if (this.info.isStream) {
+        return embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+            |**Requester:** $requester
+        """.trimMargin())
+            .setThumbnail(this.getImageUrl())
+    }
+
+    return  embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+            |**Requester:** $requester${if (withPlayer) playerEmbed(mng) + "\n" else ""}
+        """.trimMargin())
+        .setThumbnail(this.getImageUrl())
+}
 
 /**
  * @param onlyStatic If we only should return thumbnails that do not require an http request
