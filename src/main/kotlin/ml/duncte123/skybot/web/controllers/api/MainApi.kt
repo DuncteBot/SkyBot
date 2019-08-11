@@ -20,7 +20,7 @@ package ml.duncte123.skybot.web.controllers.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
-import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

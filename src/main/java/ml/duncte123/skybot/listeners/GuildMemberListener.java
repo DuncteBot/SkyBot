@@ -25,11 +25,11 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.guild.member.*;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.guild.member.*;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -44,7 +44,7 @@ public class GuildMemberListener extends BaseListener {
     }
 
     @Override
-    public void onEvent(Event event) {
+    public void onEvent(@Nonnull GenericEvent event) {
         if (event instanceof GuildMemberJoinEvent) {
             this.onGuildMemberJoin((GuildMemberJoinEvent) event);
         } else if (event instanceof GuildMemberLeaveEvent) {
@@ -79,9 +79,7 @@ public class GuildMemberListener extends BaseListener {
             final Role r = guild.getRoleById(settings.getAutoroleRole());
 
             if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
-                guild.getController()
-                    .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
-                });
+                guild.addRoleToMember(event.getMember(), r).queue(null, it -> {});
             }
         }
     }
@@ -107,7 +105,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().getShardManager());
         }
     }
 
@@ -124,7 +122,7 @@ public class GuildMemberListener extends BaseListener {
                 continue;
             }
 
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().getShardManager());
         }
     }
 
@@ -136,7 +134,7 @@ public class GuildMemberListener extends BaseListener {
 
         final User user = event.getUser();
         final long userId = user.getIdLong();
-        final ShardManager manager = event.getJDA().asBot().getShardManager();
+        final ShardManager manager = event.getJDA().getShardManager();
 
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();

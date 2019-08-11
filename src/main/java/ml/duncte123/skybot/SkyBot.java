@@ -27,13 +27,12 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
-import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Game.GameType;
-import net.dv8tion.jda.core.requests.RestAction;
-import net.dv8tion.jda.core.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public final class SkyBot {
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
         (r) -> new Thread(r, "Game-Update-Thread")
     );
-    private final IntFunction<? extends Game> gameProvider;
+    private final IntFunction<? extends Activity> activityProvider;
     private WebRouter webRouter = null;
 
     private SkyBot() throws Exception {
@@ -101,10 +100,10 @@ public final class SkyBot {
         //Set the game from the config
         final int gameId = config.discord.game.type;
         final String name = config.discord.game.name;
-        final GameType gameType = GameType.fromKey(gameId);
-        final String streamUrl = gameType == GameType.STREAMING ? config.discord.game.streamUrl : null;
+        final Activity.ActivityType gameType = Activity.ActivityType.fromKey(gameId);
+        final String streamUrl = gameType == Activity.ActivityType.STREAMING ? config.discord.game.streamUrl : null;
 
-        this.gameProvider = (shardId) -> Game.of(
+        this.activityProvider = (shardId) -> Activity.of(
             gameType,
             name.replace("{shardId}", Integer.toString(shardId + 1)),
             streamUrl
@@ -119,10 +118,10 @@ public final class SkyBot {
         this.shardManager = new DefaultShardManagerBuilder()
             .setToken(token)
             .setShardsTotal(totalShards)
-            .setGameProvider(this.gameProvider)
+            .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
-            .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
                     .connectTimeout(30L, TimeUnit.SECONDS)
@@ -151,7 +150,7 @@ public final class SkyBot {
 
     private void startGameTimer() {
         this.gameScheduler.scheduleAtFixedRate(
-            () -> this.shardManager.setGameProvider(this.gameProvider),
+            () -> this.shardManager.setActivityProvider(this.activityProvider),
             1, 1, TimeUnit.DAYS);
     }
 

@@ -23,10 +23,10 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -89,12 +89,12 @@ public class SoftbanCommand extends ModBaseCommand {
 
             final String fReason = reason;
 
-            ctx.getGuild().getController().ban(toBanMember, 1)
+            ctx.getGuild().ban(toBanMember, 1)
                 .reason("Kicked by: " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(
                 nothing -> {
                     ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, ctx.getGuild());
                     MessageUtils.sendSuccess(ctx.getMessage());
-                    ctx.getGuild().getController().unban(toBan.getId())
+                    ctx.getGuild().unban(toBan.getId())
                         .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag()).queue();
                 }
             );

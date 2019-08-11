@@ -20,10 +20,10 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
+import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,7 +169,7 @@ public class GuildUtils {
     }
 
     public static int getMemberJoinPosition(Member member) {
-        return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
+        return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getTimeJoined))
             .collect(Collectors.toList()).indexOf(member) + 1;
     }
 

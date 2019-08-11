@@ -28,8 +28,8 @@ import me.duncte123.botcommons.web.requests.EmptyFromRequestBody
 import me.duncte123.botcommons.web.requests.FormRequestBody
 import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.config.DunctebotConfig
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.entities.Guild
 import org.apache.http.NameValuePair
 import spark.Request
 import java.util.*

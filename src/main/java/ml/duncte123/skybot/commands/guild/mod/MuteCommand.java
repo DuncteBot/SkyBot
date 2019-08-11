@@ -23,9 +23,9 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -87,7 +87,7 @@ public class MuteCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        ctx.getGuild().getController().addSingleRoleToMember(toMute, role)
+        ctx.getGuild().addRoleToMember(toMute, role)
             .reason("Muted by " + ctx.getAuthor().getAsTag() + ": " + reason).queue(success -> {
                 ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                 sendSuccess(ctx.getMessage());

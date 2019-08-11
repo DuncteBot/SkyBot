@@ -26,11 +26,11 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.bot.utils.cache.ShardCacheView;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.cache.ShardCacheView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 
@@ -81,7 +81,7 @@ public class ShardInfoCommand extends Command {
     private void embedTable(CommandContext ctx) {
         final EmbedBuilder embedBuilder = new EmbedBuilder();
         final int currentShard = ctx.getJDA().getShardInfo().getShardId();
-        final ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
+        final ShardManager shardManager = ctx.getJDA().getShardManager();
         final List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
 
@@ -90,7 +90,7 @@ public class ShardInfoCommand extends Command {
             final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
 
             valueBuilder.append("**Status:** ").append(getShardStatus(shard)).append('\n')
-                .append("**Ping:** ").append(shard.getPing()).append('\n')
+                .append("**Ping:** ").append(shard.getGatewayPing()).append('\n')
                 .append("**Guilds:** ").append(shard.getGuildCache().size()).append('\n')
                 .append("**VCs:** ").append(channelStats.getFirst()).append(" / ").append(channelStats.getSecond());
 
@@ -115,7 +115,7 @@ public class ShardInfoCommand extends Command {
 
         List<List<String>> table = new ArrayList<>();
         final int currentShard = ctx.getJDA().getShardInfo().getShardId();
-        final ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
+        final ShardManager shardManager = ctx.getJDA().getShardManager();
         final List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
 
@@ -125,7 +125,7 @@ public class ShardInfoCommand extends Command {
 
             row.add(shardId + (currentShard == shardId ? " (current)" : ""));
             row.add(getShardStatus(shard));
-            row.add(String.valueOf(shard.getPing()));
+            row.add(String.valueOf(shard.getGatewayPing()));
             row.add(String.valueOf(shard.getGuildCache().size()));
 
             final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
@@ -201,7 +201,7 @@ public class ShardInfoCommand extends Command {
         final ShardCacheView shardCache = shardManager.getShardCache();
 
         final String connectedShards = String.valueOf(shardCache.stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
-        final String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
+        final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
 
         sb.append(String.format(
@@ -249,7 +249,7 @@ public class ShardInfoCommand extends Command {
 
     /**
      * @param shard
-     *         the current shard
+     *     the current shard
      *
      * @return a pair where
      * first  = connected channels

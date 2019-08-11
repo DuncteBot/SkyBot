@@ -71,7 +71,7 @@ class UpdateCommand : Command() {
             // This will also shutdown eval
             val listener = event.jda.eventManager.registeredListeners.find { it.javaClass == MessageListener::class.java } as MessageListener
 
-            listener.killAllShards(event.jda.asBot().shardManager)
+            listener.killAllShards(event.jda.shardManager!!)
 
             // Wait for 2 seconds to allow everything to shut down
             sleep(2000)

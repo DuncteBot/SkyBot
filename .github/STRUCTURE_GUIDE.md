@@ -145,7 +145,7 @@ If you however want to also have nested links or other JavaDoc tags in your code
 
 Always use the fully qualified name when you are linking to something through JavaDoc!
 <br>Bad: `{@link RestAction}`
-<br>Good: `{@link net.dv8tion.jda.core.requests.RestAction RestAction}`
+<br>Good: `{@link net.dv8tion.jda.api.requests.RestAction RestAction}`
 > Note: We also highly recommend setting an alias name as you can see in the 2nd example snippet.
 
 When you link to an external resource (such as the official api docs) you can use the `<a>` tag to create
@@ -174,12 +174,12 @@ a hyperlink.
      * @param  var1
      *         Multiple parameters are to be documented in one "block"
      *
-     * @return {@link net.dv8tion.jda.core.requests.RestAction RestAction} - Type: {@link net.dv8tion.jda.core.entities.Role Role}
+     * @return {@link net.dv8tion.jda.api.requests.RestAction RestAction} - Type: {@link net.dv8tion.jda.api.entities.Role Role}
      *         <br>The response type of the RestAction can be described further here.
      *
      * @throws javax.security.auth.login.LoginException
      *         The same goes for descriptions of throwables
-     * @throws net.dv8tion.jda.core.exceptions.RateLimitedException
+     * @throws net.dv8tion.jda.api.exceptions.RateLimitedException
      *         Multiple throwables are to be documented in one "block"
      *
      * @see    Void

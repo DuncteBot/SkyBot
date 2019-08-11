@@ -23,8 +23,8 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.exceptions.PermissionException
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.exceptions.PermissionException
 import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -38,13 +38,15 @@ class JoinCommand : MusicCommand() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
+        val member = ctx.member
+        val voiceState = member.voiceState!!
 
-        if (!event.member.voiceState.inVoiceChannel()) {
+        if (!voiceState.inVoiceChannel()) {
             sendMsg(event, "Please join a voice channel first.")
             return
         }
 
-        val vc = event.member.voiceState.channel
+        val vc = voiceState.channel!!
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
 
@@ -78,9 +80,9 @@ class JoinCommand : MusicCommand() {
             sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                sendMsg(event, "I don't have permission to join `${vc?.name}`")
+                sendMsg(event, "I don't have permission to join `${vc.name}`")
             } else {
-                sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
+                sendMsg(event, "Error while joining channel `${vc.name}`: ${e.message}")
             }
         }
 

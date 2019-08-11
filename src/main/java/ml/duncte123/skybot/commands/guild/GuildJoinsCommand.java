@@ -21,8 +21,8 @@ package ml.duncte123.skybot.commands.guild;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -53,7 +53,7 @@ public class GuildJoinsCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final long startTime = ctx.getGuild().getCreationTime().toEpochSecond();
+        final long startTime = ctx.getGuild().getTimeCreated().toEpochSecond();
         final OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         final long currentTime = now.toEpochSecond();
         final int imageWidth = 1000;
@@ -62,7 +62,7 @@ public class GuildJoinsCommand extends Command {
         final BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         final Graphics2D graphics2D = bufferedImage.createGraphics();
 
-        members.sort(Comparator.comparing(Member::getJoinDate));
+        members.sort(Comparator.comparing(Member::getTimeJoined));
         graphics2D.setColor(Color.BLACK);
         graphics2D.fillRect(0, 0, imageWidth, imageHeight);
 
@@ -71,7 +71,7 @@ public class GuildJoinsCommand extends Command {
         final int membersSize = members.size();
 
         for (int i = 0; i < membersSize; i++) {
-            final long joinMinStart = members.get(i).getJoinDate().toEpochSecond() - startTime;
+            final long joinMinStart = members.get(i).getTimeJoined().toEpochSecond() - startTime;
             final long joinTimesWidth = joinMinStart * imageWidth;
             final double xPos = joinTimesWidth / (currentTime - startTime);
             final int yPos = imageHeight - ((i * imageHeight) / membersSize);
@@ -87,7 +87,7 @@ public class GuildJoinsCommand extends Command {
         graphics2D.setFont(graphics2D.getFont().deriveFont(24f));
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString("0 - " + membersSize + " Users", 20, 26);
-        graphics2D.drawString(ctx.getGuild().getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
+        graphics2D.drawString(ctx.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
         graphics2D.drawString(now.format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 90);
 
         try {

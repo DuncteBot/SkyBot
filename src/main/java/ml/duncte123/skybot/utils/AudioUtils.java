@@ -39,7 +39,7 @@ import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.concurrent.Future;
 import java.util.logging.Level;

@@ -21,8 +21,8 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.MessageBuilder.SplitPolicy
+import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.MessageBuilder.SplitPolicy
 import java.util.function.BiFunction
 
 class RolesCommand : Command() {

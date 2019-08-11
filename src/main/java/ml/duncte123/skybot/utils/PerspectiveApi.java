@@ -27,7 +27,7 @@ import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
-import net.dv8tion.jda.core.exceptions.HttpException;
+import net.dv8tion.jda.api.exceptions.HttpException;
 
 import java.util.Objects;
 

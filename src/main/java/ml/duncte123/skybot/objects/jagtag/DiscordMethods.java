@@ -24,9 +24,10 @@ import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.utils.MiscUtil;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.utils.MiscUtil;
+import net.dv8tion.jda.api.utils.TimeUtil;
 
 import javax.annotation.Nonnull;
 import java.time.format.DateTimeFormatter;
@@ -98,7 +99,7 @@ public class DiscordMethods {
                     throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]));
                 }
 
-                return MiscUtil.getCreationTime(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);
+                return TimeUtil.getTimeCreated(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);
             }),
 
             new Method("userid", (env) -> {
@@ -236,7 +237,7 @@ public class DiscordMethods {
                     throw new ParseException("Cannot interact with target member or target role");
                 }
 
-                guild.getController().addSingleRoleToMember(targetMember, targetRole).queue();
+                guild.addRoleToMember(targetMember, targetRole).queue();
 
                 return "";
             }, "|user:")

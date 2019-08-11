@@ -26,8 +26,8 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.VoiceChannel
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.VoiceChannel
 import java.util.function.BiFunction
 import java.util.stream.Collectors
 

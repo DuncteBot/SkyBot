@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.guild.mod;
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class HackbanCommand extends ModBaseCommand {
             }
 
             try {
-                event.getGuild().getController().ban(id, 0)
+                event.getGuild().ban(id, 0)
                     .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue();
                 messages.add(id);
             }

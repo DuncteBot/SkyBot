@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot;
 
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDA.ShardInfo;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDA.ShardInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ class ShardWatcher {
 
         for (final JDA shard : shardManager.getShardCache()) {
             final ShardInfo info = shard.getShardInfo();
-            final long ping = shard.getPing();
+            final long ping = shard.getGatewayPing();
             final long oldPing = this.pings[info.getShardId()];
 
             if (oldPing != ping) {

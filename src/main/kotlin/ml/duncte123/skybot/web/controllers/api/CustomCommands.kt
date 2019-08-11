@@ -24,7 +24,7 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand.*
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
-import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
 import spark.Spark.halt

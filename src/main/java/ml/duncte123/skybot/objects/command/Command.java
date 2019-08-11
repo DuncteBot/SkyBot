@@ -20,7 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

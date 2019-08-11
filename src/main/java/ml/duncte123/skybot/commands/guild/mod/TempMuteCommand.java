@@ -25,11 +25,11 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -112,7 +112,7 @@ public class TempMuteCommand extends ModBaseCommand {
         );
 
 
-        event.getGuild().getController().addSingleRoleToMember(toMute, role)
+        event.getGuild().addRoleToMember(toMute, role)
             .reason("Muted by " + author.getAsTag() + ": " + fReason)
             .queue(success -> {
                     ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());

@@ -30,9 +30,9 @@ import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.objects.api.Warning;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,17 +76,17 @@ public class ModerationUtils {
      * This will send a message to a channel called modlog
      *
      * @param mod
-     *         The mod that performed the punishment
+     *     The mod that performed the punishment
      * @param punishedUser
-     *         The user that got punished
+     *     The user that got punished
      * @param punishment
-     *         The type of punishment
+     *     The type of punishment
      * @param reason
-     *         The reason of the punishment
+     *     The reason of the punishment
      * @param time
-     *         How long it takes for the punishment to get removed
+     *     How long it takes for the punishment to get removed
      * @param g
-     *         A instance of the {@link Guild}
+     *     A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
         String length = "";
@@ -118,15 +118,15 @@ public class ModerationUtils {
      * A version of {@link #modLog(User, User, String, String, String, DunctebotGuild)} but without the time
      *
      * @param mod
-     *         The mod that performed the punishment
+     *     The mod that performed the punishment
      * @param punishedUser
-     *         The user that got punished
+     *     The user that got punished
      * @param punishment
-     *         The type of punishment
+     *     The type of punishment
      * @param reason
-     *         The reason of the punishment
+     *     The reason of the punishment
      * @param g
-     *         A instance of the {@link Guild}
+     *     A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
@@ -136,13 +136,13 @@ public class ModerationUtils {
      * To log a unban or a unmute
      *
      * @param mod
-     *         The mod that permed the executeCommand
+     *     The mod that permed the executeCommand
      * @param unbannedUser
-     *         The user that the executeCommand is for
+     *     The user that the executeCommand is for
      * @param punishment
-     *         The type of punishment that got removed
+     *     The type of punishment that got removed
      * @param g
-     *         A instance of the {@link Guild}
+     *     A instance of the {@link Guild}
      */
     public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild g) {
         modLog(mod, unbannedUser, punishment, "", g);
@@ -152,17 +152,17 @@ public class ModerationUtils {
      * Add the banned user to the database
      *
      * @param modID
-     *         The user id from the mod
+     *     The user id from the mod
      * @param userName
-     *         The username from the banned user
+     *     The username from the banned user
      * @param userDiscriminator
-     *         the discriminator from the user
+     *     the discriminator from the user
      * @param userId
-     *         the id from the banned users
+     *     the id from the banned users
      * @param unbanDate
-     *         When we need to unban the user
+     *     When we need to unban the user
      * @param guildId
-     *         What guild the user got banned in
+     *     What guild the user got banned in
      */
     public static void addBannedUserToDb(DatabaseAdapter adapter, long modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
         adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
@@ -172,7 +172,7 @@ public class ModerationUtils {
      * Returns the current amount of warnings that a user has
      *
      * @param u
-     *         the {@link User User} to check the warnings for
+     *     the {@link User User} to check the warnings for
      *
      * @return The current amount of warnings that a user has
      */
@@ -192,11 +192,11 @@ public class ModerationUtils {
      * This attempts to register a warning in the database
      *
      * @param moderator
-     *         The mod that executed the warning
+     *     The mod that executed the warning
      * @param target
-     *         The user to warn
+     *     The user to warn
      * @param reason
-     *         the reason for the warn
+     *     the reason for the warn
      */
     public static void addWarningToDb(DatabaseAdapter adapter, User moderator, User target, String reason, Guild guild) {
         adapter.createWarning(moderator.getIdLong(), target.getIdLong(), guild.getIdLong(), reason);
@@ -263,7 +263,7 @@ public class ModerationUtils {
                 continue;
             }
 
-            guild.getController().removeSingleRoleFromMember(target, muteRole).reason("Mute expired").queue();
+            guild.removeRoleFromMember(target, muteRole).reason("Mute expired").queue();
 
             modLog(new ConsoleUser(), targetUser, "unmuted", dbGuild);
         }
@@ -290,13 +290,13 @@ public class ModerationUtils {
 
             logger.debug("Unbanning " + ban.getUserName());
 
-            guild.getController()
+            guild
                 .unban(ban.getUserId()).reason("Ban expired").queue();
 
             final User fakeUser = new FakeUser(
                 ban.getUserName(),
                 Long.parseUnsignedLong(ban.getUserId()),
-                Short.valueOf(ban.getDiscriminator())
+                Short.parseShort(ban.getDiscriminator())
             );
 
             modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild, variables));
@@ -354,9 +354,9 @@ public class ModerationUtils {
             return;
         }
         final String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
-        guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
+        guild.addRoleToMember(member, muteRole).reason(reason).queue(
             (success) ->
-                guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
+                guild.removeRoleFromMember(member, muteRole).reason("Scheduled un-mute")
                     .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
             ,
             (failure) -> {
@@ -394,6 +394,6 @@ public class ModerationUtils {
             return;
         }
         final String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
-        guild.getController().kick(member).reason(reason).queue();
+        guild.kick(member).reason(reason).queue();
     }
 }

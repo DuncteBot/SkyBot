@@ -28,7 +28,7 @@ import ml.duncte123.skybot.extensions.getString
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
-import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.api.MessageBuilder
 import java.lang.management.ManagementFactory
 import java.util.function.BiFunction
 
@@ -66,7 +66,7 @@ class OneLinerCommands : Command() {
                 )
             }
 
-            // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
+            // "event.jda.selfUser.id" might be invalid "jda.getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n<https://lnk.dunctebot.com/invite>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))

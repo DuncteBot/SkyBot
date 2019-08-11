@@ -37,15 +37,15 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import ml.duncte123.skybot.web.WebRouter;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -103,7 +103,7 @@ public abstract class MessageListener extends BaseListener {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
-            final ShardManager manager = event.getJDA().asBot().getShardManager();
+            final ShardManager manager = event.getJDA().getShardManager();
 
             event.getMessage().addReaction("a:_yes:577795293546938369").queue(
                 success -> killAllShards(manager),
@@ -284,7 +284,7 @@ public abstract class MessageListener extends BaseListener {
                 final String inviteID = matcher.group(matcher.groupCount());
 
                 //Prohibiting failure because the bot is currently banned from the other guild.
-                guild.getInvites().queue((invites) -> {
+                guild.retrieveInvites().queue((invites) -> {
                     //Check if the invite is for this guild, if it is not delete the message
                     if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                         event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->

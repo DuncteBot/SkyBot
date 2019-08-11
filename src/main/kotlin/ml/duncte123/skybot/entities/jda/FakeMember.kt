@@ -19,25 +19,52 @@
 package ml.duncte123.skybot.entities.jda
 
 import ml.duncte123.skybot.objects.FakeUser
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.OnlineStatus
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.time.OffsetDateTime
+import java.util.*
 
 class FakeMember(private val name: String) : Member {
+    override fun getEffectiveName() = name
+
+    override fun getUser() = FakeUser(name, 0, 0)
+
+    override fun canInteract(member: Member): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun canInteract(role: Role): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun canInteract(emote: Emote): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getTimeJoined(): OffsetDateTime {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getActivities(): MutableList<Activity> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getIdLong(): Long {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getTimeBoosted(): OffsetDateTime? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun isOwner(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getEffectiveName() = name
-
     override fun getColor(): Color {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getJoinDate(): OffsetDateTime {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -45,35 +72,11 @@ class FakeMember(private val name: String) : Member {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getPermissions(channel: Channel?): MutableList<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getPermissions(): MutableList<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getVoiceState(): GuildVoiceState {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getGame(): Game {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getJDA(): JDA {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun canInteract(member: Member?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun canInteract(role: Role?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun canInteract(emote: Emote?): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -93,8 +96,6 @@ class FakeMember(private val name: String) : Member {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getUser() = FakeUser(name, 0, 0)
-
     override fun getColorRaw(): Int {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -103,19 +104,39 @@ class FakeMember(private val name: String) : Member {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun hasPermission(permissions: MutableCollection<Permission>?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hasPermission(channel: Channel?, vararg permissions: Permission?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hasPermission(channel: Channel?, permissions: MutableCollection<Permission>?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getGuild(): Guild {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getOnlineStatus(type: ClientType): OnlineStatus {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hasPermission(permissions: MutableCollection<Permission>): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hasPermission(channel: GuildChannel, vararg permissions: Permission?): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hasPermission(channel: GuildChannel, permissions: MutableCollection<Permission>): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getPermissions(): EnumSet<Permission> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getPermissions(channel: GuildChannel): EnumSet<Permission> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getPermissionsExplicit(): EnumSet<Permission> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getPermissionsExplicit(channel: GuildChannel): EnumSet<Permission> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

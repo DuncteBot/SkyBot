@@ -26,11 +26,11 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Invite;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Invite;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
@@ -71,7 +71,7 @@ public class GuildInfoCommand extends Command {
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().queue((invites) -> {
+                    g.retrieveInvites().queue((invites) -> {
 
                         if (invites.isEmpty()) {
                             sendGuildInfoEmbed(event, ctx, "");
@@ -82,9 +82,7 @@ public class GuildInfoCommand extends Command {
                         sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
                     });
                 } else {
-                    g.getVanityUrl().queue((invite) ->
-                        sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
-                    );
+                    sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, g.getVanityUrl()));
                 }
             } else {
                 sendGuildInfoEmbed(event, ctx, "");
@@ -103,7 +101,7 @@ public class GuildInfoCommand extends Command {
         final EmbedBuilder eb = EmbedUtils.defaultEmbed();
         final GuildSettings settings = ctx.getGuildSettings();
 
-        final OffsetDateTime createTime = g.getCreationTime();
+        final OffsetDateTime createTime = g.getTimeCreated();
         final Date createTimeDate = Date.from(createTime.toInstant());
         final String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
         final String createTimeHuman = ctx.getVariables().getPrettyTime().format(createTimeDate);

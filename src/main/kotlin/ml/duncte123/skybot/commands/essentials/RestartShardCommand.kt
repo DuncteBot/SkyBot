@@ -31,7 +31,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
-import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.api.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 
@@ -57,7 +57,7 @@ class RestartShardCommand : Command() {
             return
         }
 
-        val shardManager = event.jda.asBot().shardManager
+        val shardManager = event.jda.shardManager!!
 
         try {
             when (ctx.args.size) {

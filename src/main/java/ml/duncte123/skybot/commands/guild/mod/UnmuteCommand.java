@@ -22,10 +22,10 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -98,7 +98,7 @@ public class UnmuteCommand extends ModBaseCommand {
 
         final String fReason = reason;
 
-        event.getGuild().getController().removeSingleRoleFromMember(toMute, role)
+        event.getGuild().removeRoleFromMember(toMute, role)
             .reason("Unmute by " + event.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
                 ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", fReason, ctx.getGuild());
                 sendSuccess(event.getMessage());

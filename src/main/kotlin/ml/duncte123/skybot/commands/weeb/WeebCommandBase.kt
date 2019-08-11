@@ -24,9 +24,9 @@ import me.duncte123.weebJava.models.WeebApi
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import net.dv8tion.jda.core.EmbedBuilder
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
@@ -54,17 +54,17 @@ abstract class WeebCommandBase : Command() {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "<@210363111729790977> $thing ${event.member.asMention}", imageUrl))
+                    "<@210363111729790977> $thing ${event.member!!.asMention}", imageUrl))
                 return@async
             }
-            if (!event.message.mentionedMembers.isEmpty()) {
+            if (!event.message.mentionedMembers.isNotEmpty()) {
                 sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
+                    "${event.member!!.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
                     , imageUrl))
                 return@async
             }
             sendEmbed(event, getWeebEmbedImageAndDesc(
-                "${event.member.asMention} $thing ${args.joinToString(" ")}", imageUrl))
+                "${event.member!!.asMention} $thing ${args.joinToString(" ")}", imageUrl))
         }
 
     }

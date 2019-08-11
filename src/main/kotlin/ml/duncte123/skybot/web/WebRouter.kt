@@ -37,8 +37,8 @@ import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.Permission
 import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine

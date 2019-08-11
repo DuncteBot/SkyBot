@@ -25,8 +25,8 @@ import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
@@ -102,11 +102,11 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                     true
                 } else {
                     return msg.embeds.map {
-                        it.description.isBlank()
-                            && it.footer.text.isBlank()
-                            && it.title.isBlank()
-                            && it.thumbnail.url.isBlank()
-                            && it.image.url.isBlank()
+                        it.description.isNullOrBlank()
+                            && it.footer?.text.isNullOrBlank()
+                            && it.title.isNullOrBlank()
+                            && it.thumbnail?.url.isNullOrBlank()
+                            && it.image?.url.isNullOrBlank()
                     }.count { it } < 1
                 }
             }

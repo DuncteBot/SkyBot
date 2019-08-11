@@ -29,13 +29,13 @@ import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildUtils
-import net.dv8tion.jda.core.OnlineStatus
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.Game
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.User
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -117,7 +117,7 @@ class UserinfoCommand : Command() {
 
     private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
 
-        val createTime = user.creationTime
+        val createTime = user.timeCreated
         val createTimeDate = Date.from(createTime.toInstant())
         val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val createTimeHuman = prettyTime.format(createTimeDate)
@@ -142,7 +142,7 @@ class UserinfoCommand : Command() {
 
     private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
         val joins = guild.memberCache.stream().sorted(
-            Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
+            Comparator.comparing<Member, OffsetDateTime> { it.timeJoined }
         ).collect(Collectors.toList())
 
         var index = joins.indexOf(member)
@@ -182,17 +182,26 @@ class UserinfoCommand : Command() {
         val user = member.user
         val guild = ctx.guild
 
-        val createTime = user.creationTime
+        val createTime = user.timeCreated
         val createTimeDate = Date.from(createTime.toInstant())
         val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val createTimeHuman = prettyTime.format(createTimeDate)
 
-        val joinTime = member.joinDate
+        val joinTime = member.timeJoined
         val joinTimeDate = Date.from(joinTime.toInstant())
         val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val joinTimeHuman = prettyTime.format(joinTimeDate)
-
         val mStatus = member.onlineStatus
+
+        val boostingSinceMsg = if (member.timeBoosted == null) {
+            ""
+        } else {
+            val boostTime = member.timeBoosted!!
+            val boostTimeDate = Date.from(boostTime.toInstant())
+            val boostTimeFormat = boostTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+            val boostTimeHuman = prettyTime.format(boostTimeDate)
+            "\n**Boosting since:** $boostTimeFormat ($boostTimeHuman)"
+        }
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(member.color)
@@ -209,6 +218,7 @@ class UserinfoCommand : Command() {
                         |**Join Order:** ${generateJoinOrder(guild, member)}
                         |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
                         |**Bot Account:** ${user.isBot.toEmoji()}
+                        |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
@@ -229,8 +239,9 @@ class UserinfoCommand : Command() {
         }
     }
 
+
     private fun toWeebshStatus(member: Member): StatusType {
-        if (member.game != null && member.game.type == Game.GameType.STREAMING) {
+        if (member.activities.isNotEmpty() && member.activities[0].type == Activity.ActivityType.STREAMING) {
             return StatusType.STREAMING
         }
 
@@ -245,7 +256,7 @@ class UserinfoCommand : Command() {
     }
 
     private fun isNitro(user: User): Boolean {
-        return user.avatarId != null && user.avatarId.startsWith("a_")
+        return user.avatarId != null && (user.avatarId as String).startsWith("a_")
     }
 
     private fun convertStatus(status: OnlineStatus): String {

@@ -23,11 +23,11 @@ import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.impl.JDAImpl;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.utils.data.DataObject;
+import net.dv8tion.jda.internal.JDAImpl;
 
 import javax.annotation.Nonnull;
 import java.text.ParseException;
@@ -57,7 +57,7 @@ public class ChangeLogCommand extends Command {
 
         final JDAImpl jda = (JDAImpl) ctx.getJDA();
 
-        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(new JSONObject(embedJson));
+        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(DataObject.fromJson(embedJson));
 
         sendEmbed(ctx.getEvent(), embed);
     }
@@ -84,7 +84,7 @@ public class ChangeLogCommand extends Command {
                 .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())))
                 .build();
 
-            embedJson = embed.toJSONObject()
+            embedJson = embed.toData()
                 .put("type", "rich")
                 .toString();
 

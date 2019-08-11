@@ -55,16 +55,4 @@ appender("Sentry", SentryAppender) {
 
 root(INFO, ["STDOUT", "Sentry"])
 
-/*def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
-
-appender("FILE", FileAppender) {
-    file = "logs/log-${bySecond}.txt"
-    encoder(PatternLayoutEncoder) {
-        pattern = "[%d{dd-MM-yyyy HH:mm:ss}][%logger{35}] [%level] - %msg%n"
-    }
-}
-
-logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE, ["FILE"])
-logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE"])*/
-
 

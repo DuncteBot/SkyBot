@@ -23,14 +23,14 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Variables
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.Message
-import net.dv8tion.jda.core.entities.MessageChannel
-import net.dv8tion.jda.core.entities.TextChannel
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.core.requests.RestAction
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.requests.RestAction
 
 @Suppress("unused")
 @Authors(authors = [
@@ -58,22 +58,22 @@ class EvalFunctions {
                 .addField("Guilds", shardManager.guildCache.size().toString(), true)
                 .addField("Users", shardManager.userCache.size().toString(), true)
                 .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
-                .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
+                .addField("Socket-Ping", shardManager.averageGatewayPing.toString(), false).build()
             return channel.sendMessage(embed)
         }
 
         @JvmStatic
         fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
-            return getSharedGuilds(event.jda, event.member)
+            return getSharedGuilds(event.jda, event.member!!)
         }
 
         @JvmStatic
         fun getSharedGuilds(jda: JDA, member: Member): String {
-            val shardManager = jda.asBot().shardManager
+            val shardManager = jda.shardManager
 
             var out = ""
 
-            shardManager.getMutualGuilds(member.user).forEach {
+            shardManager!!.getMutualGuilds(member.user).forEach {
                 out += "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
             }
 
@@ -82,7 +82,7 @@ class EvalFunctions {
 
         @JvmStatic
         fun pinnedMessageCheck(channel: TextChannel) {
-            channel.pinnedMessages.queue {
+            channel.retrievePinnedMessages().queue {
                 MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
             }
         }

@@ -25,13 +25,14 @@ import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.hooks.EventListener;
-import net.dv8tion.jda.core.hooks.IEventManager;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,17 +68,17 @@ public class EventManager implements IEventManager {
     }
 
     @Override
-    public void register(Object listener) {
+    public void register(@Nonnull Object listener) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public void unregister(Object listener) {
+    public void unregister(@Nonnull Object listener) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public void handle(Event event) {
+    public void handle(@Nonnull GenericEvent event) {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
         if (shouldFakeBlock) {
@@ -108,6 +109,7 @@ public class EventManager implements IEventManager {
     }
 
     @Override
+    @Nonnull
     public List<Object> getRegisteredListeners() {
         return Collections.singletonList(this.listeners);
     }
