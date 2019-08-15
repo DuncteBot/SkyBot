@@ -154,17 +154,6 @@ public final class SkyBot {
             1, 1, TimeUnit.DAYS);
     }
 
-    /**
-     * This is our main method
-     *
-     * @param args
-     *         The args passed in while running the bot
-     *
-     * @throws Exception
-     *         When you mess something up
-     * @deprecated Because I can lol
-     */
-    @Deprecated
     public static void main(final String[] args) throws Exception {
         instance = new SkyBot();
     }
