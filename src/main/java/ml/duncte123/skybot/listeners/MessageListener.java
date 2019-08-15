@@ -21,10 +21,7 @@ package ml.duncte123.skybot.listeners;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -411,6 +408,9 @@ public abstract class MessageListener extends BaseListener {
 
     public void killAllShards(@Nonnull ShardManager manager) {
 
+        //noinspection ConstantConditions
+        final ShardWatcher shardWatcher = ((EventManager) manager.getShardById(0).getEventManager()).getShardWatcher();
+
         manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
         try {
@@ -420,10 +420,9 @@ public abstract class MessageListener extends BaseListener {
         catch (InterruptedException ignored) {
         }
 
-        manager.shutdown();
-
         if (shuttingDown) {
             // Kill all threads
+            shardWatcher.shutdown();
             MusicCommand.shutdown();
             this.systemPool.shutdown();
             variables.getCommandManager().shutdown();
@@ -438,6 +437,8 @@ public abstract class MessageListener extends BaseListener {
             WebUtils.ins.getClient().connectionPool().evictAll();
 
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
+
+            manager.shutdown();
 
             /*
              * Only shut down if we are not updating

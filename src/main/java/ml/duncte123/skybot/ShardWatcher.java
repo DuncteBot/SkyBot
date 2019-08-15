@@ -18,30 +18,45 @@
 
 package ml.duncte123.skybot;
 
+import net.dv8tion.jda.api.events.GatewayPingEvent;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDA.ShardInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-class ShardWatcher {
+public class ShardWatcher implements EventListener {
 
     // TODO use ping event
 
     private final long[] pings;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
+    private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     ShardWatcher(SkyBot skyBot) {
-        final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         final int totalShards = skyBot.getShardManager().getShardsTotal();
 
         this.pings = new long[totalShards];
 
         service.scheduleAtFixedRate(this::checkShards, 10, 10, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void onEvent(@Nonnull GenericEvent event) {
+        if (event instanceof GatewayPingEvent) {
+            this.onGatewayPing((GatewayPingEvent) event);
+        }
+    }
+
+    private void onGatewayPing(@Nonnull GatewayPingEvent event) {
+        //
     }
 
     private void checkShards() {
@@ -63,5 +78,9 @@ class ShardWatcher {
         }
 
         logger.debug("Checking done");
+    }
+
+    public void shutdown() {
+        this.service.shutdown();
     }
 }
