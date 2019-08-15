@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 class ShardWatcher {
 
+    // TODO use ping event
+
     private final long[] pings;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
 
