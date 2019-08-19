@@ -85,6 +85,7 @@ public class EventManager implements IEventManager {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
         if (shouldFakeBlock) {
+            //noinspection ConstantConditions
             if (shardInfo == null) {
                 logger.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
                 return;

@@ -18,24 +18,22 @@
 
 package ml.duncte123.skybot;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDA.ShardInfo;
 import net.dv8tion.jda.api.events.GatewayPingEvent;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDA.ShardInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ShardWatcher implements EventListener {
-
-    // TODO use ping event
-
     private final long[] pings;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
@@ -44,6 +42,7 @@ public class ShardWatcher implements EventListener {
         final int totalShards = skyBot.getShardManager().getShardsTotal();
 
         this.pings = new long[totalShards];
+        Arrays.fill(this.pings, -1); // Set everything to -1
 
         service.scheduleAtFixedRate(this::checkShards, 10, 10, TimeUnit.MINUTES);
     }
@@ -55,26 +54,32 @@ public class ShardWatcher implements EventListener {
         }
     }
 
+    // Add shard to list on ping
+    // check if shards are in the list in checkShards
+    // If the shard is on 0 or -1 alert
+    // set shard to -1
+
     private void onGatewayPing(@Nonnull GatewayPingEvent event) {
-        //
+        final JDA shard = event.getEntity();
+        final ShardInfo info = shard.getShardInfo();
+
+        this.pings[info.getShardId()] = event.getNewPing();
     }
 
     private void checkShards() {
-
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
         logger.debug("Checking shards");
 
         for (final JDA shard : shardManager.getShardCache()) {
             final ShardInfo info = shard.getShardInfo();
-            final long ping = shard.getGatewayPing();
-            final long oldPing = this.pings[info.getShardId()];
 
-            if (oldPing != ping) {
-                this.pings[info.getShardId()] = ping;
-            } else {
+            if (this.pings[info.getShardId()] < 1) {
                 logger.warn("{} is possibly down", info);
             }
+
+
+            this.pings[info.getShardId()] = -1;
         }
 
         logger.debug("Checking done");
