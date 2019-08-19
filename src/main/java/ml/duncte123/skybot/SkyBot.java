@@ -114,7 +114,7 @@ public final class SkyBot {
 
 
         //Set up sharding for the bot
-        final EventManager eventManager = new EventManager(variables, this);
+        final EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
             .setToken(token)
             .setShardsTotal(totalShards)

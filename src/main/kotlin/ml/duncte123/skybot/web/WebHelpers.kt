@@ -75,7 +75,7 @@ object WebHelpers {
 
         val guildId = request.params(WebRouter.GUILD_ID)
 
-        return shardManager.getGuildById(guildId) ?: null
+        return shardManager.getGuildById(guildId)
     }
 
     fun paramToBoolean(param: String?): Boolean {

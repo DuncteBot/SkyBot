@@ -51,12 +51,12 @@ public class EventManager implements IEventManager {
     private final ShardWatcher shardWatcher;
     private final List<EventListener> listeners = new ArrayList<>();
 
-    EventManager(Variables variables, SkyBot skyBot) {
+    EventManager(Variables variables) {
         final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
-        shardWatcher = new ShardWatcher(skyBot);
+        shardWatcher = new ShardWatcher(variables.getConfig());
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);

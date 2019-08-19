@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDA.ShardInfo;
 import net.dv8tion.jda.api.events.GatewayPingEvent;
@@ -38,10 +39,8 @@ public class ShardWatcher implements EventListener {
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-    ShardWatcher(SkyBot skyBot) {
-        final int totalShards = skyBot.getShardManager().getShardsTotal();
-
-        this.pings = new long[totalShards];
+    ShardWatcher(DunctebotConfig config) {
+        this.pings = new long[config.discord.totalShards];
         Arrays.fill(this.pings, -1); // Set everything to -1
 
         service.scheduleAtFixedRate(this::checkShards, 10, 10, TimeUnit.MINUTES);
@@ -62,6 +61,8 @@ public class ShardWatcher implements EventListener {
     private void onGatewayPing(@Nonnull GatewayPingEvent event) {
         final JDA shard = event.getEntity();
         final ShardInfo info = shard.getShardInfo();
+
+//        logger.debug("Ping event from {} ({})", info, event.getNewPing());
 
         this.pings[info.getShardId()] = event.getNewPing();
     }
