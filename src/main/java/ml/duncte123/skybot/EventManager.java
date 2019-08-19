@@ -56,7 +56,7 @@ public class EventManager implements IEventManager {
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
-        shardWatcher = new ShardWatcher(variables.getConfig());
+        shardWatcher = new ShardWatcher();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);

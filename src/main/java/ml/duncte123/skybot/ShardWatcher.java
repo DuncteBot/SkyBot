@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import gnu.trove.map.TIntLongMap;
+import gnu.trove.map.hash.TIntLongHashMap;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDA.ShardInfo;
 import net.dv8tion.jda.api.events.GatewayPingEvent;
@@ -29,21 +30,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static gnu.trove.impl.Constants.DEFAULT_LOAD_FACTOR;
+
 public class ShardWatcher implements EventListener {
-    private final long[] pings;
+    private final TIntLongMap shardMap;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-    ShardWatcher(DunctebotConfig config) {
-        this.pings = new long[config.discord.totalShards];
-        Arrays.fill(this.pings, -1); // Set everything to -1
+    ShardWatcher() {
+        this.shardMap = new TIntLongHashMap(
+            (int) DEFAULT_LOAD_FACTOR,
+            (int) DEFAULT_LOAD_FACTOR,
+            -1, -1
+        );
 
-        service.scheduleAtFixedRate(this::checkShards, 10, 10, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
     }
 
     @Override
@@ -64,7 +69,7 @@ public class ShardWatcher implements EventListener {
 
 //        logger.debug("Ping event from {} ({})", info, event.getNewPing());
 
-        this.pings[info.getShardId()] = event.getNewPing();
+        this.shardMap.put(info.getShardId(), event.getNewPing());
     }
 
     private void checkShards() {
@@ -74,13 +79,20 @@ public class ShardWatcher implements EventListener {
 
         for (final JDA shard : shardManager.getShardCache()) {
             final ShardInfo info = shard.getShardInfo();
+            final int shardId = info.getShardId();
 
-            if (this.pings[info.getShardId()] < 1) {
-                logger.warn("{} is possibly down", info);
+            if (this.shardMap.get(shardId) < 1) {
+               if (Settings.AUTO_REBOOT_SHARDS) {
+                   logger.warn("{} is down, rebooting it", info);
+                   // We need to make sure that there are no useless reboots
+                   shardManager.restart(shardId);
+               } else {
+                   logger.warn("{} is possibly down", info);
+               }
             }
 
 
-            this.pings[info.getShardId()] = -1;
+            this.shardMap.put(shardId, -1);
         }
 
         logger.debug("Checking done");
