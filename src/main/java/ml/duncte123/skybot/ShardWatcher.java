@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static gnu.trove.impl.Constants.DEFAULT_CAPACITY;
 import static gnu.trove.impl.Constants.DEFAULT_LOAD_FACTOR;
 
 public class ShardWatcher implements EventListener {
@@ -43,8 +44,7 @@ public class ShardWatcher implements EventListener {
 
     ShardWatcher() {
         this.shardMap = new TIntLongHashMap(
-            (int) DEFAULT_LOAD_FACTOR,
-            (int) DEFAULT_LOAD_FACTOR,
+            DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR,
             -1, -1
         );
 
