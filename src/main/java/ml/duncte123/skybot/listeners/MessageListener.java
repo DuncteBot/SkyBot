@@ -435,17 +435,20 @@ public abstract class MessageListener extends BaseListener {
             }
 
             WebUtils.ins.getClient().connectionPool().evictAll();
+            WebUtils.ins.getClient().dispatcher().executorService().shutdown();
 
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
 
             manager.shutdown();
+            manager.getShardCache().forEach((jda) -> {
+                jda.getHttpClient().connectionPool().evictAll();
+                jda.getHttpClient().dispatcher().executorService().shutdown();
+            });
 
-            /*
-             * Only shut down if we are not updating
-             */
-            if (!isUpdating) {
+            // We close every thread :)
+            /*if (!isUpdating) {
                 System.exit(0);
-            }
+            }*/
         }
     }
 }
