@@ -115,7 +115,7 @@ public final class SkyBot {
 
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
-        this.shardManager = new DefaultShardManagerBuilder()
+        final DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder()
             .setToken(token)
             .setShardsTotal(totalShards)
             .setActivityProvider(this.activityProvider)
@@ -127,12 +127,17 @@ public final class SkyBot {
                     .connectTimeout(30L, TimeUnit.SECONDS)
                     .readTimeout(30L, TimeUnit.SECONDS)
                     .writeTimeout(30L, TimeUnit.SECONDS)
-            )
-            .build();
+            );
 
         this.startGameTimer();
 
-        //Load all the commands for the help embed last
+        if (LavalinkManager.ins.isEnabled()) {
+            builder.setVoiceDispatchInterceptor(LavalinkManager.ins.getLavalink().getVoiceInterceptor());
+        }
+
+        this.shardManager = builder.build();
+
+            //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
 
         if (!config.discord.local) {

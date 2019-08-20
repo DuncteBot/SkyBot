@@ -85,7 +85,7 @@ dependencies {
 
     //Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.20")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "e77e768d1a")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "0034c0b")
 //    implementation(project(":Lavalink-Client"))
 
     // SQLite
@@ -116,8 +116,8 @@ dependencies {
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "e51a5a2")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "e51a5a2")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "f6cdd8c")
 
     implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
 
