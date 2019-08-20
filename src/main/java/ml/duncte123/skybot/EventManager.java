@@ -48,6 +48,7 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
+    private final ShardWatcher shardWatcher;
     private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
@@ -55,12 +56,14 @@ public class EventManager implements IEventManager {
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
+        shardWatcher = new ShardWatcher();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
         this.listeners.add(readyShutdownListener);
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
+        this.listeners.add(shardWatcher);
 
         if (LavalinkManager.ins.isEnabled()) {
             this.listeners.add(LavalinkManager.ins.getLavalink());
@@ -82,6 +85,7 @@ public class EventManager implements IEventManager {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
         if (shouldFakeBlock) {
+            //noinspection ConstantConditions
             if (shardInfo == null) {
                 logger.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
                 return;
@@ -118,4 +122,7 @@ public class EventManager implements IEventManager {
         return this.reactionHandler;
     }
 
+    public ShardWatcher getShardWatcher() {
+        return shardWatcher;
+    }
 }
