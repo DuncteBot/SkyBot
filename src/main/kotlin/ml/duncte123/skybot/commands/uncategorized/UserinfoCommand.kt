@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -127,11 +128,11 @@ class UserinfoCommand : Command() {
             .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${user.asMention}
                         |
-                        |**Username + Discriminator:** ${user.asTag}
+                        |**Username + Discriminator:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
-                        |**Display Name:** ${user.name}
+                        |**Display Name:** ${user.name.escapeMarkDown()}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(user)}
+                        |$nitroUserLink ${user.isNitro()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
@@ -155,7 +156,7 @@ class UserinfoCommand : Command() {
         appendln()
 
         if (joins[index] == member) {
-            append("[${joins[index].effectiveName}](https://dunctebot.com/)")
+            append("[${joins[index].effectiveName}](https://patreon.com/DuncteBot)")
         } else {
             append(joins[index].effectiveName)
         }
@@ -166,10 +167,10 @@ class UserinfoCommand : Command() {
             }
 
             val mbr = joins[i]
-            var usrName = mbr.effectiveName.replace("_", "\\_")
+            var usrName = mbr.effectiveName.escapeMarkDown()
 
             if (mbr == member) {
-                usrName = "[$usrName](https://dunctebot.com/)"
+                usrName = "[$usrName](https://patreon.com/DuncteBot)"
             }
 
             append(" \\> ")
@@ -208,15 +209,15 @@ class UserinfoCommand : Command() {
             .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${member.asMention}
                         |
-                        |**Username + Discriminator:** ${user.asTag}
+                        |**Username + Discriminator:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
-                        |**Display Name:** ${member.effectiveName}
+                        |**Display Name:** ${member.effectiveName.escapeMarkDown()}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(user).toEmoji()}
+                        |$nitroUserLink ${user.isNitro().toEmoji()}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
-                        |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
+                        |**Online Status:** ${mStatus.toEmote()} ${mStatus.key}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
@@ -247,26 +248,22 @@ class UserinfoCommand : Command() {
 
         return when (member.onlineStatus) {
             OnlineStatus.ONLINE -> StatusType.ONLINE
-            OnlineStatus.OFFLINE -> StatusType.OFFLINE
             OnlineStatus.DO_NOT_DISTURB -> StatusType.DND
             OnlineStatus.IDLE -> StatusType.IDLE
-            OnlineStatus.INVISIBLE -> StatusType.OFFLINE
-            else -> StatusType.ONLINE
+            else -> StatusType.OFFLINE
         }
     }
 
-    private fun isNitro(user: User): Boolean {
-        return user.avatarId != null && (user.avatarId as String).startsWith("a_")
+    private fun User.isNitro() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
+
+    private fun OnlineStatus.toEmote() = when (this) {
+        OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
+        OnlineStatus.IDLE -> "<:away2:464520569862357002>"
+        OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
+
+        else -> "<:offline2:464520569929334784>"
     }
 
-    private fun convertStatus(status: OnlineStatus): String {
-        return when (status) {
-            OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
-            OnlineStatus.IDLE -> "<:away2:464520569862357002>"
-            OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
-
-            else -> "<:offline2:464520569929334784>"
-        }
-    }
+    private fun String.escapeMarkDown() = MarkdownSanitizer.escape(this)
 
 }
