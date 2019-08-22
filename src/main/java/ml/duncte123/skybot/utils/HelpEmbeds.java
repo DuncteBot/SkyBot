@@ -33,24 +33,33 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
-
-    /**
-     * These hold the command lists
-     */
+    /// <editor-fold desc="Command storage" defaultstate="collapsed">
     private static String MAIN_COMMANDS = "";
+    private static final String MAIN_COMMANDS_DESC = "Main commands";
     private static String MUSIC_COMMANDS = "";
+    private static final String MUSIC_COMMANDS_DESC = "Music commands";
     private static String ANIMALS_COMMANDS = "";
+    private static final String ANIMALS_COMMANDS_DESC = "Animal commands";
     private static String WEEB_COMMANDS = "";
+    private static final String WEEB_COMMANDS_DESC = "Weeb commands";
     private static String LGBTQ_COMMANDS = "";
+    private static final String LGBTQ_COMMANDS_DESC = "LGBTQ+ commands";
     private static String FUN_COMMANDS = "";
+    private static final String FUN_COMMANDS_DESC = "Fun commands";
     private static String UTILS_COMMANDS = "";
+    private static final String UTILS_COMMANDS_DESC = "Util commands";
     private static String MODERATION_COMMANDS = "";
+    private static final String MODERATION_COMMANDS_DESC = "Mod commands";
     private static String ADMINISTRATION_COMMANDS = "";
+    private static final String ADMINISTRATION_COMMANDS_DESC = "Admin commands";
     private static String PATRON_COMMANDS = "";
+    private static final String PATRON_COMMANDS_DESC = "Patron only commands";
     private static String NSFW_COMMANDS = "";
+    private static final String NSFW_COMMANDS_DESC = "NSFW commands";
+    /// </editor-fold>
 
     private static final boolean INLINE = true;
     public static void init(final CommandManager manager) {
@@ -95,61 +104,14 @@ public class HelpEmbeds {
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 
         if (categories == null || categories.length == 0) {
-            return embed
-                .addField("Main commands", MAIN_COMMANDS, INLINE)
-                .addField("Music commands", MUSIC_COMMANDS, INLINE)
-                .addField("Animal commands", ANIMALS_COMMANDS, INLINE)
-                .addField("Weeb commands", WEEB_COMMANDS, INLINE)
-                .addField("LGBTQ+ commands", LGBTQ_COMMANDS, INLINE)
-                .addField("Fun commands", FUN_COMMANDS, INLINE)
-                .addField("Util commands", UTILS_COMMANDS, INLINE)
-                .addField("Mod commands", MODERATION_COMMANDS, INLINE)
-                .addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE)
-                .addField("Patron only commands", PATRON_COMMANDS, INLINE)
-                .addField("NSFW commands", NSFW_COMMANDS, INLINE)
-                .addField("Support",
-                    "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                        "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
-                .build();
-        }
+            addAllCategoriesToEmbed(embed);
+        } else {
+            for (final CommandCategory category : categories) {
+                final MessageEmbed.Field generated = getFieldForCategory(category);
 
-        for (final CommandCategory category : categories) {
-            switch (category) {
-                case MAIN:
-                    embed.addField("Main commands", MAIN_COMMANDS, INLINE);
-                    break;
-                case MUSIC:
-                    embed.addField("Music commands", MUSIC_COMMANDS, INLINE);
-                    break;
-                case ANIMALS:
-                    embed.addField("Animal commands", ANIMALS_COMMANDS, INLINE);
-                    break;
-                case WEEB:
-                    embed.addField("Weeb commands", WEEB_COMMANDS, INLINE);
-                    break;
-                case LGBTQ:
-                    embed.addField("LGBTQ+ commands", LGBTQ_COMMANDS, INLINE);
-                    break;
-                case FUN:
-                    embed.addField("Fun commands", FUN_COMMANDS, INLINE);
-                    break;
-                case UTILS:
-                    embed.addField("Util commands", UTILS_COMMANDS, INLINE);
-                    break;
-                case MODERATION:
-                    embed.addField("Mod commands", MODERATION_COMMANDS, INLINE);
-                    break;
-                case ADMINISTRATION:
-                    embed.addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE);
-                    break;
-                case PATRON:
-                    embed.addField("Patron only commands", PATRON_COMMANDS, INLINE);
-                    break;
-                case NSFW:
-                    embed.addField("NSFW commands", NSFW_COMMANDS, INLINE);
-                    break;
-                default:
-                    break;
+                if (generated != null) {
+                    embed.addField(generated);
+                }
             }
         }
 
@@ -157,8 +119,58 @@ public class HelpEmbeds {
             "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                 "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
             .build();
-
     }
+
+    private static void addAllCategoriesToEmbed(EmbedBuilder embed) {
+        final CommandCategory[] categories = CommandCategory.values();
+        final Class<?> cls = HelpEmbeds.class;
+
+        for (final CommandCategory category : categories) {
+
+            if ("unlisted".equalsIgnoreCase(category.name())) {
+                continue;
+            }
+
+            try {
+                final String fieldName = category.name() + "_COMMANDS";
+                final String descFieldName = category.name() + "_COMMANDS_DESC";
+                final Field field = cls.getDeclaredField(fieldName);
+                final Field descField = cls.getDeclaredField(descFieldName);
+
+                embed.addField(
+                    (String) descField.get(cls),
+                    (String) field.get(cls),
+                    INLINE
+                );
+            }
+            catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private static MessageEmbed.Field getFieldForCategory(CommandCategory category) {
+        final Class<?> cls = HelpEmbeds.class;
+        final String fieldName = category.name() + "_COMMANDS";
+        final String descFieldName = category.name() + "_COMMANDS_DESC";
+        try {
+            final Field field = cls.getDeclaredField(fieldName);
+            final Field descField = cls.getDeclaredField(descFieldName);
+
+            return new MessageEmbed.Field(
+                (String) descField.get(cls),
+                (String) field.get(cls),
+                INLINE
+            );
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     private static String joinCommands(List<String> cmdNames) {
         return "`" + String.join("` | `", cmdNames) + "`";
