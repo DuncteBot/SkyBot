@@ -52,15 +52,7 @@ public class HelpEmbeds {
     private static String PATRON_COMMANDS = "";
     private static String NSFW_COMMANDS = "";
 
-    /**
-     * This tells the fields to be inline or not
-     */
     private static final boolean INLINE = true;
-
-    /**
-     * This loads all the commands in the lists
-     */
-
     public static void init(final CommandManager manager) {
         final CommandCategory[] categories = CommandCategory.values();
         final Class<?> cls = HelpEmbeds.class;
@@ -96,14 +88,6 @@ public class HelpEmbeds {
         }
     }
 
-    /**
-     * This will return a embed containing all the commands
-     *
-     * @param prefix
-     *         the prefix that we need
-     *
-     * @return a embed containing all the commands
-     */
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
         final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
@@ -123,7 +107,7 @@ public class HelpEmbeds {
                 .addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE)
                 .addField("Patron only commands", PATRON_COMMANDS, INLINE)
                 .addField("NSFW commands", NSFW_COMMANDS, INLINE)
-                .addField("Other suff",
+                .addField("Support",
                     "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                         "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
                 .build();
@@ -169,21 +153,13 @@ public class HelpEmbeds {
             }
         }
 
-        return embed.addField("Other stuff",
+        return embed.addField("Support",
             "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                 "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
             .build();
 
     }
 
-    /**
-     * if you enter a list of commands in here it will generate a string containing all the commands
-     *
-     * @param cmdNames
-     *         the commands that should be added to the list
-     *
-     * @return a concatenated string of the commands that we entered
-     */
     private static String joinCommands(List<String> cmdNames) {
         return "`" + String.join("` | `", cmdNames) + "`";
     }

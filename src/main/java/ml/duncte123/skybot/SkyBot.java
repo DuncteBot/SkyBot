@@ -137,7 +137,6 @@ public final class SkyBot {
 
         this.shardManager = builder.build();
 
-            //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
 
         if (!config.discord.local) {
