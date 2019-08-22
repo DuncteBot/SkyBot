@@ -21,9 +21,9 @@ package ml.duncte123.skybot.web.controllers.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHelpers
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.User
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.User
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response

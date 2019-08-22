@@ -28,11 +28,11 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -187,7 +187,7 @@ public class CommandUtils {
             return true;
         }
 
-        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             return false;
@@ -226,7 +226,7 @@ public class CommandUtils {
             return true;
         }
 
-        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             return false;

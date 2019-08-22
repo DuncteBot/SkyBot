@@ -22,8 +22,10 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.atomic.AtomicLong;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class PingCommand extends Command {
 
@@ -38,28 +40,18 @@ public class PingCommand extends Command {
             return;
         }
 
-        final AtomicLong start = new AtomicLong();
+        ctx.getJDA().getRestPing().queue((restPing) ->
+            sendMsgFormat(ctx.getChannel(),
+                "PONG!\n" +
+                    "Rest ping: %sms\n" +
+                    "Message ping: %sms\n" +
+                    "Websocket ping: %sms\n" +
+                    "Average shard ping: %sms",
+                restPing,
+                ctx.getMessage().getTimeCreated().until(OffsetDateTime.now(), ChronoUnit.MILLIS),
+                ctx.getJDA().getGatewayPing(),
+                ctx.getShardManager().getAverageGatewayPing())
+        );
 
-        ctx.getChannel().sendMessage("Pong!!")
-            .setCheck(() -> {
-                start.set(System.currentTimeMillis());
-
-                return true;
-            })
-            .queue((it) -> {
-                final double restPing = System.currentTimeMillis() - start.get();
-                final long messagePing = ctx.getMessage().getCreationTime().until(it.getCreationTime(), ChronoUnit.MILLIS);
-
-                it.editMessageFormat("PONG!\n" +
-                        "Rest ping: %sms\n" +
-                        "Message ping: %sms\n" +
-                        "Websocket ping: %sms\n" +
-                        "Average shard ping: %sms",
-                    restPing,
-                    messagePing,
-                    ctx.getJDA().getPing(),
-                    ctx.getShardManager().getAveragePing()
-                ).queue();
-            });
     }
 }

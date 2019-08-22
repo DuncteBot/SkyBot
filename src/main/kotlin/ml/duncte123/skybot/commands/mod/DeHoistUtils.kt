@@ -25,11 +25,11 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent
-import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent
-import net.dv8tion.jda.core.hooks.ListenerAdapter
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent
+import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -62,7 +62,7 @@ class DeHoistCommand : ModBaseCommand() {
             return
         }
 
-        ctx.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
+        ctx.guild.modifyNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
             .reason("de-hoist ctx ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
     }
@@ -77,15 +77,15 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
-            event.guild.controller.setNickname(event.member, dehoistChar + event.member.effectiveName)
+            event.guild.modifyNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
     }
 
-    override fun onGuildMemberNickChange(event: GuildMemberNickChangeEvent) {
+    override fun onGuildMemberUpdateNickname(event: GuildMemberUpdateNicknameEvent) {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
-            event.guild.controller.setNickname(event.member, dehoistChar + event.member.effectiveName)
+            event.guild.modifyNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
     }

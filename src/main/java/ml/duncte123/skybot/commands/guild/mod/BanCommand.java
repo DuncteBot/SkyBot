@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -88,7 +88,7 @@ public class BanCommand extends ModBaseCommand {
 
         final String fReason = reason;
 
-        ctx.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+        ctx.getGuild().ban(toBan.getId(), 1, reason).queue(
             (m) -> {
                 modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 sendSuccess(ctx.getMessage());

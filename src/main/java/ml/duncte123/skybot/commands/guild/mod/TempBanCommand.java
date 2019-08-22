@@ -23,10 +23,10 @@ import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -93,7 +93,7 @@ public class TempBanCommand extends ModBaseCommand {
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
+        ctx.getGuild().ban(toBan.getId(), 1, fReason).queue(
             (__) -> {
                 if (duration.getSeconds() > 0) {
                     addBannedUserToDb(ctx.getDatabaseAdapter(), ctx.getAuthor().getIdLong(),

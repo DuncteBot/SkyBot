@@ -23,79 +23,76 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Variables
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.Message
-import net.dv8tion.jda.core.entities.MessageChannel
-import net.dv8tion.jda.core.entities.TextChannel
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.core.requests.RestAction
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.requests.RestAction
+import net.dv8tion.jda.api.sharding.ShardManager
 
 @Suppress("unused")
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
     Author(nickname = "duncte123", author = "Duncan Sterken")
 ])
-class EvalFunctions {
+object EvalFunctions {
+    @JvmStatic
+    fun isEven(number: Int): Boolean {
+        return number % 2 == 0
+    }
 
-    companion object {
-        @JvmStatic
-        fun isEven(number: Int): Boolean {
-            return number % 2 == 0
+    @Suppress("UnnecessaryVariable", "LocalVariableName")
+    @JvmStatic
+    fun quick_mafs(x: Int): Int {
+        val the_thing = x + 2 - 1
+        return the_thing
+    }
+
+    @JvmStatic
+    fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
+        val embed = EmbedUtils.defaultEmbed()
+            .addField("Guilds", shardManager.guildCache.size().toString(), true)
+            .addField("Users", shardManager.userCache.size().toString(), true)
+            .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
+            .addField("Socket-Ping", shardManager.averageGatewayPing.toString(), false).build()
+        return channel.sendMessage(embed)
+    }
+
+    @JvmStatic
+    fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
+        return getSharedGuilds(event.jda, event.member!!)
+    }
+
+    @JvmStatic
+    fun getSharedGuilds(jda: JDA, member: Member): String {
+        val shardManager = jda.shardManager
+
+        var out = ""
+
+        shardManager!!.getMutualGuilds(member.user).forEach {
+            out += "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
         }
 
-        @Suppress("UnnecessaryVariable", "LocalVariableName")
-        @JvmStatic
-        fun quick_mafs(x: Int): Int {
-            val the_thing = x + 2 - 1
-            return the_thing
+        return out
+    }
+
+    @JvmStatic
+    fun pinnedMessageCheck(channel: TextChannel) {
+        channel.retrievePinnedMessages().queue {
+            MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
+        }
+    }
+
+    @JvmStatic
+    fun restoreCustomCommand(commandId: Int, variables: Variables): String {
+        val bool = variables.apis.restoreCustomCommand(commandId, variables)
+
+        if (bool) {
+            return "Command Restored"
         }
 
-        @JvmStatic
-        fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
-            val embed = EmbedUtils.defaultEmbed()
-                .addField("Guilds", shardManager.guildCache.size().toString(), true)
-                .addField("Users", shardManager.userCache.size().toString(), true)
-                .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
-                .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
-            return channel.sendMessage(embed)
-        }
-
-        @JvmStatic
-        fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
-            return getSharedGuilds(event.jda, event.member)
-        }
-
-        @JvmStatic
-        fun getSharedGuilds(jda: JDA, member: Member): String {
-            val shardManager = jda.asBot().shardManager
-
-            var out = ""
-
-            shardManager.getMutualGuilds(member.user).forEach {
-                out += "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
-            }
-
-            return out
-        }
-
-        @JvmStatic
-        fun pinnedMessageCheck(channel: TextChannel) {
-            channel.pinnedMessages.queue {
-                MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
-            }
-        }
-
-        @JvmStatic
-        fun restoreCustomCommand(commandId: Int, variables: Variables): String {
-            val bool = variables.apis.restoreCustomCommand(commandId, variables)
-
-            if (bool) {
-                return "Command Restored"
-            }
-
-            return "Could not restore command"
-        }
+        return "Could not restore command"
     }
 }

@@ -27,10 +27,9 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.TextChannel
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.atomic.AtomicLong
 import java.util.function.BiFunction
 
@@ -103,13 +102,14 @@ class BlackListCommand : ModBaseCommand() {
         val listBytes = jackson.writeValueAsBytes(blacklist)
         val isOwner = event.author.idLong == event.guild.ownerIdLong
 
-        event.channel.sendFile(
-            listBytes,
-            "blacklist_${event.guild.id}.json",
-            MessageBuilder().setContent("Here is the current black list for ${if (isOwner) "your" else "this"} server").build()
-        ).queue(null) {
-            sendMsg(event, "This command requires me to be able to upload files to this channel")
-        }
+        event.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
+            .addFile(
+                listBytes,
+                "blacklist_${event.guild.id}.json"
+            )
+            .queue(null) {
+                sendMsg(event, "This command requires me to be able to upload files to this channel")
+            }
     }
 
     private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
@@ -139,7 +139,7 @@ class BlackListCommand : ModBaseCommand() {
         val current = ctx.guildSettings.blacklistedWords
         val guildId = ctx.guild.idLong
         val adapter = ctx.databaseAdapter
-        attachments[0].withInputStream {
+        attachments[0].retrieveInputStream().thenAcceptAsync {
             try {
                 val importedBlacklist = jackson.readValue<List<String>>(it, object : TypeReference<List<String>>() {})
                 val filtered = importedBlacklist.filter { w -> !current.contains(w) }

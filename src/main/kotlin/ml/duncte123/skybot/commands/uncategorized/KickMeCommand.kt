@@ -23,7 +23,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.Permission
 import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 
@@ -49,11 +49,11 @@ class KickMeCommand : Command() {
             MessageUtils.sendMsg(event, warningMsg)
         } else if (args.isNotEmpty() && args[0] == "YESIMSURE") {
             //Check for perms
-            if (event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
+            if (event.guild.selfMember.canInteract(ctx.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
                 MessageUtils.sendSuccess(event.message)
                 //Kick the user
                 MessageUtils.sendMsg(event, "Your kick will commence in 20 seconds") {
-                    it.guild.controller.kick(event.member)
+                    it.guild.kick(ctx.member)
                         .reason("${event.author.asTag} ran the kickme command and got kicked")
                         .queueAfter(20L, TimeUnit.SECONDS) {
                             ModerationUtils.modLog(event.jda.selfUser,
@@ -62,7 +62,7 @@ class KickMeCommand : Command() {
                 }
             } else {
                 MessageUtils.sendMsg(event, """I'm missing the permission to kick you.
-                            |You got lucky this time ${event.member.asMention}.
+                            |You got lucky this time ${ctx.member.asMention}.
                         """.trimMargin())
             }
         } else {

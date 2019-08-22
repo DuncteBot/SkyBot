@@ -29,13 +29,14 @@ import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildUtils
-import net.dv8tion.jda.core.OnlineStatus
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.Game
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.User
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -117,7 +118,7 @@ class UserinfoCommand : Command() {
 
     private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
 
-        val createTime = user.creationTime
+        val createTime = user.timeCreated
         val createTimeDate = Date.from(createTime.toInstant())
         val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val createTimeHuman = prettyTime.format(createTimeDate)
@@ -127,11 +128,11 @@ class UserinfoCommand : Command() {
             .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${user.asMention}
                         |
-                        |**Username + Discriminator:** ${user.asTag}
+                        |**Username + Discriminator:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
-                        |**Display Name:** ${user.name}
+                        |**Display Name:** ${user.name.escapeMarkDown()}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(user)}
+                        |$nitroUserLink ${user.isNitro()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
@@ -142,7 +143,7 @@ class UserinfoCommand : Command() {
 
     private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
         val joins = guild.memberCache.stream().sorted(
-            Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
+            Comparator.comparing<Member, OffsetDateTime> { it.timeJoined }
         ).collect(Collectors.toList())
 
         var index = joins.indexOf(member)
@@ -155,7 +156,7 @@ class UserinfoCommand : Command() {
         appendln()
 
         if (joins[index] == member) {
-            append("[${joins[index].effectiveName}](https://dunctebot.com/)")
+            append("[${joins[index].effectiveName}](https://patreon.com/DuncteBot)")
         } else {
             append(joins[index].effectiveName)
         }
@@ -166,10 +167,10 @@ class UserinfoCommand : Command() {
             }
 
             val mbr = joins[i]
-            var usrName = mbr.effectiveName.replace("_", "\\_")
+            var usrName = mbr.effectiveName.escapeMarkDown()
 
             if (mbr == member) {
-                usrName = "[$usrName](https://dunctebot.com/)"
+                usrName = "[$usrName](https://patreon.com/DuncteBot)"
             }
 
             append(" \\> ")
@@ -182,33 +183,43 @@ class UserinfoCommand : Command() {
         val user = member.user
         val guild = ctx.guild
 
-        val createTime = user.creationTime
+        val createTime = user.timeCreated
         val createTimeDate = Date.from(createTime.toInstant())
         val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val createTimeHuman = prettyTime.format(createTimeDate)
 
-        val joinTime = member.joinDate
+        val joinTime = member.timeJoined
         val joinTimeDate = Date.from(joinTime.toInstant())
         val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val joinTimeHuman = prettyTime.format(joinTimeDate)
-
         val mStatus = member.onlineStatus
+
+        val boostingSinceMsg = if (member.timeBoosted == null) {
+            ""
+        } else {
+            val boostTime = member.timeBoosted!!
+            val boostTimeDate = Date.from(boostTime.toInstant())
+            val boostTimeFormat = boostTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+            val boostTimeHuman = prettyTime.format(boostTimeDate)
+            "\n**Boosting since:** $boostTimeFormat ($boostTimeHuman)"
+        }
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${member.asMention}
                         |
-                        |**Username + Discriminator:** ${user.asTag}
+                        |**Username + Discriminator:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
-                        |**Display Name:** ${member.effectiveName}
+                        |**Display Name:** ${member.effectiveName.escapeMarkDown()}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |$nitroUserLink ${isNitro(user).toEmoji()}
+                        |$nitroUserLink ${user.isNitro().toEmoji()}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
-                        |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
+                        |**Online Status:** ${mStatus.toEmote()} ${mStatus.key}
                         |**Bot Account:** ${user.isBot.toEmoji()}
+                        |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
@@ -229,33 +240,30 @@ class UserinfoCommand : Command() {
         }
     }
 
+
     private fun toWeebshStatus(member: Member): StatusType {
-        if (member.game != null && member.game.type == Game.GameType.STREAMING) {
+        if (member.activities.isNotEmpty() && member.activities[0].type == Activity.ActivityType.STREAMING) {
             return StatusType.STREAMING
         }
 
         return when (member.onlineStatus) {
             OnlineStatus.ONLINE -> StatusType.ONLINE
-            OnlineStatus.OFFLINE -> StatusType.OFFLINE
             OnlineStatus.DO_NOT_DISTURB -> StatusType.DND
             OnlineStatus.IDLE -> StatusType.IDLE
-            OnlineStatus.INVISIBLE -> StatusType.OFFLINE
-            else -> StatusType.ONLINE
+            else -> StatusType.OFFLINE
         }
     }
 
-    private fun isNitro(user: User): Boolean {
-        return user.avatarId != null && user.avatarId.startsWith("a_")
+    private fun User.isNitro() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
+
+    private fun OnlineStatus.toEmote() = when (this) {
+        OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
+        OnlineStatus.IDLE -> "<:away2:464520569862357002>"
+        OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
+
+        else -> "<:offline2:464520569929334784>"
     }
 
-    private fun convertStatus(status: OnlineStatus): String {
-        return when (status) {
-            OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
-            OnlineStatus.IDLE -> "<:away2:464520569862357002>"
-            OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
-
-            else -> "<:offline2:464520569929334784>"
-        }
-    }
+    private fun String.escapeMarkDown() = MarkdownSanitizer.escape(this)
 
 }

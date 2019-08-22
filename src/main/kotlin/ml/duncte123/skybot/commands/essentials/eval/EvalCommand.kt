@@ -35,9 +35,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.core.requests.RestAction
+import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.requests.RestAction
 import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
@@ -68,12 +68,12 @@ class EvalCommand : Command() {
             "java.lang",
             "java.util",
             "java.util.concurrent",
-            "net.dv8tion.jda.core",
-            "net.dv8tion.jda.core.entities",
-            "net.dv8tion.jda.core.entities.impl",
-            "net.dv8tion.jda.core.managers",
-            "net.dv8tion.jda.core.managers.impl",
-            "net.dv8tion.jda.core.utils",
+            "net.dv8tion.jda.api",
+            "net.dv8tion.jda.api.entities",
+            "net.dv8tion.jda.api.entities.impl",
+            "net.dv8tion.jda.api.managers",
+            "net.dv8tion.jda.api.managers.impl",
+            "net.dv8tion.jda.api.utils",
             "ml.duncte123.skybot.utils",
             "ml.duncte123.skybot.entities",
             "ml.duncte123.skybot.entities.delegate",
@@ -132,7 +132,7 @@ class EvalCommand : Command() {
         engine.setVariable("member", ctx.member)
         engine.setVariable("author", ctx.author)
         engine.setVariable("jda", ctx.jda)
-        engine.setVariable("shardManager", ctx.jda.asBot().shardManager)
+        engine.setVariable("shardManager", ctx.jda.shardManager)
         engine.setVariable("event", event)
 
         engine.setVariable("skraa", script)

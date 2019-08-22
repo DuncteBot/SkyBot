@@ -26,16 +26,16 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -53,7 +53,7 @@ public class ReadyShutdownListener extends MessageListener {
     }
 
     @Override
-    public void onEvent(Event event) {
+    public void onEvent(@Nonnull GenericEvent event) {
         if (event instanceof ReadyEvent) {
             this.onReady((ReadyEvent) event);
         } else if (event instanceof GuildMessageUpdateEvent) {
@@ -92,7 +92,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         shardsReady++;
-        final ShardManager manager = jda.asBot().getShardManager();
+        final ShardManager manager = jda.getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
 
             loadPatrons(manager);

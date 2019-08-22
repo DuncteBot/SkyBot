@@ -37,7 +37,7 @@ class FlipCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
-        var uname = event.member.effectiveName
+        var uname = event.member!!.effectiveName
 
         if (event.message.mentionedMembers.isNotEmpty()) {
             uname = event.message.mentionedMembers[0].effectiveName

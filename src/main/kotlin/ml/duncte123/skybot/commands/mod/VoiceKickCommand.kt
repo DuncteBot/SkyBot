@@ -23,8 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.VoiceChannel
+import net.dv8tion.jda.api.Permission
 import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -41,7 +40,7 @@ class VoiceKickCommand : ModBaseCommand() {
     override fun run(ctx: CommandContext) {
         val event = ctx.event
         val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
-        val controller = ctx.guild.controller
+        val guild = ctx.guild
 
         if (channels.isNotEmpty()) {
             val channel = channels[0]
@@ -58,24 +57,12 @@ class VoiceKickCommand : ModBaseCommand() {
         if (ctx.message.mentionedMembers.isNotEmpty()) {
             val member = ctx.message.mentionedMembers[0]
 
-            if (member.voiceState.channel == null) {
+            if (member.voiceState!!.channel == null) {
                 sendMsg(event, "That member is not in a voice channel")
                 return
             }
 
-            controller.createVoiceChannel("temp_voicekick_${System.currentTimeMillis()}").queue { channel ->
-                if (channel !is VoiceChannel) {
-                    logger.error("Created a Voice Channel but the result wasn't a voice channel (received ${channel.type.name.toLowerCase()})")
-
-                    return@queue
-                }
-
-                // TODO: may be null in v4
-                controller.moveVoiceMember(member, channel).queue {
-                    channel.delete().queue()
-                }
-            }
-
+            guild.kickVoiceMember(member).queue()
             sendSuccess(ctx.message)
 
             return

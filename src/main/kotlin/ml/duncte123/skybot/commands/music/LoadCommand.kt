@@ -58,7 +58,7 @@ class LoadCommand : MusicCommand() {
 
         val attachment = attachments[0]
 
-        attachment.withInputStream {
+        attachment.retrieveInputStream().thenAcceptAsync {
             try {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream
@@ -67,7 +67,7 @@ class LoadCommand : MusicCommand() {
                 if (!node.isArray) {
                     sendMsg(ctx, "Provided file is not a valid JSON array")
 
-                    return@withInputStream
+                    return@thenAcceptAsync
                 }
 
                 val array = node as ArrayNode

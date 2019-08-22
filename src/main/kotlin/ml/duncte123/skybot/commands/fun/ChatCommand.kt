@@ -30,8 +30,8 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isPatron
 import ml.duncte123.skybot.utils.MapUtils
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
 import java.util.*

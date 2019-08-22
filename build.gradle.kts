@@ -41,7 +41,7 @@ plugins {
 }
 
 project.group = "ml.duncte123.skybot"
-project.version = "3.87.2_${getGitHash()}"
+project.version = "3.88.0_${getGitHash()}"
 
 
 java {
@@ -76,16 +76,17 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.41")
+    implementation(group = "me.duncte123", name = "botCommons", version = "JDA_4_1.0.39")
 
     //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_464") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_42") {
         exclude(module = "opus-java")
     }
 
     //Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.20")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "9d32e7f")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "0034c0b")
+//    implementation(project(":Lavalink-Client"))
 
     // SQLite
     implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
@@ -108,14 +109,15 @@ dependencies {
     //Add kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.0")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.1")
 
     //Spark for website
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "c3383a8")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "f6cdd8c")
 
     implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
 

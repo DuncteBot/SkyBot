@@ -25,8 +25,8 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.Permission
 import spark.ModelAndView
 import spark.Request
 import spark.Response
@@ -72,7 +72,7 @@ object Dashboard {
         val userId = WebHelpers.getUserId(request)
 
         val user = shardManager.getUserById(userId)
-        val member = guild.getMember(user)
+        val member = guild.getMember(user!!)
         val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
         if (!hasPermission && !request.url().contains("noperms")) {

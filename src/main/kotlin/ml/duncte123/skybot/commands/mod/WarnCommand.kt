@@ -24,7 +24,7 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.utils.ModerationUtils.*
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.Permission
 import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -67,7 +67,7 @@ class WarnCommand : ModBaseCommand() {
         }
 
         if (getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
-            event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
+            event.guild.kick(target).reason("Reached 3 warnings").queue()
             modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
             return
         }

@@ -25,8 +25,8 @@ import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
-import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.Permission
 import spark.Request
 import spark.Response
 import java.util.concurrent.ThreadLocalRandom

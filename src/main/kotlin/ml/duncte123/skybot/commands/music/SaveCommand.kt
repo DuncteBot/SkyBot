@@ -23,8 +23,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
-import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.api.entities.Guild
 import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
@@ -39,13 +38,12 @@ class SaveCommand : MusicCommand() {
 
         val event = ctx.event
 
-        event.channel.sendFile(
-            toByteArray(event.guild, ctx.audioUtils, ctx.variables.jackson),
-            "playlist.json",
-            MessageBuilder()
-                .append(event.author)
-                .append(", here is the queue which can be re-imported")
-                .build()).queue()
+        event.channel.sendMessage("${event.author.asTag}, here is the queue which can be re-imported")
+            .addFile(
+                toByteArray(event.guild, ctx.audioUtils, ctx.variables.jackson),
+                "playlist.json"
+            )
+            .queue()
     }
 
     private fun toByteArray(guild: Guild?, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {

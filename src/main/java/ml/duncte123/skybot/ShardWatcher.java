@@ -18,48 +18,87 @@
 
 package ml.duncte123.skybot;
 
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDA.ShardInfo;
+import gnu.trove.map.TIntLongMap;
+import gnu.trove.map.hash.TIntLongHashMap;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDA.ShardInfo;
+import net.dv8tion.jda.api.events.GatewayPingEvent;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-class ShardWatcher {
+import static gnu.trove.impl.Constants.DEFAULT_CAPACITY;
+import static gnu.trove.impl.Constants.DEFAULT_LOAD_FACTOR;
 
-    private final long[] pings;
+public class ShardWatcher implements EventListener {
+    private final TIntLongMap shardMap;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
+    private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-    ShardWatcher(SkyBot skyBot) {
-        final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        final int totalShards = skyBot.getShardManager().getShardsTotal();
+    ShardWatcher() {
+        this.shardMap = new TIntLongHashMap(
+            DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR,
+            -1, -1
+        );
 
-        this.pings = new long[totalShards];
+        service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
+    }
 
-        service.scheduleAtFixedRate(this::checkShards, 10, 10, TimeUnit.MINUTES);
+    @Override
+    public void onEvent(@Nonnull GenericEvent event) {
+        if (event instanceof GatewayPingEvent) {
+            this.onGatewayPing((GatewayPingEvent) event);
+        }
+    }
+
+    // Add shard to list on ping
+    // check if shards are in the list in checkShards
+    // If the shard is on 0 or -1 alert
+    // set shard to -1
+
+    private void onGatewayPing(@Nonnull GatewayPingEvent event) {
+        final JDA shard = event.getEntity();
+        final ShardInfo info = shard.getShardInfo();
+
+//        logger.debug("Ping event from {} ({})", info, event.getNewPing());
+
+        this.shardMap.put(info.getShardId(), event.getNewPing());
     }
 
     private void checkShards() {
-
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
         logger.debug("Checking shards");
 
         for (final JDA shard : shardManager.getShardCache()) {
             final ShardInfo info = shard.getShardInfo();
-            final long ping = shard.getPing();
-            final long oldPing = this.pings[info.getShardId()];
+            final int shardId = info.getShardId();
 
-            if (oldPing != ping) {
-                this.pings[info.getShardId()] = ping;
-            } else {
-                logger.warn("{} is possibly down", info);
+            if (this.shardMap.get(shardId) < 1) {
+               if (Settings.AUTO_REBOOT_SHARDS) {
+                   logger.warn("{} is down, rebooting it", info);
+                   // We need to make sure that there are no useless reboots
+                   shardManager.restart(shardId);
+               } else {
+                   logger.warn("{} is possibly down", info);
+               }
             }
+
+
+            this.shardMap.put(shardId, -1);
         }
 
         logger.debug("Checking done");
+    }
+
+    public void shutdown() {
+        this.service.shutdown();
     }
 }

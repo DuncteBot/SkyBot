@@ -26,8 +26,8 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
@@ -102,7 +102,7 @@ public abstract class MusicCommand extends Command {
      * This performs some checks that we need for the music and may suppress error messages.
      *
      * @param event
-     *         The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+     *         The current {@link net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
      *         GuildMessageReceivedEvent}
      * @param reply
      *         whether the bot replies that you should make it join first
@@ -146,7 +146,7 @@ public abstract class MusicCommand extends Command {
      * This performs some checks that we need for the music and will always reply with error messages.
      *
      * @param event
-     *         The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+     *         The current {@link net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
      *         GuildMessageReceivedEvent}
      *
      * @return true if the checks pass

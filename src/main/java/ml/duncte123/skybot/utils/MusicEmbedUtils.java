@@ -31,7 +31,7 @@ public class MusicEmbedUtils {
      * This will generate a nice player embed for us
      *
      * @param mng
-     *         the {@link net.dv8tion.jda.core.entities.Guild} that we need the info for
+     *         the {@link net.dv8tion.jda.api.entities.Guild} that we need the info for
      *
      * @return the String that we can place in our embed
      */

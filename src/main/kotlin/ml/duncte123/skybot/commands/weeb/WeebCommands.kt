@@ -24,7 +24,7 @@ import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.api.MessageBuilder
 import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -61,7 +61,7 @@ class WeebCommands : WeebCommandBase() {
                 getWeebEmbedImage(ctx.weebApi.getRandomImage("lewd").execute().url))
             "pat" -> requestAndSend("pat", "pats", args, event, ctx.weebApi)
             "punch" -> requestAndSend("punch", "punches", args, event, ctx.weebApi)
-            "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
+            "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member!!.effectiveName} shrugs",
                 ctx.weebApi.getRandomImage("shrug").execute().url))
             "lick" -> requestAndSend("lick", "licks", args, event, ctx.weebApi)
             "owo" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage("owo").execute().url))

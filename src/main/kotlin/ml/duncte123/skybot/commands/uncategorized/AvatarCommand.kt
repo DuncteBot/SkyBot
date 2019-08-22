@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.core.entities.User
+import net.dv8tion.jda.api.entities.User
 import java.util.function.BiFunction
 
 class AvatarCommand : Command() {

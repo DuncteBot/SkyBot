@@ -21,10 +21,7 @@ package ml.duncte123.skybot.listeners;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -37,15 +34,15 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import ml.duncte123.skybot.web.WebRouter;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -103,7 +100,7 @@ public abstract class MessageListener extends BaseListener {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
-            final ShardManager manager = event.getJDA().asBot().getShardManager();
+            final ShardManager manager = event.getJDA().getShardManager();
 
             event.getMessage().addReaction("a:_yes:577795293546938369").queue(
                 success -> killAllShards(manager),
@@ -284,7 +281,7 @@ public abstract class MessageListener extends BaseListener {
                 final String inviteID = matcher.group(matcher.groupCount());
 
                 //Prohibiting failure because the bot is currently banned from the other guild.
-                guild.getInvites().queue((invites) -> {
+                guild.retrieveInvites().queue((invites) -> {
                     //Check if the invite is for this guild, if it is not delete the message
                     if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                         event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
@@ -411,6 +408,9 @@ public abstract class MessageListener extends BaseListener {
 
     public void killAllShards(@Nonnull ShardManager manager) {
 
+        //noinspection ConstantConditions
+        final ShardWatcher shardWatcher = ((EventManager) manager.getShardById(0).getEventManager()).getShardWatcher();
+
         manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
         try {
@@ -420,10 +420,9 @@ public abstract class MessageListener extends BaseListener {
         catch (InterruptedException ignored) {
         }
 
-        manager.shutdown();
-
         if (shuttingDown) {
             // Kill all threads
+            shardWatcher.shutdown();
             MusicCommand.shutdown();
             this.systemPool.shutdown();
             variables.getCommandManager().shutdown();
@@ -436,15 +435,20 @@ public abstract class MessageListener extends BaseListener {
             }
 
             WebUtils.ins.getClient().connectionPool().evictAll();
+            WebUtils.ins.getClient().dispatcher().executorService().shutdown();
 
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
 
-            /*
-             * Only shut down if we are not updating
-             */
-            if (!isUpdating) {
+            manager.shutdown();
+            manager.getShardCache().forEach((jda) -> {
+                jda.getHttpClient().connectionPool().evictAll();
+                jda.getHttpClient().dispatcher().executorService().shutdown();
+            });
+
+            // We close every thread :)
+            /*if (!isUpdating) {
                 System.exit(0);
-            }
+            }*/
         }
     }
 }

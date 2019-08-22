@@ -20,22 +20,9 @@ package ml.duncte123.skybot.unstable.utils;
 
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
-import net.dv8tion.jda.annotations.ReplaceWith;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class ComparatingUtils {
-
-    /**
-     * Used to do something
-     *
-     * @param t
-     *         something
-     *
-     * @see io.sentry.Sentry#capture(Throwable)
-     * @deprecated Should be replaced with sentry
-     */
-    @Deprecated()
-    @ReplaceWith(value = "io.sentry.Sentry#capture(Throwable)")
     public static void execCheck(Throwable t) {
         Sentry.capture(t);
     }

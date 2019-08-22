@@ -23,7 +23,7 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
-import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.api.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response

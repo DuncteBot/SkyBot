@@ -25,13 +25,14 @@ import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.hooks.EventListener;
-import net.dv8tion.jda.core.hooks.IEventManager;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,7 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
+    private final ShardWatcher shardWatcher;
     private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
@@ -54,12 +56,14 @@ public class EventManager implements IEventManager {
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
+        shardWatcher = new ShardWatcher();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
         this.listeners.add(readyShutdownListener);
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
+        this.listeners.add(shardWatcher);
 
         if (LavalinkManager.ins.isEnabled()) {
             this.listeners.add(LavalinkManager.ins.getLavalink());
@@ -67,20 +71,21 @@ public class EventManager implements IEventManager {
     }
 
     @Override
-    public void register(Object listener) {
+    public void register(@Nonnull Object listener) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public void unregister(Object listener) {
+    public void unregister(@Nonnull Object listener) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public void handle(Event event) {
+    public void handle(@Nonnull GenericEvent event) {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
         if (shouldFakeBlock) {
+            //noinspection ConstantConditions
             if (shardInfo == null) {
                 logger.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
                 return;
@@ -108,6 +113,7 @@ public class EventManager implements IEventManager {
     }
 
     @Override
+    @Nonnull
     public List<Object> getRegisteredListeners() {
         return Collections.singletonList(this.listeners);
     }
@@ -116,4 +122,7 @@ public class EventManager implements IEventManager {
         return this.reactionHandler;
     }
 
+    public ShardWatcher getShardWatcher() {
+        return shardWatcher;
+    }
 }

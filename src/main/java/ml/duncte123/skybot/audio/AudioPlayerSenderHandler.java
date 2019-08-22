@@ -18,70 +18,35 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
 import ml.duncte123.skybot.Author;
-import net.dv8tion.jda.core.audio.AudioSendHandler;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
 
+import java.nio.ByteBuffer;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioPlayerSenderHandler implements AudioSendHandler {
-
-    /**
-     * This is our audio player
-     */
-    private final IPlayer audioPlayer;
-
-    /**
-     * I don't know what this does but it seems important
-     */
-    private AudioFrame lastFrame;
+    private final LavaplayerPlayerWrapper audioPlayer;
+    private final MutableAudioFrame frame = new MutableAudioFrame();
+    private final ByteBuffer buffer = ByteBuffer.allocate(1024);
 
     AudioPlayerSenderHandler(IPlayer audioPlayer) {
-        this.audioPlayer = audioPlayer;
+        this.audioPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        this.frame.setBuffer(buffer);
     }
 
-    /**
-     * Checks if the player can provide the song
-     *
-     * @return true if we can provide something
-     */
     @Override
     public boolean canProvide() {
-        final LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
-
-        if (lastFrame == null) {
-            lastFrame = lavaplayerPlayer.provide();
-        }
-
-        return lastFrame != null;
+        return audioPlayer.provide(frame);
     }
 
-    /**
-     * This <em>should</em> gives us our audio
-     *
-     * @return The audio in some nice bytes
-     */
     @Override
-    public byte[] provide20MsAudio() {
-        final LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
-
-        if (lastFrame == null) {
-            lastFrame = lavaplayerPlayer.provide();
-        }
-
-        final byte[] data = lastFrame != null ? lastFrame.getData() : null;
-        lastFrame = null;
-
-        return data;
+    public ByteBuffer provide20MsAudio() {
+        return buffer.flip();
     }
 
-    /**
-     * "Checks" if this audio is opus
-     *
-     * @return always true
-     */
     @Override
     public boolean isOpus() {
         return true;
