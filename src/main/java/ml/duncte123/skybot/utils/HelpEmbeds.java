@@ -62,6 +62,32 @@ public class HelpEmbeds {
     /// </editor-fold>
 
     private static final boolean INLINE = true;
+
+    public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
+        final EmbedBuilder embed = defaultEmbed()
+            .setThumbnail(Settings.DEFAULT_ICON)
+            .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
+            .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
+
+        if (categories == null || categories.length == 0) {
+            addAllCategoriesToEmbed(embed);
+        } else {
+            for (final CommandCategory category : categories) {
+                final MessageEmbed.Field generated = getFieldForCategory(category);
+
+                if (generated != null) {
+                    embed.addField(generated);
+                }
+            }
+        }
+
+        return embed.addField("Support",
+            "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
+            .build();
+    }
+
+    /// <editor-fold desc="Reflection magic" defaultstate="collapsed">
     public static void init(final CommandManager manager) {
         final CommandCategory[] categories = CommandCategory.values();
         final Class<?> cls = HelpEmbeds.class;
@@ -95,30 +121,6 @@ public class HelpEmbeds {
             }
 
         }
-    }
-
-    public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
-        final EmbedBuilder embed = defaultEmbed()
-            .setThumbnail(Settings.DEFAULT_ICON)
-            .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-            .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
-
-        if (categories == null || categories.length == 0) {
-            addAllCategoriesToEmbed(embed);
-        } else {
-            for (final CommandCategory category : categories) {
-                final MessageEmbed.Field generated = getFieldForCategory(category);
-
-                if (generated != null) {
-                    embed.addField(generated);
-                }
-            }
-        }
-
-        return embed.addField("Support",
-            "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
-            .build();
     }
 
     private static void addAllCategoriesToEmbed(EmbedBuilder embed) {
@@ -170,7 +172,7 @@ public class HelpEmbeds {
 
         return null;
     }
-
+    /// </editor-fold>
 
     private static String joinCommands(List<String> cmdNames) {
         return "`" + String.join("` | `", cmdNames) + "`";
