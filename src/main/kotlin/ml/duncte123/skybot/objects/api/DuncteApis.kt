@@ -360,7 +360,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun decodeToken(token: String): JsonNode {
         val json = mapper.createObjectNode().put("token", token)
 
-        return postJSON("token", json)
+        return postJSON("token", json, false)
     }
 
     fun getPronouns(userId: Long): JsonNode? {
