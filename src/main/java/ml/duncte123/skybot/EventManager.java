@@ -115,7 +115,7 @@ public class EventManager implements IEventManager {
     @Override
     @Nonnull
     public List<Object> getRegisteredListeners() {
-        return Collections.singletonList(this.listeners);
+        return Collections.unmodifiableList(this.listeners);
     }
 
     public ReactionHandler getReactionHandler() {

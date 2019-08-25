@@ -25,7 +25,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.listeners.BaseListener
-import ml.duncte123.skybot.listeners.MessageListener
+import ml.duncte123.skybot.listeners.ReadyShutdownListener
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -45,19 +45,17 @@ class UpdateCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-
-        if (!isDev(event.author)
-            && Settings.OWNER_ID != event.author.idLong) {
-            sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
-            MessageUtils.sendError(event.message)
+        if (!isDev(ctx.author)
+            && Settings.OWNER_ID != ctx.author.idLong) {
+            sendMsg(ctx, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
+            MessageUtils.sendError(ctx.message)
             return
         }
 
         if (getProperty("updater") == null) {
             val message = "The updater is not enabled. " +
                 "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
-            sendEmbed(event, EmbedUtils.embedMessage(message))
+            sendEmbed(ctx, EmbedUtils.embedMessage(message))
             return
         }
 
@@ -67,11 +65,11 @@ class UpdateCommand : Command() {
         BaseListener.isUpdating = true
         BaseListener.shuttingDown = true
 
-        sendMsg(event, "✅ Updating") {
+        sendMsg(ctx, "✅ Updating") {
             // This will also shutdown eval
-            val listener = event.jda.eventManager.registeredListeners.find { it.javaClass == MessageListener::class.java } as MessageListener
+            val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
 
-            listener.killAllShards(event.jda.shardManager!!)
+            listener.killAllShards(ctx.shardManager!!)
 
             // Wait for 2 seconds to allow everything to shut down
             sleep(2000)
