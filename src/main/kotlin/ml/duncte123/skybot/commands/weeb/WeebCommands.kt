@@ -92,7 +92,7 @@ class WeebCommands : WeebCommandBase() {
                     val img = ctx.weebApi.getRandomImage(type).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
-                    sendMsg(event, "That category could not be found, Use `${ctx.prefix}weeb_image categories` for all categories")
+                    sendMsg(event, "That category could not be found, Use `${ctx.prefix}weeb categories` for all categories")
                 }
             }
         }

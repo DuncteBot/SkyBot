@@ -57,7 +57,7 @@ abstract class WeebCommandBase : Command() {
                     "<@210363111729790977> $thing ${event.member!!.asMention}", imageUrl))
                 return@async
             }
-            if (!event.message.mentionedMembers.isNotEmpty()) {
+            if (event.message.mentionedMembers.isNotEmpty()) {
                 sendEmbed(event, getWeebEmbedImageAndDesc(
                     "${event.member!!.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
                     , imageUrl))

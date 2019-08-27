@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
@@ -29,7 +30,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -124,7 +128,19 @@ public class CleanupCommand extends ModBaseCommand {
 //                .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
                 .collect(Collectors.toList());
 
-            channel.purgeMessages(msgList);
+            CompletableFuture<Message> hack = new CompletableFuture<>();
+            sendMsg(event, "Deleting messages, please wait (this might take a while)", hack::complete);
+
+            final List<CompletableFuture<Void>> futures =  channel.purgeMessages(msgList);
+
+            try {
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+            }
+            catch (InterruptedException | ExecutionException e) {
+                Sentry.capture(e);
+            } finally {
+                removeMessage(channel, hack);
+            }
 
             return msgList.size();
         }).exceptionally((thr) -> {
@@ -138,10 +154,23 @@ public class CleanupCommand extends ModBaseCommand {
 
             return 0;
         }).whenCompleteAsync((count, thr) -> {
-            sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!", count);
+            sendMsgFormatAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
 
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });
         // End of the annotation
+    }
+
+    private void removeMessage(TextChannel channel, CompletableFuture<Message> hack) {
+        try {
+            Message hacked = hack.get();
+
+            if (hacked != null) {
+                channel.deleteMessageById(hacked.getIdLong()).queue();
+            }
+        }
+        catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }
