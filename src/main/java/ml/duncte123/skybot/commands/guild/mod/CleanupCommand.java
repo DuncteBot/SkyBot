@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -128,7 +127,7 @@ public class CleanupCommand extends ModBaseCommand {
 //                .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
                 .collect(Collectors.toList());
 
-            CompletableFuture<Message> hack = new CompletableFuture<>();
+            final CompletableFuture<Message> hack = new CompletableFuture<>();
             sendMsg(event, "Deleting messages, please wait (this might take a while)", hack::complete);
 
             final List<CompletableFuture<Void>> futures =  channel.purgeMessages(msgList);
@@ -163,7 +162,7 @@ public class CleanupCommand extends ModBaseCommand {
 
     private void removeMessage(TextChannel channel, CompletableFuture<Message> hack) {
         try {
-            Message hacked = hack.get();
+            final Message hacked = hack.get();
 
             if (hacked != null) {
                 channel.deleteMessageById(hacked.getIdLong()).queue();
