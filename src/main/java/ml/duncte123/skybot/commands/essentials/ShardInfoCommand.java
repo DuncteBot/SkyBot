@@ -28,6 +28,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.ShardCacheView;
@@ -156,14 +158,13 @@ public class ShardInfoCommand extends Command {
         final StringBuilder sb = new StringBuilder();
         final int padding = 1;
         final int[] widths = new int[headers.size()];
-        for (int i = 0; i < widths.length; i++) {
-            widths[i] = 0;
-        }
+
         for (int i = 0; i < headers.size(); i++) {
             if (headers.get(i).length() > widths[i]) {
                 widths[i] = headers.get(i).length();
             }
         }
+
         for (final List<String> row : table) {
             for (int i = 0; i < row.size(); i++) {
                 final String cell = row.get(i);
@@ -258,10 +259,10 @@ public class ShardInfoCommand extends Command {
     private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
 
         final long connectedVC = shard.getVoiceChannelCache().stream()
-            .filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
+            .filter((vc) -> vc.getMembers().contains(getSelfMemberFromVCId(shard, vc.getIdLong()))).count();
 
         final long listeningVC = shard.getVoiceChannelCache().stream().filter(
-            (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
+            (voiceChannel) -> voiceChannel.getMembers().contains(getSelfMemberFromVCId(shard, voiceChannel.getIdLong())))
             .mapToLong(
                 (channel) -> channel.getMembers().stream().filter(
                     (member) -> !member.getUser().isBot() && !member.getVoiceState().isDeafened()
@@ -269,5 +270,15 @@ public class ShardInfoCommand extends Command {
             ).sum();
 
         return new Pair<>(connectedVC, listeningVC);
+    }
+
+    private Member getSelfMemberFromVCId(JDA jda, long voiceChannelId) {
+        final VoiceChannel channel = jda.getVoiceChannelById(voiceChannelId);
+
+        if (channel == null) {
+            return null;
+        }
+
+        return channel.getGuild().getSelfMember();
     }
 }
