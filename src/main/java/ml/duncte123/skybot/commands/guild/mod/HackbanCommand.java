@@ -73,6 +73,12 @@ public class HackbanCommand extends ModBaseCommand {
                 continue;
             }
 
+            if (id.isBlank()) {
+                sendMsg(event, "Found empty id, aborting");
+
+                return;
+            }
+
             try {
                 event.getGuild().ban(id, 0)
                     .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue();
