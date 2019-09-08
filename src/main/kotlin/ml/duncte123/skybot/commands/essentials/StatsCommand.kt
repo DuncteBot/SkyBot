@@ -26,6 +26,8 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.VoiceChannel
 import oshi.SystemInfo
 import java.lang.management.ManagementFactory
 import java.sql.Time
@@ -46,9 +48,10 @@ class StatsCommand : Command() {
     override fun execute(ctx: CommandContext) {
 
         val shardManager = ctx.shardManager
+        val selfMemberFromVc: (VoiceChannel) -> Member? = { vc -> shardManager.getVoiceChannelById(vc.id)?.guild?.selfMember }
         val connectedVC = shardManager.shardCache.map { shard ->
             shard.voiceChannelCache.filter { vc ->
-                vc.members.contains(vc.guild.selfMember)
+                vc.members.contains(selfMemberFromVc(vc))
             }.count()
         }.sum()
 
