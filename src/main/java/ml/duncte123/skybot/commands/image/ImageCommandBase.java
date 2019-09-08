@@ -18,14 +18,18 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,22 +103,7 @@ public abstract class ImageCommandBase extends Command {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
-        String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
-
-        if (!args.isEmpty() && ctx.getMessage().getMentionedUsers().size() < 1) {
-            try {
-                url = new URL(args.get(0)).toString();
-            }
-            catch (MalformedURLException ignored) {
-                sendMsg(event, "That does not look like a valid url");
-                return null;
-            }
-        }
-
-        if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
-            url = ctx.getMessage().getMentionedUsers().get(0)
-                .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
-        }
+        String url = null;
 
         if (!ctx.getMessage().getAttachments().isEmpty()) {
             final Attachment attachment = ctx.getMessage().getAttachments().get(0);
@@ -137,6 +126,38 @@ public abstract class ImageCommandBase extends Command {
             }
             url = attachment.getUrl();
         }
+
+        if (args.isEmpty()) {
+            return url;
+        }
+
+        if (AirUtils.isURL(args.get(0))) {
+            try {
+                url = new URL(args.get(0)).toString();
+            }
+            catch (MalformedURLException ignored) {
+                sendMsg(event, "That does not look like a valid url");
+                return null;
+            }
+        }
+
+        if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
+            url = ctx.getMessage().getMentionedUsers().get(0)
+                .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        }
+
+        if (url  == null) {
+            final List<Member> textMentions = FinderUtil.findMembers(ctx.getArgsJoined(), ctx.getGuild());
+
+            if (!textMentions.isEmpty()) {
+                url = textMentions.get(0).getUser().getEffectiveAvatarUrl() + "?size=512";
+            }
+        }
+
+        if (url == null) {
+            url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        }
+
         return url;
     }
 

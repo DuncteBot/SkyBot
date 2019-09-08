@@ -191,10 +191,6 @@ public abstract class MusicCommand extends Command {
         cooldowns.put(guildId, 12600);
     }
 
-    /*protected boolean isOwner(GuildMessageReceivedEvent event) {
-        return isDev(event.getAuthor()) || event.getAuthor().getId().equals(Settings.OWNER_ID);
-    }*/
-
     /**
      * This method shuts down the service that cares for the dynamic cooldown decreasing.
      */
