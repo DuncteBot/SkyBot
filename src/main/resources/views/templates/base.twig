@@ -43,31 +43,13 @@
 </head>
 <body class="discord dark-not-black">
 <header>
-    <div class="hide">
-        {% block menu %}
-            <li><a class="discord-text text-full-white" href="https://dunctebot.com/">Home</a></li>
-            <li><a class="discord-text text-full-white" href="https://dunctebot.com/commands">Commands</a></li>
-            <li><a class="discord-text text-full-white" href="https://dunctebot.com/suggest">Suggest</a></li>
-            <li class="active"><a class="discord-text text-full-white" href="/">Dashboard</a></li>
-        {% endblock %}
-    </div>
-
-
     <div class="navbar-fixed">
         <nav class="indigo">
             <div class="nav-wrapper container">
-                <a href="https://dunctebot.com/" class="brand-logo">DuncteBot</a>
-                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                <ul class="right hide-on-med-and-down">
-                    {{ block('menu') }}
-                </ul>
+                <a href="/" class="brand-logo">DuncteBot Dashboard</a>
             </div>
         </nav>
     </div>
-
-    <ul class="sidenav discord dark-not-black" id="mobile-demo">
-        {{ block('menu') }}
-    </ul>
 </header>
 
 <main>
@@ -112,6 +94,7 @@
                            target="_blank">Donate</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://patreon.com/DuncteBot"
                            target="_blank">Patreon</a></li>
+                    <li><a href="https://www.patreon.com/bePatron?u=6419542" data-patreon-widget-type="become-patron-button">Become a Patron!</a></li>
                 </ul>
             </div>
         </div>
@@ -124,7 +107,7 @@
 </footer>
 
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
+<script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
