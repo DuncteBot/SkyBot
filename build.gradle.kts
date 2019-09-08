@@ -119,7 +119,8 @@ dependencies {
     implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")
     implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "f6cdd8c")
 
-    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
+//    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
+    implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
 
     //Wolfaram alpha
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")

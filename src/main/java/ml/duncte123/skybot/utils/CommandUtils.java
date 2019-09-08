@@ -168,13 +168,17 @@ public class CommandUtils {
         return output;
     }
 
-    public static String parseJagTag(CommandContext ctx, String content) {
-        final Parser parser = PARSER_SUPPLIER.get()
+    public static Parser getParser(CommandContext ctx) {
+        return PARSER_SUPPLIER.get()
             .put("messageId", ctx.getMessage().getId())
             .put("user", ctx.getAuthor())
             .put("channel", ctx.getChannel())
             .put("guild", ctx.getGuild())
             .put("args", ctx.getArgsJoined());
+    }
+
+    public static String parseJagTag(CommandContext ctx, String content) {
+        final Parser parser = getParser(ctx);
         final String parsed = parser.parse(content);
 
         parser.clear();

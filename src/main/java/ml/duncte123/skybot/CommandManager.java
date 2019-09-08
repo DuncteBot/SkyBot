@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import com.jagrosh.jagtag.Parser;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.DoomedException;
@@ -28,8 +29,12 @@ import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.utils.data.DataObject;
+import net.dv8tion.jda.internal.JDAImpl;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -392,11 +397,29 @@ public class CommandManager {
                 try {
                     MDC.put("command.custom.message", cc.getMessage());
 
-                    final String message = CommandUtils.parseJagTag(new CommandContext(invoke, args, event, variables), cc.getMessage());
+                    final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
+
+                    final String message = parser.parse(cc.getMessage());
+                    final MessageBuilder messageBuilder = new MessageBuilder();
+                    final DataObject object = parser.get("embed");
 
                     if (!message.isEmpty()) {
-                        sendMsg(event, "\u200B" + message);
+                        messageBuilder.setContent("\u200B" + message);
                     }
+
+                    if (object != null) {
+                        final JDAImpl jda = (JDAImpl) event.getJDA();
+                        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
+
+                        messageBuilder.setEmbed(embed);
+                    }
+
+                    if (!messageBuilder.isEmpty()) {
+                        sendMsg(event, messageBuilder.build());
+                    }
+
+
+                    parser.clear();
                 }
                 catch (Exception e) {
                     sendMsg(event, "Error with parsing custom command: " + e.getMessage());

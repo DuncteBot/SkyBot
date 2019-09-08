@@ -26,8 +26,10 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.exceptions.ParsingException;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import net.dv8tion.jda.api.utils.TimeUtil;
+import net.dv8tion.jda.api.utils.data.DataObject;
 
 import javax.annotation.Nonnull;
 import java.time.format.DateTimeFormatter;
@@ -240,21 +242,19 @@ public class DiscordMethods {
                 guild.addRoleToMember(targetMember, targetRole).queue();
 
                 return "";
-            }, "|user:")
-
-            /*,
-
+            }, "|user:"),
             new Method("embed", (env, input) -> {
                 try {
-                    final JSONObject jsonObject = new JSONObject(input[0]);
+
+                    final DataObject jsonObject = DataObject.fromJson(input[0]);
                     jsonObject.put("type", "rich");
                     env.put("embed", jsonObject);
                 }
-                catch (JSONException e) {
+                catch (ParsingException e) {
                     throw new ParseException("The embed input is not valid JSON");
                 }
                 return "";
-            })*/
+            })
         );
     }
 
