@@ -25,9 +25,9 @@ If you want to support development of the bot [conciser to be come a patron][pat
 Go to [`https://lnk.dunctebot.com/invite`][inviteLink] and follow the steps on the website
 
 
-# How to setup? / Self hosting
-We don't support self hosting of the bot anymore.
-If you try to host this bot yourself and it fails please do not contact us for support.
+# How to setup? / Self-hosting
+Self-hosting of this bot is not supported nor will there be any support provided to the people that try.
+The code of this bot was made public for people who want to see how the bot works or want to contribute to it.
 
 # Libs
 The following libraries are used:
