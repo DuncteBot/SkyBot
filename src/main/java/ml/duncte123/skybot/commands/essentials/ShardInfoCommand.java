@@ -192,6 +192,7 @@ public class ShardInfoCommand extends Command {
         }
         formatLine.append("\n");
         sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
+
         sb.append(String.format(formatLine.toString(), headers.toArray()));
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
         for (final List<String> row : table) {
