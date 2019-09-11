@@ -17,6 +17,7 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
@@ -26,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.31"))
+        classpath(kotlin("gradle-plugin", version = "1.3.50"))
     }
 }
 
@@ -35,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.31"
+    kotlin("jvm") version "1.3.50"
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
@@ -109,7 +110,7 @@ dependencies {
     //Add kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.1")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
 
     //Spark for website
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
@@ -228,7 +229,8 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "5.4.1"
+    distributionType = DistributionType.ALL
+    gradleVersion = "5.6.2"
 }
 
 githubRelease {

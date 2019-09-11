@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import com.github.natanbc.reliqua.request.RequestException
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessageWithTitle
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -35,9 +37,24 @@ class AdviceCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice").execute()
-        val advice = json.get("slip").get("advice").asText()
+        try {
+            val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice").execute()
 
-        sendEmbed(ctx, embedMessageWithTitle("Here's some advice", advice))
+            if (json.has("message")) {
+                val type = json.get("message").get("type").asText()
+
+                if (type == "error") {
+                    sendMsg(ctx, "Something borked: ${json.get("message").get("text").asText()}")
+
+                    return
+                }
+            }
+
+            val advice = json.get("slip").get("advice").asText()
+
+            sendEmbed(ctx, embedMessageWithTitle("Here's some advice", advice))
+        } catch (ex: RequestException) {
+            sendMsg(ctx, "An SSL error has occurred and a secure connection to the server cannot be made. - William Shakespeare")
+        }
     }
 }
