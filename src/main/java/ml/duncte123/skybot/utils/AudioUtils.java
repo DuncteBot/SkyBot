@@ -28,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
@@ -172,6 +173,10 @@ public class AudioUtils {
                     musicManagers.put(guildId, mng);
                 }
             }
+        }
+
+        if (!LavalinkManager.ins.isEnabled()) {
+            guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         }
 
         return mng;
