@@ -27,11 +27,11 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -97,16 +97,8 @@ public final class SkyBot {
         //But this time we are going to shard it
         final int totalShards = config.discord.totalShards;
 
-        //Set the game from the config
-        final int gameId = config.discord.game.type;
-        final String name = config.discord.game.name;
-        final Activity.ActivityType gameType = Activity.ActivityType.fromKey(gameId);
-        final String streamUrl = gameType == Activity.ActivityType.STREAMING ? config.discord.game.streamUrl : null;
-
-        this.activityProvider = (shardId) -> Activity.of(
-            gameType,
-            name.replace("{shardId}", Integer.toString(shardId + 1)),
-            streamUrl
+        this.activityProvider = (shardId) -> Activity.playing(
+            config.discord.prefix + "help | Shard " + (shardId + 1)
         );
 
         logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());

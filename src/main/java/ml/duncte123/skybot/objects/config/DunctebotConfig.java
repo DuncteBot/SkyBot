@@ -33,20 +33,12 @@ public class DunctebotConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Discord {
-        public Game game;
         public long[] constantSuperUserIds;
         public String prefix;
         public Oauth oauth;
         public int totalShards;
         public boolean local;
         public String token;
-
-
-        public static class Game {
-            public String streamUrl;
-            public String name;
-            public int type;
-        }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Oauth {

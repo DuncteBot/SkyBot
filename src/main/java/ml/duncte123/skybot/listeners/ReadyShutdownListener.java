@@ -36,6 +36,8 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -66,6 +68,7 @@ public class ReadyShutdownListener extends MessageListener {
     private void onReady(ReadyEvent event) {
         final JDA jda = event.getJDA();
         logger.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
+        killEvents(jda);
 
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning) {
@@ -147,4 +150,35 @@ public class ReadyShutdownListener extends MessageListener {
 
         GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
     }
+
+    private void killEvents(JDA jda) {
+        final JDAImpl api = (JDAImpl) jda;
+        final SocketHandler.NOPHandler nopHandler = new SocketHandler.NOPHandler(api);
+        final var handlers = api.getClient().getHandlers();
+
+        handlers.put("TYPING_START", nopHandler);
+        handlers.put("MESSAGE_REACTION_ADD", nopHandler);
+    }
+
+    // might work some day
+    /*private void customGame(JDA jda) {
+        DataObject gameObj = DataObject.empty();
+        gameObj.put("name", jda.getShardInfo().toString());
+        gameObj.put("type", Activity.ActivityType.DEFAULT.getKey());
+
+        DataObject object = DataObject.empty();
+
+        object.put("game", gameObj);
+        object.put("afk", false);
+        object.put("status", OnlineStatus.ONLINE.getKey());
+        object.put("since", System.currentTimeMillis());
+        object.put("guild_id", "191245668617158656");
+        object.put("client_status", DataObject.empty()
+            .put("mobile", "online")
+        );
+
+        ((JDAImpl) jda).getClient().send(DataObject.empty()
+            .put("d", object)
+            .put("op", WebSocketCode.PRESENCE).toString());
+    }*/
 }

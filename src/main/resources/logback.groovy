@@ -17,6 +17,7 @@
  */
 
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.boolex.GEventEvaluator
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.filter.ThresholdFilter
@@ -54,5 +55,7 @@ appender("Sentry", SentryAppender) {
 }
 
 root(INFO, ["STDOUT", "Sentry"])
+
+//logger('net.dv8tion.jda.internal.requests.WebSocketClient', TRACE)
 
 
