@@ -176,6 +176,18 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
         filter<ReplaceTokens>(mapOf("tokens" to items))
     }
 
+    from("src/main/java") {
+        include("**/VoteCommand.java")
+
+        val regex = "\" \\+ link\\(\"(.*)\"\\)( \\+)?".toRegex()
+
+        filter {
+            println(it.replace(regex, link("\$1") + "\"\$2"))
+
+            it.replace(regex, link("\$1") + "\"\$2")
+        }
+    }
+
     into("build/filteredSrc")
 
     includeEmptyDirs = false
@@ -183,7 +195,7 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
 
 val generateJavaSources = task<SourceTask>("generateJavaSources") {
     val javaSources = sourceSets["main"].allJava.filter {
-        it.name != "Settings.java"
+        !arrayOf("Settings.java", "VoteCommand.java").contains(it.name)
     }.asFileTree
 
     source = javaSources + fileTree(sourcesForRelease.destinationDir)
@@ -257,3 +269,5 @@ fun getGitHash(): String {
         "DEV"
     }
 }
+
+fun link(inp: String) = "[$inp]($inp)\\\\n"
