@@ -146,10 +146,16 @@ public class HelpCommand extends Command {
         final StringBuilder builder = new StringBuilder();
 
         for (final Flag flag : flags) {
-            if (flag.getWord() == null) {
+            if (flag.getFlag() == null) {
+                builder.append("`--")
+                    .append(flag.getWord())
+                    .append("` : ")
+                    .append(flag.getDesc())
+                    .append('\n');
+            } else if (flag.getWord() == null) {
                 builder.append("`-")
                     .append(flag.getFlag())
-                    .append("` > ")
+                    .append("` : ")
                     .append(flag.getDesc())
                     .append('\n');
             } else {

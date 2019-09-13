@@ -182,9 +182,7 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
         val regex = "\" \\+ link\\(\"(.*)\"\\)( \\+)?".toRegex()
 
         filter {
-            println(it.replace(regex, link("\$1") + "\"\$2"))
-
-            it.replace(regex, link("\$1") + "\"\$2")
+            it.replace(regex, "[\$1](\$1)\\\\n\"\$2")
         }
     }
 
@@ -269,5 +267,3 @@ fun getGitHash(): String {
         "DEV"
     }
 }
-
-fun link(inp: String) = "[$inp]($inp)\\\\n"

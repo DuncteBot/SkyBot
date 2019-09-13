@@ -30,12 +30,16 @@ public class TestFlagCommand extends Command {
 
     public TestFlagCommand() {
         this.name = "testflag";
-        this.flags = new Flag[] {
-          new Flag(
-              't',
-              "flag",
-              "first test flag"
-          ),
+        this.flags = new Flag[]{
+            new Flag(
+                't',
+                "flag",
+                "first test flag"
+            ),
+            new Flag(
+                "flag2",
+                "second test flag"
+            ),
         };
     }
 

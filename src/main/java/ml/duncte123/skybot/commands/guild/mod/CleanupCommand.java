@@ -62,12 +62,10 @@ public class CleanupCommand extends ModBaseCommand {
         };
         this.flags = new Flag[]{
             new Flag(
-                'p',
                 "keep-pinned",
                 "If this flag is set the messages that are pinned in the channel will be skipped"
             ),
             new Flag(
-                'b',
                 "bots-only",
                 "If this flag is set only messages that are from bots will be deleted"
             ),
@@ -88,8 +86,8 @@ public class CleanupCommand extends ModBaseCommand {
         }
 
         final var flags = ctx.getParsedFlags(this);
-        final boolean keepPinned = flags.containsKey("p");
-        final boolean clearBots = flags.containsKey("b");
+        final boolean keepPinned = flags.containsKey("keep-pinned");
+        final boolean clearBots = flags.containsKey("bots-only");
 
         // if size == 0 then this will just be skipped
         for (final String arg : args) {

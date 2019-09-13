@@ -18,14 +18,15 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Flag {
-    private final char flag;
+    private final Character flag;
     private final String word;
     private final String desc;
 
-    public Flag(char flag, String word, String desc) {
+    public Flag(Character flag, String word, String desc) {
         this.flag = flag;
         this.word = word;
         this.desc = desc;
@@ -35,7 +36,12 @@ public class Flag {
         this(flag, null, desc);
     }
 
-    public char getFlag() {
+    public Flag(@Nonnull String word, String desc) {
+        this(null, word, desc);
+    }
+
+    @Nullable
+    public Character getFlag() {
         return flag;
     }
 

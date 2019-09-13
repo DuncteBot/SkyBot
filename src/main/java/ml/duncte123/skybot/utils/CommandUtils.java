@@ -134,7 +134,12 @@ public class CommandUtils {
                         .collect(Collectors.toList());
 
                     if (!flags.isEmpty()) {
-                        currentFlag = String.valueOf(flags.get(0).getFlag());
+                        final Flag flag = flags.get(0);
+                        if (flag.getFlag() == null && flag.getWord() != null) {
+                            currentFlag = flag.getWord();
+                        } else {
+                            currentFlag = String.valueOf(flag.getFlag());
+                        }
                         output.put(currentFlag, new ArrayList<>());
                         pushFlag = false;
                     }
