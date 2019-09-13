@@ -121,7 +121,8 @@ public class CustomCommandCommand extends Command {
             }
 
             final CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
-            sendMsg(event, "Raw data for `" + commandName + "`:```pascal\n" + cmd.getMessage() + "```");
+            final String escaped = cmd.getMessage().replaceAll("`", "\\\\`");
+            sendMsg(event, "Raw data for `" + commandName + "`:```pascal\n" + escaped + "\n```");
         } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
 
             if (!isAdmin(event)) {
