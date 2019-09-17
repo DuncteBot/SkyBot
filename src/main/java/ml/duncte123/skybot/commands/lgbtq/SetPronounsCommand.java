@@ -36,6 +36,13 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetPronounsCommand extends Command {
 
+    /*
+        %1$s they
+        %2$s them
+        %3$s their
+        %4$s theirs
+        %5$s is/are
+     */
     private final String[] messages = {
         "%6$s went into the kitchen.\n" +
             "**%1$s** brought **%3$s** groceries with **%2$s**.\n" +
@@ -44,7 +51,12 @@ public class SetPronounsCommand extends Command {
 
         "**%1$s %5$s** a writer and wrote that book **%2$sself**. \n" +
             "Those ideas are **%4$s**. \n" +
-            "I like both **%2$s** and **%3$s** ideas."
+            "I like both **%2$s** and **%3$s** ideas.",
+
+        "**%1$s** went to the park.\n" +
+            "I went with **%2$s**.\n" +
+            "**%1$s** brought **%3$s** frisbee.\n" +
+            "**%1$s** threw the frisbee to **%2$sself**."
     };
 
     public SetPronounsCommand() {

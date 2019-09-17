@@ -54,12 +54,10 @@ public class AnnounceCommand extends ModBaseCommand {
         };
         this.flags = new Flag[]{
             new Flag(
-                'e',
                 "noembed",
                 "Displays the announcement as plain text instead of as embed"
             ),
             new Flag(
-                't',
                 "thumbnail",
                 "Displays the image as thumbnail instead of a large image"
             ),
