@@ -176,4 +176,13 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
             }
         }
     }
+
+    protected fun String.parseDate(): Date {
+        val split = this.split("-").map(String::toInt)
+        val cal = Calendar.getInstance()
+
+            cal.set(split[0], split[1], split[2])
+
+        return cal.time
+    }
 }

@@ -242,6 +242,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(Warning(
                 json.get("id").asInt(),
+                json.get("warn_date").asText(),
                 json.get("mod_id").asText(),
                 json.get("reason").asText(),
                 json.get("guild_id").asText()
@@ -257,6 +258,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             data.forEach { json ->
                 items.add(Warning(
                     json.get("id").asInt(),
+                    json.get("warn_date").asText().split("\\s+".toRegex())[0],
                     json.get("mod_id").asText(),
                     json.get("reason").asText(),
                     json.get("guild_id").asText()

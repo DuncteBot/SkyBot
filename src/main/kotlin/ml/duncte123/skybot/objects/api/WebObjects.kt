@@ -30,7 +30,7 @@ import java.util.*
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
 //data class WarnObject(val userId: String, val warnings: List<Warning>)
-data class Warning(val id: Int, /*val date: Date, val expiryDate: Date,*/ val modId: String, val reason: String, val guildId: String)
+data class Warning(val id: Int, val rawDate: String, /*val date: Date, val expiryDate: Date,*/ val modId: String, val reason: String, val guildId: String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Ban

@@ -61,17 +61,11 @@ public class KickCommand extends ModBaseCommand {
     @Override
     public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
 
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {
-            sendMsg(ctx, "I could not find any members with name " + args.get(0));
+            sendMsg(ctx, "I could not find any members with name " + ctx.getArgs().get(0));
             return;
         }
 
@@ -85,7 +79,7 @@ public class KickCommand extends ModBaseCommand {
 
             final User toKick = toKickMember.getUser();
             if (toKick.equals(event.getAuthor()) || !event.getMember().canInteract(toKickMember)) {
-                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
+                sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
 
@@ -99,7 +93,6 @@ public class KickCommand extends ModBaseCommand {
 
             if (flags.containsKey("r")) {
                 reason = String.join(" ", flags.get("r"));
-                //noinspection ResultOfMethodCallIgnored
                 kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + ": " + reason);
             }
 
@@ -113,7 +106,7 @@ public class KickCommand extends ModBaseCommand {
             );
         }
         catch (HierarchyException ignored) {
-            MessageUtils.sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
+            sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 
 

@@ -47,17 +47,10 @@ class WarnCommand : ModBaseCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val args = ctx.args
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
         val mentioned = ctx.getMentionedArg(0)
 
         if (mentioned.isEmpty()) {
-            sendMsg(ctx, "I could not find any members with name ${args[0]}")
+            sendMsg(ctx, "I could not find any members with name ${ctx.args[0]}")
             return
         }
 
