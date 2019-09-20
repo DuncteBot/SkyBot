@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -59,13 +60,18 @@ public class KickCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (mentioned.isEmpty() || args.isEmpty()) {
+        if (args.isEmpty()) {
             this.sendUsageInstructions(ctx);
+            return;
+        }
+
+        final List<Member> mentioned = ctx.getMentionedArg(0);
+
+        if (mentioned.isEmpty()) {
+            sendMsg(ctx, "I could not find any members with name " + args.get(0));
             return;
         }
 
@@ -78,8 +84,7 @@ public class KickCommand extends ModBaseCommand {
         try {
 
             final User toKick = toKickMember.getUser();
-            if (toKick.equals(event.getAuthor()) ||
-                !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
+            if (toKick.equals(event.getAuthor()) || !event.getMember().canInteract(toKickMember)) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }

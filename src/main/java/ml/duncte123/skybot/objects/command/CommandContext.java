@@ -163,6 +163,10 @@ public class CommandContext implements ICommandContext {
         return this.event;
     }
 
+    public List<Member> getMentionedArg(int index) {
+        return FinderUtil.findMembers(this.getArgs().get(0), this.getGuild());
+    }
+
     public List<Member> getMentionedMembers() {
         if (this.mentionedInMessage == null) {
             this.mentionedInMessage = new ArrayList<>();

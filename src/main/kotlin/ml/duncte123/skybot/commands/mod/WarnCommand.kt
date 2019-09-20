@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -47,11 +48,16 @@ class WarnCommand : ModBaseCommand() {
     override fun run(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
-        val mentioned = ctx.mentionedMembers
 
-        if (args.isEmpty() || mentioned.isEmpty()) {
-            MessageUtils.sendMsg(event, "Must mention a member")
-            MessageUtils.sendError(event.message)
+        if (args.isEmpty()) {
+            this.sendUsageInstructions(ctx)
+            return
+        }
+
+        val mentioned = ctx.getMentionedArg(0)
+
+        if (mentioned.isEmpty()) {
+            sendMsg(ctx, "I could not find any members with name ${args[0]}")
             return
         }
 

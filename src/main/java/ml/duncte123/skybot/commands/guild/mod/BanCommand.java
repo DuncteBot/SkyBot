@@ -58,11 +58,17 @@ public class BanCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final List<Member> mentioned = ctx.getMentionedMembers();
         final List<String> args = ctx.getArgs();
 
-        if (mentioned.isEmpty() || args.size() < 2) {
+        if (args.size() < 2) {
             this.sendUsageInstructions(ctx);
+            return;
+        }
+
+        final List<Member> mentioned = ctx.getMentionedArg(0);
+
+        if (mentioned.isEmpty()) {
+            sendMsg(ctx, "I could not find any members with name " + args.get(0));
             return;
         }
 

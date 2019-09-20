@@ -54,8 +54,10 @@ class VoiceKickCommand : ModBaseCommand() {
             return
         }
 
-        if (ctx.message.mentionedMembers.isNotEmpty()) {
-            val member = ctx.message.mentionedMembers[0]
+        val mentioned = ctx.getMentionedArg(0)
+
+        if (mentioned.isNotEmpty()) {
+            val member = mentioned[0]
 
             if (member.voiceState!!.channel == null) {
                 sendMsg(event, "That member is not in a voice channel")
