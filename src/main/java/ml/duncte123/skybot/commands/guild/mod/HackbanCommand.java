@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
 
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HackbanCommand extends ModBaseCommand {
@@ -94,7 +96,9 @@ public class HackbanCommand extends ModBaseCommand {
                         }
                 });
             }
-            catch (Exception e) {
+            catch (HierarchyException e) {
+              sendMsgFormat(ctx, "Could not ban id `%s`", id);
+            } catch (Exception e) {
                 Sentry.capture(e);
                 sendMsg(event, "ERROR: " + e.getMessage());
                 return;
