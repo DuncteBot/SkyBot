@@ -98,7 +98,7 @@ public final class LavalinkManager {
     }
 
     public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
-        //NOTE: never use the local audio manager, since the audio connection may be remote
+        // NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the
         // current voice channel if the bot is moved around in the client)
@@ -112,22 +112,12 @@ public final class LavalinkManager {
     private void loadNodes() {
         final JdaLavalink lavalink = getLavalink();
 
-//        lavalink.getNodes().forEach(LavalinkSocket::close);
-
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
             lavalink.addNode(URI.create(node.wsurl), node.pass, LavalinkRegion.valueOf(node.region));
         }
 
     }
 
-    /**
-     * This is a simple util function that extracts the bot id from the token
-     *
-     * @param token
-     *         the token of your bot
-     *
-     * @return the client id of the bot
-     */
     private String getIdFromToken(String token) {
         return new String(
             Base64.getDecoder().decode(
