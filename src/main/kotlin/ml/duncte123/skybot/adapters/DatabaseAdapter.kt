@@ -165,6 +165,7 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
         }
     }
 
+    // Cannot be an option callback due to it targeting the onFail param
     protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
         variables.database.run {
             try {
