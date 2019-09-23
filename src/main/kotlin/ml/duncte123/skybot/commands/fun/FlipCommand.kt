@@ -24,9 +24,19 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.util.function.BiFunction
+import kotlin.math.floor
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class FlipCommand : Command() {
+
+    private val flips = arrayOf(
+        "(╯°□°）╯︵",
+        "(┛◉Д◉)┛彡┻━┻",
+        "(ﾉ≧∇≦)ﾉ ﾐ ┻━┻",
+        "(ノಠ益ಠ)ノ彡┻━┻",
+        "(╯ರ ~ ರ)╯︵ ┻━┻",
+        "(┛ಸ_ಸ)┛彡┻━┻"
+    )
 
     init {
         this.category = CommandCategory.FUN
@@ -64,6 +74,8 @@ class FlipCommand : Command() {
             }
         }
 
-        sendMsg(event, "(╯°□°）╯︵ $output")
+        sendMsg(event, "${getFlip()} $output")
     }
+
+    private fun getFlip() = flips[floor(Math.random() * flips.size).toInt()]
 }

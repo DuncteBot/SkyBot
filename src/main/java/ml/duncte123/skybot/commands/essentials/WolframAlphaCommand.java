@@ -66,6 +66,10 @@ public class WolframAlphaCommand extends Command {
         eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
 
+        if (result.getPods().length == 0) {
+            return eb.setDescription("Wolfram|Alpha returned no results").build();
+        }
+
         for (final WAPod pod : result.getPods()) {
             final String name = parseString(pod.getTitle());
             final StringBuilder embeds = new StringBuilder();
