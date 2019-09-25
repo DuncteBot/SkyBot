@@ -126,8 +126,8 @@ public abstract class ImageCommandBase extends Command {
             url = attachment.getUrl();
         }
 
-        if (args.isEmpty()) {
-            return url;
+        if (args.isEmpty() && url == null) {
+            return event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
         }
 
         if (AirUtils.isURL(args.get(0))) {

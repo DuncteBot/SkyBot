@@ -18,17 +18,17 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-import ml.duncte123.skybot.commands.image.ImageCommandBase;
-import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
-public abstract class FilterBase extends ImageCommandBase {
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
+public abstract class FilterBase extends NoPatronImageCommand {
 
     FilterBase() {
-        this.category = CommandCategory.FUN;
         this.name = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
         this.helpFunction = (invoke, prefix) -> "Overlays a " + invoke + " filter over the provided image";
         this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [image url]`";
@@ -44,7 +44,9 @@ public abstract class FilterBase extends ImageCommandBase {
 
         final String url = getImageFromCommand(ctx);
 
-        if (url != null) {
+        if (url == null) {
+            sendMsg(ctx, "Could not find image, please mention a user, upload an image, or put an image url after the command");
+        } else {
             final byte[] image = ctx.getApis().getFilter(getFilterName(), url);
             handleBasicImage(event, image);
         }
