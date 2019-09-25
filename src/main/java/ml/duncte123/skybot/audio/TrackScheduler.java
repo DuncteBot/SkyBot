@@ -26,7 +26,6 @@ import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.utils.Debouncer;
@@ -53,7 +52,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
-    private final Variables variables;
     private final Debouncer<String> messageDebouncer;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
@@ -65,14 +63,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * @param player
      *     Our audio player
      */
-    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager, Variables variables) {
+    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) ->
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
             , DEBOUNCE_INTERVAL);
-        this.variables = variables;
     }
 
     /**
@@ -154,7 +151,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         final AudioTrack clone = lastTrack.makeClone();
         clone.setUserData(lastTrack.getUserData());
         this.player.playTrack(clone);
-        announceNextTrack(lastTrack, true);
+        announceNextTrack(lastTrack);
 
     }
 
@@ -204,10 +201,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track) {
-        announceNextTrack(track, false);
-    }
-
-    private void announceNextTrack(AudioTrack track, boolean repeated) {
         if (guildMusicManager.isAnnounceTracks()) {
             final EmbedBuilder message = AudioTrackKt.toEmbed(
                 track,

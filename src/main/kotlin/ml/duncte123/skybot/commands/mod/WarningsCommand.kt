@@ -23,9 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.Permission
-import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
 
 class WarningsCommand : ModBaseCommand() {
