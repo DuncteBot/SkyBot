@@ -36,6 +36,7 @@ import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -362,5 +363,24 @@ public class AirUtils {
             .collect(Collectors.joining("`, `"));
 
         return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
+    }
+
+    public static Member getSelfMemberFromVCId(JDA jda, long voiceChannelId) {
+        final Optional<Guild> optionalGuild = jda.getGuildCache()
+            .stream()
+            .filter(
+                (guild) -> guild.getVoiceChannelCache()
+                    .stream()
+                    .anyMatch(
+                        (vc) -> vc.getIdLong() == voiceChannelId
+                    )
+            )
+            .findFirst();
+
+        if (optionalGuild.isEmpty()) {
+            return null;
+        }
+
+        return optionalGuild.get().getSelfMember();
     }
 }

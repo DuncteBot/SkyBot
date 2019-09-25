@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -41,9 +42,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static ml.duncte123.skybot.utils.AirUtils.getSelfMemberFromVCId;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -271,15 +276,5 @@ public class ShardInfoCommand extends Command {
             ).sum();
 
         return new Pair<>(connectedVC, listeningVC);
-    }
-
-    private Member getSelfMemberFromVCId(JDA jda, long voiceChannelId) {
-        final VoiceChannel channel = jda.getVoiceChannelById(voiceChannelId);
-
-        if (channel == null) {
-            return null;
-        }
-
-        return channel.getGuild().getSelfMember();
     }
 }
