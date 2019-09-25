@@ -84,6 +84,8 @@ class JoinCommand : MusicCommand() {
             } else {
                 sendMsg(event, "Error while joining channel `${vc.name}`: ${e.message}")
             }
+        } catch (other: Exception) {
+            sendErrorWithMessage(ctx.message, "Could not join channel: ${other.message}")
         }
 
     }
