@@ -41,7 +41,7 @@ class StatsCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "stats"
-        this.helpFunction = BiFunction {_, _ -> "Shows some nerdy stastistics about the bot" }
+        this.helpFunction = BiFunction {_, _ -> "Shows some nerdy statistics about the bot" }
     }
 
     override fun execute(ctx: CommandContext) {
