@@ -18,14 +18,18 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import fredboat.audio.player.LavalinkManager;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.internal.utils.cache.SnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -43,17 +47,35 @@ public class FixVCCommand extends Command {
         if (isDev(ctx.getAuthor())) {
             sendMsg(ctx, "Looping over cache to fix channels");
             final AtomicInteger counter = new AtomicInteger();
+            final ShardManager shardManager = ctx.getShardManager();
+            final Map<Integer, Long> brokenVcs = new HashMap<>();
 
-            ctx.getShardManager().getGuildCache().forEach((it) -> {
-                final GuildMusicManager manager = ctx.getAudioUtils().getMusicManager(it);
+            shardManager.getShardCache().forEach((shard) ->
+                shard.getVoiceChannelCache().forEachUnordered((vc) -> {
 
-                if (manager.player.getPlayingTrack() == null) {
-                    counter.incrementAndGet();
-                    LavalinkManager.ins.closeConnection(it);
+                    try {
+                        vc.getGuild();
+                    } catch (IllegalStateException ignored) {
+                        counter.incrementAndGet();
+                        brokenVcs.put(shard.getShardInfo().getShardId(), vc.getIdLong());
+                    }
+
+                })
+            );
+
+            brokenVcs.forEach((shardId, vcId) -> {
+                final JDA shard = shardManager.getShardById(shardId);
+                assert shard != null;
+
+                final var cache = (SnowflakeCacheViewImpl<VoiceChannel>) shard.getVoiceChannelCache();
+
+                if (AirUtils.getSelfMemberFromVCId(shard, vcId) == null) {
+                    sendMsg(ctx, "Removed " + vcId + " from cache");
+                    cache.remove(vcId);
                 }
             });
 
-            sendMsg(ctx, "Fixed `" + counter.get() + "` guilds, check cache maybe?");
+            sendMsg(ctx, "Looped `" + counter.get() + "` voice channels, check cache maybe?");
         }
     }
 }
