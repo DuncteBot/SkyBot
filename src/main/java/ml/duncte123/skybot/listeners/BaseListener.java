@@ -52,6 +52,7 @@ public abstract class BaseListener implements EventListener {
             446682534135201793L, // Discords best bots
             477792727577395210L, // discordbotlist.xyz
             475571221946171393L, // bots.discordlist.app
+            568567800910839811L, // discordextremelist.xyz
         }
     );
 

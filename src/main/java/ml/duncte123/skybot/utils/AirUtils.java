@@ -45,6 +45,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -365,22 +366,14 @@ public class AirUtils {
         return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
     }
 
+    @Nullable
     public static Member getSelfMemberFromVCId(JDA jda, long voiceChannelId) {
-        final Optional<Guild> optionalGuild = jda.getGuildCache()
-            .stream()
-            .filter(
-                (guild) -> guild.getVoiceChannelCache()
-                    .stream()
-                    .anyMatch(
-                        (vc) -> vc.getIdLong() == voiceChannelId
-                    )
-            )
-            .findFirst();
-
-        if (optionalGuild.isEmpty()) {
+        try {
+            return jda.getVoiceChannelById(voiceChannelId)
+                .getGuild()
+                .getSelfMember();
+        } catch (IllegalArgumentException ignored) {
             return null;
         }
-
-        return optionalGuild.get().getSelfMember();
     }
 }
