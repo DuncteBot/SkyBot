@@ -1,0 +1,187 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ml.duncte123.skybot.audio;
+
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.OrderedExecutor;
+import com.sedmelluq.discord.lavaplayer.track.AudioItem;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.lava.common.tools.DaemonThreadFactory;
+import com.sedmelluq.lava.common.tools.ExecutorTools;
+import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.concurrent.*;
+
+import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.FAULT;
+import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
+
+public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
+
+    private static final int MAXIMUM_LOAD_REDIRECTS = 5;
+    private static final int DEFAULT_LOADER_POOL_SIZE = 10;
+    private static final int LOADER_QUEUE_CAPACITY = 5000;
+
+    private static final Logger log = LoggerFactory.getLogger(UserContextAudioPlayerManager.class);
+
+    // Executors
+    private final ThreadPoolExecutor trackInfoExecutorService;
+    private final OrderedExecutor orderedInfoExecutor;
+
+
+    /**
+     * Create a new instance
+     */
+    public UserContextAudioPlayerManager() {
+
+        // Executors
+        trackInfoExecutorService = ExecutorTools.createEagerlyScalingExecutor(1, DEFAULT_LOADER_POOL_SIZE,
+            TimeUnit.SECONDS.toMillis(30), LOADER_QUEUE_CAPACITY, new DaemonThreadFactory("info-loader"));
+        orderedInfoExecutor = new OrderedExecutor(trackInfoExecutorService);
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+
+        ExecutorTools.shutdownExecutor(trackInfoExecutorService, "track info");
+    }
+
+    public Future<Void> loadItemOrdered(final Object orderingKey, final String identifier,
+                                        final AudioLoadResultHandler resultHandler, final boolean isPatron) {
+
+        try {
+            return orderedInfoExecutor.submit(orderingKey, createItemLoader(identifier, resultHandler, isPatron));
+        } catch (RejectedExecutionException e) {
+            return handleLoadRejected(identifier, resultHandler, e);
+        }
+    }
+
+    private Future<Void> handleLoadRejected(String identifier, AudioLoadResultHandler resultHandler, RejectedExecutionException e) {
+        FriendlyException exception = new FriendlyException("Cannot queue loading a track, queue is full.", SUSPICIOUS, e);
+        ExceptionTools.log(log, exception, "queueing item " + identifier);
+
+        resultHandler.loadFailed(exception);
+
+        return ExecutorTools.COMPLETED_VOID;
+    }
+
+    private Callable<Void> createItemLoader(final String identifier, final AudioLoadResultHandler resultHandler, boolean isPatron) {
+        return () -> {
+            boolean[] reported = new boolean[1];
+
+            try {
+                if (!checkSourcesForItem(new AudioReference(identifier, null), resultHandler, reported, isPatron)) {
+                    log.debug("No matches for track with identifier {}.", identifier);
+                    resultHandler.noMatches();
+                }
+            } catch (Throwable throwable) {
+                if (reported[0]) {
+                    log.warn("Load result handler for {} threw an exception", identifier, throwable);
+                } else {
+                    dispatchItemLoadFailure(identifier, resultHandler, throwable);
+                }
+
+                ExceptionTools.rethrowErrors(throwable);
+            }
+
+            return null;
+        };
+    }
+
+    private void dispatchItemLoadFailure(String identifier, AudioLoadResultHandler resultHandler, Throwable throwable) {
+        FriendlyException exception = ExceptionTools.wrapUnfriendlyExceptions("Something went wrong when looking up the track", FAULT, throwable);
+        ExceptionTools.log(log, exception, "loading item " + identifier);
+
+        resultHandler.loadFailed(exception);
+    }
+
+    private boolean checkSourcesForItem(AudioReference reference, AudioLoadResultHandler resultHandler, boolean[] reported, boolean isPatron) {
+        AudioReference currentReference = reference;
+
+        for (int redirects = 0; redirects < MAXIMUM_LOAD_REDIRECTS && currentReference.identifier != null; redirects++) {
+            AudioItem item = checkSourcesForItemOnce(currentReference, resultHandler, reported, isPatron);
+            if (item == null) {
+                return false;
+            } else if (!(item instanceof AudioReference)) {
+                return true;
+            }
+            currentReference = (AudioReference) item;
+        }
+
+        return false;
+    }
+
+    private AudioItem checkSourcesForItemOnce(AudioReference reference, AudioLoadResultHandler resultHandler, boolean[] reported, boolean isPatron) {
+        for (AudioSourceManager sourceManager : getRegisteredSourceManagersReflection()) {
+            if (reference.containerDescriptor != null && !(sourceManager instanceof ProbingAudioSourceManager)) {
+                continue;
+            }
+
+            AudioItem item;
+
+            if (sourceManager instanceof SpotifyAudioSourceManager) {
+                item = ((SpotifyAudioSourceManager) sourceManager).loadItem(reference, isPatron);
+            } else {
+                item = sourceManager.loadItem(this, reference);
+            }
+
+            if (item != null) {
+                if (item instanceof AudioTrack) {
+                    log.debug("Loaded a track with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
+                    reported[0] = true;
+                    resultHandler.trackLoaded((AudioTrack) item);
+                } else if (item instanceof AudioPlaylist) {
+                    log.debug("Loaded a playlist with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
+                    reported[0] = true;
+                    resultHandler.playlistLoaded((AudioPlaylist) item);
+                }
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    private List<AudioSourceManager> getRegisteredSourceManagersReflection() {
+        final Class<?> klass = this.getClass().getSuperclass();
+
+        try {
+            final Field sourceManagers = klass.getDeclaredField("sourceManagers");
+            sourceManagers.setAccessible(true);
+
+            return (List<AudioSourceManager>) sourceManagers.get(this);
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return List.of();
+    }
+}

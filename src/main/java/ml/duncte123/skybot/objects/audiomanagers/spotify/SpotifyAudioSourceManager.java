@@ -111,11 +111,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
+        return loadItem(reference, false);
+    }
+
+    public AudioItem loadItem(AudioReference reference, boolean isPatron) {
 
         AudioItem item = getSpotifyAlbum(reference);
 
         if (item == null) {
-            item = getSpotifyPlaylist(reference);
+            item = getSpotifyPlaylist(reference, isPatron);
         }
 
         if (item == null) {
@@ -153,7 +157,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
     }
 
-    private AudioItem getSpotifyPlaylist(AudioReference reference) {
+    private AudioItem getSpotifyPlaylist(AudioReference reference, boolean isPatron) {
 
         final Matcher res = getSpotifyPlaylistFromString(reference.identifier);
 
@@ -169,7 +173,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final Playlist spotifyPlaylist = spotifyApi.getPlaylist(playListId).build().execute();
             final PlaylistTrack[] playlistTracks = spotifyPlaylist.getTracks().getItems();
 
-            if (playlistTracks.length > TrackScheduler.QUEUE_SIZE) {
+            if (playlistTracks.length > TrackScheduler.QUEUE_SIZE && !isPatron) {
                 throw new LimitReachedException("The playlist is too big", TrackScheduler.QUEUE_SIZE);
             }
 
