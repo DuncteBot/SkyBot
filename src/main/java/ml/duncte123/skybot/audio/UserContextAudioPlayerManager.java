@@ -30,6 +30,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.lava.common.tools.ExecutorTools;
+import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,10 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private void dispatchItemLoadFailure(String identifier, AudioLoadResultHandler resultHandler, Throwable throwable) {
         final FriendlyException exception = ExceptionTools.wrapUnfriendlyExceptions("Something went wrong when looking up the track", FAULT, throwable);
-        ExceptionTools.log(log, exception, "loading item " + identifier);
+
+        if (!(throwable instanceof LimitReachedException)) {
+            ExceptionTools.log(log, exception, "loading item " + identifier);
+        }
 
         resultHandler.loadFailed(exception);
     }
