@@ -29,7 +29,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.lava.common.tools.DaemonThreadFactory;
 import com.sedmelluq.lava.common.tools.ExecutorTools;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import org.slf4j.Logger;
@@ -37,7 +36,10 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.function.Supplier;
 
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.FAULT;
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
@@ -45,39 +47,26 @@ import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.
 public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private static final int MAXIMUM_LOAD_REDIRECTS = 5;
-    private static final int DEFAULT_LOADER_POOL_SIZE = 10;
-    private static final int LOADER_QUEUE_CAPACITY = 5000;
 
     private static final Logger log = LoggerFactory.getLogger(UserContextAudioPlayerManager.class);
 
     // Executors
-    private final ThreadPoolExecutor trackInfoExecutorService;
-    private final OrderedExecutor orderedInfoExecutor;
+    private final Supplier<OrderedExecutor> orderedInfoExecutor = () -> getField("orderedInfoExecutor");
+
+    private final Supplier<List<AudioSourceManager>> sourceManagers = () -> getField("sourceManagers");
 
 
     /**
      * Create a new instance
      */
     public UserContextAudioPlayerManager() {
-
-        // Executors
-        trackInfoExecutorService = ExecutorTools.createEagerlyScalingExecutor(1, DEFAULT_LOADER_POOL_SIZE,
-            TimeUnit.SECONDS.toMillis(30), LOADER_QUEUE_CAPACITY, new DaemonThreadFactory("info-loader"));
-        orderedInfoExecutor = new OrderedExecutor(trackInfoExecutorService);
-    }
-
-    @Override
-    public void shutdown() {
-        super.shutdown();
-
-        ExecutorTools.shutdownExecutor(trackInfoExecutorService, "track info");
     }
 
     public Future<Void> loadItemOrdered(final Object orderingKey, final String identifier,
                                         final AudioLoadResultHandler resultHandler, final boolean isPatron) {
 
         try {
-            return orderedInfoExecutor.submit(orderingKey, createItemLoader(identifier, resultHandler, isPatron));
+            return orderedInfoExecutor.get().submit(orderingKey, createItemLoader(identifier, resultHandler, isPatron));
         } catch (RejectedExecutionException e) {
             return handleLoadRejected(identifier, resultHandler, e);
         }
@@ -139,7 +128,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
     }
 
     private AudioItem checkSourcesForItemOnce(AudioReference reference, AudioLoadResultHandler resultHandler, boolean[] reported, boolean isPatron) {
-        for (AudioSourceManager sourceManager : getRegisteredSourceManagersReflection()) {
+        for (AudioSourceManager sourceManager : sourceManagers.get()) {
             if (reference.containerDescriptor != null && !(sourceManager instanceof ProbingAudioSourceManager)) {
                 continue;
             }
@@ -169,19 +158,19 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
         return null;
     }
 
-    private List<AudioSourceManager> getRegisteredSourceManagersReflection() {
+    private <T> T getField(String name) {
         final Class<?> klass = this.getClass().getSuperclass();
 
         try {
-            final Field sourceManagers = klass.getDeclaredField("sourceManagers");
-            sourceManagers.setAccessible(true);
+            final Field field = klass.getDeclaredField(name);
+            field.setAccessible(true);
 
-            return (List<AudioSourceManager>) sourceManagers.get(this);
+            return (T) field.get(this);
         }
         catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        }
 
-        return List.of();
+            return null;
+        }
     }
 }

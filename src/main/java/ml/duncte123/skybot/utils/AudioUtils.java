@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
@@ -138,6 +136,7 @@ public class AudioUtils {
      */
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
                                     final CommandContext ctx, final boolean announce) {
+        final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -147,9 +146,9 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this);
+        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this, isPatron);
 
-        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, false);
+        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }
 
     /**

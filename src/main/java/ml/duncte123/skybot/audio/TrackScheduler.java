@@ -81,8 +81,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * @throws LimitReachedException
      *     when the queue is full
      */
-    public void queue(AudioTrack track) throws LimitReachedException {
-        if (queue.size() >= QUEUE_SIZE) {
+    public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
+        if (queue.size() >= QUEUE_SIZE && !isPatron) {
             throw new LimitReachedException("The queue is full", QUEUE_SIZE);
         }
 
