@@ -225,7 +225,7 @@ public class CommandUtils {
     }
 
     public static boolean isUserTagPatron(@Nonnull User u) {
-        return tagPatrons.contains(u.getIdLong());
+        return tagPatrons.contains(u.getIdLong()) || isDev(u);
     }
 
     public static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
