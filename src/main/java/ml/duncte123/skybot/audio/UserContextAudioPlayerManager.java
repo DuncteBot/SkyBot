@@ -55,13 +55,6 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private final Supplier<List<AudioSourceManager>> sourceManagers = () -> getField("sourceManagers");
 
-
-    /**
-     * Create a new instance
-     */
-    public UserContextAudioPlayerManager() {
-    }
-
     public Future<Void> loadItemOrdered(final Object orderingKey, final String identifier,
                                         final AudioLoadResultHandler resultHandler, final boolean isPatron) {
 
@@ -73,7 +66,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
     }
 
     private Future<Void> handleLoadRejected(String identifier, AudioLoadResultHandler resultHandler, RejectedExecutionException e) {
-        FriendlyException exception = new FriendlyException("Cannot queue loading a track, queue is full.", SUSPICIOUS, e);
+        final FriendlyException exception = new FriendlyException("Cannot queue loading a track, queue is full.", SUSPICIOUS, e);
         ExceptionTools.log(log, exception, "queueing item " + identifier);
 
         resultHandler.loadFailed(exception);
@@ -83,7 +76,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private Callable<Void> createItemLoader(final String identifier, final AudioLoadResultHandler resultHandler, boolean isPatron) {
         return () -> {
-            boolean[] reported = new boolean[1];
+            final boolean[] reported = new boolean[1];
 
             try {
                 if (!checkSourcesForItem(new AudioReference(identifier, null), resultHandler, reported, isPatron)) {
@@ -105,7 +98,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
     }
 
     private void dispatchItemLoadFailure(String identifier, AudioLoadResultHandler resultHandler, Throwable throwable) {
-        FriendlyException exception = ExceptionTools.wrapUnfriendlyExceptions("Something went wrong when looking up the track", FAULT, throwable);
+        final FriendlyException exception = ExceptionTools.wrapUnfriendlyExceptions("Something went wrong when looking up the track", FAULT, throwable);
         ExceptionTools.log(log, exception, "loading item " + identifier);
 
         resultHandler.loadFailed(exception);
@@ -115,7 +108,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
         AudioReference currentReference = reference;
 
         for (int redirects = 0; redirects < MAXIMUM_LOAD_REDIRECTS && currentReference.identifier != null; redirects++) {
-            AudioItem item = checkSourcesForItemOnce(currentReference, resultHandler, reported, isPatron);
+            final AudioItem item = checkSourcesForItemOnce(currentReference, resultHandler, reported, isPatron);
             if (item == null) {
                 return false;
             } else if (!(item instanceof AudioReference)) {
@@ -128,12 +121,12 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
     }
 
     private AudioItem checkSourcesForItemOnce(AudioReference reference, AudioLoadResultHandler resultHandler, boolean[] reported, boolean isPatron) {
-        for (AudioSourceManager sourceManager : sourceManagers.get()) {
+        for (final AudioSourceManager sourceManager : sourceManagers.get()) {
             if (reference.containerDescriptor != null && !(sourceManager instanceof ProbingAudioSourceManager)) {
                 continue;
             }
 
-            AudioItem item;
+            final AudioItem item;
 
             if (sourceManager instanceof SpotifyAudioSourceManager) {
                 item = ((SpotifyAudioSourceManager) sourceManager).loadItem(reference, isPatron);
