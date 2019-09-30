@@ -24,16 +24,21 @@ import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -59,6 +64,10 @@ public class GuildListener extends BaseListener {
             this.onGuildVoiceJoin((GuildVoiceJoinEvent) event);
         } else if (event instanceof GuildVoiceMoveEvent) {
             this.onGuildVoiceMove((GuildVoiceMoveEvent) event);
+        } else if (event instanceof GuildBanEvent) {
+            this.onGuildBan((GuildBanEvent) event);
+        } else if (event instanceof GuildUnbanEvent) {
+            this.onGuildUnban((GuildUnbanEvent) event);
         }
     }
 
@@ -160,6 +169,68 @@ public class GuildListener extends BaseListener {
         if (event.getChannelLeft().equals(connected)) {
             channelCheckThing(guild, event.getChannelLeft());
         }
+    }
+
+    private void onGuildUnban(GuildUnbanEvent event) {
+        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+
+        if (guild.getSettings().getLogChannel() < 1) {
+            return;
+        }
+
+        guild.retrieveAuditLogs()
+            .type(ActionType.UNBAN)
+            .limit(5)
+            .queueAfter(30L, TimeUnit.SECONDS,
+                (actions) -> actions.forEach((action) -> {
+                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
+                        return;
+                    }
+
+                    if (action.getTargetIdLong() != event.getUser().getIdLong()) {
+                        return;
+                    }
+
+                    ModerationUtils.modLog(
+                        action.getUser(),
+                        event.getUser(),
+                        "unbanned",
+                        action.getReason(),
+                        guild
+                    );
+                })
+            );
+    }
+
+    private void onGuildBan(GuildBanEvent event) {
+        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+
+        if (guild.getSettings().getLogChannel() < 1) {
+            return;
+        }
+
+        guild.retrieveAuditLogs()
+            .type(ActionType.BAN)
+            .limit(5)
+            .queueAfter(30L, TimeUnit.SECONDS,
+                (actions) -> actions.forEach((action) -> {
+                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
+                        return;
+                    }
+
+                    if (action.getTargetIdLong() != event.getUser().getIdLong()) {
+                        return;
+                    }
+
+                    ModerationUtils.modLog(
+                        action.getUser(),
+                        event.getUser(),
+                        "baned",
+                        action.getReason(),
+                        guild
+                    );
+                })
+            );
     }
 
     private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
