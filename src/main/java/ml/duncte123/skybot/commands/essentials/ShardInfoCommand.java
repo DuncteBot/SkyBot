@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static ml.duncte123.skybot.utils.AirUtils.getSelfMemberFromVCId;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -259,10 +258,10 @@ public class ShardInfoCommand extends Command {
     private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
 
         final long connectedVC = shard.getVoiceChannelCache().stream()
-            .filter((vc) -> vc.getMembers().contains(getSelfMemberFromVCId(shard, vc.getIdLong()))).count();
+            .filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
 
         final long listeningVC = shard.getVoiceChannelCache().stream().filter(
-            (voiceChannel) -> voiceChannel.getMembers().contains(getSelfMemberFromVCId(shard, voiceChannel.getIdLong())))
+            (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
             .mapToLong(
                 (channel) -> channel.getMembers().stream().filter(
                     (member) -> !member.getUser().isBot() && !member.getVoiceState().isDeafened()
