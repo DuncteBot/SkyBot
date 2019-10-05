@@ -40,7 +40,7 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
     var requester = "Unknown"
 
     if (userData != null && userData is TrackUserData) {
-        val userId = userData.userId
+        val userId = userData.requester
         val user = shardManager.getUserById(userId)
 
         if (user != null) {

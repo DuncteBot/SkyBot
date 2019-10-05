@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -45,8 +46,6 @@ class SkipCommand : MusicCommand() {
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
-        mng.lastChannel = -1
-
         if (mng.player.playingTrack == null) {
             sendMsg(event, "The player is not playing.")
             return
@@ -62,32 +61,27 @@ class SkipCommand : MusicCommand() {
             1
         }
 
-        repeat(count) {
-            scheduler.nextTrack()
-        }
+        val trackData = mng.player.playingTrack.userData as TrackUserData
 
-        if (mng.player.playingTrack != null) {
-            val trackUserData = mng.player.playingTrack.userData
+        // Return the console user if the requester is null
+        val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
+        val votes = trackData.votes
 
-            val user = if (trackUserData != null && trackUserData is TrackUserData) {
-                // Return the console user when the requester is null
-                ctx.jda.getUserById(trackUserData.userId) ?: ConsoleUser()
-            } else {
-                ctx.author
-            }
+        // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
+        scheduler.skipTracks(count)
 
-            val track = mng.player.playingTrack
+        val track: AudioTrack? = mng.player.playingTrack
 
-            sendEmbed(event, embedMessage("Successfully skipped $count tracks.\n" +
-                "Now playing: ${track.info.title}\n" +
-                "Requester: ${user.asTag}")
-                .setThumbnail(track.getImageUrl())
-            )
-        } else {
+        if (track == null) {
             sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Queue is now empty.")
+            return
         }
 
-        mng.lastChannel = event.channel.idLong
+        sendEmbed(event, embedMessage("Successfully skipped $count tracks.\n" +
+            "Now playing: ${track.info.title}\n" +
+            "Requester: ${user.asTag}")
+            .setThumbnail(track.getImageUrl())
+        )
     }
 }
