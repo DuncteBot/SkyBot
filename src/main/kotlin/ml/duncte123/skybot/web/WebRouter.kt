@@ -76,7 +76,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         get("/logout") { request, response ->
             request.session().invalidate()
 
-            return@get response.redirect("https://dunctebot.com/")
+            return@get response.redirect(HOMEPAGE)
         }
 
         get("/invite") { _, response ->
@@ -229,12 +229,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
                 return@get CommandTransformers.toPHP(variables.commandManager)
             }
-
-            get("/command_storage.html") { _, response ->
-                response.type(ContentType.TEXT_PLAIN.type)
-
-                return@get CommandTransformers.toJekyll(variables.commandManager)
-            }
         }
 
         notFound { request, response ->
@@ -300,5 +294,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         const val SESSION_ID = "sessionId"
         const val USER_ID = "USER_SESSION"
         const val GUILD_ID = ":guildid"
+        const val HOMEPAGE = "https://dunctebot.com/"
     }
 }
