@@ -32,11 +32,17 @@ object Callback {
     fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
         if (!request.queryParams().contains("code") || !request.queryParams().contains("state")) {
-            return response.redirect("https://dunctebot.com/")
+            return response.redirect(WebRouter.HOMEPAGE)
         }
 
         return try {
-            val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
+            val session = request.session()
+
+            if (!request.attributes().contains(WebRouter.SESSION_ID)){
+                return response.redirect(WebRouter.HOMEPAGE)
+            }
+
+            val sesid: String? = request.session().attribute(WebRouter.SESSION_ID)
             val oauthses = oAuth2Client.startSession(
                 request.queryParams("code"),
                 request.queryParams("state"),
@@ -46,8 +52,6 @@ object Callback {
 
             val userId = oAuth2Client.getUser(oauthses).complete().id
 
-            val session = request.session()
-
             session.attribute(WebRouter.USER_ID, userId)
 
             if (session.attributes().contains(WebRouter.OLD_PAGE)) {
@@ -56,7 +60,7 @@ object Callback {
 
             response.redirect("/")
         } catch (stateEx: InvalidStateException) {
-            "<h1>${stateEx.message}</h1><br /><a href=\"https://dunctebot.com\">Click here to go back home</a>"
+            "<h1>${stateEx.message}</h1><br /><a href=\"${WebRouter.HOMEPAGE}\">Click here to go back home</a>"
         }
     }
 

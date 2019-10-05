@@ -66,29 +66,6 @@ object CommandTransformers {
         }
     }
 
-    fun toJekyll(commandManager: CommandManager): Any {
-        val names = commandManager.getCommandsList()
-            .map(ICommand::getName)
-            .sorted()
-            .toList()
-
-        return buildString {
-            appendln("---")
-            appendln("layout: default")
-            appendln("commands:")
-
-            for (name in names) {
-                val command = commandManager.getCommand(name) as Command
-                val help = command.parseHelp(true).replace("\"", "\\\"")
-
-                appendln("  - name: $name")
-                appendln("    description: \"$help\"")
-            }
-
-            appendln("---\n\n{{ content }}")
-        }
-    }
-
     private fun Command.parseHelp(forceAliases: Boolean = false): String {
         var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
             "<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
