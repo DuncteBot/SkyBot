@@ -18,4 +18,6 @@
 
 package ml.duncte123.skybot.extensions
 
-fun Boolean.toEmoji() = if (this) "<:yes_:578487429783355393>" else "<:no_:578487579842969601>"
+import ml.duncte123.skybot.Settings
+
+fun Boolean.toEmoji() = if (this) Settings.YES_STATIC else Settings.NO_STATIC

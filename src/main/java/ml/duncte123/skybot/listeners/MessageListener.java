@@ -20,7 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import io.sentry.Sentry;
 import kotlin.Triple;
-import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.BotCommons;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -34,7 +34,6 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import ml.duncte123.skybot.web.WebRouter;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,6 +42,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -434,16 +434,9 @@ public abstract class MessageListener extends BaseListener {
                 router.shutdown();
             }
 
-            WebUtils.ins.getClient().connectionPool().evictAll();
-            WebUtils.ins.getClient().dispatcher().executorService().shutdown();
-
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
 
-            manager.shutdown();
-            manager.getShardCache().forEach((jda) -> {
-                jda.getHttpClient().connectionPool().evictAll();
-                jda.getHttpClient().dispatcher().executorService().shutdown();
-            });
+            BotCommons.shutdown(manager);
 
             // We close every thread :)
             /*if (!isUpdating) {
