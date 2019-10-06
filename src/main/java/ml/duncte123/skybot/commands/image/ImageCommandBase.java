@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,7 +128,7 @@ public abstract class ImageCommandBase extends Command {
         }
 
         if (args.isEmpty() && url == null) {
-            return event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+            return getAvatarUrl(event.getAuthor());
         }
 
         if (AirUtils.isURL(args.get(0))) {
@@ -141,23 +142,26 @@ public abstract class ImageCommandBase extends Command {
         }
 
         if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
-            url = ctx.getMessage().getMentionedUsers().get(0)
-                .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+            url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
         }
 
         if (url  == null) {
             final List<Member> textMentions = FinderUtil.findMembers(ctx.getArgsJoined(), ctx.getGuild());
 
             if (!textMentions.isEmpty()) {
-                url = textMentions.get(0).getUser().getEffectiveAvatarUrl() + "?size=512";
+                url = getAvatarUrl(textMentions.get(0).getUser());
             }
         }
 
         if (url == null) {
-            url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+            url = getAvatarUrl(event.getAuthor());
         }
 
         return url;
+    }
+
+    private String getAvatarUrl(User user) {
+        return user.getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
     }
 
     public String parseTextArgsForImage(CommandContext ctx) {
