@@ -232,7 +232,7 @@ class EvalCommand : Command() {
 
             val loc = WebUtils.ins.postRequest("$base/paste/new", body)
                 .build({
-                    return@build Jsoup.parse(it.body!!.string())
+                    return@build Jsoup.parse(it.body()!!.string())
                         .select("a[title=\"View Raw\"]")
                         .first().attr("href")
                         .replaceFirst("/raw", "")

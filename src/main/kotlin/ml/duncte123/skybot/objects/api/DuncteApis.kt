@@ -626,7 +626,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun executeRequest(request: Request.Builder): JsonNode {
-        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body!!.byteStream()) }.execute()
+        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body()!!.byteStream()) }.execute()
     }
 
     private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {

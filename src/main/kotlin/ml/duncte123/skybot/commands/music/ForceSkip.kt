@@ -22,7 +22,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
@@ -47,7 +46,6 @@ class ForceSkip : MusicCommand() {
         val args = ctx.args
         val mng = getMusicManager(ctx.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
-        val author = ctx.author
 
         if (mng.player.playingTrack == null) {
             sendMsg(ctx, "The player is not playing.")
