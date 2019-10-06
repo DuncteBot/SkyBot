@@ -36,16 +36,14 @@ import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -364,16 +362,5 @@ public class AirUtils {
             .collect(Collectors.joining("`, `"));
 
         return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
-    }
-
-    @Nullable
-    public static Member getSelfMemberFromVCId(JDA jda, long voiceChannelId) {
-        try {
-            return jda.getVoiceChannelById(voiceChannelId)
-                .getGuild()
-                .getSelfMember();
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
     }
 }
