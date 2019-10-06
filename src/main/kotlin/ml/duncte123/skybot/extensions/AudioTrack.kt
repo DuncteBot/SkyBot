@@ -56,7 +56,7 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
     }
 
     return  embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
-            |**Requester:** $requester${if (withPlayer) playerEmbed(mng) + "\n" else ""}
+            |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
         """.trimMargin())
         .setThumbnail(this.getImageUrl())
 }

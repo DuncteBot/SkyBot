@@ -70,6 +70,7 @@ class SkipCommand : MusicCommand() {
         var msg = if (votes.contains(author.idLong)) {
             "$NO_STATIC You already voted to skip this song `["
         } else {
+            votes.add(author.idLong)
             "$YES_STATIC Successfully voted to skip the song `["
         }
 
