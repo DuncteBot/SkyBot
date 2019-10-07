@@ -188,19 +188,18 @@ public class GuildListener extends BaseListener {
                         continue;
                     }
 
-                    if (action.getTargetIdLong() != event.getUser().getIdLong()) {
-                        continue;
+                    if (action.getTargetIdLong() == event.getUser().getIdLong()) {
+                        ModerationUtils.modLog(
+                            action.getUser(),
+                            event.getUser(),
+                            "unbanned",
+                            action.getReason(),
+                            guild
+                        );
+
+                        break;
                     }
 
-                    ModerationUtils.modLog(
-                        action.getUser(),
-                        event.getUser(),
-                        "unbanned",
-                        action.getReason(),
-                        guild
-                    );
-
-                    break;
                 }
             });
     }
@@ -221,19 +220,17 @@ public class GuildListener extends BaseListener {
                         continue;
                     }
 
-                    if (action.getTargetIdLong() != event.getUser().getIdLong()) {
-                        continue;
+                    if (action.getTargetIdLong() == event.getUser().getIdLong()) {
+                        ModerationUtils.modLog(
+                            action.getUser(),
+                            event.getUser(),
+                            "baned",
+                            action.getReason(),
+                            guild
+                        );
+
+                        break;
                     }
-
-                    ModerationUtils.modLog(
-                        action.getUser(),
-                        event.getUser(),
-                        "baned",
-                        action.getReason(),
-                        guild
-                    );
-
-                    break;
                 }
             });
     }
