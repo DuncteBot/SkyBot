@@ -31,10 +31,7 @@ import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -173,46 +170,22 @@ public class GuildListener extends BaseListener {
     }
 
     private void onGuildUnban(GuildUnbanEvent event) {
-        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
-
-        if (guild.getSettings().getLogChannel() < 1) {
-            return;
-        }
-
-        guild.retrieveAuditLogs()
-            .type(ActionType.UNBAN)
-            .limit(5)
-            .queue((actions) -> {
-                for (final AuditLogEntry action : actions) {
-                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
-                        continue;
-                    }
-
-                    if (action.getTargetIdLong() == event.getUser().getIdLong()) {
-                        ModerationUtils.modLog(
-                            action.getUser(),
-                            event.getUser(),
-                            "unbanned",
-                            action.getReason(),
-                            guild
-                        );
-
-                        break;
-                    }
-
-                }
-            });
+        modLogBanUnban(ActionType.UNBAN, event.getUser(), event.getGuild());
     }
 
     private void onGuildBan(GuildBanEvent event) {
-        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+        modLogBanUnban(ActionType.BAN, event.getUser(), event.getGuild());
+    }
 
-        if (guild.getSettings().getLogChannel() < 1) {
+    private void modLogBanUnban(ActionType type, User user, Guild guild) {
+        final DunctebotGuild dbg = new DunctebotGuild(guild, variables);
+
+        if (dbg.getSettings().getLogChannel() < 1) {
             return;
         }
 
         guild.retrieveAuditLogs()
-            .type(ActionType.BAN)
+            .type(type)
             .limit(5)
             .queue((actions) -> {
                 for (final AuditLogEntry action : actions) {
@@ -220,13 +193,13 @@ public class GuildListener extends BaseListener {
                         continue;
                     }
 
-                    if (action.getTargetIdLong() == event.getUser().getIdLong()) {
+                    if (action.getTargetIdLong() == user.getIdLong()) {
                         ModerationUtils.modLog(
                             action.getUser(),
-                            event.getUser(),
-                            "baned",
+                            user,
+                            type == ActionType.BAN ? "banned" : "unbanned",
                             action.getReason(),
-                            guild
+                            dbg
                         );
 
                         break;
