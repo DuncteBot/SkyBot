@@ -30,6 +30,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -181,14 +182,14 @@ public class GuildListener extends BaseListener {
         guild.retrieveAuditLogs()
             .type(ActionType.UNBAN)
             .limit(5)
-            .queueAfter(30L, TimeUnit.SECONDS,
-                (actions) -> actions.forEach((action) -> {
+            .queue((actions) -> {
+                for (final AuditLogEntry action : actions) {
                     if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
-                        return;
+                        continue;
                     }
 
                     if (action.getTargetIdLong() != event.getUser().getIdLong()) {
-                        return;
+                        continue;
                     }
 
                     ModerationUtils.modLog(
@@ -198,8 +199,10 @@ public class GuildListener extends BaseListener {
                         action.getReason(),
                         guild
                     );
-                })
-            );
+
+                    break;
+                }
+            });
     }
 
     private void onGuildBan(GuildBanEvent event) {
@@ -212,14 +215,14 @@ public class GuildListener extends BaseListener {
         guild.retrieveAuditLogs()
             .type(ActionType.BAN)
             .limit(5)
-            .queueAfter(30L, TimeUnit.SECONDS,
-                (actions) -> actions.forEach((action) -> {
+            .queue((actions) -> {
+                for (final AuditLogEntry action : actions) {
                     if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
-                        return;
+                        continue;
                     }
 
                     if (action.getTargetIdLong() != event.getUser().getIdLong()) {
-                        return;
+                        continue;
                     }
 
                     ModerationUtils.modLog(
@@ -229,8 +232,10 @@ public class GuildListener extends BaseListener {
                         action.getReason(),
                         guild
                     );
-                })
-            );
+
+                    break;
+                }
+            });
     }
 
     private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
