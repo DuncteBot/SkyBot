@@ -40,7 +40,9 @@ class WeebCommands : WeebCommandBase() {
             "lewd",
             "pat",
             "punch",
+            "shoot",
             "shrug",
+            "dance",
             "lick",
             "owo",
             "weeb",
@@ -57,10 +59,11 @@ class WeebCommands : WeebCommandBase() {
 
         when (ctx.invoke) {
             "hug" -> requestAndSend("hug", "hugs", args, event, ctx.weebApi)
-            "lewd" -> sendEmbed(event,
-                getWeebEmbedImage(ctx.weebApi.getRandomImage("lewd").execute().url))
+            "lewd" -> singleAction("lewd", "is being lewd", args, event, ctx.weebApi)
+            "dance" -> singleAction("dance", "is dancing", args, event, ctx.weebApi)
             "pat" -> requestAndSend("pat", "pats", args, event, ctx.weebApi)
             "punch" -> requestAndSend("punch", "punches", args, event, ctx.weebApi)
+            "shoot" -> requestAndSend("bang", "shoots", args, event, ctx.weebApi)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member!!.effectiveName} shrugs",
                 ctx.weebApi.getRandomImage("shrug").execute().url))
             "lick" -> requestAndSend("lick", "licks", args, event, ctx.weebApi)
@@ -104,9 +107,11 @@ class WeebCommands : WeebCommandBase() {
     private fun parseUsageInstructions(invoke: String, prefix: String): String {
         return when (invoke) {
             "hug" -> this.userUsage(invoke, prefix)
-            "lewd" -> this.basicUsage(invoke, prefix)
+            "lewd" -> this.userUsage(invoke, prefix)
             "pat" -> this.userUsage(invoke, prefix)
             "punch" -> this.userUsage(invoke, prefix)
+            "shoot" -> this.userUsage(invoke, prefix)
+            "dance" -> this.userUsage(invoke, prefix)
             "shrug" -> this.basicUsage(invoke, prefix)
             "lick" -> this.userUsage(invoke, prefix)
             "owo" -> this.basicUsage(invoke, prefix)
@@ -120,9 +125,11 @@ class WeebCommands : WeebCommandBase() {
     private fun parseHelp(invoke: String): String {
         return when (invoke) {
             "hug" -> "Hug a user"
-            "lewd" -> "Someones being a bit lewd"
+            "lewd" -> "Someone's being a bit lewd"
             "pat" -> "Pat someone"
             "punch" -> "Punch someone in their face"
+            "shoot" -> "Shoot someone"
+            "dance" -> "Do a little dance"
             "shrug" -> "¯\\\\_(ツ)\\_/¯"
             "lick" -> "Lick someone"
             "owo" -> "OwO what's this"

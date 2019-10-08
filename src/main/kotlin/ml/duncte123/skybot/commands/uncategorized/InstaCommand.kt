@@ -63,7 +63,7 @@ class InstaCommand : Command() {
 
         val embed = EmbedUtils.defaultEmbed()
             .setAuthor(user.get("username").asText(), "https://instagram.com/$username/", user.get("profile_pic_url").asText())
-            .setTitle("Latest picture of $username", "https://instagram.com/$username/")
+            .setTitle("Latest picture of $username", "https://instagram.com/${img.get("page_url").asText()}/")
             .setDescription(img.get("caption").asText())
             .setImage(img.get("url").asText())
 
