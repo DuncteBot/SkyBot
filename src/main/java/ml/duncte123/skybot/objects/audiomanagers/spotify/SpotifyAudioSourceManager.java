@@ -169,6 +169,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final Playlist spotifyPlaylist = spotifyApi.getPlaylist(playListId).build().execute();
             final PlaylistTrack[] playlistTracks = spotifyPlaylist.getTracks().getItems();
 
+            if (playlistTracks.length == 0) {
+                return null;
+            }
+
             if (playlistTracks.length > TrackScheduler.QUEUE_SIZE) {
                 throw new LimitReachedException("The playlist is too big", TrackScheduler.QUEUE_SIZE);
             }
