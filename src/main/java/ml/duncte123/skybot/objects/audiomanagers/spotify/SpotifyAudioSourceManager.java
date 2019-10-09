@@ -313,7 +313,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private AudioTrack audioTrackFromVideo(Video v, Image[] images) {
         return new SpotifyAudioTrack(new AudioTrackInfoWithImage(
             v.getSnippet().getTitle(),
-            v.getSnippet().getChannelId(),
+            v.getSnippet().getChannelTitle(),
             toLongDuration(v.getContentDetails().getDuration()),
             v.getId(),
             false,
