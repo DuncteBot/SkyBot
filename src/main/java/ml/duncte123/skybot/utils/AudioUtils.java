@@ -85,6 +85,12 @@ public class AudioUtils {
 
             final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
 
+            // When the values change
+            /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
+                request.setHeader("x-youtube-client-name", "1");
+                request.setHeader("x-youtube-client-version", "2.20191008.04.01");
+            });*/
+
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
             playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
