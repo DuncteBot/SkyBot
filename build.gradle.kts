@@ -102,7 +102,7 @@ dependencies {
     implementation(group = "org.reflections", name = "reflections", version = "0.9.11")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "3.0.0")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.0.1")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev206-1.25.0")

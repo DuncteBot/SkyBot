@@ -50,8 +50,9 @@ public class AudioLoader implements AudioLoadResultHandler {
     private final boolean announce;
     private final String trackUrl;
     private final AudioUtils audioUtils;
+    private final boolean isPatron;
 
-    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, AudioUtils audioUtils) {
+    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, AudioUtils audioUtils, boolean isPatron) {
         this.ctx = ctx;
         this.channel = ctx.getChannel();
         this.requester = ctx.getAuthor().getIdLong();
@@ -59,6 +60,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         this.announce = announce;
         this.trackUrl = trackUrl;
         this.audioUtils = audioUtils;
+        this.isPatron = isPatron;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         track.setUserData(new TrackUserData(this.requester));
         try {
-            this.mng.scheduler.queue(track);
+            this.mng.scheduler.queue(track, this.isPatron);
 
             if (this.announce) {
                 String msg = "Adding to queue: " + title;
@@ -88,6 +90,12 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
+        if (playlist.getTracks().isEmpty()) {
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
+
+            return;
+        }
+
         final List<AudioTrack> tracks = new ArrayList<>();
         final TrackUserData userData = new TrackUserData(this.requester);
 
@@ -96,17 +104,11 @@ public class AudioLoader implements AudioLoadResultHandler {
             tracks.add(track);
         }
 
-        if (tracks.isEmpty()) {
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
-
-            return;
-        }
-
         try {
             final TrackScheduler trackScheduler = this.mng.scheduler;
 
             for (final AudioTrack track : tracks) {
-                trackScheduler.queue(track);
+                trackScheduler.queue(track, this.isPatron);
             }
 
             if (this.announce) {

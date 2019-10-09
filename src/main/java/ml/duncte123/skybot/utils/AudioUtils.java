@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
@@ -35,6 +33,7 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
@@ -59,7 +58,7 @@ public class AudioUtils {
     /**
      * This will hold the manager for the audio player
      */
-    private AudioPlayerManager playerManager;
+    private UserContextAudioPlayerManager playerManager;
     /**
      * This is the default volume that the player will play at
      * I've set it to 100 to save some resources
@@ -81,7 +80,7 @@ public class AudioUtils {
 
     private void initPlayerManager() {
         if (playerManager == null) {
-            playerManager = new DefaultAudioPlayerManager();
+            playerManager = new UserContextAudioPlayerManager();
             //playerManager.enableGcMonitoring();
 
             final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
@@ -102,7 +101,7 @@ public class AudioUtils {
         }
     }
 
-    public AudioPlayerManager getPlayerManager() {
+    public UserContextAudioPlayerManager getPlayerManager() {
         initPlayerManager();
         return playerManager;
     }
@@ -137,6 +136,7 @@ public class AudioUtils {
      */
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
                                     final CommandContext ctx, final boolean announce) {
+        final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -146,9 +146,9 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this);
+        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this, isPatron);
 
-        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader);
+        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }
 
     /**
