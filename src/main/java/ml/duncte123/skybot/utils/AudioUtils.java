@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
@@ -102,8 +101,6 @@ public class AudioUtils {
             playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
             playerManager.registerSourceManager(new BeamAudioSourceManager());
             playerManager.registerSourceManager(new HttpAudioSourceManager());
-
-            AudioSourceManagers.registerLocalSource(playerManager);
         }
     }
 
