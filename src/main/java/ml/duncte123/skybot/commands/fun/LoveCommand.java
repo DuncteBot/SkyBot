@@ -34,6 +34,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class LoveCommand extends Command {
 
@@ -71,6 +72,12 @@ public class LoveCommand extends Command {
         final Member target2 = AirUtils.getMentionedMember(name2, ctx.getGuild());
 
         final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
+
+        if (response == null) {
+            sendMsg(ctx, "I failed my math exam and I could not calculate the love score");
+
+            return;
+        }
 
         final EmbedBuilder embed = EmbedUtils.defaultEmbed()
             .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")

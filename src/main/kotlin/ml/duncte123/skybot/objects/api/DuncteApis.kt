@@ -373,8 +373,15 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return json.get("data")
     }
 
-    fun getLove(name: String, name2: String): JsonNode {
+    fun getLove(name: String, name2: String): JsonNode? {
         val json = executeRequest(defaultRequest("love/$name/$name2", false))
+
+        if (!json.get("success").asBoolean()) {
+            logger.error("Failed to get love\n" +
+                "Response: {}", json.get("error").toString())
+
+            return null
+        }
 
         return json.get("data")
     }
