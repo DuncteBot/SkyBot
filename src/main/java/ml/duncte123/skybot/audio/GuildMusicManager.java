@@ -32,27 +32,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
-
-    /**
-     * This is our player
-     */
     public final IPlayer player;
-    /**
-     * This is the scheduler
-     */
     public final TrackScheduler scheduler;
-    /**
-     * This is the text channel were we will announce our songs
-     */
     private final AtomicLong lastChannel = new AtomicLong(-1);
     private final GuildSettings settings;
 
-    /**
-     * Constructor
-     *
-     * @param g
-     *         The guild that we want the manager for
-     */
     public GuildMusicManager(Guild g, Variables variables) {
         this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
         this.scheduler = new TrackScheduler(this.player, this);
@@ -60,11 +44,6 @@ public class GuildMusicManager {
         this.settings = GuildSettingsUtils.getGuild(g, variables);
     }
 
-    /**
-     * This will get our sending handler
-     *
-     * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
-     */
     public AudioPlayerSenderHandler getSendHandler() {
         return new AudioPlayerSenderHandler(this.player);
     }
@@ -73,6 +52,7 @@ public class GuildMusicManager {
         return this.settings.isAnnounceTracks();
     }
 
+    // Has to be public because of kotlin
     public long getLastChannel() {
         return this.lastChannel.get();
     }

@@ -94,7 +94,9 @@ public class BanCommand extends ModBaseCommand {
 
         final String fReason = reason;
 
-        ctx.getGuild().ban(toBan.getId(), 1, reason).queue(
+        ctx.getGuild().ban(toBan.getId(), 1, reason)
+            .reason(String.format("Ban by %#s: %s", ctx.getAuthor(), fReason))
+            .queue(
             (m) -> {
                 modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 sendSuccess(ctx.getMessage());

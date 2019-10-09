@@ -85,15 +85,17 @@ public class HackbanCommand extends ModBaseCommand {
 
             try {
                 final String finalId = id;
-                event.getGuild().ban(finalId, 0)
-                    .reason(String.format("Hackban by %#s", ctx.getAuthor()))
-                    .queue((___) -> messages.add(finalId), (thr) -> {
+                final String reason = String.format("Hackban by %#s", ctx.getAuthor());
+                event.getGuild().ban(finalId, 0, reason)
+                    .reason(reason)
+                    .queue(null, (thr) -> {
                         if (thr instanceof ErrorResponseException) {
                             sendMsg(event, "Could not ban `" + finalId + "`, reason: " + ((ErrorResponseException) thr).getMeaning());
                         } else {
                             RestActionImpl.getDefaultFailure().accept(thr);
                         }
                 });
+                messages.add(finalId);
             }
             catch (HierarchyException e) {
               sendMsgFormat(ctx, "Could not ban id `%s`", id);

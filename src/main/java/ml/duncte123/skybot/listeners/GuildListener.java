@@ -24,16 +24,19 @@ import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -59,6 +62,10 @@ public class GuildListener extends BaseListener {
             this.onGuildVoiceJoin((GuildVoiceJoinEvent) event);
         } else if (event instanceof GuildVoiceMoveEvent) {
             this.onGuildVoiceMove((GuildVoiceMoveEvent) event);
+        } else if (event instanceof GuildBanEvent) {
+            this.onGuildBan((GuildBanEvent) event);
+        } else if (event instanceof GuildUnbanEvent) {
+            this.onGuildUnban((GuildUnbanEvent) event);
         }
     }
 
@@ -160,6 +167,45 @@ public class GuildListener extends BaseListener {
         if (event.getChannelLeft().equals(connected)) {
             channelCheckThing(guild, event.getChannelLeft());
         }
+    }
+
+    private void onGuildUnban(GuildUnbanEvent event) {
+        modLogBanUnban(ActionType.UNBAN, event.getUser(), event.getGuild());
+    }
+
+    private void onGuildBan(GuildBanEvent event) {
+        modLogBanUnban(ActionType.BAN, event.getUser(), event.getGuild());
+    }
+
+    private void modLogBanUnban(ActionType type, User user, Guild guild) {
+        final DunctebotGuild dbg = new DunctebotGuild(guild, variables);
+
+        if (dbg.getSettings().getLogChannel() < 1) {
+            return;
+        }
+
+        guild.retrieveAuditLogs()
+            .type(type)
+            .limit(5)
+            .queue((actions) -> {
+                for (final AuditLogEntry action : actions) {
+                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
+                        continue;
+                    }
+
+                    if (action.getTargetIdLong() == user.getIdLong()) {
+                        ModerationUtils.modLog(
+                            action.getUser(),
+                            user,
+                            type == ActionType.BAN ? "banned" : "unbanned",
+                            action.getReason(),
+                            dbg
+                        );
+
+                        break;
+                    }
+                }
+            });
     }
 
     private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
