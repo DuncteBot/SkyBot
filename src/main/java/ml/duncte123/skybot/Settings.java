@@ -39,4 +39,7 @@ public class Settings {
     public static final long PATRONS_ROLE = 402497345721466892L;
     public static final long ONE_GUILD_PATRONS_ROLE = 490859976475148298L;
     public static final long TAG_PATRONS_ROLE = 578660495738011658L;
+
+    public static final String YES_STATIC = "<:yes_:578487429783355393>";
+    public static final String NO_STATIC = "<:no_:578487579842969601>";
 }

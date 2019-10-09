@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
@@ -63,7 +64,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         try {
-            manager.scheduler.queue(track)
+            manager.scheduler.queue(track, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
             sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
         } catch (e: LimitReachedException) {

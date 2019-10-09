@@ -20,7 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import io.sentry.Sentry;
 import kotlin.Triple;
-import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.BotCommons;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -450,16 +450,9 @@ public abstract class MessageListener extends BaseListener {
                 router.shutdown();
             }
 
-            WebUtils.ins.getClient().connectionPool().evictAll();
-            WebUtils.ins.getClient().dispatcher().executorService().shutdown();
-
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
 
-            manager.shutdown();
-            manager.getShardCache().forEach((jda) -> {
-                jda.getHttpClient().connectionPool().evictAll();
-                jda.getHttpClient().dispatcher().executorService().shutdown();
-            });
+            BotCommons.shutdown(manager);
 
             // We close every thread :)
             /*if (!isUpdating) {

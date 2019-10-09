@@ -29,11 +29,13 @@ import java.nio.ByteBuffer;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioPlayerSenderHandler implements AudioSendHandler {
     private final LavaplayerPlayerWrapper audioPlayer;
-    private final MutableAudioFrame frame = new MutableAudioFrame();
-    private final ByteBuffer buffer = ByteBuffer.allocate(1024);
+    private final MutableAudioFrame frame;
+    private final ByteBuffer buffer;
 
     AudioPlayerSenderHandler(IPlayer audioPlayer) {
         this.audioPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        this.buffer = ByteBuffer.allocate(1024);
+        this.frame = new MutableAudioFrame();
         this.frame.setBuffer(buffer);
     }
 
