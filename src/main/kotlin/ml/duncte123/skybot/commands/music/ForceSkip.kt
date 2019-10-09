@@ -19,76 +19,53 @@
 package ml.duncte123.skybot.commands.music
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
+import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings.YES_STATIC
-import ml.duncte123.skybot.Settings.NO_STATIC
-import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.Permission
 import java.util.function.BiFunction
-import kotlin.math.ceil
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SkipCommand : MusicCommand() {
+class ForceSkip : MusicCommand() {
 
     init {
-        this.name = "skip"
-        this.aliases = arrayOf("next", "nexttrack", "skiptrack")
-        this.helpFunction = BiFunction { _, _ -> "Skips the current track" }
+        this.name = "forceskip"
+        this.aliases = arrayOf("modskip")
+        this.helpFunction = BiFunction { _, _ -> "Force skips the current track" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [skip count]`" }
+        this.userPermissions = arrayOf(
+            Permission.MANAGE_SERVER
+        )
     }
 
     override fun run(ctx: CommandContext) {
+        val args = ctx.args
         val mng = getMusicManager(ctx.guild, ctx.audioUtils)
-        val author = ctx.author
+        val scheduler = mng.scheduler
 
         if (mng.player.playingTrack == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
 
+        val count = if (args.isNotEmpty()) {
+            if (!args[0].matches("\\d{1,10}".toRegex())) {
+                1
+            } else {
+                args[0].toInt().coerceIn(1, scheduler.queue.size.coerceAtLeast(1))
+            }
+        } else {
+            1
+        }
+
         val trackData = mng.player.playingTrack.userData as TrackUserData
 
-        if (trackData.requester == author.idLong) {
-            doSkip(ctx, mng, trackData)
-            return
-        }
-
-        val listeners = getLavalinkManager()
-            .getConnectedChannel(ctx.guild)
-            .members.filter {
-                !it.user.isBot && !(it.voiceState?.isDeafened ?: false)
-            }.count()
-
-        val votes = trackData.votes
-
-        var msg = if (votes.contains(author.idLong)) {
-            "$NO_STATIC You already voted to skip this song `["
-        } else {
-            votes.add(author.idLong)
-            "$YES_STATIC Successfully voted to skip the song `["
-        }
-
-        val skippers = getLavalinkManager().getConnectedChannel(ctx.guild)
-            .members.filter { votes.contains(it.idLong) }.count()
-        val required = ceil(listeners * .55).toInt()
-
-        msg += "$skippers votes, $required/$listeners needed]`"
-
-        sendMsg(ctx, msg)
-
-        if (skippers >= required) {
-            doSkip(ctx, mng, trackData)
-        }
-    }
-
-    private fun doSkip(ctx: CommandContext, mng: GuildMusicManager, trackData: TrackUserData) {
-        mng.scheduler.skipTrack()
+        // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
+        mng.scheduler.skipTracks(count)
 
         // Return the console user if the requester is null
         val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
@@ -96,12 +73,12 @@ class SkipCommand : MusicCommand() {
         val track: AudioTrack? = mng.player.playingTrack
 
         if (track == null) {
-            sendMsg(ctx, "Successfully skipped the track.\n" +
+            sendMsg(ctx, "Successfully skipped $count tracks.\n" +
                 "Queue is now empty.")
             return
         }
 
-        sendEmbed(ctx, embedMessage("Successfully skipped the track.\n" +
+        sendEmbed(ctx, EmbedUtils.embedMessage("Successfully skipped $count tracks.\n" +
             "Now playing: ${track.info.title}\n" +
             "Requester: ${user.asTag}")
             .setThumbnail(track.getImageUrl()))

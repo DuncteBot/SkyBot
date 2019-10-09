@@ -93,11 +93,16 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    /**
-     * Starts the next track
-     */
-    public void nextTrack() {
-        final AudioTrack nextTrack = queue.poll();
+    public void skipTrack() {
+        skipTracks(1);
+    }
+
+    public void skipTracks(int count) {
+        AudioTrack nextTrack = null;
+
+        for (int i = 0; i < count; i++) {
+            nextTrack = queue.poll();
+        }
 
         if (nextTrack != null) {
             player.playTrack(nextTrack);
@@ -132,7 +137,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         if (!repeating) {
             logger.debug("starting next track");
-            nextTrack();
+            skipTrack();
             return;
         }
 
@@ -140,7 +145,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         if (repeatPlayList) {
             logger.debug("a playlist.....");
-            nextTrack();
+            skipTrack();
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
             clone.setUserData(lastTrack.getUserData());

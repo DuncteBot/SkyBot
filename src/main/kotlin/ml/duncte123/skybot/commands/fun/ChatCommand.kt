@@ -181,7 +181,7 @@ class ChatSession(userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         body.append("input",text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
-            .build({ it.body!!.string() }, WebParserUtils::handleError)
+            .build({ it.body()!!.string() }, WebParserUtils::handleError)
             .async {
             try {
                 response.invoke(xPathSearch(it, "//result/that/text()"))

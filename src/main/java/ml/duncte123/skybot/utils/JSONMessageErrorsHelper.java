@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.api.Permission;
@@ -64,7 +65,7 @@ public class JSONMessageErrorsHelper {
             }
         }
 
-        message.addReaction("a:_no:577795484060483584").queue(null, (ignored) -> {});
+        message.addReaction(MessageUtils.getErrorReaction()).queue(null, (ignored) -> {});
 
         try {
             message.getChannel()
