@@ -127,11 +127,11 @@ public abstract class ImageCommandBase extends Command {
             url = attachment.getUrl();
         }
 
-        if (args.isEmpty() && url == null) {
+        if (url == null && args.isEmpty()) {
             return getAvatarUrl(event.getAuthor());
         }
 
-        if (AirUtils.isURL(args.get(0))) {
+        if (url == null && AirUtils.isURL(args.get(0))) {
             try {
                 url = new URL(args.get(0)).toString();
             }
@@ -141,7 +141,7 @@ public abstract class ImageCommandBase extends Command {
             }
         }
 
-        if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
+        if (url == null && !ctx.getMessage().getMentionedUsers().isEmpty()) {
             url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
         }
 
