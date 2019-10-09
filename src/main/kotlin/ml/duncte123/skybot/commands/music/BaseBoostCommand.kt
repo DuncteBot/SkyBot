@@ -31,7 +31,7 @@ class BaseBoostCommand : MusicCommand() {
         this.name = "bassboost"
         this.aliases = arrayOf("bb", "baseboost")
         this.helpFunction = BiFunction { _, _ -> "Sets the bass boost on the music player" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <<high/med/low/off>>`" }
+        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <high/med/low/off>`" }
     }
 
     override fun run(ctx: CommandContext) {

@@ -20,7 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import io.sentry.Sentry;
 import kotlin.Triple;
-import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.BotCommons;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -34,15 +34,12 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import ml.duncte123.skybot.web.WebRouter;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -61,6 +58,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public abstract class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
+    private static final String PROFANITY_FILTER_DISABLE_FLAG = "--no-filter";
     final SpamFilter spamFilter = new SpamFilter(variables);
     final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
         r -> new Thread(r, "Bot-Service-Thread"));
@@ -70,6 +68,10 @@ public abstract class MessageListener extends BaseListener {
     }
 
     void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        if (topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
+            return;
+        }
+
         variables.getDatabase().run(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
@@ -110,7 +112,15 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        variables.getDatabase().run(() -> handleMessageEventChecked(rw, guild, event));
+        variables.getDatabase().run(() -> {
+            try {
+                handleMessageEventChecked(rw, guild, event);
+            }
+            catch (Exception e) {
+                Sentry.capture(e);
+                e.printStackTrace();
+            }
+        });
     }
 
     private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, GuildMessageReceivedEvent event) {
@@ -130,50 +140,44 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
-        try {
-            final String selfMember = guild.getSelfMember().getAsMention();
-            final String selfUser = event.getJDA().getSelfUser().getAsMention();
-            final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final User selfUser = event.getJDA().getSelfUser();
+        final String selfRegex = "^<@!?" + selfUser.getId() + '>';
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-            if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
-                return;
-            }
-
-            if (rw.equals(selfMember) || rw.equals(selfUser)) {
-                sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                    event.getAuthor(),
-                    settings.getCustomPrefix())
-                );
-                return;
-            }
-
-            final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-            final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
-
-            if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
-                return;
-            }
-
-            if (doesNotStartWithPrefix(event, settings) || !canRunCommands(rw, settings, event)) {
-                return;
-            }
-
-            if (rw.startsWith(selfMember) || rw.startsWith(selfUser)) {
-                //Handle the chat command
-                commandManager.getCommand("chat").executeCommand(new CommandContext(
-                    "chat",
-                    Arrays.asList(split).subList(1, split.length),
-                    event,
-                    variables
-                ));
-            } else {
-                //Handle the command
-                commandManager.runCommand(event);
-            }
+        if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
+            return;
         }
-        catch (Exception e) {
-            Sentry.capture(e);
-            e.printStackTrace();
+
+        if (rw.matches(selfRegex + '$')) {
+            sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                event.getAuthor(),
+                settings.getCustomPrefix())
+            );
+            return;
+        }
+
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+        final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
+
+        if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
+            return;
+        }
+
+        if (doesNotStartWithPrefix(event, settings) || !canRunCommands(rw, settings, event)) {
+            return;
+        }
+
+        if (rw.matches(selfRegex + "(.*)")) {
+            //Handle the chat command
+            commandManager.getCommand("chat").executeCommand(new CommandContext(
+                "chat",
+                Arrays.asList(split).subList(1, split.length),
+                event,
+                variables
+            ));
+        } else {
+            //Handle the command
+            commandManager.runCommand(event);
         }
     }
 
@@ -243,7 +247,7 @@ public abstract class MessageListener extends BaseListener {
             return true;
         }
 
-        if (topic.contains("-commands")) {
+        if (topicContains(event.getChannel(), "-commands")) {
             return false;
         }
 
@@ -273,6 +277,7 @@ public abstract class MessageListener extends BaseListener {
         return true;
     }
 
+    /// <editor-fold desc="auto moderation" defaultstate="collapsed">
     private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
             final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
@@ -298,7 +303,7 @@ public abstract class MessageListener extends BaseListener {
     private boolean checkSwearFilter(Message messageToCheck, GenericGuildMessageEvent event, DunctebotGuild guild) {
         final GuildSettings settings = guild.getSettings();
 
-        if (settings.isEnableSwearFilter()) {
+        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
             final float score = PerspectiveApi.checkSevereToxicity(
                 messageToCheck.getContentStripped(),
                 event.getChannel().getId(),
@@ -405,6 +410,17 @@ public abstract class MessageListener extends BaseListener {
 
         return false;
     }
+    /// </editor-fold>
+
+    private boolean topicContains(TextChannel channel, String search) {
+        final String topic = channel.getTopic();
+
+        if (topic == null || topic.isBlank()) {
+            return false;
+        }
+
+        return topic.contains(search);
+    }
 
     public void killAllShards(@Nonnull ShardManager manager) {
 
@@ -434,16 +450,9 @@ public abstract class MessageListener extends BaseListener {
                 router.shutdown();
             }
 
-            WebUtils.ins.getClient().connectionPool().evictAll();
-            WebUtils.ins.getClient().dispatcher().executorService().shutdown();
-
             AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
 
-            manager.shutdown();
-            manager.getShardCache().forEach((jda) -> {
-                jda.getHttpClient().connectionPool().evictAll();
-                jda.getHttpClient().dispatcher().executorService().shutdown();
-            });
+            BotCommons.shutdown(manager);
 
             // We close every thread :)
             /*if (!isUpdating) {
