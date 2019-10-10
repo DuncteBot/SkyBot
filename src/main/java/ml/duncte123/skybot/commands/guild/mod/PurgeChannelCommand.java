@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -59,10 +60,15 @@ public class PurgeChannelCommand extends ModBaseCommand {
             return;
         }
 
-        ctx.getGuild()
+        final ChannelAction<TextChannel> action = ctx.getGuild()
             .createCopyOfChannel(toPurge)
-            .setPosition(toPurge.getPosition())
-            .queue(
+            .setPosition(toPurge.getPosition());
+
+        if (toPurge.getParent() != null) {
+            action.setParent(toPurge.getParent());
+        }
+
+        action.queue(
                 (success) -> {
                     toPurge.delete().queue();
                     sendSuccess(ctx.getMessage());

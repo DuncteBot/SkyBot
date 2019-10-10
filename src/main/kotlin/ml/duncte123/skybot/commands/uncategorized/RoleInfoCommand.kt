@@ -53,7 +53,7 @@ class RoleInfoCommand : Command() {
 
         val role = roles[0]
         val perms = role.permissions.map { it.getName() }.joinToString()
-        val memberCount = ctx.guild.memberCache.stream().filter { it.roles.contains(role) }.count()
+        val memberCount = ctx.guild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(role.colorRaw)

@@ -142,9 +142,11 @@ class UserinfoCommand : Command() {
     }
 
     private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
-        val joins = guild.memberCache.stream().sorted(
-            Comparator.comparing<Member, OffsetDateTime> { it.timeJoined }
-        ).collect(Collectors.toList())
+        val joins = guild.memberCache.applyStream {
+            it.sorted(
+                Comparator.comparing<Member, OffsetDateTime> { m -> m.timeJoined }
+            ).collect(Collectors.toList())
+        }!!
 
         var index = joins.indexOf(member)
         index -= 3

@@ -200,7 +200,9 @@ public class ShardInfoCommand extends Command {
 
         final ShardCacheView shardCache = shardManager.getShardCache();
 
-        final String connectedShards = String.valueOf(shardCache.stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        //noinspection ConstantConditions
+        long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final String connectedShards = String.valueOf(l);
         final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
 
@@ -255,18 +257,22 @@ public class ShardInfoCommand extends Command {
      * first  = connected channels
      * second = users listening in channel
      */
+    @SuppressWarnings("ConstantConditions")
     private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
 
-        final long connectedVC = shard.getVoiceChannelCache().stream()
-            .filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
+        final long connectedVC = shard.getVoiceChannelCache().applyStream(
+            (s) -> s.filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
+        );
 
-        final long listeningVC = shard.getVoiceChannelCache().stream().filter(
-            (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
-            .mapToLong(
-                (channel) -> channel.getMembers().stream().filter(
-                    (member) -> !member.getUser().isBot() && !member.getVoiceState().isDeafened()
-                ).count()
-            ).sum();
+        final long listeningVC = shard.getVoiceChannelCache().applyStream(
+            (s) -> s.filter(
+                (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
+                .mapToLong(
+                    (channel) -> channel.getMembers().stream().filter(
+                        (member) -> !member.getUser().isBot() && !member.getVoiceState().isDeafened()
+                    ).count()
+                ).sum()
+        );
 
         return new Pair<>(connectedVC, listeningVC);
     }

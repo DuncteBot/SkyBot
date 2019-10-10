@@ -158,7 +158,9 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
 
         if (args[1].toLowerCase() == "all") {
-            val ids = guild.voiceChannelCache.stream().map(VoiceChannel::getIdLong).collect(Collectors.toList())
+            val ids = guild.voiceChannelCache.applyStream {
+                it.map(VoiceChannel::getIdLong).collect(Collectors.toList())
+            }!!
 
             ctx.databaseAdapter.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
             ids.forEach { cache.put(it, targetRole) }

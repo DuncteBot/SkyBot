@@ -57,7 +57,8 @@ public class GuildUtils {
     public static long[] getBotAndUserCount(Guild g) {
         final MemberCacheView memberCache = g.getMemberCache();
         final long totalCount = memberCache.size();
-        final long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
+        //noinspection ConstantConditions
+        final long botCount = memberCache.applyStream((s) -> s.filter(it -> it.getUser().isBot()).count());
         final long userCount = totalCount - botCount;
 
         return new long[]{userCount, botCount, totalCount};
@@ -111,12 +112,13 @@ public class GuildUtils {
      * @return the amount users that have a animated avatar
      */
     public static long countAnimatedAvatars(Guild g) {
-
-        return g.getMemberCache().stream()
-            .map(Member::getUser)
-            .map(User::getAvatarId)
-            .filter(Objects::nonNull)
-            .filter(it -> it.startsWith("a_")).count();
+        //noinspection ConstantConditions
+        return g.getMemberCache().applyStream(
+            (s) -> s.map(Member::getUser)
+                .map(User::getAvatarId)
+                .filter(Objects::nonNull)
+                .filter(it -> it.startsWith("a_")).count()
+        );
     }
 
     /**
@@ -133,7 +135,9 @@ public class GuildUtils {
 
         if (pubChann == null || !pubChann.canTalk()) {
 
-            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+            return guild.getTextChannelCache().applyStream(
+                (s) -> s.filter(TextChannel::canTalk).findFirst().orElse(null)
+            );
         }
 
         return pubChann;
@@ -169,8 +173,11 @@ public class GuildUtils {
     }
 
     public static int getMemberJoinPosition(Member member) {
-        return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getTimeJoined))
-            .collect(Collectors.toList()).indexOf(member) + 1;
+        //noinspection ConstantConditions
+        return member.getGuild().getMemberCache().applyStream(
+            (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
+                .collect(Collectors.toList())
+        ).indexOf(member) + 1;
     }
 
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {

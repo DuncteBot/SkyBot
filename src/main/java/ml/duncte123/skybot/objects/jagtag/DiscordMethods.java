@@ -306,8 +306,11 @@ public class DiscordMethods {
 
     private static Member getRandomMember(Environment env, Predicate<? super Member> filter) throws ParseException {
         final Guild guild = env.get("guild");
-        final List<Member> members = guild.getMemberCache().stream().filter(filter).collect(Collectors.toList());
+        final List<Member> members = guild.getMemberCache().applyStream(
+            (s) -> s.filter(filter).collect(Collectors.toList())
+        );
 
+        //noinspection ConstantConditions
         if (members.isEmpty()) {
             throw new ParseException("No members found");
         }
