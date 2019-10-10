@@ -26,8 +26,8 @@ public class FactsCommand extends NoPatronImageCommand {
 
     public FactsCommand() {
         this.name = "facts";
-        this.helpFunction = (invoke, prefix) -> "Show people the facts";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+        this.helpFunction = (prefix, invoke) -> "Show people the facts";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
     }
 
     @Override

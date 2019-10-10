@@ -38,7 +38,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
-import java.util.function.BiFunction
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -59,8 +58,8 @@ class ChatCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "chat"
-        this.helpFunction = BiFunction { _, _ -> "Have a chat with DuncteBot" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <message>`" }
+        this.helpFunction = { _, _ -> "Have a chat with DuncteBot" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <message>`" }
 
         commandService.scheduleAtFixedRate({
             val temp = TLongObjectHashMap<ChatSession>(sessions)

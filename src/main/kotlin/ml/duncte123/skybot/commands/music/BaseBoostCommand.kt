@@ -23,15 +23,14 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import java.util.function.BiFunction
 
 class BaseBoostCommand : MusicCommand() {
 
     init {
         this.name = "bassboost"
         this.aliases = arrayOf("bb", "baseboost")
-        this.helpFunction = BiFunction { _, _ -> "Sets the bass boost on the music player" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <high/med/low/off>`" }
+        this.helpFunction = { _, _ -> "Sets the bass boost on the music player" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <high/med/low/off>`" }
     }
 
     override fun run(ctx: CommandContext) {

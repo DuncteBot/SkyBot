@@ -31,18 +31,17 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.BiFunction
 
 class BlackListCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
         this.name = "blacklist"
-        this.helpFunction = BiFunction { _, _ ->
+        this.helpFunction = { _, _ ->
             """Control the blacklisted words on your server
             |Note: **People that have the kick members permission will bypass the blacklist**""".trimMargin()
         }
-        this.usageInstructions = BiFunction { invoke, prefix ->
+        this.usageInstructions = { prefix, invoke ->
             """```$prefix$invoke list => Gives you a list of the current blacklisted words
         |$prefix$invoke clear => Clears the blacklist
         |$prefix$invoke import => Imports an exported blacklist

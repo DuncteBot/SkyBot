@@ -29,8 +29,8 @@ public class ClintCommand extends ImageCommandBase {
 
     public ClintCommand() {
         this.name = "clint";
-        this.helpFunction = (invoke, prefix) -> "Shows a picture of Clint staring at something on a monitor.";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [image url]`";
+        this.helpFunction = (prefix, invoke) -> "Shows a picture of Clint staring at something on a monitor.";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [image url]`";
     }
 
     @Override

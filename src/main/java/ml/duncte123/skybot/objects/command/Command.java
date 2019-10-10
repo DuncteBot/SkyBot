@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import kotlin.jvm.functions.Function2;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.api.Permission;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiFunction;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -50,8 +50,8 @@ public abstract class Command implements ICommand {
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
     protected String[] aliases = new String[0];
-    protected BiFunction<String, String, String> helpFunction = (invoke, prefix) -> "No help available";
-    protected BiFunction<String, String, String> usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + '`';
+    protected Function2<String, String, String> helpFunction = (prefix, invoke) -> "No help available";
+    protected Function2<String, String, String> usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + '`';
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
@@ -106,7 +106,7 @@ public abstract class Command implements ICommand {
     @Nonnull
     @Override
     public final String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.helpFunction.apply(invoke, prefix);
+        return this.helpFunction.invoke(prefix, invoke);
     }
 
     @Override
@@ -121,7 +121,7 @@ public abstract class Command implements ICommand {
 
     public @Nonnull
     String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.usageInstructions.apply(invoke, prefix);
+        return this.usageInstructions.invoke(prefix, invoke);
     }
 
     protected void sendUsageInstructions(CommandContext ctx) {

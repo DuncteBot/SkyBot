@@ -35,8 +35,8 @@ public class SetDescriptionCommand extends SettingsBase {
 
     public SetDescriptionCommand() {
         this.name = "setdescription";
-        this.helpFunction = (invoke, prefix) -> "Sets a custom description viewable in `" + prefix + "serverinfo`";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <description/disable>`";
+        this.helpFunction = (prefix, invoke) -> "Sets a custom description viewable in `" + prefix + "serverinfo`";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <description/disable>`";
     }
 
     @Override

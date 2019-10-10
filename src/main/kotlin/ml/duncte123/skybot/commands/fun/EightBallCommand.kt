@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 class EightBallCommand : Command() {
     private val eightBallResponses = arrayOf(
@@ -51,8 +50,8 @@ class EightBallCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "8ball"
-        this.helpFunction = BiFunction { _, _ -> "Ask a question to magic the 8ball" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <question>`" }
+        this.helpFunction = { _, _ -> "Ask a question to magic the 8ball" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <question>`" }
     }
 
     override fun execute(ctx: CommandContext) {

@@ -22,14 +22,13 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StopCommand : MusicCommand() {
 
     init {
         this.name = "stop"
-        this.helpFunction = BiFunction { _, _ -> "Stops the music" }
+        this.helpFunction = { _, _ -> "Stops the music" }
     }
 
     override fun run(ctx: CommandContext) {

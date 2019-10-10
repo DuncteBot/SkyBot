@@ -32,7 +32,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import java.lang.System.getProperty
 import java.lang.Thread.sleep
-import java.util.function.BiFunction
 import kotlin.system.exitProcess
 
 @Author(author = "Ramid Khan", nickname = "ramidzkh")
@@ -41,7 +40,7 @@ class UpdateCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "update"
-        this.helpFunction = BiFunction { _, _ -> "Update the bot and restart" }
+        this.helpFunction = { _, _ -> "Update the bot and restart" }
     }
 
     override fun execute(ctx: CommandContext) {

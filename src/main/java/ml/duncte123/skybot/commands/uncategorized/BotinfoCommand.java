@@ -53,7 +53,7 @@ public class BotinfoCommand extends Command {
             "support",
             "bi",
         };
-        this.helpFunction = (invoke, prefix) -> "Displays some information about the bot";
+        this.helpFunction = (prefix, invoke) -> "Displays some information about the bot";
     }
 
     @Override

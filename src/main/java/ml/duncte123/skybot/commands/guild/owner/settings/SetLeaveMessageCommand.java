@@ -30,8 +30,8 @@ public class SetLeaveMessageCommand extends SettingsBase {
 
     public SetLeaveMessageCommand() {
         this.name = "setleavemessage";
-        this.helpFunction = (invoke, prefix) -> "Sets the message that the bot shows when a member leaves";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <leave message>`";
+        this.helpFunction = (prefix, invoke) -> "Sets the message that the bot shows when a member leaves";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <leave message>`";
     }
 
     @Override

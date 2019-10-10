@@ -25,7 +25,6 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class SlowModeCommand : ModBaseCommand() {
@@ -36,8 +35,8 @@ class SlowModeCommand : ModBaseCommand() {
         this.argscheck = false
         this.name = "slowmode"
         this.aliases = arrayOf("sm")
-        this.helpFunction = BiFunction { _, _ -> "Sets the slowmode in the current channel" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <seconds (1-$maxSeconds)/off>`" }
+        this.helpFunction = { _, _ -> "Sets the slowmode in the current channel" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <seconds (1-$maxSeconds)/off>`" }
         this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
     }

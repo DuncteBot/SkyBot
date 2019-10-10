@@ -30,7 +30,6 @@ import oshi.SystemInfo
 import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
-import java.util.function.BiFunction
 import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -40,7 +39,7 @@ class StatsCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "stats"
-        this.helpFunction = BiFunction {_, _ -> "Shows some nerdy statistics about the bot" }
+        this.helpFunction = {_, _ -> "Shows some nerdy statistics about the bot" }
     }
 
     override fun execute(ctx: CommandContext) {

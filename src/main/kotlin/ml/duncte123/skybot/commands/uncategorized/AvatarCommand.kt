@@ -23,14 +23,13 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.User
-import java.util.function.BiFunction
 
 class AvatarCommand : Command() {
 
     init {
         this.name = "avatar"
-        this.helpFunction = BiFunction { _, _ -> "Shows your avatar or the one for the specified user" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@user]`" }
+        this.helpFunction = { _, _ -> "Shows your avatar or the one for the specified user" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user]`" }
     }
 
     override fun execute(ctx: CommandContext) {

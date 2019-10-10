@@ -28,7 +28,6 @@ import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import ml.duncte123.skybot.utils.YoutubeUtils
 import java.util.concurrent.TimeUnit
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SearchCommand : MusicCommand() {
@@ -36,8 +35,8 @@ class SearchCommand : MusicCommand() {
     init {
         this.withAutoJoin = true
         this.name = "search"
-        this.helpFunction = BiFunction { _, _ -> "Search for a song to play" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <search term>`" }
+        this.helpFunction = { _, _ -> "Search for a song to play" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <search term>`" }
     }
 
     override fun run(ctx: CommandContext) {

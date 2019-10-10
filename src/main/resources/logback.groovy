@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.boolex.GEventEvaluator
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.filter.ThresholdFilter
 import ch.qos.logback.core.filter.EvaluatorFilter
 import io.sentry.logback.SentryAppender
-import static ch.qos.logback.core.spi.FilterReply.*
+
+import static ch.qos.logback.core.spi.FilterReply.DENY
+import static ch.qos.logback.core.spi.FilterReply.NEUTRAL
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {

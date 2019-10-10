@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.MessageBuilder
 import java.lang.management.ManagementFactory
-import java.util.function.BiFunction
 
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -43,7 +42,7 @@ class OneLinerCommands : Command() {
         this.displayAliasesInHelp = true
         this.name = "cookie"
         this.aliases = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "screenfetch", "website")
-        this.helpFunction = BiFunction { invoke, _ -> this.parseHelp(invoke) }
+        this.helpFunction = { invoke, _ -> this.parseHelp(invoke) }
     }
 
     override fun execute(ctx: CommandContext) {

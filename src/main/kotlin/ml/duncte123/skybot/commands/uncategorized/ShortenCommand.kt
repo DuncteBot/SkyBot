@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.isURL
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
@@ -32,8 +31,8 @@ class ShortenCommand : Command() {
     init {
         this.name = "shorten"
         this.aliases = arrayOf("short", "url", "bitly", "googl")
-        this.helpFunction = BiFunction {_,_ -> "Shortens a link"}
-        this.usageInstructions = BiFunction {invoke, prefix -> "`$prefix$invoke <link>`"}
+        this.helpFunction = {_,_ -> "Shortens a link"}
+        this.usageInstructions = {invoke, prefix -> "`$prefix$invoke <link>`"}
     }
 
     override fun execute(ctx: CommandContext) {

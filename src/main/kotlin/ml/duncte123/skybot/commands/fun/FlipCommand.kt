@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 import kotlin.math.floor
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -41,8 +40,8 @@ class FlipCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "flip"
-        this.helpFunction = BiFunction { _, _ -> "Flips someone upside down" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@user/text]`" }
+        this.helpFunction = { _, _ -> "Flips someone upside down" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user/text]`" }
     }
 
     override fun execute(ctx: CommandContext) {

@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class KpopCommand : Command() {
@@ -38,8 +37,8 @@ class KpopCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "kpop"
-        this.helpFunction = BiFunction { _, _ -> "Gives you a random kpop member, command suggestion by Exa" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [search term]`" }
+        this.helpFunction = { _, _ -> "Gives you a random kpop member, command suggestion by Exa" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [search term]`" }
     }
 
     override fun execute(ctx: CommandContext) {

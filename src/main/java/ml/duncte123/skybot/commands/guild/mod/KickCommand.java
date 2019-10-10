@@ -41,8 +41,8 @@ public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
         this.name = "kick";
-        this.helpFunction = (invoke, prefix) -> "Kicks a user from the server";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.helpFunction = (prefix, invoke) -> "Kicks a user from the server";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
         this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };

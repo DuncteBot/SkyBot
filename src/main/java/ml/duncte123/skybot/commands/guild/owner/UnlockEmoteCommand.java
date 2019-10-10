@@ -39,8 +39,8 @@ public class UnlockEmoteCommand extends Command {
     public UnlockEmoteCommand() {
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "unlockemote";
-        this.helpFunction = (invoke, prefix) -> "Unlocks an emote if it was locked";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <emote>";
+        this.helpFunction = (prefix, invoke) -> "Unlocks an emote if it was locked";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <emote>";
         this.userPermissions = new Permission[]{
             Permission.ADMINISTRATOR,
         };

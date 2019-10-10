@@ -33,7 +33,6 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig
 import org.apache.commons.lang3.StringUtils
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class LyricsCommand : MusicCommand() {
@@ -43,8 +42,8 @@ class LyricsCommand : MusicCommand() {
 
     init {
         this.name = "lyrics"
-        this.helpFunction = BiFunction { _, _ -> "Search for song lyrics or show the ones for the currently playing song" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [song name]`" }
+        this.helpFunction = { _, _ -> "Search for song lyrics or show the ones for the currently playing song" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [song name]`" }
     }
 
     override fun execute(ctx: CommandContext) {

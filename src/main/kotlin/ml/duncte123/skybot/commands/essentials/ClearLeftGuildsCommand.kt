@@ -25,13 +25,12 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import java.util.concurrent.CompletableFuture
-import java.util.function.BiFunction
 
 class ClearLeftGuildsCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "clearleftguilds"
-        this.helpFunction = BiFunction { _, _ -> "Clears the guilds from the db that the bot is no longer in" }
+        this.helpFunction = { _, _ -> "Clears the guilds from the db that the bot is no longer in" }
     }
 
     override fun execute(ctx: CommandContext) {

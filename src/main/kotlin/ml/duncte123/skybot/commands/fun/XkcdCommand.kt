@@ -26,15 +26,14 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 import kotlin.math.floor
 
 class XkcdCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "xkcd"
-        this.helpFunction = BiFunction { _, _ -> "Sends the latest xkcd comic" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [latest/random/number]`" }
+        this.helpFunction = { _, _ -> "Sends the latest xkcd comic" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [latest/random/number]`" }
     }
 
     override fun execute(ctx: CommandContext) {

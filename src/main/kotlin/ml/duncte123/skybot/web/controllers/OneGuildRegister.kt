@@ -27,9 +27,9 @@ import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.WebHelpers
-import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
 import spark.Request

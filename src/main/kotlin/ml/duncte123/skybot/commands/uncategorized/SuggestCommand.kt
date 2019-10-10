@@ -22,14 +22,13 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SuggestCommand : Command() {
 
     init {
         this.name = "suggest"
-        this.helpFunction = BiFunction { _, _ -> "Suggest a new feature for DuncteBot!" }
+        this.helpFunction = { _, _ -> "Suggest a new feature for DuncteBot!" }
     }
 
     override fun execute(ctx: CommandContext) {

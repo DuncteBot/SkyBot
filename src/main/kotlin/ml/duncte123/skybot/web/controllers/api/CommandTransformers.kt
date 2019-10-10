@@ -23,7 +23,6 @@ import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.objects.command.ICommand
 
 object CommandTransformers {
 

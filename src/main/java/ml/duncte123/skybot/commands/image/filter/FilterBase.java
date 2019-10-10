@@ -30,8 +30,8 @@ public abstract class FilterBase extends NoPatronImageCommand {
 
     FilterBase() {
         this.name = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
-        this.helpFunction = (invoke, prefix) -> "Overlays a " + invoke + " filter over the provided image";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [image url]`";
+        this.helpFunction = (prefix, invoke) -> "Overlays a " + invoke + " filter over the provided image";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [image url]`";
     }
 
     @Override

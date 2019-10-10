@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.MessageBuilder
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommands : WeebCommandBase() {
@@ -47,8 +46,8 @@ class WeebCommands : WeebCommandBase() {
             "b1nzy",
             "megumin"
         )
-        this.helpFunction = BiFunction { invoke, _ -> this.parseHelp(invoke) }
-        this.usageInstructions = BiFunction { invoke, prefix -> this.parseUsageInstructions(invoke, prefix) }
+        this.helpFunction = { invoke, _ -> this.parseHelp(invoke) }
+        this.usageInstructions = { prefix, invoke -> this.parseUsageInstructions(invoke, prefix) }
     }
 
     override fun execute(ctx: CommandContext) {

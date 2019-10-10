@@ -34,8 +34,8 @@ public class DrakeCommand extends NoPatronImageCommand {
             "ddrake",
             "dddrake",
         };
-        this.helpFunction = (invoke, prefix) -> "Generates the drake meme format";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <top text>|<bottom text>";
+        this.helpFunction = (prefix, invoke) -> "Generates the drake meme format";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <top text>|<bottom text>";
     }
 
     @Override

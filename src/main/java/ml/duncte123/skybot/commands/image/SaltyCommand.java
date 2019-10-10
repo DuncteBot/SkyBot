@@ -26,8 +26,8 @@ public class SaltyCommand extends NoPatronImageCommand {
 
     public SaltyCommand() {
         this.name = "salty";
-        this.helpFunction = (invoke, prefix) -> "Someones being salty today";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user/url]`";
+        this.helpFunction = (prefix, invoke) -> "Someones being salty today";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [@user/url]`";
     }
 
     @Override

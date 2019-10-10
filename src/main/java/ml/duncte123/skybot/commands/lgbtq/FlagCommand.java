@@ -40,8 +40,8 @@ public class FlagCommand extends ImageCommandBase {
     public FlagCommand() {
         this.category = CommandCategory.LGBTQ;
         this.name = "flag";
-        this.helpFunction = (invoke, prefix) -> "Overlay your profile picture with a pride flag";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <flag/list> [@user]`";
+        this.helpFunction = (prefix, invoke) -> "Overlay your profile picture with a pride flag";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <flag/list> [@user]`";
     }
 
     @Override

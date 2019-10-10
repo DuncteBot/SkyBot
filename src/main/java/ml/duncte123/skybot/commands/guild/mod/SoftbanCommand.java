@@ -39,8 +39,8 @@ public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {
         this.name = "softban";
-        this.helpFunction = (invoke, prefix) -> "Kicks a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.helpFunction = (prefix, invoke) -> "Kicks a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
         this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };

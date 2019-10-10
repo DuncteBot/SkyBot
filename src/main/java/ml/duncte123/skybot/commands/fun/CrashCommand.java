@@ -42,7 +42,7 @@ public class CrashCommand extends Command {
     public CrashCommand() {
         this.category = CommandCategory.FUN;
         this.name = "crash";
-        this.helpFunction = (invoke, prefix) -> "Crashes the bot";
+        this.helpFunction = (prefix, invoke) -> "Crashes the bot";
     }
 
     @Override

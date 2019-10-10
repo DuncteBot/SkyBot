@@ -29,8 +29,8 @@ public class PcCheckCommand extends ImageCommandBase {
 
     public PcCheckCommand() {
         this.name = "pccheck";
-        this.helpFunction = (invoke, prefix) -> "Your pc needs to be checked, but for what?";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>";
+        this.helpFunction = (prefix, invoke) -> "Your pc needs to be checked, but for what?";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>";
     }
 
     @Override

@@ -32,8 +32,8 @@ import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
-import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.sharding.ShardManager
 
 fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
     val userData = this.userData

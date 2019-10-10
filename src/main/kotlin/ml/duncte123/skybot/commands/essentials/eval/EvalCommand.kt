@@ -41,7 +41,6 @@ import net.dv8tion.jda.api.requests.RestAction
 import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
-import java.util.function.BiFunction
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
@@ -58,8 +57,8 @@ class EvalCommand : Command() {
         this.category = CommandCategory.UNLISTED
         this.name = "eval"
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
-        this.helpFunction = BiFunction { _, _ -> "Evaluate groovy/java code on the bot" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <java/groovy code>`" }
+        this.helpFunction = { _, _ -> "Evaluate groovy/java code on the bot" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <java/groovy code>`" }
 
         engine = GroovyShell()
 

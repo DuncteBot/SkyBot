@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
@@ -30,8 +29,8 @@ class RepeatCommand : MusicCommand() {
     init {
         this.name = "repeat"
         this.aliases = arrayOf("loop")
-        this.helpFunction = BiFunction { _, _ -> "Makes the player repeat the currently playing song" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [playlist/status]`" }
+        this.helpFunction = { _, _ -> "Makes the player repeat the currently playing song" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [playlist/status]`" }
     }
 
     override fun run(ctx: CommandContext) {

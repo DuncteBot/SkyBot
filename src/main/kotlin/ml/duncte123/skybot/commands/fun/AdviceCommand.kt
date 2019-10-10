@@ -26,14 +26,13 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 class AdviceCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
         this.name = "Advice"
-        this.helpFunction = BiFunction {_, _ -> "Gives some advice"}
+        this.helpFunction = {_, _ -> "Gives some advice"}
     }
 
     override fun execute(ctx: CommandContext) {

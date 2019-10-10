@@ -29,8 +29,8 @@ public class JokeoverheadCommand extends NoPatronImageCommand {
         this.aliases = new String[]{
             "woosh",
         };
-        this.helpFunction = (invoke, prefix) -> "You just got wooshed";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [@user/url]`";
+        this.helpFunction = (prefix, invoke) -> "You just got wooshed";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [@user/url]`";
     }
 
     @Override

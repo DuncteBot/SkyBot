@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DeletCommand : WeebCommandBase() {
@@ -32,7 +31,7 @@ class DeletCommand : WeebCommandBase() {
         this.category = CommandCategory.FUN
         this.name = "delet"
         this.aliases = arrayOf("deletthis", "deletethis")
-        this.helpFunction = BiFunction { _, _ -> "Delet this" }
+        this.helpFunction = { _, _ -> "Delet this" }
     }
 
     override fun execute(ctx: CommandContext) {

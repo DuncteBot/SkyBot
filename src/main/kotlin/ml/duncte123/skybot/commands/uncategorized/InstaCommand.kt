@@ -23,14 +23,13 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 class InstaCommand : Command() {
 
     init {
         this.name = "insta"
-        this.helpFunction = BiFunction { _, _ -> "Shows the latest picture on someones instagram account" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <username>`" }
+        this.helpFunction = { _, _ -> "Shows the latest picture on someones instagram account" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <username>`" }
     }
 
     override fun execute(ctx: CommandContext) {

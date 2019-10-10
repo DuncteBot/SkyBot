@@ -38,8 +38,8 @@ public class UrbanCommand extends Command {
     public UrbanCommand() {
         this.category = CommandCategory.NSFW;
         this.name = "urban";
-        this.helpFunction = (invoke, prefix) -> "Searches the urban dictionary";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <search term>`";
+        this.helpFunction = (prefix, invoke) -> "Searches the urban dictionary";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <search term>`";
     }
 
     @Override

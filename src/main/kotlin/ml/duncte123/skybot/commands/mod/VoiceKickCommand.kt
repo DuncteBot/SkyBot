@@ -24,15 +24,14 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class VoiceKickCommand : ModBaseCommand() {
 
     init {
         this.name = "voicekick"
-        this.helpFunction = BiFunction { _, _ -> "Kicks a user from the voice channel that they are in" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user/voice channel>`" }
+        this.helpFunction = { _, _ -> "Kicks a user from the voice channel that they are in" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user/voice channel>`" }
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
     }

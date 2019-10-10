@@ -28,15 +28,14 @@ import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 class ForceSkip : MusicCommand() {
 
     init {
         this.name = "forceskip"
         this.aliases = arrayOf("modskip")
-        this.helpFunction = BiFunction { _, _ -> "Force skips the current track" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [skip count]`" }
+        this.helpFunction = { _, _ -> "Force skips the current track" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [skip count]`" }
         this.userPermissions = arrayOf(
             Permission.MANAGE_SERVER
         )
