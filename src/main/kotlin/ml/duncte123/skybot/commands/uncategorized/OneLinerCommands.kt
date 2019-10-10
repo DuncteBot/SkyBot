@@ -42,7 +42,7 @@ class OneLinerCommands : Command() {
         this.displayAliasesInHelp = true
         this.name = "cookie"
         this.aliases = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "screenfetch", "website")
-        this.helpFunction = { invoke, _ -> this.parseHelp(invoke) }
+        this.helpFunction = { _, invoke -> this.parseHelp(invoke) }
     }
 
     override fun execute(ctx: CommandContext) {
@@ -65,7 +65,6 @@ class OneLinerCommands : Command() {
                 )
             }
 
-            // "event.jda.selfUser.id" might be invalid "jda.getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n<https://lnk.dunctebot.com/invite>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))

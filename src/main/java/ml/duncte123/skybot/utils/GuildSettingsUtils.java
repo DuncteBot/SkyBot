@@ -120,14 +120,6 @@ public class GuildSettingsUtils {
         });
     }
 
-    /**
-     * This wil get a guild or register it if it's not there yet
-     *
-     * @param guild
-     *         the guild to get
-     *
-     * @return the guild
-     */
     @Nonnull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
         final GuildSettings setting = variables.getGuildSettingsCache().get(guild.getIdLong());
@@ -140,14 +132,6 @@ public class GuildSettingsUtils {
 
     }
 
-    /**
-     * This will save the settings into the database when the guild owner/admin updates it
-     *
-     * @param guild
-     *         The guild to update it for
-     * @param settings
-     *         the new settings
-     */
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
         if (variables.getGuildSettingsCache().get(settings.getGuildId()) == null) {
             registerNewGuild(guild, variables, settings);
@@ -161,7 +145,7 @@ public class GuildSettingsUtils {
         return registerNewGuild(g, variables, new GuildSettings(g.getIdLong()));
     }
 
-    public static GuildSettings registerNewGuild(Guild g, Variables variables, GuildSettings newGuildSettings) {
+    private static GuildSettings registerNewGuild(Guild g, Variables variables, GuildSettings newGuildSettings) {
         final LoadingCache<Long, GuildSettings> guildSettingsCache = variables.getGuildSettingsCache();
         final GuildSettings settingForGuild = guildSettingsCache.get(g.getIdLong());
 

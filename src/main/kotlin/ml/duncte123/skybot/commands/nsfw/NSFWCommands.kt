@@ -37,7 +37,7 @@ class NSFWCommands : Command() {
         this.category = CommandCategory.NSFW
         this.name = "lewdneko"
         this.aliases = arrayOf("carsandhentai", "lewdkitsune", "hentai")
-        this.helpFunction = { invoke, _ -> this.parseCommandHelp(invoke) }
+        this.helpFunction = { _, invoke -> this.parseCommandHelp(invoke) }
     }
 
     override fun execute(ctx: CommandContext) {

@@ -56,13 +56,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
-
-    /**
-     * This instantiates our player
-     *
-     * @param player
-     *     Our audio player
-     */
     TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
@@ -72,15 +65,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             , DEBOUNCE_INTERVAL);
     }
 
-    /**
-     * Queue a track
-     *
-     * @param track
-     *     The {@link AudioTrack AudioTrack} to queue
-     *
-     * @throws LimitReachedException
-     *     when the queue is full
-     */
     public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
         if (queue.size() >= QUEUE_SIZE && !isPatron) {
             throw new LimitReachedException("The queue is full", QUEUE_SIZE);
@@ -115,16 +99,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    /**
-     * Gets run when a track ends
-     *
-     * @param player
-     *     The {@link AudioPlayer AudioTrack} for that guild
-     * @param lastTrack
-     *     The {@link AudioTrack AudioTrack} that ended
-     * @param endReason
-     *     Why did this track end?
-     */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
@@ -160,47 +134,22 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     }
 
-    /**
-     * This will tell you if the player is repeating
-     *
-     * @return true if the player is set to repeat
-     */
     public boolean isRepeating() {
         return repeating;
     }
 
-    /**
-     * tell the player if needs to repeat
-     *
-     * @param repeating
-     *     if the player needs to repeat
-     */
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
     }
 
-    /**
-     * This will tell you if the player is repeating playlists
-     *
-     * @return true if the player is set to repeat playlists
-     */
     public boolean isRepeatingPlaylists() {
         return repeatPlayList;
     }
 
-    /**
-     * tell the player if needs to repeat playlists
-     *
-     * @param repeatingPlaylists
-     *     if the player needs to repeat playlists
-     */
     public void setRepeatingPlaylists(boolean repeatingPlaylists) {
         this.repeatPlayList = repeatingPlaylists;
     }
 
-    /**
-     * Shuffles the player
-     */
     public void shuffle() {
         Collections.shuffle((List<?>) queue);
     }

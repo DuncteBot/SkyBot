@@ -20,13 +20,8 @@ package ml.duncte123.skybot.objects;
 
 import ml.duncte123.skybot.Author;
 
-/**
- * This is our "Console" user I made this for the automatic unban system
- */
-
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ConsoleUser extends FakeUser {
-
     public ConsoleUser() {
         super("AutoMod", 191231307290771456L, (short) 0);
     }

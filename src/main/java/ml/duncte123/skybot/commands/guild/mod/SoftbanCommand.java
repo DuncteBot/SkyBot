@@ -80,8 +80,7 @@ public class SoftbanCommand extends ModBaseCommand {
 
         try {
             final User toBan = toBanMember.getUser();
-            if (toBan.equals(ctx.getAuthor()) &&
-                !ctx.getGuild().getMember(ctx.getAuthor()).canInteract(ctx.getGuild().getMember(toBan))) {
+            if (toBan.equals(ctx.getAuthor()) && !ctx.getMember().canInteract(toBanMember)) {
                 sendMsg(ctx, "You are not permitted to perform this action.");
                 return;
             }

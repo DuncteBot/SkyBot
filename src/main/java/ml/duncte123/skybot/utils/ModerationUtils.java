@@ -72,22 +72,6 @@ public class ModerationUtils {
         return true;
     }
 
-    /**
-     * This will send a message to a channel called modlog
-     *
-     * @param mod
-     *     The mod that performed the punishment
-     * @param punishedUser
-     *     The user that got punished
-     * @param punishment
-     *     The type of punishment
-     * @param reason
-     *     The reason of the punishment
-     * @param time
-     *     How long it takes for the punishment to get removed
-     * @param g
-     *     A instance of the {@link Guild}
-     */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
         String length = "";
 
@@ -114,68 +98,18 @@ public class ModerationUtils {
         }
     }
 
-    /**
-     * A version of {@link #modLog(User, User, String, String, String, DunctebotGuild)} but without the time
-     *
-     * @param mod
-     *     The mod that performed the punishment
-     * @param punishedUser
-     *     The user that got punished
-     * @param punishment
-     *     The type of punishment
-     * @param reason
-     *     The reason of the punishment
-     * @param g
-     *     A instance of the {@link Guild}
-     */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
     }
 
-    /**
-     * To log a unban or a unmute
-     *
-     * @param mod
-     *     The mod that permed the executeCommand
-     * @param unbannedUser
-     *     The user that the executeCommand is for
-     * @param punishment
-     *     The type of punishment that got removed
-     * @param g
-     *     A instance of the {@link Guild}
-     */
     public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild g) {
         modLog(mod, unbannedUser, punishment, "", g);
     }
 
-    /**
-     * Add the banned user to the database
-     *
-     * @param modID
-     *     The user id from the mod
-     * @param userName
-     *     The username from the banned user
-     * @param userDiscriminator
-     *     the discriminator from the user
-     * @param userId
-     *     the id from the banned users
-     * @param unbanDate
-     *     When we need to unban the user
-     * @param guildId
-     *     What guild the user got banned in
-     */
     public static void addBannedUserToDb(DatabaseAdapter adapter, long modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
         adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
     }
 
-    /**
-     * Returns the current amount of warnings that a user has
-     *
-     * @param u
-     *     the {@link User User} to check the warnings for
-     *
-     * @return The current amount of warnings that a user has
-     */
     public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) throws ExecutionException, InterruptedException {
         final CompletableFuture<List<Warning>> future = new CompletableFuture<>();
 
@@ -188,23 +122,10 @@ public class ModerationUtils {
         return future.get().size();
     }
 
-    /**
-     * This attempts to register a warning in the database
-     *
-     * @param moderator
-     *     The mod that executed the warning
-     * @param target
-     *     The user to warn
-     * @param reason
-     *     the reason for the warn
-     */
     public static void addWarningToDb(DatabaseAdapter adapter, User moderator, User target, String reason, Guild guild) {
         adapter.createWarning(moderator.getIdLong(), target.getIdLong(), guild.getIdLong(), reason);
     }
 
-    /**
-     * This will check if there are users that can be unbanned
-     */
     public static void checkUnbans(Variables variables) {
 
         variables.getDatabaseAdapter().getExpiredBansAndMutes(
@@ -394,6 +315,6 @@ public class ModerationUtils {
             return;
         }
         final String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
-        guild.kick(member).reason(reason).queue();
+        guild.kick(member, reason).reason(reason).queue();
     }
 }

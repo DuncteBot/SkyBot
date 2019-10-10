@@ -46,29 +46,13 @@ import java.util.logging.Level;
 @SinceSkybot(version = "3.5.1")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
-    /**
-     * This is the title that you see in the embeds from the player
-     */
     public final String embedTitle = "AirPlayer";
-    /**
-     * This will store all the music managers for all the guilds that we are playing music in
-     */
     protected final TLongObjectMap<GuildMusicManager> musicManagers;
-    /**
-     * This will hold the manager for the audio player
-     */
-    private UserContextAudioPlayerManager playerManager;
-    /**
-     * This is the default volume that the player will play at
-     * I've set it to 100 to save some resources
-     */
     private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
     private final DunctebotConfig.Apis config;
     private final Variables variables;
+    private UserContextAudioPlayerManager playerManager;
 
-    /**
-     * This will set everything up and get the player ready
-     */
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         this.config = config;
@@ -78,65 +62,38 @@ public class AudioUtils {
     }
 
     private void initPlayerManager() {
-        if (playerManager == null) {
-            playerManager = new UserContextAudioPlayerManager();
-            //playerManager.enableGcMonitoring();
+        playerManager = new UserContextAudioPlayerManager();
+        //playerManager.enableGcMonitoring();
 
-            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
+        final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
 
-            // When the values change
+        // When the values change
             /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
                 request.setHeader("x-youtube-client-name", "1");
                 request.setHeader("x-youtube-client-version", "2.20191008.04.01");
             });*/
 
-            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
-            playerManager.registerSourceManager(new ClypitAudioSourceManager());
-            playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
+        playerManager.registerSourceManager(new ClypitAudioSourceManager());
+        playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
 
-            playerManager.registerSourceManager(youtubeAudioSourceManager);
-            playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
-            playerManager.registerSourceManager(new BandcampAudioSourceManager());
-            playerManager.registerSourceManager(new VimeoAudioSourceManager());
-            playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-            playerManager.registerSourceManager(new BeamAudioSourceManager());
-            playerManager.registerSourceManager(new HttpAudioSourceManager());
-        }
+        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+        playerManager.registerSourceManager(new HttpAudioSourceManager());
     }
 
     public UserContextAudioPlayerManager getPlayerManager() {
-        initPlayerManager();
         return playerManager;
     }
 
-    /**
-     * Loads a track and plays it if the bot isn't playing
-     *
-     * @param mng
-     *         The {@link GuildMusicManager MusicManager} for the guild
-     * @param trackUrlRaw
-     *         The url from the track to play
-     * @param ctx
-     *         the command context for this event
-     */
     public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw, final CommandContext ctx) {
         loadAndPlay(mng, trackUrlRaw, ctx, true);
     }
 
-    /**
-     * Loads a track and plays it if the bot isn't playing
-     *
-     * @param mng
-     *         The {@link GuildMusicManager MusicManager} for the guild
-     * @param trackUrlRaw
-     *         The url from the track to play
-     * @param ctx
-     *         the command context for this event
-     * @param announce
-     *         if we should announce the track
-     *
-     * @return The future from lavaplayer
-     */
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
                                     final CommandContext ctx, final boolean announce) {
         final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
@@ -154,14 +111,6 @@ public class AudioUtils {
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }
 
-    /**
-     * This will get the music manager for the guild or register it if we don't have it yet
-     *
-     * @param guild
-     *         The guild that we need the manager for
-     *
-     * @return The music manager for that guild
-     */
     public GuildMusicManager getMusicManager(Guild guild) {
         final long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
@@ -189,14 +138,6 @@ public class AudioUtils {
         return musicManagers;
     }
 
-    /**
-     * This will return the formatted timestamp for the current playing track
-     *
-     * @param milliseconds
-     *         the milliseconds that the track is at
-     *
-     * @return a formatted time
-     */
     public static String getTimestamp(long milliseconds) {
         final int seconds = (int) (milliseconds / 1000) % 60;
         final int minutes = (int) ((milliseconds / (1000 * 60)) % 60);

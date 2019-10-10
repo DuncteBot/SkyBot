@@ -44,7 +44,7 @@ class JokeCommand : Command() {
         this.category = CommandCategory.FUN
         this.name = "joke"
         this.aliases = arrayOf("meme")
-        this.helpFunction = { invoke, _ ->
+        this.helpFunction = { _, invoke ->
             when (invoke) {
                 "meme" -> "See a funny meme"
                 else -> "See a funny joke. Dad's love them!"

@@ -163,9 +163,6 @@ class ChatCommand : Command() {
     }
 }
 
-/**
- * Little wrapper class to help us keep track of inactive sessions
- */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatSession(userId: Long) {
     private val body = FormRequestBody()

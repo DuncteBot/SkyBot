@@ -59,26 +59,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 })
 public class AirUtils {
 
-    /**
-     * This will validate a link
-     *
-     * @param url
-     *         The thing to check
-     *
-     * @return true or false depending on if the url is valid
-     */
     public static boolean isURL(String url) {
         return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)").matcher(url).find();
     }
 
-    /**
-     * This will check if the number that we are trying to parse is an int
-     *
-     * @param integer
-     *         the int to check
-     *
-     * @return true if it is an int
-     */
     public static boolean isInt(String integer) {
         return integer.matches("^\\d{1,11}$");
     }
@@ -96,28 +80,10 @@ public class AirUtils {
         return (int) input;
     }
 
-    /**
-     * This will generate the uptime for us based on the time that we pass in
-     *
-     * @param time
-     *         The time that the bot has been running for
-     *
-     * @return The uptime nicely formatted
-     */
     public static String getUptime(long time) {
         return getUptime(time, false);
     }
 
-    /**
-     * This will generate the uptime for us based on the time that we pass in
-     *
-     * @param time
-     *         The time that the bot has been running for
-     * @param withTime
-     *         If we should add the seconds, minutes and hours to the time
-     *
-     * @return The uptime nicely formatted
-     */
     public static String getUptime(long time, boolean withTime) {
         /*
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
@@ -170,9 +136,6 @@ public class AirUtils {
         return builder.toString();
     }
 
-    /**
-     * Stops everything
-     */
     public static void stop(DBManager database, AudioUtils audioUtils, ShardManager manager) {
         stopMusic(audioUtils, manager);
 
@@ -181,7 +144,7 @@ public class AirUtils {
         audioUtils.getPlayerManager().shutdown();
     }
 
-    public static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
+    private static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (final long key : temp.keys()) {
@@ -215,16 +178,6 @@ public class AirUtils {
         return getLogChannel(Long.toString(channel), g);
     }
 
-    /**
-     * This gets the channel from a name or id
-     *
-     * @param channelId
-     *         the channel name or id
-     * @param guild
-     *         the guild to search in
-     *
-     * @return the channel
-     */
     private static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 

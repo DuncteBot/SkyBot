@@ -82,7 +82,7 @@ public class UnlockEmoteCommand extends Command {
             return true;
         }
 
-        if (!emote.getGuild().equals(event.getGuild())) {
+        if (emote.getGuild() == null || !emote.getGuild().equals(event.getGuild())) {
             sendMsg(event, "That emote does not exist on this server");
             return true;
         }

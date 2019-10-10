@@ -22,7 +22,6 @@ import kotlin.Triple;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -201,7 +200,7 @@ public class CustomCommandCommand extends Command {
 
             sendMsg(event, String.format(error, reason));
         }
-        catch (DoomedException e) {
+        catch (IllegalArgumentException e) {
             sendMsg(event, "Could not add command: " + e.getMessage());
         }
     }

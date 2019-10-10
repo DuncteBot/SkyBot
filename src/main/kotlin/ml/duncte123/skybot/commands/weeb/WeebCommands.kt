@@ -46,7 +46,7 @@ class WeebCommands : WeebCommandBase() {
             "b1nzy",
             "megumin"
         )
-        this.helpFunction = { invoke, _ -> this.parseHelp(invoke) }
+        this.helpFunction = { _, invoke -> this.parseHelp(invoke) }
         this.usageInstructions = { prefix, invoke -> this.parseUsageInstructions(invoke, prefix) }
     }
 

@@ -36,23 +36,9 @@ import java.util.regex.Pattern;
  */
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class SQLiteDatabaseConnectionManager implements Closeable {
-
-    /**
-     * The URL of this database
-     */
     private final String url;
-
-    /**
-     * The associated connection object
-     */
     private Connection con;
 
-    /**
-     * Constructs a new SQLite file database
-     *
-     * @param file
-     *         The file where to create or load the database
-     */
     public SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
@@ -69,9 +55,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    /**
-     * Gets the associated connection object
-     */
     public Connection getConnection() {
         try {
             return isConnected() ? con : JDBC.createConnection(url, new Properties());
@@ -82,9 +65,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    /**
-     * @return Is the connection open
-     */
     private boolean isConnected() {
         try {
             return con != null && !con.isClosed();
@@ -106,14 +86,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    /**
-     * This sets up the database and inserts the tables if they are not there
-     *
-     * @param connection
-     *         the connection to use
-     *
-     * @author duncte123
-     */
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
         try {

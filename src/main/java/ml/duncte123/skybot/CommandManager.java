@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import com.jagrosh.jagtag.Parser;
 import io.sentry.Sentry;
 import kotlin.Triple;
-import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -170,7 +169,7 @@ public class CommandManager {
 
     private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
-            throw new DoomedException("Name can't have spaces!");
+            throw new IllegalArgumentException("Name can't have spaces!");
         }
 
         final boolean commandFound = this.customCommands.stream()
@@ -266,7 +265,7 @@ public class CommandManager {
      */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
-            throw new DoomedException("Name can't have spaces!");
+            throw new IllegalArgumentException("Name can't have spaces!");
         }
 
         final String cmdName = command.getName().toLowerCase();

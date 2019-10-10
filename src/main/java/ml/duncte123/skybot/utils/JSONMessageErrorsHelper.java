@@ -42,15 +42,6 @@ public class JSONMessageErrorsHelper {
     /////
     private static Logger logger = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
 
-    /**
-     * This will react with a ❌ if the user doesn't have permission to run the command or any other error while
-     * execution
-     *
-     * @param message
-     *         the message to add the reaction to
-     * @param error
-     *         the cause
-     */
     public static void sendErrorJSON(Message message, Throwable error, final boolean print, ObjectMapper mapper) {
         if (print) {
             logger.error(error.getLocalizedMessage(), error);

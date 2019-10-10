@@ -104,7 +104,6 @@ public final class SkyBot {
         logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
-
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
         final DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder()

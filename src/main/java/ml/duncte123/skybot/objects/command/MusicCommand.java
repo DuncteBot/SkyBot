@@ -86,29 +86,10 @@ public abstract class MusicCommand extends Command {
         run(ctx);
     }
 
-    /**
-     * This is a shortcut for getting the music manager
-     *
-     * @param guild
-     *         the guild to get the music manager for
-     *
-     * @return the {@link GuildMusicManager GuildMusicManager} for that guild
-     */
     protected GuildMusicManager getMusicManager(Guild guild, AudioUtils audioUtils) {
         return audioUtils.getMusicManager(guild);
     }
 
-    /**
-     * This performs some checks that we need for the music and may suppress error messages.
-     *
-     * @param event
-     *         The current {@link net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-     *         GuildMessageReceivedEvent}
-     * @param reply
-     *         whether the bot replies that you should make it join first
-     *
-     * @return true if the checks pass
-     */
     private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply, String prefix) {
 
         if (!event.getMember().getVoiceState().inVoiceChannel()) {
@@ -142,15 +123,6 @@ public abstract class MusicCommand extends Command {
         return true;
     }
 
-    /**
-     * This performs some checks that we need for the music and will always reply with error messages.
-     *
-     * @param event
-     *         The current {@link net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-     *         GuildMessageReceivedEvent}
-     *
-     * @return true if the checks pass
-     */
     private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, String prefix) {
         return channelChecks(event, audioUtils, true, prefix);
     }
@@ -172,28 +144,16 @@ public abstract class MusicCommand extends Command {
         return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;
     }
 
-    /**
-     * This is a shortcut for getting the the link
-     *
-     * @return the {@link LavalinkManager LavalinkManager}
-     */
     protected static LavalinkManager getLavalinkManager() {
         return LavalinkManager.ins;
     }
 
-    /**
-     * @param guildId
-     *         the {@link Guild} id that should receive the cooldown.
-     */
     @SinceSkybot(version = "3.54.2")
     @Author(nickname = "Sanduhr32", author = "Maurice R S")
     public static void addCooldown(long guildId) {
         cooldowns.put(guildId, 12600);
     }
 
-    /**
-     * This method shuts down the service that cares for the dynamic cooldown decreasing.
-     */
     @SinceSkybot(version = "3.54.2")
     @Author(nickname = "Sanduhr32", author = "Maurice R S")
     public static void shutdown() {
