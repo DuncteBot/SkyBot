@@ -201,7 +201,7 @@ public class ShardInfoCommand extends Command {
         final ShardCacheView shardCache = shardManager.getShardCache();
 
         //noinspection ConstantConditions
-        long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         final String connectedShards = String.valueOf(l);
         final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
