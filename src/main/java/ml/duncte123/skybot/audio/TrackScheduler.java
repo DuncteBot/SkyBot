@@ -28,6 +28,7 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
+import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -122,13 +123,15 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             skipTrack();
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(lastTrack.getUserData());
+            final TrackUserData data = (TrackUserData) lastTrack.getUserData();
+            clone.setUserData(data.copy(data.getRequester()));
             queue.offer(clone);
             return;
         }
 
         final AudioTrack clone = lastTrack.makeClone();
-        clone.setUserData(lastTrack.getUserData());
+        final TrackUserData data = (TrackUserData) lastTrack.getUserData();
+        clone.setUserData(data.copy(data.getRequester()));
         this.player.playTrack(clone);
         announceNextTrack(lastTrack);
 
