@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
@@ -99,14 +101,7 @@ public class CommandManager {
         return this.customCommands;
     }
 
-    /**
-     * This tries to get a command with the provided name/alias
-     *
-     * @param name
-     *     the name of the command
-     *
-     * @return a possible null command for the name
-     */
+    @Nullable
     public ICommand getCommand(String name) {
 
         ICommand found = this.commands.get(name);
@@ -142,7 +137,7 @@ public class CommandManager {
         return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
-
+    @Nullable
     public CustomCommand getCustomCommand(String invoke, long guildId) {
         return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
             .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
@@ -254,15 +249,6 @@ public class CommandManager {
         }
     }
 
-    /**
-     * This handles adding the command
-     *
-     * @param command
-     *     The command to add
-     *
-     * @throws IllegalArgumentException
-     *     if the command or alias is already present
-     */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new IllegalArgumentException("Name can't have spaces!");
@@ -339,17 +325,15 @@ public class CommandManager {
             cmd = getCustomCommand(invokeLower, event.getGuild().getIdLong());
         }
 
-        dispatchCommand(cmd, invoke, args, event);
-    }
-
-    public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-
         if (cmd == null) {
             return;
         }
 
-        this.commandThread.submit(() -> {
+        dispatchCommand(cmd, invoke, args, event);
+    }
 
+    public void dispatchCommand(@Nonnull ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        this.commandThread.submit(() -> {
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
             MDC.put("user.tag", event.getAuthor().getAsTag());
@@ -367,64 +351,11 @@ public class CommandManager {
             channel.sendTyping().queue(null, (t) -> {});
 
             try {
-
                 if (!cmd.isCustom()) {
-
-                    if (cmd.getCategory() == CommandCategory.NSFW && !channel.isNSFW()) {
-                        sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
-                            "Please mark this channel as NSFW to use this command");
-                        return;
-                    }
-
-                    MDC.put("command.class", cmd.getClass().getName());
-
-                    LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
-
-                    cmd.executeCommand(
-                        new CommandContext(invoke, args, event, variables)
-                    );
-
-                    return;
+                    runNormalCommand(cmd, invoke, args, event);
+                } else {
+                    runCustomCommand(cmd, invoke, args, event);
                 }
-
-                final CustomCommand cc = (CustomCommand) cmd;
-
-                if (cc.getGuildId() != event.getGuild().getIdLong()) {
-                    return;
-                }
-
-                try {
-                    MDC.put("command.custom.message", cc.getMessage());
-
-                    final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
-
-                    final String message = parser.parse(cc.getMessage());
-                    final MessageBuilder messageBuilder = new MessageBuilder();
-                    final DataObject object = parser.get("embed");
-
-                    if (!message.isEmpty()) {
-                        messageBuilder.setContent("\u200B" + message);
-                    }
-
-                    if (object != null) {
-                        final JDAImpl jda = (JDAImpl) event.getJDA();
-                        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
-
-                        messageBuilder.setEmbed(embed);
-                    }
-
-                    if (!messageBuilder.isEmpty()) {
-                        sendMsg(event, messageBuilder.build());
-                    }
-
-
-                    parser.clear();
-                }
-                catch (Exception e) {
-                    sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-                    execCheck(e);
-                }
-
             }
             catch (Throwable ex) {
                 execCheck(ex);
@@ -432,6 +363,62 @@ public class CommandManager {
                 sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
             }
         });
+    }
+
+    private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
+                "Please mark this channel as NSFW to use this command");
+            return;
+        }
+
+        MDC.put("command.class", cmd.getClass().getName());
+
+        LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
+
+        cmd.executeCommand(
+            new CommandContext(invoke, args, event, variables)
+        );
+    }
+
+    private void runCustomCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        final CustomCommand cc = (CustomCommand) cmd;
+
+        if (cc.getGuildId() != event.getGuild().getIdLong()) {
+            return;
+        }
+
+        try {
+            MDC.put("command.custom.message", cc.getMessage());
+
+            final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
+
+            final String message = parser.parse(cc.getMessage());
+            final MessageBuilder messageBuilder = new MessageBuilder();
+            final DataObject object = parser.get("embed");
+
+            if (!message.isEmpty()) {
+                messageBuilder.setContent("\u200B" + message);
+            }
+
+            if (object != null) {
+                final JDAImpl jda = (JDAImpl) event.getJDA();
+                final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
+
+                messageBuilder.setEmbed(embed);
+            }
+
+            if (!messageBuilder.isEmpty()) {
+                sendMsg(event, messageBuilder.build());
+            }
+
+
+            parser.clear();
+        }
+        catch (Exception e) {
+            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+            execCheck(e);
+        }
     }
 
     private void registerCommandsFromReflection(Reflections reflections) {
