@@ -78,7 +78,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    public void skipTrack() {
+    private void skipTrack() {
         skipTracks(1);
     }
 

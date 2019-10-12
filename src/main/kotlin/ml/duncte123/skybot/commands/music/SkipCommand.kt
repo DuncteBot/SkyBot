@@ -54,7 +54,7 @@ class SkipCommand : MusicCommand() {
         val trackData = mng.player.playingTrack.userData as TrackUserData
 
         if (trackData.requester == author.idLong) {
-            doSkip(ctx, mng, trackData)
+            doSkip(ctx, mng)
             return
         }
 
@@ -82,27 +82,20 @@ class SkipCommand : MusicCommand() {
         sendMsg(ctx, msg)
 
         if (skippers >= required) {
-            doSkip(ctx, mng, trackData)
+            doSkip(ctx, mng)
         }
     }
 
-    private fun doSkip(ctx: CommandContext, mng: GuildMusicManager, trackData: TrackUserData) {
-        mng.scheduler.skipTrack()
+    private fun doSkip(ctx: CommandContext, mng: GuildMusicManager) {
+        val player = mng.player
 
-        // Return the console user if the requester is null
-        val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
+        player.seekTo(player.playingTrack.duration)
 
-        val track: AudioTrack? = mng.player.playingTrack
+//        mng.scheduler.skipTrack()
 
-        if (track == null) {
+        if (player.playingTrack == null) {
             sendMsg(ctx, "Successfully skipped the track.\n" +
                 "Queue is now empty.")
-            return
         }
-
-        sendEmbed(ctx, embedMessage("Successfully skipped the track.\n" +
-            "Now playing: ${track.info.title}\n" +
-            "Requester: ${user.asTag}")
-            .setThumbnail(track.getImageUrl()))
     }
 }

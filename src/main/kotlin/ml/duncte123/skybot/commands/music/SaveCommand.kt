@@ -22,8 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.entities.Guild
+import java.util.*
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
@@ -37,10 +39,10 @@ class SaveCommand : MusicCommand() {
 
         val event = ctx.event
 
-        event.channel.sendMessage("${event.author.asTag}, here is the queue which can be re-imported")
+        event.channel.sendMessage("${event.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")
             .addFile(
                 toByteArray(event.guild, ctx.audioUtils, ctx.variables.jackson),
-                "playlist.json"
+                "playlist-${getDatabaseDateFormat(Date())}.json"
             )
             .queue()
     }

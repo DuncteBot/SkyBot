@@ -80,7 +80,6 @@ class EvalCommand : Command() {
         )
 
         val classImports = listOf(
-            "ml.duncte123.skybot.exceptions.DoomedException",
             "fredboat.audio.player.LavalinkManager"
         )
 

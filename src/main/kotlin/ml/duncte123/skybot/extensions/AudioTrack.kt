@@ -55,7 +55,7 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
             .setThumbnail(this.getImageUrl())
     }
 
-    return  embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+    return embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
             |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
         """.trimMargin())
         .setThumbnail(this.getImageUrl())
@@ -85,27 +85,28 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
     }
 
     // The following make a REST request for the thumbnail
+    if (!onlyStatic) {
+        if (this is VimeoAudioTrack) {
+            return try {
+                val split = this.identifier.split("/")
+                val id = split[split.size - 1]
+                val url = "https://vimeo.com/api/v2/video/$id.json"
+                val json = WebUtils.ins.getJSONArray(url).execute().get(0)
 
-    if (this is VimeoAudioTrack && !onlyStatic) {
-        return try {
-            val split = this.identifier.split("/")
-            val id = split[split.size - 1]
-            val url = "https://vimeo.com/api/v2/video/$id.json"
-            val json = WebUtils.ins.getJSONArray(url).execute().get(0)
-
-            json.get("thumbnail_small").asText()
-        } catch (e: Exception) {
-            Sentry.capture(e)
-            null
+                json.get("thumbnail_small").asText()
+            } catch (e: Exception) {
+                Sentry.capture(e)
+                null
+            }
         }
-    }
 
-    if (this is SoundCloudAudioTrack && !onlyStatic) {
-        val page = WebUtils.ins.scrapeWebPage(this.info.uri).execute()
-        val elems = page.select("meta[property=og:image]")
+        if (this is SoundCloudAudioTrack) {
+            val page = WebUtils.ins.scrapeWebPage(this.info.uri).execute()
+            val elems = page.select("meta[property=og:image]")
 
-        if (!elems.isEmpty()) {
-            return elems.first().attr("content")
+            if (!elems.isEmpty()) {
+                return elems.first().attr("content")
+            }
         }
     }
 
