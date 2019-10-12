@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -64,7 +65,6 @@ public class RemindmeCommand extends Command {
 
         if (args.size() < 2) {
             this.sendUsageInstructions(ctx);
-
             return;
         }
 
@@ -80,20 +80,10 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        Optional<Duration> optionalDuration;
-
-        try {
-            optionalDuration = DurationParser.parse(
-                String.join("", flags.get("t"))
-            );
-        }
-        catch (IllegalArgumentException ignored) {
-            optionalDuration = Optional.empty();
-        }
+        final Optional<Duration> optionalDuration = getDuration(flags);
 
         if (optionalDuration.isEmpty()) {
             sendMsg(ctx, "Incorrect duration format");
-
             return;
         }
 
@@ -101,19 +91,30 @@ public class RemindmeCommand extends Command {
 
         if (duration.getMilis() == 0) {
             sendMsg(ctx, "Your specified time is too short or the time syntax is invalid.");
-
             return;
         }
 
         if (duration.getMinutes() < 2) {
             sendMsg(ctx, "Minimum duration is 2 minutes");
-
             return;
         }
 
-        final String reminder = String.join(" ",flags.get("undefined"));
+        final String reminder = String.join(" ", flags.get("undefined"));
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
+        createReminder(ctx, expireDate, reminder, flags, duration);
+    }
+
+    private Optional<Duration> getDuration(Map<String, List<String>> flags) {
+        try {
+            return DurationParser.parse(String.join("", flags.get("t")));
+        }
+        catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    private void createReminder(CommandContext ctx, Date expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
         if (flags.containsKey("c")) {
             ctx.getDatabaseAdapter().createReminder(
                 ctx.getAuthor().getIdLong(),
@@ -129,18 +130,16 @@ public class RemindmeCommand extends Command {
 
                     return null;
                 });
+        } else {
+            ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
+                if (success) {
+                    sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
+                } else {
+                    sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
+                }
 
-            return;
+                return null;
+            });
         }
-
-        ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
-            if (success) {
-                sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
-            } else {
-                sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
-            }
-
-            return null;
-        });
     }
 }
