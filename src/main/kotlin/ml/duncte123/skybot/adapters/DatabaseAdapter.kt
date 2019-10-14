@@ -21,8 +21,9 @@ package ml.duncte123.skybot.adapters
 import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -30,7 +31,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class DatabaseAdapter(protected val variables: Variables) {
+abstract class DatabaseAdapter() {
 
     //////////////////
     // Custom commands
@@ -167,7 +168,7 @@ abstract class DatabaseAdapter(protected val variables: Variables) {
 
     // Cannot be an option callback due to it targeting the onFail param
     protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
-        variables.database.run {
+        GlobalScope.launch {
             try {
                 r.invoke()
             } catch (thr: Throwable) {

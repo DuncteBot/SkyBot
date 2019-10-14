@@ -43,8 +43,11 @@ public abstract class Command implements ICommand {
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
-        r -> new Thread(r, "Command-Thread"));
-
+        (r) -> {
+            final Thread thread = new Thread(r, "Command-Thread");
+            thread.setDaemon(true);
+            return thread;
+        });
     //@formatter:off
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;

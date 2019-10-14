@@ -30,6 +30,8 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseListener implements EventListener {
@@ -37,6 +39,11 @@ public abstract class BaseListener implements EventListener {
     public static boolean isUpdating = false;
     public static boolean shuttingDown = false;
     protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
+    protected final ExecutorService handlerThread = Executors.newCachedThreadPool((r) -> {
+        final Thread thread = new Thread(r, "Listener-handle-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
     protected final Variables variables;
     // A list of servers that list bots
     private static final TLongList botLists = new TLongArrayList(

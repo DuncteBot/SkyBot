@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
+package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.Author;
 import org.sqlite.JDBC;

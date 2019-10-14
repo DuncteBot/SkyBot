@@ -18,16 +18,11 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.Settings.YES_STATIC
 import ml.duncte123.skybot.audio.GuildMusicManager
-import ml.duncte123.skybot.extensions.getImageUrl
-import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand

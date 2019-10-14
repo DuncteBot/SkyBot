@@ -24,8 +24,7 @@ import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.connections.database.SQLiteDatabaseConnectionManager
+import ml.duncte123.skybot.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -37,7 +36,7 @@ import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
+class SqliteDatabaseAdapter : DatabaseAdapter() {
     private val connManager = SQLiteDatabaseConnectionManager(File("database.db"))
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {

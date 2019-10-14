@@ -50,26 +50,25 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
+import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
-    /**
-     * This stores all our commands
-     */
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
+        final Thread thread = new Thread(r, "Command-execute-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
+
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
-
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     private final Variables variables;
 
-    /**
-     * This makes sure that all the commands are added
-     */
     public CommandManager(Variables variables) {
         this.variables = variables;
 
@@ -80,11 +79,6 @@ public class CommandManager {
         loadCustomCommands();
     }
 
-    /**
-     * This is method to get the commands on request
-     *
-     * @return A list of all the commands
-     */
     public Collection<ICommand> getCommands() {
         return this.commands.values();
     }
@@ -154,149 +148,6 @@ public class CommandManager {
             .collect(Collectors.toList());
     }
 
-    public boolean editCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true, true).getFirst();
-    }
-
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true, false);
-    }
-
-    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
-        if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
-        }
-
-        final boolean commandFound = this.customCommands.stream()
-            .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
-        final boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
-
-        if (commandFound || limitReached) {
-            return new Triple<>(false, commandFound, limitReached);
-        }
-
-        if (insertInDb) {
-            try {
-                final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
-
-                if (isEdit) {
-                    this.variables.getDatabaseAdapter()
-                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
-                            future.complete(triple);
-                            return null;
-                        });
-                } else {
-                    this.variables.getDatabaseAdapter()
-                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
-                            future.complete(triple);
-                            return null;
-                        });
-                }
-
-                final Triple<Boolean, Boolean, Boolean> res = future.get();
-
-                if (res != null && !res.getFirst()) {
-                    return res;
-                }
-            }
-            catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                Sentry.capture(e);
-            }
-        }
-
-        if (isEdit) {
-            this.customCommands.remove(getCustomCommand(command.getName(), command.getGuildId()));
-        }
-
-        this.customCommands.add(command);
-
-        return new Triple<>(true, false, false);
-    }
-
-    /*
-     * This removes a command from the commands
-     *
-     * @param command the command to remove
-     * @return {@code true} on success
-     */
-    /*public boolean removeCommand(String command) {
-        return commands.remove(getCommand(command));
-    }*/
-
-    public boolean removeCustomCommand(String name, long guildId) {
-        final CustomCommand cmd = getCustomCommand(name, guildId);
-
-        if (cmd == null) {
-            return false;
-        }
-
-        try {
-            final CompletableFuture<Boolean> future = new CompletableFuture<>();
-            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, future::complete);
-
-            final boolean result = future.get();
-
-            if (result) {
-                this.customCommands.remove(cmd);
-            }
-
-            return result;
-        }
-        catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void addCommand(ICommand command) {
-        if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
-        }
-
-        final String cmdName = command.getName().toLowerCase();
-
-        if (this.commands.containsKey(cmdName)) {
-            throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
-        }
-
-        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
-
-        if (!lowerAliasses.isEmpty()) {
-            for (final String alias : lowerAliasses) {
-                if (this.aliases.containsKey(alias)) {
-                    throw new IllegalArgumentException(String.format(
-                        "Alias %s already present (Stored for: %s, trying to insert: %s))",
-                        alias,
-                        this.aliases.get(alias),
-                        command.getName()
-                    ));
-                }
-
-                if (this.commands.containsKey(alias)) {
-                    throw new IllegalArgumentException(String.format(
-                        "Alias %s already present for command (Stored for: %s, trying to insert: %s))",
-                        alias,
-                        this.commands.get(alias).getClass().getSimpleName(),
-                        command.getClass().getSimpleName()
-                    ));
-                }
-            }
-
-            for (final String alias : lowerAliasses) {
-                this.aliases.put(alias, command.getName());
-            }
-        }
-
-        this.commands.put(cmdName, command);
-    }
-
-    /**
-     * This will run the command when we need them
-     *
-     * @param event
-     *     the event for the message
-     */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
@@ -339,7 +190,7 @@ public class CommandManager {
             MDC.put("user.tag", event.getAuthor().getAsTag());
             MDC.put("user.id", event.getAuthor().getId());
             MDC.put("guild", event.getGuild().toString());
-            MDC.put("jda.shard", Objects.requireNonNull(event.getJDA().getShardInfo()).getShardString());
+            setJDAContext(event.getJDA());
 
             final TextChannel channel = event.getChannel();
 
@@ -464,7 +315,130 @@ public class CommandManager {
         );
     }
 
-    public void shutdown() {
-        this.commandThread.shutdown();
+    public boolean editCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true, true).getFirst();
+    }
+
+    public Triple<Boolean, Boolean, Boolean> registerCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true, false);
+    }
+
+    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+        if (command.getName().contains(" ")) {
+            throw new IllegalArgumentException("Name can't have spaces!");
+        }
+
+        final boolean commandFound = this.customCommands.stream()
+            .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
+        final boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
+
+        if (commandFound || limitReached) {
+            return new Triple<>(false, commandFound, limitReached);
+        }
+
+        if (insertInDb) {
+            try {
+                final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
+
+                if (isEdit) {
+                    this.variables.getDatabaseAdapter()
+                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                } else {
+                    this.variables.getDatabaseAdapter()
+                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                }
+
+                final Triple<Boolean, Boolean, Boolean> res = future.get();
+
+                if (res != null && !res.getFirst()) {
+                    return res;
+                }
+            }
+            catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                Sentry.capture(e);
+            }
+        }
+
+        if (isEdit) {
+            this.customCommands.remove(getCustomCommand(command.getName(), command.getGuildId()));
+        }
+
+        this.customCommands.add(command);
+
+        return new Triple<>(true, false, false);
+    }
+
+    public boolean removeCustomCommand(String name, long guildId) {
+        final CustomCommand cmd = getCustomCommand(name, guildId);
+
+        if (cmd == null) {
+            return false;
+        }
+
+        try {
+            final CompletableFuture<Boolean> future = new CompletableFuture<>();
+            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, future::complete);
+
+            final boolean result = future.get();
+
+            if (result) {
+                this.customCommands.remove(cmd);
+            }
+
+            return result;
+        }
+        catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void addCommand(ICommand command) {
+        if (command.getName().contains(" ")) {
+            throw new IllegalArgumentException("Name can't have spaces!");
+        }
+
+        final String cmdName = command.getName().toLowerCase();
+
+        if (this.commands.containsKey(cmdName)) {
+            throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
+        }
+
+        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
+
+        if (!lowerAliasses.isEmpty()) {
+            for (final String alias : lowerAliasses) {
+                if (this.aliases.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.aliases.get(alias),
+                        command.getName()
+                    ));
+                }
+
+                if (this.commands.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present for command (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.commands.get(alias).getClass().getSimpleName(),
+                        command.getClass().getSimpleName()
+                    ));
+                }
+            }
+
+            for (final String alias : lowerAliasses) {
+                this.aliases.put(alias, command.getName());
+            }
+        }
+
+        this.commands.put(cmdName, command);
     }
 }

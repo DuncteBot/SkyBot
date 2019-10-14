@@ -32,16 +32,17 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
@@ -136,10 +137,8 @@ public class AirUtils {
         return builder.toString();
     }
 
-    public static void stop(DBManager database, AudioUtils audioUtils, ShardManager manager) {
+    public static void stop(AudioUtils audioUtils, ShardManager manager) {
         stopMusic(audioUtils, manager);
-
-        database.getService().shutdown();
 
         audioUtils.getPlayerManager().shutdown();
     }
@@ -315,5 +314,9 @@ public class AirUtils {
             .collect(Collectors.joining("`, `"));
 
         return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
+    }
+
+    public static void setJDAContext(JDA jda) {
+        ((JDAImpl) jda).setContext();
     }
 }

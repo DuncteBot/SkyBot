@@ -236,7 +236,7 @@ public class CustomCommandCommand extends Command {
 
     public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId,
                                                                           boolean autoresponse, CommandManager manager) {
-        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
+        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
     }
 
     public static boolean editCustomCommand(CustomCommand customCommand, String newMessage,

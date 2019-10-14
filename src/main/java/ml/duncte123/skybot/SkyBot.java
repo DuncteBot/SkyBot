@@ -55,9 +55,11 @@ public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
-    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
-        (r) -> new Thread(r, "Game-Update-Thread")
-    );
+    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread thread = new Thread(r, "Game-Update-Thread");
+        thread.setDaemon(true);
+        return thread;
+    });
     private final IntFunction<? extends Activity> activityProvider;
     private WebRouter webRouter = null;
 

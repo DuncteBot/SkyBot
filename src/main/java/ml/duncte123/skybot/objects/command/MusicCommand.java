@@ -153,10 +153,4 @@ public abstract class MusicCommand extends Command {
     public static void addCooldown(long guildId) {
         cooldowns.put(guildId, 12600);
     }
-
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void shutdown() {
-        commandService.shutdown();
-    }
 }
