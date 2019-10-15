@@ -66,14 +66,13 @@ object CommandTransformers {
     }
 
     private fun Command.parseHelp(): String {
-        val ownUsage = this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()
-        var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
-            "<br />Usage: $ownUsage"
+        val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
+        var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
 
         if (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp()) {
-            val aliasUsage = getUsageInstructions(this.aliases[0], Settings.PREFIX).mdToHtml()
+            val aliasHelp = help(this.aliases[0], Settings.PREFIX).mdToHtml()
 
-            s += if (aliasUsage == ownUsage) {
+            s += if (aliasHelp == ownHelp) {
                 "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
             } else {
                 buildString {
