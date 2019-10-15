@@ -36,24 +36,25 @@ import spark.template.jtwig.JtwigTemplateEngine
 object Dashboard {
 
     fun before(request: Request, response: Response, oAuth2Client: OAuth2Client, config: DunctebotConfig) {
+        val ses = request.session()
 
-        if (!request.session().attributes().contains(WebRouter.SESSION_ID)) {
+        if (ses.attribute<String?>(WebRouter.SESSION_ID) == null) {
             val url = oAuth2Client.generateAuthorizationURL(
                 config.discord.oauth.redirUrl,
                 Scope.IDENTIFY, Scope.GUILDS
             )
 
-            request.session().attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
-//            response.redirect("$url&prompt=none")
-            response.redirect(url)
+            ses.attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
+
+            response.redirect("$url&prompt=none")
+//            response.redirect(url)
         }
     }
 
     fun beforeServer(request: Request, response: Response, shardManager: ShardManager) {
+        val ses = request.session()
 
-        val attributes = request.session().attributes()
-
-        if (!attributes.contains(WebRouter.USER_ID) || !attributes.contains(WebRouter.SESSION_ID)) {
+        if (ses.attribute<String?>(WebRouter.USER_ID) == null || ses.attribute<String?>(WebRouter.SESSION_ID) == null) {
             request.session().attribute(WebRouter.OLD_PAGE, request.pathInfo())
             return response.redirect("/")
         }
@@ -70,10 +71,10 @@ object Dashboard {
         }
 
         val userId = WebHelpers.getUserId(request)
+        val member = guild.getMemberById(userId)
+                ?: return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
 
-        val user = shardManager.getUserById(userId)
-        val member = guild.getMember(user!!)
-        val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
+        val hasPermission = member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
         if (!hasPermission && !request.url().contains("noperms")) {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
@@ -86,47 +87,4 @@ object Dashboard {
             .put("name", WebHelpers.getGuildFromRequest(request, shardManager)?.name).map,
             "dashboard/panelSelection.twig"))
     }
-
-    fun postIssue(): Any {
-        //                    val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-//                    val params = toMap(pairs)
-//
-//                    val captcha = params["g-recaptcha-response"] + ""
-//                    val name = params["name"]
-//                    val description = params["desc"]
-//                    // this should be an array
-//                    val lastCommands = arrayListOf<String>()
-//                    // full link or just invite code
-//                    val invite = params["inv"]
-//                    // hasteb.in or screenshot / video or whatever
-//                    val detailed = params["detailed"]
-//
-//                    var i = 0
-//                    var res: String? = params["cmds[$i]"]
-//                    while (res != null) {
-//                        lastCommands.add(res)
-//                        res = params["cmds[${++i}]"]
-//                    }
-//
-//                    if (name.isNullOrEmpty() || (description.isNullOrEmpty() || detailed.isNullOrEmpty())) {
-//                        return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
-//                    } else if (lastCommands.isEmpty()) {
-//                        return@post renderSugPage(WebVariables().put("message", "Please add at least one command."))
-//                    }
-//
-//                    val cap = helpers.verifyCapcha(captcha)
-//
-//                    if (!cap.getBoolean("success")) {
-//                        return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
-//                    }
-//
-//                    val json = JSONObject()
-//                    json.put("description", "$description").put("inv", "$invite").put("detailedReport", "$detailed")
-//                    val array = JSONArray()
-//                    lastCommands.forEach { array.put(it) }
-//                    return@post json.put("lastCommands", array).toString()
-        return "{\"lastCommands\":[\"help\", \"join\", \"play duncan\"], \"detailedReport\":\"\",\"description\":\"dank meme\"," +
-            "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
-    }
-
 }

@@ -42,6 +42,7 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
+import spark.Spark.staticFiles
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(private val shardManager: ShardManager, private val variables: Variables) {
@@ -56,10 +57,16 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
 
     init {
-        //Port has to be 2000 because of the apache proxy on the vps
+        //Port has to be 2000 because of the proxy on the vps
         port(2000)
 
-        staticFiles.location("/public")
+        if (Settings.IS_LOCAL) {
+            val projectDir = System.getProperty("user.dir")
+            val staticDir = "/src/main/resources/public"
+            staticFiles.externalLocation(projectDir + staticDir)
+        } else {
+            staticFiles.location("/public")
+        }
 
         defaultResponseTransformer {
             if (it is JsonNode) {
@@ -98,11 +105,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
-            get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
-
-            post("/issue") { _, _ ->
-                return@post Dashboard.postIssue()
-            }
         }
 
         path("/server/$GUILD_ID") {

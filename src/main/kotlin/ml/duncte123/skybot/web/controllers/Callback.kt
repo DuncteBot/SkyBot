@@ -38,7 +38,7 @@ object Callback {
         return try {
             val session = request.session()
 
-            if (!request.attributes().contains(WebRouter.SESSION_ID)){
+            if (session.attribute<String?>(WebRouter.SESSION_ID) == null){
                 return response.redirect(WebRouter.HOMEPAGE)
             }
 

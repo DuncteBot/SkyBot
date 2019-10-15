@@ -70,9 +70,8 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
         runOnThread {
-            val mapper = jackson
             val array = apis.getGuildSettings()
-            val settings: List<GuildSettings> = mapper.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
+            val settings: List<GuildSettings> = jackson.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
 
             callback.invoke(settings)
         }
@@ -283,14 +282,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
         runOnThread {
-            val mapper = jackson
-
             val storedData = apis.getExpiredBansAndMutes()
             val storedBans = storedData.get("bans")
             val storedMutes = storedData.get("mutes")
 
-            val bans: List<Ban> = mapper.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
-            val mutes: List<Mute> = mapper.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
+            val bans: List<Ban> = jackson.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
+            val mutes: List<Mute> = jackson.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
 
             callback.invoke(Pair(bans, mutes))
         }
@@ -339,11 +336,10 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun loadTags(callback: (List<Tag>) -> Unit) {
         runOnThread {
-            val mapper = jackson
             val allTags = apis.getAllTags()
 
             callback.invoke(
-                mapper.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
+                jackson.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
             )
         }
     }
@@ -388,9 +384,8 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
-            val mapper = jackson
             val expiredReminders = apis.getExpiredReminders()
-            val reminders = mapper.readValue<List<Reminder>>(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+            val reminders = jackson.readValue<List<Reminder>>(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
             if (reminders.isNotEmpty()) {
                 callback.invoke(reminders)

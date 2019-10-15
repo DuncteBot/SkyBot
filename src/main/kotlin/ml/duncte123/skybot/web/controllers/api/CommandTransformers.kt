@@ -65,19 +65,24 @@ object CommandTransformers {
         }
     }
 
-    private fun Command.parseHelp(forceAliases: Boolean = false): String {
+    private fun Command.parseHelp(): String {
+        val ownUsage = this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()
         var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
-            "<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
+            "<br />Usage: $ownUsage"
 
-        if (this.aliases.isNotEmpty() && (forceAliases || this.shouldDisplayAliasesInHelp())) {
-            s += buildString {
-                this@parseHelp.aliases.forEach {
-                    append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
-                    append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+        if (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp()) {
+            val aliasUsage = getUsageInstructions(this.aliases[0], Settings.PREFIX).mdToHtml()
+
+            s += if (aliasUsage == ownUsage) {
+                "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
+            } else {
+                buildString {
+                    this@parseHelp.aliases.forEach {
+                        append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                        append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+                    }
                 }
             }
-
-            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
         }
 
         return s
