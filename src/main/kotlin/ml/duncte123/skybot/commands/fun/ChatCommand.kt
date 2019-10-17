@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import gnu.trove.map.hash.TLongObjectHashMap
-import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
@@ -28,9 +27,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.CommandUtils.isPatron
 import ml.duncte123.skybot.utils.MapUtils
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
@@ -112,33 +109,18 @@ class ChatCommand : Command() {
         session.time = Date()
 
         session.think(message) {
-            var response = it
-
-            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !isPatron(event.author, null)
-
-            response = parseATags(response, withAds)
-            if (withAds) {
-                response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/DuncteBot)."
-                sendMsg(event, MessageBuilder().append(event.author)
-                    .setEmbed(EmbedUtils.embedMessage(response).build()).build())
-            } else {
-                sendMsg(event, "${event.author.asMention}, $response")
-            }
+            val response = parseATags(it)
+            sendMsg(event, "${event.author.asMention}, $response")
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 
     }
 
-    private fun parseATags(response: String, withAds: Boolean): String {
+    private fun parseATags(response: String): String {
         var response1 = response
         for (element in Jsoup.parse(response1).getElementsByTag("a")) {
             response1 = response1.replace(oldValue = element.toString(),
-                newValue = if (withAds) {
-                    "[${element.text()}](${element.attr("href")})"
-                } else {
-                    //It's usefull to show the text
-                    "${element.text()}(<${element.attr("href")}>)"
-                }
+                newValue = "${element.text()}(<${element.attr("href")}>)"
             )
         }
         return response1
