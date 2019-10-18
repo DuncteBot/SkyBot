@@ -37,9 +37,6 @@ import java.util.List;
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
-/**
- * This class will hold the settings for a guild
- */
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -336,9 +333,6 @@ public class GuildSettings {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return String.format("GuildSettings[%s]", guildId);

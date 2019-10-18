@@ -44,7 +44,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
-//Skybot version 1.0 and 2.0 where written in php
+//Skybot version 1.0 and 2.0 were written in php
 @SinceSkybot(version = "3.0.0")
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -149,6 +149,13 @@ public final class SkyBot {
     }
 
     public static void main(final String[] args) throws Exception {
+        /*assert AirUtils.isURL("") == false;
+        assert AirUtils.isURL("https://google.com/hello") == true;
+        assert AirUtils.isURL("https://google.com/ bla bla") == false;
+        assert AirUtils.isURL("https://goo gle.com/ bla bla") == false;
+        assert AirUtils.isURL("https://google.com/mycool-site") == true;
+        assert AirUtils.isURL("google.com") == false;*/
+
         instance = new SkyBot();
     }
 

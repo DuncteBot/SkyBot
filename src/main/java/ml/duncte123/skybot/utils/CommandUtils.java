@@ -46,11 +46,10 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-
 /**
- * The methods {@link #splitInput(String)} and {@link #parseInput(Flag[], List)} have been rewritten in java from
+ * The {@link #parseInput(Flag[], List)} method has been rewritten in java from
  * JavaScript
- * The original methods are available at https://github.com/blargbot/blargbot/
+ * The original method is available at https://github.com/blargbot/blargbot/
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandUtils {
@@ -63,58 +62,6 @@ public class CommandUtils {
     public static final Supplier<Parser> PARSER_SUPPLIER = () -> JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
         .build();
-
-    /*public static List<String> splitInput(@Nonnull String content) {
-        final List<String> input = new ArrayList<>(Arrays.asList(content.split("\\s+")));
-
-        if (!input.isEmpty() && input.get(0).isBlank()) {
-            input.remove(0);
-        }
-        if (!input.isEmpty() && input.get(input.size() - 1).isBlank()) {
-            input.remove(input.size() - 1);
-        }
-
-        List<String> words = new ArrayList<>();
-        boolean inQuote = false;
-        StringBuilder quoted = new StringBuilder();
-
-        for (final String i : input) {
-            if (!inQuote) {
-                // Normal quote            Escaped quote
-                if (i.startsWith("\"") && !i.startsWith("\\\"")) {
-                    inQuote = true;
-                    if (i.endsWith("\"") && !i.endsWith("\\\"")) {
-                        inQuote = false;
-                        words.add(i.substring(1, i.length() - 1));
-                    } else {
-                        quoted = new StringBuilder();
-                        quoted.append(i.substring(1)).append(' ');
-                    }
-                } else {
-                    words.add(i);
-                }
-            } else { // inQuote
-                if (i.endsWith("\"") && !i.endsWith("\\\"")) {
-                    inQuote = false;
-                    //noinspection StringOperationCanBeSimplified
-                    quoted.append(i.substring(0, i.length() - 1));
-                    words.add(quoted.toString());
-                } else {
-                    quoted.append(i).append(' ');
-                }
-            }
-        }
-
-        if (inQuote) {
-            words = input;
-        }
-
-        for (int i = 0; i < words.size(); i++) {
-            words.set(i, words.get(i).replace("\"", ""));
-        }
-
-        return words;
-    }*/
 
     @Nonnull
     public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
@@ -191,11 +138,12 @@ public class CommandUtils {
         return parsed;
     }
 
-    public static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
+    private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
 
+        //noinspection ConstantConditions
         final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
@@ -228,17 +176,18 @@ public class CommandUtils {
         return tagPatrons.contains(u.getIdLong()) || isDev(u);
     }
 
-    public static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
+    private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
-    public static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+    private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
 
         if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 
+        //noinspection ConstantConditions
         final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {

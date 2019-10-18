@@ -39,9 +39,6 @@ import java.util.Date;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-/**
- * Created by Duncan on 2-7-2017.
- */
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")

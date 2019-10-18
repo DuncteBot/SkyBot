@@ -31,9 +31,9 @@ import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -94,7 +94,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.PATRON;

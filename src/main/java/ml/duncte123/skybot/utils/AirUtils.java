@@ -43,12 +43,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -60,8 +60,11 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 })
 public class AirUtils {
 
+    // Default instance allows for ftp
+    private static final UrlValidator urlValidator = new UrlValidator(new String[] {"https", "http"});
+
     public static boolean isURL(String url) {
-        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)").matcher(url).find();
+        return urlValidator.isValid(url);
     }
 
     public static boolean isInt(String integer) {

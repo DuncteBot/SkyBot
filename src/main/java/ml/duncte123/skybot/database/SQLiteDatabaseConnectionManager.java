@@ -29,11 +29,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-/**
- * Represents an SQLite file database connection manager
- *
- * @author ramidzkh
- */
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class SQLiteDatabaseConnectionManager implements Closeable {
     private final String url;
