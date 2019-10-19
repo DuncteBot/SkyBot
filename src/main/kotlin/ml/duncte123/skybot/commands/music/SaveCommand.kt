@@ -32,7 +32,7 @@ class SaveCommand : MusicCommand() {
 
     init {
         this.name = "save"
-        this.helpFunction = { _, prefix -> "Saves a playlist into a file with can be loaded with `${prefix}load`" }
+        this.helpFunction = { prefix, _ -> "Saves a playlist into a file with can be loaded with `${prefix}load`" }
     }
 
     override fun run(ctx: CommandContext) {

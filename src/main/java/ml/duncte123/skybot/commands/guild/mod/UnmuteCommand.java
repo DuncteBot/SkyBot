@@ -39,7 +39,7 @@ public class UnmuteCommand extends ModBaseCommand {
     public UnmuteCommand() {
         this.name = "unmute";
         this.helpFunction = (prefix, invoke) -> "Removes the mute of a user if they are muted";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,
@@ -48,7 +48,7 @@ public class UnmuteCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "Sets the reason for this ban"
+                "Sets the reason for this umnute"
             ),
         };
     }

@@ -97,7 +97,6 @@ public class ReadyShutdownListener extends MessageListener {
         shardsReady++;
         final ShardManager manager = jda.getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
-
             loadPatrons(manager);
         }
     }

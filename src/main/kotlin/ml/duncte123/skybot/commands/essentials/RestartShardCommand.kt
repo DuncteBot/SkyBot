@@ -45,7 +45,7 @@ class RestartShardCommand : Command() {
         this.name = "restartshard"
         this.aliases = arrayOf("shardrestart")
         this.helpFunction = {_,_ -> "Restart the bot or a shard"}
-        this.usageInstructions = {invoke, prefix -> "`$prefix$invoke [shard id]`"}
+        this.usageInstructions = {prefix, invoke-> "`$prefix$invoke [shard id]`"}
     }
 
     override fun execute(ctx: CommandContext) {

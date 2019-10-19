@@ -32,7 +32,7 @@ class ShortenCommand : Command() {
         this.name = "shorten"
         this.aliases = arrayOf("short", "url", "bitly", "googl")
         this.helpFunction = {_,_ -> "Shortens a link"}
-        this.usageInstructions = {invoke, prefix -> "`$prefix$invoke <link>`"}
+        this.usageInstructions = {prefix, invoke-> "`$prefix$invoke <link>`"}
     }
 
     override fun execute(ctx: CommandContext) {

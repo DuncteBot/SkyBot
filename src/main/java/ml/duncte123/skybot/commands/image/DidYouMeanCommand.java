@@ -27,7 +27,7 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
     public DidYouMeanCommand() {
         this.name = "didyoumean";
         this.helpFunction = (prefix, invoke) -> "Did you type your search wrong?";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <top text>|<bottom text>";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <top text>|<bottom text>`";
     }
 
     @Override

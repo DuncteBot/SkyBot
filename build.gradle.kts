@@ -131,7 +131,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-validator/commons-validator
     implementation(group = "commons-validator", name = "commons-validator", version = "1.6")
 
-
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
 

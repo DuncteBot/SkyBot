@@ -54,7 +54,7 @@ public class TempMuteCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "Sets the reason for this ban"
+                "Sets the reason for this mute"
             ),
         };
     }

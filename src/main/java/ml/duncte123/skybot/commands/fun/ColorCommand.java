@@ -37,7 +37,7 @@ public class ColorCommand extends Command {
         this.category = CommandCategory.FUN;
         this.name = "color";
         this.aliases = new String[]{
-            "color",
+            "colour",
         };
         this.helpFunction = (prefix, invoke) -> "Shows a random color";
     }
