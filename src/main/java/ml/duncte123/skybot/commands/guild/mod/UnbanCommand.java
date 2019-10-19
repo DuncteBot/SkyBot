@@ -40,8 +40,8 @@ public class UnbanCommand extends ModBaseCommand {
             "ban't",
             "pardon",
         };
-        this.helpFunction = (invoke, prefix) -> "Removes the ban for a user";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <user> [-r reason]`";
+        this.helpFunction = (prefix, invoke) -> "Removes the ban for a user";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <user> [-r reason]`";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
@@ -49,7 +49,7 @@ public class UnbanCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "Sets the reason for this ban"
+                "Sets the reason for this unban"
             ),
         };
     }

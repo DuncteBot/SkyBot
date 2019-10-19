@@ -29,7 +29,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -41,7 +40,6 @@ import net.dv8tion.jda.api.requests.RestAction
 import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
-import java.util.function.BiFunction
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
@@ -58,8 +56,8 @@ class EvalCommand : Command() {
         this.category = CommandCategory.UNLISTED
         this.name = "eval"
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
-        this.helpFunction = BiFunction { _, _ -> "Evaluate groovy/java code on the bot" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <java/groovy code>`" }
+        this.helpFunction = { _, _ -> "Evaluate groovy/java code on the bot" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <java/groovy code>`" }
 
         engine = GroovyShell()
 
@@ -82,7 +80,6 @@ class EvalCommand : Command() {
         )
 
         val classImports = listOf(
-            "ml.duncte123.skybot.exceptions.DoomedException",
             "fredboat.audio.player.LavalinkManager"
         )
 
@@ -187,8 +184,7 @@ class EvalCommand : Command() {
                 sendErrorWithMessage(event.message, "ERROR: $out")
             }
 
-            is IllegalArgumentException, is DoomedException -> {
-                out as RuntimeException
+            is IllegalArgumentException -> {
                 sendErrorWithMessage(event.message, "ERROR: $out")
             }
 

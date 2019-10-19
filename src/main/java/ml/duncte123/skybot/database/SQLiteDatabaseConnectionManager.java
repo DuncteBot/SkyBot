@@ -16,43 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
+package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.Author;
 import org.sqlite.JDBC;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-/**
- * Represents an SQLite file database connection manager
- *
- * @author ramidzkh
- */
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class SQLiteDatabaseConnectionManager implements Closeable {
-
-    /**
-     * The URL of this database
-     */
+public class SQLiteDatabaseConnectionManager {
     private final String url;
-
-    /**
-     * The associated connection object
-     */
     private Connection con;
 
-    /**
-     * Constructs a new SQLite file database
-     *
-     * @param file
-     *         The file where to create or load the database
-     */
     public SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
@@ -69,9 +48,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    /**
-     * Gets the associated connection object
-     */
     public Connection getConnection() {
         try {
             return isConnected() ? con : JDBC.createConnection(url, new Properties());
@@ -82,9 +58,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    /**
-     * @return Is the connection open
-     */
     private boolean isConnected() {
         try {
             return con != null && !con.isClosed();
@@ -95,25 +68,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         }
     }
 
-    @Override
-    public void close() throws IOException {
-        try {
-            if (isConnected())
-                con.close();
-        }
-        catch (SQLException e) {
-            throw new IOException(e);
-        }
-    }
-
-    /**
-     * This sets up the database and inserts the tables if they are not there
-     *
-     * @param connection
-     *         the connection to use
-     *
-     * @author duncte123
-     */
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
         try {
@@ -219,10 +173,8 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
                     "remind_date DATETIME NOT NULL," +
                     "channel_id VARCHAR(255) DEFAULT NULL);"
             );
-
-            close();
         }
-        catch (SQLException | IOException e) {
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }

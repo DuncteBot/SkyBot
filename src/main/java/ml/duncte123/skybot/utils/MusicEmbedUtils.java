@@ -21,20 +21,9 @@ package ml.duncte123.skybot.utils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 
-/**
- * A simple class to help me build embeds
- */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MusicEmbedUtils {
 
-    /**
-     * This will generate a nice player embed for us
-     *
-     * @param mng
-     *         the {@link net.dv8tion.jda.api.entities.Guild} that we need the info for
-     *
-     * @return the String that we can place in our embed
-     */
     public static String playerEmbed(GuildMusicManager mng) {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
             generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
@@ -42,14 +31,6 @@ public class MusicEmbedUtils {
             + getVolumeIcon(mng.player.getVolume());
     }
 
-    /**
-     * This will calculate the progressbar for us
-     *
-     * @param percent
-     *         how far we are in the audio track
-     *
-     * @return the progressbar
-     */
     private static String generateProgressBar(double percent) {
         final StringBuilder str = new StringBuilder();
         for (int i = 0; i < 8; i++) {
@@ -62,14 +43,6 @@ public class MusicEmbedUtils {
         return str.toString();
     }
 
-    /**
-     * This will give a nice emote depending on how loud we are sending the music
-     *
-     * @param volume
-     *         the volume of our player
-     *
-     * @return the volume icon emote
-     */
     private static String getVolumeIcon(int volume) {
         if (volume == 0) {
             return "\uD83D\uDD07";
@@ -83,14 +56,6 @@ public class MusicEmbedUtils {
         return "\uD83D\uDD0A";
     }
 
-    /**
-     * This wil format our current player time in this format: hh:mm:ss
-     *
-     * @param duration
-     *         how far we are in the track
-     *
-     * @return our formatted time
-     */
     private static String formatTime(long duration) {
         if (duration == Long.MAX_VALUE) {
             return "LIVE";

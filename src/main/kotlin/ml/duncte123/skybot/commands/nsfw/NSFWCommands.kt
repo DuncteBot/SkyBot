@@ -26,7 +26,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class NSFWCommands : Command() {
@@ -38,7 +37,7 @@ class NSFWCommands : Command() {
         this.category = CommandCategory.NSFW
         this.name = "lewdneko"
         this.aliases = arrayOf("carsandhentai", "lewdkitsune", "hentai")
-        this.helpFunction = BiFunction { invoke, _ -> this.parseCommandHelp(invoke) }
+        this.helpFunction = { _, invoke -> this.parseCommandHelp(invoke) }
     }
 
     override fun execute(ctx: CommandContext) {

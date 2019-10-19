@@ -36,11 +36,11 @@ import java.util.concurrent.TimeUnit;
 
 import static gnu.trove.impl.Constants.DEFAULT_CAPACITY;
 import static gnu.trove.impl.Constants.DEFAULT_LOAD_FACTOR;
+import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 public class ShardWatcher implements EventListener {
     private final TIntLongMap shardMap;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
-    private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     ShardWatcher() {
         this.shardMap = new TIntLongHashMap(
@@ -48,6 +48,11 @@ public class ShardWatcher implements EventListener {
             -1, -1
         );
 
+        final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor((r) -> {
+            final Thread thread = new Thread(r, "Shard-watcher");
+            thread.setDaemon(true);
+            return thread;
+        });
         service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
     }
 
@@ -78,6 +83,7 @@ public class ShardWatcher implements EventListener {
         logger.debug("Checking shards");
 
         for (final JDA shard : shardManager.getShardCache()) {
+            setJDAContext(shard);
             final ShardInfo info = shard.getShardInfo();
             final int shardId = info.getShardId();
 
@@ -96,9 +102,5 @@ public class ShardWatcher implements EventListener {
         }
 
         logger.debug("Checking done");
-    }
-
-    public void shutdown() {
-        this.service.shutdown();
     }
 }

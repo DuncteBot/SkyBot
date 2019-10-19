@@ -24,14 +24,13 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 class WarningsCommand : ModBaseCommand() {
 
     init {
         this.name = "warnings"
-        this.helpFunction = BiFunction { _, _ -> "Shows the active warnings that a member has" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user>`" }
+        this.helpFunction = { _, _ -> "Shows the active warnings that a member has" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
     }
 

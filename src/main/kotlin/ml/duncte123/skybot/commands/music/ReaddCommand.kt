@@ -22,17 +22,17 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.exceptions.LimitReachedException
+import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron
-import java.util.function.BiFunction
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {
 
     init {
         this.name = "readd"
-        this.helpFunction = BiFunction { _, _ -> "Adds the currently playing track to the end of the queue" }
+        this.helpFunction = { _, _ -> "Adds the currently playing track to the end of the queue" }
     }
 
     override fun run(ctx: CommandContext) {
@@ -47,7 +47,8 @@ class ReaddCommand : MusicCommand() {
         }
 
         val track = t.makeClone()
-        track.userData = t.userData
+        val currentData = t.userData as TrackUserData
+        track.userData = currentData.copy(requester = currentData.requester)
 
         // This is from AudioUtils.java but in Kotlin
         var title = track.info.title

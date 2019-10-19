@@ -20,9 +20,9 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,14 +103,6 @@ public class GuildUtils {
         };
     }
 
-    /**
-     * This counts the users in a guild that have an animated avatar
-     *
-     * @param g
-     *         the guild to count it in
-     *
-     * @return the amount users that have a animated avatar
-     */
     public static long countAnimatedAvatars(Guild g) {
         //noinspection ConstantConditions
         return g.getMemberCache().applyStream(
@@ -121,14 +113,6 @@ public class GuildUtils {
         );
     }
 
-    /**
-     * This will get the first channel of a guild that we can write in/should be able to write in
-     *
-     * @param guild
-     *         The guild that we want to get the main channel from
-     *
-     * @return the Text channel that we can send our messages in.
-     */
     public static TextChannel getPublicChannel(Guild guild) {
 
         final TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
@@ -143,15 +127,6 @@ public class GuildUtils {
         return pubChann;
     }
 
-    /**
-     * This will convert the VerificationLevel from the guild to how it is displayed in the settings
-     *
-     * @param lvl
-     *         The level to convert
-     *
-     * @return The converted verification level
-     */
-    // Null safety
     public static String verificationLvlToName(VerificationLevel lvl) {
 
         if (lvl == null) {

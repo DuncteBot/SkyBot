@@ -35,7 +35,7 @@ public class AlpacaCommand extends Command {
     public AlpacaCommand() {
         this.category = CommandCategory.ANIMALS;
         this.name = "alpaca";
-        this.helpFunction = (invoke, prefix) -> "Shows an alpaca";
+        this.helpFunction = (prefix, invoke) -> "Shows an alpaca";
     }
 
     @Override

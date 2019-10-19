@@ -41,7 +41,6 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.function.BiFunction
 import java.util.stream.Collectors
 
 @Authors(authors = [
@@ -54,8 +53,8 @@ class UserinfoCommand : Command() {
     init {
         this.name = "userinfo"
         this.aliases = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
-        this.helpFunction = BiFunction { _, _ -> "Get some information aobut yourself or from another user" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [@user]`" }
+        this.helpFunction = { _, _ -> "Get some information aobut yourself or from another user" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user]`" }
     }
 
     override fun execute(ctx: CommandContext) {

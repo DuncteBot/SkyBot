@@ -48,7 +48,6 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final ShardWatcher shardWatcher;
     private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
@@ -56,7 +55,7 @@ public class EventManager implements IEventManager {
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
-        shardWatcher = new ShardWatcher();
+        final ShardWatcher shardWatcher = new ShardWatcher();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
@@ -120,9 +119,5 @@ public class EventManager implements IEventManager {
 
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
-    }
-
-    public ShardWatcher getShardWatcher() {
-        return shardWatcher;
     }
 }

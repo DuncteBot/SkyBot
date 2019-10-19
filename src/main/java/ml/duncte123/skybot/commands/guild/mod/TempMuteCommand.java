@@ -44,8 +44,8 @@ public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {
         this.name = "tempmute";
-        this.helpFunction = (invoke, prefix) -> "Temporally mutes a user in the server";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
+        this.helpFunction = (prefix, invoke) -> "Temporally mutes a user in the server";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,
@@ -54,7 +54,7 @@ public class TempMuteCommand extends ModBaseCommand {
             new Flag(
                 'r',
                 "reason",
-                "Sets the reason for this ban"
+                "Sets the reason for this mute"
             ),
         };
     }

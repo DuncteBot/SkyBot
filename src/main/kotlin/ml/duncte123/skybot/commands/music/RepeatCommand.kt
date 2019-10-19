@@ -20,9 +20,9 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
@@ -30,8 +30,8 @@ class RepeatCommand : MusicCommand() {
     init {
         this.name = "repeat"
         this.aliases = arrayOf("loop")
-        this.helpFunction = BiFunction { _, _ -> "Makes the player repeat the currently playing song" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [playlist/status]`" }
+        this.helpFunction = { _, _ -> "Makes the player repeat the currently playing song" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [playlist/status]`" }
     }
 
     override fun run(ctx: CommandContext) {
@@ -40,9 +40,7 @@ class RepeatCommand : MusicCommand() {
         val scheduler = mng.scheduler
 
         if (ctx.args.size == 1) {
-            val firstArg = ctx.args[0]
-
-            when (firstArg) {
+            when (ctx.args[0]) {
                 "playlist" -> {
                     scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
                     scheduler.isRepeating = scheduler.isRepeatingPlaylists
@@ -50,8 +48,8 @@ class RepeatCommand : MusicCommand() {
 
                 "status" -> {
                     sendMsg(event, """Current repeat status:
-                        |Repeating: **${scheduler.isRepeating}**
-                        |Repeating queue: **${scheduler.isRepeatingPlaylists}**
+                        |Repeating: **${scheduler.isRepeating.toEmoji()}**
+                        |Repeating queue: **${scheduler.isRepeatingPlaylists.toEmoji()}**
                     """.trimMargin())
 
                     return
@@ -63,7 +61,6 @@ class RepeatCommand : MusicCommand() {
                     return
                 }
             }
-
         } else {
             // turn off all repeats if they are on
             if (scheduler.isRepeatingPlaylists) scheduler.isRepeatingPlaylists = false

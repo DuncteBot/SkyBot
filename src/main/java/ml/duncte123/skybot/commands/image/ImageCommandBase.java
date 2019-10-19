@@ -31,8 +31,9 @@ import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -93,52 +94,27 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.PATRON;
     }
 
+    @Nullable
     protected String getImageFromCommand(CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-
         String url = null;
 
         if (!ctx.getMessage().getAttachments().isEmpty()) {
-            final Attachment attachment = ctx.getMessage().getAttachments().get(0);
-
-            final File file = new File(attachment.getFileName());
-
-
-            String mimetype = null;
-            try {
-                mimetype = Files.probeContentType(file.toPath());
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            //mimetype should be something like "image/png"
-
-            if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
-                sendMsg(event, "That file does not look like an image");
-                return null;
-            }
-            url = attachment.getUrl();
+            url = tryGetAttachment(ctx);
         }
 
         if (url == null && args.isEmpty()) {
-            return getAvatarUrl(event.getAuthor());
+            url = getAvatarUrl(ctx.getAuthor());
         }
 
         if (url == null && AirUtils.isURL(args.get(0))) {
-            try {
-                url = new URL(args.get(0)).toString();
-            }
-            catch (MalformedURLException ignored) {
-                sendMsg(event, "That does not look like a valid url");
-                return null;
-            }
+            url = tryGetUrl(ctx, args.get(0));
         }
 
         if (url == null && !ctx.getMessage().getMentionedUsers().isEmpty()) {
@@ -154,10 +130,44 @@ public abstract class ImageCommandBase extends Command {
         }
 
         if (url == null) {
-            url = getAvatarUrl(event.getAuthor());
+            url = getAvatarUrl(ctx.getAuthor());
         }
 
         return url;
+    }
+
+    @Nullable
+    private String tryGetAttachment(CommandContext ctx) {
+        final Attachment attachment = ctx.getMessage().getAttachments().get(0);
+
+        final File file = new File(attachment.getFileName());
+
+        String mimetype = null;
+        try {
+            mimetype = Files.probeContentType(file.toPath());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //mimetype should be something like "image/png"
+        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+            sendMsg(ctx, "That file does not look like an image");
+            return null;
+        }
+
+        return attachment.getUrl();
+    }
+
+    @Nullable
+    private String tryGetUrl(CommandContext ctx, String s) {
+        try {
+            return new URL(s).toString();
+        }
+        catch (MalformedURLException ignored) {
+            sendMsg(ctx, "That does not look like a valid url");
+            return null;
+        }
     }
 
     private String getAvatarUrl(User user) {

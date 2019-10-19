@@ -51,8 +51,8 @@ public class HelpCommand extends Command {
             "commands",
             "h",
         };
-        this.helpFunction = (invoke, prefix) -> "Sends you a list of all the commands";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " [command]`";
+        this.helpFunction = (prefix, invoke) -> "Sends you a list of all the commands";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [command]`";
     }
 
     @Override

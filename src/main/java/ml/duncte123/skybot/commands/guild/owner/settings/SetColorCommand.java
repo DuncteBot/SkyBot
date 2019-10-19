@@ -41,8 +41,8 @@ public class SetColorCommand extends SettingsBase {
         this.aliases = new String[]{
             "setembedcolor",
         };
-        this.helpFunction = (invoke, prefix) -> "Sets the color of the embeds that the bot sends";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <hex color>`";
+        this.helpFunction = (prefix, invoke) -> "Sets the color of the embeds that the bot sends";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <hex color>`";
     }
 
     @Override

@@ -22,7 +22,6 @@ import kotlin.Triple;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -54,8 +53,8 @@ public class CustomCommandCommand extends Command {
             "cc",
             "customcommands",
         };
-        this.helpFunction = (invoke, prefix) -> "Create, edit and delete custom commands";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " list` => Shows a list of all the custom commands\n" +
+        this.helpFunction = (prefix, invoke) -> "Create, edit and delete custom commands";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " list` => Shows a list of all the custom commands\n" +
             '`' + prefix + invoke + " new <name> <text>` => Creates a new custom command\n" +
             '`' + prefix + invoke + " edit <name> <text>` => Edits a custom command\n" +
             '`' + prefix + invoke + " raw <name>` => Shows the raw value of a custom command\n" +
@@ -201,7 +200,7 @@ public class CustomCommandCommand extends Command {
 
             sendMsg(event, String.format(error, reason));
         }
-        catch (DoomedException e) {
+        catch (IllegalArgumentException e) {
             sendMsg(event, "Could not add command: " + e.getMessage());
         }
     }
@@ -237,7 +236,7 @@ public class CustomCommandCommand extends Command {
 
     public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId,
                                                                           boolean autoresponse, CommandManager manager) {
-        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
+        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
     }
 
     public static boolean editCustomCommand(CustomCommand customCommand, String newMessage,

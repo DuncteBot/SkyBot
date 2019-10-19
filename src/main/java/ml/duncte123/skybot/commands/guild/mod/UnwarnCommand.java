@@ -34,8 +34,8 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class UnwarnCommand extends ModBaseCommand {
     public UnwarnCommand() {
         this.name = "unwarn";
-        this.helpFunction = (invoke, prefix) -> "Removes the latest warning of a user in this server";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user>`";
+        this.helpFunction = (prefix, invoke) -> "Removes the latest warning of a user in this server";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user>`";
         this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };

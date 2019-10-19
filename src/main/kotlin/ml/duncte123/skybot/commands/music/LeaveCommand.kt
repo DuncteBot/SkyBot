@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class LeaveCommand : MusicCommand() {
@@ -31,7 +30,7 @@ class LeaveCommand : MusicCommand() {
     init {
         this.name = "leave"
         this.aliases = arrayOf("disconnect", "exit")
-        this.helpFunction = BiFunction {_,_ -> "Makes the bot leave the current voice channel"}
+        this.helpFunction = {_,_ -> "Makes the bot leave the current voice channel"}
     }
 
     override fun run(ctx: CommandContext) {

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -54,7 +53,7 @@ public class CustomCommandImpl implements CustomCommand {
         return guildId;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName() {
         return invoke;

@@ -44,7 +44,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
-//Skybot version 1.0 and 2.0 where written in php
+//Skybot version 1.0 and 2.0 were written in php
 @SinceSkybot(version = "3.0.0")
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -55,9 +55,11 @@ public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
-    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
-        (r) -> new Thread(r, "Game-Update-Thread")
-    );
+    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread thread = new Thread(r, "Game-Update-Thread");
+        thread.setDaemon(true);
+        return thread;
+    });
     private final IntFunction<? extends Activity> activityProvider;
     private WebRouter webRouter = null;
 
@@ -104,7 +106,6 @@ public final class SkyBot {
         logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
-
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
         final DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder()
@@ -148,6 +149,13 @@ public final class SkyBot {
     }
 
     public static void main(final String[] args) throws Exception {
+        /*assert AirUtils.isURL("") == false;
+        assert AirUtils.isURL("https://google.com/hello") == true;
+        assert AirUtils.isURL("https://google.com/ bla bla") == false;
+        assert AirUtils.isURL("https://goo gle.com/ bla bla") == false;
+        assert AirUtils.isURL("https://google.com/mycool-site") == true;
+        assert AirUtils.isURL("google.com") == false;*/
+
         instance = new SkyBot();
     }
 

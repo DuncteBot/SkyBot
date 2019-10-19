@@ -42,8 +42,8 @@ public class BanCommand extends ModBaseCommand {
         this.aliases = new String[]{
             "dabon",
         };
-        this.helpFunction = (invoke, prefix) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
+        this.helpFunction = (prefix, invoke) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
@@ -52,6 +52,10 @@ public class BanCommand extends ModBaseCommand {
                 'r',
                 "reason",
                 "Sets the reason for this ban"
+            ),
+            new Flag(
+                "nodel",
+                "Prevents the deletion of any messages"
             ),
         };
     }
@@ -93,8 +97,9 @@ public class BanCommand extends ModBaseCommand {
         }
 
         final String fReason = reason;
+        final int delDays = flags.containsKey("nodel") ? 0 : 1;
 
-        ctx.getGuild().ban(toBan.getId(), 1, reason)
+        ctx.getGuild().ban(toBan.getId(), delDays, reason)
             .reason(String.format("Ban by %#s: %s", ctx.getAuthor(), fReason))
             .queue(
             (m) -> {

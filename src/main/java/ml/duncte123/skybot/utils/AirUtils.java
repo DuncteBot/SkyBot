@@ -32,22 +32,23 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.internal.JDAImpl;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -59,26 +60,13 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 })
 public class AirUtils {
 
-    /**
-     * This will validate a link
-     *
-     * @param url
-     *         The thing to check
-     *
-     * @return true or false depending on if the url is valid
-     */
+    // Default instance allows for ftp
+    private static final UrlValidator urlValidator = new UrlValidator(new String[] {"https", "http"});
+
     public static boolean isURL(String url) {
-        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)").matcher(url).find();
+        return urlValidator.isValid(url);
     }
 
-    /**
-     * This will check if the number that we are trying to parse is an int
-     *
-     * @param integer
-     *         the int to check
-     *
-     * @return true if it is an int
-     */
     public static boolean isInt(String integer) {
         return integer.matches("^\\d{1,11}$");
     }
@@ -96,28 +84,10 @@ public class AirUtils {
         return (int) input;
     }
 
-    /**
-     * This will generate the uptime for us based on the time that we pass in
-     *
-     * @param time
-     *         The time that the bot has been running for
-     *
-     * @return The uptime nicely formatted
-     */
     public static String getUptime(long time) {
         return getUptime(time, false);
     }
 
-    /**
-     * This will generate the uptime for us based on the time that we pass in
-     *
-     * @param time
-     *         The time that the bot has been running for
-     * @param withTime
-     *         If we should add the seconds, minutes and hours to the time
-     *
-     * @return The uptime nicely formatted
-     */
     public static String getUptime(long time, boolean withTime) {
         /*
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
@@ -170,18 +140,13 @@ public class AirUtils {
         return builder.toString();
     }
 
-    /**
-     * Stops everything
-     */
-    public static void stop(DBManager database, AudioUtils audioUtils, ShardManager manager) {
+    public static void stop(AudioUtils audioUtils, ShardManager manager) {
         stopMusic(audioUtils, manager);
-
-        database.getService().shutdown();
 
         audioUtils.getPlayerManager().shutdown();
     }
 
-    public static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
+    private static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (final long key : temp.keys()) {
@@ -215,16 +180,6 @@ public class AirUtils {
         return getLogChannel(Long.toString(channel), g);
     }
 
-    /**
-     * This gets the channel from a name or id
-     *
-     * @param channelId
-     *         the channel name or id
-     * @param guild
-     *         the guild to search in
-     *
-     * @return the channel
-     */
     private static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
@@ -362,5 +317,9 @@ public class AirUtils {
             .collect(Collectors.joining("`, `"));
 
         return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
+    }
+
+    public static void setJDAContext(JDA jda) {
+        ((JDAImpl) jda).setContext();
     }
 }

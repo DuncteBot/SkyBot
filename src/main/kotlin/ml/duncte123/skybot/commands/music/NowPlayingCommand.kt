@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.extensions.toEmbed
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
@@ -32,7 +31,7 @@ class NowPlayingCommand : MusicCommand() {
     init {
         this.name = "nowplaying"
         this.aliases = arrayOf("np", "song")
-        this.helpFunction = BiFunction { _, _ -> "Prints information about the currently playing song (title, current time)" }
+        this.helpFunction = { _, _ -> "Prints information about the currently playing song (title, current time)" }
     }
 
     override fun execute(ctx: CommandContext) {

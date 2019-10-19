@@ -26,9 +26,9 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -51,8 +51,8 @@ public class TokenCommand extends Command {
     public TokenCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "token";
-        this.helpFunction = (invoke, prefix) -> "Deconstructs a token to get as much information as possible from it";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <token of a discord bot>`";
+        this.helpFunction = (prefix, invoke) -> "Deconstructs a token to get as much information as possible from it";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <token of a discord bot>`";
     }
 
     @Override

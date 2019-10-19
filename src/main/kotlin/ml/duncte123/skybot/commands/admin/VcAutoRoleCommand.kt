@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.VoiceChannel
-import java.util.function.BiFunction
 import java.util.stream.Collectors
 
 class VcAutoRoleCommand : ModBaseCommand() {
@@ -36,8 +35,8 @@ class VcAutoRoleCommand : ModBaseCommand() {
     init {
         this.category = CommandCategory.ADMINISTRATION
         this.name = "vcautorole"
-        this.helpFunction = BiFunction { _, _ -> "Gives a role to a user when they join a specified voice channel" }
-        this.usageInstructions = BiFunction { invoke, prefix ->
+        this.helpFunction = { _, _ -> "Gives a role to a user when they join a specified voice channel" }
+        this.usageInstructions = { prefix, invoke ->
             """`$prefix$invoke add <voice channel> <@role>`
         |`$prefix$invoke remove <voice channel>`
         |`$prefix$invoke off`

@@ -31,6 +31,7 @@ public class Settings {
     public static final TLongList DEVELOPERS = MapUtils.newLongList();
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
+    public static final boolean IS_LOCAL = "@versionObj@".equals(VERSION);
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
     public static final int DEFAULT_COLOUR = 0x0751c6;
 

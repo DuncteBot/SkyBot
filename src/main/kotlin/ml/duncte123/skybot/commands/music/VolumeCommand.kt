@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import java.util.function.BiFunction
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,8 +31,8 @@ class VolumeCommand : MusicCommand() {
 
     init {
         this.name = "volume"
-        this.helpFunction = BiFunction { _, _ -> "Sets the volume on the music player" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke [volume]`" }
+        this.helpFunction = { _, _ -> "Sets the volume on the music player" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [volume]`" }
     }
 
     override fun run(ctx: CommandContext) {

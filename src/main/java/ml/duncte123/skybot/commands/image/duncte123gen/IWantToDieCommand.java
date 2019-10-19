@@ -27,8 +27,8 @@ public class IWantToDieCommand extends NoPatronImageCommand {
 
     public IWantToDieCommand() {
         this.name = "iwanttodie";
-        this.helpFunction = (invoke, prefix) -> "You have decided that you want to die";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+        this.helpFunction = (prefix, invoke) -> "You have decided that you want to die";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
     }
 
     @Override

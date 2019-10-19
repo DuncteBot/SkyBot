@@ -44,7 +44,7 @@ public class GuildJoinsCommand extends Command {
 
     public GuildJoinsCommand() {
         this.name = "serverjoins";
-        this.helpFunction = (invoke, prefix) -> "Shows a graph with the joins for this server.\n" +
+        this.helpFunction = (prefix, invoke) -> "Shows a graph with the joins for this server.\n" +
             "This is not a full history as it only looks at the members that are currently in the server.";
         this.botPermissions = new Permission[]{
             Permission.MESSAGE_ATTACH_FILES,

@@ -26,15 +26,14 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : ModBaseCommand() {
 
     init {
         this.name = "warn"
-        this.helpFunction = BiFunction { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user> [-r reason]`" }
+        this.helpFunction = { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user> [-r reason]`" }
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
         this.flags = arrayOf(
             Flag(

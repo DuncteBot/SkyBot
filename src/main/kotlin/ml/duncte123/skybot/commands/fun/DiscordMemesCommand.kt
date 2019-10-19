@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DiscordMemesCommand : WeebCommandBase() {
@@ -33,7 +32,7 @@ class DiscordMemesCommand : WeebCommandBase() {
         this.category = CommandCategory.FUN
         this.name = "discordmeme"
         this.aliases = arrayOf("dmeme", "discordmemes", "dmemes")
-        this.helpFunction = BiFunction { _, _ -> "Shows a discord meme" }
+        this.helpFunction = { _, _ -> "Shows a discord meme" }
     }
 
     override fun execute(ctx: CommandContext) {

@@ -30,15 +30,14 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DeHoistCommand : ModBaseCommand() {
 
     init {
         this.name = "dehoist"
-        this.helpFunction = BiFunction { _, _ -> "De-hoists a user" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <@user>`" }
+        this.helpFunction = { _, _ -> "De-hoists a user" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
         this.userPermissions = arrayOf(Permission.NICKNAME_MANAGE)
         this.botPermissions = arrayOf(Permission.NICKNAME_MANAGE)
     }

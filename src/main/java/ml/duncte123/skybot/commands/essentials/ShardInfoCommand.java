@@ -55,7 +55,7 @@ public class ShardInfoCommand extends Command {
         this.aliases = new String[]{
             "shards",
         };
-        this.helpFunction = (invoke, prefix) -> "Get information about all things shards";
+        this.helpFunction = (prefix, invoke) -> "Get information about all things shards";
         this.flags = new Flag[]{
             new Flag(
                 'm',
@@ -201,7 +201,7 @@ public class ShardInfoCommand extends Command {
         final ShardCacheView shardCache = shardManager.getShardCache();
 
         //noinspection ConstantConditions
-        long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         final String connectedShards = String.valueOf(l);
         final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
@@ -249,14 +249,6 @@ public class ShardInfoCommand extends Command {
         return new Pair<>(connectedVC.get(), listeningVC.get());
     }
 
-    /**
-     * @param shard
-     *     the current shard
-     *
-     * @return a pair where
-     * first  = connected channels
-     * second = users listening in channel
-     */
     @SuppressWarnings("ConstantConditions")
     private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
 

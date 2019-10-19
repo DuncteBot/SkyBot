@@ -38,10 +38,10 @@ public class SeekCommand extends MusicCommand {
 
     public SeekCommand() {
         this.name = "seek";
-        this.helpFunction = (invoke, prefix) -> "Seek in the currently playing track\n" +
+        this.helpFunction = (prefix, invoke) -> "Seek in the currently playing track\n" +
             "Examples: `" + prefix + invoke + " 04:20`\n" +
             '`' + prefix + invoke + " 00:50`\n";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <minutes:seconds>`";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <minutes:seconds>`";
     }
 
     @Override

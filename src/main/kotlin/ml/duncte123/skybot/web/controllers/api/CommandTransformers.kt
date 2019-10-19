@@ -23,7 +23,6 @@ import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.objects.command.ICommand
 
 object CommandTransformers {
 
@@ -66,19 +65,23 @@ object CommandTransformers {
         }
     }
 
-    private fun Command.parseHelp(forceAliases: Boolean = false): String {
-        var s = this.help(this.name, Settings.PREFIX).mdToHtml() +
-            "<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
+    private fun Command.parseHelp(): String {
+        val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
+        var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
 
-        if (this.aliases.isNotEmpty() && (forceAliases || this.shouldDisplayAliasesInHelp())) {
-            s += buildString {
-                this@parseHelp.aliases.forEach {
-                    append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
-                    append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+        if (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp()) {
+            val aliasHelp = help(this.aliases[0], Settings.PREFIX).mdToHtml()
+
+            s += if (aliasHelp == ownHelp) {
+                "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
+            } else {
+                buildString {
+                    this@parseHelp.aliases.forEach {
+                        append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                        append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+                    }
                 }
             }
-
-            s += "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
         }
 
         return s

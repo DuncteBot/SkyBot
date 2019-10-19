@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import org.apache.commons.text.WordUtils
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class DialogCommand : Command() {
@@ -32,8 +31,8 @@ class DialogCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "dialog"
-        this.helpFunction = BiFunction { _, _ -> "Displays a confirmation dialog" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <text>`" }
+        this.helpFunction = { _, _ -> "Displays a confirmation dialog" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <text>`" }
     }
 
     override fun execute(ctx: CommandContext) {

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ImageCommand : Command() {
@@ -34,8 +33,8 @@ class ImageCommand : Command() {
     init {
         this.category = CommandCategory.PATRON
         this.name = "image"
-        this.helpFunction = BiFunction { _, _ -> "Searches for an image on google" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <search term>`" }
+        this.helpFunction = { _, _ -> "Searches for an image on google" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <search term>`" }
     }
 
     override fun execute(ctx: CommandContext) {

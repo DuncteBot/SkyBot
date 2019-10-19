@@ -15,7 +15,7 @@
     Resolving deltas: 100% (8584/8584), done.
     Checking connectivity... done.
     ```
-> Replace `ExampleName` with your GitHub username, mine for example is `duncte123`
+> Replace `ExampleName` with your GitHub username, mine is `duncte123` for example
 
 3. Move to your local repository (here `SkyBot`)
 
@@ -109,12 +109,6 @@ Based on the current `upstream/master` changes!
 
 **Good Addition**
 ```diff
-+    /**
-+    * This makes a post request to the specified website
-+    * @param url The website to post to
-+    * @param postFields the params for the post
-+    * @return The {@link okhttp3.Response Response} from the webserver
-+    */
 +   @Nullable
 +   public static Response postRequest(String url, @Nonnull Map<String, Object> postFields) {
 +       if (url != null) {
@@ -124,4 +118,4 @@ Based on the current `upstream/master` changes!
 +       return postRequest(url, postFields, AcceptType.URLENCODED);
 +   }
 ```
-The annotations should always be imported from `org.jetbrains.annotations`
+The annotations should always be imported from `javax.annotation`

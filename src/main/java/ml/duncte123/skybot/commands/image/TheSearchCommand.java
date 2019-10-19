@@ -29,8 +29,8 @@ public class TheSearchCommand extends ImageCommandBase {
 
     public TheSearchCommand() {
         this.name = "thesearch";
-        this.helpFunction = (invoke, prefix) -> "Go on a journey to find intelligent life";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+        this.helpFunction = (prefix, invoke) -> "Go on a journey to find intelligent life";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
     }
 
     @Override

@@ -36,9 +36,6 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-/**
- * Created by Duncan on 11-7-2017.
- */
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
@@ -53,7 +50,7 @@ public class BotinfoCommand extends Command {
             "support",
             "bi",
         };
-        this.helpFunction = (invoke, prefix) -> "Displays some information about the bot";
+        this.helpFunction = (prefix, invoke) -> "Displays some information about the bot";
     }
 
     @Override

@@ -21,14 +21,13 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 class ReverseCommand : Command() {
 
     init {
         this.name = "reverse"
-        this.helpFunction = BiFunction { _, _ -> "Reverses a string" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <texxt>`" }
+        this.helpFunction = { _, _ -> "Reverses a string" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <texxt>`" }
     }
 
     override fun execute(ctx: CommandContext) {

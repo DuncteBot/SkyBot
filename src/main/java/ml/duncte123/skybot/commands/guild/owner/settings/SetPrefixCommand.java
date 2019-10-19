@@ -30,8 +30,8 @@ public class SetPrefixCommand extends SettingsBase {
 
     public SetPrefixCommand() {
         this.name = "setprefix";
-        this.helpFunction = (invoke, prefix) -> "Sets the new prefix to use on this server";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <prefix>`";
+        this.helpFunction = (prefix, invoke) -> "Sets the new prefix to use on this server";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <prefix>`";
     }
 
     @Override

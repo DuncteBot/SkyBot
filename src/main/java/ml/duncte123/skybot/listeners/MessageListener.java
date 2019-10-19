@@ -21,12 +21,14 @@ package ml.duncte123.skybot.listeners;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
-import ml.duncte123.skybot.*;
+import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -44,6 +46,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,6 +56,7 @@ import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
+import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public abstract class MessageListener extends BaseListener {
@@ -61,7 +65,7 @@ public abstract class MessageListener extends BaseListener {
     private static final String PROFANITY_FILTER_DISABLE_FLAG = "--no-filter";
     final SpamFilter spamFilter = new SpamFilter(variables);
     final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
-        r -> new Thread(r, "Bot-Service-Thread"));
+        (r) -> new Thread(r, "Bot-Service-Thread"));
 
     MessageListener(Variables variables) {
         super(variables);
@@ -72,11 +76,11 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        variables.getDatabase().run(() -> {
+        this.handlerThread.submit(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
             if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
-                !event.getMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE) &&
                 guild.getSettings().isEnableSwearFilter()) {
                 checkSwearFilter(event.getMessage(), event, guild);
             }
@@ -102,7 +106,7 @@ public abstract class MessageListener extends BaseListener {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
-            final ShardManager manager = event.getJDA().getShardManager();
+            final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
             event.getMessage().addReaction("a:_yes:577795293546938369").queue(
                 success -> killAllShards(manager),
@@ -112,8 +116,9 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        variables.getDatabase().run(() -> {
+        this.handlerThread.submit(() -> {
             try {
+                setJDAContext(event.getJDA());
                 handleMessageEventChecked(rw, guild, event);
             }
             catch (Exception e) {
@@ -169,7 +174,7 @@ public abstract class MessageListener extends BaseListener {
 
         if (rw.matches(selfRegex + "(.*)")) {
             //Handle the chat command
-            commandManager.getCommand("chat").executeCommand(new CommandContext(
+            Objects.requireNonNull(commandManager.getCommand("chat")).executeCommand(new CommandContext(
                 "chat",
                 Arrays.asList(split).subList(1, split.length),
                 event,
@@ -389,7 +394,7 @@ public abstract class MessageListener extends BaseListener {
     private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
-            && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+            && !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
 
             checkMessageForInvites(guild, event, settings, rw);
 
@@ -423,25 +428,22 @@ public abstract class MessageListener extends BaseListener {
     }
 
     public void killAllShards(@Nonnull ShardManager manager) {
+        final Thread shutdownThread = new Thread(() -> {
+            manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
-        //noinspection ConstantConditions
-        final ShardWatcher shardWatcher = ((EventManager) manager.getShardById(0).getEventManager()).getShardWatcher();
+            try {
+                // Sleep for 3 seconds
+                Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+            }
+            catch (InterruptedException ignored) {
+            }
 
-        manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
+            if (!shuttingDown) {
+                return;
+            }
 
-        try {
-            // Sleep for 3 seconds
-            Thread.sleep(TimeUnit.SECONDS.toMillis(3));
-        }
-        catch (InterruptedException ignored) {
-        }
-
-        if (shuttingDown) {
             // Kill all threads
-            shardWatcher.shutdown();
-            MusicCommand.shutdown();
             this.systemPool.shutdown();
-            variables.getCommandManager().shutdown();
             SkyBot.getInstance().getGameScheduler().shutdown();
 
             final WebRouter router = SkyBot.getInstance().getWebRouter();
@@ -450,14 +452,14 @@ public abstract class MessageListener extends BaseListener {
                 router.shutdown();
             }
 
-            AirUtils.stop(variables.getDatabase(), variables.getAudioUtils(), manager);
-
+            AirUtils.stop(variables.getAudioUtils(), manager);
             BotCommons.shutdown(manager);
 
             // We close every thread :)
             /*if (!isUpdating) {
                 System.exit(0);
             }*/
-        }
+        }, "shutdown-thread");
+        shutdownThread.start();
     }
 }

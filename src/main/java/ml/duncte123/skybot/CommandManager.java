@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import com.jagrosh.jagtag.Parser;
 import io.sentry.Sentry;
 import kotlin.Triple;
-import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -40,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
@@ -49,26 +50,25 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
+import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
-    /**
-     * This stores all our commands
-     */
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
+        final Thread thread = new Thread(r, "Command-execute-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
+
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
-
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     private final Variables variables;
 
-    /**
-     * This makes sure that all the commands are added
-     */
     public CommandManager(Variables variables) {
         this.variables = variables;
 
@@ -79,11 +79,6 @@ public class CommandManager {
         loadCustomCommands();
     }
 
-    /**
-     * This is method to get the commands on request
-     *
-     * @return A list of all the commands
-     */
     public Collection<ICommand> getCommands() {
         return this.commands.values();
     }
@@ -100,14 +95,7 @@ public class CommandManager {
         return this.customCommands;
     }
 
-    /**
-     * This tries to get a command with the provided name/alias
-     *
-     * @param name
-     *     the name of the command
-     *
-     * @return a possible null command for the name
-     */
+    @Nullable
     public ICommand getCommand(String name) {
 
         ICommand found = this.commands.get(name);
@@ -143,7 +131,7 @@ public class CommandManager {
         return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
-
+    @Nullable
     public CustomCommand getCustomCommand(String invoke, long guildId) {
         return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
             .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
@@ -160,17 +148,184 @@ public class CommandManager {
             .collect(Collectors.toList());
     }
 
+    public void runCommand(GuildMessageReceivedEvent event) {
+        final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
+        final String[] split = event.getMessage().getContentRaw().replaceFirst(
+            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
+                Pattern.quote(customPrefix),
+            "").split("\\s+", 2);
+        final String invoke = split[0];
+
+        final List<String> args = new ArrayList<>();
+
+        if (split.length > 1) {
+            final String raw = split[1];
+            final Matcher m = COMMAND_PATTERN.matcher(raw);
+            while (m.find()) {
+                args.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
+            }
+        }
+
+        dispatchCommand(invoke, invoke.toLowerCase(), args, event);
+    }
+
+    private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
+        ICommand cmd = getCommand(invokeLower);
+
+        if (cmd == null) {
+            cmd = getCustomCommand(invokeLower, event.getGuild().getIdLong());
+        }
+
+        if (cmd == null) {
+            return;
+        }
+
+        dispatchCommand(cmd, invoke, args, event);
+    }
+
+    public void dispatchCommand(@Nonnull ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        this.commandThread.submit(() -> {
+            MDC.put("command.invoke", invoke);
+            MDC.put("command.args", args.toString());
+            MDC.put("user.tag", event.getAuthor().getAsTag());
+            MDC.put("user.id", event.getAuthor().getId());
+            MDC.put("guild", event.getGuild().toString());
+            setJDAContext(event.getJDA());
+
+            final TextChannel channel = event.getChannel();
+
+            if (!channel.canTalk()) {
+                return;
+            }
+
+            // Suppress errors from when we can't type in the channel
+            channel.sendTyping().queue(null, (t) -> {});
+
+            try {
+                if (!cmd.isCustom()) {
+                    runNormalCommand(cmd, invoke, args, event);
+                } else {
+                    runCustomCommand(cmd, invoke, args, event);
+                }
+            }
+            catch (Throwable ex) {
+                execCheck(ex);
+                ex.printStackTrace();
+                sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
+            }
+        });
+    }
+
+    private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
+                "Please mark this channel as NSFW to use this command");
+            return;
+        }
+
+        MDC.put("command.class", cmd.getClass().getName());
+
+        LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
+
+        cmd.executeCommand(
+            new CommandContext(invoke, args, event, variables)
+        );
+    }
+
+    private void runCustomCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        final CustomCommand cc = (CustomCommand) cmd;
+
+        if (cc.getGuildId() != event.getGuild().getIdLong()) {
+            return;
+        }
+
+        try {
+            MDC.put("command.custom.message", cc.getMessage());
+
+            final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
+
+            final String message = parser.parse(cc.getMessage());
+            final MessageBuilder messageBuilder = new MessageBuilder();
+            final DataObject object = parser.get("embed");
+
+            if (!message.isEmpty()) {
+                messageBuilder.setContent("\u200B" + message);
+            }
+
+            if (object != null) {
+                final JDAImpl jda = (JDAImpl) event.getJDA();
+                final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
+
+                messageBuilder.setEmbed(embed);
+            }
+
+            if (!messageBuilder.isEmpty()) {
+                sendMsg(event, messageBuilder.build());
+            }
+
+
+            parser.clear();
+        }
+        catch (Exception e) {
+            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+            execCheck(e);
+        }
+    }
+
+    private void registerCommandsFromReflection(Reflections reflections) {
+
+        final List<Class<? extends ICommand>> filteredCommands = reflections
+            .getSubTypesOf(ICommand.class)
+            .stream()
+            // Remove abstract classes
+            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
+            .collect(Collectors.toList());
+
+        //Loop over them commands
+        for (final Class<? extends ICommand> cmd : filteredCommands) {
+            try {
+                final ICommand command;
+
+                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
+                    command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
+                } else {
+                    command = cmd.getDeclaredConstructor().newInstance();
+                }
+
+                this.addCommand(command);
+            }
+            catch (IllegalArgumentException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadCustomCommands() {
+        this.variables.getDatabaseAdapter().getCustomCommands(
+            (loadedCommands) -> {
+                loadedCommands.forEach(
+                    (command) -> addCustomCommand(command, false, false)
+                );
+
+                return null;
+            }
+        );
+    }
+
     public boolean editCustomCommand(CustomCommand c) {
         return addCustomCommand(c, true, true).getFirst();
     }
 
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand c) {
+    public Triple<Boolean, Boolean, Boolean> registerCustomCommand(CustomCommand c) {
         return addCustomCommand(c, true, false);
     }
 
     private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
-            throw new DoomedException("Name can't have spaces!");
+            throw new IllegalArgumentException("Name can't have spaces!");
         }
 
         final boolean commandFound = this.customCommands.stream()
@@ -220,16 +375,6 @@ public class CommandManager {
         return new Triple<>(true, false, false);
     }
 
-    /*
-     * This removes a command from the commands
-     *
-     * @param command the command to remove
-     * @return {@code true} on success
-     */
-    /*public boolean removeCommand(String command) {
-        return commands.remove(getCommand(command));
-    }*/
-
     public boolean removeCustomCommand(String name, long guildId) {
         final CustomCommand cmd = getCustomCommand(name, guildId);
 
@@ -255,18 +400,9 @@ public class CommandManager {
         }
     }
 
-    /**
-     * This handles adding the command
-     *
-     * @param command
-     *     The command to add
-     *
-     * @throws IllegalArgumentException
-     *     if the command or alias is already present
-     */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
-            throw new DoomedException("Name can't have spaces!");
+            throw new IllegalArgumentException("Name can't have spaces!");
         }
 
         final String cmdName = command.getName().toLowerCase();
@@ -304,181 +440,5 @@ public class CommandManager {
         }
 
         this.commands.put(cmdName, command);
-    }
-
-    /**
-     * This will run the command when we need them
-     *
-     * @param event
-     *     the event for the message
-     */
-    public void runCommand(GuildMessageReceivedEvent event) {
-        final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
-        final String[] split = event.getMessage().getContentRaw().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
-                Pattern.quote(customPrefix),
-            "").split("\\s+", 2);
-        final String invoke = split[0];
-
-        final List<String> args = new ArrayList<>();
-
-        if (split.length > 1) {
-            final String raw = split[1];
-            final Matcher m = COMMAND_PATTERN.matcher(raw);
-            while (m.find()) {
-                args.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
-            }
-        }
-
-        dispatchCommand(invoke, invoke.toLowerCase(), args, event);
-    }
-
-    private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
-        ICommand cmd = getCommand(invokeLower);
-
-        if (cmd == null) {
-            cmd = getCustomCommand(invokeLower, event.getGuild().getIdLong());
-        }
-
-        dispatchCommand(cmd, invoke, args, event);
-    }
-
-    public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-
-        if (cmd == null) {
-            return;
-        }
-
-        this.commandThread.submit(() -> {
-
-            MDC.put("command.invoke", invoke);
-            MDC.put("command.args", args.toString());
-            MDC.put("user.tag", event.getAuthor().getAsTag());
-            MDC.put("user.id", event.getAuthor().getId());
-            MDC.put("guild", event.getGuild().toString());
-            MDC.put("jda.shard", Objects.requireNonNull(event.getJDA().getShardInfo()).getShardString());
-
-            final TextChannel channel = event.getChannel();
-
-            if (!channel.canTalk()) {
-                return;
-            }
-
-            // Suppress errors from when we can't type in the channel
-            channel.sendTyping().queue(null, (t) -> {});
-
-            try {
-
-                if (!cmd.isCustom()) {
-
-                    if (cmd.getCategory() == CommandCategory.NSFW && !channel.isNSFW()) {
-                        sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
-                            "Please mark this channel as NSFW to use this command");
-                        return;
-                    }
-
-                    MDC.put("command.class", cmd.getClass().getName());
-
-                    LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
-
-                    cmd.executeCommand(
-                        new CommandContext(invoke, args, event, variables)
-                    );
-
-                    return;
-                }
-
-                final CustomCommand cc = (CustomCommand) cmd;
-
-                if (cc.getGuildId() != event.getGuild().getIdLong()) {
-                    return;
-                }
-
-                try {
-                    MDC.put("command.custom.message", cc.getMessage());
-
-                    final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
-
-                    final String message = parser.parse(cc.getMessage());
-                    final MessageBuilder messageBuilder = new MessageBuilder();
-                    final DataObject object = parser.get("embed");
-
-                    if (!message.isEmpty()) {
-                        messageBuilder.setContent("\u200B" + message);
-                    }
-
-                    if (object != null) {
-                        final JDAImpl jda = (JDAImpl) event.getJDA();
-                        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
-
-                        messageBuilder.setEmbed(embed);
-                    }
-
-                    if (!messageBuilder.isEmpty()) {
-                        sendMsg(event, messageBuilder.build());
-                    }
-
-
-                    parser.clear();
-                }
-                catch (Exception e) {
-                    sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-                    execCheck(e);
-                }
-
-            }
-            catch (Throwable ex) {
-                execCheck(ex);
-                ex.printStackTrace();
-                sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
-            }
-        });
-    }
-
-    private void registerCommandsFromReflection(Reflections reflections) {
-
-        final List<Class<? extends ICommand>> filteredCommands = reflections
-            .getSubTypesOf(ICommand.class)
-            .stream()
-            // Remove abstract classes
-            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
-            .collect(Collectors.toList());
-
-        //Loop over them commands
-        for (final Class<? extends ICommand> cmd : filteredCommands) {
-            try {
-                final ICommand command;
-
-                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
-                    command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
-                } else {
-                    command = cmd.getDeclaredConstructor().newInstance();
-                }
-
-                this.addCommand(command);
-            }
-            catch (IllegalArgumentException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void loadCustomCommands() {
-        this.variables.getDatabaseAdapter().getCustomCommands(
-            (loadedCommands) -> {
-                loadedCommands.forEach(
-                    (command) -> addCustomCommand(command, false, false)
-                );
-
-                return null;
-            }
-        );
-    }
-
-    public void shutdown() {
-        this.commandThread.shutdown();
     }
 }

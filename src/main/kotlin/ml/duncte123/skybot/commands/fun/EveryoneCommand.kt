@@ -16,29 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
+package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.Author;
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import ml.duncte123.skybot.commands.weeb.WeebCommandBase
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+class EveryoneCommand : WeebCommandBase() {
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class DBManager {
-
-    private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-Web-thread"));
-
-    public <T> Future<T> run(Callable<T> c) {
-        return service.submit(c);
+    init {
+        this.category = CommandCategory.FUN
+        this.name = "everyone"
+        this.helpFunction = { _, _ -> "Useful for when everyone is being pinged again" }
     }
 
-    public Future<?> run(Runnable r) {
-        return service.submit(r);
-    }
-
-    public ExecutorService getService() {
-        return service;
+    override fun execute(ctx: CommandContext) {
+        ctx.weebApi.getRandomImage(arrayListOf("everyone")).async {
+            sendEmbed(ctx, getWeebEmbedImage(it.url))
+        }
     }
 }

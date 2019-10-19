@@ -24,9 +24,8 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
+import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
 import java.util.*
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
@@ -34,7 +33,7 @@ class ListCommand : MusicCommand() {
     init {
         this.name = "list"
         this.aliases = arrayOf("queue", "q")
-        this.helpFunction = BiFunction {_,_ -> "Shows the current queue"}
+        this.helpFunction = {_,_ -> "Shows the current queue"}
     }
 
     override fun run(ctx: CommandContext) {
@@ -49,21 +48,22 @@ class ListCommand : MusicCommand() {
             } else {
                 val queueLength = queue.map { it.duration }.sum()
                 val maxTracks = 10
-                val sb = StringBuilder()
+                val queueText = buildString {
+                    appendln("Current Queue: Entries: ${queue.size}")
 
-                sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
+                    for ((index, track) in queue.withIndex()) {
+                        if (index == maxTracks) {
+                            break
+                        }
 
-                for ((index, track) in queue.withIndex()) {
-                    if (index == maxTracks) {
-                        break
+                        appendln("`[${getTimestamp(track.duration)}]` ${track.info.title}")
                     }
 
-                    sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
-                    sb.append(track.info.title).append("\n")
+                    appendln("Total Queue Time Length: ${getTimestamp(queueLength)}")
+                    appendln("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, sb.toString()))
+                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,queueText))
             }
         }
     }

@@ -25,14 +25,13 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.api.Permission
 import java.util.concurrent.TimeUnit
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class KickMeCommand : Command() {
 
     init {
         this.name = "kickme"
-        this.helpFunction = BiFunction { _, _ -> "Kicks you off the server" }
+        this.helpFunction = { _, _ -> "Kicks you off the server" }
     }
 
     override fun execute(ctx: CommandContext) {

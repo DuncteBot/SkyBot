@@ -26,8 +26,8 @@ public class ScrollCommand extends ImageCommandBase {
 
     public ScrollCommand() {
         this.name = "scroll";
-        this.helpFunction = (invoke, prefix) -> "The scroll of truth";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+        this.helpFunction = (prefix, invoke) -> "The scroll of truth";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
     }
 
     @Override

@@ -21,13 +21,12 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.function.BiFunction
 
 class DonateCommand : Command() {
 
     init {
         this.name = "donate"
-        this.helpFunction = BiFunction { _, _ -> "Help keeping the bot up by donating" }
+        this.helpFunction = { _, _ -> "Help keeping the bot up by donating" }
     }
 
     override fun execute(ctx: CommandContext) {

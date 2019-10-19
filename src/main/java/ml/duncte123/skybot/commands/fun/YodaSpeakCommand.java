@@ -37,8 +37,8 @@ public class YodaSpeakCommand extends Command {
     public YodaSpeakCommand() {
         this.category = CommandCategory.FUN;
         this.name = "yoda";
-        this.helpFunction = (invoke, prefix) -> "Convert your input to how Yoda speaks";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <your sentence>`";
+        this.helpFunction = (prefix, invoke) -> "Convert your input to how Yoda speaks";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <your sentence>`";
     }
 
     @Override

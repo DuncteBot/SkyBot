@@ -26,8 +26,8 @@ public class CaptchaCommand extends NoPatronImageCommand {
 
     public CaptchaCommand() {
         this.name = "captcha";
-        this.helpFunction = (invoke, prefix) -> "Checks if you are a robot";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text>`";
+        this.helpFunction = (prefix, invoke) -> "Checks if you are a robot";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
     }
 
     @Override

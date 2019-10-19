@@ -36,7 +36,7 @@ public class ToggleSwearFilterCommand extends SettingsBase {
             "enableswearfilter",
             "disableswearfilter"
         };
-        this.helpFunction = (invoke, prefix) -> "Turns the swearword filter on or off";
+        this.helpFunction = (prefix, invoke) -> "Turns the swearword filter on or off";
     }
 
     @Override

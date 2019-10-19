@@ -43,10 +43,10 @@ public class LockEmoteCommand extends Command {
     public LockEmoteCommand() {
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "lockemote";
-        this.helpFunction = (invoke, prefix) -> "Lock an emote to some roles.\n" +
+        this.helpFunction = (prefix, invoke) -> "Lock an emote to some roles.\n" +
             "_Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
             "even if you have administrator permission_";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <emote> <@role...>";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <emote> <@role...>`";
         this.userPermissions = new Permission[]{
             Permission.ADMINISTRATOR,
         };

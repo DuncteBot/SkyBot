@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import java.util.function.BiFunction
 
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -45,7 +44,7 @@ class JokeCommand : Command() {
         this.category = CommandCategory.FUN
         this.name = "joke"
         this.aliases = arrayOf("meme")
-        this.helpFunction = BiFunction { invoke, _ ->
+        this.helpFunction = { _, invoke ->
             when (invoke) {
                 "meme" -> "See a funny meme"
                 else -> "See a funny joke. Dad's love them!"

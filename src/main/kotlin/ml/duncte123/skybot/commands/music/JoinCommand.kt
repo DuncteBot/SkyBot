@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.exceptions.PermissionException
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class JoinCommand : MusicCommand() {
@@ -33,7 +32,7 @@ class JoinCommand : MusicCommand() {
     init {
         this.name = "join"
         this.aliases = arrayOf("summon", "connect")
-        this.helpFunction = BiFunction { _, _ -> "Makes the bot join the voice channel that you are in." }
+        this.helpFunction = { _, _ -> "Makes the bot join the voice channel that you are in." }
     }
 
     override fun execute(ctx: CommandContext) {

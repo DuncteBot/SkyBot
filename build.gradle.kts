@@ -63,7 +63,6 @@ repositories {
         url = uri("https://dl.bintray.com/duncte123/maven")
     }
 
-    // Use JitPack if jcenter doesn"t find, not download everything from JitPack ;)
     maven {
         name = "jitpack"
         url = uri("https://jitpack.io")
@@ -110,7 +109,7 @@ dependencies {
     //Add kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.2")
 
     //Spark for website
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
@@ -128,6 +127,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
+
+    // https://mvnrepository.com/artifact/commons-validator/commons-validator
+    implementation(group = "commons-validator", name = "commons-validator", version = "1.6")
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")

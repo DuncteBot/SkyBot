@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
@@ -39,8 +38,8 @@ class RadioCommand : MusicCommand() {
         this.withAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
-        this.helpFunction = BiFunction { _, _ -> "Adds a radio http stream to your queue and goes to it" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <(full)list/station name>`" }
+        this.helpFunction = { _, _ -> "Adds a radio http stream to your queue and goes to it" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <(full)list/station name>`" }
         loadStations()
     }
 

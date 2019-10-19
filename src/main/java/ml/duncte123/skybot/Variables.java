@@ -29,7 +29,6 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -57,11 +56,10 @@ public final class Variables {
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
-    private DBManager database;
     private CommandManager commandManager;
     private BlargBot blargBot;
     private DunctebotConfig config;
-    private DuncteApis apis;
+    private final DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
     private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
@@ -88,6 +86,8 @@ public final class Variables {
             System.exit(0);
         }
 
+        this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
+
         //set the devs
         Settings.DEVELOPERS.addAll(this.config.discord.constantSuperUserIds);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
@@ -95,8 +95,7 @@ public final class Variables {
         this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
-            //noinspection ConstantConditions
-            final String env = "&environment=" + ("@versionObj@".equals(Settings.VERSION) ? "local" : "production");
+            final String env = "&environment=" + (Settings.IS_LOCAL ? "local" : "production");
             Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION + env);
         }
     }
@@ -121,15 +120,6 @@ public final class Variables {
 
     public DunctebotConfig getConfig() {
         return config;
-    }
-
-    public DBManager getDatabase() {
-
-        if (this.database == null) {
-            this.database = new DBManager();
-        }
-
-        return this.database;
     }
 
     public LoadingCache<Long, GuildSettings> getGuildSettingsCache() {
@@ -179,7 +169,7 @@ public final class Variables {
     }
 
     public ObjectMapper getJackson() {
-        return mapper;
+        return this.mapper;
     }
 
     public AudioUtils getAudioUtils() {
@@ -192,22 +182,16 @@ public final class Variables {
     }
 
     public DuncteApis getApis() {
-
-        if (this.apis == null) {
-            this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
-        }
-
         return this.apis;
     }
 
     public DatabaseAdapter getDatabaseAdapter() {
-
         try {
             if (this.databaseAdapter == null) {
                 this.databaseAdapter = this.isSql ?
-                    new WebDatabaseAdapter(this) :
+                    new WebDatabaseAdapter(this.getApis(), this.getJackson()) :
                     (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
-                        .getDeclaredConstructor(Variables.class).newInstance(this));
+                        .getDeclaredConstructor().newInstance());
             }
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |

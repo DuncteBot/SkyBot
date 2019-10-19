@@ -237,9 +237,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) {
         // Nothing to encode

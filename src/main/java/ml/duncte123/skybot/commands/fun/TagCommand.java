@@ -51,9 +51,9 @@ public class TagCommand extends VariablesInConstructorCommand {
             "tags",
             "t",
         };
-        this.helpFunction = (invoke, prefix) -> "Stores some text for later usage\n" +
+        this.helpFunction = (prefix, invoke) -> "Stores some text for later usage\n" +
             "Tags follow the same parsing as custom commands and the join/leave messages";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`";
 
         variables.getDatabaseAdapter().loadTags((tags) -> {
             tags.forEach((tag) -> this.tagStore.put(tag.name, tag));

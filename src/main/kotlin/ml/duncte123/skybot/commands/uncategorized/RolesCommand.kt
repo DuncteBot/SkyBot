@@ -23,13 +23,12 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.MessageBuilder.SplitPolicy
-import java.util.function.BiFunction
 
 class RolesCommand : Command() {
 
     init {
         this.name = "roles"
-        this.helpFunction = BiFunction { _, _ -> "Returns a list of roles on the server" }
+        this.helpFunction = { _, _ -> "Returns a list of roles on the server" }
     }
 
     override fun execute(ctx: CommandContext) {

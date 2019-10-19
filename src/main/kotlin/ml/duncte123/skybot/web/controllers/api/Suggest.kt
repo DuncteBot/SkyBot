@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web.controllers.api
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.web.WebHelpers
@@ -26,11 +27,15 @@ import spark.Response
 
 object Suggest {
 
+    private fun JsonNode.hasAll(vararg fieldNames: String): Boolean {
+        return fieldNames.all { this.has(it) }
+    }
+
     fun create(request: Request, response: Response, config: DunctebotConfig, mapper: ObjectMapper): Any {
         return try {
             val jsonBody = mapper.readTree(request.bodyAsBytes())
 
-            if (!(jsonBody.has("name") && jsonBody.has("sug") && jsonBody.has("desc") && jsonBody.has("g-recaptcha-response"))) {
+            if (!jsonBody.hasAll("name", "sug", "desc", "g-recaptcha-response")) {
                 response.status(400)
 
                 return mapper.createObjectNode()

@@ -45,8 +45,8 @@ public class LoveCommand extends Command {
             "love",
             "loveship",
         };
-        this.helpFunction = (invoke, prefix) -> "Ship two people and get their love score";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <@user> <@user>`";
+        this.helpFunction = (prefix, invoke) -> "Ship two people and get their love score";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <@user>`";
     }
 
     @Override

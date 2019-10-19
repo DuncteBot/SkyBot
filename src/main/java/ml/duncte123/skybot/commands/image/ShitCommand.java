@@ -33,8 +33,8 @@ public class ShitCommand extends NoPatronImageCommand {
         this.aliases = new String[]{
             "pluralshit",
         };
-        this.helpFunction = (invoke, prefix) -> "Exclaim that something is shit";
-        this.usageInstructions = (invoke, prefix) -> '`' + prefix + invoke + " <text> [--plural]`";
+        this.helpFunction = (prefix, invoke) -> "Exclaim that something is shit";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text> [--plural]`";
         this.flags = new Flag[]{
             new Flag(
                 'p',

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.MessageEmbed
-import java.util.function.BiFunction
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class TextToBricksCommand : Command() {
@@ -34,8 +33,8 @@ class TextToBricksCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "ttb"
-        this.helpFunction = BiFunction { _, _ -> "Converts your text into emoji bricks" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <text>`" }
+        this.helpFunction = { _, _ -> "Converts your text into emoji bricks" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <text>`" }
     }
 
     override fun execute(ctx: CommandContext) {

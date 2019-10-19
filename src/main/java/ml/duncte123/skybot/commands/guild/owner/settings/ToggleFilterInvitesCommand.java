@@ -30,7 +30,7 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
 
     public ToggleFilterInvitesCommand() {
         this.name = "togglefilterinvites";
-        this.helpFunction = (invoke, prefix) -> "Toggles if the bot should delete messages that contain invite links";
+        this.helpFunction = (prefix, invoke) -> "Toggles if the bot should delete messages that contain invite links";
     }
 
     @Override

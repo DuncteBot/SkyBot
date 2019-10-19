@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class IssueCommand : Command() {
@@ -35,13 +34,13 @@ class IssueCommand : Command() {
     init {
         this.name = "issue"
         this.aliases = arrayOf("bug", "bugreport")
-        this.helpFunction = BiFunction { _, _ ->
+        this.helpFunction = { _, _ ->
             """Reports heavy and weird issues to the developers.
         |This will create an invite to your server, so we can join and help you directly.
         |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
     """.trimMargin()
         }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <issue json>` (issue can be generated at https://dunctebot.com/issuegenerator" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <issue json>` (issue can be generated at https://dunctebot.com/issuegenerator" }
     }
 
     override fun execute(ctx: CommandContext) {

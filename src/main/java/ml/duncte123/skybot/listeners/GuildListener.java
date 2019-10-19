@@ -240,7 +240,7 @@ public class GuildListener extends BaseListener {
     }
 
     private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel voiceChannel) {
-        variables.getDatabase().run(() -> {
+        this.handlerThread.submit(() -> {
             try {
                 // Run the disconnecting after timeout so we allow JDA to receive updates
                 final long timeout = GuildSettingsUtils.getGuild(guild, variables).getLeaveTimeout();

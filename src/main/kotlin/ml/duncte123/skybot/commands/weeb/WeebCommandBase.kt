@@ -49,6 +49,28 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
+    protected fun singleAction(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
+        weebApi.getRandomImage(type).async {
+            val imageUrl = it.url
+
+            if (args.isEmpty()) {
+                sendEmbed(event, getWeebEmbedImageAndDesc(
+                    " ${event.member!!.asMention} $thing", imageUrl))
+                return@async
+            }
+
+            if (event.message.mentionedMembers.isNotEmpty()) {
+                sendEmbed(event, getWeebEmbedImageAndDesc(
+                    "${event.message.mentionedMembers[0].asMention} $thing"
+                    , imageUrl))
+                return@async
+            }
+
+            sendEmbed(event, getWeebEmbedImageAndDesc(
+                "${args.joinToString(" ")} $thing", imageUrl))
+        }
+    }
+
     protected fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
         weebApi.getRandomImage(type).async {
             val imageUrl = it.url

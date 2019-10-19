@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import java.util.function.BiFunction
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PPlayCommand : MusicCommand() {
@@ -31,8 +30,8 @@ class PPlayCommand : MusicCommand() {
     init {
         this.withAutoJoin = true
         this.name = "pplay"
-        this.helpFunction = BiFunction {_,_ -> "Adds a playlist to the queue"}
-        this.usageInstructions = BiFunction {invoke, prefix -> "`$prefix$invoke <playlist url>`"}
+        this.helpFunction = {_,_ -> "Adds a playlist to the queue"}
+        this.usageInstructions = {prefix, invoke-> "`$prefix$invoke <playlist url>`"}
     }
 
     override fun run(ctx: CommandContext) {

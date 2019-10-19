@@ -45,7 +45,7 @@ public class CSShumorCommand extends Command {
         this.aliases = new String[]{
             "cssjoke",
         };
-        this.helpFunction = (invoke, prefix) -> "Sends a css-related joke";
+        this.helpFunction = (prefix, invoke) -> "Sends a css-related joke";
     }
 
 

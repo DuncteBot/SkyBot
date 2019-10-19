@@ -25,14 +25,13 @@ import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
-import java.util.function.BiFunction
 
 class UnshortenCommand : Command() {
 
     init {
         this.name = "unshorten"
-        this.helpFunction = BiFunction { _, _ -> "Gets the long url from a shortened url" }
-        this.usageInstructions = BiFunction { invoke, prefix -> "`$prefix$invoke <short url>`" }
+        this.helpFunction = { _, _ -> "Gets the long url from a shortened url" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <short url>`" }
     }
 
     override fun execute(ctx: CommandContext) {
