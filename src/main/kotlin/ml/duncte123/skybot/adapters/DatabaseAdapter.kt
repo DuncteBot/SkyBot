@@ -31,7 +31,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class DatabaseAdapter() {
+abstract class DatabaseAdapter {
 
     //////////////////
     // Custom commands
