@@ -21,16 +21,14 @@ package ml.duncte123.skybot.database;
 import ml.duncte123.skybot.Author;
 import org.sqlite.JDBC;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class SQLiteDatabaseConnectionManager implements Closeable {
+public class SQLiteDatabaseConnectionManager {
     private final String url;
     private Connection con;
 
@@ -67,17 +65,6 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
         catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        try {
-            if (isConnected())
-                con.close();
-        }
-        catch (SQLException e) {
-            throw new IOException(e);
         }
     }
 
@@ -186,10 +173,8 @@ public class SQLiteDatabaseConnectionManager implements Closeable {
                     "remind_date DATETIME NOT NULL," +
                     "channel_id VARCHAR(255) DEFAULT NULL);"
             );
-
-            close();
         }
-        catch (SQLException | IOException e) {
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }
