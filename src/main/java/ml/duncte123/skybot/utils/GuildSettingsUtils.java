@@ -129,7 +129,6 @@ public class GuildSettingsUtils {
         }
 
         return setting;
-
     }
 
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {

@@ -48,7 +48,6 @@ import java.util.logging.Level;
 public class AudioUtils {
     public final String embedTitle = "AirPlayer";
     protected final TLongObjectMap<GuildMusicManager> musicManagers;
-    private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
     private final DunctebotConfig.Apis config;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
@@ -121,13 +120,12 @@ public class AudioUtils {
 
                 if (mng == null) {
                     mng = new GuildMusicManager(guild, variables);
-                    mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }
             }
         }
 
-        if (!LavalinkManager.ins.isEnabled()) {
+        if (!LavalinkManager.ins.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
             guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         }
 

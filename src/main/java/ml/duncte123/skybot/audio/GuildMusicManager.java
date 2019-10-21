@@ -29,19 +29,20 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
     public final IPlayer player;
     public final TrackScheduler scheduler;
     private final AtomicLong lastChannel = new AtomicLong(-1);
-    private final GuildSettings settings;
+    private final Supplier<Boolean> isAnnounceTracksSupplier;
 
     public GuildMusicManager(Guild g, Variables variables) {
         this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
         this.scheduler = new TrackScheduler(this.player, this);
         this.player.addListener(this.scheduler);
-        this.settings = GuildSettingsUtils.getGuild(g, variables);
+        this.isAnnounceTracksSupplier = () -> GuildSettingsUtils.getGuild(g, variables).isAnnounceTracks();
     }
 
     public AudioPlayerSenderHandler getSendHandler() {
@@ -49,7 +50,7 @@ public class GuildMusicManager {
     }
 
     boolean isAnnounceTracks() {
-        return this.settings.isAnnounceTracks();
+        return this.isAnnounceTracksSupplier.get();
     }
 
     // Has to be public because of kotlin
