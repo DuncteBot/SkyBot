@@ -192,7 +192,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             }*/
 
             final Throwable rootCause = ExceptionUtils.getRootCause(exception);
-            final Throwable finalCause = rootCause != null ? rootCause : exception;
+            final Throwable finalCause = rootCause == null ? exception : rootCause;
 
             if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
                 return;

@@ -18,18 +18,21 @@
 
 package ml.duncte123.skybot.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lavalink.client.player.IPlayer;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.internal.utils.Helpers;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SeekCommand extends MusicCommand {
@@ -38,15 +41,19 @@ public class SeekCommand extends MusicCommand {
 
     public SeekCommand() {
         this.name = "seek";
+        this.aliases = new String[]{
+            "jump",
+            "jumpto",
+            "jp",
+        };
         this.helpFunction = (prefix, invoke) -> "Seek in the currently playing track\n" +
             "Examples: `" + prefix + invoke + " 04:20`\n" +
             '`' + prefix + invoke + " 00:50`\n";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <minutes:seconds>`";
+        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <minutes:seconds>` / `" + prefix + invoke + "[-]<seconds>";
     }
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
@@ -54,39 +61,84 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
-        final Matcher matcher = TIME_REGEX.matcher(args.get(0));
-
-        if (!matcher.matches()) {
-            sendMsg(event, "Invalid time format");
-            return;
-        }
-
+        final String arg0 = args.get(0);
+        final String seekTime = arg0.replaceFirst("-", "");
+        final Matcher matcher = TIME_REGEX.matcher(seekTime);
         final IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
+        final AudioTrack currentTrack = player.getPlayingTrack();
 
-        if (player.getPlayingTrack() == null) {
-            sendMsg(event, "The player is currently not playing anything");
+        if (currentTrack == null) {
+            sendMsg(ctx, "The player is currently not playing anything");
             return;
         }
 
-        if (!player.getPlayingTrack().isSeekable()) {
-            sendMsg(event, "This track is not seekable");
+        if (!currentTrack.isSeekable()) {
+            sendMsg(ctx, "This track is not seekable");
             return;
         }
 
-        final long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
-        final long seconds = Integer.parseInt(matcher.group(2)) * 1000;
+        if (matcher.matches()) {
+            final long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
+            final long seconds = Integer.parseInt(matcher.group(2)) * 1000;
 
-        final long finalTime = minutes + seconds;
+            final long finalTime = minutes + seconds;
 
-        player.seekTo(finalTime);
+            player.seekTo(finalTime);
+            sendNowPlaying(ctx);
+            return;
+        }
 
+        if (!Helpers.isNumeric(seekTime)) {
+            sendMsg(ctx, "Invalid time format");
+            return;
+        }
+
+        // To hopefully prevent race conditions
+        final Supplier<Long> trackDuration = () -> player.getPlayingTrack().getDuration();
+        final Supplier<Long> trackPosition = () -> player.getPlayingTrack().getPosition();
+
+        int seconds = Integer.parseInt(seekTime) * 1000;
+
+        // FIXME: Odd looking code
+        if (seconds >= (trackDuration.get() / 1000)) {
+            if (arg0.charAt(0) == '-') {
+                sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
+                return;
+            }
+
+            // No need to announce as we just skip to the end
+            player.seekTo(trackDuration.get());
+            return;
+        }
+
+        if (arg0.charAt(0) == '-') {
+            seconds = ~seconds;
+        }
+
+        final long currentPosition = trackPosition.get();
+        final long newPosition = currentPosition + seconds;
+
+        if (newPosition < 0) {
+            sendMsgFormat(ctx, "%s is not above 0", newPosition);
+            return;
+        }
+
+        player.seekTo(newPosition);
+
+        if (newPosition < trackPosition.get()) {
+            sendNowPlaying(ctx);
+        }
+
+    }
+
+    private void sendNowPlaying(CommandContext ctx) {
         try {
-            Thread.sleep(500);
+            // Race condition
+            Thread.sleep(700);
         }
         catch (InterruptedException ignored) {
         }
 
         ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
-
     }
 }
