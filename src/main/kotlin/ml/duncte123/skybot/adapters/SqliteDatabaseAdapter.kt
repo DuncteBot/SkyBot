@@ -699,7 +699,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
             .setKickState(this.getBoolean("kickInsteadState"))
             .setLeaveTimeout(this.getInt("leave_timeout"))
-            .setSpamThreshold(this.getInt("spam_ththishold"))
+            .setSpamThreshold(this.getInt("spam_threshold"))
             .setBlacklistedWords(blackList)
     }
 }

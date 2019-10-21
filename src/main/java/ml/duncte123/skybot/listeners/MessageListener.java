@@ -104,7 +104,6 @@ public abstract class MessageListener extends BaseListener {
         if (rw.equals(Settings.PREFIX + "shutdown")
             && Settings.DEVELOPERS.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
-            shuttingDown = true;
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
@@ -438,13 +437,8 @@ public abstract class MessageListener extends BaseListener {
             catch (InterruptedException ignored) {
             }
 
-            if (!shuttingDown) {
-                return;
-            }
-
             // Kill all threads
             this.systemPool.shutdown();
-            SkyBot.getInstance().getGameScheduler().shutdown();
 
             final WebRouter router = SkyBot.getInstance().getWebRouter();
 

@@ -35,9 +35,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseListener implements EventListener {
-
-    public static boolean isUpdating = false;
-    public static boolean shuttingDown = false;
     protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
     protected final ExecutorService handlerThread = Executors.newCachedThreadPool((r) -> {
         final Thread thread = new Thread(r, "Listener-handle-thread");

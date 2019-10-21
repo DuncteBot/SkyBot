@@ -24,7 +24,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.listeners.BaseListener
 import ml.duncte123.skybot.listeners.ReadyShutdownListener
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -57,12 +56,6 @@ class UpdateCommand : Command() {
             sendEmbed(ctx, EmbedUtils.embedMessage(message))
             return
         }
-
-        /*
-         * Tell the bot that we are using the updater
-         */
-        BaseListener.isUpdating = true
-        BaseListener.shuttingDown = true
 
         sendMsg(ctx, "✅ Updating") {
             // This will also shutdown eval

@@ -163,10 +163,6 @@ public final class SkyBot {
         return instance;
     }
 
-    public ScheduledExecutorService getGameScheduler() {
-        return gameScheduler;
-    }
-
     public WebRouter getWebRouter() {
         return webRouter;
     }
