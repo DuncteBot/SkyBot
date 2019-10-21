@@ -48,7 +48,8 @@ public class SeekCommand extends MusicCommand {
         };
         this.helpFunction = (prefix, invoke) -> "Seek in the currently playing track\n" +
             "Examples: `" + prefix + invoke + " 04:20`\n" +
-            '`' + prefix + invoke + " 00:50`\n";
+            '`' + prefix + invoke + " 00:50`\n" +
+            '`' + prefix + invoke + " 120`";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <minutes:seconds>` / `" + prefix + invoke + "[-]<seconds>";
     }
 
@@ -100,7 +101,7 @@ public class SeekCommand extends MusicCommand {
         int seconds = Integer.parseInt(seekTime) * 1000;
 
         // FIXME: Odd looking code
-        if (seconds >= (trackDuration.get() / 1000)) {
+        if (seconds >= trackDuration.get()) {
             if (arg0.charAt(0) == '-') {
                 sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
                 return;
@@ -125,7 +126,7 @@ public class SeekCommand extends MusicCommand {
 
         player.seekTo(newPosition);
 
-        if (newPosition < trackPosition.get()) {
+        if (newPosition < trackDuration.get()) {
             sendNowPlaying(ctx);
         }
 

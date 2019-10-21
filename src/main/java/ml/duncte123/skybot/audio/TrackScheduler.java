@@ -42,6 +42,7 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -98,6 +99,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         if (player.getPlayingTrack() != null) {
             player.stopTrack();
         }
+
+        sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
     }
 
     @Override
