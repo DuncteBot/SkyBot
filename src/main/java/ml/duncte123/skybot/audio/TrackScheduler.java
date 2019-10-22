@@ -126,18 +126,15 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             skipTrack();
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
-            final TrackUserData data = (TrackUserData) lastTrack.getUserData();
-            clone.setUserData(data.copy(data.getRequester()));
+            clone.setUserData(createNewTrackData(lastTrack));
             queue.offer(clone);
             return;
         }
 
         final AudioTrack clone = lastTrack.makeClone();
-        final TrackUserData data = (TrackUserData) lastTrack.getUserData();
-        clone.setUserData(data.copy(data.getRequester()));
+        clone.setUserData(createNewTrackData(lastTrack));
         this.player.playTrack(clone);
         announceNextTrack(lastTrack);
-
     }
 
     public boolean isRepeating() {
@@ -171,6 +168,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
             sendEmbed(guildMusicManager.getLatestChannel(), message);
         }
+    }
+
+    private TrackUserData createNewTrackData(AudioTrack track) {
+        final TrackUserData oldData = track.getUserData(TrackUserData.class);
+
+        return oldData.copy(oldData.getRequester());
     }
 
     @Override

@@ -47,8 +47,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         val track = t.makeClone()
-        val currentData = t.userData as TrackUserData
-        track.userData = currentData.copy()
+        track.userData = t.getUserData(TrackUserData::class.java).copy()
 
         // This is from AudioUtils.java but in Kotlin
         var title = track.info.title

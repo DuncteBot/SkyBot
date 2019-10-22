@@ -46,7 +46,7 @@ class SkipCommand : MusicCommand() {
             return
         }
 
-        val trackData = mng.player.playingTrack.userData as TrackUserData
+        val trackData = mng.player.playingTrack.getUserData(TrackUserData::class.java)
 
         if (trackData.requester == author.idLong) {
             doSkip(ctx, mng)

@@ -36,10 +36,10 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 
 fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
-    val userData = this.userData
+    val userData = this.getUserData(TrackUserData::class.java)
     var requester = "Unknown"
 
-    if (userData != null && userData is TrackUserData) {
+    if (userData != null) {
         val userId = userData.requester
         val user = shardManager.getUserById(userId)
 

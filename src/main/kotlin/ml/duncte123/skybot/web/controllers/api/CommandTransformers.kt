@@ -69,7 +69,7 @@ object CommandTransformers {
         val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
         var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
 
-        if (this.aliases.isNotEmpty() && this.shouldDisplayAliasesInHelp()) {
+        if (this.aliases.isNotEmpty()) {
             val aliasHelp = help(this.aliases[0], Settings.PREFIX).mdToHtml()
 
             s += if (aliasHelp == ownHelp) {

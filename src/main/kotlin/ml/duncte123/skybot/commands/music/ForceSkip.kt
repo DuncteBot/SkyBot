@@ -61,7 +61,7 @@ class ForceSkip : MusicCommand() {
             1
         }
 
-        val trackData = mng.player.playingTrack.userData as TrackUserData
+        val trackData = mng.player.playingTrack.getUserData(TrackUserData::class.java)
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
         mng.scheduler.skipTracks(count)

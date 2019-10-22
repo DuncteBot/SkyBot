@@ -53,6 +53,7 @@ public class CommandContext implements ICommandContext {
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
+    private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
     private List<Member> mentionedInMessage;
     private GuildMessageReceivedEvent reactionAddEvent = null;
@@ -63,6 +64,7 @@ public class CommandContext implements ICommandContext {
         this.args = Collections.unmodifiableList(args);
         this.event = event;
         this.variables = variables;
+        this.duncteBotGuild = new DunctebotGuild(event.getGuild(), variables);
     }
 
     // --------------- Methods from the Variables class --------------- //
@@ -221,7 +223,7 @@ public class CommandContext implements ICommandContext {
 
     @Override
     public DunctebotGuild getGuild() {
-        return new DunctebotGuild(this.event.getGuild(), this.getVariables());
+        return this.duncteBotGuild;
     }
 
     // --------------- Private methods --------------- //
