@@ -19,43 +19,29 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Author
+import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-class JokeCommand : Command() {
-
+class MemeCommand : Command() {
     init {
         this.category = CommandCategory.FUN
-        this.name = "joke"
-        this.helpFunction = { _, _ -> "See a funny joke. Dad's love them!"}
+        this.name = "meme"
+        this.helpFunction = { _, _ -> "See a funny meme" }
     }
 
     override fun execute(ctx: CommandContext) {
-        when (ctx.random.nextInt(2)) {
-            0 -> sendJokeFromApi(ctx)
-            1 -> sendRanddomJoke(ctx.event)
-        }
-    }
-
-    private fun sendJokeFromApi(ctx: CommandContext) {
-        val json = ctx.apis.executeDefaultGetRequest("joke", false).get("data")
+        val json = ctx.apis.executeDefaultGetRequest("meme", false).get("data")
 
         val embed = EmbedUtils.defaultEmbed()
             .setTitle(json.get("title").asText(), json.get("url").asText())
             .setDescription(json.get("body").asText())
 
-        sendEmbed(ctx, embed)
-    }
-
-    private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
-        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
-            sendEmbed(event, EmbedUtils.embedMessage(it.get("joke").asText()))
+        if (json.has("image")) {
+            embed.setImage(json.get("image").asText())
         }
+
+        MessageUtils.sendEmbed(ctx, embed)
     }
 }
