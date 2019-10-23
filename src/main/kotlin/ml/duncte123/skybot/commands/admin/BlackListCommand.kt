@@ -150,6 +150,8 @@ class BlackListCommand : ModBaseCommand() {
             } catch (e: Exception) {
                 Sentry.capture(e)
                 ctx.channel.edit(msgId, "Error while importing blacklist: ${e.message}")
+            } finally {
+                it.close()
             }
         }
     }

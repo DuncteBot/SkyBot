@@ -92,6 +92,8 @@ class LoadCommand : MusicCommand() {
             } catch (exception: Exception) {
                 sendError(event.message)
                 sendMsg(event, "Invalid JSON file!")
+            } finally {
+                it.close()
             }
         }
     }

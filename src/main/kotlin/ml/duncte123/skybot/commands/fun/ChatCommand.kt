@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
 import java.util.*
@@ -178,12 +179,13 @@ class ChatSession(userId: Long) {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
-        val document = documentBuilder.parse(ByteArrayInputStream(input.toByteArray(charset("UTF-8"))))
-        val output = xPathExpression.evaluate(document, XPathConstants.STRING)
 
-        val outputString = (output as? String) ?: "Error on xpath, this should never be shown"
+        return ByteArrayInputStream(input.toByteArray(charset("UTF-8"))).use {
+            val document = documentBuilder.parse(it)
+            val output = xPathExpression.evaluate(document, XPathConstants.STRING)
+            val outputString = (output as? String) ?: "Error on xpath, this should never be shown"
 
-        return outputString.trim { it <= ' ' }
+            return@use outputString.trim { s -> s <= ' ' }
+        }
     }
-
 }

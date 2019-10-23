@@ -23,10 +23,13 @@ import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 fun Process.getString(): String {
-    val scanner = Scanner(inputStream)
-    return buildString {
-        while (scanner.hasNextLine()) {
-            appendln(scanner.nextLine())
+    this.inputStream.use { s ->
+        Scanner(s).use { scanner ->
+            return buildString {
+                while (scanner.hasNextLine()) {
+                    appendln(scanner.nextLine())
+                }
+            }
         }
     }
 }

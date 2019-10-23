@@ -90,9 +90,7 @@ public class GuildJoinsCommand extends Command {
         graphics2D.drawString(ctx.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
         graphics2D.drawString(now.format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 90);
 
-        try {
-            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ImageIO.write(bufferedImage, "png", outputStream);
 
             ctx.getChannel()

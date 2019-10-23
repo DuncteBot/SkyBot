@@ -46,6 +46,11 @@ class SkipCommand : MusicCommand() {
             return
         }
 
+        if (!mng.player.playingTrack.isSeekable) {
+            sendMsg(ctx, "This track is not seekable")
+            return
+        }
+
         val trackData = mng.player.playingTrack.getUserData(TrackUserData::class.java)
 
         if (trackData.requester == author.idLong) {
