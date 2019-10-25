@@ -32,6 +32,7 @@ import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
+import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 
@@ -71,7 +72,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
     }
 
     if (this is YoutubeAudioTrack) {
-        return "https://i.ytimg.com/vi/${this.identifier}/mqdefault.jpg"
+        return YoutubeUtils.getThumbnail(this.identifier)
     }
 
     if (this is TwitchStreamAudioTrack) {

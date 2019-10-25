@@ -48,13 +48,12 @@ public class YoutubeUtils {
 
 
     public static Video getVideoById(String videoID, String apiKey) throws Exception {
-        return youtube.videos().list("snippet,statistics,contentDetails")
+        return youtube.videos().list("id,snippet,contentDetails")
             .setId(videoID)
             .setKey(apiKey)
             .execute()
             .getItems().get(0);
     }
-
 
     public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
         return youtube.search().list("id,snippet")
@@ -65,6 +64,10 @@ public class YoutubeUtils {
             .setMaxResults(size)
             .execute()
             .getItems();
+    }
+
+    public static String getThumbnail(String videoID) {
+        return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
     }
 
 }

@@ -35,8 +35,8 @@ data class Warning(val id: Int, val rawDate: String, /*val date: Date, val expir
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Ban
 @JsonCreator constructor(@JsonProperty("id") val id: Int, @JsonProperty("modUserId") val modId: String,
-                         @JsonProperty("userId") val userId: String, @JsonProperty("username") val userName: String,
-                         @JsonProperty("disciminator") val discriminator: String, @JsonProperty("guildId") val guildId: String)
+                         @JsonProperty("userId") val userId: String, @JsonProperty("Username") val userName: String,
+                         @JsonProperty("discriminator") val discriminator: String, @JsonProperty("guildId") val guildId: String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Mute
