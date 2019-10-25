@@ -63,7 +63,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) ->
-            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
+            sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
             , DEBOUNCE_INTERVAL);
     }
 

@@ -29,7 +29,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
 import java.util.*
