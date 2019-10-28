@@ -36,6 +36,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
+import net.notfab.caching.client.CacheClient;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,7 @@ public final class Variables {
     private DunctebotConfig config;
     private final DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
+    private CacheClient youtubeCache;
     private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
         .build((guildId) -> {
@@ -141,6 +143,15 @@ public final class Variables {
 
     public String getGoogleBaseUrl() {
         return this.googleBaseUrl;
+    }
+
+    public CacheClient getYoutubeCache() {
+        if (this.youtubeCache == null) {
+            var cfg = getConfig().apis.youtubeCache;
+            this.youtubeCache = new CacheClient(cfg.endpoint, cfg.token);
+        }
+
+        return this.youtubeCache;
     }
 
     public WeebApi getWeebApi() {

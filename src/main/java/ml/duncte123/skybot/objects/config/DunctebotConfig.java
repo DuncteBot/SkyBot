@@ -50,6 +50,7 @@ public class DunctebotConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Apis {
+        public Cache youtubeCache;
         public Trello trello;
         public String github;
         public String googl;
@@ -59,6 +60,11 @@ public class DunctebotConfig {
         public String blargbot;
         public String wolframalpha;
         public String thecatapi;
+
+        public static class Cache {
+            public String endpoint;
+            public String token;
+        }
 
         public static class Trello {
             public String key;

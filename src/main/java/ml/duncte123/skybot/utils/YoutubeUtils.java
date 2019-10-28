@@ -46,24 +46,46 @@ public class YoutubeUtils {
         }
     }
 
-
-    public static Video getVideoById(String videoID, String apiKey) throws Exception {
-        return youtube.videos().list("id,snippet,contentDetails")
-            .setId(videoID)
-            .setKey(apiKey)
-            .execute()
-            .getItems().get(0);
+    public static void getVideoInfoCached() {
+        //
     }
 
-    public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("id,snippet")
+    public static Video getVideoById(String videoID, String apiKey) throws Exception {
+        return getVideosByIds(videoID, apiKey).get(0);
+    }
+
+    public static List<Video> getVideosByIds(String videoIds, String apiKey) throws IOException {
+        return youtube.videos().list("id,snippet,contentDetails")
+            .setId(videoIds)
+            .setKey(apiKey)
+            .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)")
+            .execute()
+            .getItems();
+    }
+
+    public static List<SearchResult> searchYoutubeIdOnly(String query, String apiKey, long size) throws IOException {
+        return youtube.search().list("id")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
-            .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
             .setMaxResults(size)
             .execute()
             .getItems();
+    }
+
+    public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
+        return youtube.search().list("snippet")
+            .setKey(apiKey)
+            .setQ(query)
+            .setType("video")
+            .setFields("items(id/kind,id/videoId,snippet/title)")
+            .setMaxResults(size)
+            .execute()
+            .getItems();
+    }
+
+    public static String getThumbnail(Video video) {
+        return getThumbnail(video.getId());
     }
 
     public static String getThumbnail(String videoID) {

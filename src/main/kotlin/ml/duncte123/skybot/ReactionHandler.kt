@@ -32,7 +32,11 @@ import java.util.function.BiConsumer
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ReactionHandler : ListenerAdapter() {
-    private val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(2) { r -> Thread(r, "ReactionAwaiter") }
+    private val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(2) { r ->
+        val t = Thread(r, "ReactionAwaiter")
+        t.isDaemon = true
+        return@newScheduledThreadPool t
+    }
     private var requirementsCache: List<ReactionCacheElement> = ArrayList()
     private var consumerCache: Map<Long, Pair<CommandContext, List<SearchResult>>> = HashMap()
 

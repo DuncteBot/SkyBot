@@ -64,6 +64,10 @@ repositories {
     }
 
     maven {
+        url = uri("https://maven.notfab.net/Hosted")
+    }
+
+    maven {
         name = "jitpack"
         url = uri("https://jitpack.io")
     }
@@ -79,7 +83,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.58")
 
     //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_53") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_54") {
         exclude(module = "opus-java")
     }
 
@@ -87,6 +91,8 @@ dependencies {
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.22.pbjtest3")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "700b55e")
 //    implementation(project(":Lavalink-Client"))
+
+    implementation(group = "net.notfab.cache", name = "cache-client", version = "1.0")
 
     // SQLite
     implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")

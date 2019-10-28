@@ -34,6 +34,7 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.notfab.caching.client.CacheClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +72,10 @@ public class CommandContext implements ICommandContext {
 
     public Variables getVariables() {
         return variables;
+    }
+
+    public CacheClient getYoutubeCache() {
+        return this.variables.getYoutubeCache();
     }
 
     public CommandManager getCommandManager() {

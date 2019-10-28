@@ -66,6 +66,10 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack track) {
+        System.out.println(track.getClass());
+
+        this.ctx.getYoutubeCache().addToIndex(track);
+
         final String title = getSteamTitle(track, track.getInfo().title, this.ctx.getCommandManager());
 
         track.setUserData(new TrackUserData(this.requester));
@@ -96,6 +100,8 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             return;
         }
+
+        this.ctx.getYoutubeCache().addToIndex(playlist);
 
         final List<AudioTrack> tracks = new ArrayList<>();
         final TrackUserData userData = new TrackUserData(this.requester);

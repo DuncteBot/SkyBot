@@ -33,6 +33,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
+import ml.duncte123.skybot.audio.sourcemanagers.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
@@ -64,7 +65,7 @@ public class AudioUtils {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(false);
+        final var youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(false, this.variables);
 
         // When the values change
             /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {

@@ -178,6 +178,10 @@ public class GuildListener extends BaseListener {
     }
 
     private void modLogBanUnban(ActionType type, User user, Guild guild) {
+        if (!guild.getSelfMember().hasPermission(Permission.VIEW_AUDIT_LOGS)) {
+            return;
+        }
+
         final DunctebotGuild dbg = new DunctebotGuild(guild, variables);
 
         if (dbg.getSettings().getLogChannel() < 1) {
@@ -185,6 +189,7 @@ public class GuildListener extends BaseListener {
         }
 
         guild.retrieveAuditLogs()
+            .cache(false)
             .type(type)
             .limit(5)
             .queue((actions) -> {
