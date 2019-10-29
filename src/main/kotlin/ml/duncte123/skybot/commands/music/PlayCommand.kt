@@ -71,7 +71,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay)) {
-            val (vidId, shouldCache) = searchCache(toPlay, ctx)
+            val vidId = searchCache(toPlay, ctx)
 
             if (vidId == null) {
                 MessageUtils.sendError(event.message)
@@ -84,7 +84,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         handlePlay(toPlay, event, ctx, mng)
     }
 
-    private fun searchCache(search: String, ctx: CommandContext): Pair<String?, Boolean> {
+    private fun searchCache(search: String, ctx: CommandContext): String? {
         val params = SearchParams()
             .setSearch(search)
             .setTitle(*ctx.args.toTypedArray())
@@ -93,25 +93,22 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         println(tracks)
 
         if (tracks.isEmpty()) {
-            println("Missed")
-
             val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
 
             if(res.isEmpty()) {
-                return Pair(null, false)
+                return null
             }
 
-             return Pair(res[0].id.videoId, true)
+             return res[0].id.videoId
         }
 
-        return Pair(tracks[0].id, false)
+        return tracks[0].id
     }
 
     private fun handlePlay(toPlay: String, event: GuildMessageReceivedEvent, ctx: CommandContext, mng: GuildMusicManager?) {
         if (toPlay.length > 1024) {
             MessageUtils.sendError(event.message)
             sendMsg(event, "Input cannot be longer than 1024 characters.")
-
             return
         }
 
