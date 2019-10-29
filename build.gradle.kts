@@ -54,12 +54,10 @@ repositories {
     jcenter()
 
     maven {
-        name = "Jenkins"
         url = uri("http://repo.jenkins-ci.org/releases/")
     }
 
     maven {
-        name = "duncte123 bintray"
         url = uri("https://dl.bintray.com/duncte123/maven")
     }
 
@@ -68,7 +66,6 @@ repositories {
     }
 
     maven {
-        name = "jitpack"
         url = uri("https://jitpack.io")
     }
 }
@@ -88,7 +85,7 @@ dependencies {
     }
 
     //Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.22.pbjtest3")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.23")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "700b55e")
 //    implementation(project(":Lavalink-Client"))
 
@@ -107,7 +104,7 @@ dependencies {
     implementation(group = "org.reflections", name = "reflections", version = "0.9.11")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.0.1")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.1.0")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev206-1.25.0")
