@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.objects.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ml.duncte123.skybot.Author;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -31,7 +30,6 @@ public class DunctebotConfig {
     public Sentry sentry;
     public boolean use_database;
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Discord {
         public long[] constantSuperUserIds;
         public String prefix;
@@ -40,7 +38,6 @@ public class DunctebotConfig {
         public boolean local;
         public String token;
 
-        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Oauth {
             public long clientId;
             public String redirUrl;
@@ -48,13 +45,11 @@ public class DunctebotConfig {
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Apis {
         public Cache youtubeCache;
         public Trello trello;
-        public String github;
         public String googl;
-        public WeebSh weebSh;
+        public String weebSh;
         public Chapta chapta;
         public Spotify spotify;
         public String blargbot;
@@ -71,10 +66,6 @@ public class DunctebotConfig {
             public String token;
         }
 
-        public static class WeebSh {
-            public String wolketoken;
-        }
-
         public static class Chapta {
             public String sitekey;
             public String secret;
@@ -86,7 +77,6 @@ public class DunctebotConfig {
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Lavalink {
         public boolean enable;
         public LavalinkNode[] nodes;

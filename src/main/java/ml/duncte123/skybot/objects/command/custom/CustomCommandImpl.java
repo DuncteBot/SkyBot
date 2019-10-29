@@ -19,13 +19,11 @@
 package ml.duncte123.skybot.objects.command.custom;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
 
 import javax.annotation.Nonnull;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandImpl implements CustomCommand {
 

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -44,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -77,6 +80,10 @@ public final class Variables {
 
 
     Variables() {
+        this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
+        this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+
         try {
             this.config = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
@@ -103,7 +110,6 @@ public final class Variables {
     }
 
     public BlargBot getBlargBot() {
-
         if (this.blargBot == null) {
             this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
         }
@@ -112,7 +118,6 @@ public final class Variables {
     }
 
     public CommandManager getCommandManager() {
-
         if (this.commandManager == null) {
             this.commandManager = new CommandManager(this);
         }
@@ -148,18 +153,21 @@ public final class Variables {
     public CacheClient getYoutubeCache() {
         if (this.youtubeCache == null) {
             var cfg = getConfig().apis.youtubeCache;
-            this.youtubeCache = new CacheClient(cfg.endpoint, cfg.token);
+            this.youtubeCache = new CacheClient(cfg.endpoint, cfg.token, Executors.newCachedThreadPool((r) -> {
+                final Thread thread = new Thread(r, "Cache-Thread");
+                thread.setDaemon(true);
+                return thread;
+            }));
         }
 
         return this.youtubeCache;
     }
 
     public WeebApi getWeebApi() {
-
         if (this.weebApi == null) {
             this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
                 .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-                .setToken(this.config.apis.weebSh.wolketoken)
+                .setToken(this.config.apis.weebSh)
                 .build();
         }
 
@@ -171,7 +179,6 @@ public final class Variables {
     }
 
     public Alexflipnote getAlexflipnote() {
-
         if (this.alexflipnote == null) {
             this.alexflipnote = new Alexflipnote(this.mapper);
         }
@@ -184,7 +191,6 @@ public final class Variables {
     }
 
     public AudioUtils getAudioUtils() {
-
         if (this.audioUtils == null) {
             this.audioUtils = new AudioUtils(this.config.apis, this);
         }

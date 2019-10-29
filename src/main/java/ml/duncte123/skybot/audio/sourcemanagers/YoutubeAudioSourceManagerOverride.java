@@ -19,7 +19,10 @@
 package ml.duncte123.skybot.audio.sourcemanagers;
 
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.Variables;
 import net.notfab.caching.shared.CacheResponse;
 
@@ -39,9 +42,19 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
         System.out.println(cacheResponse.toString());
 
         if (!cacheResponse.failure && cacheResponse.getTrack() != null) {
-            return cacheResponse.getTrack().toAudioTrack(this);
+            final AudioTrack track = cacheResponse.getTrack().toAudioTrack(this);
+            return new DoNotCache(track.getInfo(), (YoutubeAudioSourceManager) track.getSourceManager());
         }
 
         return super.loadTrackWithVideoId(videoId, mustExist);
+    }
+
+    /**
+     * Don't cache tracks that are already retrieved from the cache
+     */
+    public static class DoNotCache extends YoutubeAudioTrack {
+        DoNotCache(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+            super(trackInfo, sourceManager);
+        }
     }
 }

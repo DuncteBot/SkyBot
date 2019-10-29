@@ -21,7 +21,6 @@
 package ml.duncte123.skybot.objects.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.AirUtils
@@ -32,13 +31,11 @@ data class KpopObject(val id: Int, val name: String, val band: String, val image
 //data class WarnObject(val userId: String, val warnings: List<Warning>)
 data class Warning(val id: Int, val rawDate: String, /*val date: Date, val expiryDate: Date,*/ val modId: String, val reason: String, val guildId: String)
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Ban
 @JsonCreator constructor(@JsonProperty("id") val id: Int, @JsonProperty("modUserId") val modId: String,
                          @JsonProperty("userId") val userId: String, @JsonProperty("Username") val userName: String,
                          @JsonProperty("discriminator") val discriminator: String, @JsonProperty("guildId") val guildId: String)
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Mute
 @JsonCreator constructor(@JsonProperty("id") val id: Int, @JsonProperty("mod_id") val modId: String,
                          @JsonProperty("user_id") val userId: String, @JsonProperty("user_tag") val userTag: String,
@@ -46,7 +43,6 @@ data class Mute
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Reminder(val id: Int, val user_id: Long, val reminder: String, val reminder_date: Date, val channel_id: Long) {
     @JsonCreator
     constructor(@JsonProperty("id") id: Int, @JsonProperty("user_id") user_id: Long,

@@ -23,6 +23,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.audio.sourcemanagers.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
@@ -34,9 +35,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -66,9 +67,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        System.out.println(track.getClass());
-
-        this.ctx.getYoutubeCache().addToIndex(track);
+        addToIndex(track);
 
         final String title = getSteamTitle(track, track.getInfo().title, this.ctx.getCommandManager());
 
@@ -101,15 +100,12 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        this.ctx.getYoutubeCache().addToIndex(playlist);
-
-        final List<AudioTrack> tracks = new ArrayList<>();
         final TrackUserData userData = new TrackUserData(this.requester);
-
-        for (final AudioTrack track : playlist.getTracks()) {
+        final List<AudioTrack> tracks = playlist.getTracks().stream().peek((track) -> {
+            addToIndex(track);
             track.setUserData(userData);
-            tracks.add(track);
-        }
+        })
+        .collect(Collectors.toList());
 
         try {
             final TrackScheduler trackScheduler = this.mng.scheduler;
@@ -187,5 +183,11 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         return title;
+    }
+
+    private void addToIndex(AudioTrack track) {
+        if (!(track instanceof YoutubeAudioSourceManagerOverride.DoNotCache)) {
+            this.ctx.getYoutubeCache().addToIndex(track);
+        }
     }
 }

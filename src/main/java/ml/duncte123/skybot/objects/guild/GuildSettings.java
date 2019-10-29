@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.guild;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +40,6 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class GuildSettings {
 
     private final long guildId;

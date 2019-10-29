@@ -46,10 +46,6 @@ public class YoutubeUtils {
         }
     }
 
-    public static void getVideoInfoCached() {
-        //
-    }
-
     public static Video getVideoById(String videoID, String apiKey) throws Exception {
         return getVideosByIds(videoID, apiKey).get(0);
     }
@@ -92,4 +88,35 @@ public class YoutubeUtils {
         return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
     }
 
+    /*private static YoutubeTrack searchCache(String title, String author, CacheClient cacheClient) {
+        final SearchParams params = new SearchParams()
+            .setSearch(title + " " + author)
+            .setTitle(title.split("\\s+"))
+            .setAuthor(author.split("\\s+"));
+
+        final List<YoutubeTrack> found = cacheClient.search(params);
+
+        if (found.isEmpty()) {
+            return null;
+        }
+
+        return found.get(0);
+    }
+
+    private static Video cacheToYoutubeVideo(YoutubeTrack track) {
+        return new Video()
+            .setId(track.getId())
+            .setKind("youtube#video")
+            .setSnippet(
+                new VideoSnippet()
+                .setTitle(track.getTitle())
+                .setChannelTitle(track.getAuthor())
+            )
+            .setContentDetails(
+                new VideoContentDetails()
+                .setDuration(
+                    Duration.ofMillis(track.getLength()).toString()
+                )
+            );
+    }*/
 }
