@@ -55,7 +55,6 @@ public final class Variables {
     private final ObjectMapper mapper = new ObjectMapper();
     private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
-    private final boolean isSql;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
@@ -101,7 +100,6 @@ public final class Variables {
         Settings.DEVELOPERS.addAll(this.config.discord.constantSuperUserIds);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + this.config.apis.googl + "&safe=off";
-        this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
             final String env = "&environment=" + (Settings.IS_LOCAL ? "local" : "production");
@@ -175,7 +173,7 @@ public final class Variables {
     }
 
     boolean useApi() {
-        return this.isSql;
+        return this.config.use_database;
     }
 
     public Alexflipnote getAlexflipnote() {
@@ -205,7 +203,7 @@ public final class Variables {
     public DatabaseAdapter getDatabaseAdapter() {
         try {
             if (this.databaseAdapter == null) {
-                this.databaseAdapter = this.isSql ?
+                this.databaseAdapter = this.useApi() ?
                     new WebDatabaseAdapter(this.getApis(), this.getJackson()) :
                     (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
                         .getDeclaredConstructor().newInstance());
