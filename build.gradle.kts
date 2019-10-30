@@ -89,7 +89,7 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "700b55e")
 //    implementation(project(":Lavalink-Client"))
 
-    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.0")
+    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.1")
 
     // SQLite
     implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
