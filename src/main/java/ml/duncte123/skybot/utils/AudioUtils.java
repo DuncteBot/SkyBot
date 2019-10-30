@@ -65,7 +65,7 @@ public class AudioUtils {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final var youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(false, this.variables);
+        final var youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(false, this.variables.getYoutubeCache());
 
         // When the values change
             /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {

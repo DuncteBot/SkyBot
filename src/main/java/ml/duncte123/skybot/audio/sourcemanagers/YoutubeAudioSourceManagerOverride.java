@@ -23,21 +23,21 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import ml.duncte123.skybot.Variables;
+import net.notfab.caching.client.CacheClient;
 import net.notfab.caching.shared.CacheResponse;
 
 public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager {
 
-    private final Variables variables;
+    private final CacheClient cacheClient;
 
-    public YoutubeAudioSourceManagerOverride(boolean allowSearch, Variables variables) {
+    public YoutubeAudioSourceManagerOverride(boolean allowSearch, CacheClient cacheClient) {
         super(allowSearch);
-        this.variables = variables;
+        this.cacheClient = cacheClient;
     }
 
     @Override
     public AudioItem loadTrackWithVideoId(String videoId, boolean mustExist) {
-        final CacheResponse cacheResponse = this.variables.getYoutubeCache().get(videoId);
+        final CacheResponse cacheResponse = this.cacheClient.get(videoId);
 
         System.out.println(cacheResponse.toString());
 
