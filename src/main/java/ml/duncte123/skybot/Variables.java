@@ -56,15 +56,15 @@ public final class Variables {
     private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
-    private AudioUtils audioUtils;
-    private Alexflipnote alexflipnote;
-    private WeebApi weebApi;
-    private CommandManager commandManager;
-    private BlargBot blargBot;
-    private DunctebotConfig config;
+    private final CommandManager commandManager;
     private final DuncteApis apis;
+    private final BlargBot blargBot;
+    private final AudioUtils audioUtils;
+    private final Alexflipnote alexflipnote;
+    private final WeebApi weebApi;
+    private final DunctebotConfig config;
+    private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
-    private CacheClient youtubeCache;
     private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
         .build((guildId) -> {
@@ -83,18 +83,37 @@ public final class Variables {
         this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
+        DunctebotConfig tmp = null;
         try {
-            this.config = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
+            tmp = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
+        this.config = tmp;
         if (this.config == null) {
             System.exit(0);
         }
 
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
+        this.commandManager = new CommandManager(this);
+        this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
+
+        // Audio Utils needs the client
+        var ytcfg = this.config.apis.youtubeCache;
+        this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> {
+            final Thread thread = new Thread(r, "Cache-Thread");
+            thread.setDaemon(true);
+            return thread;
+        }));
+
+        this.audioUtils = new AudioUtils(this.config.apis, this);
+        this.alexflipnote = new Alexflipnote(this.mapper);
+        this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
+            .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
+            .setToken(this.config.apis.weebSh)
+            .build();
 
         //set the devs
         Settings.DEVELOPERS.addAll(this.config.discord.constantSuperUserIds);
@@ -108,18 +127,10 @@ public final class Variables {
     }
 
     public BlargBot getBlargBot() {
-        if (this.blargBot == null) {
-            this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
-        }
-
         return this.blargBot;
     }
 
     public CommandManager getCommandManager() {
-        if (this.commandManager == null) {
-            this.commandManager = new CommandManager(this);
-        }
-
         return this.commandManager;
     }
 
@@ -149,26 +160,10 @@ public final class Variables {
     }
 
     public CacheClient getYoutubeCache() {
-        if (this.youtubeCache == null) {
-            var cfg = getConfig().apis.youtubeCache;
-            this.youtubeCache = new CacheClient(cfg.endpoint, cfg.token, Executors.newCachedThreadPool((r) -> {
-                final Thread thread = new Thread(r, "Cache-Thread");
-                thread.setDaemon(true);
-                return thread;
-            }));
-        }
-
         return this.youtubeCache;
     }
 
     public WeebApi getWeebApi() {
-        if (this.weebApi == null) {
-            this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
-                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-                .setToken(this.config.apis.weebSh)
-                .build();
-        }
-
         return this.weebApi;
     }
 
@@ -177,10 +172,6 @@ public final class Variables {
     }
 
     public Alexflipnote getAlexflipnote() {
-        if (this.alexflipnote == null) {
-            this.alexflipnote = new Alexflipnote(this.mapper);
-        }
-
         return this.alexflipnote;
     }
 
@@ -189,10 +180,6 @@ public final class Variables {
     }
 
     public AudioUtils getAudioUtils() {
-        if (this.audioUtils == null) {
-            this.audioUtils = new AudioUtils(this.config.apis, this);
-        }
-
         return this.audioUtils;
     }
 
