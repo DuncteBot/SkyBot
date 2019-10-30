@@ -89,7 +89,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             .setSearch(search)
             .setTitle(*ctx.args.toTypedArray())
 
-        println(params.title)
+        println(params.title.toList())
 
         val tracks = ctx.youtubeCache.search(params)
 

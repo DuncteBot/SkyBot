@@ -102,11 +102,7 @@ public final class Variables {
 
         // Audio Utils needs the client
         var ytcfg = this.config.apis.youtubeCache;
-        this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> {
-            final Thread thread = new Thread(r, "Cache-Thread");
-            thread.setDaemon(true);
-            return thread;
-        }));
+        this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> new Thread(r, "Cache-Thread")));
 
         this.audioUtils = new AudioUtils(this.config.apis, this);
         this.alexflipnote = new Alexflipnote(this.mapper);

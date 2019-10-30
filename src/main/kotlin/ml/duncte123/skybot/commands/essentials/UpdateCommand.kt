@@ -61,7 +61,7 @@ class UpdateCommand : Command() {
             // This will also shutdown eval
             val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
 
-            listener.killAllShards(ctx.shardManager!!)
+            listener.killAllShards(ctx.shardManager!!, false)
 
             // Wait for 2 seconds to allow everything to shut down
             sleep(2000)

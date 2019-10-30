@@ -76,11 +76,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             this.mng.scheduler.queue(track, this.isPatron);
 
             if (this.announce) {
-                String msg = "Adding to queue: " + title;
-                if (this.mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
-                }
-
+                final String msg = "Adding to queue: " + title;
                 sendEmbed(this.channel,
                     embedField(this.audioUtils.embedTitle, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
@@ -115,12 +111,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             }
 
             if (this.announce) {
-                String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-
-                if (this.mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
-                }
-
+                final String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
                 sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
             }
         }

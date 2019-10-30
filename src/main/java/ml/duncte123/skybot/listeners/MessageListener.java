@@ -108,8 +108,8 @@ public abstract class MessageListener extends BaseListener {
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
             event.getMessage().addReaction("a:_yes:577795293546938369").queue(
-                success -> killAllShards(manager),
-                failure -> killAllShards(manager)
+                success -> killAllShards(manager, true),
+                failure -> killAllShards(manager, true)
             );
 
             return;
@@ -426,7 +426,7 @@ public abstract class MessageListener extends BaseListener {
         return topic.contains(search);
     }
 
-    public void killAllShards(@Nonnull ShardManager manager) {
+    public void killAllShards(@Nonnull ShardManager manager, boolean kill) {
         final Thread shutdownThread = new Thread(() -> {
             manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
@@ -449,10 +449,11 @@ public abstract class MessageListener extends BaseListener {
             AirUtils.stop(variables.getAudioUtils(), manager);
             BotCommons.shutdown(manager);
 
-            // We close every thread :)
-            /*if (!isUpdating) {
+            // There are *some* applications (weeb.java *cough*) that are stupid
+            // and do not allow us to shut down okhttp or create deamon threads
+            if (kill) {
                 System.exit(0);
-            }*/
+            }
         }, "shutdown-thread");
         shutdownThread.start();
     }
