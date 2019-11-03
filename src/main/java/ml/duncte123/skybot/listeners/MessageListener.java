@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SkyBot;
@@ -94,8 +95,11 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        //We only want to respond to members/users
-        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.isWebhookMessage()) {
+        if (event.getAuthor().isFake() ||
+            event.getAuthor().isBot() ||
+            event.isWebhookMessage() ||
+            event.getMember() == null // Just in case Discord fucks up *again*
+        ) {
             return;
         }
 
@@ -107,7 +111,7 @@ public abstract class MessageListener extends BaseListener {
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
-            event.getMessage().addReaction("a:_yes:577795293546938369").queue(
+            event.getMessage().addReaction(MessageUtils.getSuccessReaction()).queue(
                 success -> killAllShards(manager, true),
                 failure -> killAllShards(manager, true)
             );
