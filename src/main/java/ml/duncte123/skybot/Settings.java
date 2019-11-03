@@ -18,9 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import gnu.trove.list.TLongList;
-import ml.duncte123.skybot.utils.MapUtils;
-
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Settings {
 
@@ -28,7 +25,7 @@ public class Settings {
     public static boolean USE_JSON = false;
     public static boolean AUTO_REBOOT_SHARDS = true; // set to false if shards are rebooted when they shouldn't be
     public static final long OWNER_ID = 191231307290771456L;
-    public static final TLongList DEVELOPERS = MapUtils.newLongList();
+    public static long[] DEVELOPERS = new long[0];
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final boolean IS_LOCAL = VERSION.startsWith("@versionObj");

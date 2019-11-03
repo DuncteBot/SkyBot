@@ -38,8 +38,6 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
     public AudioItem loadTrackWithVideoId(String videoId, boolean mustExist) {
         final CacheResponse cacheResponse = this.cacheClient.get(videoId);
 
-        System.out.println(cacheResponse.toString());
-
         if (!cacheResponse.failure && cacheResponse.getTrack() != null) {
             final AudioTrack track = cacheResponse.getTrack().toAudioTrack(this);
             return new DoNotCache(track);

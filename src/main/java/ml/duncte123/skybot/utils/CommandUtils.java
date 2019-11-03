@@ -219,6 +219,16 @@ public class CommandUtils {
     }
 
     public static boolean isDev(@Nonnull User u) {
-        return Settings.DEVELOPERS.contains(u.getIdLong());
+        return isDev(u.getIdLong());
+    }
+
+    public static boolean isDev(long userId) {
+        for (long id : Settings.DEVELOPERS) {
+            if (id == userId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

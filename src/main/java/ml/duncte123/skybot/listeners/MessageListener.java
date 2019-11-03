@@ -58,6 +58,7 @@ import java.util.regex.Pattern;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
+import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public abstract class MessageListener extends BaseListener {
@@ -106,7 +107,7 @@ public abstract class MessageListener extends BaseListener {
         final String rw = event.getMessage().getContentRaw();
 
         if (rw.equals(Settings.PREFIX + "shutdown")
-            && Settings.DEVELOPERS.contains(event.getAuthor().getIdLong())) {
+            && isDev(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
