@@ -85,9 +85,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     }
 
     private fun searchCache(search: String, ctx: CommandContext): String? {
-        val params = SearchParams()
-            .setSearch(search)
-            .setTitle(*ctx.args.toTypedArray())
+        val params = SearchParams().setSearch(search)
+        AirUtils.setTitleFromKotlin(params, ctx.args.toTypedArray())
         val tracks = ctx.youtubeCache.search(params)
 
         if (tracks.isEmpty()) {
