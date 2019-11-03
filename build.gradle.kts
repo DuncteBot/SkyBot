@@ -99,9 +99,6 @@ dependencies {
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 
-    // reflections
-    implementation(group = "org.reflections", name = "reflections", version = "0.9.11")
-
     //Spotify API
     implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.1.0")
 
@@ -119,6 +116,7 @@ dependencies {
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
+
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
     implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")

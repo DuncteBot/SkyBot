@@ -21,10 +21,36 @@ package ml.duncte123.skybot;
 import com.jagrosh.jagtag.Parser;
 import io.sentry.Sentry;
 import kotlin.Triple;
+import ml.duncte123.skybot.commands.admin.BlackListCommand;
+import ml.duncte123.skybot.commands.admin.VcAutoRoleCommand;
+import ml.duncte123.skybot.commands.animals.*;
+import ml.duncte123.skybot.commands.essentials.*;
+import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
+import ml.duncte123.skybot.commands.fun.*;
+import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
+import ml.duncte123.skybot.commands.guild.GuildJoinsCommand;
+import ml.duncte123.skybot.commands.guild.mod.*;
+import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand;
+import ml.duncte123.skybot.commands.guild.owner.ForceDisconnectCommand;
+import ml.duncte123.skybot.commands.guild.owner.LockEmoteCommand;
+import ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand;
+import ml.duncte123.skybot.commands.guild.owner.settings.*;
+import ml.duncte123.skybot.commands.image.*;
+import ml.duncte123.skybot.commands.image.duncte123gen.DrakeCommand;
+import ml.duncte123.skybot.commands.image.duncte123gen.IWantToDieCommand;
+import ml.duncte123.skybot.commands.image.duncte123gen.ItsFreeRealEstateCommand;
+import ml.duncte123.skybot.commands.image.filter.*;
+import ml.duncte123.skybot.commands.lgbtq.FlagCommand;
+import ml.duncte123.skybot.commands.lgbtq.PronounsCheckCommand;
+import ml.duncte123.skybot.commands.lgbtq.SetPronounsCommand;
+import ml.duncte123.skybot.commands.mod.*;
+import ml.duncte123.skybot.commands.music.*;
+import ml.duncte123.skybot.commands.nsfw.NSFWCommands;
+import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.commands.weeb.WeebCommands;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -34,14 +60,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -72,9 +96,162 @@ public class CommandManager {
     public CommandManager(Variables variables) {
         this.variables = variables;
 
-        //Get reflections for this project
-        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
-//        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
+        /// <editor-fold desc="Command Loading" defaulstate="collapsed">
+        this.addCommand(new AchievementCommand());
+        this.addCommand(new AdviceCommand());
+        this.addCommand(new AlpacaCommand());
+        this.addCommand(new AnnounceCommand());
+        this.addCommand(new AutoRoleCommand());
+        this.addCommand(new AvatarCommand());
+        this.addCommand(new BanCommand());
+        this.addCommand(new BaseBoostCommand());
+        this.addCommand(new BirbCommand());
+        this.addCommand(new BlackAndWhiteCommand());
+        this.addCommand(new BlackListCommand());
+        this.addCommand(new BlurCommand());
+        this.addCommand(new BotinfoCommand());
+        this.addCommand(new CaptchaCommand());
+        this.addCommand(new ChangeLogCommand());
+        this.addCommand(new ChatCommand());
+        this.addCommand(new CleanupCommand());
+        this.addCommand(new ClearLeftGuildsCommand());
+        this.addCommand(new ClintCommand());
+        this.addCommand(new CoinCommand());
+        this.addCommand(new ColorCommand());
+        this.addCommand(new CrashCommand());
+        this.addCommand(new CSShumorCommand());
+        this.addCommand(new CustomCommandCommand());
+        this.addCommand(new DeepfryCommand());
+        this.addCommand(new DeHoistCommand());
+        this.addCommand(new DeletCommand());
+        this.addCommand(new DeleteCommand());
+        this.addCommand(new DialogCommand());
+        this.addCommand(new DidYouMeanCommand());
+        this.addCommand(new DiscordMemesCommand());
+        this.addCommand(new DogCommand());
+        this.addCommand(new DonateCommand());
+        this.addCommand(new DrakeCommand());
+        this.addCommand(new EightBallCommand());
+        this.addCommand(new EvalCommand());
+        this.addCommand(new EveryoneCommand());
+        this.addCommand(new FactsCommand());
+        this.addCommand(new FlagCommand());
+        this.addCommand(new FlipCommand());
+        this.addCommand(new ForceDisconnectCommand());
+        this.addCommand(new ForceSkip());
+        this.addCommand(new GuildInfoCommand());
+        this.addCommand(new GuildJoinsCommand());
+        this.addCommand(new HackbanCommand());
+        this.addCommand(new HelpCommand());
+        this.addCommand(new ImageCommand());
+        this.addCommand(new InstaCommand());
+        this.addCommand(new InvertCommand());
+        this.addCommand(new IssueCommand());
+        this.addCommand(new ItsFreeRealEstateCommand());
+        this.addCommand(new IWantToDieCommand());
+        this.addCommand(new JoinCommand());
+        this.addCommand(new JokeCommand());
+        this.addCommand(new JokeoverheadCommand());
+        this.addCommand(new KickCommand());
+        this.addCommand(new KickMeCommand());
+        this.addCommand(new KittyCommand());
+        this.addCommand(new KpopCommand());
+        this.addCommand(new LeaveCommand());
+        this.addCommand(new LinusCommand());
+        this.addCommand(new ListCommand());
+        this.addCommand(new LlamaCommand());
+        this.addCommand(new LoadCommand());
+        this.addCommand(new LoadingBarCommand());
+        this.addCommand(new LockEmoteCommand());
+        this.addCommand(new LoveCommand());
+        this.addCommand(new LyricsCommand());
+        this.addCommand(new MemeCommand());
+        this.addCommand(new MuteCommand());
+        this.addCommand(new MuteRoleCommand());
+        this.addCommand(new NowPlayingCommand());
+        this.addCommand(new NSFWCommands());
+        this.addCommand(new OneLinerCommands());
+        this.addCommand(new PauseCommand());
+        this.addCommand(new PcCheckCommand());
+        this.addCommand(new PingCommand());
+        this.addCommand(new PixelateCommand());
+        this.addCommand(new PlayCommand());
+        this.addCommand(new PlayRawCommand());
+        this.addCommand(new PPlayCommand());
+        this.addCommand(new PronounsCheckCommand());
+        this.addCommand(new PurgeChannelCommand());
+        this.addCommand(new RadioCommand());
+        this.addCommand(new ReaddCommand());
+        this.addCommand(new RemindmeCommand());
+        this.addCommand(new RepeatCommand());
+        this.addCommand(new RestartCommand());
+        this.addCommand(new RestartShardCommand());
+        this.addCommand(new ReverseCommand());
+        this.addCommand(new RoleInfoCommand());
+        this.addCommand(new RolesCommand());
+        this.addCommand(new SaltyCommand());
+        this.addCommand(new SaturateCommand());
+        this.addCommand(new SaveCommand());
+        this.addCommand(new ScrollCommand());
+        this.addCommand(new SealCommand());
+        this.addCommand(new SearchCommand());
+        this.addCommand(new SeekCommand());
+        this.addCommand(new SetColorCommand());
+        this.addCommand(new SetDescriptionCommand());
+        this.addCommand(new SetJoinMessageCommand());
+        this.addCommand(new SetLeaveMessageCommand());
+        this.addCommand(new SetLogChannelCommand());
+        this.addCommand(new SetPrefixCommand());
+        this.addCommand(new SetPronounsCommand());
+        this.addCommand(new SetRateLimitsCommand());
+        this.addCommand(new SettingsCommand());
+        this.addCommand(new SetWelcomeChannelCommand());
+        this.addCommand(new ShardInfoCommand());
+        this.addCommand(new ShitCommand());
+        this.addCommand(new ShortenCommand());
+        this.addCommand(new ShuffleCommand());
+        this.addCommand(new SkipCommand());
+        this.addCommand(new SlowModeCommand());
+        this.addCommand(new SoftbanCommand());
+        this.addCommand(new StatsCommand());
+        this.addCommand(new StopCommand());
+        this.addCommand(new SuggestCommand());
+        this.addCommand(new TagCommand(variables));
+        this.addCommand(new TempBanCommand());
+        this.addCommand(new TempMuteCommand());
+        this.addCommand(new TestFlagCommand());
+        this.addCommand(new TestTagCommand());
+        this.addCommand(new TextToBricksCommand());
+        this.addCommand(new TheSearchCommand());
+        this.addCommand(new ToggleAnnounceTracksCommand());
+        this.addCommand(new ToggleAutoDehoistCommand());
+        this.addCommand(new ToggleFilterInvitesCommand());
+        this.addCommand(new ToggleJoinMessageCommand());
+        this.addCommand(new ToggleKickModeCommand());
+        this.addCommand(new ToggleSpamFilterCommand());
+        this.addCommand(new ToggleSwearFilterCommand());
+        this.addCommand(new TokenCommand());
+        this.addCommand(new TranslateCommand());
+        this.addCommand(new UnbanCommand());
+        this.addCommand(new UnlockEmoteCommand());
+        this.addCommand(new UnmuteCommand());
+        this.addCommand(new UnshortenCommand());
+        this.addCommand(new UnwarnCommand());
+        this.addCommand(new UpdateCommand());
+        this.addCommand(new UrbanCommand());
+        this.addCommand(new UserinfoCommand());
+        this.addCommand(new VcAutoRoleCommand());
+        this.addCommand(new VoiceKickCommand());
+        this.addCommand(new VolumeCommand());
+        this.addCommand(new VoteCommand());
+        this.addCommand(new WarnCommand());
+        this.addCommand(new WarningsCommand());
+        this.addCommand(new WeebCommands());
+        this.addCommand(new WolframAlphaCommand());
+        this.addCommand(new XkcdCommand());
+        this.addCommand(new YesNoCommand());
+        this.addCommand(new YodaSpeakCommand());
+        /// </editor-fold>
 
         loadCustomCommands();
     }
@@ -272,7 +449,8 @@ public class CommandManager {
         }
     }
 
-    private void registerCommandsFromReflection(Reflections reflections) {
+    // You served well my friend
+    /*private void registerCommandsFromReflection(Reflections reflections) {
 
         final List<Class<? extends ICommand>> filteredCommands = reflections
             .getSubTypesOf(ICommand.class)
@@ -301,7 +479,7 @@ public class CommandManager {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     private void loadCustomCommands() {
         this.variables.getDatabaseAdapter().getCustomCommands(
