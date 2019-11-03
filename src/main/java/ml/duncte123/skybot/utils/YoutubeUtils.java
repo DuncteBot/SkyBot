@@ -47,14 +47,15 @@ public class YoutubeUtils {
     }
 
     public static Video getVideoById(String videoID, String apiKey) throws Exception {
-        return getVideosByIds(videoID, apiKey).get(0);
+        return getVideosByIdBase(videoID, apiKey)
+            .setMaxResults(1L)
+            .execute()
+            .getItems()
+            .get(0);
     }
 
     public static List<Video> getVideosByIds(String videoIds, String apiKey) throws IOException {
-        return youtube.videos().list("id,snippet,contentDetails")
-            .setId(videoIds)
-            .setKey(apiKey)
-            .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)")
+        return getVideosByIdBase(videoIds, apiKey)
             .execute()
             .getItems();
     }
@@ -86,6 +87,13 @@ public class YoutubeUtils {
 
     public static String getThumbnail(String videoID) {
         return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
+    }
+
+    private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
+        return youtube.videos().list("id,snippet,contentDetails")
+            .setId(videoIds)
+            .setKey(apiKey)
+            .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)");
     }
 
     /*private static YoutubeTrack searchCache(String title, String author, CacheClient cacheClient) {
