@@ -300,7 +300,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws Exception {
-        String videoIdsJoined = String.join(",", videoIds);
+        final String videoIdsJoined = String.join(",", videoIds);
         final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
         final List<AudioTrack> playList = new ArrayList<>();
 
@@ -337,7 +337,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             return images[0].getUrl();
         }
 
-        return YoutubeUtils.getThumbnail(video);
+        return getThumbnail(video);
     }
 
     private long toLongDuration(String dur) {

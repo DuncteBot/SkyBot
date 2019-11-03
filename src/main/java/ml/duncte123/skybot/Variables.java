@@ -101,7 +101,7 @@ public final class Variables {
         this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
 
         // Audio Utils needs the client
-        var ytcfg = this.config.apis.youtubeCache;
+        final var ytcfg = this.config.apis.youtubeCache;
         this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> new Thread(r, "Cache-Thread")));
 
         this.audioUtils = new AudioUtils(this.config.apis, this);
