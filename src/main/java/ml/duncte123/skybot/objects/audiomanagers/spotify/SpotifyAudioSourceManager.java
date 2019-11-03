@@ -36,7 +36,6 @@ import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.utils.YoutubeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
