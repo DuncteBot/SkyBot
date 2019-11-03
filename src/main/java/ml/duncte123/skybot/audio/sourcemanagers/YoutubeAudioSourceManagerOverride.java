@@ -43,7 +43,7 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
 
         if (!cacheResponse.failure && cacheResponse.getTrack() != null) {
             final AudioTrack track = cacheResponse.getTrack().toAudioTrack(this);
-            return new DoNotCache(track.getInfo(), (YoutubeAudioSourceManager) track.getSourceManager());
+            return new DoNotCache(track);
         }
 
         return super.loadTrackWithVideoId(videoId, mustExist);
@@ -53,8 +53,8 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
      * Don't cache tracks that are already retrieved from the cache
      */
     public static class DoNotCache extends YoutubeAudioTrack {
-        DoNotCache(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
-            super(trackInfo, sourceManager);
+        DoNotCache(AudioTrack track) {
+            super(track.getInfo(), (YoutubeAudioSourceManager) track.getSourceManager());
         }
     }
 }
