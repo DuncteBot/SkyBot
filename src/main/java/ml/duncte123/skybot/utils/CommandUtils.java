@@ -223,7 +223,7 @@ public class CommandUtils {
     }
 
     public static boolean isDev(long userId) {
-        for (long id : Settings.DEVELOPERS) {
+        for (final long id : Settings.DEVELOPERS) {
             if (id == userId) {
                 return true;
             }
