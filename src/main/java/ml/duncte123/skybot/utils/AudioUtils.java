@@ -51,6 +51,8 @@ public class AudioUtils {
     private final DunctebotConfig.Apis config;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
+    // public so we can change it with eval
+    public static String YOUTUBE_VERSION = "2.20191103.05.00";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
@@ -67,10 +69,10 @@ public class AudioUtils {
         final var youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(false, this.variables.getYoutubeCache());
 
         // When the values change
-            /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
-                request.setHeader("x-youtube-client-name", "1");
-                request.setHeader("x-youtube-client-version", "2.20191008.04.01");
-            });*/
+        youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
+            request.setHeader("x-youtube-client-name", "1");
+            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION);
+        });
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
         playerManager.registerSourceManager(new ClypitAudioSourceManager());
