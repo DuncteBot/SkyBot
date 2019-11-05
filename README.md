@@ -29,19 +29,6 @@ Go to [`https://lnk.dunctebot.com/invite`][inviteLink] and follow the steps on t
 Self-hosting of this bot is not supported nor will there be any support provided to the people that try.
 The code of this bot was made public for people who want to see how the bot works or want to contribute to it.
 
-# Libs
-The following libraries are used:
-- [_weeb.java_](https://github.com/duncte123/weeb.java)
-- [_JDA_](https://github.com/DV8FromTheWorld/JDA)
-- [_LavaPlayer_](https://github.com/sedmelluq/lavaplayer)
-- [_Wolfaram|Alpha Binding_](https://github.com/aeurielesn/wolfram-alpha-java-binding)
-- [_reflections_](https://github.com/ronmamo/reflections)
-- [_commons-text_](https://commons.apache.org/proper/commons-text/)
-- [_sqlite-connector-java_](https://github.com/xerial/sqlite-jdbc)
-- [_groovy-jsr223_](https://github.com/apache/groovy)
-- [_groovy-sandbox_](https://github.com/jenkinsci/groovy-sandbox)
-- [_spotify-web-api-java_](https://github.com/thelinmichael/spotify-web-api-java)
-- [_logback-classic_](https://logback.qos.ch/)
 
 # Support
 [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://discord.gg/NKM9Xtk)
