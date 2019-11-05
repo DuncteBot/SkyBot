@@ -46,28 +46,85 @@ public class YoutubeUtils {
         }
     }
 
-
     public static Video getVideoById(String videoID, String apiKey) throws Exception {
-        return youtube.videos().list("id,snippet,contentDetails")
-            .setId(videoID)
-            .setKey(apiKey)
+        return getVideosByIdBase(videoID, apiKey)
+            .setMaxResults(1L)
             .execute()
-            .getItems().get(0);
+            .getItems()
+            .get(0);
     }
 
-    public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("id,snippet")
+    public static List<Video> getVideosByIds(String videoIds, String apiKey) throws IOException {
+        return getVideosByIdBase(videoIds, apiKey)
+            .execute()
+            .getItems();
+    }
+
+    public static List<SearchResult> searchYoutubeIdOnly(String query, String apiKey, long size) throws IOException {
+        return youtube.search().list("id")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
-            .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
             .setMaxResults(size)
             .execute()
             .getItems();
+    }
+
+    public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
+        return youtube.search().list("snippet")
+            .setKey(apiKey)
+            .setQ(query)
+            .setType("video")
+            .setFields("items(id/kind,id/videoId,snippet/title)")
+            .setMaxResults(size)
+            .execute()
+            .getItems();
+    }
+
+    public static String getThumbnail(Video video) {
+        return getThumbnail(video.getId());
     }
 
     public static String getThumbnail(String videoID) {
         return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
     }
 
+    private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
+        return youtube.videos().list("id,snippet,contentDetails")
+            .setId(videoIds)
+            .setKey(apiKey)
+            .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)");
+    }
+
+    /*private static YoutubeTrack searchCache(String title, String author, CacheClient cacheClient) {
+        final SearchParams params = new SearchParams()
+            .setSearch(title + " " + author)
+            .setTitle(title.split("\\s+"))
+            .setAuthor(author.split("\\s+"));
+
+        final List<YoutubeTrack> found = cacheClient.search(params);
+
+        if (found.isEmpty()) {
+            return null;
+        }
+
+        return found.get(0);
+    }
+
+    private static Video cacheToYoutubeVideo(YoutubeTrack track) {
+        return new Video()
+            .setId(track.getId())
+            .setKind("youtube#video")
+            .setSnippet(
+                new VideoSnippet()
+                .setTitle(track.getTitle())
+                .setChannelTitle(track.getAuthor())
+            )
+            .setContentDetails(
+                new VideoContentDetails()
+                .setDuration(
+                    Duration.ofMillis(track.getLength()).toString()
+                )
+            );
+    }*/
 }

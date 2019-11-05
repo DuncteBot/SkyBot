@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.objects.audiomanagers.spotify;
 
-import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -37,13 +36,14 @@ import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.utils.YoutubeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -53,8 +53,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
-import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube;
+import static ml.duncte123.skybot.utils.YoutubeUtils.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SpotifyAudioSourceManager implements AudioSourceManager {
@@ -138,17 +137,19 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
 
         try {
-            final List<AudioTrack> playList = new ArrayList<>();
-
+            final List<String> videoIDs = new ArrayList<>();
             final Future<Album> albumFuture = this.spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
             final Album album = albumFuture.get();
 
             for (final TrackSimplified t : album.getTracks().getItems()) {
-                final List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(),
-                    this.config.googl, 1L);
+                final String videoId = searchYoutube(t.getName(), album.getArtists()[0].getName());
 
-                playList.addAll(doThingWithPlaylist(results, album.getImages()));
+                if (videoId != null) {
+                    videoIDs.add(videoId);
+                }
             }
+
+            final List<AudioTrack> playList = getTrackListFromVideoIds(videoIDs, album.getImages());
 
             return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
         }
@@ -169,25 +170,33 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         final String playListId = res.group(res.groupCount());
 
         try {
-            final List<AudioTrack> finalPlaylist = new ArrayList<>();
+            final List<String> videoIDs = new ArrayList<>();
 
             final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
             final PlaylistTrack[] playlistTracks = spotifyPlaylist.getTracks().getItems();
-          
+
             if (playlistTracks.length == 0) {
                 return null;
             }
-          
+
             if (playlistTracks.length > TrackScheduler.QUEUE_SIZE && !isPatron) {
                 throw new LimitReachedException("The playlist is too big", TrackScheduler.QUEUE_SIZE);
             }
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
-                final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
-                    + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
+                if (playlistTrack.getIsLocal()) {
+                    continue;
+                }
 
-                finalPlaylist.addAll(doThingWithPlaylist(results, playlistTrack.getTrack().getAlbum().getImages()));
+                final Track track = playlistTrack.getTrack();
+                final String videoId = searchYoutube(track.getName(), track.getArtists()[0].getName());
+
+                if (videoId != null) {
+                    videoIDs.add(videoId);
+                }
             }
+
+            final List<AudioTrack> finalPlaylist = getTrackListFromVideoIds(videoIDs, spotifyPlaylist.getImages());
 
             return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
         }
@@ -214,15 +223,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
         try {
             final Track track = this.spotifyApi.getTrack(res.group(res.groupCount())).build().execute();
+            final String videoId = searchYoutube(track.getName(), track.getArtists()[0].getName());
 
-            final List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(),
-                this.config.googl, 1L);
-
-            if (results.isEmpty()) {
+            if (videoId == null) {
                 return null;
             }
 
-            final Video v = getVideoById(results.get(0).getId().getVideoId(), this.config.googl);
+            final Video v = getVideoById(videoId, this.config.googl);
 
             return audioTrackFromVideo(v, track.getAlbum().getImages());
         }
@@ -231,7 +238,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
         }
     }
-
 
     @Override
     public boolean isTrackEncodable(AudioTrack track) {
@@ -292,20 +298,25 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results, Image[] images) throws Exception {
+    private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws Exception {
+        final String videoIdsJoined = String.join(",", videoIds);
+        final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
         final List<AudioTrack> playList = new ArrayList<>();
-        if (!results.isEmpty()) {
-            final SearchResult video = results.get(0);
-            final ResourceId rId = video.getId();
 
-            if (rId.getKind().equals("youtube#video")) {
-                final Video videoById = getVideoById(video.getId().getVideoId(), this.config.googl);
-
-                playList.add(audioTrackFromVideo(videoById, images));
-            }
-        }
+        videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
 
         return playList;
+    }
+
+    @Nullable
+    private String searchYoutube(String title, String author) throws IOException {
+        final List<SearchResult> results = searchYoutubeIdOnly(title + " " + author, this.config.googl, 1L);
+
+        if (!results.isEmpty()) {
+            return results.get(0).getId().getVideoId();
+        }
+
+        return null;
     }
 
     private AudioTrack audioTrackFromVideo(Video v, Image[] images) {
@@ -316,30 +327,19 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             v.getId(),
             false,
             "https://youtube.com/watch?v=" + v.getId(),
-            imageUrlOrThumbnail(images, v.getId())
+            imageUrlOrThumbnail(images, v)
         ), this.youtubeAudioSourceManager);
     }
 
-    private String imageUrlOrThumbnail(Image[] images, String videoId) {
+    private String imageUrlOrThumbnail(Image[] images, Video video) {
         if (images.length > 0) {
             return images[0].getUrl();
         }
 
-        return YoutubeUtils.getThumbnail(videoId);
+        return getThumbnail(video);
     }
 
     private long toLongDuration(String dur) {
-        String time = dur.substring(2);
-        long duration = 0L;
-        final Object[][] indexs = new Object[][]{{"H", 3600}, {"M", 60}, {"S", 1}};
-        for (final Object[] index1 : indexs) {
-            final int index = time.indexOf((String) index1[0]);
-            if (index != -1) {
-                final String value = time.substring(0, index);
-                duration += Integer.parseInt(value) * (int) index1[1] * 1000;
-                time = time.substring(value.length() + 1);
-            }
-        }
-        return duration;
+        return Duration.parse(dur).toMillis();
     }
 }

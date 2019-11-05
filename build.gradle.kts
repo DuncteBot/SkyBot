@@ -54,38 +54,40 @@ repositories {
     jcenter()
 
     maven {
-        name = "Jenkins"
         url = uri("http://repo.jenkins-ci.org/releases/")
     }
 
     maven {
-        name = "duncte123 bintray"
         url = uri("https://dl.bintray.com/duncte123/maven")
     }
 
     maven {
-        name = "jitpack"
+        url = uri("https://maven.notfab.net/Hosted")
+    }
+
+    maven {
         url = uri("https://jitpack.io")
     }
 }
 
 dependencies {
+    // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
 
-    //Weeb api
+    // Weeb api
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
-    //My little utils
+    // botCommons
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.58")
 
-    //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_53") {
+    // JDA (java discord api)
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_56") {
         exclude(module = "opus-java")
     }
 
-    //Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.22.pbjtest3")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "700b55e")
+    // Lavaplayer/Lavalink
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.23")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "709d79f")
 //    implementation(project(":Lavalink-Client"))
 
     // SQLite
@@ -97,23 +99,24 @@ dependencies {
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 
-    // cp scraping stuffz
-    implementation(group = "org.reflections", name = "reflections", version = "0.9.11")
-
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.0.1")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.1.0")
+
+    // Youtube Cache
+    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.1")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev206-1.25.0")
 
-    //Add kotlin
+    // kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.2")
 
-    //Spark for website
-    implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1") // Override spark to the latest version
+    //Spark
+    implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
+
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
     implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")
@@ -137,9 +140,13 @@ dependencies {
     // Trove
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
-    // A nice duration parser
+    // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
+
+    // Oshi
     implementation(group = "com.github.oshi", name = "oshi-core", version = "3.13.2")
+
+    // caffeine
     implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.7.0")
 }
 

@@ -226,7 +226,7 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
-            || ctx.config.apis.weebSh.wolketoken == null) {
+            || ctx.config.apis.weebSh == null) {
             sendEmbedRaw(event.channel, embed.build(), null)
             return
         }

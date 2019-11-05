@@ -35,14 +35,14 @@ jobs:
                   name: "Get dependencies"
                   command: ./gradlew dependencies
 
+            - run:
+                name: "Build bot"
+                command: ./gradlew build
+
             - save_cache:
                   paths:
                       - ~/.gradle
                   key: v1-dependencies-{{ checksum "build.gradle.kts" }}
-
-            - run:
-                  name: "Build bot"
-                  command: ./gradlew build
 
             # run tests!
             #      - run: ./gradlew test

@@ -58,6 +58,7 @@ import java.util.regex.Pattern;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
+import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public abstract class MessageListener extends BaseListener {
@@ -106,14 +107,14 @@ public abstract class MessageListener extends BaseListener {
         final String rw = event.getMessage().getContentRaw();
 
         if (rw.equals(Settings.PREFIX + "shutdown")
-            && Settings.DEVELOPERS.contains(event.getAuthor().getIdLong())) {
+            && isDev(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
             event.getMessage().addReaction(MessageUtils.getSuccessReaction()).queue(
-                success -> killAllShards(manager),
-                failure -> killAllShards(manager)
+                success -> killAllShards(manager, true),
+                failure -> killAllShards(manager, true)
             );
 
             return;
@@ -430,7 +431,7 @@ public abstract class MessageListener extends BaseListener {
         return topic.contains(search);
     }
 
-    public void killAllShards(@Nonnull ShardManager manager) {
+    public void killAllShards(@Nonnull ShardManager manager, boolean kill) {
         final Thread shutdownThread = new Thread(() -> {
             manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
 
@@ -453,10 +454,11 @@ public abstract class MessageListener extends BaseListener {
             AirUtils.stop(variables.getAudioUtils(), manager);
             BotCommons.shutdown(manager);
 
-            // We close every thread :)
-            /*if (!isUpdating) {
+            // There are *some* applications (weeb.java *cough*) that are stupid
+            // and do not allow us to shut down okhttp or create deamon threads
+            if (kill) {
                 System.exit(0);
-            }*/
+            }
         }, "shutdown-thread");
         shutdownThread.start();
     }

@@ -80,16 +80,19 @@ public class CommandUtils {
                         .filter((f) -> f.getWord() != null && f.getWord().equals(fWord.substring(2).toLowerCase()))
                         .collect(Collectors.toList());
 
-                    if (!flags.isEmpty()) {
+                    if (flags.isEmpty()) {
+                        currentFlag = word.substring(2);
+                    } else {
                         final Flag flag = flags.get(0);
                         if (flag.getFlag() == null && flag.getWord() != null) {
                             currentFlag = flag.getWord();
                         } else {
                             currentFlag = String.valueOf(flag.getFlag());
                         }
-                        output.put(currentFlag, new ArrayList<>());
-                        pushFlag = false;
                     }
+
+                    output.put(currentFlag, new ArrayList<>());
+                    pushFlag = false;
                 } else {
                     currentFlag = "";
                     pushFlag = false;
@@ -219,6 +222,16 @@ public class CommandUtils {
     }
 
     public static boolean isDev(@Nonnull User u) {
-        return Settings.DEVELOPERS.contains(u.getIdLong());
+        return isDev(u.getIdLong());
+    }
+
+    public static boolean isDev(long userId) {
+        for (final long id : Settings.DEVELOPERS) {
+            if (id == userId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

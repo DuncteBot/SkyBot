@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -36,6 +38,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
+import net.notfab.caching.client.CacheClient;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -51,15 +55,15 @@ public final class Variables {
     private final ObjectMapper mapper = new ObjectMapper();
     private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
-    private final boolean isSql;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
-    private AudioUtils audioUtils;
-    private Alexflipnote alexflipnote;
-    private WeebApi weebApi;
-    private CommandManager commandManager;
-    private BlargBot blargBot;
-    private DunctebotConfig config;
+    private final CommandManager commandManager;
     private final DuncteApis apis;
+    private final BlargBot blargBot;
+    private final AudioUtils audioUtils;
+    private final Alexflipnote alexflipnote;
+    private final WeebApi weebApi;
+    private final DunctebotConfig config;
+    private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
     private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
@@ -75,24 +79,42 @@ public final class Variables {
 
 
     Variables() {
+        this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
+        this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+
+        DunctebotConfig tmp = null;
         try {
-            this.config = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
+            tmp = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
+        this.config = tmp;
         if (this.config == null) {
             System.exit(0);
         }
 
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
+        this.commandManager = new CommandManager(this);
+        this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
+
+        // Audio Utils needs the client
+        final var ytcfg = this.config.apis.youtubeCache;
+        this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> new Thread(r, "Cache-Thread")));
+
+        this.audioUtils = new AudioUtils(this.config.apis, this);
+        this.alexflipnote = new Alexflipnote(this.mapper);
+        this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
+            .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
+            .setToken(this.config.apis.weebSh)
+            .build();
 
         //set the devs
-        Settings.DEVELOPERS.addAll(this.config.discord.constantSuperUserIds);
+        Settings.DEVELOPERS = this.config.discord.constantSuperUserIds;
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + this.config.apis.googl + "&safe=off";
-        this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
             final String env = "&environment=" + (Settings.IS_LOCAL ? "local" : "production");
@@ -101,20 +123,10 @@ public final class Variables {
     }
 
     public BlargBot getBlargBot() {
-
-        if (this.blargBot == null) {
-            this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
-        }
-
         return this.blargBot;
     }
 
     public CommandManager getCommandManager() {
-
-        if (this.commandManager == null) {
-            this.commandManager = new CommandManager(this);
-        }
-
         return this.commandManager;
     }
 
@@ -143,28 +155,19 @@ public final class Variables {
         return this.googleBaseUrl;
     }
 
+    public CacheClient getYoutubeCache() {
+        return this.youtubeCache;
+    }
+
     public WeebApi getWeebApi() {
-
-        if (this.weebApi == null) {
-            this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
-                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-                .setToken(this.config.apis.weebSh.wolketoken)
-                .build();
-        }
-
         return this.weebApi;
     }
 
     boolean useApi() {
-        return this.isSql;
+        return this.config.use_database;
     }
 
     public Alexflipnote getAlexflipnote() {
-
-        if (this.alexflipnote == null) {
-            this.alexflipnote = new Alexflipnote(this.mapper);
-        }
-
         return this.alexflipnote;
     }
 
@@ -173,11 +176,6 @@ public final class Variables {
     }
 
     public AudioUtils getAudioUtils() {
-
-        if (this.audioUtils == null) {
-            this.audioUtils = new AudioUtils(this.config.apis, this);
-        }
-
         return this.audioUtils;
     }
 
@@ -188,7 +186,7 @@ public final class Variables {
     public DatabaseAdapter getDatabaseAdapter() {
         try {
             if (this.databaseAdapter == null) {
-                this.databaseAdapter = this.isSql ?
+                this.databaseAdapter = this.useApi() ?
                     new WebDatabaseAdapter(this.getApis(), this.getJackson()) :
                     (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
                         .getDeclaredConstructor().newInstance());

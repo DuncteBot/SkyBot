@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.fun;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.VariablesInConstructorCommand;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.CommandUtils.*;
 
-public class TagCommand extends VariablesInConstructorCommand {
+public class TagCommand extends Command {
 
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
 

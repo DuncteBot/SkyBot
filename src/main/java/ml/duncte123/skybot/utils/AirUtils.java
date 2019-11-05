@@ -43,6 +43,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
+import net.notfab.caching.shared.SearchParams;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -321,5 +322,9 @@ public class AirUtils {
 
     public static void setJDAContext(JDA jda) {
         ((JDAImpl) jda).setContext();
+    }
+
+    public static void setTitleFromKotlin(SearchParams params, String[] title) {
+        params.setTitle(title);
     }
 }

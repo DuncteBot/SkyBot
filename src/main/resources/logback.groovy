@@ -57,5 +57,6 @@ appender("Sentry", SentryAppender) {
 root(INFO, ["STDOUT", "Sentry"])
 
 //logger('net.dv8tion.jda.internal.requests.WebSocketClient', TRACE)
+logger('net.notfab.caching.client.CacheClient', TRACE)
 
 
