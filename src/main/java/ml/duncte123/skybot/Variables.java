@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
@@ -45,9 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
@@ -74,7 +73,11 @@ public final class Variables {
                 return null;
             });
 
-            return future.get();
+            try {
+                return future.get(40L, TimeUnit.SECONDS);
+            } catch (ExecutionException | TimeoutException e) {
+                return null;
+            }
         });
 
 
