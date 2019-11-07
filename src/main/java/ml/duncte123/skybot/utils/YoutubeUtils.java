@@ -23,10 +23,16 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoContentDetails;
+import com.google.api.services.youtube.model.VideoSnippet;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.Author;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.List;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -46,7 +52,7 @@ public class YoutubeUtils {
         }
     }
 
-    public static Video getVideoById(String videoID, String apiKey) throws Exception {
+    public static Video getVideoById(String videoID, String apiKey) throws IOException {
         return getVideosByIdBase(videoID, apiKey)
             .setMaxResults(1L)
             .execute()
@@ -87,6 +93,21 @@ public class YoutubeUtils {
 
     public static String getThumbnail(String videoID) {
         return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
+    }
+
+    public static YoutubeAudioTrack videoToTrack(Video video, YoutubeAudioSourceManager sourceManager) {
+        final VideoSnippet snippet = video.getSnippet();
+        final VideoContentDetails details = video.getContentDetails();
+        final AudioTrackInfo info = new AudioTrackInfo(
+            snippet.getTitle(),
+            snippet.getChannelTitle(),
+            Duration.parse(details.getDuration()).toMillis(),
+            video.getId(),
+            false,
+            "https://www.youtube.com/watch?v=" + video.getId()
+        );
+
+        return new YoutubeAudioTrack(info, sourceManager);
     }
 
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {

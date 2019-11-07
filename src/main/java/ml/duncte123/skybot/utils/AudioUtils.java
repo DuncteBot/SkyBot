@@ -52,7 +52,7 @@ public class AudioUtils {
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
-    public static String YOUTUBE_VERSION = "2.20191103.05.00";
+    public static String YOUTUBE_VERSION = "2.20191106.05.00";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
@@ -66,7 +66,11 @@ public class AudioUtils {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final var youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(false, this.variables.getYoutubeCache());
+        final YoutubeAudioSourceManagerOverride youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(
+            false,
+            this.variables.getYoutubeCache(),
+            this.variables.getConfig().apis.googl
+        );
 
         // When the values change
         youtubeAudioSourceManager.setHttpRequestModifier((request) -> {

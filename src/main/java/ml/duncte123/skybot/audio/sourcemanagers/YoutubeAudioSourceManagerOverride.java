@@ -20,18 +20,26 @@ package ml.duncte123.skybot.audio.sourcemanagers;
 
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.notfab.caching.client.CacheClient;
 import net.notfab.caching.shared.CacheResponse;
 
+import java.io.IOException;
+
+import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
+import static ml.duncte123.skybot.utils.YoutubeUtils.videoToTrack;
+
 public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager {
 
     private final CacheClient cacheClient;
+    private final String ytApiKey;
 
-    public YoutubeAudioSourceManagerOverride(boolean allowSearch, CacheClient cacheClient) {
+    public YoutubeAudioSourceManagerOverride(boolean allowSearch, CacheClient cacheClient, String ytApiKey) {
         super(allowSearch);
         this.cacheClient = cacheClient;
+        this.ytApiKey = ytApiKey;
     }
 
     @Override
@@ -43,7 +51,22 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
             return new DoNotCache(track);
         }
 
+        if (mustExist) {
+            return getFromYoutubeApi(videoId);
+        }
+
         return super.loadTrackWithVideoId(videoId, mustExist);
+    }
+
+    private AudioItem getFromYoutubeApi(String videoId) {
+        try {
+            return videoToTrack(
+                getVideoById(videoId, this.ytApiKey),
+                this
+            );
+        } catch (IOException e) {
+            throw new FriendlyException("This video does not exist", FriendlyException.Severity.SUSPICIOUS, e);
+        }
     }
 
     /**
