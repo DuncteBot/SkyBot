@@ -52,7 +52,7 @@ public class AudioUtils {
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
-    public static String YOUTUBE_VERSION = "2.20191106.05.00";
+    public static String YOUTUBE_VERSION = "2.20191108.05.00";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
