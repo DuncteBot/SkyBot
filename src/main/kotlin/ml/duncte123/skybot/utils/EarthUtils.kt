@@ -61,9 +61,9 @@ class EarthUtils {
                 .put("message", throwable.message)
                 .put("localiziedMessage", throwable.localizedMessage)
 
-            node.set("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace, mapper))
-            node.set("supressed", throwableArrayToJSONArray(throwable.suppressed, mapper))
-            node.set("cause", throwable.cause?.let { throwableToJSONObject(it, mapper) })
+            node.set<ArrayNode>("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace, mapper))
+            node.set<ArrayNode>("supressed", throwableArrayToJSONArray(throwable.suppressed, mapper))
+            node.set<JsonNode>("cause", throwable.cause?.let { throwableToJSONObject(it, mapper) })
 
             return node
         }
@@ -134,7 +134,7 @@ class EarthUtils {
             val json = mapper.createObjectNode().put("time", OffsetDateTime.now().toString())
 
             audioUtils.musicManagers.forEachEntry { key, value ->
-                json.set(key.toString(),
+                json.set<ObjectNode>(key.toString(),
                     mapper.createObjectNode()
                         .put("guildId", key)
                         .set("manager", gMMtoJSON(value, mapper))
@@ -161,8 +161,8 @@ class EarthUtils {
         private fun gMMtoJSON(manager: GuildMusicManager, mapper: ObjectMapper): ObjectNode {
             val node = mapper.createObjectNode()
 
-            node.set("scheduler", schedulerToJSON(manager.scheduler, mapper))
-            node.set("fredboat/audio/player", playerToJSON(manager.player, mapper))
+            node.set<ObjectNode>("scheduler", schedulerToJSON(manager.scheduler, mapper))
+            node.set<ObjectNode>("fredboat/audio/player", playerToJSON(manager.player, mapper))
 
             return node
         }

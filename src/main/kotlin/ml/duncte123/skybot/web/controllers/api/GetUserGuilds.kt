@@ -20,6 +20,7 @@ package ml.duncte123.skybot.web.controllers.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import ml.duncte123.skybot.Author
@@ -60,7 +61,7 @@ object GetUserGuilds {
             .put("total", guildsRequest.size)
             .put("code", response.status())
 
-        node.set("guilds", guilds)
+        node.set<ObjectNode>("guilds", guilds)
 
         return node
     }

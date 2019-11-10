@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.web.controllers.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHelpers
 import net.dv8tion.jda.api.entities.Guild
@@ -82,8 +83,8 @@ object FindUserAndGuild {
             .put("status", "success")
             .put("code", response.status())
 
-        node.set("user", userJson)
-        node.set("guild", guildJson)
+        node.set<ObjectNode>("user", userJson)
+        node.set<ObjectNode>("guild", guildJson)
 
         return node
     }

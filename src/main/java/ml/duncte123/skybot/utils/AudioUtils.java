@@ -24,6 +24,7 @@ import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Author;
@@ -39,44 +40,42 @@ import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManag
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
     public final String embedTitle = "AirPlayer";
     protected final TLongObjectMap<GuildMusicManager> musicManagers;
-    private final DunctebotConfig.Apis config;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
+    @SuppressWarnings("WeakerAccess")
     public static String YOUTUBE_VERSION = "2.20191108.05.00";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
-        java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-        this.config = config;
         this.variables = variables;
-        initPlayerManager();
         musicManagers = MapUtils.newLongObjectMap();
-    }
 
-    private void initPlayerManager() {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
         final YoutubeAudioSourceManagerOverride youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(
             false,
-            this.variables.getYoutubeCache(),
-            this.variables.getConfig().apis.googl
+            variables.getYoutubeCache(),
+            config.googl
         );
 
         // When the values change
-        youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
+        /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
             request.setHeader("x-youtube-client-name", "1");
             request.setHeader("x-youtube-client-version", YOUTUBE_VERSION);
-        });
+        });*/
+
+        youtubeAudioSourceManager.getMainHttpConfiguration().setHttpContextFilter(new YoutubeContextFilterOverride());
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
         playerManager.registerSourceManager(new ClypitAudioSourceManager());
@@ -151,6 +150,15 @@ public class AudioUtils {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {
             return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+
+    private static class YoutubeContextFilterOverride extends YoutubeHttpContextFilter {
+        @Override
+        public void onRequest(HttpClientContext context, HttpUriRequest request, boolean isRepetition) {
+            super.onRequest(context, request, isRepetition);
+
+            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION);
         }
     }
 }

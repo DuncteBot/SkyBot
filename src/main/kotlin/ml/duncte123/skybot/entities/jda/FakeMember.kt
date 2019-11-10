@@ -139,4 +139,8 @@ class FakeMember(private val name: String) : Member {
     override fun getPermissionsExplicit(channel: GuildChannel): EnumSet<Permission> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun getActiveClients(): EnumSet<ClientType> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
