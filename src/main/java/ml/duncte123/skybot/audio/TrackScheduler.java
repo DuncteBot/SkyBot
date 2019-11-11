@@ -168,6 +168,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private TrackUserData createNewTrackData(AudioTrack track) {
         final TrackUserData oldData = track.getUserData(TrackUserData.class);
 
+        if (oldData == null) {
+            return new TrackUserData(0L);
+        }
+
         return oldData.copy(oldData.getRequester());
     }
 
