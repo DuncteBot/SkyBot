@@ -18,7 +18,7 @@
 
 function initModal() {
     window.storedCommands = {};
-    window.editorRow = document.getElementById('editorRow');
+    window.editorRow = _('editorRow');
 }
 
 function showEditor() {
@@ -31,7 +31,7 @@ function hideEditor() {
 }
 
 function initEitor() {
-    const el = document.getElementById('editor');
+    const el = _('editor');
     window.editor = CodeMirror.fromTextArea(el, {
         mode: 'jagtag',
         lineNumbers: true,

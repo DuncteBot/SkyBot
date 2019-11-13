@@ -21,7 +21,7 @@ fetch("/api/getUserGuilds", {
 })
     .then(response => response.json())
     .then(json => {
-        const div = document.getElementById("guilds");
+        const div = _("guilds");
 
         if (json.status === "error") {
             div.innerHTML = `<h1 class="center">Session not valid</h1>
@@ -85,5 +85,5 @@ fetch("/api/getUserGuilds", {
 
     })
     .catch(() =>
-        document.getElementById("guilds").innerHTML = "Your session has expired, please refresh your browser"
+        _("guilds").innerHTML = "Your session has expired, please refresh your browser"
     );
