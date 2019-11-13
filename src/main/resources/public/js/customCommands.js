@@ -55,7 +55,6 @@ function initEitor() {
         }
         editor.save();
         _("chars").innerHTML = editor.getValue().length;
-        // localStorage.content = editor.getValue();
     });
 }
 
@@ -124,33 +123,12 @@ function deleteCommand(name) {
 
     toast(`Deleting "${name}"!`);
 
-    fetch(`/api/customcommands/${guildId}`, {
-        method: "DELETE",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name
-        })
-
-    })
-        .then((response) => response.json())
-        .then((json) => {
-
-            if (json.status === "success") {
-                toast("Deleted!");
-                hideEditor();
-                _("chars").innerHTML = 0;
-                setTimeout(() => window.location.reload(), 500);
-                return
-            }
-
-            notSaveToast(json.message);
-        })
-        .catch((e) => {
-            notSaveToast(e);
-        });
+    doFetch('DELETE', {name: name}, () => {
+        toast("Deleted!");
+        hideEditor();
+        _("chars").innerHTML = 0;
+        setTimeout(() => window.location.reload(), 500);
+    });
 }
 
 function clearEditor() {
@@ -164,6 +142,7 @@ function clearEditor() {
 
 function saveEdit(name) {
     if (!name || !storedCommands[name]) {
+        toast("Stop touching me");
         return;
     }
 
@@ -173,29 +152,11 @@ function saveEdit(name) {
     command.message = editor.getValue();
     command.autoresponse = _("autoresponse").checked;
 
-    fetch(`/api/customcommands/${guildId}`, {
-        method: "PATCH",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(command)
-    })
-        .then((response) => response.json())
-        .then((json) => {
-
-            if (json.status === "success") {
-                toast("Saved!");
-                hideEditor();
-                _("chars").innerHTML = 0;
-                return
-            }
-
-            notSaveToast(json.message);
-        })
-        .catch((e) => {
-            notSaveToast(e);
-        });
+    doFetch('PATCH', command, () => {
+        toast("Saved!");
+        hideEditor();
+        _("chars").innerHTML = 0;
+    });
 }
 
 function showModal(invoke, message, method, autoresponse) {
@@ -255,22 +216,27 @@ function createNew() {
 
     toast("Adding command....");
 
+    doFetch('POST', command, () => {
+        toast("Command added");
+        setTimeout(() => window.location.reload(), 500);
+        // modal.close();
+        _("chars").innerHTML = 0;
+    });
+}
+
+function doFetch(method, body, cb) {
     fetch(`/api/customcommands/${guildId}`, {
-        method: "POST",
+        method: method,
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(command)
+        body: JSON.stringify(body)
     })
         .then((response) => response.json())
         .then((json) => {
-
             if (json.status === "success") {
-                toast("Command added");
-                setTimeout(() => window.location.reload(), 500);
-                // modal.close();
-                _("chars").innerHTML = 0;
+                cb(json);
                 return
             }
 
