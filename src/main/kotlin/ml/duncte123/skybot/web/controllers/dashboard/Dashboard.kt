@@ -69,6 +69,8 @@ object Dashboard {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
         }
 
+        // Because this method gets called before every /server/... we have to return on null guilds
+        // because it gets here before it gets to /server/.../invalid
         if (guild == null) {
             return
         }
