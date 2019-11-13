@@ -60,9 +60,12 @@ object Dashboard {
         }
 
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+
         if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/invalid")
-        } else if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
+        }
+
+        if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
         }
 
@@ -74,9 +77,7 @@ object Dashboard {
         val member = guild.getMemberById(userId)
                 ?: return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
 
-        val hasPermission = member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
-
-        if (!hasPermission && !request.url().contains("noperms")) {
+        if (!member.hasPermission(Permission.MANAGE_SERVER) && !request.url().contains("noperms")) {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
         }
     }

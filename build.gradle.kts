@@ -157,11 +157,13 @@ val clean: Task by tasks
 val build: Task by tasks
 val jar: Jar by tasks
 
-task<Task>("printVersion") {
+val printVersion = task<Task>("printVersion") {
+    println("CI: ${System.getenv("CI")}")
     println(project.version)
 }
 
 build.apply {
+    dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)
 
@@ -178,11 +180,13 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
     from("src/main/java") {
         include("**/Settings.java")
 
-        val items = mapOf(
-            "versionObj" to project.version
-        )
+        if (System.getenv("CI") == "true") {
+            val items = mapOf(
+                "versionObj" to project.version
+            )
 
-        filter<ReplaceTokens>(mapOf("tokens" to items))
+            filter<ReplaceTokens>(mapOf("tokens" to items))
+        }
     }
 
     from("src/main/java") {

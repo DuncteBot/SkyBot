@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -42,6 +43,12 @@ public class SetPrefixCommand extends SettingsBase {
         }
 
         final String newPrefix = ctx.getArgsJoined();
+
+        if (newPrefix.length() > 10) {
+            sendErrorWithMessage(ctx.getMessage(), "The length of the prefix must not exceed 10 characters");
+            return;
+        }
+
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
         sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + '`');
     }

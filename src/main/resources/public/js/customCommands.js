@@ -18,43 +18,44 @@
 
 function initModal() {
     window.storedCommands = {};
-    window.modal = M.Modal.init(document.querySelectorAll('.modal'))[0];
+    window.editorRow = document.getElementById('editorRow');
+}
+
+function showEditor() {
+    editorRow.style.display = "block";
+    editorRow.scrollIntoView();
+}
+
+function hideEditor() {
+    editorRow.style.display = "none";
 }
 
 function initEitor() {
-    const jagTagCompleter = {
-        getCompletions: function (editor, session, pos, prefix, callback) {
-
-            const firstChar = session.getTokenAt(pos.row, pos.column - 1).value;
-
-            callback(null, wordList.map((word) => {
-                return {
-                    caption: word,
-                    value: firstChar === "{" ? word.substr(1) : word,
-                    meta: "JagTag"
-                };
-            }));
-
-        }
-    };
-
-    ace.require("ace/ext/language_tools");
-    window.editor = ace.edit("editor", {
-        theme: "ace/theme/monokai",
-        mode: "ace/mode/perl",
-        maxLines: 18,
-        minLines: 10,
-        wrap: false,
-        autoScrollEditorIntoView: true,
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: true,
+    const el = document.getElementById('editor');
+    window.editor = CodeMirror.fromTextArea(el, {
+        mode: 'jagtag',
+        lineNumbers: true,
+        indentWithTabs: false,
+        styleActiveLine: true,
+        matchBrackets: true,
+        smartIndent: true,
+        autoCloseBrackets: false,
+        theme: 'monokai',
+        electricChars: true,
+        lineWrapping: true,
+        hintOptions: {
+            words: window.wordList
+        },
+        tabMode: 'indent'
     });
 
-    editor.completers = [jagTagCompleter];
-
-    editor.getSession().on('change', () => {
-        _("chars").innerHTML = editor.getSession().getValue().length;
+    window.editor.on('inputRead', function (editor, change) {
+        if (change.text[0] === '{') {
+            editor.showHint();
+        }
+        editor.save();
+        _("chars").innerHTML = editor.getValue().length;
+        // localStorage.content = editor.getValue();
     });
 }
 
@@ -109,14 +110,12 @@ function loadCommands() {
 }
 
 function showCommand(name) {
-
     const command = storedCommands[name];
 
     showModal(name, command.message, `saveEdit("${name}")`, command.autoresponse);
 }
 
 function deleteCommand(name) {
-
     const conf = confirm("Are you sure that you want to delete this command?");
 
     if (!conf) {
@@ -141,7 +140,7 @@ function deleteCommand(name) {
 
             if (json.status === "success") {
                 toast("Deleted!");
-                modal.close();
+                hideEditor();
                 _("chars").innerHTML = 0;
                 setTimeout(() => window.location.reload(), 500);
                 return
@@ -157,10 +156,17 @@ function deleteCommand(name) {
 function clearEditor() {
     _("chars").innerHTML = 0;
     editor.setValue("");
-    modal.close();
+    editor.save();
+    editor.refresh();
+    _("commandName").value = '';
+    hideEditor();
 }
 
 function saveEdit(name) {
+    if (!name || !storedCommands[name]) {
+        return;
+    }
+
     toast("Saving...");
 
     const command = storedCommands[name];
@@ -180,7 +186,7 @@ function saveEdit(name) {
 
             if (json.status === "success") {
                 toast("Saved!");
-                modal.close();
+                hideEditor();
                 _("chars").innerHTML = 0;
                 return
             }
@@ -194,19 +200,21 @@ function saveEdit(name) {
 
 function showModal(invoke, message, method, autoresponse) {
     editor.setValue(message);
+    editor.save();
     _("commandName").value = invoke;
     _("autoresponse").checked = autoresponse;
 
-    _("saveBtn").setAttribute("onclick", `${method}; return false;`);
-
-    modal.open();
-    editor.resize();
-    editor.clearSelection();
+    _("saveBtn").setAttribute("href", `javascript:${method};`);
     _("chars").innerHTML = message.length;
+
+    showEditor();
+    editor.refresh();
 }
 
 function prepareCreateNew() {
     _("chars").innerHTML = 0;
+    _("commandName").value = '';
+    editor.save();
     showModal("", "", "createNew()", false);
 }
 
@@ -261,7 +269,7 @@ function createNew() {
             if (json.status === "success") {
                 toast("Command added");
                 setTimeout(() => window.location.reload(), 500);
-                modal.close();
+                // modal.close();
                 _("chars").innerHTML = 0;
                 return
             }

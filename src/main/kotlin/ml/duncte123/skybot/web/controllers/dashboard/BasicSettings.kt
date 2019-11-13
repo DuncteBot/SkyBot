@@ -39,7 +39,12 @@ object BasicSettings {
         val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
         val params = WebHelpers.toMap(pairs)
 
-        val prefix = params["prefix"]
+        var prefix = params["prefix"] ?: "db!"
+
+        if (prefix.length > 10) {
+            prefix = prefix.substring(0, 10)
+        }
+
         val welcomeChannel = params["welcomeChannel"]
         val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
         val autorole = params["autoRoleRole"]
@@ -55,7 +60,7 @@ object BasicSettings {
         val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!, variables)
         guild.setColor(color)
 
-        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+        val newSettings = guild.getSettings()
             .setCustomPrefix(prefix)
             .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
             .setEnableJoinMessage(welcomeLeaveEnabled)
@@ -63,7 +68,7 @@ object BasicSettings {
             .setAnnounceTracks(announceTracks)
             .setLeaveTimeout(leaveTimeout)
 
-        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+        guild.setSettings(newSettings)
 
         /* val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
          val autoVcRoleRole = (params["vcAutoRoleRole"] ?: "0").toLong()
