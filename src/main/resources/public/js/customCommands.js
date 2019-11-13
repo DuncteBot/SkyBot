@@ -146,10 +146,10 @@ function deleteCommand(name) {
                 return
             }
 
-            toast(`Could not save: ${json.message}`);
+            notSaveToast(json.message);
         })
         .catch((e) => {
-            toast(`Could not save: ${e}`);
+            notSaveToast(e);
         });
 }
 
@@ -191,10 +191,10 @@ function saveEdit(name) {
                 return
             }
 
-            toast(`Could not save: ${json.message}`);
+            notSaveToast(json.message);
         })
         .catch((e) => {
-            toast(`Could not save: ${e}`);
+            notSaveToast(e);
         });
 }
 
@@ -274,11 +274,15 @@ function createNew() {
                 return
             }
 
-            toast(`Could not save: ${json.message}`);
+            notSaveToast(json.message);
         })
         .catch((e) => {
-            toast(`Could not save: ${e}`);
+            notSaveToast(e);
         });
+}
+
+function notSaveToast(m) {
+    toast(`Could not save: ${m}`);
 }
 
 function toast(message) {
