@@ -181,7 +181,6 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
         include("**/Settings.java")
 
         if (System.getenv("CI") == "true") {
-            println("TEST: Running on CI")
             val items = mapOf(
                 "versionObj" to project.version
             )
