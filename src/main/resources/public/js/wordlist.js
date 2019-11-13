@@ -16,35 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const old = [
-    '{user}',
-    '{user:SEARCH}',
-    '{usertag}',
-    '{usertag:SEARCH}',
-    '{nick}',
-    '{nick:SEARCH}',
-    '{discrim}',
-    '{discrim:SEARCH}',
-    '{avatar}',
-    '{avatar:SEARCH}',
-    '{creation:ENTITY ID}',
-    '{userid}',
-    '{atuser}',
-    '{server}',
-    '{serverid}',
-    '{servercount}',
-    '{servericon}',
-    '{channel}',
-    '{channel:SEARCH}',
-    '{channelid}',
-    '{channelid:SEARCH}',
-    '{randuser}',
-    '{randatuser}',
-    '{randonline}',
-    '{randatonline}',
-    '{randchannel}',
-];
-
 window.wordList = [
     {text: 'user'},
     {text: 'user:SEARCH'},
