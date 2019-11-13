@@ -23,7 +23,7 @@ function initModal() {
 
 function showEditor() {
     editorRow.style.display = "block";
-    editorRow.scrollIntoView();
+    editorRow.scrollIntoView({behavior: "smooth"});
 }
 
 function hideEditor() {
