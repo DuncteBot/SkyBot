@@ -29,6 +29,7 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,10 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@SuppressWarnings("unused")
 public class GuildSettings {
+
+    public static final String[] LOGGING_TYPES = {"Ban", "Unban"};
 
     private final long guildId;
     private final List<String> blacklistedWords = new ArrayList<>();
@@ -62,6 +66,9 @@ public class GuildSettings {
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private int leave_timeout = 1;
     private int spam_threshold = 7;
+    // logging
+    private boolean banLogging = true;
+    private boolean unbanLogging = true;
 
     @JsonCreator
     public GuildSettings(@JsonProperty("guildId") long guildId) {
@@ -246,7 +253,6 @@ public class GuildSettings {
         return ratelimits;
     }
 
-    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("ratelimits")
     public GuildSettings setRatelimits(JsonNode ratelimits) {
         this.ratelimits = ratelimmitChecks(ratelimits.asText());
@@ -261,7 +267,6 @@ public class GuildSettings {
         return this;
     }
 
-    @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
     @JsonIgnore
     public Long[] getRateLimitsForTwig() {
@@ -293,7 +298,6 @@ public class GuildSettings {
         return this;
     }
 
-    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("blacklisted_words")
     public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
         if (!blacklistedWords.isArray()) {
@@ -329,6 +333,39 @@ public class GuildSettings {
         this.spam_threshold = spamThreshold;
 
         return this;
+    }
+
+    @JsonProperty("banLogging")
+    public boolean isBanLogging() {
+        return true;
+    }
+
+    @JsonProperty("banLogging")
+    public GuildSettings setBanLogging(boolean banLogging) {
+        this.banLogging = banLogging;
+        return this;
+    }
+
+    @JsonProperty("unbanLogging")
+    public boolean isUnbanLogging() {
+        return false;
+    }
+
+    @JsonProperty("unbanLogging")
+    public GuildSettings setUnbanLogging(boolean unbanLogging) {
+        this.unbanLogging = unbanLogging;
+        return this;
+    }
+
+    public Object call(String methodName) {
+        final Class<? extends GuildSettings> klass = this.getClass();
+        try {
+            return klass.getDeclaredMethod(methodName).invoke(this);
+        }
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

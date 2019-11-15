@@ -90,7 +90,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             return@get response.redirect("https://lnk.dunctebot.com/invite")
         }
 
-        get("/register-server", WebVariables()
+        getWithDefaultData("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
@@ -104,7 +104,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@before Dashboard.before(request, response, oAuth2Client, config)
             }
 
-            get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
+            getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
         }
 
         path("/server/$GUILD_ID") {
@@ -129,7 +129,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Basic settings
-            get("/basic", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/basic", WebVariables().put("title", "Dashboard"),
                 "dashboard/basicSettings.twig", true)
 
             post("/basic") { request, response ->
@@ -137,7 +137,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Moderation settings
-            get("/moderation", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/moderation", WebVariables().put("title", "Dashboard"),
                 "dashboard/moderationSettings.twig", true)
 
             post("/moderation") { request, response ->
@@ -145,11 +145,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Custom command settings
-            get("/customcommands", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/customcommands", WebVariables().put("title", "Dashboard"),
                 "dashboard/customCommandSettings.twig", true)
 
             // Message settings
-            get("/messages", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/messages", WebVariables().put("title", "Dashboard"),
                 "dashboard/welcomeLeaveDesc.twig", true)
 
             post("/messages") { request, response ->
@@ -242,7 +242,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
     }
 
-    fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
+    fun getWithDefaultData(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path) { request, _ ->
             if (withGuildData) {
                 val guild = WebHelpers.getGuildFromRequest(request, shardManager)

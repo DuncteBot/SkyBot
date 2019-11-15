@@ -13,59 +13,82 @@
                 <h6>Moderation:</h6> <br/>
 
                 {# Modlog #}
-                <div class="input-field col s12 m2">
-                    <select id="modChannel" name="modChannel">
-                        <option value="" disabled selected>Select a channel</option>
-                        {% for textChannel in goodChannels %}
-                            {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getIdLong() }}"
-                                        selected>#{{ textChannel.getName() }}</option>
-                            {% else %}
-                                <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
-                            {% endif %}
+                <div class="col s12">
+                    <div class="col s12 m4">
+                        <div class="input-field">
+                            <select id="modChannel" name="modChannel">
+                                <option value="" disabled selected>Select a channel</option>
+                                {% for textChannel in goodChannels %}
+                                    {% if settings.getLogChannel() == textChannel.getIdLong() %}
+                                        <option value="{{ textChannel.getIdLong() }}"
+                                                selected>#{{ textChannel.getName() }}</option>
+                                    {% else %}
+                                        <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                                <option value="">Disable</option>
+                            </select>
+                            <label for="modChannel">ModLog Channel</label>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m8">
+                        <p>What is the difference between Ban logging and DbBan logging? TODO</p>
+                        {% for logType in constant("ml.duncte123.skybot.objects.guild.GuildSettings.LOGGING_TYPES") %}
+                            <div class="switch">
+                                {{ logType }} logging:
+                                <label>
+                                    Disabled
+                                    <input type="checkbox" name="log{{ logType }}" id="log{{ logType }}"
+                                           {% if settings.call('is' ~ logType ~ 'Logging') %}checked="checked"{% endif %}>
+                                    <span class="lever"></span>
+                                    Enabled
+                                </label>
+                            </div>
                         {% endfor %}
-                    </select>
-                    <label for="modChannel">ModLog Channel</label>
+                    </div>
                 </div>
 
                 {# Other boolean flags #}
 
-                <div class="switch">
-                    Auto de-hoist:
-                    <label>
-                        Disabled
-                        <input type="checkbox" name="autoDeHoist" id=""
-                               {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
-                        <span class="lever"></span>
-                        Enabled
-                    </label>
-                </div>
+                <div class="col s12">
+                    <div class="switch">
+                        Auto de-hoist:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="autoDeHoist" id=""
+                                   {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
 
-                <div class="switch">
-                    Filter invites:
-                    <label>
-                        Disabled
-                        <input type="checkbox" name="filterInvites" id=""
-                               {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
-                        <span class="lever"></span>
-                        Enabled
-                    </label>
-                </div>
+                    <div class="switch">
+                        Filter invites:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="filterInvites" id=""
+                                   {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
 
-                <div class="switch">
-                    Swearword filter:
-                    <label>
-                        Disabled
-                        <input type="checkbox" name="swearFilter" id=""
-                               {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
-                        <span class="lever"></span>
-                        Enabled
-                    </label>
+                    <div class="switch">
+                        Swearword filter:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="swearFilter" id=""
+                                   {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="divider"></div>
+                <hr>
             </div>
 
             <div class="row section">
@@ -115,7 +138,7 @@
             </div>
 
             <div class="row">
-                <div class="divider"></div>
+                <hr>
             </div>
 
             <div class="row section">

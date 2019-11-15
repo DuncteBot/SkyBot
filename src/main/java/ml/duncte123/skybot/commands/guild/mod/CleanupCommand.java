@@ -126,7 +126,7 @@ public class CleanupCommand extends ModBaseCommand {
                 .collect(Collectors.toList());
 
             final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(event, "Deleting messages, please wait (this might take a while)", hack::complete);
+            sendMsg(event, "Deleting messages, please wait this might take a while (message will be deleted once complete)", hack::complete);
 
             final List<CompletableFuture<Void>> futures =  channel.purgeMessages(msgList);
 
