@@ -47,6 +47,11 @@ object ModerationSettings {
         val spamThreshold = (params["spamThreshold"] ?: "7").toInt()
         val rateLimits = LongArray(6)
 
+        val logBan = paramToBoolean(params["logBan"])
+        val logUnban = paramToBoolean(params["logUnban"])
+        val logMute = paramToBoolean(params["logMute"])
+        val logKick = paramToBoolean(params["logKick"])
+
         for (i in 0..5) {
 
             val value = params.getValue("rateLimits[$i]")
@@ -72,6 +77,10 @@ object ModerationSettings {
             .setEnableSpamFilter(spamFilter)
             .setEnableSwearFilter(swearFilter)
             .setSpamThreshold(spamThreshold)
+            .setBanLogging(logBan)
+            .setUnbanLogging(logUnban)
+            .setMuteLogging(logMute)
+            .setKickLogging(logKick)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

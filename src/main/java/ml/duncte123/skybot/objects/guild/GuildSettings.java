@@ -44,7 +44,7 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 @SuppressWarnings("unused")
 public class GuildSettings {
 
-    public static final String[] LOGGING_TYPES = {"Ban", "Unban"};
+    public static final String[] LOGGING_TYPES = {"Ban", "Unban", "Mute", "Kick"};
 
     private final long guildId;
     private final List<String> blacklistedWords = new ArrayList<>();
@@ -69,6 +69,8 @@ public class GuildSettings {
     // logging
     private boolean banLogging = true;
     private boolean unbanLogging = true;
+    private boolean muteLogging = true;
+    private boolean kickLogging = true;
 
     @JsonCreator
     public GuildSettings(@JsonProperty("guildId") long guildId) {
@@ -337,7 +339,7 @@ public class GuildSettings {
 
     @JsonProperty("banLogging")
     public boolean isBanLogging() {
-        return true;
+        return this.banLogging;
     }
 
     @JsonProperty("banLogging")
@@ -348,12 +350,34 @@ public class GuildSettings {
 
     @JsonProperty("unbanLogging")
     public boolean isUnbanLogging() {
-        return false;
+        return this.unbanLogging;
     }
 
     @JsonProperty("unbanLogging")
     public GuildSettings setUnbanLogging(boolean unbanLogging) {
         this.unbanLogging = unbanLogging;
+        return this;
+    }
+
+    @JsonProperty("muteLogging")
+    public boolean isMuteLogging() {
+        return this.muteLogging;
+    }
+
+    @JsonProperty("muteLogging")
+    public GuildSettings setMuteLogging(boolean muteLogging) {
+        this.muteLogging = muteLogging;
+        return this;
+    }
+
+    @JsonProperty("kickLogging")
+    public boolean isKickLogging() {
+        return kickLogging;
+    }
+
+    @JsonProperty("kickLogging")
+    public GuildSettings setKickLogging(boolean kickLogging) {
+        this.kickLogging = kickLogging;
         return this;
     }
 

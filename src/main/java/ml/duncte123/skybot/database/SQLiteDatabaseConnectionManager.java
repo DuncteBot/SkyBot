@@ -93,7 +93,11 @@ public class SQLiteDatabaseConnectionManager {
                     "muteRoleId varchar(255) DEFAULT NULL," +
                     "ratelimits TEXT DEFAULT NULL," +
                     "spam_threshold integer(2) NOT NULL DEFAULT 7," +
-                    "leave_timeout tinyint(2) NOT NULL DEFAULT 1" +
+                    "leave_timeout tinyint(2) NOT NULL DEFAULT 1," +
+                    "logBan tinyint(1) NOT NULL DEFAULT '1'," +
+                    "logUnban tinyint(1) NOT NULL DEFAULT '1'," +
+                    "logKick tinyint(1) NOT NULL DEFAULT '1'," +
+                    "logMute tinyint(1) NOT NULL DEFAULT '1'" +
                     ");"
             );
 
