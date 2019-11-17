@@ -102,7 +102,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
     fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson(mapper)
-        println(json)
         val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
 
         return response.get("success").asBoolean()
@@ -549,8 +548,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun paginateData(path: String): ArrayNode {
         val res = executeRequest(defaultRequest("$path?page=1"))
 
-        println(res)
-
         val page1 = res.get("data")
 
         val data = page1.get("data") as ArrayNode
@@ -657,8 +654,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun JsonNode.toJsonString() = mapper.writeValueAsString(this)
 
     companion object {
-//        const val API_HOST = "https://apis.duncte123.me"
-        const val API_HOST = "http://duncte123-apis-lumen.test/"
+        const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
     }
 }

@@ -44,7 +44,7 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 @SuppressWarnings("unused")
 public class GuildSettings {
 
-    public static final String[] LOGGING_TYPES = {"Ban", "Unban", "Mute", "Kick"};
+    public static final String[] LOGGING_TYPES = {"Ban", "Unban", "Mute", "Kick", "Warn"};
 
     private final long guildId;
     private final List<String> blacklistedWords = new ArrayList<>();
@@ -71,6 +71,7 @@ public class GuildSettings {
     private boolean unbanLogging = true;
     private boolean muteLogging = true;
     private boolean kickLogging = true;
+    private boolean warnLogging = true;
 
     @JsonCreator
     public GuildSettings(@JsonProperty("guildId") long guildId) {
@@ -378,6 +379,17 @@ public class GuildSettings {
     @JsonProperty("kickLogging")
     public GuildSettings setKickLogging(boolean kickLogging) {
         this.kickLogging = kickLogging;
+        return this;
+    }
+
+    @JsonProperty("warnLogging")
+    public boolean isWarnLogging() {
+        return warnLogging;
+    }
+
+    @JsonProperty("warnLogging")
+    public GuildSettings setWarnLogging(boolean warnLogging) {
+        this.warnLogging = warnLogging;
         return this;
     }
 

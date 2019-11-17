@@ -54,7 +54,7 @@ public class AudioUtils {
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
     @SuppressWarnings("WeakerAccess")
-    public static String YOUTUBE_VERSION = "2.20191108.05.00";
+    public static String YOUTUBE_VERSION = "2.20191113.05.02";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;

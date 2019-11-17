@@ -187,7 +187,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 "logBan = ? ," +
                 "logUnban = ? ," +
                 "logKick = ? ," +
-                "logMute = ? " +
+                "logMute = ? ," +
+                "logWarn = ? " +
                 "WHERE guildId='${guildSettings.guildId}'"
             ).apply {
                 setBoolean(1, guildSettings.isEnableJoinMessage)
@@ -212,6 +213,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 setBoolean(20, guildSettings.isUnbanLogging)
                 setBoolean(21, guildSettings.isKickLogging)
                 setBoolean(22, guildSettings.isMuteLogging)
+                setBoolean(23, guildSettings.isWarnLogging)
                 executeUpdate()
             }
         }
@@ -712,6 +714,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             .setUnbanLogging(this.getBoolean("logUnban"))
             .setKickLogging(this.getBoolean("logKick"))
             .setMuteLogging(this.getBoolean("logMute"))
+            .setWarnLogging(this.getBoolean("logWarn"))
             .setBlacklistedWords(blackList)
     }
 }

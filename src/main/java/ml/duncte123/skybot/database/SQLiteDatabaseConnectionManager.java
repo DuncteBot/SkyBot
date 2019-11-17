@@ -97,7 +97,8 @@ public class SQLiteDatabaseConnectionManager {
                     "logBan tinyint(1) NOT NULL DEFAULT '1'," +
                     "logUnban tinyint(1) NOT NULL DEFAULT '1'," +
                     "logKick tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logMute tinyint(1) NOT NULL DEFAULT '1'" +
+                    "logMute tinyint(1) NOT NULL DEFAULT '1'," +
+                    "logWarn tinyint(1) NOT NULL DEFAULT '1'" +
                     ");"
             );
 

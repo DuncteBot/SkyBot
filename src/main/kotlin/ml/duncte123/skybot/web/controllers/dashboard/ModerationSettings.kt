@@ -51,6 +51,7 @@ object ModerationSettings {
         val logUnban = paramToBoolean(params["logUnban"])
         val logMute = paramToBoolean(params["logMute"])
         val logKick = paramToBoolean(params["logKick"])
+        val logWarn = paramToBoolean(params["logWarn"])
 
         for (i in 0..5) {
 
@@ -81,6 +82,7 @@ object ModerationSettings {
             .setUnbanLogging(logUnban)
             .setMuteLogging(logMute)
             .setKickLogging(logKick)
+            .setWarnLogging(logWarn)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
