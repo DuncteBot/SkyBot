@@ -393,6 +393,7 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonIgnore
     public Object call(String methodName) {
         final Class<? extends GuildSettings> klass = this.getClass();
         try {
@@ -411,6 +412,7 @@ public class GuildSettings {
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
+    @JsonIgnore
     public ObjectNode toJson(ObjectMapper mapper) {
         final GuildSettings obj = this;
         final ObjectNode j = mapper.createObjectNode();

@@ -162,6 +162,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
             final Field field = klass.getDeclaredField(name);
             field.setAccessible(true);
 
+            //noinspection unchecked
             return (T) field.get(this);
         }
         catch (NoSuchFieldException | IllegalAccessException e) {
