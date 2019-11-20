@@ -47,7 +47,7 @@ object Dashboard {
 
             ses.attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
 
-            response.redirect("$url&prompt=none")
+            return response.redirect("$url&prompt=none")
 //            response.redirect(url)
         }
     }
