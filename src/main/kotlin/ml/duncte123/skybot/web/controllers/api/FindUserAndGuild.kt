@@ -21,21 +21,18 @@ package ml.duncte123.skybot.web.controllers.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.getParamsMap
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object FindUserAndGuild {
 
     fun get(request: Request, response: Response, shardManager: ShardManager, mapper: ObjectMapper): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+        val params = request.getParamsMap()
 
         val userId = params["user_id"]
         val guildId = params["guild_id"]

@@ -245,7 +245,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
     fun getWithDefaultData(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path) { request, _ ->
             if (withGuildData) {
-                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+                val guild = request.getGuild(shardManager)
 
                 if (guild != null) {
                     val tcs = guild.textChannelCache.filter {

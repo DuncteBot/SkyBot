@@ -27,21 +27,19 @@ import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.getParamsMap
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
 import spark.Request
 import spark.template.jtwig.JtwigTemplateEngine
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object OneGuildRegister {
 
     fun post(request: Request, shardManager: ShardManager, variables: Variables, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+        val params = request.getParamsMap()
 
         val captcha = params["g-recaptcha-response"]
         val userId = GuildSettingsUtils.toLong(params["user_id"])

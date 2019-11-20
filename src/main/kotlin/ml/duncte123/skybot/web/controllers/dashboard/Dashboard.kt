@@ -23,8 +23,9 @@ import com.jagrosh.jdautilities.oauth2.Scope
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
-import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
+import ml.duncte123.skybot.web.getUserId
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.ModelAndView
@@ -59,7 +60,7 @@ object Dashboard {
             return response.redirect("/")
         }
 
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = request.getGuild(shardManager)
 
         if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/invalid")
@@ -75,7 +76,7 @@ object Dashboard {
             return
         }
 
-        val userId = WebHelpers.getUserId(request)
+        val userId = request.getUserId()
         val member = guild.getMemberById(userId)
                 ?: return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
 
@@ -87,7 +88,7 @@ object Dashboard {
     fun serverSelection(request: Request, shardManager: ShardManager, engine: JtwigTemplateEngine): Any {
         return engine.render(ModelAndView(WebVariables()
             .put("title", "Dashboard").put("id", request.params(WebRouter.GUILD_ID))
-            .put("name", WebHelpers.getGuildFromRequest(request, shardManager)?.name).map,
+            .put("name", request.getGuild(shardManager)?.name).map,
             "dashboard/panelSelection.twig"))
     }
 }

@@ -21,28 +21,27 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
+import ml.duncte123.skybot.web.getParamsMap
+import ml.duncte123.skybot.web.toCBBool
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object MessageSettings {
 
     fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+        val params = request.getParamsMap()
 
-        val welcomeLeaveEnabled = WebHelpers.paramToBoolean(params["welcomeChannelCB"])
+        val welcomeLeaveEnabled = params["welcomeChannelCB"].toCBBool()
         val welcomeMessage = params["welcomeMessage"]
         val leaveMessage = params["leaveMessage"]
         val serverDescription = params["serverDescription"]
         val welcomeChannel = params["welcomeChannel"]
 
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = request.getGuild(shardManager)
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)
             .setServerDesc(serverDescription)
