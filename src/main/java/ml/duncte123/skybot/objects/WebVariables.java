@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects;
 
 import ml.duncte123.skybot.Author;
+import spark.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class WebVariables {
         return this;
     }
 
-    public Map<String, Object> getMap() {
-        return map;
+    public ModelAndView toModelAndView(String view) {
+        return new ModelAndView(this.map, view);
     }
 }

@@ -61,13 +61,14 @@ object Dashboard {
         }
 
         val guild = request.getGuild(shardManager)
+        val guildId = request.params(WebRouter.GUILD_ID)
 
         if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/invalid")
+            return response.redirect("/server/${guildId}/invalid")
         }
 
         if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
+            return response.redirect("/server/${guildId}/")
         }
 
         // Because this method gets called before every /server/... we have to return on null guilds
@@ -78,17 +79,20 @@ object Dashboard {
 
         val userId = request.getUserId()
         val member = guild.getMemberById(userId)
-                ?: return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
+                ?: return response.redirect("/server/${guildId}/noperms")
 
         if (!member.hasPermission(Permission.MANAGE_SERVER) && !request.url().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
+            return response.redirect("/server/${guildId}/noperms")
         }
     }
 
     fun serverSelection(request: Request, shardManager: ShardManager, engine: JtwigTemplateEngine): Any {
-        return engine.render(ModelAndView(WebVariables()
-            .put("title", "Dashboard").put("id", request.params(WebRouter.GUILD_ID))
-            .put("name", request.getGuild(shardManager)?.name).map,
-            "dashboard/panelSelection.twig"))
+        val modelAndView = WebVariables()
+            .put("title", "Dashboard")
+            .put("id", request.params(WebRouter.GUILD_ID))
+            .put("name", request.getGuild(shardManager)?.name)
+            .toModelAndView("dashboard/panelSelection.twig")
+
+        return engine.render(modelAndView)
     }
 }

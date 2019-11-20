@@ -39,10 +39,8 @@ import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
-import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
-import spark.Spark.staticFiles
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(private val shardManager: ShardManager, private val variables: Variables) {
@@ -238,11 +236,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
 
         internalServerError { request, response ->
-            return@internalServerError HttpErrorHandlers.internalServerError(request, response, mapper)
+            return@internalServerError HttpErrorHandlers.internalServerError(request, response, engine, mapper)
         }
     }
 
-    fun getWithDefaultData(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
+    private fun getWithDefaultData(path: String, map: WebVariables, viewName: String, withGuildData: Boolean = false) {
         get(path) { request, _ ->
             if (withGuildData) {
                 val guild = request.getGuild(shardManager)
@@ -280,9 +278,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 }
             }
 
-            map.put("color", colorToHex(Settings.DEFAULT_COLOUR))
-
-            engine.render(ModelAndView(map.map, model))
+            engine.render(map.toModelAndView(viewName))
         }
     }
 

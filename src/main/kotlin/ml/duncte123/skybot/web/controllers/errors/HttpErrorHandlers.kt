@@ -33,8 +33,11 @@ object HttpErrorHandlers {
             response.type() != ContentType.JSON.type) {
             response.type(ContentType.TEXT_HTML.type)
 
-            return engine.render(ModelAndView(WebVariables()
-                .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
+            val modelAndView = WebVariables()
+                .put("title", "404 - Page Not Found")
+                .toModelAndView("errors/404.twig")
+
+            return engine.render(modelAndView)
         }
 
         response.type(ContentType.JSON.type)
@@ -45,12 +48,16 @@ object HttpErrorHandlers {
             .put("code", response.status())
     }
 
-    fun internalServerError(request: Request, response: Response, mapper: ObjectMapper): Any {
+    fun internalServerError(request: Request, response: Response, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != ContentType.JSON.type ||
             response.type() != ContentType.JSON.type) {
             response.type(ContentType.TEXT_HTML.type)
 
-            return "<html><body><h1>Internal server error</h1></body></html>"
+            val modelAndView = WebVariables()
+                .put("title", "500 - Internal Server error")
+                .toModelAndView("errors/500.twig")
+
+            return engine.render(modelAndView)
         }
 
         response.type(ContentType.JSON.type)

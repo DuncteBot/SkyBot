@@ -84,7 +84,7 @@ object OneGuildRegister {
         map.put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey)
 
-        return engine.render(ModelAndView(map.map, "oneGuildRegister.twig"))
+        return engine.render(map.toModelAndView("oneGuildRegister.twig"))
     }
 
 }
