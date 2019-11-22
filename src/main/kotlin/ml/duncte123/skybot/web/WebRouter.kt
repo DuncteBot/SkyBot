@@ -68,17 +68,21 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             staticFiles.location("/public")
         }
 
-        defaultResponseTransformer {
-            if (it is JsonNode) {
-                return@defaultResponseTransformer mapper.writeValueAsString(it)
+        val responseTransformer: (Any) -> String = {
+            when (it) {
+                is JsonNode -> {
+                    mapper.writeValueAsString(it)
+                }
+                is ModelAndView -> {
+                    engine.render(it)
+                }
+                else -> {
+                    it.toString()
+                }
             }
-
-            if (it is ModelAndView) {
-                return@defaultResponseTransformer engine.render(it)
-            }
-
-            return@defaultResponseTransformer it.toString()
         }
+
+        defaultResponseTransformer(responseTransformer)
 
         get("/callback") { request, response ->
             return@get Callback.handle(request, response, oAuth2Client)
@@ -240,11 +244,15 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
 
         notFound { request, response ->
-            return@notFound HttpErrorHandlers.notFound(request, response, mapper).renderEngine()
+            val result = HttpErrorHandlers.notFound(request, response, mapper)
+
+            return@notFound responseTransformer(result)
         }
 
         internalServerError { request, response ->
-            return@internalServerError HttpErrorHandlers.internalServerError(request, response, mapper).renderEngine()
+            val result = HttpErrorHandlers.internalServerError(request, response, mapper)
+
+            return@internalServerError responseTransformer(result)
         }
     }
 
@@ -292,14 +300,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
     fun shutdown() {
         awaitStop()
-    }
-
-    private fun Any.renderEngine(): String {
-        if (this !is ModelAndView) {
-            throw IllegalArgumentException("Not a model and view")
-        }
-
-        return engine.render(this)
     }
 
     companion object {
