@@ -39,6 +39,7 @@ import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
+import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
 
@@ -71,6 +72,10 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@defaultResponseTransformer mapper.writeValueAsString(it)
             }
 
+            if (it is ModelAndView) {
+                return@defaultResponseTransformer engine.render(it)
+            }
+
             return@defaultResponseTransformer it.toString()
         }
 
@@ -93,7 +98,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
         post("/register-server") { request, _ ->
-            return@post OneGuildRegister.post(request, shardManager, variables, engine, mapper)
+            return@post OneGuildRegister.post(request, shardManager, variables, mapper)
         }
 
         path("/") {
@@ -111,7 +116,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             get("/") { request, _ ->
-                return@get Dashboard.serverSelection(request, shardManager, engine)
+                return@get Dashboard.serverSelection(request, shardManager)
             }
 
             get("/invalid") { request, response ->
@@ -232,11 +237,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
 
         notFound { request, response ->
-            return@notFound HttpErrorHandlers.notFound(request, response, engine, mapper)
+            return@notFound HttpErrorHandlers.notFound(request, response, mapper).renderEngine()
         }
 
         internalServerError { request, response ->
-            return@internalServerError HttpErrorHandlers.internalServerError(request, response, engine, mapper)
+            return@internalServerError HttpErrorHandlers.internalServerError(request, response, mapper).renderEngine()
         }
     }
 
@@ -278,12 +283,20 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 }
             }
 
-            engine.render(map.toModelAndView(viewName))
+            map.toModelAndView(viewName)
         }
     }
 
     fun shutdown() {
         awaitStop()
+    }
+
+    private fun Any.renderEngine(): String {
+        if (this !is ModelAndView) {
+            throw IllegalArgumentException("Not a model and view")
+        }
+
+        return engine.render(this)
     }
 
     companion object {

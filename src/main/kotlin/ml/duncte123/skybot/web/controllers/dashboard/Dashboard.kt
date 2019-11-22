@@ -28,10 +28,8 @@ import ml.duncte123.skybot.web.getGuild
 import ml.duncte123.skybot.web.getUserId
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
-import spark.ModelAndView
 import spark.Request
 import spark.Response
-import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object Dashboard {
@@ -86,13 +84,11 @@ object Dashboard {
         }
     }
 
-    fun serverSelection(request: Request, shardManager: ShardManager, engine: JtwigTemplateEngine): Any {
-        val modelAndView = WebVariables()
+    fun serverSelection(request: Request, shardManager: ShardManager): Any {
+        return WebVariables()
             .put("title", "Dashboard")
             .put("id", request.params(WebRouter.GUILD_ID))
             .put("name", request.getGuild(shardManager)?.name)
             .toModelAndView("dashboard/panelSelection.twig")
-
-        return engine.render(modelAndView)
     }
 }
