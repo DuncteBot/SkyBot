@@ -40,7 +40,7 @@ public enum ProfanityFilterType {
     }
 
     public static ProfanityFilterType fromType(@Nullable String type) {
-        for (ProfanityFilterType value : values()) {
+        for (final ProfanityFilterType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
