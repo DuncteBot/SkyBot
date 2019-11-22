@@ -14,7 +14,7 @@
 
                 {# Modlog #}
                 <div class="col s12">
-                    <div class="col s12 m4">
+                    <div class="col s12 m5">
                         <div class="input-field">
                             <select id="modChannel" name="modChannel">
                                 <option value="" disabled selected>Select a channel</option>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
 
-                    <div class="col s12 m8">
+                    <div class="col s12 m5">
                         {% for logType in constant("ml.duncte123.skybot.objects.guild.GuildSettings.LOGGING_TYPES") %}
                             <div class="switch">
                                 {{ logType }} logging:
@@ -46,44 +46,65 @@
                             </div>
                         {% endfor %}
                     </div>
+                    <br>
                 </div>
 
                 {# Other boolean flags #}
 
-                <div class="col s12">
-                    <div class="switch">
-                        Auto de-hoist:
-                        <label>
-                            Disabled
-                            <input type="checkbox" name="autoDeHoist" id=""
-                                   {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
-                            <span class="lever"></span>
-                            Enabled
-                        </label>
-                    </div>
+                <div class="col">
+                    <div class="s4">
+                        <div class="switch">
+                            Auto de-hoist:
+                            <label>
+                                Disabled
+                                <input type="checkbox" name="autoDeHoist" id=""
+                                       {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
+                                <span class="lever"></span>
+                                Enabled
+                            </label>
+                        </div>
 
-                    <div class="switch">
-                        Filter invites:
-                        <label>
-                            Disabled
-                            <input type="checkbox" name="filterInvites" id=""
-                                   {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
-                            <span class="lever"></span>
-                            Enabled
-                        </label>
-                    </div>
+                        <div class="switch">
+                            Filter invites:
+                            <label>
+                                Disabled
+                                <input type="checkbox" name="filterInvites" id=""
+                                       {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
+                                <span class="lever"></span>
+                                Enabled
+                            </label>
+                        </div>
 
-                    <div class="switch">
-                        Swearword filter:
-                        <label>
-                            Disabled
-                            <input type="checkbox" name="swearFilter" id=""
-                                   {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
-                            <span class="lever"></span>
-                            Enabled
-                        </label>
+                        <div class="switch">
+                            Swearword filter:
+                            <label>
+                                Disabled
+                                <input type="checkbox" name="swearFilter" id=""
+                                       {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
+                                <span class="lever"></span>
+                                Enabled
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="s12 m5">
+                        <div class="input-field">
+                            <select id="filterType" name="filterType">
+                                {% for profanityType in filterValues %}
+                                    <option
+                                        value="{{ profanityType.getType() }}"
+                                        {%- if settings.getFilterType() == profanityType -%}
+                                            selected
+                                        {%- endif -%}
+                                    >{{ profanityType.name().toLowerCase() }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="filterType">Swear filter sensitivity</label>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="row">

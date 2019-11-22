@@ -27,19 +27,20 @@ import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
+import ml.duncte123.skybot.objects.guild.ProfanityFilterType;
 import net.dv8tion.jda.api.exceptions.HttpException;
 
 import java.util.Objects;
 
 public class PerspectiveApi {
 
-    public static float checkSevereToxicity(String text, String channelId, String apiKey, ObjectMapper mapper) {
+    public static float checkSevereToxicity(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) {
         if (text.isEmpty()) {
             return 0f;
         }
 
         try {
-            final JsonNode json = makeRequest(text, channelId, apiKey, mapper);
+            final JsonNode json = makeRequest(text, channelId, apiKey, filterType, mapper);
 
             if (json.has("error")) {
                 final String error = json.get("error").get("message").asText();
@@ -51,7 +52,8 @@ public class PerspectiveApi {
                 throw new HttpException("Error while handling perspective api request: " + json);
             }
 
-            final JsonNode score = json.get("attributeScores").get("SEVERE_TOXICITY")
+            final JsonNode score = json.get("attributeScores")
+                .get(filterType.getType())
                 .get("summaryScore");
 
             return Float.parseFloat(score.get("value").asText());
@@ -64,13 +66,13 @@ public class PerspectiveApi {
         }
     }
 
-    private static JSONRequestBody genBody(String text, String channelId, ObjectMapper mapper) {
+    private static JSONRequestBody genBody(String text, String channelId, ProfanityFilterType filterType, ObjectMapper mapper) {
         final ObjectNode mainNode = mapper.createObjectNode();
         final ObjectNode commentNode = mapper.createObjectNode()
             .put("text", text);
 
         final ObjectNode requestedAttributesNode = mapper.createObjectNode();
-        requestedAttributesNode.set("SEVERE_TOXICITY", mapper.createObjectNode());
+        requestedAttributesNode.set(filterType.getType(), mapper.createObjectNode());
 
         mainNode.set("comment", commentNode);
         mainNode.set("requestedAttributes", requestedAttributesNode);
@@ -90,8 +92,8 @@ public class PerspectiveApi {
         return "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey;
     }
 
-    private static JsonNode makeRequest(String text, String channelId, String apiKey, ObjectMapper mapper) throws RequestException {
-        return WebUtils.ins.postRequest(genUrl(apiKey), Objects.requireNonNull(genBody(text, channelId, mapper)))
+    private static JsonNode makeRequest(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) throws RequestException {
+        return WebUtils.ins.postRequest(genUrl(apiKey), Objects.requireNonNull(genBody(text, channelId, filterType, mapper)))
             .build((it) -> WebParserUtils.toJSONObject(it, mapper), WebParserUtils::handleError)
             .execute();
     }

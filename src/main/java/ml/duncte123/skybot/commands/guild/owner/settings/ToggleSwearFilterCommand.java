@@ -36,18 +36,20 @@ public class ToggleSwearFilterCommand extends SettingsBase {
             "enableswearfilter",
             "disableswearfilter"
         };
-        this.helpFunction = (prefix, invoke) -> "Turns the swearword filter on or off";
+        this.helpFunction = (prefix, invoke) -> "Turns the swearword filter on or off.\n" +
+            "The default sensitivity is severe, this can be changed on the dashboard";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
         final boolean isEnabled = !settings.isEnableSwearFilter();
         guild.setSettings(settings.setEnableSwearFilter(isEnabled));
 
-        sendMsg(ctx.getEvent(), "The swearword filter has been " + (isEnabled ? "enabled" : "disabled") + ".");
+        sendMsg(ctx.getEvent(), "The swearword filter has been " +
+            (isEnabled ? "enabled, with `"+settings.getFilterType().name().toLowerCase()+"` sensitivity" : "disabled") +
+            ".");
     }
 }

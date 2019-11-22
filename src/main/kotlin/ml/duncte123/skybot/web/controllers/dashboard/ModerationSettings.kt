@@ -43,6 +43,7 @@ object ModerationSettings {
         val spamFilter = params["spamFilter"].toCBBool()
         val kickMode = params["kickMode"].toCBBool()
         val spamThreshold = (params["spamThreshold"] ?: "7").toInt()
+        val filterType = params["filterType"]
         val rateLimits = LongArray(6)
 
         val logBan = params["logBan"].toCBBool()
@@ -76,6 +77,7 @@ object ModerationSettings {
             .setEnableSpamFilter(spamFilter)
             .setEnableSwearFilter(swearFilter)
             .setSpamThreshold(spamThreshold)
+            .setFilterType(filterType)
             .setBanLogging(logBan)
             .setUnbanLogging(logUnban)
             .setMuteLogging(logMute)

@@ -66,6 +66,7 @@ public class GuildSettings {
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private int leave_timeout = 1;
     private int spam_threshold = 7;
+    private ProfanityFilterType filterType = ProfanityFilterType.SEVERE;
     // logging
     private boolean banLogging = true;
     private boolean unbanLogging = true;
@@ -390,6 +391,23 @@ public class GuildSettings {
     @JsonProperty("warnLogging")
     public GuildSettings setWarnLogging(boolean warnLogging) {
         this.warnLogging = warnLogging;
+        return this;
+    }
+
+    @JsonProperty("filterType")
+    public ProfanityFilterType getFilterType() {
+        return this.filterType;
+    }
+
+    @JsonProperty("filterType")
+    public GuildSettings setFilterType(String filterType) {
+        this.filterType = ProfanityFilterType.fromType(filterType);
+        return this;
+    }
+
+    @JsonIgnore
+    public GuildSettings setFilterType(ProfanityFilterType filterType) {
+        this.filterType = filterType;
         return this;
     }
 

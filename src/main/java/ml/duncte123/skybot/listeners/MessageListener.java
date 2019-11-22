@@ -317,6 +317,7 @@ public abstract class MessageListener extends BaseListener {
                 messageToCheck.getContentStripped(),
                 event.getChannel().getId(),
                 variables.getConfig().apis.googl,
+                settings.getFilterType(),
                 variables.getJackson());
 
             if (score < 0.7f) {
@@ -325,7 +326,8 @@ public abstract class MessageListener extends BaseListener {
 
             final String display = messageToCheck.getContentDisplay();
 
-            messageToCheck.delete().reason("Blocked for swearing: " + display)
+            messageToCheck.delete()
+                .reason("Blocked for swearing: " + display)
                 .queue(null, (t) -> {});
 
             sendMsg(event.getChannel(),

@@ -27,6 +27,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.guild.ProfanityFilterType
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.Callback
@@ -140,7 +141,9 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Moderation settings
-            getWithDefaultData("/moderation", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/moderation", WebVariables()
+                .put("filterValues", ProfanityFilterType.values())
+                .put("title", "Dashboard"),
                 "dashboard/moderationSettings.twig", true)
 
             post("/moderation") { request, response ->
