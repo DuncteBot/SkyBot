@@ -98,7 +98,8 @@ public class SQLiteDatabaseConnectionManager {
                     "logUnban tinyint(1) NOT NULL DEFAULT '1'," +
                     "logKick tinyint(1) NOT NULL DEFAULT '1'," +
                     "logMute tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logWarn tinyint(1) NOT NULL DEFAULT '1'" +
+                    "logWarn tinyint(1) NOT NULL DEFAULT '1'," +
+                    "profanity_type VARCHAR(20) default 'SEVERE_TOXICITY'" +
                     ");"
             );
 

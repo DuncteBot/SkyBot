@@ -49,7 +49,7 @@ public class ToggleSwearFilterCommand extends SettingsBase {
         guild.setSettings(settings.setEnableSwearFilter(isEnabled));
 
         sendMsg(ctx.getEvent(), "The swearword filter has been " +
-            (isEnabled ? "enabled, with `"+settings.getFilterType().name().toLowerCase()+"` sensitivity" : "disabled") +
+            (isEnabled ? "enabled, with `" + settings.getFilterType().getName() + "` sensitivity" : "disabled") +
             ".");
     }
 }
