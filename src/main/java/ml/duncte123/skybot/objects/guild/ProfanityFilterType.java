@@ -45,7 +45,6 @@ public enum ProfanityFilterType {
         return this.type;
     }
 
-    // TODO: database
     public static ProfanityFilterType fromType(@Nullable String type) {
         for (final ProfanityFilterType value : values()) {
             if (value.type.equals(type)) {
