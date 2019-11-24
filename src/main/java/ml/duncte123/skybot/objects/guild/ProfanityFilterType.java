@@ -21,8 +21,10 @@ package ml.duncte123.skybot.objects.guild;
 import javax.annotation.Nullable;
 
 public enum ProfanityFilterType {
-    NORMAL("TOXICITY", "Normal"),
-    SEVERE("SEVERE_TOXICITY", "High");
+    NORMAL("TOXICITY", "Toxic"),
+    SEVERE("SEVERE_TOXICITY", "Very Toxic"),
+    INSULT("INSULT", "Insult (Experimental)"),
+    PROFANITY("PROFANITY", "Profanity (Experimental)");
 
     private final String type;
     private final String name;

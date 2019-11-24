@@ -400,7 +400,7 @@ public abstract class MessageListener extends BaseListener {
     private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
-            && !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
+            || !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
 
             checkMessageForInvites(guild, event, settings, rw);
 

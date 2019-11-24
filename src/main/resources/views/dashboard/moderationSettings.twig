@@ -89,6 +89,11 @@
                     <br>
 
                     <div class="s12 m5">
+                        <p><a
+                                href="https://github.com/DuncteBot/SkyBot/wiki/What-filter-do-I-choose%3F"
+                                target="_blank"
+                                title="Explanation of the models"
+                            >What type do I choose?</a></p>
                         <div class="input-field">
                             <select id="filterType" name="filterType">
                                 {% for profanityType in filterValues %}
@@ -100,7 +105,7 @@
                                     >{{ profanityType.getName() }}</option>
                                 {% endfor %}
                             </select>
-                            <label for="filterType">Swear filter sensitivity</label>
+                            <label for="filterType">Swear filter type</label>
                         </div>
                     </div>
                 </div>
