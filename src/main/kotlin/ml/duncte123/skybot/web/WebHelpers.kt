@@ -38,8 +38,7 @@ import java.util.*
 fun Request.getParamsMap() : Map<String, String> {
     val list = URLEncodedUtils.parse(this.body(), StandardCharsets.UTF_8)
     val map = HashMap<String, String>()
-    for (i in list.indices) {
-        val pair = list[i]
+    list.forEach { pair ->
         map[pair.name] = pair.value
     }
     return map

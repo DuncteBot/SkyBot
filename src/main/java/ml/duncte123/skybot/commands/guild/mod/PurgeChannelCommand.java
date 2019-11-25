@@ -39,6 +39,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
             Permission.MESSAGE_HISTORY,
         };
         this.botPermissions = new Permission[]{
+            Permission.MANAGE_CHANNEL,
             Permission.MANAGE_SERVER,
         };
     }
