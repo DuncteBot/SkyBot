@@ -27,6 +27,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.guild.ProfanityFilterType
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.Callback
@@ -42,7 +43,6 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
-import spark.Spark.staticFiles
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(private val shardManager: ShardManager, private val variables: Variables) {
@@ -68,13 +68,21 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             staticFiles.location("/public")
         }
 
-        defaultResponseTransformer {
-            if (it is JsonNode) {
-                return@defaultResponseTransformer mapper.writeValueAsString(it)
+        val responseTransformer: (Any) -> String = {
+            when (it) {
+                is JsonNode -> {
+                    mapper.writeValueAsString(it)
+                }
+                is ModelAndView -> {
+                    engine.render(it)
+                }
+                else -> {
+                    it.toString()
+                }
             }
-
-            return@defaultResponseTransformer it.toString()
         }
+
+        defaultResponseTransformer(responseTransformer)
 
         get("/callback") { request, response ->
             return@get Callback.handle(request, response, oAuth2Client)
@@ -90,12 +98,12 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             return@get response.redirect("https://lnk.dunctebot.com/invite")
         }
 
-        get("/register-server", WebVariables()
+        getWithDefaultData("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
         post("/register-server") { request, _ ->
-            return@post OneGuildRegister.post(request, shardManager, variables, engine, mapper)
+            return@post OneGuildRegister.post(request, shardManager, variables, mapper)
         }
 
         path("/") {
@@ -104,7 +112,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@before Dashboard.before(request, response, oAuth2Client, config)
             }
 
-            get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
+            getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
         }
 
         path("/server/$GUILD_ID") {
@@ -113,7 +121,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             get("/") { request, _ ->
-                return@get Dashboard.serverSelection(request, shardManager, engine)
+                return@get Dashboard.serverSelection(request, shardManager)
             }
 
             get("/invalid") { request, response ->
@@ -129,7 +137,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Basic settings
-            get("/basic", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/basic", WebVariables().put("title", "Dashboard"),
                 "dashboard/basicSettings.twig", true)
 
             post("/basic") { request, response ->
@@ -137,7 +145,9 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Moderation settings
-            get("/moderation", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/moderation", WebVariables()
+                .put("filterValues", ProfanityFilterType.values())
+                .put("title", "Dashboard"),
                 "dashboard/moderationSettings.twig", true)
 
             post("/moderation") { request, response ->
@@ -145,11 +155,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             // Custom command settings
-            get("/customcommands", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/customcommands", WebVariables().put("title", "Dashboard"),
                 "dashboard/customCommandSettings.twig", true)
 
             // Message settings
-            get("/messages", WebVariables().put("title", "Dashboard"),
+            getWithDefaultData("/messages", WebVariables().put("title", "Dashboard"),
                 "dashboard/welcomeLeaveDesc.twig", true)
 
             post("/messages") { request, response ->
@@ -234,18 +244,22 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
 
         notFound { request, response ->
-            return@notFound HttpErrorHandlers.notFound(request, response, engine, mapper)
+            val result = HttpErrorHandlers.notFound(request, response, mapper)
+
+            return@notFound responseTransformer(result)
         }
 
         internalServerError { request, response ->
-            return@internalServerError HttpErrorHandlers.internalServerError(request, response, mapper)
+            val result = HttpErrorHandlers.internalServerError(request, response, mapper)
+
+            return@internalServerError responseTransformer(result)
         }
     }
 
-    fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
+    private fun getWithDefaultData(path: String, map: WebVariables, viewName: String, withGuildData: Boolean = false) {
         get(path) { request, _ ->
             if (withGuildData) {
-                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+                val guild = request.getGuild(shardManager)
 
                 if (guild != null) {
                     val tcs = guild.textChannelCache.filter {
@@ -280,9 +294,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 }
             }
 
-            map.put("color", colorToHex(Settings.DEFAULT_COLOUR))
-
-            engine.render(ModelAndView(map.map, model))
+            map.toModelAndView(viewName)
         }
     }
 

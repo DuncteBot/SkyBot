@@ -109,18 +109,17 @@ public class CustomCommandCommand extends Command {
 
     private void deleteOrShowCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager, String prefix) {
         final String commandName = args.get(1);
-        final long guildid = event.getGuild().getIdLong();
+        final long guildId = event.getGuild().getIdLong();
 
         //Check for deleting
         if (args.get(0).equalsIgnoreCase("raw")) {
-
-            if (!commandExists(commandName, guildid, manager)) {
+            if (!commandExists(commandName, guildId, manager)) {
                 sendMsg(event, "No command was found for this name");
                 return;
             }
 
-            final CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
-            final String escaped = cmd.getMessage().replaceAll("`", "\\\\`");
+            final CustomCommand cmd = manager.getCustomCommand(commandName, guildId);
+            final String escaped = cmd.getMessage().replaceAll("`", "");
             sendMsg(event, "Raw data for `" + commandName + "`:```pascal\n" + escaped + "\n```");
         } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
 
@@ -129,12 +128,12 @@ public class CustomCommandCommand extends Command {
                 return;
             }
 
-            if (!commandExists(commandName, guildid, manager)) {
+            if (!commandExists(commandName, guildId, manager)) {
                 sendMsg(event, "No command was found for this name");
                 return;
             }
 
-            final boolean success = manager.removeCustomCommand(commandName, guildid);
+            final boolean success = manager.removeCustomCommand(commandName, guildId);
             final Message msg = event.getMessage();
             if (!success) {
                 sendErrorWithMessage(msg, "Failed to delete custom command.");

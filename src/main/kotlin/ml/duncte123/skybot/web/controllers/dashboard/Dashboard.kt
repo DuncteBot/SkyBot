@@ -23,14 +23,13 @@ import com.jagrosh.jdautilities.oauth2.Scope
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
-import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
+import ml.duncte123.skybot.web.getUserId
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
-import spark.ModelAndView
 import spark.Request
 import spark.Response
-import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object Dashboard {
@@ -46,7 +45,7 @@ object Dashboard {
 
             ses.attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
 
-            response.redirect("$url&prompt=none")
+            return response.redirect("$url&prompt=none")
 //            response.redirect(url)
         }
     }
@@ -59,32 +58,37 @@ object Dashboard {
             return response.redirect("/")
         }
 
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = request.getGuild(shardManager)
+        val guildId = request.params(WebRouter.GUILD_ID)
+
         if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/invalid")
-        } else if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
+            return response.redirect("/server/${guildId}/invalid")
         }
 
+        if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
+            return response.redirect("/server/${guildId}/")
+        }
+
+        // Because this method gets called before every /server/... we have to return on null guilds
+        // because it gets here before it gets to /server/.../invalid
         if (guild == null) {
             return
         }
 
-        val userId = WebHelpers.getUserId(request)
+        val userId = request.getUserId()
         val member = guild.getMemberById(userId)
-                ?: return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
+                ?: return response.redirect("/server/${guildId}/noperms")
 
-        val hasPermission = member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
-
-        if (!hasPermission && !request.url().contains("noperms")) {
-            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
+        if (!member.hasPermission(Permission.MANAGE_SERVER) && !request.url().contains("noperms")) {
+            return response.redirect("/server/${guildId}/noperms")
         }
     }
 
-    fun serverSelection(request: Request, shardManager: ShardManager, engine: JtwigTemplateEngine): Any {
-        return engine.render(ModelAndView(WebVariables()
-            .put("title", "Dashboard").put("id", request.params(WebRouter.GUILD_ID))
-            .put("name", WebHelpers.getGuildFromRequest(request, shardManager)?.name).map,
-            "dashboard/panelSelection.twig"))
+    fun serverSelection(request: Request, shardManager: ShardManager): Any {
+        return WebVariables()
+            .put("title", "Dashboard")
+            .put("id", request.params(WebRouter.GUILD_ID))
+            .put("name", request.getGuild(shardManager)?.name)
+            .toModelAndView("dashboard/panelSelection.twig")
     }
 }

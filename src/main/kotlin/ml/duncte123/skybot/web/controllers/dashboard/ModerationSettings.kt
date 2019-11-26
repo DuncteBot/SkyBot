@@ -21,31 +21,36 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHelpers
-import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
+import ml.duncte123.skybot.web.getParamsMap
+import ml.duncte123.skybot.web.toCBBool
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object ModerationSettings {
 
     fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+        val params = request.getParamsMap()
 
         val modLogChannel = params["modChannel"]
-        val autoDeHoist = paramToBoolean(params["autoDeHoist"])
-        val filterInvites = paramToBoolean(params["filterInvites"])
-        val swearFilter = paramToBoolean(params["swearFilter"])
+        val autoDeHoist = params["autoDeHoist"].toCBBool()
+        val filterInvites = params["filterInvites"].toCBBool()
+        val swearFilter = params["swearFilter"].toCBBool()
         val muteRole = params["muteRole"]
-        val spamFilter = paramToBoolean(params["spamFilter"])
-        val kickMode = paramToBoolean(params["kickMode"])
+        val spamFilter = params["spamFilter"].toCBBool()
+        val kickMode = params["kickMode"].toCBBool()
         val spamThreshold = (params["spamThreshold"] ?: "7").toInt()
+        val filterType = params["filterType"]
         val rateLimits = LongArray(6)
+
+        val logBan = params["logBan"].toCBBool()
+        val logUnban = params["logUnban"].toCBBool()
+        val logMute = params["logMute"].toCBBool()
+        val logKick = params["logKick"].toCBBool()
+        val logWarn = params["logWarn"].toCBBool()
 
         for (i in 0..5) {
 
@@ -60,7 +65,7 @@ object ModerationSettings {
             rateLimits[i] = value.toLong()
         }
 
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = request.getGuild(shardManager)
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)
             .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
@@ -72,6 +77,12 @@ object ModerationSettings {
             .setEnableSpamFilter(spamFilter)
             .setEnableSwearFilter(swearFilter)
             .setSpamThreshold(spamThreshold)
+            .setFilterType(filterType)
+            .setBanLogging(logBan)
+            .setUnbanLogging(logUnban)
+            .setMuteLogging(logMute)
+            .setKickLogging(logKick)
+            .setWarnLogging(logWarn)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

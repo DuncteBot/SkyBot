@@ -30,9 +30,35 @@ import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.NameValuePair
+import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
+import java.nio.charset.StandardCharsets
 import java.util.*
+
+fun Request.getParamsMap() : Map<String, String> {
+    val list = URLEncodedUtils.parse(this.body(), StandardCharsets.UTF_8)
+    val map = HashMap<String, String>()
+    list.forEach { pair ->
+        map[pair.name] = pair.value
+    }
+    return map
+}
+
+fun Request.getUserId(): String = this.session().attribute(WebRouter.USER_ID) as String
+
+fun Request.getGuild(shardManager: ShardManager): Guild? = shardManager.getGuildById(this.params(WebRouter.GUILD_ID))
+
+fun Request.getSession(oAuth2Client: OAuth2Client): Session? {
+    val session: String? = this.session().attribute(WebRouter.SESSION_ID)
+
+    if (session.isNullOrEmpty()) {
+        return null
+    }
+
+    return oAuth2Client.sessionController.getSession(session)
+}
+
+fun String?.toCBBool(): Boolean = if (this.isNullOrEmpty()) false else (this == "on")
 
 object WebHelpers {
 
@@ -60,39 +86,5 @@ object WebHelpers {
         return WebUtils.ins.postRequest(query.build(), EmptyFromRequestBody())
             .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
             .execute()
-    }
-
-    fun toMap(pairs: List<NameValuePair>): Map<String, String> {
-        val map = HashMap<String, String>()
-        for (i in pairs.indices) {
-            val pair = pairs[i]
-            map[pair.name] = pair.value
-        }
-        return map
-    }
-
-    fun getGuildFromRequest(request: Request, shardManager: ShardManager): Guild? {
-
-        val guildId = request.params(WebRouter.GUILD_ID)
-
-        return shardManager.getGuildById(guildId)
-    }
-
-    fun paramToBoolean(param: String?): Boolean {
-        return if (param.isNullOrEmpty()) false else (param == "on")
-    }
-
-    fun getSession(request: Request, oAuth2Client: OAuth2Client): Session? {
-        val session: String? = request.session().attribute(WebRouter.SESSION_ID)
-
-        if (session.isNullOrEmpty()) {
-            return null
-        }
-
-        return oAuth2Client.sessionController.getSession(session)
-    }
-
-    fun getUserId(request: Request): String {
-        return request.session().attribute(WebRouter.USER_ID) as String
     }
 }

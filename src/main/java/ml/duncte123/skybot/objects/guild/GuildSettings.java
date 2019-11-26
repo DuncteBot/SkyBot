@@ -29,6 +29,7 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,10 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@SuppressWarnings("unused")
 public class GuildSettings {
+
+    public static final String[] LOGGING_TYPES = {"Ban", "Unban", "Mute", "Kick", "Warn"};
 
     private final long guildId;
     private final List<String> blacklistedWords = new ArrayList<>();
@@ -62,6 +66,13 @@ public class GuildSettings {
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private int leave_timeout = 1;
     private int spam_threshold = 7;
+    private ProfanityFilterType filterType = ProfanityFilterType.SEVERE;
+    // logging
+    private boolean banLogging = true;
+    private boolean unbanLogging = true;
+    private boolean muteLogging = true;
+    private boolean kickLogging = true;
+    private boolean warnLogging = true;
 
     @JsonCreator
     public GuildSettings(@JsonProperty("guildId") long guildId) {
@@ -246,7 +257,6 @@ public class GuildSettings {
         return ratelimits;
     }
 
-    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("ratelimits")
     public GuildSettings setRatelimits(JsonNode ratelimits) {
         this.ratelimits = ratelimmitChecks(ratelimits.asText());
@@ -261,7 +271,6 @@ public class GuildSettings {
         return this;
     }
 
-    @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
     @JsonIgnore
     public Long[] getRateLimitsForTwig() {
@@ -293,7 +302,6 @@ public class GuildSettings {
         return this;
     }
 
-    @SuppressWarnings("unused") // Used to deserialize data
     @JsonProperty("blacklisted_words")
     public GuildSettings setBlackListedWords(JsonNode blacklistedWords) {
         if (!blacklistedWords.isArray()) {
@@ -331,6 +339,90 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("banLogging")
+    public boolean isBanLogging() {
+        return this.banLogging;
+    }
+
+    @JsonProperty("banLogging")
+    public GuildSettings setBanLogging(boolean banLogging) {
+        this.banLogging = banLogging;
+        return this;
+    }
+
+    @JsonProperty("unbanLogging")
+    public boolean isUnbanLogging() {
+        return this.unbanLogging;
+    }
+
+    @JsonProperty("unbanLogging")
+    public GuildSettings setUnbanLogging(boolean unbanLogging) {
+        this.unbanLogging = unbanLogging;
+        return this;
+    }
+
+    @JsonProperty("muteLogging")
+    public boolean isMuteLogging() {
+        return this.muteLogging;
+    }
+
+    @JsonProperty("muteLogging")
+    public GuildSettings setMuteLogging(boolean muteLogging) {
+        this.muteLogging = muteLogging;
+        return this;
+    }
+
+    @JsonProperty("kickLogging")
+    public boolean isKickLogging() {
+        return kickLogging;
+    }
+
+    @JsonProperty("kickLogging")
+    public GuildSettings setKickLogging(boolean kickLogging) {
+        this.kickLogging = kickLogging;
+        return this;
+    }
+
+    @JsonProperty("warnLogging")
+    public boolean isWarnLogging() {
+        return warnLogging;
+    }
+
+    @JsonProperty("warnLogging")
+    public GuildSettings setWarnLogging(boolean warnLogging) {
+        this.warnLogging = warnLogging;
+        return this;
+    }
+
+    @JsonProperty("filterType")
+    public ProfanityFilterType getFilterType() {
+        return this.filterType;
+    }
+
+    @JsonProperty("filterType")
+    public GuildSettings setFilterType(String filterType) {
+        this.filterType = ProfanityFilterType.fromType(filterType);
+        return this;
+    }
+
+    @JsonIgnore
+    public GuildSettings setFilterType(ProfanityFilterType filterType) {
+        this.filterType = filterType;
+        return this;
+    }
+
+    @JsonIgnore
+    public Object call(String methodName) {
+        final Class<? extends GuildSettings> klass = this.getClass();
+        try {
+            return klass.getDeclaredMethod(methodName).invoke(this);
+        }
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("GuildSettings[%s]", guildId);
@@ -338,6 +430,7 @@ public class GuildSettings {
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
+    @JsonIgnore
     public ObjectNode toJson(ObjectMapper mapper) {
         final GuildSettings obj = this;
         final ObjectNode j = mapper.createObjectNode();

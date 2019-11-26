@@ -73,6 +73,10 @@ public class ModerationUtils {
     }
 
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
+        if (!isLogEnabled(punishment, g)) {
+            return;
+        }
+
         String length = "";
 
         if (time != null && !time.isEmpty()) {
@@ -95,6 +99,36 @@ public class ModerationUtils {
             final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
             sendMsg(logChannel, message);
+        }
+    }
+
+    private static boolean isLogEnabled(String type, DunctebotGuild guild) {
+        final GuildSettings settings = guild.getSettings();
+        switch (type) {
+            case "ban":
+            case "banned":
+            case "softban":
+                return settings.isBanLogging();
+
+            case "unban":
+            case "unbanned":
+                return settings.isUnbanLogging();
+
+            case "mute":
+            case "muted":
+            case "unmuted":
+                return settings.isMuteLogging();
+
+            case "kick":
+            case "kicked":
+                return settings.isKickLogging();
+
+            case "warn":
+            case "warned":
+                return settings.isWarnLogging();
+
+            default:
+                return true;
         }
     }
 

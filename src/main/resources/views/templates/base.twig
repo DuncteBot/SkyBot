@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="UTF-8"/>
 
-
     <meta name="author" content="duncte123"/>
     <meta name="application-name" content="DuncteBot"/>
     <meta name="keywords" content="discord, bot, music, youtube, google, best discord bot, spotify, rythm"/>
@@ -14,8 +13,8 @@
     <meta content="{{ title }}" property="og:title"/>
     <meta content="website" property="og:type"/>
     <meta content="DuncteBot, a multi-propose bot for moderation and music" property="og:description"/>
-    <meta name="theme-color" content="{{ color }}"/>
-    <meta name="msapplication-TileColor" content="{{ color }}"/>
+    <meta name="theme-color" content="#0751c6"/>
+    <meta name="msapplication-TileColor" content="#0751c6"/>
     <meta name="twitter:card" content="summary"/>
     <meta name="twitter:site" content="@DuncteBot"/>
     <meta name="twitter:title" content="DuncteBot (Discord bot)"/>
@@ -29,7 +28,7 @@
 
     <style>
         * {
-            --color: {{ color }};
+            --color: #0751c6;
         }
     </style>
     <!--Import Google Icon Font-->
@@ -40,13 +39,15 @@
     <link rel="stylesheet" href="https://dunctebot.com/css/animate.css"/>
 
     <title>{{ title }}</title>
+
+    {% block style %}{% endblock %}
 </head>
 <body class="discord dark-not-black">
 <header>
     <div class="navbar-fixed">
         <nav class="indigo">
             <div class="nav-wrapper container">
-                <a href="/" class="brand-logo">DuncteBot Dashboard</a>
+                <a href="/" class="brand-logo">Dashboard</a>
             </div>
         </nav>
     </div>

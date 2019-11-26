@@ -39,6 +39,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
             Permission.MESSAGE_HISTORY,
         };
         this.botPermissions = new Permission[]{
+            Permission.MANAGE_CHANNEL,
             Permission.MANAGE_SERVER,
         };
     }
@@ -60,7 +61,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
         }
 
         toPurge.createCopy()
-            .setPosition(toPurge.getPositionRaw())
+            .setPosition(toPurge.getPosition())
             .queue(
                 (success) -> {
                     toPurge.delete().queue();

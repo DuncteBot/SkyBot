@@ -81,12 +81,12 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.58")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_59") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_64") {
         exclude(module = "opus-java")
     }
 
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.25")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.29")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "709d79f")
 //    implementation(project(":Lavalink-Client"))
 
@@ -157,11 +157,13 @@ val clean: Task by tasks
 val build: Task by tasks
 val jar: Jar by tasks
 
-task<Task>("printVersion") {
+val printVersion = task<Task>("printVersion") {
+    println("CI: ${System.getenv("CI")}")
     println(project.version)
 }
 
 build.apply {
+    dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)
 
@@ -178,11 +180,13 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
     from("src/main/java") {
         include("**/Settings.java")
 
-        val items = mapOf(
-            "versionObj" to project.version
-        )
+        if (System.getenv("CI") == "true") {
+            val items = mapOf(
+                "versionObj" to project.version
+            )
 
-        filter<ReplaceTokens>(mapOf("tokens" to items))
+            filter<ReplaceTokens>(mapOf("tokens" to items))
+        }
     }
 
     from("src/main/java") {

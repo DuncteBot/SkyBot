@@ -92,7 +92,7 @@ public class YoutubeUtils {
     }
 
     public static String getThumbnail(String videoID) {
-        return "https://i.ytimg.com/vi/" + videoID + "/mqdefault.jpg";
+        return "https://i.ytimg.com/vi/" + videoID + "/hq720.jpg";
     }
 
     public static YoutubeAudioTrack videoToTrack(Video video, YoutubeAudioSourceManager sourceManager) {

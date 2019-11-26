@@ -21,20 +21,20 @@ package ml.duncte123.skybot.web.controllers.errors
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.web.ContentType
 import ml.duncte123.skybot.objects.WebVariables
-import spark.ModelAndView
 import spark.Request
 import spark.Response
 import spark.template.jtwig.JtwigTemplateEngine
 
 object HttpErrorHandlers {
 
-    fun notFound(request: Request, response: Response, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
+    fun notFound(request: Request, response: Response, mapper: ObjectMapper): Any {
         if (request.headers("Accept") != ContentType.JSON.type ||
             response.type() != ContentType.JSON.type) {
             response.type(ContentType.TEXT_HTML.type)
 
-            return engine.render(ModelAndView(WebVariables()
-                .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
+            return WebVariables()
+                .put("title", "404 - Page Not Found")
+                .toModelAndView("errors/404.twig")
         }
 
         response.type(ContentType.JSON.type)
@@ -50,7 +50,9 @@ object HttpErrorHandlers {
             response.type() != ContentType.JSON.type) {
             response.type(ContentType.TEXT_HTML.type)
 
-            return "<html><body><h1>Internal server error</h1></body></html>"
+            return WebVariables()
+                .put("title", "500 - Internal Server error")
+                .toModelAndView("errors/500.twig")
         }
 
         response.type(ContentType.JSON.type)

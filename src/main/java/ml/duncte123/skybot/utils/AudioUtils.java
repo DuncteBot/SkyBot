@@ -54,7 +54,7 @@ public class AudioUtils {
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
     @SuppressWarnings("WeakerAccess")
-    public static String YOUTUBE_VERSION = "2.20191108.05.00";
+    public static String YOUTUBE_VERSION = "2.20191122.05.01";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
@@ -68,12 +68,6 @@ public class AudioUtils {
             variables.getYoutubeCache(),
             config.googl
         );
-
-        // When the values change
-        /*youtubeAudioSourceManager.setHttpRequestModifier((request) -> {
-            request.setHeader("x-youtube-client-name", "1");
-            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION);
-        });*/
 
         youtubeAudioSourceManager.getMainHttpConfiguration().setHttpContextFilter(new YoutubeContextFilterOverride());
 

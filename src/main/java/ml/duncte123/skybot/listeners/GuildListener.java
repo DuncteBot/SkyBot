@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -183,8 +184,19 @@ public class GuildListener extends BaseListener {
         }
 
         final DunctebotGuild dbg = new DunctebotGuild(guild, variables);
+        final GuildSettings settings = dbg.getSettings();
 
-        if (dbg.getSettings().getLogChannel() < 1) {
+        if (settings.getLogChannel() < 1) {
+            return;
+        }
+
+        // If unban and unban logging is disabled
+        if (type == ActionType.UNBAN && !settings.isUnbanLogging()) {
+            return;
+        }
+
+        // If ban and ban logging is disabled
+        if (type == ActionType.BAN && !settings.isBanLogging()) {
             return;
         }
 

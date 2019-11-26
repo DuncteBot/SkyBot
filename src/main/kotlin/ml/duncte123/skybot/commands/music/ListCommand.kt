@@ -25,6 +25,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
+import org.apache.commons.lang3.StringUtils
 import java.util.*
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -56,14 +57,14 @@ class ListCommand : MusicCommand() {
                             break
                         }
 
-                        appendln("`[${getTimestamp(track.duration)}]` ${track.info.title}")
+                        appendln(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 40))
                     }
 
                     appendln("Total Queue Time Length: ${getTimestamp(queueLength)}")
                     appendln("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,queueText))
+                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, queueText))
             }
         }
     }

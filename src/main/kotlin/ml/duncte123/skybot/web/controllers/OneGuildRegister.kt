@@ -27,66 +27,63 @@ import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.getParamsMap
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
 import spark.Request
-import spark.template.jtwig.JtwigTemplateEngine
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object OneGuildRegister {
 
-    fun post(request: Request, shardManager: ShardManager, variables: Variables, engine: JtwigTemplateEngine, mapper: ObjectMapper): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+    fun post(request: Request, shardManager: ShardManager, variables: Variables, mapper: ObjectMapper): Any {
+        val params = request.getParamsMap()
 
         val captcha = params["g-recaptcha-response"]
         val userId = GuildSettingsUtils.toLong(params["user_id"])
         val guildId = GuildSettingsUtils.toLong(params["guild_id"])
 
         if (captcha.isNullOrEmpty()) {
-            return renderPage(WebVariables().put("message", "Error: Captcha missing"), variables.config, engine)
+            return renderPage(WebVariables().put("message", "Error: Captcha missing"), variables.config)
         }
 
         if (userId == 0L || guildId == 0L) {
-            return renderPage(WebVariables().put("message", "Please fill in all the fields."), variables.config, engine)
+            return renderPage(WebVariables().put("message", "Please fill in all the fields."), variables.config)
         }
 
         val guild: Guild? = shardManager.getGuildById(guildId)
         val user: User? = shardManager.getUserById(userId)
 
         if (guild == null) {
-            return renderPage(WebVariables().put("message", "Server with id <b>$guildId</b> could not be found"), variables.config, engine)
+            return renderPage(WebVariables().put("message", "Server with id <b>$guildId</b> could not be found"), variables.config)
         }
 
         if (user == null) {
-            return renderPage(WebVariables().put("message", "User with id <b>$userId</b> could not be found"), variables.config, engine)
+            return renderPage(WebVariables().put("message", "User with id <b>$userId</b> could not be found"), variables.config)
         }
 
         if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
-            return renderPage(WebVariables().put("message", "This user is already registered, please contact a bot admin to have it changed."), variables.config, engine)
+            return renderPage(WebVariables().put("message", "This user is already registered, please contact a bot admin to have it changed."), variables.config)
         }
 
         val cap = WebHelpers.verifyCapcha(captcha, variables.config.apis.chapta.secret, mapper)
 
         if (!cap.get("success").asBoolean()) {
-            return renderPage(WebVariables().put("message", "Captcha error: Please try again later"), variables.config, engine)
+            return renderPage(WebVariables().put("message", "Captcha error: Please try again later"), variables.config)
         }
 
         GuildUtils.addOneGuildPatron(user.idLong, guild.idLong, variables)
 
         return renderPage(WebVariables().put("message", "Server successfully registered")
-            .put("hideForm", true), variables.config, engine)
+            .put("hideForm", true), variables.config)
     }
 
-    private fun renderPage(map: WebVariables, config: DunctebotConfig, engine: JtwigTemplateEngine): String {
+    private fun renderPage(map: WebVariables, config: DunctebotConfig): ModelAndView {
         map.put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey)
 
-        return engine.render(ModelAndView(map.map, "oneGuildRegister.twig"))
+        return map.toModelAndView("oneGuildRegister.twig")
     }
 
 }

@@ -29,6 +29,8 @@ import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -82,6 +84,7 @@ public final class SkyBot {
 
         Settings.PREFIX = config.discord.prefix;
         RestAction.setPassContext(true);
+        RestAction.setDefaultFailure(ErrorResponseException.ignore(EnumSet.of(ErrorResponse.UNKNOWN_MESSAGE)));
 
         if (variables.useApi()) {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);

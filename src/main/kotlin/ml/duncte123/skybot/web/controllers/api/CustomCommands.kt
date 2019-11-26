@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand.*
-import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
@@ -51,7 +51,7 @@ object CustomCommands {
 
     fun show(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val mapper = variables.jackson
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager) ?: return mapper.createObjectNode()
+        val guild = request.getGuild(shardManager) ?: return mapper.createObjectNode()
             .put("status", "error")
             .put("message", "guild not found")
             .put("code", response.status())
@@ -71,7 +71,7 @@ object CustomCommands {
 
     fun update(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val mapper = variables.jackson
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager) ?: return mapper.createObjectNode()
+        val guild = request.getGuild(shardManager) ?: return mapper.createObjectNode()
             .put("status", "error")
             .put("message", "guild not found")
             .put("code", response.status())
@@ -119,7 +119,7 @@ object CustomCommands {
 
     fun create(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val mapper = variables.jackson
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val guild = request.getGuild(shardManager)!!
         val commandData = mapper.readTree(request.bodyAsBytes())
 
         if (!commandData.has("name") || !commandData.has("message") || !commandData.has("autoresponse")) {
@@ -193,7 +193,7 @@ object CustomCommands {
 
     fun delete(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val mapper = variables.jackson
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val guild = request.getGuild(shardManager)!!
         val commandData = mapper.readTree(request.bodyAsBytes())
 
         if (!commandData.has("name")) {

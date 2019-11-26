@@ -23,28 +23,31 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.utils.AirUtils.colorToInt
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHelpers
-import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getGuild
+import ml.duncte123.skybot.web.getParamsMap
+import ml.duncte123.skybot.web.toCBBool
 import net.dv8tion.jda.api.sharding.ShardManager
-import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
-import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object BasicSettings {
 
     fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
-        val params = WebHelpers.toMap(pairs)
+        val params = request.getParamsMap()
 
-        val prefix = params["prefix"]
+        var prefix = params["prefix"] ?: "db!"
+
+        if (prefix.length > 10) {
+            prefix = prefix.substring(0, 10)
+        }
+
         val welcomeChannel = params["welcomeChannel"]
-        val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
+        val welcomeLeaveEnabled = params["welcomeChannelCB"].toCBBool()
         val autorole = params["autoRoleRole"]
         //val autoRoleEnabled = params["autoRoleRoleCB"]
-        val announceTracks = paramToBoolean(params["announceTracks"])
+        val announceTracks = params["announceTracks"].toCBBool()
         val color = colorToInt(params["embedColor"])
         var leaveTimeout = GuildSettingsUtils.toLong(params["leaveTimeout"]).toInt()
 
@@ -52,10 +55,10 @@ object BasicSettings {
             leaveTimeout = 1
         }
 
-        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!, variables)
+        val guild = DunctebotGuild(request.getGuild(shardManager)!!, variables)
         guild.setColor(color)
 
-        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+        val newSettings = guild.getSettings()
             .setCustomPrefix(prefix)
             .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
             .setEnableJoinMessage(welcomeLeaveEnabled)
@@ -63,7 +66,7 @@ object BasicSettings {
             .setAnnounceTracks(announceTracks)
             .setLeaveTimeout(leaveTimeout)
 
-        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+        guild.setSettings(newSettings)
 
         /* val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
          val autoVcRoleRole = (params["vcAutoRoleRole"] ?: "0").toLong()

@@ -183,7 +183,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 "ratelimits = ? ," +
                 "kickInsteadState = ? ," +
                 "leave_timeout = ? ," +
-                "spam_threshold = ? " +
+                "spam_threshold = ? ," +
+                "logBan = ? ," +
+                "logUnban = ? ," +
+                "logKick = ? ," +
+                "logMute = ? ," +
+                "logWarn = ? ," +
+                "profanity_type = ? " +
                 "WHERE guildId='${guildSettings.guildId}'"
             ).apply {
                 setBoolean(1, guildSettings.isEnableJoinMessage)
@@ -204,6 +210,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 setBoolean(16, guildSettings.kickState)
                 setInt(17, guildSettings.leaveTimeout)
                 setInt(18, guildSettings.spamThreshold)
+                setBoolean(19, guildSettings.isBanLogging)
+                setBoolean(20, guildSettings.isUnbanLogging)
+                setBoolean(21, guildSettings.isKickLogging)
+                setBoolean(22, guildSettings.isMuteLogging)
+                setBoolean(23, guildSettings.isWarnLogging)
+                setString(24, guildSettings.filterType.type)
                 executeUpdate()
             }
         }
@@ -700,6 +712,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             .setKickState(this.getBoolean("kickInsteadState"))
             .setLeaveTimeout(this.getInt("leave_timeout"))
             .setSpamThreshold(this.getInt("spam_threshold"))
+            .setBanLogging(this.getBoolean("logBan"))
+            .setUnbanLogging(this.getBoolean("logUnban"))
+            .setKickLogging(this.getBoolean("logKick"))
+            .setMuteLogging(this.getBoolean("logMute"))
+            .setWarnLogging(this.getBoolean("logWarn"))
+            .setFilterType(this.getString("profanity_type"))
             .setBlacklistedWords(blackList)
     }
 }

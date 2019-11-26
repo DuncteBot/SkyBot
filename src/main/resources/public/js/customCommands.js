@@ -18,43 +18,43 @@
 
 function initModal() {
     window.storedCommands = {};
-    window.modal = M.Modal.init(document.querySelectorAll('.modal'))[0];
+    window.editorRow = _('editorRow');
+}
+
+function showEditor() {
+    editorRow.style.display = "block";
+    editorRow.scrollIntoView({behavior: "smooth"});
+}
+
+function hideEditor() {
+    editorRow.style.display = "none";
 }
 
 function initEitor() {
-    const jagTagCompleter = {
-        getCompletions: function (editor, session, pos, prefix, callback) {
-
-            const firstChar = session.getTokenAt(pos.row, pos.column - 1).value;
-
-            callback(null, wordList.map((word) => {
-                return {
-                    caption: word,
-                    value: firstChar === "{" ? word.substr(1) : word,
-                    meta: "JagTag"
-                };
-            }));
-
-        }
-    };
-
-    ace.require("ace/ext/language_tools");
-    window.editor = ace.edit("editor", {
-        theme: "ace/theme/monokai",
-        mode: "ace/mode/perl",
-        maxLines: 18,
-        minLines: 10,
-        wrap: false,
-        autoScrollEditorIntoView: true,
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: true,
+    const el = _('editor');
+    window.editor = CodeMirror.fromTextArea(el, {
+        mode: 'jagtag',
+        lineNumbers: true,
+        indentWithTabs: false,
+        styleActiveLine: true,
+        matchBrackets: true,
+        smartIndent: true,
+        autoCloseBrackets: false,
+        theme: 'monokai',
+        electricChars: true,
+        lineWrapping: true,
+        hintOptions: {
+            words: window.wordList
+        },
+        tabMode: 'indent'
     });
 
-    editor.completers = [jagTagCompleter];
-
-    editor.getSession().on('change', () => {
-        _("chars").innerHTML = editor.getSession().getValue().length;
+    window.editor.on('inputRead', function (editor, change) {
+        if (change.text[0] === '{') {
+            editor.showHint();
+        }
+        editor.save();
+        _("chars").innerHTML = editor.getValue().length;
     });
 }
 
@@ -109,14 +109,12 @@ function loadCommands() {
 }
 
 function showCommand(name) {
-
     const command = storedCommands[name];
 
     showModal(name, command.message, `saveEdit("${name}")`, command.autoresponse);
 }
 
 function deleteCommand(name) {
-
     const conf = confirm("Are you sure that you want to delete this command?");
 
     if (!conf) {
@@ -125,88 +123,59 @@ function deleteCommand(name) {
 
     toast(`Deleting "${name}"!`);
 
-    fetch(`/api/customcommands/${guildId}`, {
-        method: "DELETE",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name
-        })
-
-    })
-        .then((response) => response.json())
-        .then((json) => {
-
-            if (json.status === "success") {
-                toast("Deleted!");
-                modal.close();
-                _("chars").innerHTML = 0;
-                setTimeout(() => window.location.reload(), 500);
-                return
-            }
-
-            toast(`Could not save: ${json.message}`);
-        })
-        .catch((e) => {
-            toast(`Could not save: ${e}`);
-        });
+    doFetch('DELETE', {name: name}, () => {
+        toast("Deleted!");
+        hideEditor();
+        _("chars").innerHTML = 0;
+        setTimeout(() => window.location.reload(), 500);
+    });
 }
 
 function clearEditor() {
     _("chars").innerHTML = 0;
     editor.setValue("");
-    modal.close();
+    editor.save();
+    editor.refresh();
+    _("commandName").value = '';
+    hideEditor();
 }
 
 function saveEdit(name) {
+    if (!name || !storedCommands[name]) {
+        toast("Stop touching me");
+        return;
+    }
+
     toast("Saving...");
 
     const command = storedCommands[name];
     command.message = editor.getValue();
     command.autoresponse = _("autoresponse").checked;
 
-    fetch(`/api/customcommands/${guildId}`, {
-        method: "PATCH",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(command)
-    })
-        .then((response) => response.json())
-        .then((json) => {
-
-            if (json.status === "success") {
-                toast("Saved!");
-                modal.close();
-                _("chars").innerHTML = 0;
-                return
-            }
-
-            toast(`Could not save: ${json.message}`);
-        })
-        .catch((e) => {
-            toast(`Could not save: ${e}`);
-        });
+    doFetch('PATCH', command, () => {
+        toast("Saved!");
+        hideEditor();
+        _("chars").innerHTML = 0;
+    });
 }
 
 function showModal(invoke, message, method, autoresponse) {
     editor.setValue(message);
+    editor.save();
     _("commandName").value = invoke;
     _("autoresponse").checked = autoresponse;
 
-    _("saveBtn").setAttribute("onclick", `${method}; return false;`);
-
-    modal.open();
-    editor.resize();
-    editor.clearSelection();
+    _("saveBtn").setAttribute("href", `javascript:${method};`);
     _("chars").innerHTML = message.length;
+
+    showEditor();
+    editor.refresh();
 }
 
 function prepareCreateNew() {
     _("chars").innerHTML = 0;
+    _("commandName").value = '';
+    editor.save();
     showModal("", "", "createNew()", false);
 }
 
@@ -247,30 +216,39 @@ function createNew() {
 
     toast("Adding command....");
 
+    doFetch('POST', command, () => {
+        toast("Command added");
+        setTimeout(() => window.location.reload(), 500);
+        // modal.close();
+        _("chars").innerHTML = 0;
+    });
+}
+
+function doFetch(method, body, cb) {
     fetch(`/api/customcommands/${guildId}`, {
-        method: "POST",
+        method: method,
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(command)
+        body: JSON.stringify(body)
     })
         .then((response) => response.json())
         .then((json) => {
-
             if (json.status === "success") {
-                toast("Command added");
-                setTimeout(() => window.location.reload(), 500);
-                modal.close();
-                _("chars").innerHTML = 0;
+                cb(json);
                 return
             }
 
-            toast(`Could not save: ${json.message}`);
+            notSaveToast(json.message);
         })
         .catch((e) => {
-            toast(`Could not save: ${e}`);
+            notSaveToast(e);
         });
+}
+
+function notSaveToast(m) {
+    toast(`Could not save: ${m}`);
 }
 
 function toast(message) {

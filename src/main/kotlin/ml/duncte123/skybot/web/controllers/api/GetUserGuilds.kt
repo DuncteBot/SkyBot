@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.getSession
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
@@ -48,7 +48,7 @@ object GetUserGuilds {
         }
 
         val guilds = mapper.createArrayNode()
-        val guildsRequest = oAuth2Client.getGuilds(WebHelpers.getSession(request, oAuth2Client)).complete()
+        val guildsRequest = oAuth2Client.getGuilds(request.getSession(oAuth2Client)).complete()
 
         guildsRequest.forEach {
             if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
