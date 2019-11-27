@@ -34,7 +34,7 @@ import java.util.Objects;
 
 public class PerspectiveApi {
 
-    public static float checkSevereToxicity(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) {
+    public static float checkSwearFilter(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) {
         if (text.isEmpty()) {
             return 0f;
         }

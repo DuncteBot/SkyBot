@@ -313,8 +313,8 @@ public abstract class MessageListener extends BaseListener {
         final GuildSettings settings = guild.getSettings();
 
         if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
-            final float score = PerspectiveApi.checkSevereToxicity(
-                messageToCheck.getContentStripped(),
+            final float score = PerspectiveApi.checkSwearFilter(
+                messageToCheck.getContentRaw(),
                 event.getChannel().getId(),
                 variables.getConfig().apis.googl,
                 settings.getFilterType(),
