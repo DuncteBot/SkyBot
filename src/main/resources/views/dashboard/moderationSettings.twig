@@ -9,86 +9,90 @@
     <div class="row">
         <form class="col s12" method="post">
             {# Spam filter #}
-            <div class="row section">
-                <h6>Moderation:</h6> <br/>
+            <section class="section">
+                <div class="row">
+                    <h6>Moderation:</h6> <br/>
 
-                {# Modlog #}
-                <div class="col s12">
-                    <div class="col s12 m5">
-                        <div class="input-field">
-                            <select id="modChannel" name="modChannel">
-                                <option value="" disabled selected>Select a channel</option>
-                                {% for textChannel in goodChannels %}
-                                    {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                        <option value="{{ textChannel.getIdLong() }}"
-                                                selected>#{{ textChannel.getName() }}</option>
-                                    {% else %}
-                                        <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                                <option value="">Disable</option>
-                            </select>
-                            <label for="modChannel">ModLog Channel</label>
+                    {# Modlog #}
+                    <div class="col s12">
+                        <div class="col s12 m5">
+                            <div class="input-field">
+                                <select id="modChannel" name="modChannel">
+                                    <option value="" disabled selected>Select a channel</option>
+                                    {% for textChannel in goodChannels %}
+                                        {% if settings.getLogChannel() == textChannel.getIdLong() %}
+                                            <option value="{{ textChannel.getIdLong() }}"
+                                                    selected>#{{ textChannel.getName() }}</option>
+                                        {% else %}
+                                            <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <option value="">Disable</option>
+                                </select>
+                                <label for="modChannel">ModLog Channel</label>
+                            </div>
                         </div>
+
+                        <div class="col s12 m5">
+                            {% for logType in constant("ml.duncte123.skybot.objects.guild.GuildSettings.LOGGING_TYPES") %}
+                                <div class="switch">
+                                    {{ logType }} logging:
+                                    <label>
+                                        Disabled
+                                        <input type="checkbox" name="log{{ logType }}" id="log{{ logType }}"
+                                               {% if settings.call('is' ~ logType ~ 'Logging') %}checked="checked"{% endif %}>
+                                        <span class="lever"></span>
+                                        Enabled
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <br>
                     </div>
 
-                    <div class="col s12 m5">
-                        {% for logType in constant("ml.duncte123.skybot.objects.guild.GuildSettings.LOGGING_TYPES") %}
+                    {# Other boolean flags #}
+
+                    <div class="col">
+                        <div class="s4">
                             <div class="switch">
-                                {{ logType }} logging:
+                                Auto de-hoist:
                                 <label>
                                     Disabled
-                                    <input type="checkbox" name="log{{ logType }}" id="log{{ logType }}"
-                                           {% if settings.call('is' ~ logType ~ 'Logging') %}checked="checked"{% endif %}>
+                                    <input type="checkbox" name="autoDeHoist" id=""
+                                           {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
                                     <span class="lever"></span>
                                     Enabled
                                 </label>
                             </div>
-                        {% endfor %}
+
+                            <div class="switch">
+                                Filter invites:
+                                <label>
+                                    Disabled
+                                    <input type="checkbox" name="filterInvites" id=""
+                                           {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
+                                    <span class="lever"></span>
+                                    Enabled
+                                </label>
+                            </div>
+
+                            <div class="switch">
+                                Swearword filter:
+                                <label>
+                                    Disabled
+                                    <input type="checkbox" name="swearFilter" id=""
+                                           {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
+                                    <span class="lever"></span>
+                                    Enabled
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <br>
+
                 </div>
 
-                {# Other boolean flags #}
-
-                <div class="col">
-                    <div class="s4">
-                        <div class="switch">
-                            Auto de-hoist:
-                            <label>
-                                Disabled
-                                <input type="checkbox" name="autoDeHoist" id=""
-                                       {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
-                                <span class="lever"></span>
-                                Enabled
-                            </label>
-                        </div>
-
-                        <div class="switch">
-                            Filter invites:
-                            <label>
-                                Disabled
-                                <input type="checkbox" name="filterInvites" id=""
-                                       {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
-                                <span class="lever"></span>
-                                Enabled
-                            </label>
-                        </div>
-
-                        <div class="switch">
-                            Swearword filter:
-                            <label>
-                                Disabled
-                                <input type="checkbox" name="swearFilter" id=""
-                                       {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
-                                <span class="lever"></span>
-                                Enabled
-                            </label>
-                        </div>
-                    </div>
-                    <br>
-
-                    <div class="s12 m5">
+                <div class="row">
+                    <div class="col s12 m5">
                         <p><a
                                 href="https://github.com/DuncteBot/SkyBot/wiki/What-filter-do-I-choose%3F"
                                 target="_blank"
@@ -108,9 +112,18 @@
                             <label for="filterType">Swear filter type</label>
                         </div>
                     </div>
-                </div>
 
-            </div>
+                    <div class="col s12 m5">
+                        <p>A value between 0.7 and 0.85 is recommended (higher means less sensitive)</p>
+                        <div id="range-field" style="position: relative;">
+                            <label for="ai-sensitivity">Sensitivity</label>
+                            <input type="range" id="ai-sensitivity" name="ai-sensitivity"
+                                   value="{{ settings.getAiSensitivity() }}"
+                                   min="0" max="1" step="0.01" />
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <div class="row">
                 <hr>
@@ -208,5 +221,6 @@
 {% block script %}
     <script>
         M.FormSelect.init(document.querySelectorAll('select'));
+        M.Range.init(document.querySelector('input[name="ai-sensitivity"]'));
     </script>
 {% endblock %}

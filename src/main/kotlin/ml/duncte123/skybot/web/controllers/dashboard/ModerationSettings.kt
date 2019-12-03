@@ -28,6 +28,8 @@ import ml.duncte123.skybot.web.toCBBool
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
+import kotlin.math.max
+import kotlin.math.min
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object ModerationSettings {
@@ -51,6 +53,8 @@ object ModerationSettings {
         val logMute = params["logMute"].toCBBool()
         val logKick = params["logKick"].toCBBool()
         val logWarn = params["logWarn"].toCBBool()
+
+        val aiSensitivity = ((params["ai-sensitivity"] ?: "0.7").toFloatOrNull() ?: 0.7f).minMax(0f, 1f)
 
         for (i in 0..5) {
 
@@ -83,11 +87,17 @@ object ModerationSettings {
             .setMuteLogging(logMute)
             .setKickLogging(logKick)
             .setWarnLogging(logWarn)
+            .setAiSensitivity(aiSensitivity)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
         return response.redirect(request.url())
+    }
+
+    private fun Float.minMax(min: Float, max: Float): Float {
+        // max returns the highest value and min returns the lowest value
+        return min(max, max(min, this))
     }
 }

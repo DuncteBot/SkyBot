@@ -67,6 +67,7 @@ public class GuildSettings {
     private int leave_timeout = 1;
     private int spam_threshold = 7;
     private ProfanityFilterType filterType = ProfanityFilterType.SEVERE;
+    private float aiSensitivity = 0.7f;
     // logging
     private boolean banLogging = true;
     private boolean unbanLogging = true;
@@ -411,6 +412,17 @@ public class GuildSettings {
         return this;
     }
 
+    @JsonProperty("aiSensitivity")
+    public float getAiSensitivity() {
+        return aiSensitivity;
+    }
+
+    @JsonProperty("aiSensitivity")
+    public GuildSettings setAiSensitivity(float aiSensitivity) {
+        this.aiSensitivity = aiSensitivity;
+        return this;
+    }
+
     @JsonIgnore
     public Object call(String methodName) {
         final Class<? extends GuildSettings> klass = this.getClass();
@@ -454,6 +466,12 @@ public class GuildSettings {
 
                 if (value instanceof Boolean) {
                     j.put(name, (boolean) value);
+
+                    continue;
+                }
+
+                if (value instanceof Float) {
+                    j.put(name, (float) value);
 
                     continue;
                 }

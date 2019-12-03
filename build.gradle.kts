@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.50"))
+        classpath(kotlin("gradle-plugin", version = "1.3.60"))
     }
 }
 
@@ -36,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.60"
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
@@ -70,6 +70,11 @@ repositories {
     }
 }
 
+val devDependencies = arrayOf<DependencyInfo>(
+    // SQLite
+    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
+)
+
 dependencies {
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
@@ -78,20 +83,19 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.58")
+    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.61")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_64") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_69") {
         exclude(module = "opus-java")
     }
 
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.29")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.32")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "709d79f")
 //    implementation(project(":Lavalink-Client"))
 
-    // SQLite
-    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
+//    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
 
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
@@ -131,9 +135,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
 
-    // https://mvnrepository.com/artifact/commons-validator/commons-validator
-    implementation(group = "commons-validator", name = "commons-validator", version = "1.6")
-
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
 
@@ -148,6 +149,10 @@ dependencies {
 
     // caffeine
     implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.7.0")
+
+    devDependencies.forEach {
+        implementation(group = it.group, name = it.name, version = it.version)
+    }
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -172,7 +177,7 @@ build.apply {
 
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
 
@@ -247,7 +252,9 @@ shadowJar.apply {
     )
 
     dependencies {
-        exclude(dependency("org.xerial:sqlite-jdbc:3.25.2"))
+        devDependencies.forEach {
+            exclude(dependency("${it.group}:${it.name}:${it.version}"))
+        }
     }
 }
 
@@ -280,3 +287,5 @@ fun getGitHash(): String {
         "DEV"
     }
 }
+
+class DependencyInfo(val group: String, val name: String, val version: String)

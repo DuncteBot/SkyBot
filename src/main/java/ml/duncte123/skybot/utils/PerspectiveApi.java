@@ -45,7 +45,7 @@ public class PerspectiveApi {
             if (json.has("error")) {
                 final String error = json.get("error").get("message").asText();
 
-                if (error.contains("does not support request languages")) {
+                if ("Unable to detect language.".equals(error)) {
                     return 0f;
                 }
 

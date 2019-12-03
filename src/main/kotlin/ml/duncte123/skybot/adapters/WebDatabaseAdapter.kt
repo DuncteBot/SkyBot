@@ -254,10 +254,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val data = apis.getWarningsForUser(userId, guildId)
             val items = arrayListOf<Warning>()
 
+            val regex = "\\s+".toRegex()
             data.forEach { json ->
                 items.add(Warning(
                     json.get("id").asInt(),
-                    json.get("warn_date").asText().split("\\s+".toRegex())[0],
+                    json.get("warn_date").asText().split(regex)[0],
                     json.get("mod_id").asText(),
                     json.get("reason").asText(),
                     json.get("guild_id").asText()

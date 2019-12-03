@@ -76,7 +76,7 @@ public class AudioUtils {
         playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
 
         playerManager.registerSourceManager(youtubeAudioSourceManager);
-        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+        playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());
         playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());

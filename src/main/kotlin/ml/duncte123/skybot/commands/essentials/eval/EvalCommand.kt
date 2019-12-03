@@ -37,7 +37,6 @@ import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.requests.RestAction
-import org.jsoup.Jsoup
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
 import javax.script.ScriptException
@@ -217,24 +216,24 @@ class EvalCommand : Command() {
         }
     }
 
-    companion object {
-        fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
-            val base = "https://paste.menudocs.org"
-            val body = FormRequestBody()
-
-            body.append("text", text)
-            body.append("expire", expiration)
-            body.append("lang", lang)
-
-            val loc = WebUtils.ins.postRequest("$base/paste/new", body)
-                .build({
-                    return@build Jsoup.parse(it.body()!!.string())
-                        .select("a[title=\"View Raw\"]")
-                        .first().attr("href")
-                        .replaceFirst("/raw", "")
-                }, WebParserUtils::handleError).execute()
-
-            return base + loc
+    @Suppress("SameParameterValue")
+    private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
+        if (Settings.IS_LOCAL) {
+            return "RUNNING_LOCAL"
         }
+
+        val base = "https://paste.menudocs.org"
+        val body = FormRequestBody()
+
+        body.append("text", text)
+        body.append("expire", expiration)
+        body.append("lang", lang)
+
+        val loc = WebUtils.ins.postRequest("$base/paste/new", body)
+            .build({
+                return@build it.request().url().url().path
+            }, WebParserUtils::handleError).execute()
+
+        return base + loc
     }
 }

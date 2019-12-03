@@ -80,26 +80,27 @@ public class SQLiteDatabaseConnectionManager {
                     "welcomeLeaveChannel TEXT NULL," +
                     "prefix VARCHAR(255) NOT NULL DEFAULT 'db!'," +
                     "autoRole VARCHAR(255) NULL," +
-                    "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                    "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                    "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
-                    "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
-                    "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
+                    "enableJoinMessage TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "enableSwearFilter TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "autoDeHoist TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "filterInvites TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "announceNextTrack TINYINT(1) NOT NULL DEFAULT '1'," +
                     "customWelcomeMessage TEXT NOT NULL," +
                     "serverDesc TEXT NULL," +
                     "customLeaveMessage TEXT NOT NULL," +
-                    "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
-                    "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
-                    "muteRoleId varchar(255) DEFAULT NULL," +
+                    "spamFilterState TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "kickInsteadState TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "muteRoleId VARCHAR(255) DEFAULT NULL," +
                     "ratelimits TEXT DEFAULT NULL," +
                     "spam_threshold integer(2) NOT NULL DEFAULT 7," +
-                    "leave_timeout tinyint(2) NOT NULL DEFAULT 1," +
-                    "logBan tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logUnban tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logKick tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logMute tinyint(1) NOT NULL DEFAULT '1'," +
-                    "logWarn tinyint(1) NOT NULL DEFAULT '1'," +
-                    "profanity_type VARCHAR(20) default 'SEVERE_TOXICITY'" +
+                    "leave_timeout TINYINT(2) NOT NULL DEFAULT 1," +
+                    "logBan TINYINT(1) NOT NULL DEFAULT '1'," +
+                    "logUnban TINYINT(1) NOT NULL DEFAULT '1'," +
+                    "logKick TINYINT(1) NOT NULL DEFAULT '1'," +
+                    "logMute TINYINT(1) NOT NULL DEFAULT '1'," +
+                    "logWarn TINYINT(1) NOT NULL DEFAULT '1'," +
+                    "profanity_type VARCHAR(20) default 'SEVERE_TOXICITY'," +
+                    "aiSensitivity FLOAT(3, 2) default 0.7" +
                     ");"
             );
 
@@ -141,12 +142,12 @@ public class SQLiteDatabaseConnectionManager {
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS warnings" +
                     "(`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "  `mod_id` varchar(255) NOT NULL," +
-                    "  `user_id` varchar(300) NOT NULL," +
-                    "  `reason` text NOT NULL," +
-                    "  `warn_date` date NOT NULL," +
-                    "  `expire_date` date NOT NULL," +
-                    "  `guild_id` varchar(266) DEFAULT NULL);"
+                    "  `mod_id` VARCHAR(255) NOT NULL," +
+                    "  `user_id` VARCHAR(300) NOT NULL," +
+                    "  `reason` TEXT NOT NULL," +
+                    "  `warn_date` DATE NOT NULL," +
+                    "  `expire_date` DATE NOT NULL," +
+                    "  `guild_id` VARCHAR(266) DEFAULT NULL);"
             );
 
             connection.createStatement().execute(

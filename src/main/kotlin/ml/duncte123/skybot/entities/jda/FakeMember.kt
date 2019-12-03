@@ -143,4 +143,6 @@ class FakeMember(private val name: String) : Member {
     override fun getActiveClients(): EnumSet<ClientType> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun isFake() = true
 }

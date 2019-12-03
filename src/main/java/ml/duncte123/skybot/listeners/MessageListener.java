@@ -43,6 +43,7 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -320,7 +321,8 @@ public abstract class MessageListener extends BaseListener {
                 settings.getFilterType(),
                 variables.getJackson());
 
-            if (score < 0.7f) {
+            // if the score is less than our target value it's not swearing
+            if (score < settings.getAiSensitivity()) {
                 return false;
             }
 
@@ -337,10 +339,11 @@ public abstract class MessageListener extends BaseListener {
                 (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
 
             modLog(String.format(
-                "Message by %#s deleted in %s for profanity, message content was:```\n%s```",
+                "Message with score %.2f by %#s deleted in %s for profanity, message content was:```\n%s```",
+                score,
                 messageToCheck.getAuthor(),
                 event.getChannel().getAsMention(),
-                display
+                StringUtils.abbreviate(display, Message.MAX_CONTENT_LENGTH - 150) // Just to be safe
             ), guild);
 
             return true;

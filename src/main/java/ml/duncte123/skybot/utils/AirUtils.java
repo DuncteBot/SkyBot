@@ -44,7 +44,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.notfab.caching.shared.SearchParams;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
@@ -61,11 +60,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 })
 public class AirUtils {
 
-    // Default instance allows for ftp
-    private static final UrlValidator urlValidator = new UrlValidator(new String[] {"https", "http"});
-
     public static boolean isURL(String url) {
-        return urlValidator.isValid(url);
+        return url.matches("^https?:\\/\\/[-a-zA-Z0-9+&@#\\/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#\\/%=~_|]");
     }
 
     public static boolean isInt(String integer) {
