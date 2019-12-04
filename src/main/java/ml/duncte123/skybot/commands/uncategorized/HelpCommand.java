@@ -122,10 +122,16 @@ public class HelpCommand extends Command {
     }
 
     private void sendCommandHelpMessage(GuildMessageReceivedEvent event, Command cmd, String prefix, String invoke) {
+        final Class<? extends Command> commandClass = cmd.getClass();
+        final String clsPath = commandClass.getName().replace('.', '/');
+        final boolean isKotlin = isKotlin(commandClass);
+        final String extension = isKotlin ? ".kt" : ".java";
+        final String type = isKotlin ? "kotlin" : "java";
+        final String url = String.format("https://github.com/DuncteBot/SkyBot/blob/master/src/main/%s/%s%s", type, clsPath, extension);
+
         final EmbedBuilder builder = EmbedUtils
             .defaultEmbed()
-            .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])",
-                "https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName())
+            .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])", url)
             .setDescription(cmd.help(invoke, prefix) +
                 "\nUsage: " + cmd.getUsageInstructions(invoke, prefix));
 
@@ -170,6 +176,11 @@ public class HelpCommand extends Command {
         }
 
         return builder.toString();
+    }
+
+    private boolean isKotlin(Class<? extends Command> klass) {
+        return Arrays.stream(klass.getDeclaredAnnotations())
+            .anyMatch((c) -> c.annotationType().getName().equals("kotlin.Metadata"));
     }
 
     private CommandCategory getCategory(String search) {

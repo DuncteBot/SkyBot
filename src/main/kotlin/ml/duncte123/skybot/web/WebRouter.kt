@@ -236,11 +236,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@get CommandTransformers.toJson(variables.commandManager, mapper)
             }
 
-            get("/commands.php") { _, response ->
+            /*get("/commands.php") { _, response ->
                 response.type(ContentType.TEXT_PLAIN.type)
 
                 return@get CommandTransformers.toPHP(variables.commandManager)
-            }
+            }*/
         }
 
         notFound { request, response ->

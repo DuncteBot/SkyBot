@@ -103,7 +103,7 @@ object CommandTransformers {
 
     private fun Class<*>.isKotlinClass(): Boolean {
         return this.declaredAnnotations.any {
-            it.annotationClass.qualifiedName == "kotlin.Metadata"
+            it.toString().startsWith("@kotlin.Metadata")
         }
     }
 }
