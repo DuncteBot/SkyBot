@@ -13,15 +13,15 @@
 [![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Patreon][patronImage]][patronLink] [![Support Guild][discord]][discordLink]
 
 # SkyBot 
-SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
+SkyBot is an LGBT-friendly multipurpose discord bot with features such as music and moderation.
+
 
 # Support
 If you need any support please join our [support guild][discordLink] <br />
-If you want to support development of the bot [conciser to be come a patron][patronLink]
+If you want to support development of the bot [consider to be come a patron][patronLink]
 
 
 # How to invite the bot to a server?
-
 Go to [`https://lnk.dunctebot.com/invite`][inviteLink] and follow the steps on the website
 
 
