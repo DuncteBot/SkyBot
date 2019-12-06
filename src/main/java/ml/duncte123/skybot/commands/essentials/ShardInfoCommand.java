@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import kotlin.Pair;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -47,6 +46,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@SuppressWarnings("ConstantConditions")
 public class ShardInfoCommand extends Command {
 
     public ShardInfoCommand() {
@@ -82,12 +82,13 @@ public class ShardInfoCommand extends Command {
         final EmbedBuilder embedBuilder = new EmbedBuilder();
         final int currentShard = ctx.getJDA().getShardInfo().getShardId();
         final ShardManager shardManager = ctx.getJDA().getShardManager();
-        final List<JDA> shards = new ArrayList<>(shardManager.getShards());
+        final ShardCacheView shardCache = shardManager.getShardCache();
+        final List<JDA> shards = new ArrayList<>(shardCache.asList());
         Collections.reverse(shards);
 
         for (final JDA shard : shards) {
             final StringBuilder valueBuilder = new StringBuilder();
-            final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
+            final LongLongPair channelStats = getConnectedVoiceChannels(shard);
 
             valueBuilder.append("**Status:** ").append(getShardStatus(shard)).append('\n')
                 .append("**Ping:** ").append(shard.getGatewayPing()).append('\n')
@@ -99,6 +100,23 @@ public class ShardInfoCommand extends Command {
             embedBuilder.addField(String.format("Shard #%s%s", shardId, (shardId == currentShard ? " (current)" : "")),
                 valueBuilder.toString(), true);
         }
+
+        final long connectedShards = shardCache.applyStream((s) -> s.filter((shard) -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
+        final long guilds = shardManager.getGuildCache().size();
+        final LongLongPair channelStats = getConnectedVoiceChannels(shardManager);
+
+        embedBuilder.addField(
+            "Total/Average",
+            String.format("**Connected:** %s\n**Ping:** %s\n**Guilds:** %s\n**VCs:** %s / %s",
+                connectedShards,
+                avgPing,
+                guilds,
+                channelStats.getFirst(),
+                channelStats.getSecond()
+            ),
+            false
+        );
 
         sendEmbed(ctx, embedBuilder);
     }
@@ -128,7 +146,7 @@ public class ShardInfoCommand extends Command {
             row.add(String.valueOf(shard.getGatewayPing()));
             row.add(String.valueOf(shard.getGuildCache().size()));
 
-            final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
+            final LongLongPair channelStats = getConnectedVoiceChannels(shard);
 
             row.add(channelStats.getFirst() + " / " + channelStats.getSecond());
             table.add(row);
@@ -172,7 +190,7 @@ public class ShardInfoCommand extends Command {
             }
         }
 
-        final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
+        final LongLongPair channelStats = getConnectedVoiceChannels(shardManager);
         final String statsString = channelStats.getFirst() + " / " + channelStats.getSecond();
 
         if (statsString.length() > widths[widths.length - 1]) {
@@ -200,7 +218,6 @@ public class ShardInfoCommand extends Command {
 
         final ShardCacheView shardCache = shardManager.getShardCache();
 
-        //noinspection ConstantConditions
         final long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         final String connectedShards = String.valueOf(l);
         final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
@@ -233,24 +250,23 @@ public class ShardInfoCommand extends Command {
         return ret.append(right).append("\n").toString();
     }
 
-    private Pair<Long, Long> getConnectedVoiceChannels(ShardManager shardManager) {
+    private LongLongPair getConnectedVoiceChannels(ShardManager shardManager) {
         final AtomicLong connectedVC = new AtomicLong();
         final AtomicLong listeningVC = new AtomicLong();
 
         shardManager.getShardCache().forEach(
             (jda) -> {
-                final Pair<Long, Long> shardStats = getConnectedVoiceChannels(jda);
+                final LongLongPair shardStats = getConnectedVoiceChannels(jda);
 
                 connectedVC.addAndGet(shardStats.getFirst());
                 listeningVC.addAndGet(shardStats.getSecond());
             }
         );
 
-        return new Pair<>(connectedVC.get(), listeningVC.get());
+        return new LongLongPair(connectedVC.get(), listeningVC.get());
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
+    private LongLongPair getConnectedVoiceChannels(JDA shard) {
 
         final long connectedVC = shard.getVoiceChannelCache().applyStream(
             (s) -> s.filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
@@ -266,6 +282,24 @@ public class ShardInfoCommand extends Command {
                 ).sum()
         );
 
-        return new Pair<>(connectedVC, listeningVC);
+        return new LongLongPair(connectedVC, listeningVC);
+    }
+
+    private static class LongLongPair {
+        private final long first;
+        private final long second;
+
+        public LongLongPair(long left, long right) {
+            this.first = left;
+            this.second = right;
+        }
+
+        public long getFirst() {
+            return first;
+        }
+
+        public long getSecond() {
+            return second;
+        }
     }
 }
