@@ -47,6 +47,7 @@ import ml.duncte123.skybot.commands.mod.*;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.nsfw.NSFWCommands;
 import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.WeebCommands;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -132,6 +133,7 @@ public class CommandManager {
         this.addCommand(new DonateCommand());
         this.addCommand(new DrakeCommand());
         this.addCommand(new EightBallCommand());
+        this.addCommand(new EmoteCommand());
         this.addCommand(new EvalCommand());
         this.addCommand(new EveryoneCommand());
         this.addCommand(new FactsCommand());
