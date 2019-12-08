@@ -27,8 +27,16 @@ import com.google.api.services.youtube.model.VideoContentDetails;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
+import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import me.duncte123.botcommons.web.WebParserUtils;
+import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
+import net.notfab.caching.client.CacheClient;
+import net.notfab.caching.shared.SearchParams;
+import net.notfab.caching.shared.YoutubeTrack;
+import okhttp3.Request;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -95,10 +103,11 @@ public class YoutubeUtils {
         return "https://i.ytimg.com/vi/" + videoID + "/hq720.jpg";
     }
 
-    public static YoutubeAudioTrack videoToTrack(Video video, YoutubeAudioSourceManager sourceManager) {
+    public static AudioTrackInfo videoToTrackInfo(Video video) {
         final VideoSnippet snippet = video.getSnippet();
         final VideoContentDetails details = video.getContentDetails();
-        final AudioTrackInfo info = new AudioTrackInfo(
+
+        return new AudioTrackInfo(
             snippet.getTitle(),
             snippet.getChannelTitle(),
             Duration.parse(details.getDuration()).toMillis(),
@@ -106,8 +115,27 @@ public class YoutubeUtils {
             false,
             "https://www.youtube.com/watch?v=" + video.getId()
         );
+    }
 
-        return new YoutubeAudioTrack(info, sourceManager);
+    public static YoutubeAudioTrack videoToTrack(Video video, YoutubeAudioSourceManager sourceManager) {
+        return new YoutubeAudioTrack(videoToTrackInfo(video), sourceManager);
+    }
+
+    public static String getUIVersion() throws IOException {
+        final Request request = WebUtils.defaultRequest()
+            .url("https://www.youtube.com/")
+            .header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
+            .build();
+
+        final String html = WebUtils.ins.prepareRaw(request, (response) -> response.body().string()).execute();
+
+        final String extracted = DataFormatTools.extractBetween(html,
+            "window.ytplayer = {};ytcfg.set(",
+            ");ytcfg.set(");
+
+        return JsonBrowser.parse(extracted)
+            .get("INNERTUBE_CONTEXT_CLIENT_VERSION")
+            .safeText();
     }
 
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
@@ -138,14 +166,14 @@ public class YoutubeUtils {
             .setKind("youtube#video")
             .setSnippet(
                 new VideoSnippet()
-                .setTitle(track.getTitle())
-                .setChannelTitle(track.getAuthor())
+                    .setTitle(track.getTitle())
+                    .setChannelTitle(track.getAuthor())
             )
             .setContentDetails(
                 new VideoContentDetails()
-                .setDuration(
-                    Duration.ofMillis(track.getLength()).toString()
-                )
+                    .setDuration(
+                        Duration.ofMillis(track.getLength()).toString()
+                    )
             );
     }*/
 }

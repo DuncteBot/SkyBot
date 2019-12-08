@@ -22,10 +22,7 @@ import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.CommandUtils;
-import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.ModerationUtils;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -40,14 +37,13 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ReadyShutdownListener extends MessageListener {
-    private boolean unbanTimerRunning = false;
-    private boolean isCacheCleanerActive = false;
-    private boolean reminderCheckActive = false;
+    private boolean arePoolsRunning = false;
     private byte shardsReady = 0;
 
     public ReadyShutdownListener(Variables variables) {
@@ -71,27 +67,27 @@ public class ReadyShutdownListener extends MessageListener {
         killEvents(jda);
 
         //Start the timers if they have not been started yet
-        if (!unbanTimerRunning) {
-            logger.info("Starting the unban timer.");
+        if (!arePoolsRunning) {
+            logger.info("Starting the unban timer!");
             //Register the timer for the auto unbans
             systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 2, 2, TimeUnit.MINUTES);
-            unbanTimerRunning = true;
-        }
 
-        if (!isCacheCleanerActive) {
             logger.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
-            isCacheCleanerActive = true;
-        }
 
-        if (!reminderCheckActive) {
+            logger.info("Starting reminder checker!");
             systemPool.scheduleAtFixedRate(
                 () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
                     AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
 
                     return null;
                 }), 2, 2, TimeUnit.MINUTES);
-            reminderCheckActive = true;
+
+
+            logger.info("Starting youtube version updater!");
+            systemPool.scheduleAtFixedRate(this::updateYoutubeVersion, 0L, 1L, TimeUnit.DAYS);
+
+            arePoolsRunning = true;
         }
 
         shardsReady++;
@@ -157,6 +153,19 @@ public class ReadyShutdownListener extends MessageListener {
 
         handlers.put("TYPING_START", nopHandler);
         handlers.put("MESSAGE_REACTION_ADD", nopHandler);
+    }
+
+    private void updateYoutubeVersion() {
+        try {
+            final String uiVersion = YoutubeUtils.getUIVersion();
+
+            logger.info("Fetched youtube version {}", uiVersion);
+
+            AudioUtils.YOUTUBE_VERSION = uiVersion;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // might work some day

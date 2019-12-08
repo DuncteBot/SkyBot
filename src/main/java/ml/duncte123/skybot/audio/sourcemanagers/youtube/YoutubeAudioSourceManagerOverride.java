@@ -16,10 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.audio.sourcemanagers;
+package ml.duncte123.skybot.audio.sourcemanagers.youtube;
 
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.youtube.*;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -36,8 +35,16 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
     private final CacheClient cacheClient;
     private final String ytApiKey;
 
-    public YoutubeAudioSourceManagerOverride(boolean allowSearch, CacheClient cacheClient, String ytApiKey) {
-        super(allowSearch);
+    public YoutubeAudioSourceManagerOverride(CacheClient cacheClient, String ytApiKey) {
+        super(
+            true,
+            new DefaultYoutubeTrackDetailsLoader(),
+            new YoutubeApiSearchProvider(ytApiKey, cacheClient),
+            new YoutubeSignatureCipherManager(),
+            new DefaultYoutubePlaylistLoader(),
+            new DefaultYoutubeLinkRouter()
+        );
+
         this.cacheClient = cacheClient;
         this.ytApiKey = ytApiKey;
     }

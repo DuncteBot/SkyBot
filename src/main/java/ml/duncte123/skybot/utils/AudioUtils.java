@@ -33,7 +33,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
-import ml.duncte123.skybot.audio.sourcemanagers.YoutubeAudioSourceManagerOverride;
+import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
@@ -54,7 +54,7 @@ public class AudioUtils {
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
     @SuppressWarnings("WeakerAccess")
-    public static String YOUTUBE_VERSION = "2.20191122.05.01";
+    public static String YOUTUBE_VERSION = "2.20191206.06.00";
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
@@ -64,7 +64,6 @@ public class AudioUtils {
         //playerManager.enableGcMonitoring();
 
         final YoutubeAudioSourceManagerOverride youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(
-            false,
             variables.getYoutubeCache(),
             config.googl
         );
