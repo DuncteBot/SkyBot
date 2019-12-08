@@ -30,12 +30,8 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
-import net.notfab.caching.client.CacheClient;
-import net.notfab.caching.shared.SearchParams;
-import net.notfab.caching.shared.YoutubeTrack;
 import okhttp3.Request;
 
 import java.io.IOException;
