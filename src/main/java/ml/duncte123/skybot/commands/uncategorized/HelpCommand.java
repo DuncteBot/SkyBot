@@ -184,14 +184,6 @@ public class HelpCommand extends Command {
     }
 
     private CommandCategory getCategory(String search) {
-
-        try {
-            return CommandCategory.valueOf(search.toUpperCase());
-        }
-        catch (IllegalArgumentException ignored) {
-            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
-                .equals(search.toLowerCase())).collect(Collectors.toList());
-            return categoryList.get(0);
-        }
+        return CommandCategory.fromSearch(search);
     }
 }

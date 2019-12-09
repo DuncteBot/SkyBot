@@ -44,27 +44,6 @@ object CommandTransformers {
         return output
     }
 
-    fun toPHP(commandManager: CommandManager): Any {
-        return buildString {
-            appendln("<?php")
-            appendln("\$a = [")
-
-            for (command in commandManager.getCommandsList()) {
-                val cls = command.javaClass
-                val clsPath = cls.name.replace("\\.".toRegex(), "/")
-                val clsName = cls.simpleName
-
-                appendln("\t[")
-                appendln("\t\t'name' => '$clsName',")
-                appendln("\t\t'path' => '$clsPath',")
-                appendln("\t\t'type' => '${if (cls.isKotlinClass()) "kotlin" else "java"}',")
-                appendln("\t],")
-            }
-
-            appendln("];")
-        }
-    }
-
     private fun Command.parseHelp(): String {
         val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
         var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
@@ -99,11 +78,5 @@ object CommandTransformers {
 
     private fun CommandManager.getCommandsList(): List<Command> {
         return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
-    }
-
-    private fun Class<*>.isKotlinClass(): Boolean {
-        return this.declaredAnnotations.any {
-            it.toString().startsWith("@kotlin.Metadata")
-        }
     }
 }

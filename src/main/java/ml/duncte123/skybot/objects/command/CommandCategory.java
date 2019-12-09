@@ -45,4 +45,14 @@ public enum CommandCategory {
     public String getSearch() {
         return search;
     }
+
+    public static CommandCategory fromSearch(String input) {
+        for (CommandCategory value : values()) {
+            if (value.name().equalsIgnoreCase(input) || value.getSearch().equalsIgnoreCase(input)) {
+                return value;
+            }
+        }
+
+        return null;
+    }
 }
