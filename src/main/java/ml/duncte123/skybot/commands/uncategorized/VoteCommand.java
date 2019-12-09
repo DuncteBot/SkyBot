@@ -37,7 +37,7 @@ public class VoteCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        sendEmbed(ctx, EmbedUtils.embedMessage((
+        sendEmbed(ctx, EmbedUtils.embedMessage(
                 "Votes are always welcome :D\n" +
                     "You can use the following links:\n" +
                     "BFD - " + link("https://botsfordiscord.com/bot/210363111729790977/vote") +
@@ -46,7 +46,6 @@ public class VoteCommand extends Command {
                     "Divine - " + link("https://divinediscordbots.com/bot/210363111729790977/vote") +
                     "DiscordsBestBots - " + link("https://discordsbestbots.xyz/bots/210363111729790977") +
                     "DBL - " + link("https://discordbots.org/bot/210363111729790977/vote")
-            ).trim()
         ));
     }
 

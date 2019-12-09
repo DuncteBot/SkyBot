@@ -184,7 +184,16 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
     from("src/main/java") {
         include("**/Settings.java")
 
-        if (System.getenv("CI") == "true") {
+        val isCi = System.getenv("CI") == "true"
+
+        filter {
+            it.replaceFirst(
+                """public static final boolean IS_LOCAL = VERSION.startsWith("@versionObj");""",
+                """public static final boolean IS_LOCAL = ${!isCi};"""
+            )
+        }
+
+        if (isCi) {
             val items = mapOf(
                 "versionObj" to project.version
             )
