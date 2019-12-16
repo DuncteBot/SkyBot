@@ -42,7 +42,7 @@ plugins {
 }
 
 project.group = "ml.duncte123.skybot"
-project.version = "3.88.0_${getGitHash()}"
+project.version = "3.89.0_${getGitHash()}"
 
 
 java {
@@ -83,10 +83,10 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.61")
+    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.65")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_70") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_77") {
         exclude(module = "opus-java")
     }
 
@@ -94,8 +94,6 @@ dependencies {
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.32")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "97530e1")
 //    implementation(project(":Lavalink-Client"))
-
-//    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
 
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
@@ -136,9 +134,6 @@ dependencies {
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
-
-    // Trove
-    implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
