@@ -105,7 +105,7 @@ dependencies {
     implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.1.0")
 
     // Youtube Cache
-    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.1")
+    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev206-1.25.0")
