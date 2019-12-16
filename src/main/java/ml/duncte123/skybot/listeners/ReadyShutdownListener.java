@@ -84,8 +84,10 @@ public class ReadyShutdownListener extends MessageListener {
                 }), 2, 2, TimeUnit.MINUTES);
 
 
-            logger.info("Starting youtube version updater!");
-            systemPool.scheduleAtFixedRate(this::updateYoutubeVersion, 0L, 1L, TimeUnit.DAYS);
+            if (!Settings.IS_LOCAL) {
+                logger.info("Starting youtube version updater!");
+                systemPool.scheduleAtFixedRate(this::updateYoutubeVersion, 0L, 1L, TimeUnit.DAYS);
+            }
 
             arePoolsRunning = true;
         }

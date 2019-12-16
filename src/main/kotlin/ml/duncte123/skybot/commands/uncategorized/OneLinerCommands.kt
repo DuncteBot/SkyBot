@@ -49,7 +49,7 @@ class OneLinerCommands : Command() {
 
         val event = ctx.event
 
-        when (ctx.invoke) {
+        when (ctx.invoke.toLowerCase()) {
             "cookie" -> sendMsg(event, "<:blobnomcookie_secret:317636549342789632>")
 
             "trigger" -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif"))

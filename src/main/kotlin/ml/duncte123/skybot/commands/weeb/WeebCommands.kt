@@ -55,7 +55,7 @@ class WeebCommands : WeebCommandBase() {
         val event = ctx.event
         val args = ctx.args
 
-        when (ctx.invoke) {
+        when (ctx.invoke.toLowerCase()) {
             "hug" -> requestAndSend("hug", "hugs", args, event, ctx.weebApi)
             "lewd" -> singleAction("lewd", "is being lewd", args, event, ctx.weebApi)
             "dance" -> singleAction("dance", "is dancing", args, event, ctx.weebApi)
