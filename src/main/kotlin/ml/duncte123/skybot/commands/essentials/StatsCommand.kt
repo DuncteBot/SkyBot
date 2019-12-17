@@ -34,7 +34,7 @@ import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
-    private val oshi = SystemInfo().hardware.processor
+    private val oshi = SystemInfo().operatingSystem
 
     init {
         this.category = CommandCategory.UTILS
@@ -54,16 +54,18 @@ class StatsCommand : Command() {
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
         val uptimeTime = Time(uptimeLong - 3600000)
         val serverUptimeString = AirUtils.getUptime(oshi.systemUptime * 1000, true)
-        val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
+
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+        val cores = platformMXBean.availableProcessors
         val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
         val serverMem = (platformMXBean.totalPhysicalMemorySize shr 20).toDouble()
         val serverMemUsage = serverMem - (platformMXBean.freePhysicalMemorySize shr 20)
         val serverMemPercent = floor((serverMemUsage / serverMem) * 100.0)
 
+        val memoryBean = ManagementFactory.getMemoryMXBean()
         val jvmCpuUsage = DecimalFormat("###.###%").format(platformMXBean.processCpuLoad)
-        val jvmMemUsage = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.used shr 20).toDouble()
-        val jvmMemTotal = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.max shr 20).toDouble()
+        val jvmMemUsage = (memoryBean.heapMemoryUsage.used shr 20).toDouble()
+        val jvmMemTotal = (memoryBean.heapMemoryUsage.max shr 20).toDouble()
         val jvmMemPercent = floor((jvmMemUsage / jvmMemTotal) * 100)
         val os = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
 

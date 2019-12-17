@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.60"))
+        classpath(kotlin("gradle-plugin", version = "1.3.61"))
     }
 }
 
@@ -36,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.60"
+    kotlin("jvm") version "1.3.61"
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
@@ -72,7 +72,7 @@ repositories {
 
 val devDependencies = arrayOf<DependencyInfo>(
     // SQLite
-    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
+    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.28.0")
 )
 
 dependencies {
@@ -86,7 +86,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.65")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_77") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.0.0_78") {
         exclude(module = "opus-java")
     }
 
@@ -96,23 +96,23 @@ dependencies {
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.8")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.1.0")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.2.1")
 
     // Youtube Cache
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2")
 
     // Youtube api
-    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev206-1.25.0")
+    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev212-1.25.0")
 
     // kotlin
     implementation(kotlin("stdlib"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
 
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
@@ -120,8 +120,8 @@ dependencies {
 
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "f6cdd8c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "f6cdd8c")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "2652bb0")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "2652bb0")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
@@ -139,10 +139,10 @@ dependencies {
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
 
     // Oshi
-    implementation(group = "com.github.oshi", name = "oshi-core", version = "3.13.2")
+    implementation(group = "com.github.oshi", name = "oshi-core", version = "4.2.1")
 
     // caffeine
-    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.7.0")
+    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.0")
 
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
