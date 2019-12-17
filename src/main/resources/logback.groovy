@@ -36,7 +36,7 @@ appender("STDOUT", ConsoleAppender) {
 
 appender("Sentry", SentryAppender) {
     filter(ThresholdFilter) {
-        level = WARN
+        level = ERROR
     }
 
     filter(EvaluatorFilter) {
