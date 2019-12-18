@@ -22,6 +22,7 @@ import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.objects.YoutubeVersionData;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -125,7 +126,7 @@ public class ReadyShutdownListener extends MessageListener {
 
         guildPatronsList.forEach((patron) -> {
             final List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
+                .filter((it) -> it.getOwnerIdLong() == patron.getIdLong() ||
                     it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
                 .map(Guild::getIdLong)
                 .collect(Collectors.toList());
@@ -159,11 +160,11 @@ public class ReadyShutdownListener extends MessageListener {
 
     private void updateYoutubeVersion() {
         try {
-            final String uiVersion = YoutubeUtils.getUIVersion();
+            final YoutubeVersionData uiVersion = YoutubeUtils.getYoutubeHeaderDetails();
 
             logger.info("Fetched youtube version {}", uiVersion);
 
-            AudioUtils.YOUTUBE_VERSION = uiVersion;
+            AudioUtils.YOUTUBE_VERSION_DATA = uiVersion;
         }
         catch (IOException e) {
             e.printStackTrace();

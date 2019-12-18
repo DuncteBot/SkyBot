@@ -34,6 +34,7 @@ import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
+import ml.duncte123.skybot.objects.YoutubeVersionData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
@@ -53,8 +54,7 @@ public class AudioUtils {
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
     // public so we can change it with eval
-    @SuppressWarnings("WeakerAccess")
-    public static String YOUTUBE_VERSION = "2.20191206.06.00";
+    public static YoutubeVersionData YOUTUBE_VERSION_DATA = null;
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
@@ -113,14 +113,8 @@ public class AudioUtils {
         GuildMusicManager mng = musicManagers.get(guildId);
 
         if (mng == null) {
-            synchronized (musicManagers) {
-                mng = musicManagers.get(guildId);
-
-                if (mng == null) {
-                    mng = new GuildMusicManager(guild, variables);
-                    musicManagers.put(guildId, mng);
-                }
-            }
+            mng = new GuildMusicManager(guild, variables);
+            musicManagers.put(guildId, mng);
         }
 
         if (!LavalinkManager.ins.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
@@ -151,7 +145,14 @@ public class AudioUtils {
         public void onRequest(HttpClientContext context, HttpUriRequest request, boolean isRepetition) {
             super.onRequest(context, request, isRepetition);
 
-            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION);
+            if (YOUTUBE_VERSION_DATA == null) {
+                return;
+            }
+
+            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION_DATA.getVersion());
+            request.setHeader("x-youtube-page-cl", YOUTUBE_VERSION_DATA.getPageCl());
+            request.setHeader("x-youtube-page-label", YOUTUBE_VERSION_DATA.getLabel());
+            request.setHeader("x-youtube-variants-checksum", YOUTUBE_VERSION_DATA.getChecksum());
         }
     }
 }

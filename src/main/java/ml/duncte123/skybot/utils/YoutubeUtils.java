@@ -32,6 +32,7 @@ import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.YoutubeVersionData;
 import okhttp3.Request;
 
 import java.io.IOException;
@@ -117,7 +118,7 @@ public class YoutubeUtils {
         return new YoutubeAudioTrack(videoToTrackInfo(video), sourceManager);
     }
 
-    public static String getUIVersion() throws IOException {
+    public static YoutubeVersionData getYoutubeHeaderDetails() throws IOException {
         final Request request = WebUtils.defaultRequest()
             .url("https://www.youtube.com/")
             .header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
@@ -128,10 +129,9 @@ public class YoutubeUtils {
         final String extracted = DataFormatTools.extractBetween(html,
             "window.ytplayer = {};ytcfg.set(",
             ");ytcfg.set(");
+        final JsonBrowser json = JsonBrowser.parse(extracted);
 
-        return JsonBrowser.parse(extracted)
-            .get("INNERTUBE_CONTEXT_CLIENT_VERSION")
-            .safeText();
+        return YoutubeVersionData.fromBrowser(json);
     }
 
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
