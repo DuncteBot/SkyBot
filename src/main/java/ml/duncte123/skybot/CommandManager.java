@@ -54,7 +54,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -327,8 +326,7 @@ public class CommandManager {
             .collect(Collectors.toList());
     }
 
-    public void runCommand(GuildMessageReceivedEvent event) {
-        final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
+    public void runCommand(GuildMessageReceivedEvent event, String customPrefix) {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
                 Pattern.quote(customPrefix),

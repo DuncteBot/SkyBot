@@ -153,15 +153,16 @@ public abstract class MessageListener extends BaseListener {
         final User selfUser = event.getJDA().getSelfUser();
         final String selfRegex = "^<@!?" + selfUser.getId() + '>';
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final String customPrefix = settings.getCustomPrefix();
 
-        if (!commandManager.isCommand(settings.getCustomPrefix(), rw) && doAutoModChecks(event, settings, rw)) {
+        if (!commandManager.isCommand(customPrefix, rw) && doAutoModChecks(event, settings, rw)) {
             return;
         }
 
         if (rw.matches(selfRegex + '$')) {
             sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                 event.getAuthor(),
-                settings.getCustomPrefix())
+                customPrefix)
             );
             return;
         }
@@ -173,7 +174,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (doesNotStartWithPrefix(event, settings) || !canRunCommands(rw, settings, event)) {
+        if (doesNotStartWithPrefix(event, customPrefix) || !canRunCommands(rw, customPrefix, event)) {
             return;
         }
 
@@ -187,15 +188,14 @@ public abstract class MessageListener extends BaseListener {
             ));
         } else {
             //Handle the command
-            commandManager.runCommand(event);
+            commandManager.runCommand(event, customPrefix);
         }
     }
 
-    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, GuildSettings settings) {
+    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String customPrefix) {
         final String rwLower = event.getMessage().getContentRaw().toLowerCase();
         final String selfMember = event.getGuild().getSelfMember().getAsMention();
         final String selfUser = event.getJDA().getSelfUser().getAsMention();
-        final String customPrefix = settings.getCustomPrefix();
 
         if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return false;
@@ -216,19 +216,19 @@ public abstract class MessageListener extends BaseListener {
         return !rwLower.startsWith(selfUser);
     }
 
-    private boolean shouldBlockCommand(@Nonnull GuildSettings settings, @Nonnull String rw, @Nonnull String s) {
+    private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String rw, @Nonnull String s) {
         return s.equalsIgnoreCase(
             rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(customPrefix), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
         );
     }
 
     //                                    raw,    category?
-    private boolean hasCorrectCategory(@Nonnull String rw, @Nonnull String categoryName, @Nonnull GuildSettings settings) {
+    private boolean hasCorrectCategory(@Nonnull String rw, @Nonnull String categoryName, @Nonnull String customPrefix) {
 
         final ICommand command = commandManager.getCommand(
-            rw.replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.PREFIX)
+            rw.replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
@@ -249,7 +249,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean canRunCommands(String rw, GuildSettings settings, @Nonnull GuildMessageReceivedEvent event) {
+    private boolean canRunCommands(String rw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
 
         final String topic = event.getChannel().getTopic();
 
@@ -267,18 +267,18 @@ public abstract class MessageListener extends BaseListener {
             if (s.startsWith("!")) {
                 s = s.split("!")[1];
 
-                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s, settings)) {
+                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s, customPrefix)) {
                     return false;
                 }
 
-                return !shouldBlockCommand(settings, rw, s);
+                return !shouldBlockCommand(customPrefix, rw, s);
             }
 
-            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s, settings)) {
+            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s, customPrefix)) {
                 return false;
             }
 
-            if (shouldBlockCommand(settings, rw, s)) {
+            if (shouldBlockCommand(customPrefix, rw, s)) {
                 return false;
             }
 
