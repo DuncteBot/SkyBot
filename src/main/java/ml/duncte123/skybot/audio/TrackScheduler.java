@@ -199,6 +199,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             final Throwable rootCause = ExceptionUtils.getRootCause(exception);
             final Throwable finalCause = rootCause == null ? exception : rootCause;
 
+            if (finalCause == null || finalCause.getMessage() == null) {
+                this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + track.getIdentifier() +
+                    "`\nPlease contact the developers asap with the identifier in the message above");
+                return;
+            }
+
             if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
                 return;
             }
