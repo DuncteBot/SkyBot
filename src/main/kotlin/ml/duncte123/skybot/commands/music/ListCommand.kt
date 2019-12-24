@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
 import org.apache.commons.lang3.StringUtils
 import java.util.*
@@ -45,7 +46,7 @@ class ListCommand : MusicCommand() {
 
         synchronized(queue) {
             if (queue.isEmpty()) {
-                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, "The queue is currently empty!"))
+                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, "The queue is currently empty!"))
             } else {
                 val queueLength = queue.map { it.duration }.sum()
                 val maxTracks = 10
@@ -64,7 +65,7 @@ class ListCommand : MusicCommand() {
                     appendln("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, queueText))
+                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, queueText))
             }
         }
     }

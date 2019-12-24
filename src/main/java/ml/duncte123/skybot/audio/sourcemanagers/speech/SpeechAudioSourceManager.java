@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audiomanagers.speech;
+package ml.duncte123.skybot.audio.sourcemanagers.speech;
 
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
@@ -25,7 +25,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.audiomanagers.IdentifiedAudioReference;
+import ml.duncte123.skybot.audio.sourcemanagers.IdentifiedAudioReference;
 
 import java.io.DataInput;
 import java.io.DataOutput;

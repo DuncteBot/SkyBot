@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audiomanagers.spotify;
+package ml.duncte123.skybot.audio.sourcemanagers.spotify;
 
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
@@ -34,7 +34,7 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
-import ml.duncte123.skybot.objects.audiomanagers.AudioTrackInfoWithImage;
+import ml.duncte123.skybot.audio.sourcemanagers.AudioTrackInfoWithImage;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

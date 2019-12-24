@@ -25,6 +25,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.AudioUtils
 import java.util.*
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
@@ -87,7 +88,7 @@ class LoadCommand : MusicCommand() {
                         shouldAnnounce = false
                     }
 
-                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,
+                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE,
                     "Added ${array.size()} requested tracks."))
             } catch (exception: Exception) {
                 sendError(event.message)

@@ -21,10 +21,7 @@ package ml.duncte123.skybot.utils;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoContentDetails;
-import com.google.api.services.youtube.model.VideoSnippet;
+import com.google.api.services.youtube.model.*;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
@@ -32,13 +29,17 @@ import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.YoutubePlaylistMetadata;
 import ml.duncte123.skybot.objects.YoutubeVersionData;
 import okhttp3.Request;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YoutubeUtils {
@@ -92,6 +93,49 @@ public class YoutubeUtils {
             .getItems();
     }
 
+    @Nullable
+    public static YoutubePlaylistMetadata getPlaylistPageById(String playlistId, String apiKey, @Nullable String nextPageKey, boolean withExtraData) throws IOException {
+        String title = "";
+
+        if (withExtraData) {
+            final List<Playlist> playlists = youtube.playlists()
+                .list("snippet")
+                .setId(playlistId)
+                .setKey(apiKey)
+                .execute()
+                .getItems();
+
+            if (playlists.isEmpty()) {
+                return null;
+            }
+
+            final Playlist playlist = playlists.get(0);
+
+            title = playlist.getSnippet().getTitle();
+        }
+
+        final PlaylistItemListResponse playlistItems = youtube.playlistItems()
+            .list("snippet,contentDetails")
+            .setPageToken(nextPageKey)
+            .setPlaylistId(playlistId)
+            .setMaxResults(20L)
+//            .setMaxResults(1L)
+            .setKey(apiKey)
+            .execute();
+
+        final List<PlaylistItem> items = playlistItems.getItems();
+
+        if (items.isEmpty()) {
+            return new YoutubePlaylistMetadata(playlistId, title, null, new ArrayList<>());
+        }
+
+        final List<AudioTrackInfo> changedItems = items.stream()
+            .map((playlistItem) -> playListItemToTrackInfo(playlistItem, apiKey))
+            .collect(Collectors.toList());
+
+        return new YoutubePlaylistMetadata(playlistId, title, playlistItems.getNextPageToken(), changedItems);
+    }
+
     public static String getThumbnail(Video video) {
         return getThumbnail(video.getId());
     }
@@ -112,6 +156,19 @@ public class YoutubeUtils {
             false,
             "https://www.youtube.com/watch?v=" + video.getId()
         );
+    }
+
+    public static AudioTrackInfo playListItemToTrackInfo(PlaylistItem playlistItem, String apiKey) {
+        try {
+            final String videoId = playlistItem.getContentDetails().getVideoId();
+            final Video video = getVideoById(videoId, apiKey);
+
+            return videoToTrackInfo(video);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null; // Should never happen tbh
+        }
     }
 
     public static YoutubeAudioTrack videoToTrack(Video video, YoutubeAudioSourceManager sourceManager) {

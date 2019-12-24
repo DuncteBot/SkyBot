@@ -35,9 +35,9 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.YoutubeVersionData;
-import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
-import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
-import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.audio.sourcemanagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.audio.sourcemanagers.speech.SpeechAudioSourceManager;
+import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
@@ -49,7 +49,7 @@ import java.util.concurrent.Future;
 @SinceSkybot(version = "3.5.1")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
-    public final String embedTitle = "AirPlayer";
+    public static final String EMBED_TITLE = "AirPlayer";
     protected final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
@@ -67,6 +67,8 @@ public class AudioUtils {
             variables.getYoutubeCache(),
             config.googl
         );
+
+        youtubeAudioSourceManager.setPlaylistPageCount(1);
 
         youtubeAudioSourceManager.getMainHttpConfiguration().setHttpContextFilter(new YoutubeContextFilterOverride());
 

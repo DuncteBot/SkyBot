@@ -54,7 +54,7 @@ public class RemindmeCommand extends Command {
             new Flag(
                 'c',
                 "channel",
-                "Tells the reminder to remind you in this channel"
+                "When this flag is set you will be reminded in the channel where you executed the command (reminder is in dms by default)"
             ),
         };
     }
@@ -71,7 +71,7 @@ public class RemindmeCommand extends Command {
         final var flags = ctx.getParsedFlags(this);
 
         if (flags.get("undefined").isEmpty()) {
-            sendMsg(ctx, "What do you want me to remind you for?");
+            sendMsg(ctx, "Please tell me what to remind you off, usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 

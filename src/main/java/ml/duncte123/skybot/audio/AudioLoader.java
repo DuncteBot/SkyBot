@@ -78,7 +78,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             if (this.announce) {
                 final String msg = "Adding to queue: " + title;
                 sendEmbed(this.channel,
-                    embedField(this.audioUtils.embedTitle, msg)
+                    embedField(this.audioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
                 );
             }
@@ -91,7 +91,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
+            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Error: This playlist is empty."));
 
             return;
         }
@@ -112,7 +112,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-                sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
+                sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, msg));
             }
         }
         catch (LimitReachedException e) {
@@ -126,7 +126,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Nothing found by _" + this.trackUrl + "_"));
+            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Nothing found by _" + this.trackUrl + "_"));
         }
     }
 
@@ -145,7 +145,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + this.trackUrl
+            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -156,7 +156,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + root.getMessage()
+        sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Could not play: " + root.getMessage()
             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
 
     }

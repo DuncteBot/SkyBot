@@ -16,22 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audiomanagers.speech;
+package ml.duncte123.skybot.audio.sourcemanagers;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.audiomanagers.Mp3Track;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class SpeechAudioTrack extends Mp3Track {
+public class IdentifiedAudioReference extends AudioReference {
 
-    SpeechAudioTrack(AudioTrackInfo trackInfo, SpeechAudioSourceManager manager) {
-        super(trackInfo, manager);
+    private final String uri;
+
+    public IdentifiedAudioReference(String identifier, String uri, String title) {
+        super(identifier, title);
+
+        this.uri = uri;
     }
 
     @Override
-    public AudioTrack makeClone() {
-        return new SpeechAudioTrack(trackInfo, (SpeechAudioSourceManager) getSourceManager());
+    public String getUri() {
+        return uri;
     }
 }
