@@ -98,20 +98,11 @@ public class YoutubeUtils {
         String title = "";
 
         if (withExtraData) {
-            final List<Playlist> playlists = youtube.playlists()
-                .list("snippet")
-                .setId(playlistId)
-                .setKey(apiKey)
-                .execute()
-                .getItems();
+            title = getPlayListName(playlistId, apiKey);
+        }
 
-            if (playlists.isEmpty()) {
-                return null;
-            }
-
-            final Playlist playlist = playlists.get(0);
-
-            title = playlist.getSnippet().getTitle();
+        if (title == null) {
+            return null;
         }
 
         final PlaylistItemListResponse playlistItems = youtube.playlistItems()
@@ -196,6 +187,29 @@ public class YoutubeUtils {
             .setId(videoIds)
             .setKey(apiKey)
             .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)");
+    }
+
+    /**
+     * Gets the name for a playlist
+     * <p>
+     * IMPORTANT: returns null if the playlist does not exist
+     */
+    @Nullable
+    private static String getPlayListName(String playlistId, String apiKey) throws IOException {
+        final List<Playlist> playlists = youtube.playlists()
+            .list("snippet")
+            .setId(playlistId)
+            .setKey(apiKey)
+            .execute()
+            .getItems();
+
+        if (playlists.isEmpty()) {
+            return null;
+        }
+
+        final Playlist playlist = playlists.get(0);
+
+        return playlist.getSnippet().getTitle();
     }
 
     /*private static YoutubeTrack searchCache(String title, String author, CacheClient cacheClient) {

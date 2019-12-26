@@ -25,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
+import io.sentry.Sentry;
 import ml.duncte123.skybot.objects.YoutubePlaylistMetadata;
 
 import java.io.IOException;
@@ -36,8 +37,8 @@ import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.
 import static ml.duncte123.skybot.utils.YoutubeUtils.getPlaylistPageById;
 
 public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
-    private volatile int playlistPageCount = 6;
     private final String apiKey;
+    private volatile int playlistPageCount = 6;
 
     public YoutubeApiPlaylistLoader(String apiKey) {
         this.apiKey = apiKey;
@@ -57,61 +58,67 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
                 throw new FriendlyException("This playlist does not exist", COMMON, null);
             }
 
-            List<AudioTrack> convertedTracks = new ArrayList<>();
-
-            firstPage.getTracks()
-                .stream()
-                .map(trackFactory)
-                .forEach(convertedTracks::add);
-
-            String nextPageKey = firstPage.getNextPageKey();
-            int loadCount = 0;
-            final int pageCount = playlistPageCount;
-
-            while (nextPageKey != null && ++loadCount < pageCount) {
-                final YoutubePlaylistMetadata youtubePlaylistMetadata = fetchNextPage(nextPageKey, playlistId, trackFactory, convertedTracks);
-
-                if (youtubePlaylistMetadata == null) {
-                    break;
-                }
-
-                nextPageKey = youtubePlaylistMetadata.getNextPageKey();
-            }
-
-            return new BasicAudioPlaylist(
-                firstPage.getTitle(),
-                convertedTracks,
-                convertedTracks.get(0),
-                false
-            );
+            return buildPlaylist(firstPage, playlistId, selectedVideoId, trackFactory);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Sentry.capture(e);
 
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
-    private YoutubePlaylistMetadata fetchNextPage(String nextPageKey, String playlistId, Function<AudioTrackInfo, AudioTrack> trackFactory, List<AudioTrack> tracks) {
-        try {
-            System.out.println(nextPageKey);
-            final YoutubePlaylistMetadata nextPage = getPlaylistPageById(playlistId, this.apiKey, nextPageKey, false);
+    private AudioPlaylist buildPlaylist(YoutubePlaylistMetadata firstPage, String playlistId, String selectedVideoId,
+                                        Function<AudioTrackInfo, AudioTrack> trackFactory) throws IOException {
+        final List<AudioTrack> convertedTracks = new ArrayList<>();
 
-            if (nextPage == null) {
-                return null;
-            }
+        firstPage.getTracks()
+            .stream()
+            .map(trackFactory)
+            .forEach(convertedTracks::add);
 
-            nextPage.getTracks()
-                .stream()
-                .map(trackFactory)
-                .forEach(tracks::add);
+        String nextPageKey = firstPage.getNextPageKey();
+        int loadCount = 0;
+        final int pageCount = playlistPageCount;
 
-            return nextPage;
+        while (nextPageKey != null && ++loadCount < pageCount) {
+            nextPageKey = fetchNextPage(nextPageKey, playlistId, trackFactory, convertedTracks);
         }
-        catch (IOException e) {
-            e.printStackTrace();
 
+        return new BasicAudioPlaylist(
+            firstPage.getTitle(),
+            convertedTracks,
+            getSelectedTrack(selectedVideoId, convertedTracks),
+            false
+        );
+    }
+
+    private AudioTrack getSelectedTrack(String selectedVideoId, List<AudioTrack> tracks) {
+        if (selectedVideoId == null) {
             return null;
         }
+
+        for (final AudioTrack track : tracks) {
+            if (selectedVideoId.equals(track.getIdentifier())) {
+                return track;
+            }
+        }
+
+        return null;
+    }
+
+    private String fetchNextPage(String nextPageKey, String playlistId, Function<AudioTrackInfo, AudioTrack> trackFactory,
+                                                  List<AudioTrack> tracks) throws IOException {
+        final YoutubePlaylistMetadata nextPage = getPlaylistPageById(playlistId, this.apiKey, nextPageKey, false);
+
+        if (nextPage == null) {
+            return null;
+        }
+
+        nextPage.getTracks()
+            .stream()
+            .map(trackFactory)
+            .forEach(tracks::add);
+
+        return nextPage.getNextPageKey();
     }
 }
