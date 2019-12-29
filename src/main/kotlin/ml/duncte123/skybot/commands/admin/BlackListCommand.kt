@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicLong
 class BlackListCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
         this.name = "blacklist"
         this.helpFunction = { _, _ ->
@@ -53,7 +54,7 @@ class BlackListCommand : ModBaseCommand() {
         this.botPermissions = arrayOf(Permission.MESSAGE_MANAGE)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 

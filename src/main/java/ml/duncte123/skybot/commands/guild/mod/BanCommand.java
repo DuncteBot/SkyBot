@@ -38,6 +38,8 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class BanCommand extends ModBaseCommand {
 
     public BanCommand() {
+        this.requiresArgs = true;
+        this.requiredArgCount = 2;
         this.name = "ban";
         this.aliases = new String[]{
             "dabon",
@@ -61,14 +63,8 @@ public class BanCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-
-        if (args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {

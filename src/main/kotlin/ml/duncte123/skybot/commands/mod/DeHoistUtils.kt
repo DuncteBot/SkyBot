@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 class DeHoistCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.name = "dehoist"
         this.helpFunction = { _, _ -> "De-hoists a user" }
         this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
@@ -42,7 +43,7 @@ class DeHoistCommand : ModBaseCommand() {
         this.botPermissions = arrayOf(Permission.NICKNAME_MANAGE)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         if (ctx.message.mentionedMembers.size == 0) {
             this.sendUsageInstructions(ctx)
             return

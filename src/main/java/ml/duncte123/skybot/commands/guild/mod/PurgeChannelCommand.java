@@ -31,6 +31,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 public class PurgeChannelCommand extends ModBaseCommand {
 
     public PurgeChannelCommand() {
+        this.requiresArgs = true;
         this.name = "purgechannel";
         this.helpFunction = (prefix, invoke) -> "Purges an entire text channel";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <#channel>`";
@@ -45,7 +46,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<TextChannel> channels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
 
         if (channels.isEmpty()) {

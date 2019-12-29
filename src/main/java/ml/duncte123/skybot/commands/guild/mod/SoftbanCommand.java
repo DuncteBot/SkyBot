@@ -38,6 +38,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {
+        this.requiresArgs = true;
         this.name = "softban";
         this.helpFunction = (prefix, invoke) -> "Kicks a user from the server **(THIS WILL DELETE MESSAGES)**";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
@@ -57,7 +58,7 @@ public class SoftbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
 
         if (args.size() < 2) {

@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.Permission
 class VoiceKickCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.name = "voicekick"
         this.helpFunction = { _, _ -> "Kicks a user from the voice channel that they are in" }
         this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user/voice channel>`" }
@@ -36,7 +37,7 @@ class VoiceKickCommand : ModBaseCommand() {
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
         val guild = ctx.guild

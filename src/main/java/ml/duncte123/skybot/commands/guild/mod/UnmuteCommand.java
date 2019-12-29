@@ -37,6 +37,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class UnmuteCommand extends ModBaseCommand {
 
     public UnmuteCommand() {
+        this.requiresArgs = true;
         this.name = "unmute";
         this.helpFunction = (prefix, invoke) -> "Removes the mute of a user if they are muted";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
@@ -54,7 +55,7 @@ public class UnmuteCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();

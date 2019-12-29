@@ -30,27 +30,8 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ModBaseCommand extends Command {
-    protected boolean argscheck = true;
-
     public ModBaseCommand() {
         this.category = CommandCategory.MODERATION;
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
-
-    @Override
-    public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-
-        if (argscheck && args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
-
-            return;
-        }
-
-        run(ctx);
-    }
-
-    public abstract void run(@Nonnull CommandContext ctx);
-
 }

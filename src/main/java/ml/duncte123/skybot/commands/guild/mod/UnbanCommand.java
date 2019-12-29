@@ -35,6 +35,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class UnbanCommand extends ModBaseCommand {
 
     public UnbanCommand() {
+        this.requiresArgs = true;
         this.name = "unban";
         this.aliases = new String[]{
             "ban't",
@@ -55,7 +56,7 @@ public class UnbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final var flags = ctx.getParsedFlags(this);
         final String argsJoined = String.join(" ", flags.get("undefined"));

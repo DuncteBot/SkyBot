@@ -43,6 +43,8 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {
+        this.requiresArgs = true;
+        this.requiredArgCount = 2;
         this.name = "tempmute";
         this.helpFunction = (prefix, invoke) -> "Temporally mutes a user in the server";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
@@ -60,16 +62,10 @@ public class TempMuteCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final GuildSettings settings = ctx.getGuildSettings();
-
-        if (args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {

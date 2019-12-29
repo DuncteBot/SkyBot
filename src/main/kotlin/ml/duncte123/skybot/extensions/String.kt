@@ -25,7 +25,7 @@ fun String.stripFlags(command: Command): String {
 
     for (f in command.flags) {
         if (f.word != null) {
-            text = text.replace("--" + f.word!!, "")
+            text = text.replace("--" + f.word, "")
         }
 
         text = text.replace("-" + f.flag, "")

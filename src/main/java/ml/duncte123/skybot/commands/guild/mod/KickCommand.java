@@ -40,6 +40,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
+        this.requiresArgs = true;
         this.name = "kick";
         this.helpFunction = (prefix, invoke) -> "Kicks a user from the server";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
@@ -59,7 +60,7 @@ public class KickCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         final List<Member> mentioned = ctx.getMentionedArg(0);

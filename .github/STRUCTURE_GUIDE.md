@@ -52,15 +52,17 @@ In this section we guide you through a logically ordered and structure class und
 
 ### Command constructor
 To maintain consistency between the constructors of the commands the following order has been given to the properties
-1. displayAliasesInHelp
-2. category
-3. name
-4. aliases
-5. helpFunction (prefix, invoke)
-6. usageInstructions (prefix, invoke)
-7. userPermissions
-8. botPermissions
-9. flags
+1. requiresArgs
+2. requiredArgCount
+3. displayAliasesInHelp
+4. category
+5. name
+6. aliases
+7. helpFunction (prefix, invoke)
+8. usageInstructions (prefix, invoke)
+9. userPermissions
+10. botPermissions
+11. flags
 
 ### Access Modifiers
 

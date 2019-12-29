@@ -181,6 +181,7 @@ public class CommandManager {
         this.addCommand(new PPlayCommand());
         this.addCommand(new PronounsCheckCommand());
         this.addCommand(new PurgeChannelCommand());
+        this.addCommand(new PurgeUserCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
         this.addCommand(new RemindmeCommand());

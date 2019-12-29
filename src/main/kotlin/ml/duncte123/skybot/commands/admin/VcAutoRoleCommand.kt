@@ -33,6 +33,7 @@ import java.util.stream.Collectors
 class VcAutoRoleCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
         this.name = "vcautorole"
         this.helpFunction = { _, _ -> "Gives a role to a user when they join a specified voice channel" }
@@ -47,7 +48,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         this.botPermissions = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val guild = ctx.guild
         val args = ctx.args

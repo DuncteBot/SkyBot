@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.Permission
 class WarnCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.name = "warn"
         this.helpFunction = { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
         this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user> [-r reason]`" }
@@ -44,7 +45,7 @@ class WarnCommand : ModBaseCommand() {
         )
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val mentioned = ctx.getMentionedArg(0)
 

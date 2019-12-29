@@ -33,6 +33,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class UnwarnCommand extends ModBaseCommand {
     public UnwarnCommand() {
+        this.requiresArgs = true;
         this.name = "unwarn";
         this.helpFunction = (prefix, invoke) -> "Removes the latest warning of a user in this server";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user>`";
@@ -42,7 +43,7 @@ public class UnwarnCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty()) {

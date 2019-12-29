@@ -49,6 +49,8 @@ public abstract class Command implements ICommand {
             return thread;
         });
     //@formatter:off
+    protected boolean requiresArgs = false;
+    protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
@@ -58,7 +60,6 @@ public abstract class Command implements ICommand {
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
-
     //@formatter:on
 
     @Override
@@ -82,6 +83,14 @@ public abstract class Command implements ICommand {
                 parsePerms(this.botPermissions), permissionsWord
             );
 
+            return;
+        }
+
+        if (this.requiresArgs &&
+            // if args are empty or the args count is less than the required args count
+            (ctx.getArgs().isEmpty() || ctx.getArgs().size() < this.requiredArgCount)
+        ) {
+            sendMsg(ctx, "Missing arguments, usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 

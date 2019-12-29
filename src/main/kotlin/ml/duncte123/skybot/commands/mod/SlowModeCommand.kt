@@ -25,23 +25,21 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.TextChannel
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class SlowModeCommand : ModBaseCommand() {
 
-    private val maxSeconds = 21600
-
     init {
-        this.argscheck = false
         this.name = "slowmode"
         this.aliases = arrayOf("sm")
         this.helpFunction = { _, _ -> "Sets the slowmode in the current channel" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <seconds (1-$maxSeconds)/off>`" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <seconds (1-${TextChannel.MAX_SLOWMODE})/off>`" }
         this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
 
         val event = ctx.event
 
@@ -69,8 +67,8 @@ class SlowModeCommand : ModBaseCommand() {
 
         val intDelay = delay.toInt()
 
-        if (intDelay < 0 || intDelay > maxSeconds) {
-            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-$maxSeconds (21600 is 6 hours in seconds)")
+        if (intDelay < 0 || intDelay > TextChannel.MAX_SLOWMODE) {
+            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-${TextChannel.MAX_SLOWMODE} (21600 is 6 hours in seconds)")
             return
         }
 

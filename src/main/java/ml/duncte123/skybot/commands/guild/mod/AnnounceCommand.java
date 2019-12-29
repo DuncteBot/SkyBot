@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,6 +38,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 public class AnnounceCommand extends ModBaseCommand {
 
     public AnnounceCommand() {
+        this.requiresArgs = true;
+        this.requiredArgCount = 2;
         this.displayAliasesInHelp = true;
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "announce";
@@ -65,20 +66,19 @@ public class AnnounceCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
+    public void execute(@Nonnull CommandContext ctx) {
         if (!ctx.getInvoke().equalsIgnoreCase(this.name)) {
-            sendMsg(ctx, "The usage of this command changed, please check `" + ctx.getPrefix() + "help " + this.name + '`');
+            sendMsg(ctx, "The usage of this command changed, please check `" + ctx.getPrefix() + "help " + this.name + "`\n" +
+                "The aliases announce1, announce2 and announce3 will be removed in the future");
             return;
         }
 
-        if (event.getMessage().getMentionedChannels().isEmpty()) {
+        if (ctx.getMessage().getMentionedChannels().isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
         }
 
-        final List<TextChannel> mentioned = event.getMessage().getMentionedChannels();
+        final List<TextChannel> mentioned = ctx.getMessage().getMentionedChannels();
 
         if (mentioned.isEmpty()) {
             sendMsg(ctx, "You did not specify a channel");
@@ -89,7 +89,7 @@ public class AnnounceCommand extends ModBaseCommand {
         final TextChannel targetChannel = mentioned.get(0);
 
         if (!targetChannel.canTalk()) {
-            sendErrorWithMessage(event.getMessage(), "I can not talk in " + targetChannel.getAsMention());
+            sendErrorWithMessage(ctx.getMessage(), "I can not talk in " + targetChannel.getAsMention());
             return;
         }
 
@@ -107,7 +107,7 @@ public class AnnounceCommand extends ModBaseCommand {
             this
         );
 
-        if (flags.containsKey("e")) {
+        if (flags.containsKey("noembed")) {
             sendMsg(targetChannel, msg);
             sendSuccess(ctx.getMessage());
 
@@ -120,8 +120,8 @@ public class AnnounceCommand extends ModBaseCommand {
 
         if (!attachments.isEmpty()) {
             attachments.stream().filter(Message.Attachment::isImage).findFirst().ifPresent((attachment) -> {
-                if (flags.containsKey("t")) {
-                    embed.setImage(attachment.getUrl());
+                if (flags.containsKey("thumbnail")) {
+                    embed.setThumbnail(attachment.getUrl());
                 } else {
                     embed.setImage(attachment.getUrl());
                 }
@@ -130,6 +130,5 @@ public class AnnounceCommand extends ModBaseCommand {
 
         sendEmbed(targetChannel, embed);
         sendSuccess(ctx.getMessage());
-
     }
 }

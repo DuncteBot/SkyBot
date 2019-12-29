@@ -40,6 +40,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 public class HackbanCommand extends ModBaseCommand {
 
     public HackbanCommand() {
+        this.requiresArgs = true;
         this.name = "hackban";
         this.helpFunction = (prefix, invoke) -> "Ban a user before they can join your server.";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <userId...>`";
@@ -49,7 +50,7 @@ public class HackbanCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<String> messages = new ArrayList<>();

@@ -28,13 +28,14 @@ import net.dv8tion.jda.api.Permission
 class WarningsCommand : ModBaseCommand() {
 
     init {
+        this.requiresArgs = true
         this.name = "warnings"
         this.helpFunction = { _, _ -> "Shows the active warnings that a member has" }
         this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
     }
 
-    override fun run(ctx: CommandContext) {
+    override fun execute(ctx: CommandContext) {
         val mentioned = ctx.getMentionedArg(0)
         val db = ctx.databaseAdapter
 

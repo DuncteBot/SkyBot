@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -49,7 +48,7 @@ public class CleanupCommand extends ModBaseCommand {
             "purge",
             "wipe",
         };
-        this.helpFunction = (prefix, invoke) -> "Performs a cleanup in the channel where the command is run.\n" +
+        this.helpFunction = (prefix, invoke) -> "Performs a purge in the channel where the command is run.\n" +
             "To clear an entire channel it's better to use `" + prefix + "purgechannel`";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [amount] [--keep-pinned] [--bots-only]`";
         this.userPermissions = new Permission[]{
@@ -73,15 +72,13 @@ public class CleanupCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
+    public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
 
         int total = 5;
 
         if (args.size() > 3) {
-            sendErrorWithMessage(event.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 
@@ -96,19 +93,19 @@ public class CleanupCommand extends ModBaseCommand {
                     total = Integer.parseInt(args.get(0));
                 }
                 catch (NumberFormatException e) {
-                    sendError(event.getMessage());
-                    sendMsg(event, "Error: Amount to clear is not a valid number");
+                    sendError(ctx.getMessage());
+                    sendMsg(ctx, "Error: Amount to clear is not a valid number");
                     return;
                 }
                 if (total < 1 || total > 1000) {
-                    sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
+                    sendMsgAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
                         "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`");
                     return;
                 }
             }
         }
 
-        final TextChannel channel = event.getChannel();
+        final TextChannel channel = ctx.getChannel();
         // Start of the annotation
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();
@@ -126,7 +123,7 @@ public class CleanupCommand extends ModBaseCommand {
                 .collect(Collectors.toList());
 
             final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(event, "Deleting messages, please wait this might take a while (message will be deleted once complete)", hack::complete);
+            sendMsg(ctx, "Deleting messages, please wait this might take a while (message will be deleted once complete)", hack::complete);
 
             final List<CompletableFuture<Void>> futures =  channel.purgeMessages(msgList);
 
@@ -147,11 +144,11 @@ public class CleanupCommand extends ModBaseCommand {
                 cause = " caused by: " + thr.getCause().getMessage();
             }
 
-            sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+            sendMsg(ctx, "ERROR: " + thr.getMessage() + cause);
 
             return 0;
         }).whenCompleteAsync((count, thr) -> {
-            sendMsgFormatAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
+            sendMsgFormatAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
 
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });
