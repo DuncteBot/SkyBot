@@ -177,8 +177,25 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        if (exception.severity != FriendlyException.Severity.COMMON) {
-            /*final TextChannel tc = guildMusicManager.getLatestChannel();
+        final Throwable rootCause = ExceptionUtils.getRootCause(exception);
+        final Throwable finalCause = rootCause == null ? exception : rootCause;
+
+        if (finalCause == null || finalCause.getMessage() == null) {
+            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + track.getIdentifier() +
+                "`\nPlease contact the developers asap with the identifier in the message above");
+            return;
+        }
+
+        if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
+            return;
+        }
+
+        this.messageDebouncer.accept("Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+            "Details: " + finalCause);
+
+        // old shit
+        /*if (exception.severity != FriendlyException.Severity.COMMON) {
+            final TextChannel tc = guildMusicManager.getLatestChannel();
             final Guild g = tc == null ? null : tc.getGuild();
 
             if (g != null) {
@@ -194,23 +211,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 );
 
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            }*/
-
-            final Throwable rootCause = ExceptionUtils.getRootCause(exception);
-            final Throwable finalCause = rootCause == null ? exception : rootCause;
-
-            if (finalCause == null || finalCause.getMessage() == null) {
-                this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + track.getIdentifier() +
-                    "`\nPlease contact the developers asap with the identifier in the message above");
-                return;
             }
 
-            if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
-                return;
-            }
-
-            this.messageDebouncer.accept("Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                "Details: " + finalCause);
-        }
+        }*/
     }
 }
