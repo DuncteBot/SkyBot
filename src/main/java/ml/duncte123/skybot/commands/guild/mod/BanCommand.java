@@ -43,6 +43,7 @@ public class BanCommand extends ModBaseCommand {
         this.name = "ban";
         this.aliases = new String[]{
             "dabon",
+            "naenae",
         };
         this.helpFunction = (prefix, invoke) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
