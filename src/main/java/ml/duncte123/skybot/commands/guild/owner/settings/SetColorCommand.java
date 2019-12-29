@@ -34,7 +34,7 @@ import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetColorCommand extends SettingsBase {
 
-    private static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
+    public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
     public SetColorCommand() {
         this.name = "setcolor";

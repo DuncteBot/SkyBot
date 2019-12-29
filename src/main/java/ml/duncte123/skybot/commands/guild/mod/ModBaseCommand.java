@@ -20,14 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ModBaseCommand extends Command {
     public ModBaseCommand() {

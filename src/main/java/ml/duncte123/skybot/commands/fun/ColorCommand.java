@@ -26,8 +26,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 import javax.annotation.Nonnull;
 
+import java.util.List;
+import java.util.regex.Matcher;
+
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.commands.guild.owner.settings.SetColorCommand.COLOR_REGEX;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -44,7 +49,23 @@ public class ColorCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        ctx.getAlexFlipnote().getRandomColour().async((data) -> {
+        final List<String> args = ctx.getArgs();
+        String color = "random";
+
+        if (!args.isEmpty()) {
+            final String colorString = args.get(0);
+            final Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
+
+            if (!colorMatcher.matches()) {
+                sendMsg(ctx.getEvent(), "That color does not look like a valid hex color, hex colors start with a pound sign and have 6 alphanumeric characters.\n" +
+                    "Tip: you can use <http://colorpicker.com/> to generate a hex code.");
+                return;
+            }
+
+            color = colorString.substring(1);
+        }
+
+        ctx.getAlexFlipnote().getColour(color).async((data) -> {
             final String hex = data.hex;
             final String image = data.image;
             final int integer = data.integer;

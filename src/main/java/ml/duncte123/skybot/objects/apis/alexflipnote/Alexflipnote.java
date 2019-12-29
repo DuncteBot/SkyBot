@@ -40,9 +40,9 @@ public class Alexflipnote {
         this.mapper = mapper;
     }
 
-    public PendingRequest<FlipnoteColourObj> getRandomColour() {
+    public PendingRequest<FlipnoteColourObj> getColour(String color) {
         return WebUtils.ins.prepareRaw(
-            makeRequest("colour/random"),
+            makeRequest("colour/" + color),
             (r) -> {
                 final JsonNode node = mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
 
