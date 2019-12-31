@@ -33,6 +33,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
+import ml.duncte123.skybot.audio.sourcemanagers.pornhub.PornHubAudioSourceManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.YoutubeVersionData;
 import ml.duncte123.skybot.audio.sourcemanagers.clypit.ClypitAudioSourceManager;
@@ -75,6 +76,7 @@ public class AudioUtils {
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
         playerManager.registerSourceManager(new ClypitAudioSourceManager());
         playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
+        playerManager.registerSourceManager(new PornHubAudioSourceManager());
 
         playerManager.registerSourceManager(youtubeAudioSourceManager);
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());

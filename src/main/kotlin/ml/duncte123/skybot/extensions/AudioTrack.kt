@@ -67,9 +67,13 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
  */
 fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
-    if (this is SpotifyAudioTrack && this.info is AudioTrackInfoWithImage) {
+    if (this.info is AudioTrackInfoWithImage) {
         return (this.info as AudioTrackInfoWithImage).image
     }
+
+    /*if (this is SpotifyAudioTrack && this.info is AudioTrackInfoWithImage) {
+        return (this.info as AudioTrackInfoWithImage).image
+    }*/
 
     if (this is YoutubeAudioTrack) {
         return YoutubeUtils.getThumbnail(this.identifier)

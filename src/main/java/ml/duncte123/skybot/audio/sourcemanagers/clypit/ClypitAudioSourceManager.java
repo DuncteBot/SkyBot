@@ -18,19 +18,25 @@
 
 package ml.duncte123.skybot.audio.sourcemanagers.clypit;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.sourcemanagers.IdentifiedAudioReference;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +47,7 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
 
     @Override
     public String getSourceName() {
-        return "clyp.it";
+        return "clypit";
     }
 
     @Override
@@ -54,28 +60,48 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
 
         try {
             final String clypitId = m.group(m.groupCount());
-            final ObjectNode json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
+            final JsonBrowser json = fetchJson(clypitId);
+
+            if (json == null) {
+                return AudioReference.NO_TRACK;
+            }
 
             return new IdentifiedAudioReference(
-                json.get("Mp3Url").asText(),
+                json.get("Mp3Url").safeText(),
                 reference.identifier,
-                json.get("Title").asText()
+                json.get("Title").safeText()
             );
         }
         catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw ExceptionTools.wrapUnfriendlyExceptions("Something went wrong", FriendlyException.Severity.SUSPICIOUS, e);
         }
-    }
-
-    @Override
-    public boolean isTrackEncodable(AudioTrack track) {
-        return true;
     }
 
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) {
         // empty because we don't need them
+    }
+
+    // Switched from WebUtils to lavaplayer's stuff because that is better I guess
+    private JsonBrowser fetchJson(String itemId) throws IOException {
+        final HttpGet httpGet = new HttpGet("https://api.clyp.it/" + itemId);
+
+        try (final CloseableHttpResponse response = getHttpInterface().execute(httpGet)) {
+            final int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode != 200) {
+                if (statusCode == 404) {
+                    return null;
+                }
+
+                throw new IOException("Unexpected status code for video page response: " + statusCode);
+            }
+
+
+            final String json = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+
+            return JsonBrowser.parse(json);
+        }
     }
 
     @Override
