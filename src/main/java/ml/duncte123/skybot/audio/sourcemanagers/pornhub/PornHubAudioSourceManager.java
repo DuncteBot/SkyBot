@@ -177,7 +177,7 @@ public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfig
             return JsonBrowser.parse(matcher.group(1));
         }
 
-        return JsonBrowser.NULL_BROWSER;
+        return null;
     }
 
     private JsonBrowser getModelInfo(String html) throws IOException {
@@ -187,7 +187,7 @@ public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfig
             return JsonBrowser.parse(matcher.group(1));
         }
 
-        return JsonBrowser.NULL_BROWSER;
+        return null;
     }
 
     private String loadHtml(String url) throws IOException {
@@ -230,12 +230,12 @@ public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfig
 
         @Override
         public void onContextClose(HttpClientContext context) {
-
+            // Not used
         }
 
         @Override
         public void onRequest(HttpClientContext context, HttpUriRequest request, boolean isRepetition) {
-
+            // Not used
         }
 
         @Override

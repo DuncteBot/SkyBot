@@ -30,7 +30,6 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.audio.sourcemanagers.AudioTrackInfoWithImage
-import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
 import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder

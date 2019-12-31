@@ -53,7 +53,7 @@ public class PornHubAudioTrack extends DelegatedAudioTrack {
     public void process(LocalAudioTrackExecutor executor) throws Exception {
         final String playbackUrl = this.loadTrackUrl();
 
-        try (final PersistentHttpStream stream = new PersistentHttpStream(this.sourceManager.getHttpInterface(), new URI(playbackUrl), Long.MAX_VALUE);) {
+        try (final PersistentHttpStream stream = new PersistentHttpStream(this.sourceManager.getHttpInterface(), new URI(playbackUrl), Long.MAX_VALUE)) {
             processDelegate(
                 new MpegAudioTrack(this.trackInfo, stream),
                 executor
