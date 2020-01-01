@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.audio.sourcemanagers.youtube;
 
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubePlaylistLoader;
+import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -63,7 +64,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
         catch (IOException e) {
             Sentry.capture(e);
 
-            throw new RuntimeException(e);
+            throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
     }
 

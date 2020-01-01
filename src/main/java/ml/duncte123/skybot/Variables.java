@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
@@ -198,6 +199,8 @@ public final class Variables {
             InstantiationException | InvocationTargetException e) {
             LoggerFactory.getLogger(Variables.class).error("Could not load database class.\n" +
                 "Are you a developer?", e);
+
+            throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
 
         return this.databaseAdapter;

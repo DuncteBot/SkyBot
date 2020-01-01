@@ -55,7 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfigurable {
-    private static final Pattern VIDEO_REGEX = Pattern.compile("^https?://(www\\.)?pornhub\\.(com|net)/view_video\\.php\\?viewkey=([a-zA-Z0-9]+)$");
+    private static final Pattern VIDEO_REGEX = Pattern.compile("^https?://(www\\.)?pornhub\\.(com|net)/view_video\\.php\\?viewkey=([a-zA-Z0-9]+)(?:.*)$");
     private static final Pattern VIDEO_INFO_REGEX = Pattern.compile("var flashvars_\\d+ = (\\{.+})");
     private static final Pattern MODEL_INFO_REGEX = Pattern.compile("var MODEL_PROFILE = (\\{.+})");
     private final HttpInterfaceManager httpInterfaceManager;

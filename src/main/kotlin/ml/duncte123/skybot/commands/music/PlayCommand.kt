@@ -65,6 +65,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
         var toPlay = ctx.argsRaw
 
+        if (toPlay.startsWith("https://www.pornhub.com") && !ctx.channel.isNSFW) {
+            sendMsg(ctx, "Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
+            return
+        }
+
         if (skipParsing) {
             handlePlay(toPlay, event, ctx, mng)
             return
