@@ -20,6 +20,7 @@ package ml.duncte123.skybot.audio.sourcemanagers.pornhub;
 
 import com.sedmelluq.discord.lavaplayer.container.mpeg.MpegAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
@@ -41,17 +42,19 @@ public class PornHubAudioTrack extends DelegatedAudioTrack {
     private static final Pattern MEDIA_STRING_FILTER = Pattern.compile("\\/\\* \\+ [a-zA-Z0-9]+ \\+ \\*\\/"); // Should be used with replaceAll
 
     private final PornHubAudioSourceManager sourceManager;
-    private final AudioTrackInfo trackInfo;
 
     public PornHubAudioTrack(AudioTrackInfo trackInfo, PornHubAudioSourceManager sourceManager) {
         super(trackInfo);
         this.sourceManager = sourceManager;
-        this.trackInfo = trackInfo;
     }
 
     @Override
     public void process(LocalAudioTrackExecutor executor) throws Exception {
-        final String playbackUrl = this.loadTrackUrl();
+        if (!this.trackInfo.identifier.equals(this.trackInfo.uri)) {
+            return;
+        }
+
+        final String playbackUrl = loadTrackUrl(this.trackInfo, this.sourceManager.getHttpInterface());
 
         try (final PersistentHttpStream stream = new PersistentHttpStream(this.sourceManager.getHttpInterface(), new URI(playbackUrl), Long.MAX_VALUE)) {
             processDelegate(
@@ -61,12 +64,12 @@ public class PornHubAudioTrack extends DelegatedAudioTrack {
         }
     }
 
-    private String loadTrackUrl() throws IOException {
-        final HttpGet httpGet = new HttpGet(this.trackInfo.identifier);
+    /* package */ static String loadTrackUrl(AudioTrackInfo trackInfo, HttpInterface HttpInterface) throws IOException {
+        final HttpGet httpGet = new HttpGet(trackInfo.identifier);
 
         httpGet.setHeader("Cookie", "platform=tv");
 
-        try (final CloseableHttpResponse response = this.sourceManager.getHttpInterface().execute(httpGet)) {
+        try (final CloseableHttpResponse response = HttpInterface.execute(httpGet)) {
             final String html = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             final Matcher matcher = MEDIA_STRING.matcher(html);
 
@@ -80,7 +83,7 @@ public class PornHubAudioTrack extends DelegatedAudioTrack {
         }
     }
 
-    private String parseJsValueToUrl(String htmlPage, String js) {
+    private static String parseJsValueToUrl(String htmlPage, String js) {
         final String filteredJsValue = MEDIA_STRING_FILTER.matcher(js).replaceAll("");
         final String variables = filteredJsValue.split("=")[1].split(";")[0];
         final String[] items = variables.split("\\+");
@@ -103,5 +106,10 @@ public class PornHubAudioTrack extends DelegatedAudioTrack {
         }
 
         return String.join("", videoParts);
+    }
+
+    @Override
+    public PornHubAudioSourceManager getSourceManager() {
+        return sourceManager;
     }
 }

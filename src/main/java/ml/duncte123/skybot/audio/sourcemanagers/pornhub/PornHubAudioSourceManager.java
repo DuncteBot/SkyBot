@@ -33,7 +33,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import com.sedmelluq.discord.lavaplayer.track.info.AudioTrackInfoBuilder;
+import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.audio.sourcemanagers.AudioTrackInfoWithImage;
+import ml.duncte123.skybot.audio.sourcemanagers.IdentifiedAudioReference;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -53,6 +56,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static ml.duncte123.skybot.audio.sourcemanagers.pornhub.PornHubAudioTrack.loadTrackUrl;
 
 public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfigurable {
     private static final Pattern VIDEO_REGEX = Pattern.compile("^https?://(www\\.)?pornhub\\.(com|net)/view_video\\.php\\?viewkey=([a-zA-Z0-9]+)(?:.*)$");
@@ -143,7 +148,17 @@ public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfig
 //        final Matcher matcher = VIDEO_REGEX.matcher(reference.identifier);
         final String identifier = /*matcher.matches() ? matcher.group(1) :*/ reference.identifier;
         final String uri = reference.identifier;
-        final String imagUrl = videoInfo.get("image_url").safeText();
+        final String imageUrl = videoInfo.get("image_url").safeText();
+
+        if (LavalinkManager.ins.isEnabled()) {
+            final AudioTrackInfo fakeInfo = AudioTrackInfoBuilder.empty().setIdentifier(uri).build();
+
+            return new IdentifiedAudioReference(
+                loadTrackUrl(fakeInfo, getHttpInterface()),
+                uri,
+                title
+            );
+        }
 
         return buildAudioTrack(
             title,
@@ -151,24 +166,39 @@ public class PornHubAudioSourceManager implements AudioSourceManager, HttpConfig
             duration,
             identifier,
             uri,
-            imagUrl
+            imageUrl
+        );
+    }
+
+    private AudioTrackInfoWithImage buildInfo(String title, String author, long duration, String identifier, String uri, String imageUrl) {
+        return new AudioTrackInfoWithImage(
+            title,
+            author,
+            duration,
+            identifier,
+            false,
+            uri,
+            imageUrl
         );
     }
 
     private PornHubAudioTrack buildAudioTrack(String title, String author, long duration, String identifier, String uri, String imageUrl) {
         return new PornHubAudioTrack(
-            new AudioTrackInfoWithImage(
+            buildInfo(
                 title,
                 author,
                 duration,
                 identifier,
-                false,
                 uri,
                 imageUrl
             ),
             this
         );
     }
+
+    /*private PornHubAudioTrack buildAudioTrack(AudioTrackInfoWithImage info) {
+        return new PornHubAudioTrack(info, this);
+    }*/
 
     private JsonBrowser getVideoInfo(String html) throws IOException {
         final Matcher matcher = VIDEO_INFO_REGEX.matcher(html);

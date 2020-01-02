@@ -107,7 +107,7 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this, isPatron);
+        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, isPatron);
 
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }

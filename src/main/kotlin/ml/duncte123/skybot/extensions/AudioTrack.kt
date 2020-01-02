@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.extensions
 
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
@@ -104,7 +105,9 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
             }
         }
 
-        if (this is SoundCloudAudioTrack) {
+        if (this is SoundCloudAudioTrack ||
+            (this is HttpAudioTrack && this.info.uri.startsWith("https://www.pornhub.com/"))
+        ) {
             val page = WebUtils.ins.scrapeWebPage(this.info.uri).execute()
             val elems = page.select("meta[property=og:image]")
 

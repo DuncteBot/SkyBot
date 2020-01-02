@@ -51,17 +51,15 @@ public class AudioLoader implements AudioLoadResultHandler {
     private final GuildMusicManager mng;
     private final boolean announce;
     private final String trackUrl;
-    private final AudioUtils audioUtils;
     private final boolean isPatron;
 
-    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, AudioUtils audioUtils, boolean isPatron) {
+    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, boolean isPatron) {
         this.ctx = ctx;
         this.channel = ctx.getChannel();
         this.requester = ctx.getAuthor().getIdLong();
         this.mng = mng;
         this.announce = announce;
         this.trackUrl = trackUrl;
-        this.audioUtils = audioUtils;
         this.isPatron = isPatron;
     }
 
@@ -78,7 +76,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             if (this.announce) {
                 final String msg = "Adding to queue: " + title;
                 sendEmbed(this.channel,
-                    embedField(this.audioUtils.EMBED_TITLE, msg)
+                    embedField(AudioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
                 );
             }
@@ -91,7 +89,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Error: This playlist is empty."));
+            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Error: This playlist is empty."));
 
             return;
         }
@@ -112,7 +110,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-                sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, msg));
+                sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, msg));
             }
         }
         catch (LimitReachedException e) {
@@ -126,7 +124,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Nothing found by _" + this.trackUrl + "_"));
+            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by _" + this.trackUrl + "_"));
         }
     }
 
@@ -145,7 +143,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
+            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -156,7 +154,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.channel, embedField(this.audioUtils.EMBED_TITLE, "Could not play: " + root.getMessage()
+        sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + root.getMessage()
             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
 
     }
