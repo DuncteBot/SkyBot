@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -86,7 +86,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.65")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.0_86") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.0_90") {
         exclude(module = "opus-java")
     }
 
