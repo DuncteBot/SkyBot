@@ -18,32 +18,27 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.dunctebot.sourcemanagers.DuncteBotSources;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
-import ml.duncte123.skybot.audio.sourcemanagers.pornhub.PornHubAudioSourceManager;
-import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
-import ml.duncte123.skybot.objects.YoutubeVersionData;
-import ml.duncte123.skybot.audio.sourcemanagers.clypit.ClypitAudioSourceManager;
-import ml.duncte123.skybot.audio.sourcemanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
 
 import java.util.concurrent.Future;
 
@@ -54,8 +49,6 @@ public class AudioUtils {
     protected final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
-    // public so we can change it with eval
-    public static YoutubeVersionData YOUTUBE_VERSION_DATA = null;
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
@@ -69,14 +62,13 @@ public class AudioUtils {
             config.googl
         );
 
-        youtubeAudioSourceManager.setPlaylistPageCount(1);
-
-        youtubeAudioSourceManager.getMainHttpConfiguration().setHttpContextFilter(new YoutubeContextFilterOverride());
-
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
-        playerManager.registerSourceManager(new ClypitAudioSourceManager());
-        playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
-        playerManager.registerSourceManager(new PornHubAudioSourceManager());
+
+        DuncteBotSources.registerCustom(playerManager,
+            "en-AU",
+            1,
+            !Settings.IS_LOCAL // Update youtube data when not local
+        );
 
         playerManager.registerSourceManager(youtubeAudioSourceManager);
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
@@ -141,22 +133,6 @@ public class AudioUtils {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {
             return String.format("%02d:%02d", minutes, seconds);
-        }
-    }
-
-    private static class YoutubeContextFilterOverride extends YoutubeHttpContextFilter {
-        @Override
-        public void onRequest(HttpClientContext context, HttpUriRequest request, boolean isRepetition) {
-            super.onRequest(context, request, isRepetition);
-
-            if (YOUTUBE_VERSION_DATA == null) {
-                return;
-            }
-
-            request.setHeader("x-youtube-client-version", YOUTUBE_VERSION_DATA.getVersion());
-            request.setHeader("x-youtube-page-cl", YOUTUBE_VERSION_DATA.getPageCl());
-            request.setHeader("x-youtube-page-label", YOUTUBE_VERSION_DATA.getLabel());
-            request.setHeader("x-youtube-variants-checksum", YOUTUBE_VERSION_DATA.getChecksum());
         }
     }
 }

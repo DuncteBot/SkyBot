@@ -87,11 +87,6 @@ public class ReadyShutdownListener extends MessageListener {
                     }), 2, 2, TimeUnit.MINUTES);
             }
 
-            if (!Settings.IS_LOCAL) {
-                logger.info("Starting youtube version updater!");
-                systemPool.scheduleAtFixedRate(this::updateYoutubeVersion, 0L, 1L, TimeUnit.DAYS);
-            }
-
             arePoolsRunning = true;
         }
 
@@ -158,19 +153,6 @@ public class ReadyShutdownListener extends MessageListener {
 
         handlers.put("TYPING_START", nopHandler);
         handlers.put("MESSAGE_REACTION_ADD", nopHandler);
-    }
-
-    private void updateYoutubeVersion() {
-        try {
-            final YoutubeVersionData uiVersion = YoutubeUtils.getYoutubeHeaderDetails();
-
-            logger.info("Fetched youtube version {}", uiVersion);
-
-            AudioUtils.YOUTUBE_VERSION_DATA = uiVersion;
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // might work some day

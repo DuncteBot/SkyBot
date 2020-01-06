@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.web
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import gnu.trove.map.hash.TLongLongHashMap
@@ -28,14 +27,9 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
-import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.Mute
-import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.objects.guild.ProfanityFilterType
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.utils.ModerationUtils
 import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.DataController
 import ml.duncte123.skybot.web.controllers.OneGuildRegister

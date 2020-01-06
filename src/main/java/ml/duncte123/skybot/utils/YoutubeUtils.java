@@ -166,22 +166,6 @@ public class YoutubeUtils {
         return new YoutubeAudioTrack(videoToTrackInfo(video), sourceManager);
     }
 
-    public static YoutubeVersionData getYoutubeHeaderDetails() throws IOException {
-        final Request request = WebUtils.defaultRequest()
-            .url("https://www.youtube.com/")
-            .header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
-            .build();
-
-        final String html = WebUtils.ins.prepareRaw(request, (response) -> response.body().string()).execute();
-
-        final String extracted = DataFormatTools.extractBetween(html,
-            "window.ytplayer = {};ytcfg.set(",
-            ");ytcfg.set(");
-        final JsonBrowser json = JsonBrowser.parse(extracted);
-
-        return YoutubeVersionData.fromBrowser(json);
-    }
-
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
         return youtube.videos().list("id,snippet,contentDetails")
             .setId(videoIds)
