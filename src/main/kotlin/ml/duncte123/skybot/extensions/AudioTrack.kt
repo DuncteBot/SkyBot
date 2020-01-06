@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.extensions
 
+import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
@@ -30,7 +31,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
-import ml.duncte123.skybot.audio.sourcemanagers.AudioTrackInfoWithImage
 import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
 import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder

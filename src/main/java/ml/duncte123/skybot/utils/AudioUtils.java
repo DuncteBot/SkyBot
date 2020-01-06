@@ -19,6 +19,8 @@
 package ml.duncte123.skybot.utils;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
+import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
@@ -27,6 +29,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
+import lavalink.client.LavalinkUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
@@ -40,6 +43,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.Future;
 
 @SinceSkybot(version = "3.5.1")
@@ -64,13 +68,11 @@ public class AudioUtils {
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
 
-        DuncteBotSources.registerCustom(playerManager,
-            "en-AU",
-            1,
-            !Settings.IS_LOCAL // Update youtube data when not local
-        );
-
         playerManager.registerSourceManager(youtubeAudioSourceManager);
+
+        setCustomSourcesOn(playerManager, false);
+        addSourcesToLavaLinkPlayer();
+
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());
@@ -134,5 +136,29 @@ public class AudioUtils {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
+    }
+
+    private static void addSourcesToLavaLinkPlayer() {
+        try {
+            final Class<LavalinkUtil> klass = LavalinkUtil.class;
+            final Field player_manager = klass.getDeclaredField("PLAYER_MANAGER");
+            player_manager.setAccessible(true);
+            final AudioPlayerManager manager = (AudioPlayerManager) player_manager.get(klass);
+
+            setCustomSourcesOn(manager, true);
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void setCustomSourcesOn(AudioPlayerManager playerManager, boolean isLavalinkPlayer) {
+        DuncteBotSources.registerCustom(playerManager,
+            "en-AU",
+            1,
+            // Update youtube data when not local
+            // When we are dealing with a lavalink player we don't want to update everything since we are only decoding
+            !Settings.IS_LOCAL && !isLavalinkPlayer
+        );
     }
 }

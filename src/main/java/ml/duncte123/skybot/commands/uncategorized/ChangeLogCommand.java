@@ -80,7 +80,7 @@ public class ChangeLogCommand extends Command {
                 eb.setDescription(body);
             }
 
-            final MessageEmbed embed = eb.setFooter("Released at", null)
+            final MessageEmbed embed = eb.setFooter("Released on", null)
                 .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())))
                 .build();
 
