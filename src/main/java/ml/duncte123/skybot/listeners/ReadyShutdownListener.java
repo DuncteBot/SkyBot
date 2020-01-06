@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.YoutubeVersionData;
@@ -69,21 +70,22 @@ public class ReadyShutdownListener extends MessageListener {
 
         //Start the timers if they have not been started yet
         if (!arePoolsRunning) {
-            logger.info("Starting the unban timer!");
-            //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 2, 2, TimeUnit.MINUTES);
-
             logger.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
 
-            logger.info("Starting reminder checker!");
-            systemPool.scheduleAtFixedRate(
-                () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
-                    AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
+            if (!variables.useApi()) {
+                logger.info("Starting the unban timer! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
+                //Register the timer for the auto unbans
+                systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 2, 2, TimeUnit.MINUTES);
 
-                    return null;
-                }), 2, 2, TimeUnit.MINUTES);
+                logger.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
+                systemPool.scheduleAtFixedRate(
+                    () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
+                        AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
 
+                        return null;
+                    }), 2, 2, TimeUnit.MINUTES);
+            }
 
             if (!Settings.IS_LOCAL) {
                 logger.info("Starting youtube version updater!");

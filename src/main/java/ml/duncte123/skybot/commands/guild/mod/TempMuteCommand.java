@@ -74,13 +74,13 @@ public class TempMuteCommand extends ModBaseCommand {
         }
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!spamrole <Role>` to set it");
+            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "spamrole <Role>` to set it");
             return;
         }
 
         final User author = event.getAuthor();
         final Member mod = ctx.getMember();
-        final Member toMute = event.getMessage().getMentionedMembers().get(0);
+        final Member toMute = mentioned.get(0);
         final User mutee = toMute.getUser();
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();

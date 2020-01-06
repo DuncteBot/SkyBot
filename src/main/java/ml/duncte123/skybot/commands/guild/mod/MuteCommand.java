@@ -74,7 +74,7 @@ public class MuteCommand extends ModBaseCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "!muterole <Role>` to set it");
+            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");
             return;
         }
 

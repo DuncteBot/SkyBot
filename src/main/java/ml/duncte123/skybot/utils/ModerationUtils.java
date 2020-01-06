@@ -176,7 +176,7 @@ public class ModerationUtils {
         );
     }
 
-    private static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
+    public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -232,7 +232,7 @@ public class ModerationUtils {
         }
     }
 
-    private static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
+    public static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unban");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 

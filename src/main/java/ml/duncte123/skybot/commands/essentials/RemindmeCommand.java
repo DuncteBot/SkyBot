@@ -94,8 +94,8 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        if (duration.getMinutes() < 2) {
-            sendMsg(ctx, "Minimum duration is 2 minutes");
+        if (duration.getSeconds() < 30) {
+            sendMsg(ctx, "Minimum duration is 30 seconds");
             return;
         }
 

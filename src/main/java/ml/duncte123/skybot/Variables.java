@@ -166,7 +166,7 @@ public final class Variables {
         return this.weebApi;
     }
 
-    boolean useApi() {
+    public boolean useApi() {
         return this.config.use_database;
     }
 
