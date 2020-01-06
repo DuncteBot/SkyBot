@@ -91,8 +91,8 @@ dependencies {
     }
 
     // Lavaplayer/Lavalink
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.32")
-    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "1dff250")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.33")
+//    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "1dff250")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "97530e1")
 //    implementation(project(":Lavalink-Client"))
 
