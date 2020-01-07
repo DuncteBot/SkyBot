@@ -39,6 +39,7 @@ import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -122,6 +123,7 @@ public class YoutubeUtils {
 
         final List<AudioTrackInfo> changedItems = items.stream()
             .map((playlistItem) -> playListItemToTrackInfo(playlistItem, apiKey))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         return new YoutubePlaylistMetadata(playlistId, title, playlistItems.getNextPageToken(), changedItems);
@@ -152,6 +154,11 @@ public class YoutubeUtils {
     public static AudioTrackInfo playListItemToTrackInfo(PlaylistItem playlistItem, String apiKey) {
         try {
             final String videoId = playlistItem.getContentDetails().getVideoId();
+
+            if (videoId == null) {
+                return null;
+            }
+
             final Video video = getVideoById(videoId, apiKey);
 
             return videoToTrackInfo(video);
