@@ -23,7 +23,6 @@ import gnu.trove.list.array.TLongArrayList;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.YoutubeVersionData;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -39,7 +38,6 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;

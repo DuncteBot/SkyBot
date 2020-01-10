@@ -23,7 +23,6 @@ import me.duncte123.botcommons.web.ContentType
 import ml.duncte123.skybot.objects.WebVariables
 import spark.Request
 import spark.Response
-import spark.template.jtwig.JtwigTemplateEngine
 
 object HttpErrorHandlers {
 

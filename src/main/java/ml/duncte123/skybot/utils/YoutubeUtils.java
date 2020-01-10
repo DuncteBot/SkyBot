@@ -24,14 +24,9 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
-import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
-import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.YoutubePlaylistMetadata;
-import ml.duncte123.skybot.objects.YoutubeVersionData;
-import okhttp3.Request;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
