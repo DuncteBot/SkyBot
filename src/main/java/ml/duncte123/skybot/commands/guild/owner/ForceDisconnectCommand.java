@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.Permission;
@@ -49,13 +48,8 @@ public class ForceDisconnectCommand extends MusicCommand {
         }
 
         final Guild g = ctx.getGuild();
-        final GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
-        if (manager.player.getPlayingTrack() != null) {
-            manager.player.stopTrack();
-        }
-
-        manager.scheduler.queue.clear();
+        ctx.getAudioUtils().removeMusicManager(g);
         getLavalinkManager().closeConnection(g);
 
         sendMsg(ctx, "Successfully sent the disconnect signal to the server");

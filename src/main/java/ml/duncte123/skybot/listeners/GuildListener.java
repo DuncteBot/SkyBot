@@ -23,7 +23,6 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -90,12 +89,8 @@ public class GuildListener extends BaseListener {
 
     private void onGuildLeave(GuildLeaveEvent event) {
         final Guild guild = event.getGuild();
-        final GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
 
-        if (musicManager != null) {
-            if (musicManager.player.getPlayingTrack() != null) musicManager.player.stopTrack();
-            musicManager.scheduler.queue.clear();
-        }
+        variables.getAudioUtils().removeMusicManager(guild);
 
         logger.info("{}Leaving guild: {} ({}).{}",
             TextColor.RED,
@@ -274,20 +269,13 @@ public class GuildListener extends BaseListener {
                     return;
                 }
 
-                final GuildMusicManager manager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
-
-                if (manager != null) {
-                    manager.player.stopTrack();
-                    manager.scheduler.queue.clear();
-                }
+                variables.getAudioUtils().removeMusicManager(guild);
 
                 MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
 
                 if (LavalinkManager.ins.isConnected(guild)) {
                     LavalinkManager.ins.closeConnection(guild);
                 }
-
-                variables.getAudioUtils().getMusicManagers().remove(guild.getIdLong());
             }
             catch (Exception e) {
                 e.printStackTrace();

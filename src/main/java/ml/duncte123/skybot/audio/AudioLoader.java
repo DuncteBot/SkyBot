@@ -71,7 +71,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         track.setUserData(new TrackUserData(this.requester));
         try {
-            this.mng.scheduler.queue(track, this.isPatron);
+            this.mng.getScheduler().queue(track, this.isPatron);
 
             if (this.announce) {
                 final String msg = "Adding to queue: " + title;
@@ -102,7 +102,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         .collect(Collectors.toList());
 
         try {
-            final TrackScheduler trackScheduler = this.mng.scheduler;
+            final TrackScheduler trackScheduler = this.mng.getScheduler();
 
             for (final AudioTrack track : tracks) {
                 trackScheduler.queue(track, this.isPatron);

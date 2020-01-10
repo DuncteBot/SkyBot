@@ -33,14 +33,14 @@ import java.util.function.Supplier;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
     public final IPlayer player;
-    public final TrackScheduler scheduler;
+    private final TrackScheduler scheduler;
     private final AtomicLong lastChannel = new AtomicLong(-1);
     private final Supplier<Boolean> isAnnounceTracksSupplier;
 
     public GuildMusicManager(Guild g, Variables variables) {
         this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
         this.scheduler = new TrackScheduler(this.player, this);
-        this.player.addListener(this.scheduler);
+        this.player.addListener(this.getScheduler());
         this.isAnnounceTracksSupplier = () -> GuildSettingsUtils.getGuild(g, variables).isAnnounceTracks();
     }
 
@@ -59,6 +59,21 @@ public class GuildMusicManager {
 
     public void setLastChannel(long lastChannel) {
         this.lastChannel.set(lastChannel);
+    }
+
+    public TrackScheduler getScheduler() {
+        return this.scheduler;
+    }
+
+    public void stopAndClear() {
+        final TrackScheduler scheduler = this.getScheduler();
+        this.player.removeListener(scheduler);
+
+        if (this.player.getPlayingTrack() != null) {
+            this.player.stopTrack();
+        }
+
+        scheduler.queue.clear();
     }
 
     TextChannel getLatestChannel() {

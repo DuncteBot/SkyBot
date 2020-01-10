@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
-import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
@@ -50,7 +49,7 @@ import java.util.concurrent.Future;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
     public static final String EMBED_TITLE = "AirPlayer";
-    protected final TLongObjectMap<GuildMusicManager> musicManagers;
+    private final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
     private UserContextAudioPlayerManager playerManager;
 
@@ -106,7 +105,7 @@ public class AudioUtils {
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }
 
-    public GuildMusicManager getMusicManager(Guild guild) {
+    public synchronized GuildMusicManager getMusicManager(Guild guild) {
         final long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
 
@@ -120,6 +119,16 @@ public class AudioUtils {
         }
 
         return mng;
+    }
+
+    public synchronized void removeMusicManager(Guild guild) {
+        final long guildId = guild.getIdLong();
+        final GuildMusicManager mng = musicManagers.get(guildId);
+
+        if (mng != null) {
+            mng.stopAndClear();
+            musicManagers.remove(guildId);
+        }
     }
 
     public TLongObjectMap<GuildMusicManager> getMusicManagers() {

@@ -144,7 +144,7 @@ public class AirUtils {
     }
 
     private static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
-        final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
+        final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.getMusicManagers());
 
         for (final long key : temp.keys()) {
             final Guild guild = manager.getGuildById(key);
@@ -156,7 +156,7 @@ public class AirUtils {
     }
 
     public static void stopMusic(Guild guild, AudioUtils audioUtils) {
-        final GuildMusicManager mng = audioUtils.musicManagers.get(guild.getIdLong());
+        final GuildMusicManager mng = audioUtils.getMusicManagers().get(guild.getIdLong());
 
         if (mng == null) {
             return;
@@ -164,9 +164,7 @@ public class AirUtils {
 
         final LavalinkManager lavalinkManager = LavalinkManager.ins;
 
-        if (mng.player.getPlayingTrack() != null) {
-            mng.player.stopTrack();
-        }
+        mng.stopAndClear();
 
         if (lavalinkManager.isConnected(guild)) {
             lavalinkManager.closeConnection(guild);

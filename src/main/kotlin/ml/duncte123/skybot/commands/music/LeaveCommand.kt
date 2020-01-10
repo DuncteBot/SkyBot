@@ -44,17 +44,12 @@ class LeaveCommand : MusicCommand() {
             return
         }
 
-        val manager = getMusicManager(guild, ctx.audioUtils)
-
         if (!getLavalinkManager().isConnected(guild)) {
             sendMsg(event, "I'm not connected to any channels.")
             return
         }
 
-        if (manager.player.playingTrack != null) {
-            manager.player.stopTrack()
-        }
-
+        ctx.audioUtils.removeMusicManager(guild)
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
         addCooldown(guild.idLong)

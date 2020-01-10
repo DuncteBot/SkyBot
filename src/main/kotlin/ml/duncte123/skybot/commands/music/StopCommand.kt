@@ -36,14 +36,13 @@ class StopCommand : MusicCommand() {
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
-        val scheduler = mng.scheduler
 
-        if (mng.player.playingTrack == null) {
+        if (player.playingTrack == null) {
             sendMsg(event, "The player is not playing.")
             return
         }
 
-        scheduler.queue.clear()
+        mng.scheduler.queue.clear()
         player.stopTrack()
 
         sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
