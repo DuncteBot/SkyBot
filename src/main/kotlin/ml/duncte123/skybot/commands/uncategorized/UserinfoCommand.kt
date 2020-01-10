@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -265,6 +264,13 @@ class UserinfoCommand : Command() {
         else -> "<:offline2:464520569929334784>"
     }
 
-    private fun String.escapeMarkDown() = MarkdownSanitizer.escape(this)
+    private fun String.escapeMarkDown(): String {
+        return this.replace("_", "\\_")
+            .replace("*", "\\*")
+            .replace("`", "\\`")
+            .replace("|", "\\|")
+            .replace(">", "\\?")
+            .replace("~", "\\~")
+    }
 
 }
