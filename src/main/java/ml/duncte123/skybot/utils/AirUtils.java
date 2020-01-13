@@ -231,7 +231,7 @@ public class AirUtils {
 
     private static SimpleDateFormat getFormatter() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         return format;
     }

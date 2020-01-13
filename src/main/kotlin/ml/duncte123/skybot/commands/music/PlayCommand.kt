@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
@@ -65,7 +66,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
         var toPlay = ctx.argsRaw
 
-        if (toPlay.startsWith("https://www.pornhub.com") && !ctx.channel.isNSFW) {
+        if (toPlay.contains(PornHubAudioSourceManager.DOMAIN_REGEX.toRegex()) && !ctx.channel.isNSFW) {
             sendMsg(ctx, "Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
             return
         }
