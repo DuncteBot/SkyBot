@@ -81,10 +81,15 @@ public abstract class MessageListener extends BaseListener {
 
         this.handlerThread.submit(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+            final GuildSettings settings = guild.getSettings();
 
             if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
-                !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE) &&
-                guild.getSettings().isEnableSwearFilter()) {
+                !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
+
+                if (blacklistedWordCheck(guild, event.getMessage(), event.getMember(), settings.getBlacklistedWords())) {
+                    return;
+                }
+
                 checkSwearFilter(event.getMessage(), event, guild);
             }
         });
@@ -410,14 +415,13 @@ public abstract class MessageListener extends BaseListener {
             final Message messageToCheck = event.getMessage();
             final DunctebotGuild dbG = new DunctebotGuild(event.getGuild(), variables);
 
-            if (checkSwearFilter(messageToCheck, event, dbG)) {
-                return true;
-            }
-
             if (blacklistedWordCheck(dbG, messageToCheck, event.getMember(), settings.getBlacklistedWords())) {
                 return true;
             }
 
+            if (checkSwearFilter(messageToCheck, event, dbG)) {
+                return true;
+            }
 
             checkSpamFilter(messageToCheck, event, settings, dbG);
         }
