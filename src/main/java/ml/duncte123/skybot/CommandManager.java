@@ -96,7 +96,7 @@ public class CommandManager {
     public CommandManager(Variables variables) {
         this.variables = variables;
 
-        /// <editor-fold desc="Command Loading" defaulstate="collapsed">
+        /// <editor-fold desc="Command Loading" defaultstate="collapsed">
         this.addCommand(new AchievementCommand());
         this.addCommand(new AdviceCommand());
         this.addCommand(new AlpacaCommand());

@@ -65,7 +65,7 @@ public class TagCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
 
-        if (ctx.getInvoke().equals("tags")) {
+        if (ctx.getInvoke().equalsIgnoreCase("tags")) {
             sendTagsList(ctx);
 
             return;

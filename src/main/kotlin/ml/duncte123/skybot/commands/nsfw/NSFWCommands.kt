@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.nsfw
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -41,20 +40,12 @@ class NSFWCommands : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-
-        if (!event.channel.isNSFW) {
-            MessageUtils.sendMsg(event, """Woops, this channel is not marked as NSFW.
-                |Please mark this channel as NSFW to use this command
-                """.trimMargin())
-            return
-        }
-        when (ctx.invoke) {
+        when (ctx.invoke.toLowerCase()) {
             "carsandhentai" -> {
                 WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, "Cars and hentai")).async { jsonRaw ->
                     val jsonArray = jsonRaw.get("items")
                     val randomItem = jsonArray.get(ctx.random.nextInt(jsonArray.size()))
-                    sendEmbed(event,
+                    sendEmbed(ctx,
                         EmbedUtils.defaultEmbed()
                             .setTitle(randomItem.get("title").asText(), randomItem.get("image")
                                 .get("contextLink").asText())
@@ -65,18 +56,18 @@ class NSFWCommands : Command() {
             }
             "lewdneko" -> {
                 WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.get("url").asText()))
+                    sendEmbed(ctx, EmbedUtils.embedImage(it.get("url").asText()))
                 }
             }
             "lewdkitsune" -> {
                 WebUtils.ins.getJSONObject("${nekkobotBase}lewdkitsune").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.get("message").asText()))
+                    sendEmbed(ctx, EmbedUtils.embedImage(it.get("message").asText()))
                 }
             }
             "hentai" -> {
                 val t = if (ctx.random.nextInt(2) == 1) "hentai" else "hentai_anal"
                 WebUtils.ins.getJSONObject("$nekkobotBase$t").async {
-                    sendEmbed(event, EmbedUtils.embedImage(it.get("message").asText()))
+                    sendEmbed(ctx, EmbedUtils.embedImage(it.get("message").asText()))
                 }
             }
         }

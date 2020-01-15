@@ -60,7 +60,7 @@ class UserinfoCommand : Command() {
         val event = ctx.event
         val args = ctx.args
 
-        if (ctx.invoke == "retrieveuserinfo") {
+        if (ctx.invoke.toLowerCase() == "retrieveuserinfo") {
             if (args.isEmpty()) {
                 sendMsg(ctx, "Missing arguments for retrieving user information")
 
