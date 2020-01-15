@@ -37,12 +37,14 @@ plugins {
     application
 
     kotlin("jvm") version "1.3.61"
-    id("com.github.johnrengelman.shadow") version "5.0.0"
-    id("com.github.breadmoirai.github-release") version "2.2.4"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.breadmoirai.github-release") version "2.2.10"
 }
 
+val numberVersion = "3.90.0"
+
 project.group = "ml.duncte123.skybot"
-project.version = "3.89.0_${getGitHash()}"
+project.version = "${numberVersion}_${getGitHash()}"
 
 
 java {
@@ -264,14 +266,15 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
+    gradleVersion = "6.0.1"
     distributionType = DistributionType.ALL
-    gradleVersion = "5.6.3"
 }
 
 githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
+    tagName(numberVersion)
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
     prerelease(false)
