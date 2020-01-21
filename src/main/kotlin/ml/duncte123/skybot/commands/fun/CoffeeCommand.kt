@@ -30,6 +30,7 @@ class CoffeeCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "coffee"
+        this.aliases = arrayOf("coderjuice")
         this.helpFunction = { _, _ -> "Shows a random cup of coffee" }
     }
 

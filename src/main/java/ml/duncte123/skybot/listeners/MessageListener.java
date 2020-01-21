@@ -110,7 +110,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        final String rw = event.getMessage().getContentRaw();
+        final String rw = event.getMessage().getContentRaw().trim();
 
         if (rw.equals(Settings.PREFIX + "shutdown")
             && isDev(event.getAuthor().getIdLong())) {
@@ -156,7 +156,7 @@ public abstract class MessageListener extends BaseListener {
 
     private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
         final User selfUser = event.getJDA().getSelfUser();
-        final String selfRegex = "^<@!?" + selfUser.getId() + '>';
+        final String selfRegex = "<@!?" + selfUser.getId() + '>';
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
         final String customPrefix = settings.getCustomPrefix();
 
@@ -164,7 +164,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (rw.matches(selfRegex + '$')) {
+        if (rw.matches(selfRegex)) {
             sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                 event.getAuthor(),
                 customPrefix)
@@ -179,7 +179,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (doesNotStartWithPrefix(event, customPrefix) || !canRunCommands(rw, customPrefix, event)) {
+        if (doesNotStartWithPrefix(event, rw, customPrefix) || !canRunCommands(rw, customPrefix, event)) {
             return;
         }
 
@@ -197,10 +197,10 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String customPrefix) {
-        final String rwLower = event.getMessage().getContentRaw().toLowerCase();
-        final String selfMember = event.getGuild().getSelfMember().getAsMention();
+    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String rw, String customPrefix) {
+        final String rwLower = rw.toLowerCase();
         final String selfUser = event.getJDA().getSelfUser().getAsMention();
+        final String selfMember = event.getGuild().getSelfMember().getAsMention();
 
         if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return false;

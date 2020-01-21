@@ -66,7 +66,7 @@ public class HelpEmbeds {
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
         final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
-            .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
+            .setTitle("Click here for the support server", "https://discord.gg/NKM9Xtk")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 
         if (categories == null || categories.length == 0) {
@@ -136,6 +136,7 @@ public class HelpEmbeds {
             try {
                 final String fieldName = category.name() + "_COMMANDS";
                 final String descFieldName = category.name() + "_COMMANDS_DESC";
+
                 final Field field = cls.getDeclaredField(fieldName);
                 final Field descField = cls.getDeclaredField(descFieldName);
 
@@ -145,7 +146,10 @@ public class HelpEmbeds {
                     INLINE
                 );
             }
-            catch (NoSuchFieldException | IllegalAccessException e) {
+            catch (NoSuchFieldException ignored) {
+                // ignored
+            }
+            catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
@@ -153,6 +157,10 @@ public class HelpEmbeds {
     }
 
     private static MessageEmbed.Field getFieldForCategory(CommandCategory category) {
+        if ("unlisted".equalsIgnoreCase(category.name())) {
+            return null;
+        }
+
         final Class<?> cls = HelpEmbeds.class;
         final String fieldName = category.name() + "_COMMANDS";
         final String descFieldName = category.name() + "_COMMANDS_DESC";
@@ -166,7 +174,10 @@ public class HelpEmbeds {
                 INLINE
             );
         }
-        catch (NoSuchFieldException | IllegalAccessException e) {
+        catch (NoSuchFieldException ignored) {
+            return null;
+        }
+        catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 

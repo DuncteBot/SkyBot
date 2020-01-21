@@ -34,7 +34,7 @@ public enum CommandCategory {
     WEEB("weeb"),
     NSFW("nsfw"),
     LGBTQ("lgbtq+"),
-    UNLISTED("null");
+    UNLISTED(null);
 
     private final String search;
 
@@ -48,7 +48,7 @@ public enum CommandCategory {
 
     public static CommandCategory fromSearch(String input) {
         for (final CommandCategory value : values()) {
-            if (value.name().equalsIgnoreCase(input) || value.getSearch().equalsIgnoreCase(input)) {
+            if (input.equalsIgnoreCase(value.name()) || input.equalsIgnoreCase(value.getSearch())) {
                 return value;
             }
         }

@@ -82,8 +82,8 @@ public class HelpCommand extends Command {
     @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
         try {
-            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
-                .equals(name.toLowerCase())).collect(Collectors.toList());
+            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> name.toLowerCase()
+                .equals(it.getSearch())).collect(Collectors.toList());
 
             if (!categoryList.isEmpty()) {
                 return true;
