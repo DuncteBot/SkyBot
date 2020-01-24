@@ -64,7 +64,9 @@ public class YodaSpeakCommand extends Command {
                 return;
             }
 
-            sendMsg(event, "<:yoda:578198258351079438> " + response.get("data").asText());
+            final String yoda = ctx.getRandom().nextInt(2) == 1 ? "<:yoda:578198258351079438> " : "<:BABY_YODA:670269491736870972> ";
+
+            sendMsg(event, yoda + response.get("data").asText());
         }
         catch (Exception e) {
             Sentry.capture(e);

@@ -97,15 +97,14 @@ public class HelpCommand extends Command {
     }
 
     private void sendHelp(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        event.getAuthor().openPrivateChannel().queue(
-            pc -> pc.sendMessage(embed).queue(
-                msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
+        event.getAuthor()
+            .openPrivateChannel()
+            .flatMap((pc) -> pc.sendMessage(embed))
+            .queue(
+                (msg) -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                 //When sending fails, send to the channel
-                err -> sendMsg(event,
-                    "You can check out my commands here:\nhttps://dunctebot.com/commands")
-            ),
-            err -> sendMsg(event, "ERROR: " + err.getMessage())
-        );
+                (err) -> sendMsg(event, "You can check out my commands here:\nhttps://dunctebot.com/commands")
+            );
     }
 
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager, String prefix) {
