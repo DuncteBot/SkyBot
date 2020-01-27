@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.guild.ProfanityFilterType
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
+import ml.duncte123.skybot.web.WebHelpers.haltNotFound
 import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.DataController
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
@@ -114,6 +115,20 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             }
 
             getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
+        }
+
+        get("/roles/$GUILD_ID") { request, response ->
+            try {
+                val guild = request.getGuild(shardManager) ?: return@get haltNotFound(request, response)
+
+                WebVariables()
+                    .put("title", "Roles for ${guild.name}")
+                    .put("guild_name", guild.name)
+                    .put("roles", guild.roles)
+                    .toModelAndView("guildRoles.twig")
+            } catch (ignored: NumberFormatException) {
+                haltNotFound(request, response)
+            }
         }
 
         path("/server/$GUILD_ID") {

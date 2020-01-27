@@ -31,7 +31,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
-import spark.Request
+import spark.*
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -61,6 +61,10 @@ fun Request.getSession(oAuth2Client: OAuth2Client): Session? {
 fun String?.toCBBool(): Boolean = if (this.isNullOrEmpty()) false else (this == "on")
 
 object WebHelpers {
+
+    fun haltNotFound(request: Request, response: Response) {
+        Spark.halt(404, CustomErrorPages.getFor(404, request, response) as String)
+    }
 
     fun verifyCapcha(response: String, secret: String, mapper: ObjectMapper): JsonNode {
         val fields = FormRequestBody()

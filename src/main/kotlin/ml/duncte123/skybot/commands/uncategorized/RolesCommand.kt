@@ -19,10 +19,9 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.MessageBuilder.SplitPolicy
 
 class RolesCommand : Command() {
 
@@ -32,11 +31,8 @@ class RolesCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val rolesString = ctx.guild.roleCache.joinToString(separator = "\n") { "@${it.name} - ${it.id}" }
-        val messages = MessageBuilder().appendCodeBlock(rolesString, "").buildAll(SplitPolicy.NEWLINE)
+        val domain = if (Settings.IS_LOCAL) "http://localhost:2000" else "https://dashboard.dunctebot.com"
 
-        messages.forEach {
-            sendMsg(ctx, it)
-        }
+        sendMsg(ctx, "Check out the roles on this server here: $domain/roles/${ctx.event.guild.id}")
     }
 }
