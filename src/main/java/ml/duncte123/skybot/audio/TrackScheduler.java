@@ -99,6 +99,20 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     @Override
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        if (guildMusicManager.isAnnounceTracks()) {
+            final EmbedBuilder message = AudioTrackKt.toEmbed(
+                track,
+                this.guildMusicManager,
+                getInstance().getShardManager(),
+                false
+            );
+
+            sendEmbed(guildMusicManager.getLatestChannel(), message);
+        }
+    }
+
+    @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
 
@@ -153,16 +167,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track) {
-        if (guildMusicManager.isAnnounceTracks()) {
-            final EmbedBuilder message = AudioTrackKt.toEmbed(
-                track,
-                this.guildMusicManager,
-                getInstance().getShardManager(),
-                false
-            );
-
-            sendEmbed(guildMusicManager.getLatestChannel(), message);
-        }
+        this.onTrackStart(null, track);
     }
 
     private TrackUserData createNewTrackData(AudioTrack track) {

@@ -446,7 +446,7 @@ public abstract class MessageListener extends BaseListener {
 
             try {
                 // Sleep for 3 seconds
-                Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+                TimeUnit.SECONDS.sleep(3);
             }
             catch (InterruptedException ignored) {
             }
