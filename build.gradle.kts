@@ -266,7 +266,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.0.1"
+    gradleVersion = "6.1.1"
     distributionType = DistributionType.ALL
 }
 
