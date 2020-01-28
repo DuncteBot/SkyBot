@@ -278,6 +278,7 @@ githubRelease {
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
     prerelease(false)
+    body(changelog())
 }
 
 fun getGitHash(): String {
