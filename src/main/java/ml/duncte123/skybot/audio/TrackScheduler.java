@@ -94,7 +94,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
         } else  {
             player.playTrack(nextTrack);
-            announceNextTrack(nextTrack);
         }
     }
 
@@ -143,7 +142,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         final AudioTrack clone = lastTrack.makeClone();
         clone.setUserData(createNewTrackData(lastTrack));
         this.player.playTrack(clone);
-        announceNextTrack(lastTrack);
     }
 
     public boolean isRepeating() {
@@ -164,10 +162,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     public void shuffle() {
         Collections.shuffle((List<?>) queue);
-    }
-
-    private void announceNextTrack(AudioTrack track) {
-        this.onTrackStart(null, track);
     }
 
     private TrackUserData createNewTrackData(AudioTrack track) {
