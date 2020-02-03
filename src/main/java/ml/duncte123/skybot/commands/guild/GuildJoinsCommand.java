@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
@@ -50,6 +51,7 @@ public class GuildJoinsCommand extends Command {
             Permission.MESSAGE_ATTACH_FILES,
         };
         this.cooldown = 5;
+        this.cooldownScope = CooldownScope.GUILD;
     }
 
     @Override

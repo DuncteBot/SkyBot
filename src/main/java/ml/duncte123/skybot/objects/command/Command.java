@@ -18,13 +18,12 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import gnu.trove.map.TObjectIntMap;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.utils.MapUtils;
+import ml.duncte123.skybot.objects.CooldownScope;
 import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
@@ -45,8 +43,6 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 })
 public abstract class Command implements ICommand {
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
-    // TODO: probably move to CommandManager
-    public static final TObjectIntMap<String> coolDowns = MapUtils.newObjectIntMap();
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
         (r) -> {
@@ -69,8 +65,10 @@ public abstract class Command implements ICommand {
     public Flag[] flags = new Flag[0];
     // This is the cooldown in seconds
     protected int cooldown = 0;
+    // Sets the scope of the cooldown, default is on user level
+    protected CooldownScope cooldownScope = CooldownScope.USER;
     // default key is <command name>|<user id>
-    protected Function2<String, CommandContext, String> cooldownKey = (command, ctx) -> command + "|" + ctx.getAuthor().getId();
+    protected Function2<String, CommandContext, String> cooldownKey = cooldownScope::formatKey;
     // Can be used for when patrons have no cooldown on commands
     // Default is false
     protected Function1<CommandContext, Boolean> overridesCooldown = (ctx) -> false;

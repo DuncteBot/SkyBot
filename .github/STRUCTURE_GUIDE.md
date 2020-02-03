@@ -64,8 +64,9 @@ To maintain consistency between the constructors of the commands the following o
 10. botPermissions
 11. flags
 12. cooldown
-13. cooldownKey
-14. overridesCooldown
+13. cooldownScope
+14. cooldownKey
+15. overridesCooldown
 
 ### Access Modifiers
 

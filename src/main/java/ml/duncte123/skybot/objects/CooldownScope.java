@@ -18,12 +18,32 @@
 
 package ml.duncte123.skybot.objects;
 
+import ml.duncte123.skybot.objects.command.CommandContext;
+
 public enum CooldownScope {
 
-    USER,
-    GUILD,
-    CUSOM; // idk how this is gonna work
+    USER("USR:%s"),
+    GUILD("SRV:%s");
 
-    // Store params for custom?
+    private final String pattern;
 
+    CooldownScope(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public String formatKey(String commandName, CommandContext ctx) {
+        return commandName + '|' + String.format(this.pattern, getCorrectIds(ctx));
+    }
+
+    private String[] getCorrectIds(CommandContext ctx) {
+        switch (this) {
+            case USER:
+                return new String[]{ctx.getAuthor().getId()};
+            case GUILD:
+                return new String[]{ctx.getGuild().getId()};
+
+            default:
+                return null;
+        }
+    }
 }
