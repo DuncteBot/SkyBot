@@ -43,7 +43,7 @@ public enum CooldownScope {
                 return new String[]{ctx.getGuild().getId()};
 
             default:
-                return null;
+                return new String[0];
         }
     }
 }

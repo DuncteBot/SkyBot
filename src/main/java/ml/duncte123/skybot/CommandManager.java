@@ -79,46 +79,57 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-//    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
+    //    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
     private static final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
-        final Thread thread = new Thread(r, "Command-execute-thread");
-        thread.setDaemon(true);
-        return thread;
-    });
     private static final ScheduledExecutorService cooldownThread = Executors.newSingleThreadScheduledExecutor((r) -> {
         final Thread thread = new Thread(r, "Command-cooldown-thread");
         thread.setDaemon(true);
         return thread;
     });
-
-    static {
-        // TODO: test this
-        cooldownThread.scheduleWithFixedDelay(() ->
-                cooldowns.forEachEntry((a, b) -> {
-                    if (b > 0) {
-                        cooldowns.put(a, (b - 1));
-                        return true;
-                    } else if (b == 0) {
-                        cooldowns.remove(a);
-                    }
-                    return true;
-                })
-            , 0, 1, TimeUnit.SECONDS);
-    }
-
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
+        final Thread thread = new Thread(r, "Command-execute-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-
     private final Variables variables;
+
+    static {
+        // TODO: test this
+        cooldownThread.scheduleWithFixedDelay(() -> {
+                try {
+                    // Loop over all cooldowns
+                    cooldowns.forEachEntry((key, val) -> {
+                        // Val are unix long timestamps aaaaaa
+                        System.out.println(key);
+                        System.out.println(val);
+                        // If the value is greater than 0 subtract one
+                        if (val > 0) {
+                            cooldowns.put(key, (val - 1));
+                            // Return to continue the loop
+                            return true;
+                        }
+
+                        // if the value is 0 remove it from the map
+                        cooldowns.remove(key);
+
+                        // Return true to indicate that we are allowed to continue the loop
+                        return true;
+                    });
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 0, 1, TimeUnit.SECONDS);
+    }
 
     public CommandManager(Variables variables) {
         this.variables = variables;
@@ -376,17 +387,18 @@ public class CommandManager {
     }
 
     public void setCooldown(String key, int seconds) {
-        this.cooldowns.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
+        cooldowns.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
     }
 
     public long getRemainingCooldown(String key) {
         // If we don't have a cooldown for the command return 0
-        if (!this.cooldowns.containsKey(key)) {
+        if (!cooldowns.containsKey(key)) {
+            System.out.println("Not present");
             return 0;
         }
 
         // get the time that the cooldown started
-        final long startTime = this.cooldowns.get(key);
+        final long startTime = cooldowns.get(key);
         // Get the start time as an OffsetDateTime
         final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
         // get the time that is left for the cooldown
@@ -394,7 +406,8 @@ public class CommandManager {
 
         // If the time is up we will return 0 and remove the keys from the cooldowns map
         if (timeLeft <= 0) {
-            this.cooldowns.remove(key);
+            System.out.println("Less than 0");
+//            cooldowns.remove(key);
             return 0;
         }
 
@@ -441,7 +454,7 @@ public class CommandManager {
                 }
             }
             catch (Throwable ex) {
-                execCheck(ex);
+                Sentry.capture(ex);
                 ex.printStackTrace();
                 sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
             }
@@ -500,7 +513,7 @@ public class CommandManager {
         }
         catch (Exception e) {
             sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-            execCheck(e);
+            Sentry.capture(e);
         }
     }
 

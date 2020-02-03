@@ -50,7 +50,7 @@ public class GuildJoinsCommand extends Command {
         this.botPermissions = new Permission[]{
             Permission.MESSAGE_ATTACH_FILES,
         };
-        this.cooldown = 5;
+        this.cooldown = 30;
         this.cooldownScope = CooldownScope.GUILD;
     }
 
