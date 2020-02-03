@@ -18,9 +18,11 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import gnu.trove.map.TObjectIntMap;
 import kotlin.jvm.functions.Function2;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -41,6 +44,8 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 })
 public abstract class Command implements ICommand {
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+    // TODO: probably move to CommandManager
+    public static final TObjectIntMap<String> coolDowns = MapUtils.newObjectIntMap();
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
         (r) -> {
@@ -48,7 +53,7 @@ public abstract class Command implements ICommand {
             thread.setDaemon(true);
             return thread;
         });
-    //@formatter:off
+
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
@@ -60,7 +65,9 @@ public abstract class Command implements ICommand {
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
-    //@formatter:on
+    // This is the cooldown in seconds
+    protected int cooldown = 0;
+    protected Function2<String, CommandContext, String> cooldownKey = (command, ctx) -> command + "|" + ctx.getAuthor().getId();
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
@@ -94,12 +101,12 @@ public abstract class Command implements ICommand {
             return;
         }
 
+        if (this.cooldown > 0) {
+            final String cooldownKey = getCooldownKey(ctx);
+        }
+
         execute(ctx);
     }
-
-    /*public void execute(@Nonnull CommandContext ctx) {
-        throw new NotImplementedException("This command has not been updated yet");
-    }*/
 
     public abstract void execute(@Nonnull CommandContext ctx);
 
@@ -157,5 +164,9 @@ public abstract class Command implements ICommand {
         final Command command = (Command) obj;
 
         return this.name.equals(command.getName());
+    }
+
+    private String getCooldownKey(CommandContext ctx) {
+        return this.cooldownKey.invoke(this.name, ctx);
     }
 }

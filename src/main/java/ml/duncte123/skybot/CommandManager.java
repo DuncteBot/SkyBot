@@ -49,6 +49,7 @@ import ml.duncte123.skybot.commands.nsfw.NSFWCommands;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.WeebCommands;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -66,6 +67,8 @@ import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -78,7 +81,7 @@ import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-
+    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
@@ -86,7 +89,26 @@ public class CommandManager {
         thread.setDaemon(true);
         return thread;
     });
+    private static final ScheduledExecutorService cooldownThread = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread thread = new Thread(r, "Command-cooldown-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
 
+    /*static {
+        cooldownThread.scheduleWithFixedDelay(() ->
+                coolDowns.forEachEntry((a, b) -> {
+                    if (b > 0) {
+                        coolDowns.put(a, (b - 1));
+                        return true;
+                    } else if (b == 0) {
+                        coolDowns.remove(a);
+                    }
+                    return true;
+                })
+            , 0, 1, TimeUnit.SECONDS);
+    }
+*/
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
@@ -348,6 +370,26 @@ public class CommandManager {
         dispatchCommand(invoke, invoke.toLowerCase(), args, event);
     }
 
+    public boolean hasCooldown(Command command) {
+        return false;
+    }
+
+    public int getRemainingCooldown(String key) {
+        if (!cooldowns.containsKey(key)) {
+            return 0;
+        }
+
+        final OffsetDateTime startTime = cooldowns.get(key);
+        final int timeLeft = (int)OffsetDateTime.now().until(startTime, ChronoUnit.SECONDS);
+
+        if (timeLeft <= 0) {
+            cooldowns.remove(key);
+            return 0;
+        }
+
+        return timeLeft;
+    }
+
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invokeLower);
 
@@ -450,38 +492,6 @@ public class CommandManager {
             execCheck(e);
         }
     }
-
-    // You served well my friend
-    /*private void registerCommandsFromReflection(Reflections reflections) {
-
-        final List<Class<? extends ICommand>> filteredCommands = reflections
-            .getSubTypesOf(ICommand.class)
-            .stream()
-            // Remove abstract classes
-            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
-            .collect(Collectors.toList());
-
-        //Loop over them commands
-        for (final Class<? extends ICommand> cmd : filteredCommands) {
-            try {
-                final ICommand command;
-
-                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
-                    command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
-                } else {
-                    command = cmd.getDeclaredConstructor().newInstance();
-                }
-
-                this.addCommand(command);
-            }
-            catch (IllegalArgumentException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
     private void loadCustomCommands() {
         this.variables.getDatabaseAdapter().getCustomCommands(

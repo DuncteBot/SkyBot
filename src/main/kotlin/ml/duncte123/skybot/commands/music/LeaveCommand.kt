@@ -39,7 +39,7 @@ class LeaveCommand : MusicCommand() {
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
             sendMsg(event, """I still have cooldown!
-                    |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
+                    |Remaining cooldown: ${coolDowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             sendError(event.message)
             return
         }

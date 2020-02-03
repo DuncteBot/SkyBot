@@ -63,6 +63,8 @@ To maintain consistency between the constructors of the commands the following o
 9. userPermissions
 10. botPermissions
 11. flags
+12. cooldown
+13. cooldownKey
 
 ### Access Modifiers
 

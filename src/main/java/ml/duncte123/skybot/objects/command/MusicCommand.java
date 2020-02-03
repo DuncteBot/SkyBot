@@ -61,6 +61,8 @@ public abstract class MusicCommand extends Command {
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
+        this.cooldown = 12;
+        this.cooldownKey = (cmdName, ctx) -> "musicCommand|" + ctx.getGuild().getId();
     }
 
     @Override
