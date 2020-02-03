@@ -106,20 +106,15 @@ public class CommandManager {
         // TODO: test this
         cooldownThread.scheduleWithFixedDelay(() -> {
                 try {
-                    // Loop over all cooldowns
+                    // Loop over all cooldowns with a 5 minute interval
+                    // This makes sure that we don't have any useless cooldowns in the system hogging up memory
                     cooldowns.forEachEntry((key, val) -> {
-                        // Val are unix long timestamps aaaaaa
-                        System.out.println(key);
-                        System.out.println(val);
-                        // If the value is greater than 0 subtract one
-                        if (val > 0) {
-                            cooldowns.put(key, (val - 1));
-                            // Return to continue the loop
-                            return true;
-                        }
+                        final long remaining = calcTimeRemaining(val);
 
-                        // if the value is 0 remove it from the map
-                        cooldowns.remove(key);
+                        // Remove the value from the cooldowns if it is less or equal to 0
+                        if (remaining <= 0) {
+                            cooldowns.remove(key);
+                        }
 
                         // Return true to indicate that we are allowed to continue the loop
                         return true;
@@ -128,7 +123,7 @@ public class CommandManager {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-            }, 0, 1, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.MINUTES);
     }
 
     public CommandManager(Variables variables) {
@@ -399,10 +394,8 @@ public class CommandManager {
 
         // get the time that the cooldown started
         final long startTime = cooldowns.get(key);
-        // Get the start time as an OffsetDateTime
-        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
-        // get the time that is left for the cooldown
-        final long timeLeft = OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
+        // The time that is left until the cooldown is over
+        final long timeLeft = calcTimeRemaining(startTime);
 
         // If the time is up we will return 0 and remove the keys from the cooldowns map
         if (timeLeft <= 0) {
@@ -412,6 +405,13 @@ public class CommandManager {
         }
 
         return timeLeft;
+    }
+
+    private static long calcTimeRemaining(long startTime) {
+        // Get the start time as an OffsetDateTime
+        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // get the time that is left for the cooldown
+        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
     }
 
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
