@@ -85,7 +85,7 @@ import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 //    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
-    private final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
+    private static final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
@@ -99,20 +99,21 @@ public class CommandManager {
         return thread;
     });
 
-    /*static {
+    static {
+        // TODO: test this
         cooldownThread.scheduleWithFixedDelay(() ->
-                coolDowns.forEachEntry((a, b) -> {
+                cooldowns.forEachEntry((a, b) -> {
                     if (b > 0) {
-                        coolDowns.put(a, (b - 1));
+                        cooldowns.put(a, (b - 1));
                         return true;
                     } else if (b == 0) {
-                        coolDowns.remove(a);
+                        cooldowns.remove(a);
                     }
                     return true;
                 })
             , 0, 1, TimeUnit.SECONDS);
     }
-*/
+
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
