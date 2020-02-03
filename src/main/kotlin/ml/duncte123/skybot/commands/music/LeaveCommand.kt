@@ -37,12 +37,12 @@ class LeaveCommand : MusicCommand() {
         val event = ctx.event
         val guild = event.guild
 
-        if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
+        /*if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
             sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${coolDowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             sendError(event.message)
             return
-        }
+        }*/
 
         if (!getLavalinkManager().isConnected(guild)) {
             sendMsg(event, "I'm not connected to any channels.")
@@ -52,7 +52,7 @@ class LeaveCommand : MusicCommand() {
         ctx.audioUtils.removeMusicManager(guild)
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
-        addCooldown(guild.idLong)
+//        addCooldown(guild.idLong)
 
         sendSuccess(ctx.message)
     }

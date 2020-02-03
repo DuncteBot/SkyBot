@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import com.jagrosh.jagtag.Parser;
+import gnu.trove.map.TObjectLongMap;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.commands.admin.BlackListCommand;
@@ -49,12 +50,12 @@ import ml.duncte123.skybot.commands.nsfw.NSFWCommands;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.WeebCommands;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CommandUtils;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -67,7 +68,9 @@ import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
@@ -81,7 +84,8 @@ import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
+//    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
+    private final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
@@ -370,20 +374,26 @@ public class CommandManager {
         dispatchCommand(invoke, invoke.toLowerCase(), args, event);
     }
 
-    public boolean hasCooldown(Command command) {
-        return false;
+    public void setCooldown(String key, int seconds) {
+        this.cooldowns.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
     }
 
-    public int getRemainingCooldown(String key) {
-        if (!cooldowns.containsKey(key)) {
+    public long getRemainingCooldown(String key) {
+        // If we don't have a cooldown for the command return 0
+        if (!this.cooldowns.containsKey(key)) {
             return 0;
         }
 
-        final OffsetDateTime startTime = cooldowns.get(key);
-        final int timeLeft = (int)OffsetDateTime.now().until(startTime, ChronoUnit.SECONDS);
+        // get the time that the cooldown started
+        final long startTime = this.cooldowns.get(key);
+        // Get the start time as an OffsetDateTime
+        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // get the time that is left for the cooldown
+        final long timeLeft = OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
 
+        // If the time is up we will return 0 and remove the keys from the cooldowns map
         if (timeLeft <= 0) {
-            cooldowns.remove(key);
+            this.cooldowns.remove(key);
             return 0;
         }
 

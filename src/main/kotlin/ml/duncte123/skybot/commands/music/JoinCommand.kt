@@ -51,14 +51,15 @@ class JoinCommand : MusicCommand() {
 
         mng.lastChannel = event.channel.idLong
 
-        if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
+        /*if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
             sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${coolDowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             sendError(event.message)
             return
-        }
+        }*/
 
-        coolDowns.remove(guild.idLong)
+        // TODO: Why is this here?
+//        coolDowns.remove(guild.idLong)
 
         val lavalink = getLavalinkManager()
 
@@ -75,7 +76,7 @@ class JoinCommand : MusicCommand() {
 
         try {
             lavalink.openConnection(vc)
-            addCooldown(guild.idLong)
+//            addCooldown(guild.idLong)
             sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {

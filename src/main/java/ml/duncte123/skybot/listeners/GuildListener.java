@@ -271,7 +271,11 @@ public class GuildListener extends BaseListener {
 
                 variables.getAudioUtils().removeMusicManager(guild);
 
-                MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
+                // Generate the cooldown keys and set the cooldown
+                final String cooldownKey = MusicCommand.generateCooldownKey.apply(guild.getId());
+                final int musicCooldown = MusicCommand.musicCooldown;
+
+                variables.getCommandManager().setCooldown(cooldownKey, musicCooldown);
 
                 if (LavalinkManager.ins.isConnected(guild)) {
                     LavalinkManager.ins.closeConnection(guild);

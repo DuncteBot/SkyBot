@@ -19,9 +19,11 @@
 package ml.duncte123.skybot.objects.command;
 
 import gnu.trove.map.TObjectIntMap;
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
@@ -32,8 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -60,6 +61,7 @@ public abstract class Command implements ICommand {
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
     protected String[] aliases = new String[0];
+    // We're using the kotlin functions just so the kotlin code looks neater
     protected Function2<String, String, String> helpFunction = (prefix, invoke) -> "No help available";
     protected Function2<String, String, String> usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + '`';
     protected Permission[] userPermissions = new Permission[0];
@@ -67,7 +69,11 @@ public abstract class Command implements ICommand {
     public Flag[] flags = new Flag[0];
     // This is the cooldown in seconds
     protected int cooldown = 0;
+    // default key is <command name>|<user id>
     protected Function2<String, CommandContext, String> cooldownKey = (command, ctx) -> command + "|" + ctx.getAuthor().getId();
+    // Can be used for when patrons have no cooldown on commands
+    // Default is false
+    protected Function1<CommandContext, Boolean> overridesCooldown = (ctx) -> false;
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
@@ -101,8 +107,22 @@ public abstract class Command implements ICommand {
             return;
         }
 
-        if (this.cooldown > 0) {
+        // If we have a cooldown and the event does not override it
+        if (this.cooldown > 0 && !this.overridesCooldown.invoke(ctx)) {
+            // Get the cooldown key for this command
             final String cooldownKey = getCooldownKey(ctx);
+            final CommandManager commandManager = ctx.getCommandManager();
+            final long remainingCooldown = commandManager.getRemainingCooldown(cooldownKey);
+
+            if (remainingCooldown > 0) {
+                // TODO: delete after?
+                sendMsgFormat(ctx, "This command is on cooldown for %s more seconds", remainingCooldown);
+                sendError(ctx.getMessage());
+                return;
+            } else {
+                // Set the cooldown for the command
+                commandManager.setCooldown(cooldownKey, this.cooldown);
+            }
         }
 
         execute(ctx);
@@ -138,8 +158,8 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    public @Nonnull
-    String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
+    @Nonnull
+    public String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
         return this.usageInstructions.invoke(prefix, invoke);
     }
 

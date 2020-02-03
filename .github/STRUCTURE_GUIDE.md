@@ -65,6 +65,7 @@ To maintain consistency between the constructors of the commands the following o
 11. flags
 12. cooldown
 13. cooldownKey
+14. overridesCooldown
 
 ### Access Modifiers
 
