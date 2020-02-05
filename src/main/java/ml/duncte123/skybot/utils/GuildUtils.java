@@ -147,12 +147,13 @@ public class GuildUtils {
         }
     }
 
-    public static int getMemberJoinPosition(Member member) {
+    public static long getMemberJoinPosition(Member member) {
         //noinspection ConstantConditions
         return member.getGuild().getMemberCache().applyStream(
             (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
-                .collect(Collectors.toList())
-        ).indexOf(member) + 1;
+                .takeWhile((it) -> !it.equals(member))
+                .count()
+        );
     }
 
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
