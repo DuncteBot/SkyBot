@@ -25,13 +25,13 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
+import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.ShardCacheView;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
+import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
@@ -163,7 +163,7 @@ public class ShardInfoCommand extends Command {
     }
 
     private String getShardStatus(JDA shard) {
-        return WordUtils.capitalizeFully(shard.getStatus().toString().replace('_', ' '));
+        return capitalizeFully(shard.getStatus().toString().replace('_', ' '));
     }
 
     /*
@@ -236,6 +236,7 @@ public class ShardInfoCommand extends Command {
         return sb.toString();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private String appendSeparatorLine(String left, String middle, String right, int padding, int... sizes) {
         boolean first = true;
         final StringBuilder ret = new StringBuilder();
@@ -243,9 +244,11 @@ public class ShardInfoCommand extends Command {
             if (first) {
                 first = false;
 //                "═".repeat(size + padding * 2)
-                ret.append(left).append(StringUtils.repeat("═", size + padding * 2));
+                ret.append(left).append("═".repeat(size + padding * 2));
+//                ret.append(left).append(StringUtils.repeat("═", size + padding * 2));
             } else {
-                ret.append(middle).append(StringUtils.repeat("═", size + padding * 2));
+                ret.append(middle).append("═".repeat(size + padding * 2));
+//                ret.append(middle).append(StringUtils.repeat("═", size + padding * 2));
             }
         }
         return ret.append(right).append("\n").toString();
@@ -286,21 +289,17 @@ public class ShardInfoCommand extends Command {
         return new LongLongPair(connectedVC, listeningVC);
     }
 
-    private static class LongLongPair {
-        private final long first;
-        private final long second;
+    private String capitalizeFully(String str) {
+        Checks.notBlank(str, "str");
 
-        public LongLongPair(long left, long right) {
-            this.first = left;
-            this.second = right;
+        final String[] words = str.toLowerCase().split("\\s+");
+        final StringBuilder builder = new StringBuilder();
+
+        for (final String word : words) {
+            builder.append(Character.toUpperCase(word.charAt(0)))
+                .append(word.substring(1));
         }
 
-        public long getFirst() {
-            return first;
-        }
-
-        public long getSecond() {
-            return second;
-        }
+        return builder.toString();
     }
 }

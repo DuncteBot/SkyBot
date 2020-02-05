@@ -54,6 +54,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -296,12 +297,8 @@ public class CommandManager {
         return this.commands.values();
     }
 
-    Map<String, ICommand> getCommandsMap() {
-        return this.commands;
-    }
-
-    Map<String, String> getAliasesMap() {
-        return aliases;
+    LongLongPair getCommandCount() {
+        return new LongLongPair(this.commands.size(), this.aliases.size());
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -388,7 +385,6 @@ public class CommandManager {
     public long getRemainingCooldown(String key) {
         // If we don't have a cooldown for the command return 0
         if (!cooldowns.containsKey(key)) {
-            System.out.println("Not present");
             return 0;
         }
 
@@ -399,8 +395,7 @@ public class CommandManager {
 
         // If the time is up we will return 0 and remove the keys from the cooldowns map
         if (timeLeft <= 0) {
-            System.out.println("Less than 0");
-//            cooldowns.remove(key);
+            cooldowns.remove(key);
             return 0;
         }
 
