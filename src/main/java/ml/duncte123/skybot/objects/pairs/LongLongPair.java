@@ -16,14 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.unstable.utils;
+package ml.duncte123.skybot.objects.pairs;
 
-import io.sentry.Sentry;
-import ml.duncte123.skybot.Author;
+public class LongLongPair {
+    private final long first;
+    private final long second;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class ComparatingUtils {
-    public static void execCheck(Throwable t) {
-        Sentry.capture(t);
+    public LongLongPair(long left, long right) {
+        this.first = left;
+        this.second = right;
+    }
+
+    public long getFirst() {
+        return first;
+    }
+
+    public long getSecond() {
+        return second;
     }
 }

@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
@@ -106,7 +107,9 @@ public final class SkyBot {
             config.discord.prefix + "help | Shard " + (shardId + 1)
         );
 
-        logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
+        final LongLongPair commandCount = commandManager.getCommandCount();
+
+        logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
         //Set up sharding for the bot

@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
@@ -59,7 +59,7 @@ public class DogCommand extends Command {
         catch (Exception e) {
             //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
-            ComparatingUtils.execCheck(e);
+            Sentry.capture(e);
         }
 
     }

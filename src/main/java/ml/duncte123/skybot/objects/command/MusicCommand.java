@@ -19,18 +19,17 @@
 package ml.duncte123.skybot.objects.command;
 
 import fredboat.audio.player.LavalinkManager;
-import gnu.trove.map.TLongLongMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
@@ -42,25 +41,18 @@ import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
-    public static TLongLongMap cooldowns = MapUtils.newLongLongMap();
     protected boolean withAutoJoin = false;
 
-    static {
-        commandService.scheduleWithFixedDelay(() ->
-                cooldowns.forEachEntry((a, b) -> {
-                    if (b > 0) {
-                        cooldowns.put(a, (b - 200));
-                        return true;
-                    } else if (b == 0) {
-                        cooldowns.remove(a);
-                    }
-                    return true;
-                })
-            , 0, 200, TimeUnit.MILLISECONDS);
-    }
+    public static final Function<String, String> generateCooldownKey = (guildId) -> "musicCommand|" + guildId;
+    public static final int musicCooldown = 12;
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
+        this.cooldown = musicCooldown;
+        this.cooldownScope = CooldownScope.GUILD;
+        this.cooldownKey = (cmdName, ctx) -> generateCooldownKey.apply(ctx.getGuild().getId());
+        // Patrons have no cooldown
+        this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx.getEvent(), false);
     }
 
     @Override
@@ -140,17 +132,7 @@ public abstract class MusicCommand extends Command {
         return false;
     }
 
-    protected boolean hasCoolDown(Guild guild) {
-        return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;
-    }
-
     protected static LavalinkManager getLavalinkManager() {
         return LavalinkManager.ins;
-    }
-
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void addCooldown(long guildId) {
-        cooldowns.put(guildId, 12600);
     }
 }

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import com.jagrosh.jagtag.Parser;
+import gnu.trove.map.TObjectLongMap;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.commands.admin.BlackListCommand;
@@ -53,7 +54,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -66,6 +69,10 @@ import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -73,25 +80,50 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-
+    private static final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+    private static final ScheduledExecutorService cooldownThread = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread thread = new Thread(r, "Command-cooldown-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
     private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
         final Thread thread = new Thread(r, "Command-execute-thread");
         thread.setDaemon(true);
         return thread;
     });
-
     private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-
     private final Variables variables;
+
+    static {
+        cooldownThread.scheduleWithFixedDelay(() -> {
+                try {
+                    // Loop over all cooldowns with a 5 minute interval
+                    // This makes sure that we don't have any useless cooldowns in the system hogging up memory
+                    cooldowns.forEachEntry((key, val) -> {
+                        final long remaining = calcTimeRemaining(val);
+
+                        // Remove the value from the cooldowns if it is less or equal to 0
+                        if (remaining <= 0) {
+                            cooldowns.remove(key);
+                        }
+
+                        // Return true to indicate that we are allowed to continue the loop
+                        return true;
+                    });
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 5, 5, TimeUnit.MINUTES);
+    }
 
     public CommandManager(Variables variables) {
         this.variables = variables;
@@ -263,12 +295,8 @@ public class CommandManager {
         return this.commands.values();
     }
 
-    Map<String, ICommand> getCommandsMap() {
-        return this.commands;
-    }
-
-    Map<String, String> getAliasesMap() {
-        return aliases;
+    LongLongPair getCommandCount() {
+        return new LongLongPair(this.commands.size(), this.aliases.size());
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -348,6 +376,37 @@ public class CommandManager {
         dispatchCommand(invoke, invoke.toLowerCase(), args, event);
     }
 
+    public void setCooldown(String key, int seconds) {
+        cooldowns.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
+    }
+
+    public long getRemainingCooldown(String key) {
+        // If we don't have a cooldown for the command return 0
+        if (!cooldowns.containsKey(key)) {
+            return 0;
+        }
+
+        // get the time that the cooldown started
+        final long startTime = cooldowns.get(key);
+        // The time that is left until the cooldown is over
+        final long timeLeft = calcTimeRemaining(startTime);
+
+        // If the time is up we will return 0 and remove the keys from the cooldowns map
+        if (timeLeft <= 0) {
+            cooldowns.remove(key);
+            return 0;
+        }
+
+        return timeLeft;
+    }
+
+    private static long calcTimeRemaining(long startTime) {
+        // Get the start time as an OffsetDateTime
+        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // get the time that is left for the cooldown
+        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
+    }
+
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invokeLower);
 
@@ -388,7 +447,7 @@ public class CommandManager {
                 }
             }
             catch (Throwable ex) {
-                execCheck(ex);
+                Sentry.capture(ex);
                 ex.printStackTrace();
                 sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
             }
@@ -447,41 +506,9 @@ public class CommandManager {
         }
         catch (Exception e) {
             sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-            execCheck(e);
+            Sentry.capture(e);
         }
     }
-
-    // You served well my friend
-    /*private void registerCommandsFromReflection(Reflections reflections) {
-
-        final List<Class<? extends ICommand>> filteredCommands = reflections
-            .getSubTypesOf(ICommand.class)
-            .stream()
-            // Remove abstract classes
-            .filter((c) -> !Modifier.isAbstract(c.getModifiers()))
-            .collect(Collectors.toList());
-
-        //Loop over them commands
-        for (final Class<? extends ICommand> cmd : filteredCommands) {
-            try {
-                final ICommand command;
-
-                if (cmd.getSuperclass().equals(VariablesInConstructorCommand.class)) {
-                    command = cmd.getDeclaredConstructor(Variables.class).newInstance(variables);
-                } else {
-                    command = cmd.getDeclaredConstructor().newInstance();
-                }
-
-                this.addCommand(command);
-            }
-            catch (IllegalArgumentException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
     private void loadCustomCommands() {
         this.variables.getDatabaseAdapter().getCustomCommands(

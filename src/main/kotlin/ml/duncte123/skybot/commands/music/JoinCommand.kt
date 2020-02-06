@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.exceptions.PermissionException
 
@@ -51,15 +50,6 @@ class JoinCommand : MusicCommand() {
 
         mng.lastChannel = event.channel.idLong
 
-        if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
-            sendMsg(event, """I still have cooldown!
-                    |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            sendError(event.message)
-            return
-        }
-
-        cooldowns.remove(guild.idLong)
-
         val lavalink = getLavalinkManager()
 
         if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
@@ -75,7 +65,6 @@ class JoinCommand : MusicCommand() {
 
         try {
             lavalink.openConnection(vc)
-            addCooldown(guild.idLong)
             sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {

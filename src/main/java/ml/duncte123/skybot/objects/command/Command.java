@@ -18,9 +18,12 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.objects.CooldownScope;
 import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +32,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -48,19 +50,28 @@ public abstract class Command implements ICommand {
             thread.setDaemon(true);
             return thread;
         });
-    //@formatter:off
+
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
     protected String[] aliases = new String[0];
+    // We're using the kotlin functions just so the kotlin code looks neater
     protected Function2<String, String, String> helpFunction = (prefix, invoke) -> "No help available";
     protected Function2<String, String, String> usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + '`';
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
-    //@formatter:on
+    // This is the cooldown in seconds
+    protected int cooldown = 0;
+    // Sets the scope of the cooldown, default is on user level
+    protected CooldownScope cooldownScope = CooldownScope.USER;
+    // default key is <command name>|<user id>
+    protected Function2<String, CommandContext, String> cooldownKey = cooldownScope::formatKey;
+    // Can be used for when patrons have no cooldown on commands
+    // Default is false
+    protected Function1<CommandContext, Boolean> overridesCooldown = (ctx) -> false;
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
@@ -94,12 +105,31 @@ public abstract class Command implements ICommand {
             return;
         }
 
+        // If we have a cooldown and the event does not override it
+        if (this.cooldown > 0 && !this.overridesCooldown.invoke(ctx)) {
+            // Get the cooldown key for this command
+            final String cooldownKey = getCooldownKey(ctx);
+            final CommandManager commandManager = ctx.getCommandManager();
+            final long remainingCooldown = commandManager.getRemainingCooldown(cooldownKey);
+
+            if (remainingCooldown > 0) {
+                // TODO: delete after?
+                sendMsgFormat(
+                    ctx,
+                    "This command is on cooldown for %s more seconds%s!",
+                    remainingCooldown,
+                    this.cooldownScope.getExtraErrorMsg()
+                );
+                sendError(ctx.getMessage());
+                return;
+            } else {
+                // Set the cooldown for the command
+                commandManager.setCooldown(cooldownKey, this.cooldown);
+            }
+        }
+
         execute(ctx);
     }
-
-    /*public void execute(@Nonnull CommandContext ctx) {
-        throw new NotImplementedException("This command has not been updated yet");
-    }*/
 
     public abstract void execute(@Nonnull CommandContext ctx);
 
@@ -131,8 +161,8 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    public @Nonnull
-    String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
+    @Nonnull
+    public String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
         return this.usageInstructions.invoke(prefix, invoke);
     }
 
@@ -150,12 +180,17 @@ public abstract class Command implements ICommand {
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
+
+        if (!(obj instanceof Command)) {
             return false;
         }
 
         final Command command = (Command) obj;
 
         return this.name.equals(command.getName());
+    }
+
+    private String getCooldownKey(CommandContext ctx) {
+        return this.cooldownKey.invoke(this.name, ctx);
     }
 }
