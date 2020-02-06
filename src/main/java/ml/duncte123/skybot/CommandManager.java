@@ -103,7 +103,6 @@ public class CommandManager {
     private final Variables variables;
 
     static {
-        // TODO: test this
         cooldownThread.scheduleWithFixedDelay(() -> {
                 try {
                     // Loop over all cooldowns with a 5 minute interval
