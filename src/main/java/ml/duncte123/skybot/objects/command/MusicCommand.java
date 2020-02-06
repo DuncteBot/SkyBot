@@ -23,6 +23,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -48,6 +49,7 @@ public abstract class MusicCommand extends Command {
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
         this.cooldown = musicCooldown;
+        this.cooldownScope = CooldownScope.GUILD;
         this.cooldownKey = (cmdName, ctx) -> generateCooldownKey.apply(ctx.getGuild().getId());
         // Patrons have no cooldown
         this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx.getEvent(), false);

@@ -243,12 +243,9 @@ public class ShardInfoCommand extends Command {
         for (final int size : sizes) {
             if (first) {
                 first = false;
-//                "═".repeat(size + padding * 2)
                 ret.append(left).append("═".repeat(size + padding * 2));
-//                ret.append(left).append(StringUtils.repeat("═", size + padding * 2));
             } else {
                 ret.append(middle).append("═".repeat(size + padding * 2));
-//                ret.append(middle).append(StringUtils.repeat("═", size + padding * 2));
             }
         }
         return ret.append(right).append("\n").toString();

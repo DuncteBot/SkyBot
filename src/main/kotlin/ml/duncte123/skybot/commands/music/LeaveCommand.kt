@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class LeaveCommand : MusicCommand() {
@@ -37,13 +36,6 @@ class LeaveCommand : MusicCommand() {
         val event = ctx.event
         val guild = event.guild
 
-        /*if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
-            sendMsg(event, """I still have cooldown!
-                    |Remaining cooldown: ${coolDowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            sendError(event.message)
-            return
-        }*/
-
         if (!getLavalinkManager().isConnected(guild)) {
             sendMsg(event, "I'm not connected to any channels.")
             return
@@ -52,7 +44,6 @@ class LeaveCommand : MusicCommand() {
         ctx.audioUtils.removeMusicManager(guild)
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
-//        addCooldown(guild.idLong)
 
         sendSuccess(ctx.message)
     }

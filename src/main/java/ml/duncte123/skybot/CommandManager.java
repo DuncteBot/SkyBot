@@ -84,7 +84,6 @@ import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-    //    private final Map<String, OffsetDateTime> cooldowns = new ConcurrentHashMap<>();
     private static final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
@@ -124,7 +123,7 @@ public class CommandManager {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-            }, 0, 5, TimeUnit.MINUTES);
+            }, 5, 5, TimeUnit.MINUTES);
     }
 
     public CommandManager(Variables variables) {
