@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.lgbtq;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
+import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.entities.User;
@@ -79,7 +80,7 @@ public class FlagCommand extends ImageCommandBase {
             }
         }
 
-        final String imageUrl = user.getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        final String imageUrl = UserKt.getStaticAvatarUrl(user) + "?size=512";
         final byte[] image = ctx.getApis().getFlag(flag, imageUrl);
 
         handleBasicImage(event, image);

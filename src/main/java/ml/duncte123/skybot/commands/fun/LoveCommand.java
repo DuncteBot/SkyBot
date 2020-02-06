@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -88,8 +89,8 @@ public class LoveCommand extends Command {
         if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES,
             Permission.MESSAGE_EMBED_LINKS) && channel.canTalk()) {
             ctx.getWeebApi().generateLoveship(
-                target1.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png"),
-                target2.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png")
+                UserKt.getStaticAvatarUrl(target1.getUser()),
+                UserKt.getStaticAvatarUrl(target2.getUser())
             ).async((image) -> {
                 final String message = String.format("Shipping **%s** and **%s**", target1.getEffectiveName(), target2.getEffectiveName());
 

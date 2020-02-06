@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.image;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
+import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -171,7 +172,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     private String getAvatarUrl(User user) {
-        return user.getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        return UserKt.getStaticAvatarUrl(user) + "?size=512";
     }
 
     public String parseTextArgsForImage(CommandContext ctx) {

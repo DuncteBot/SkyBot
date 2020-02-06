@@ -114,7 +114,12 @@ public abstract class Command implements ICommand {
 
             if (remainingCooldown > 0) {
                 // TODO: delete after?
-                sendMsgFormat(ctx, "This command is on cooldown for %s more seconds", remainingCooldown);
+                sendMsgFormat(
+                    ctx,
+                    "This command is on cooldown for %s more seconds%s!",
+                    remainingCooldown,
+                    this.cooldownScope.getExtraErrorMsg()
+                );
                 sendError(ctx.getMessage());
                 return;
             } else {
@@ -175,7 +180,8 @@ public abstract class Command implements ICommand {
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
+
+        if (!(obj instanceof Command)) {
             return false;
         }
 
