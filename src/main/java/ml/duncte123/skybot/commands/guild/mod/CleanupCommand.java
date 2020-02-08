@@ -26,6 +26,8 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -125,12 +127,18 @@ public class CleanupCommand extends ModBaseCommand {
             final CompletableFuture<Message> hack = new CompletableFuture<>();
             sendMsg(ctx, "Deleting messages, please wait this might take a while (message will be deleted once complete)", hack::complete);
 
-            final List<CompletableFuture<Void>> futures =  channel.purgeMessages(msgList);
-
             try {
+                final List<CompletableFuture<Void>> futures = channel.purgeMessages(msgList);
+
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
-            }
-            catch (InterruptedException | ExecutionException e) {
+            } catch (ErrorResponseException e) {
+                if (e.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                    modLog(String.format("Failed to delete messages in %s, channel was deleted during progress", channel), ctx.getGuild());
+                    return -100;
+                }
+
+                Sentry.capture(e);
+            } catch (InterruptedException | ExecutionException e) {
                 Sentry.capture(e);
             } finally {
                 removeMessage(channel, hack);
@@ -146,8 +154,12 @@ public class CleanupCommand extends ModBaseCommand {
 
             sendMsg(ctx, "ERROR: " + thr.getMessage() + cause);
 
-            return 0;
+            return -100;
         }).whenCompleteAsync((count, thr) -> {
+            if (count == -100) {
+                return;
+            }
+
             sendMsgFormatAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
 
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
