@@ -42,13 +42,13 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val array = apis.getCustomCommands()
             val customCommands: List<CustomCommand> = jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
 
-            callback.invoke(customCommands)
+            callback(customCommands)
         }
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         runOnThread {
-            callback.invoke(
+            callback(
                 apis.createCustomCommand(guildId, invoke, message)
             )
         }
@@ -56,7 +56,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         runOnThread {
-            callback.invoke(
+            callback(
                 apis.updateCustomCommand(guildId, invoke, message, autoresponse)
             )
         }
@@ -64,7 +64,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
         runOnThread {
-            callback.invoke(apis.deleteCustomCommand(guildId, invoke))
+            callback(apis.deleteCustomCommand(guildId, invoke))
         }
     }
 
@@ -73,7 +73,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val array = apis.getGuildSettings()
             val settings: List<GuildSettings> = jackson.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
 
-            callback.invoke(settings)
+            callback(settings)
         }
     }
 
@@ -82,19 +82,19 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val item = apis.getGuildSetting(guildId)
 
             if (item == null) {
-                callback.invoke(null)
+                callback(null)
                 return@runOnThread
             }
 
             val setting = jackson.readValue(item.traverse(), GuildSettings::class.java)
 
-            callback.invoke(setting)
+            callback(setting)
         }
     }
 
     override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         runOnThread {
-            callback.invoke(
+            callback(
                 apis.updateGuildSettings(guildSettings)
             )
         }
@@ -108,7 +108,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         runOnThread {
-            callback.invoke(
+            callback(
                 apis.registerNewGuildSettings(guildSettings)
             )
         }
@@ -146,7 +146,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 map.put(it.get("guild_id").asLong(), it.get("embed_color").asInt())
             }
 
-            callback.invoke(map)
+            callback(map)
         }
     }
 
@@ -164,7 +164,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
             }
 
-            callback.invoke(map)
+            callback(map)
         }
     }
 
@@ -173,7 +173,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val status = apis.updateOrCreateOneGuildPatron(userId, guildId)
 
             if (status) {
-                callback.invoke(userId, guildId)
+                callback(userId, guildId)
             }
         }
     }
@@ -186,7 +186,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
             }
 
-            callback.invoke(map)
+            callback(map)
         }
     }
 
@@ -216,7 +216,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit) {
         runOnThread {
             val json = jackson.createObjectNode()
                 .put("mod_id", modId.toString())
@@ -225,7 +225,16 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 .put("guild_id", guildId.toString())
                 .put("unmute_date", unmuteDate)
 
-            apis.createMute(json)
+            val muteData = apis.createMute(json)
+
+            if (muteData.isEmpty) {
+                callback(null)
+                return@runOnThread
+            }
+
+            val mute: Mute = jackson.readValue(muteData.traverse(), Mute::class.java)
+
+            callback(mute)
         }
     }
 
@@ -234,12 +243,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val json = apis.removeLatestWarningForUser(userId, guildId)
 
             if (json == null) {
-                callback.invoke(null)
+                callback(null)
 
                 return@runOnThread
             }
 
-            callback.invoke(Warning(
+            callback(Warning(
                 json.get("id").asInt(),
                 json.get("warn_date").asText(),
                 json.get("mod_id").asText(),
@@ -265,7 +274,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 ))
             }
 
-            callback.invoke(items)
+            callback(items)
         }
     }
 
@@ -290,7 +299,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val bans: List<Ban> = jackson.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
             val mutes: List<Mute> = jackson.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
 
-            callback.invoke(Pair(bans, mutes))
+            callback(Pair(bans, mutes))
         }
     }
 
@@ -307,7 +316,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 ))
             }
 
-            callback.invoke(converted)
+            callback(converted)
         }
     }
 
@@ -339,7 +348,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         runOnThread {
             val allTags = apis.getAllTags()
 
-            callback.invoke(
+            callback(
                 jackson.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
             )
         }
@@ -352,7 +361,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
             val response = apis.createTag(json)
 
-            callback.invoke(response.first, response.second)
+            callback(response.first, response.second)
         }
     }
 
@@ -360,7 +369,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         runOnThread {
             val response = apis.deleteTag(tag.name)
 
-            callback.invoke(response.first, response.second)
+            callback(response.first, response.second)
         }
     }
 
@@ -369,7 +378,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val date = AirUtils.getDatabaseDateFormat(expireDate)
             val res = apis.createReminder(userId, reminder, date, channelId)
 
-            callback.invoke(res)
+            callback(res)
         }
     }
 
@@ -389,7 +398,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val reminders = jackson.readValue<List<Reminder>>(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
             if (reminders.isNotEmpty()) {
-                callback.invoke(reminders)
+                callback(reminders)
             }
         }
     }

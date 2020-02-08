@@ -87,7 +87,7 @@ public abstract class BaseListener implements EventListener {
 
         final double[] botToUserRatio = GuildUtils.getBotRatio(guild);
         final long[] counts = GuildUtils.getBotAndUserCount(guild);
-        final long totalMembers = guild.getMemberCache().size();
+        final long totalMembers = guild.getMemberCount();
 
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
         logger.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));

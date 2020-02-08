@@ -393,7 +393,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
-    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit) {
         // Api only
     }
 

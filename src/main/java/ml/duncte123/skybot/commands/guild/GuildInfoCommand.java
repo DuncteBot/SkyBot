@@ -115,7 +115,7 @@ public class GuildInfoCommand extends Command {
                 "**Created at:** " + String.format("%s (%s)", createTimeFormat, createTimeHuman) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)
-            .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+            .addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
                 "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
                 "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 

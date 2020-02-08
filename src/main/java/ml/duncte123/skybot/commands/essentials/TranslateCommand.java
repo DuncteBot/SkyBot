@@ -55,7 +55,7 @@ public class TranslateCommand extends Command {
         final String input = String.join(" ", args.subList(1, args.size()));
         final ArrayNode translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
-        if (translatedJson.size() < 1) {
+        if (translatedJson.isEmpty()) {
             sendMsg(ctx.getEvent(), "No translation found");
             return;
         }

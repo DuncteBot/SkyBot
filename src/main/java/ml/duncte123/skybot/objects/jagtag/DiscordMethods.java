@@ -130,7 +130,7 @@ public class DiscordMethods {
             new Method("servercount", (env) -> {
                 final Guild guild = env.get("guild");
 
-                return String.valueOf(guild.getMemberCache().size());
+                return String.valueOf(guild.getMemberCount());
             }),
 
             new Method("servericon", (env) -> {

@@ -54,7 +54,7 @@ public class UrbanCommand extends Command {
         final String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async((json) -> {
-            if (json.get("list").size() < 1) {
+            if (json.get("list").isEmpty()) {
                 sendMsg(ctx.getEvent(), "Nothing found");
                 return;
             }

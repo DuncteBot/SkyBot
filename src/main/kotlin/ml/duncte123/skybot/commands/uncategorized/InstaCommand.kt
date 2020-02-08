@@ -52,7 +52,7 @@ class InstaCommand : Command() {
 
         val imagesArray = it.get("images")
 
-        if (imagesArray.size() == 0) {
+        if (imagesArray.isEmpty) {
             sendMsg(ctx, "This user did not upload any images")
             return
         }

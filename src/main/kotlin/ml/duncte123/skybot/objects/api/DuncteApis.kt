@@ -245,13 +245,17 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    fun createMute(json: JsonNode) {
+    fun createMute(json: JsonNode): JsonNode {
         val response = postJSON("mutes", json)
 
         if (!response.get("success").asBoolean()) {
             logger.error("Failed to create a mute\n" +
                 "Response: {}", response.get("error").toString())
         }
+
+        println(response)
+
+        return response.get("data")
     }
 
     fun getWarningsForUser(userId: Long, guildId: Long): ArrayNode {

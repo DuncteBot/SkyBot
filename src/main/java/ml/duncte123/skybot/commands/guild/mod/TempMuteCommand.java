@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -46,7 +47,7 @@ public class TempMuteCommand extends ModBaseCommand {
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "tempmute";
-        this.helpFunction = (prefix, invoke) -> "Temporally mutes a user in the server";
+        this.helpFunction = (prefix, invoke) -> "Temporally mutes a user in the server, this will override any existing tempmutes for the user";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
@@ -82,7 +83,8 @@ public class TempMuteCommand extends ModBaseCommand {
         final Member mod = ctx.getMember();
         final Member toMute = mentioned.get(0);
         final User mutee = toMute.getUser();
-        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final Guild guild = event.getGuild();
+        final Role role = guild.getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
         if (canNotProceed(ctx, event, mod, toMute, role, self)) {
@@ -110,11 +112,30 @@ public class TempMuteCommand extends ModBaseCommand {
             mutee.getIdLong(),
             mutee.getAsTag(),
             finalDate,
-            event.getGuild().getIdLong()
+            guild.getIdLong(),
+            (mute) -> {
+                if (mute != null) {
+                    final String modId = mute.getModId();
+                    final User oldMuteMod = guild.getJDA().getUserById(modId);
+                    String modName = "Unknown";
+
+                    if (oldMuteMod != null) {
+                        modName = oldMuteMod.getAsTag();
+                    }
+
+                    sendMsg(event, String.format(
+                        "Previously created muted for %#s removed, mute was created by %s",
+                        mutee,
+                        modName
+                    ));
+                }
+
+                return null;
+            }
         );
 
 
-        event.getGuild().addRoleToMember(toMute, role)
+        guild.addRoleToMember(toMute, role)
             .reason("Muted by " + author.getAsTag() + ": " + fReason)
             .queue(success -> {
                     ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());

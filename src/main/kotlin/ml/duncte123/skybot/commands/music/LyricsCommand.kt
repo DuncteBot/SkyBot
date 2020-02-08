@@ -111,7 +111,7 @@ class LyricsCommand : MusicCommand() {
         ) { WebParserUtils.toJSONObject(it, mapper) }
             .async {
                 val hits = it.get("response").get("hits")
-                if (hits.size() < 1) {
+                if (hits.isEmpty) {
                     callback.invoke(null)
                 } else {
                     callback.invoke(
