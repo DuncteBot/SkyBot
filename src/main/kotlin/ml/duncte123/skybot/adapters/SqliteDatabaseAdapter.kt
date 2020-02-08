@@ -469,6 +469,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
 
     override fun purgeBans(ids: List<Int>) {
         // Api only
+        runOnThread {
+//            val idsString = ids.joinToString(separator = ", ")
+            val conn = connManager.connection
+            conn.prepareStatement("DELETE FROM bans WHERE id in (?)").apply {
+                setArray(1, conn.createArrayOf("integer", ids.toTypedArray()))
+                execute()
+                closeOnCompletion()
+            }
+        }
     }
 
     override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
@@ -476,7 +485,14 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     }
 
     override fun purgeMutes(ids: List<Int>) {
-        // Api only
+        runOnThread {
+            val conn = connManager.connection
+            conn.prepareStatement("DELETE FROM mutes WHERE id in (?)").apply {
+                setArray(1, conn.createArrayOf("integer", ids.toTypedArray()))
+                execute()
+                closeOnCompletion()
+            }
+        }
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {

@@ -160,22 +160,6 @@ public class ModerationUtils {
         adapter.createWarning(moderator.getIdLong(), target.getIdLong(), guild.getIdLong(), reason);
     }
 
-    public static void checkUnbans(Variables variables) {
-
-        variables.getDatabaseAdapter().getExpiredBansAndMutes(
-            (bansAndMutes) -> {
-                final DatabaseAdapter adapter = variables.getDatabaseAdapter();
-                final List<Ban> bans = bansAndMutes.getFirst();
-                final List<Mute> mutes = bansAndMutes.getSecond();
-
-                handleUnban(bans, adapter, variables);
-                handleUnmute(mutes, adapter, variables);
-
-                return null;
-            }
-        );
-    }
-
     public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
@@ -245,8 +229,7 @@ public class ModerationUtils {
 
             logger.debug("Unbanning " + ban.getUserName());
 
-            guild
-                .unban(ban.getUserId()).reason("Ban expired").queue();
+            guild.unban(ban.getUserId()).reason("Ban expired").queue();
 
             final User fakeUser = new FakeUser(
                 ban.getUserName(),

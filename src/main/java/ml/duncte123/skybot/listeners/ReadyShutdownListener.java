@@ -41,6 +41,8 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -75,17 +77,7 @@ public class ReadyShutdownListener extends MessageListener {
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
 
             if (!variables.useApi()) {
-                logger.info("Starting the unban timer! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
-                //Register the timer for the auto unbans
-                systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 2, 2, TimeUnit.MINUTES);
-
-                logger.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
-                systemPool.scheduleAtFixedRate(
-                    () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
-                        AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
-
-                        return null;
-                    }), 2, 2, TimeUnit.MINUTES);
+                this.startSQLiteTimers();
             }
 
             arePoolsRunning = true;
@@ -147,6 +139,8 @@ public class ReadyShutdownListener extends MessageListener {
         GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
     }
 
+    //TODO: Remove when intends are added
+    @Deprecated
     private void killEvents(JDA jda) {
         final JDAImpl api = (JDAImpl) jda;
         final SocketHandler.NOPHandler nopHandler = new SocketHandler.NOPHandler(api);
@@ -154,6 +148,25 @@ public class ReadyShutdownListener extends MessageListener {
 
         handlers.put("TYPING_START", nopHandler);
         handlers.put("MESSAGE_REACTION_ADD", nopHandler);
+    }
+
+    private void startSQLiteTimers() {
+        systemPool.execute(() -> {
+            try {
+                final Class<?> aClass = Class.forName("ml.duncte123.skybot.database.SQLiteTimers");
+                final Method[] methods = aClass.getDeclaredMethods();
+
+                for (Method method : methods) {
+                    if (!method.getName().startsWith("start")) {
+                        continue;
+                    }
+
+                    method.invoke(null, variables);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     // might work some day

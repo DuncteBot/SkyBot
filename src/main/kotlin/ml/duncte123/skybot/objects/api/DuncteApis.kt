@@ -253,8 +253,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
                 "Response: {}", response.get("error").toString())
         }
 
-        println(response)
-
         return response.get("data")
     }
 
