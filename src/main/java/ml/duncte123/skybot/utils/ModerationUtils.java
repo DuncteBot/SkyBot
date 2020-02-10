@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -218,33 +220,49 @@ public class ModerationUtils {
 
     public static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
         logger.debug("Checking for users to unban");
+
+        // Get the ShardManager from our instance
+        // Via the ShardManager we can fetch guilds and unban users
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
+        // Loop over all the bans that came in
         for (final Ban ban : bans) {
+            // Get the guild from the ban object
             final Guild guild = shardManager.getGuildById(ban.getGuildId());
 
+            // If we're not in the guild anymore just ignore this iteration
             if (guild == null) {
                 continue;
             }
 
             logger.debug("Unbanning " + ban.getUserName());
 
-            guild.unban(ban.getUserId()).reason("Ban expired").queue();
+            // Unban the user and set the reason to "Ban expired"
+            guild.unban(ban.getUserId())
+                .reason("Ban expired")
+                // Ignore errors that indicate an unknown ban
+                // This may happen some times
+                .queue(null, ignore(UNKNOWN_BAN));
 
+            // We're creating a fake user even though we can probably get a real user
+            // This is to make sure that we have the data we need when logging the unban
             final User fakeUser = new FakeUser(
                 ban.getUserName(),
                 Long.parseUnsignedLong(ban.getUserId()),
                 Short.parseShort(ban.getDiscriminator())
             );
 
+            // Send the unban to the log channel
             modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild, variables));
-
         }
 
         logger.debug("Checking done, unbanned {} users.", bans.size());
 
+        // Map all the bans to just the id
         final List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
 
+        // If the bans are not empty send a purge request to the databse
+        // This will make sure that we don't get them again
         if (!purgeIds.isEmpty()) {
             adapter.purgeBans(purgeIds);
         }
