@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
 import java.sql.ResultSet
@@ -394,7 +395,24 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     }
 
     override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit) {
-        // Api only
+        runOnThread {
+            connManager.connection
+                // language=SQLite
+                .prepareStatement("""
+                    INSERT INTO mutes(guild_id, mod_id, user_id, user_tag, unmute_date)
+                    VALUES(? , ? , ? , ? , ?)
+                """.trimIndent())
+                .apply {
+                    setString(1, guildId.toString())
+                    setString(2, modId.toString())
+                    setString(3, userId.toString())
+                    setString(4, userTag)
+                    setDate(5, unmuteDate.toDate())
+
+                    execute()
+                    closeOnCompletion()
+                }
+        }
     }
 
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
@@ -468,9 +486,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     }
 
     override fun purgeBans(ids: List<Int>) {
-        // Api only
         runOnThread {
-//            val idsString = ids.joinToString(separator = ", ")
+            // val idsString = ids.joinToString(separator = ", ")
             val conn = connManager.connection
             conn.prepareStatement("DELETE FROM bans WHERE id in (?)").apply {
                 setArray(1, conn.createArrayOf("integer", ids.toTypedArray()))
@@ -734,6 +751,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     }
 
     private fun Date.toSQL() = java.sql.Date(this.time)
+
+    private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {
         val blackList = getBlackListsForGuild(guildId)
