@@ -20,13 +20,10 @@ package ml.duncte123.skybot.listeners;
 
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
-import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,7 +39,6 @@ import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -162,7 +158,7 @@ public class ReadyShutdownListener extends MessageListener {
                 final Method[] methods = aClass.getDeclaredMethods();
 
                 // Loop over all the methods that start with "start"
-                for (Method method : methods) {
+                for (final Method method : methods) {
                     if (!method.getName().startsWith("start")) {
                         continue;
                     }
