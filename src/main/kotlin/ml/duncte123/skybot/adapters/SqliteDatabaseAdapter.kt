@@ -363,7 +363,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         runOnThread {
             connManager.connection.prepareStatement(
                 // language=SQLite
-                "INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) VALUES(? , ? , ? , ? , current_date , ?, ?)"
+                """
+                    INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId)
+                    VALUES(? , ? , ? , ? , current_date , ?, ?)
+                """.trimIndent()
             ).apply {
 
                 setString(1, modId.toString())
@@ -382,7 +385,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         runOnThread {
             connManager.connection.prepareStatement(
                 // language=SQLite
-                "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )").apply {
+                """
+                    INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date)
+                    VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )
+                """.trimIndent()).apply {
 
                 setString(1, modId.toString())
                 setString(2, userId.toString())
@@ -487,11 +493,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
 
     override fun purgeBans(ids: List<Int>) {
         runOnThread {
-            // val idsString = ids.joinToString(separator = ", ")
-            val conn = connManager.connection
-            conn.prepareStatement("DELETE FROM bans WHERE id in (?)").apply {
-                setArray(1, conn.createArrayOf("integer", ids.toTypedArray()))
-                execute()
+            val idsString = ids.joinToString(separator = ", ")
+            connManager.connection.createStatement().apply {
+                execute("DELETE FROM bans WHERE id in ($idsString)")
                 closeOnCompletion()
             }
         }
@@ -543,10 +547,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
 
     override fun purgeMutes(ids: List<Int>) {
         runOnThread {
-            val conn = connManager.connection
-            conn.prepareStatement("DELETE FROM mutes WHERE id in (?)").apply {
-                setArray(1, conn.createArrayOf("integer", ids.toTypedArray()))
-                execute()
+            val idsString = ids.joinToString(separator = ", ")
+            connManager.connection.createStatement().apply {
+                execute("DELETE FROM mutes WHERE id in ($idsString)")
                 closeOnCompletion()
             }
         }

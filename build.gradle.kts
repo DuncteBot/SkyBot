@@ -255,6 +255,7 @@ shadowJar.apply {
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
+        "**/SQLiteTimers.class",
         "**/SqliteDatabaseAdapter**"
     )
 
