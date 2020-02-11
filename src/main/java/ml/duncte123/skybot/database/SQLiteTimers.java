@@ -21,13 +21,10 @@ package ml.duncte123.skybot.database;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.objects.api.Ban;
-import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.utils.AirUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -62,10 +59,8 @@ public class SQLiteTimers {
 
     private static void checkUnbansAndUnmutes(Variables variables) {
         variables.getDatabaseAdapter().getExpiredBansAndMutes(
-            (bansAndMutes) -> {
+            (bans, mutes) -> {
                 final DatabaseAdapter adapter = variables.getDatabaseAdapter();
-                final List<Ban> bans = bansAndMutes.getFirst();
-                final List<Mute> mutes = bansAndMutes.getSecond();
 
                 handleUnban(bans, adapter, variables);
                 handleUnmute(mutes, adapter, variables);

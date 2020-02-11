@@ -38,7 +38,7 @@ data class Ban
 
 data class Mute
 @JsonCreator constructor(@JsonProperty("id") val id: Int, @JsonProperty("mod_id") val modId: String,
-                         @JsonProperty("user_id") val userId: String, @JsonProperty("user_tag") val userTag: String,
+                         @JsonProperty("user_id") val userId: String, @JsonProperty("") val userTag: String,
                          @JsonProperty("guild_id") val guildId: String)
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)

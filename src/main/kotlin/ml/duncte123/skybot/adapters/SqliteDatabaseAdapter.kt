@@ -497,8 +497,48 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
-    override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
-        // Api only
+    override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
+        runOnThread {
+            val mutes = arrayListOf<Mute>()
+            val bans = arrayListOf<Ban>()
+
+            val muteSmt = connManager.connection.createStatement()
+            val banSmt = connManager.connection.createStatement()
+
+            muteSmt.closeOnCompletion()
+            banSmt.closeOnCompletion()
+
+            muteSmt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP")
+                .apply {
+                    while (next()) {
+                        mutes.add(Mute(
+                            getInt("id"),
+                            getString("mod_id"),
+                            getString("user_id"),
+                            getString("user_tag"),
+                            getString("guild_id")
+                        ))
+                    }
+                    close()
+                }
+
+            banSmt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP")
+                .apply {
+                    while (next()) {
+                        bans.add(Ban(
+                            getInt("id"),
+                            getString("modUserId"),
+                            getString("userId"),
+                            getString("Username"),
+                            getString("discriminator"),
+                            getString("guildId")
+                        ))
+                    }
+                    close()
+                }
+
+            callback(bans, mutes)
+        }
     }
 
     override fun purgeMutes(ids: List<Int>) {
