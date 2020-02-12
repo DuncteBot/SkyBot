@@ -115,7 +115,7 @@ dependencies {
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev212-1.25.0")
 
     // kotlin
-    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib-jdk8"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
 
     //Spark

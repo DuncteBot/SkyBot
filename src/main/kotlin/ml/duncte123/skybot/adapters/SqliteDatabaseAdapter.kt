@@ -78,11 +78,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
         runOnThread {
             // language=SQLite
-            connManager.connection.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?").apply {
-                setString(1, invoke)
-                setString(2, guildId.toString())
-                execute()
-                closeOnCompletion()
+            connManager.connection.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?").use {
+                it.setString(1, invoke)
+                it.setString(2, guildId.toString())
+                it.execute()
+                it.closeOnCompletion()
             }
 
             callback.invoke(true)
@@ -109,12 +109,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     override fun addWordToBlacklist(guildId: Long, word: String) {
         runOnThread {
             // language=SQLite
-            connManager.connection.prepareStatement("INSERT INTO blacklists(guild_id, word) VALUES( ? , ? )").apply {
-                setString(1, guildId.toString())
-                setString(2, word)
+            connManager.connection.prepareStatement("INSERT INTO blacklists(guild_id, word) VALUES( ? , ? )").use {
+                it.setString(1, guildId.toString())
+                it.setString(2, word)
 
-                executeUpdate()
-                closeOnCompletion()
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -128,13 +128,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
         runOnThread {
             // language=SQLite
-            connManager.connection.prepareStatement("DELETE FROM blacklists WHERE guild_id = ? AND word = ?").apply {
+            connManager.connection.prepareStatement("DELETE FROM blacklists WHERE guild_id = ? AND word = ?").use {
 
-                setString(1, guildId.toString())
-                setString(2, word)
+                it.setString(1, guildId.toString())
+                it.setString(2, word)
 
-                executeUpdate()
-                closeOnCompletion()
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -202,33 +202,33 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 aiSensitivity = ?
                 WHERE guildId='${guildSettings.guildId}'
                 """.trimMargin()
-            ).apply {
-                setBoolean(1, guildSettings.isEnableJoinMessage)
-                setBoolean(2, guildSettings.isEnableSwearFilter)
-                setString(3, fixUnicodeAndLines(guildSettings.customJoinMessage))
-                setString(4, replaceUnicode(guildSettings.customPrefix))
-                setString(5, guildSettings.autoroleRole.toString())
-                setString(6, guildSettings.logChannel.toString())
-                setString(7, guildSettings.welcomeLeaveChannel.toString())
-                setString(8, fixUnicodeAndLines(guildSettings.customLeaveMessage))
-                setString(9, fixUnicodeAndLines(guildSettings.serverDesc))
-                setBoolean(10, guildSettings.isAnnounceTracks)
-                setBoolean(11, guildSettings.isAutoDeHoist)
-                setBoolean(12, guildSettings.isFilterInvites)
-                setBoolean(13, guildSettings.isEnableSpamFilter)
-                setString(14, guildSettings.muteRoleId.toString())
-                setString(15, convertJ2S(guildSettings.ratelimits))
-                setBoolean(16, guildSettings.kickState)
-                setInt(17, guildSettings.leaveTimeout)
-                setInt(18, guildSettings.spamThreshold)
-                setBoolean(19, guildSettings.isBanLogging)
-                setBoolean(20, guildSettings.isUnbanLogging)
-                setBoolean(21, guildSettings.isKickLogging)
-                setBoolean(22, guildSettings.isMuteLogging)
-                setBoolean(23, guildSettings.isWarnLogging)
-                setString(24, guildSettings.filterType.type)
-                setFloat(25, guildSettings.aiSensitivity)
-                executeUpdate()
+            ).use {
+                it.setBoolean(1, guildSettings.isEnableJoinMessage)
+                it.setBoolean(2, guildSettings.isEnableSwearFilter)
+                it.setString(3, fixUnicodeAndLines(guildSettings.customJoinMessage))
+                it.setString(4, replaceUnicode(guildSettings.customPrefix))
+                it.setString(5, guildSettings.autoroleRole.toString())
+                it.setString(6, guildSettings.logChannel.toString())
+                it.setString(7, guildSettings.welcomeLeaveChannel.toString())
+                it.setString(8, fixUnicodeAndLines(guildSettings.customLeaveMessage))
+                it.setString(9, fixUnicodeAndLines(guildSettings.serverDesc))
+                it.setBoolean(10, guildSettings.isAnnounceTracks)
+                it.setBoolean(11, guildSettings.isAutoDeHoist)
+                it.setBoolean(12, guildSettings.isFilterInvites)
+                it.setBoolean(13, guildSettings.isEnableSpamFilter)
+                it.setString(14, guildSettings.muteRoleId.toString())
+                it.setString(15, convertJ2S(guildSettings.ratelimits))
+                it.setBoolean(16, guildSettings.kickState)
+                it.setInt(17, guildSettings.leaveTimeout)
+                it.setInt(18, guildSettings.spamThreshold)
+                it.setBoolean(19, guildSettings.isBanLogging)
+                it.setBoolean(20, guildSettings.isUnbanLogging)
+                it.setBoolean(21, guildSettings.isKickLogging)
+                it.setBoolean(22, guildSettings.isMuteLogging)
+                it.setBoolean(23, guildSettings.isWarnLogging)
+                it.setString(24, guildSettings.filterType.type)
+                it.setFloat(25, guildSettings.aiSensitivity)
+                it.executeUpdate()
             }
         }
 
@@ -285,14 +285,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         runOnThread {
             connManager.connection.prepareStatement(
                 "INSERT INTO embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?"
-            ).apply {
+            ).use {
+                it.setString(1, guildId.toString())
+                it.setInt(2, color)
+                it.setInt(3, color)
 
-                setString(1, guildId.toString())
-                setInt(2, color)
-                setInt(3, color)
-
-                executeUpdate()
-                closeOnCompletion()
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -315,14 +314,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             // language=SQLite
             connManager.connection.prepareStatement(
                 "INSERT INTO oneGuildPatrons(user_id, guild_id) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET guild_id = ?"
-            ).apply {
+            ).use {
+                it.setLong(1, userId)
+                it.setLong(2, guildId)
+                it.setLong(3, guildId)
 
-                setLong(1, userId)
-                setLong(2, guildId)
-                setLong(3, guildId)
-
-                executeUpdate()
-                closeOnCompletion()
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
 
             callback.invoke(userId, guildId)
@@ -335,9 +333,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         runOnThread {
             val statement = connManager.connection.prepareStatement(
                 "SELECT * FROM oneGuildPatrons WHERE user_id = ? LIMIT 1"
-            ).apply {
-                setLong(1, userId)
-                closeOnCompletion()
+            ).use {
+                it.setLong(1, userId)
+                it.closeOnCompletion()
+
+                return@use it
             }
 
             val resultSet = statement.executeQuery()
@@ -367,16 +367,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                     INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId)
                     VALUES(? , ? , ? , ? , current_date , ?, ?)
                 """.trimIndent()
-            ).apply {
-
-                setString(1, modId.toString())
-                setString(2, userName)
-                setString(3, userDiscriminator)
-                setString(4, userId.toString())
-                setString(5, unbanDate)
-                setString(6, guildId.toString())
-                execute()
-                closeOnCompletion()
+            ).use {
+                it.setString(1, modId.toString())
+                it.setString(2, userName)
+                it.setString(3, userDiscriminator)
+                it.setString(4, userId.toString())
+                it.setString(5, unbanDate)
+                it.setString(6, guildId.toString())
+                it.execute()
+                it.closeOnCompletion()
             }
         }
     }
@@ -388,36 +387,62 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 """
                     INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date)
                     VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )
-                """.trimIndent()).apply {
-
-                setString(1, modId.toString())
-                setString(2, userId.toString())
-                setString(3, reason)
-                setString(4, guildId.toString())
-                executeUpdate()
-                closeOnCompletion()
+                """.trimIndent()).use {
+                it.setString(1, modId.toString())
+                it.setString(2, userId.toString())
+                it.setString(3, reason)
+                it.setString(4, guildId.toString())
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
 
     override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit) {
         runOnThread {
+            var oldMute: Mute? = null
+
+            // language=SQLite
+            val res1 = connManager.connection.prepareStatement("""
+                SELECT id FROM mutes WHERE guild_id = ? AND user_id = ?
+            """.trimIndent())
+                .use {
+                    it.setString(1, guildId.toString())
+                    it.setString(2, userId.toString())
+
+                    it.executeQuery()
+                }
+
+            res1.use { res ->
+                if (res.next()) {
+                    oldMute = Mute(
+                        res.getInt("id"),
+                        res.getString("mod_id"),
+                        res.getString("user_id"),
+                        res.getString("user_tag"),
+                        res.getString("guild_id")
+                    )
+                }
+            }
+
             connManager.connection
                 // language=SQLite
                 .prepareStatement("""
                     INSERT INTO mutes(guild_id, mod_id, user_id, user_tag, unmute_date)
                     VALUES(? , ? , ? , ? , ?)
                 """.trimIndent())
-                .apply {
-                    setString(1, guildId.toString())
-                    setString(2, modId.toString())
-                    setString(3, userId.toString())
-                    setString(4, userTag)
-                    setDate(5, unmuteDate.toDate())
+                .use {
+                    it.setString(1, guildId.toString())
+                    it.setString(2, modId.toString())
+                    it.setString(3, userId.toString())
+                    it.setString(4, userTag)
+                    it.setDate(5, unmuteDate.toDate())
 
-                    execute()
-                    closeOnCompletion()
+                    it.execute()
+                    it.closeOnCompletion()
                 }
+
+            callback(oldMute)
         }
     }
 
@@ -428,9 +453,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             val smt = conn.prepareStatement(
                 // language=SQLite
                 "SELECT * FROM warnings WHERE user_id=? AND guild_id=? ORDER BY id DESC LIMIT 1"
-            ).apply {
-                setString(1, userId.toString())
-                setString(2, guildId.toString())
+            ).use {
+                it.setString(1, userId.toString())
+                it.setString(2, guildId.toString())
+
+                return@use it
             }
 
             val result = smt.executeQuery()
@@ -450,10 +477,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                 conn.prepareStatement(
                     // language=SQLite
                     "DELETE FROM warnings WHERE id=?"
-                ).apply {
-                    setInt(1, ret.id)
-                    executeUpdate()
-                    closeOnCompletion()
+                ).use {
+                    it.setInt(1, ret.id)
+                    it.executeUpdate()
+                    it.closeOnCompletion()
                 }
             }
 
@@ -469,10 +496,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             val smt = connManager.connection.prepareStatement(
                 // language=SQLite
                 "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
-            ).apply {
-                setString(1, userId.toString())
-                setString(2, guildId.toString())
-                closeOnCompletion()
+            ).use {
+                it.setString(1, userId.toString())
+                it.setString(2, guildId.toString())
+                it.closeOnCompletion()
+                return@use it
             }
 
             val result = smt.executeQuery()
@@ -494,9 +522,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     override fun purgeBans(ids: List<Int>) {
         runOnThread {
             val idsString = ids.joinToString(separator = ", ")
-            connManager.connection.createStatement().apply {
-                execute("DELETE FROM bans WHERE id in ($idsString)")
-                closeOnCompletion()
+            connManager.connection.createStatement().use {
+                it.execute("DELETE FROM bans WHERE id in ($idsString)")
+                it.closeOnCompletion()
             }
         }
     }
@@ -513,32 +541,32 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             banSmt.closeOnCompletion()
 
             muteSmt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP")
-                .apply {
-                    while (next()) {
+                .use {
+                    while (it.next()) {
                         mutes.add(Mute(
-                            getInt("id"),
-                            getString("mod_id"),
-                            getString("user_id"),
-                            getString("user_tag"),
-                            getString("guild_id")
+                            it.getInt("id"),
+                            it.getString("mod_id"),
+                            it.getString("user_id"),
+                            it.getString("user_tag"),
+                            it.getString("guild_id")
                         ))
                     }
-                    close()
+                    it.close()
                 }
 
             banSmt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP")
-                .apply {
-                    while (next()) {
+                .use {
+                    while (it.next()) {
                         bans.add(Ban(
-                            getInt("id"),
-                            getString("modUserId"),
-                            getString("userId"),
-                            getString("Username"),
-                            getString("discriminator"),
-                            getString("guildId")
+                            it.getInt("id"),
+                            it.getString("modUserId"),
+                            it.getString("userId"),
+                            it.getString("Username"),
+                            it.getString("discriminator"),
+                            it.getString("guildId")
                         ))
                     }
-                    close()
+                    it.close()
                 }
 
             callback(bans, mutes)
@@ -548,9 +576,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     override fun purgeMutes(ids: List<Int>) {
         runOnThread {
             val idsString = ids.joinToString(separator = ", ")
-            connManager.connection.createStatement().apply {
-                execute("DELETE FROM mutes WHERE id in ($idsString)")
-                closeOnCompletion()
+            connManager.connection.createStatement().use {
+                it.execute("DELETE FROM mutes WHERE id in ($idsString)")
+                it.closeOnCompletion()
             }
         }
     }
@@ -578,13 +606,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             connManager.connection.prepareStatement(
                 // language=SQLite
                 "INSERT INTO vcAutoRoles(guild_id, voice_channel_id, role_id) VALUES(? , ? , ?)"
-            ).apply {
-
-                setString(1, guildId.toString())
-                setString(2, voiceChannelId.toString())
-                setString(3, roleId.toString())
-                executeUpdate()
-                closeOnCompletion()
+            ).use {
+                it.setString(1, guildId.toString())
+                it.setString(2, voiceChannelId.toString())
+                it.setString(3, roleId.toString())
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -600,11 +627,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             connManager.connection.prepareStatement(
                 // language=SQLite
                 "DELETE FROM vcAutoRoles WHERE voice_channel_id = ?"
-            ).apply {
-
-                setString(1, voiceChannelId.toString())
-                executeUpdate()
-                closeOnCompletion()
+            ).use {
+                it.setString(1, voiceChannelId.toString())
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -614,10 +640,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             connManager.connection.prepareStatement(
                 // language=SQLite
                 "DELETE FROM vcAutoRoles WHERE guild_id = ?"
-            ).apply {
-                setString(1, guildId.toString())
-                executeUpdate()
-                closeOnCompletion()
+            ).use {
+                it.setString(1, guildId.toString())
+                it.executeUpdate()
+                it.closeOnCompletion()
             }
         }
     }
@@ -765,13 +791,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
         val conn = connManager.connection
 
-        conn.prepareStatement(sqlQuerry).apply {
-            setString(if (isEdit) 3 else 1, guildId.toString())
-            setString(if (isEdit) 4 else 2, invoke)
-            setString(if (isEdit) 1 else 3, message)
-            setBoolean(if (isEdit) 2 else 4, autoresponse)
-            execute()
-            closeOnCompletion()
+        conn.prepareStatement(sqlQuerry).use {
+            it.setString(if (isEdit) 3 else 1, guildId.toString())
+            it.setString(if (isEdit) 4 else 2, invoke)
+            it.setString(if (isEdit) 1 else 3, message)
+            it.setBoolean(if (isEdit) 2 else 4, autoresponse)
+            it.execute()
+            it.closeOnCompletion()
         }
 
         return null
