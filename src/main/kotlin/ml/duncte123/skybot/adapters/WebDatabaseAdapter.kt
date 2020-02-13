@@ -290,7 +290,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
+    override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
         runOnThread {
             val storedData = apis.getExpiredBansAndMutes()
             val storedBans = storedData.get("bans")
@@ -299,7 +299,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val bans: List<Ban> = jackson.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
             val mutes: List<Mute> = jackson.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
 
-            callback(Pair(bans, mutes))
+            callback(bans, mutes)
         }
     }
 

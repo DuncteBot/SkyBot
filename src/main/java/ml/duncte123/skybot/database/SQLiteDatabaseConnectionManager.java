@@ -180,6 +180,18 @@ public class SQLiteDatabaseConnectionManager {
                     "remind_date DATETIME NOT NULL," +
                     "channel_id VARCHAR(255) DEFAULT NULL);"
             );
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS mutes" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guild_id VARCHAR(255) NOT NULL," +
+                    "mod_id VARCHAR(255) NOT NULL," +
+                    "user_id VARCHAR(255) NOT NULL," +
+                    "user_tag VARCHAR(255) NOT NULL," +
+                    "mute_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                    "unmute_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+                    ");"
+            );
         }
         catch (SQLException e) {
             e.printStackTrace();
