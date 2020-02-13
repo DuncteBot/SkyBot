@@ -42,7 +42,7 @@ class CoffeeCommand : Command() {
 
     private fun coffee(cb: (String) -> Unit) {
         WebUtils.ins.getJSONObject("https://coffee.alexflipnote.dev/random.json").async {
-            cb.invoke(it.get("file").asText())
+            cb(it["file"].asText())
         }
     }
 }
