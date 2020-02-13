@@ -107,8 +107,14 @@ public class GuildInfoCommand extends Command {
             eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
         }
 
+        String owner = "Unknown";
+
+        if (g.getOwner() != null) {
+            owner = g.getOwner().getEffectiveName();
+        }
+
         eb.setThumbnail(event.getGuild().getIconUrl())
-            .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+            .addField("Basic Info", "**Owner:** " + owner + "\n" +
                 "**Name:** " + g.getName() + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
                 "**Region:** " + g.getRegion().getName() + "\n" +
