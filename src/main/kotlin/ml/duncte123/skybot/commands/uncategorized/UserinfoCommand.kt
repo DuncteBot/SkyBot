@@ -159,9 +159,9 @@ class UserinfoCommand : Command() {
         appendln()
 
         if (joins[index] == member) {
-            append("[${joins[index].effectiveName}](https://patreon.com/DuncteBot)")
+            append("[${joins[index].effectiveName.escapeMarkDown()}](https://patreon.com/DuncteBot)")
         } else {
-            append(joins[index].effectiveName)
+            append(joins[index].effectiveName.escapeMarkDown())
         }
 
         for (i in index + 1 until index + 7) {

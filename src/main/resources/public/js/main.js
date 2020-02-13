@@ -16,12 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function _(el) {
+// We had to rename this form _ to id because
+// the fucking patreon button has lodash
+function id(el) {
     return document.getElementById(el);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    _("year").innerHTML = new Date().getFullYear();
+    id("year").innerHTML = new Date().getFullYear();
     M.Sidenav.init(document.querySelectorAll(".sidenav"));
 });
 

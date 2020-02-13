@@ -18,7 +18,7 @@
 
 function initModal() {
     window.storedCommands = {};
-    window.editorRow = _('editorRow');
+    window.editorRow = id('editorRow');
 }
 
 function showEditor() {
@@ -31,7 +31,7 @@ function hideEditor() {
 }
 
 function initEitor() {
-    const el = _('editor');
+    const el = id('editor');
     window.editor = CodeMirror.fromTextArea(el, {
         mode: 'jagtag',
         lineNumbers: true,
@@ -54,7 +54,7 @@ function initEitor() {
             editor.showHint();
         }
         editor.save();
-        _("chars").innerHTML = editor.getValue().length;
+        id("chars").innerHTML = editor.getValue().length;
     });
 }
 
@@ -65,7 +65,7 @@ function loadCommands() {
         .then((response) => response.json())
         .then((json) => {
 
-            const div = _("commands");
+            const div = id("commands");
 
             if (json.status === "error") {
 
@@ -104,7 +104,7 @@ function loadCommands() {
 
         })
         .catch(
-            () => _("commands").innerHTML = "Your session has expired, please refresh your browser"
+            () => id("commands").innerHTML = "Your session has expired, please refresh your browser"
         );
 }
 
@@ -126,17 +126,17 @@ function deleteCommand(name) {
     doFetch('DELETE', {name: name}, () => {
         toast("Deleted!");
         hideEditor();
-        _("chars").innerHTML = 0;
+        id("chars").innerHTML = 0;
         setTimeout(() => window.location.reload(), 500);
     });
 }
 
 function clearEditor() {
-    _("chars").innerHTML = 0;
+    id("chars").innerHTML = 0;
     editor.setValue("");
     editor.save();
     editor.refresh();
-    _("commandName").value = '';
+    id("commandName").value = '';
     hideEditor();
 }
 
@@ -150,37 +150,37 @@ function saveEdit(name) {
 
     const command = storedCommands[name];
     command.message = editor.getValue();
-    command.autoresponse = _("autoresponse").checked;
+    command.autoresponse = id("autoresponse").checked;
 
     doFetch('PATCH', command, () => {
         toast("Saved!");
         hideEditor();
-        _("chars").innerHTML = 0;
+        id("chars").innerHTML = 0;
     });
 }
 
 function showModal(invoke, message, method, autoresponse) {
     editor.setValue(message);
     editor.save();
-    _("commandName").value = invoke;
-    _("autoresponse").checked = autoresponse;
+    id("commandName").value = invoke;
+    id("autoresponse").checked = autoresponse;
 
-    _("saveBtn").setAttribute("href", `javascript:${method};`);
-    _("chars").innerHTML = message.length;
+    id("saveBtn").setAttribute("href", `javascript:${method};`);
+    id("chars").innerHTML = message.length;
 
     showEditor();
     editor.refresh();
 }
 
 function prepareCreateNew() {
-    _("chars").innerHTML = 0;
-    _("commandName").value = '';
+    id("chars").innerHTML = 0;
+    id("commandName").value = '';
     editor.save();
     showModal("", "", "createNew()", false);
 }
 
 function createNew() {
-    let name = _("commandName").value;
+    let name = id("commandName").value;
     name = name.replace(/\s+/g, '');
 
     if (name === "") {
@@ -209,7 +209,7 @@ function createNew() {
         name: name,
         message: action,
         guildId: guildId,
-        autoresponse: _("autoresponse").checked,
+        autoresponse: id("autoresponse").checked,
     };
 
     storedCommands[name] = command;
@@ -220,7 +220,7 @@ function createNew() {
         toast("Command added");
         setTimeout(() => window.location.reload(), 500);
         // modal.close();
-        _("chars").innerHTML = 0;
+        id("chars").innerHTML = 0;
     });
 }
 

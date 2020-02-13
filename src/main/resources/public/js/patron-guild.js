@@ -18,12 +18,12 @@
 
 function submitForm(token) {
 
-    let userId = _("user_id").value;
-    let guildId = _("guild_id").value;
+    let userId = id("user_id").value;
+    let guildId = id("guild_id").value;
 
-    _("btn").disabled = true;
-    _("btn").classList.add("disabled");
-    _("msg").innerHTML = "Checking ids.....";
+    id("btn").disabled = true;
+    id("btn").classList.add("disabled");
+    id("msg").innerHTML = "Checking ids.....";
 
     fetch("/api/checkUserAndGuild", {
         method: "POST",
@@ -37,11 +37,11 @@ function submitForm(token) {
             reset("");
 
             if (json.code !== 200) {
-                _("confirm").innerHTML = `ERROR: <b>${getMessage(json.message)}</b>`;
+                id("confirm").innerHTML = `ERROR: <b>${getMessage(json.message)}</b>`;
                 return;
             }
 
-            _("confirm").innerHTML = `
+            id("confirm").innerHTML = `
                     <div class="row">
                     <div class="col s12 m6">
                         <div class="card small indigo">
@@ -58,7 +58,7 @@ function submitForm(token) {
                                 <p>If this is not correct please change the ids in the form and press submit again.</p>
                             </div>
                             <div class="card-action ">
-                                <a href="#" class="btn green white-text text-lighten-4" onclick="_('patrons').submit(); return false;">This is correct</a>
+                                <a href="#" class="btn green white-text text-lighten-4" onclick="id('patrons').submit(); return false;">This is correct</a>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ function submitForm(token) {
 
 function reset(message) {
     window.scrollTo(0, 0);
-    _("btn").disabled = false;
-    _("btn").classList.remove("disabled");
-    _("msg").innerHTML = message;
+    id("btn").disabled = false;
+    id("btn").classList.remove("disabled");
+    id("msg").innerHTML = message;
 }

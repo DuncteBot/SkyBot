@@ -124,8 +124,8 @@ dependencies {
 
     // Oauth
 //    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "2652bb0")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "2652bb0")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "cb9b28a")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "cb9b28a")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")

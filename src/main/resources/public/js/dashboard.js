@@ -16,39 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-fetch("/api/getUserGuilds", {
-    credentials: "same-origin"
-})
-    .then(response => response.json())
-    .then(json => {
-        const div = _("guilds");
+document.addEventListener('DOMContentLoaded', () => {
+    fetch("/api/getUserGuilds", {
+        credentials: "same-origin"
+    })
+        .then(response => response.json())
+        .then(json => {
+            id("guilds");
+            const div = id("guilds");
 
-        if (json.status === "error") {
-            div.innerHTML = `<h1 class="center">Session not valid</h1>
+            if (json.status === "error") {
+                div.innerHTML = `<h1 class="center">Session not valid</h1>
                               <h5 class="center">Please refresh your browser or <a href="/logout">click here</a> to log out</h5>`;
 
-            return;
-        }
-
-        if (json.guilds.length < 0) {
-            div.innerHTML = `<h1 class="center">No servers found</h1>
-                              <h5 class="center">Make sure that you have administrator permission in at least 1 server</h5>`;
-
-            return;
-        }
-
-        div.innerHTML = "";
-
-        for (const guild of json.guilds) {
-            let members = "Bot not in server";
-            let settingsLink = `<a href="https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}" target="_blank">Invite Bot</a>`;
-
-            if (guild.members > -1) {
-                members = guild.members + " members";
-                settingsLink = `<a href="/server/${guild.id}/">Edit settings</a>`;
+                return;
             }
 
-            div.innerHTML += `<div class="col s12 m6 l4 xl3">
+            if (json.guilds.length < 0) {
+                div.innerHTML = `<h1 class="center">No servers found</h1>
+                              <h5 class="center">Make sure that you have administrator permission in at least 1 server</h5>`;
+
+                return;
+            }
+
+            div.innerHTML = "";
+
+            for (const guild of json.guilds) {
+                let members = "Bot not in server";
+                let settingsLink = `<a href="https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}" target="_blank">Invite Bot</a>`;
+
+                if (guild.members > -1) {
+                    members = guild.members + " members";
+                    settingsLink = `<a href="/server/${guild.id}/">Edit settings</a>`;
+                }
+
+                div.innerHTML += `<div class="col s12 m6 l4 xl3">
                             <div class="card horizontal hoverable">
                                 <div class="card-image">
                                     <img src="${guild.iconUrl}?size=256">
@@ -64,9 +66,9 @@ fetch("/api/getUserGuilds", {
                                 </div>
                             </div>
                         </div>`;
-        }
+            }
 
-        div.innerHTML += `<div class="col s12 m6 l4 xl3">
+            div.innerHTML += `<div class="col s12 m6 l4 xl3">
                             <div class="card horizontal hoverable">
                                 <div class="card-image">
                                     <img src="https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random() * 5)}.png?size=256" />
@@ -83,7 +85,8 @@ fetch("/api/getUserGuilds", {
                             </div>
                         </div>`;
 
-    })
-    .catch(() =>
-        _("guilds").innerHTML = "Your session has expired, please refresh your browser"
-    );
+        })
+        .catch(() =>
+            id("guilds").innerHTML = "Your session has expired, please refresh your browser"
+        );
+});

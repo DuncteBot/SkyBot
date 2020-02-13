@@ -83,8 +83,8 @@
         M.FormSelect.init(document.querySelectorAll('select'));
 
         function checkSelect(selectId, checkBox) {
-            let box = _(checkBox);
-            let select = _(selectId);
+            let box = id(checkBox);
+            let select = id(selectId);
 
             if (select.value) {
                 box.checked = true;
