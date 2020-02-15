@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import me.duncte123.botcommons.web.ContentType.JSON
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
@@ -376,7 +377,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     fun getLove(name: String, name2: String): JsonNode? {
-        val json = executeRequest(defaultRequest("love/$name/$name2", false))
+        val json = executeRequest(defaultRequest("love/${name.enc()}/${name2.enc()}", false))
 
         if (!json.get("success").asBoolean()) {
             logger.error("Failed to get love\n" +
@@ -654,6 +655,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun JsonNode.toJsonString() = mapper.writeValueAsString(this)
+
+    private fun String.enc() = urlEncodeString(this)
 
     companion object {
         const val API_HOST = "https://apis.duncte123.me"
