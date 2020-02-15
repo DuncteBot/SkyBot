@@ -41,7 +41,7 @@ plugins {
     id("com.github.breadmoirai.github-release") version "2.2.10"
 }
 
-val numberVersion = "3.90.0"
+val numberVersion = "3.91.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -194,7 +194,8 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
 
         if (isCi) {
             val items = mapOf(
-                "versionObj" to project.version
+//                "versionObj" to project.version
+                "versionObj" to numberVersion
             )
 
             filter<ReplaceTokens>(mapOf("tokens" to items))

@@ -65,8 +65,9 @@ public class ChangeLogCommand extends Command {
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
             final String body = json.get("body").asText();
+            final String version = json.get("tag_name").asText();
             final EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                .setTitle("Changelog for DuncteBot", json.get("html_url").asText());
+                .setTitle("Changelog for DuncteBot v" + version, json.get("html_url").asText());
 
             for (final String item : body.split("\n")) {
                 final String hash = item.substring(0, 7);
