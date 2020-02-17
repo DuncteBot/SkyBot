@@ -51,6 +51,14 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getTrash(String face, String trash) {
+        final QueryBuilder builder = new QueryBuilder().append("face", face).append("trash", trash);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("trash" + builder.build()),
+            IOHelper::read
+        );
+    }
+
     public PendingRequest<byte[]> getAchievement(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(

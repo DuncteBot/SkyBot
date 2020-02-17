@@ -268,6 +268,7 @@ public class CommandManager {
         this.addCommand(new ToggleSwearFilterCommand());
         this.addCommand(new TokenCommand());
         this.addCommand(new TranslateCommand());
+        this.addCommand(new TrashCommand());
         this.addCommand(new UnbanCommand());
         this.addCommand(new UnlockEmoteCommand());
         this.addCommand(new UnmuteCommand());
