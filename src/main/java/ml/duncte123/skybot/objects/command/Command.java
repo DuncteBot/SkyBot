@@ -166,8 +166,13 @@ public abstract class Command implements ICommand {
         return this.usageInstructions.invoke(prefix, invoke);
     }
 
+    @Nonnull
+    public String getUsageInstructions(CommandContext ctx) {
+        return this.usageInstructions.invoke(ctx.getInvoke(), ctx.getPrefix());
+    }
+
     protected void sendUsageInstructions(CommandContext ctx) {
-        sendMsg(ctx, "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+        sendMsg(ctx, "Usage: " + this.getUsageInstructions(ctx));
     }
 
     @Override

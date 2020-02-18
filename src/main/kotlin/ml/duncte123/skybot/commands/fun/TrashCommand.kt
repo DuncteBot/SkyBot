@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand
 import ml.duncte123.skybot.extensions.getStaticAvatarUrl
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -25,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 class TrashCommand : NoPatronImageCommand() {
 
     init {
+        this.requiresArgs = true
         this.name = "trash"
     }
 
@@ -33,8 +35,22 @@ class TrashCommand : NoPatronImageCommand() {
         // if bot: send bug report form, random chance of getting a funny response
         // if self: bot calls user trash
 
-        val trash = ctx.author.getStaticAvatarUrl()
-        val face = ctx.selfUser.getStaticAvatarUrl()
+        val mentionedArg = ctx.getMentionedArg(0)
+
+        if (mentionedArg.isEmpty()) {
+            sendMsg(ctx, "Who do you want to call trash? (usage: ${this.getUsageInstructions(ctx)}}")
+            return
+        }
+
+        val trashUser = mentionedArg[0].user
+        var faceUser = ctx.author
+
+        if (faceUser == trashUser) {
+            faceUser = ctx.selfUser
+        }
+
+        val trash = trashUser.getStaticAvatarUrl()
+        val face = faceUser.getStaticAvatarUrl()
 
         ctx.alexFlipnote.getTrash(face, trash).async {
             handleBasicImage(ctx.event, it)
