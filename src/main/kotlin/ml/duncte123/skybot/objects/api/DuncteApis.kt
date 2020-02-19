@@ -70,18 +70,18 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put(RequestBody.create(null, "{}"))
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             return false
         }
 
-        val command = response.get("data")
+        val command = response["data"]
         val commandManager = variables.commandManager
 
         commandManager.customCommands.add(CustomCommandImpl(
-            command.get("invoke").asText(),
-            command.get("message").asText(),
-            command.get("guildId").asLong(),
-            command.get("autoresponse").asBoolean()
+            command["invoke"].asText(),
+            command["message"].asText(),
+            command["guildId"].asLong(),
+            command["autoresponse"].asBoolean()
         ))
 
         return true
@@ -94,40 +94,40 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getGuildSetting(guildId: Long): JsonNode? {
         val res = executeRequest(defaultRequest("guildsettings/$guildId"))
 
-        if (!res.get("success").asBoolean()) {
+        if (!res["success"].asBoolean()) {
             return null
         }
 
-        return res.get("data")
+        return res["data"]
     }
 
     fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
 
-        return response.get("success").asBoolean()
+        return response["success"].asBoolean()
     }
 
     fun deleteGuildSetting(guildId: Long) {
         val response = executeRequest(defaultRequest("guildsettings/$guildId").delete())
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to delete guild setting\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
     fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = postJSON("guildsettings", json)
-        val success = response.get("success").asBoolean()
+        val success = response["success"].asBoolean()
 
         if (success) {
             return true
         }
 
         logger.error("Failed to register new guild\n" +
-            "Response: {}", response.get("error").toString())
+            "Response: {}", response["error"].toString())
 
         return false
     }
@@ -136,9 +136,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val json = mapper.createObjectNode().put("word", word)
         val response = postJSON("guildsettings/$guildId/blacklist", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to add word to blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -148,9 +148,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         words.forEach { array.add(it) }
         val response = postJSON("guildsettings/$guildId/blacklist/batch", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to batch add to blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -158,9 +158,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val json = mapper.createObjectNode().put("word", word)
         val response = deleteJSON("guildsettings/$guildId/blacklist", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to remove word from blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -168,9 +168,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest("guildsettings/$guildId/blacklist/all").delete()
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to clear blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
