@@ -28,8 +28,8 @@ class TrashCommand : NoPatronImageCommand() {
     init {
         this.requiresArgs = true
         this.name = "trash"
-        this.helpFunction = { _, _ -> "Call someone trash"}
-        this.usageInstructions = {prefix, invoke -> "`$prefix$invoke <@user>`"}
+        this.helpFunction = { _, _ -> "Call someone trash" }
+        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
     }
 
     override fun execute(ctx: CommandContext) {
@@ -46,19 +46,24 @@ class TrashCommand : NoPatronImageCommand() {
         val trashUser = mentionedArg[0].user
         var faceUser = ctx.author
 
+        // If the mentioned user is the bot we will send a link to the suggestions page
+        // Maybe there is some sort of issue with the bot that needs to be fixed
         if (trashUser == ctx.selfUser) {
             sendMsg(ctx, """It's sad to hear that I'm trash.
                             |Try suggesting a fix for any issues that you're facing on this page <https://dunctebot.com/suggest>""".trimMargin())
             return
         }
 
+        // If the user mentioned themselves the bot is gonna call them trash
         if (faceUser == trashUser) {
             faceUser = ctx.selfUser
         }
 
+        // Get the avatar urls for the users
         val trash = trashUser.getStaticAvatarUrl()
         val face = faceUser.getStaticAvatarUrl()
 
+        // Generate and send the image to discord
         ctx.alexFlipnote.getTrash(face, trash).async {
             handleBasicImage(ctx.event, it)
         }
