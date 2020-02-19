@@ -39,12 +39,12 @@ class GenderBendCommand : Command() {
             Flag(
                 'f',
                 "female",
-                "Sets the input as a female name"
+                "Converts the name to a female name"
             ),
             Flag(
                 'm',
                 "male",
-                "Sets the input as a male name"
+                "Converts the name to a male name"
             )
         )
     }
@@ -57,17 +57,17 @@ class GenderBendCommand : Command() {
             return
         }
 
-        var inputGender = "Female"
+        var targetGender = "Male"
         var flag = flags["f"]
 
         if (flag == null) {
             flag = flags["m"]!!
-            inputGender = "Male"
+            targetGender = "Female"
         }
 
         val name = flag.joinToString(separator = " ")
 
-        flipGender(name, inputGender) {
+        flipGender(name, targetGender) {
             sendMsg(ctx, """Original name: $name
                 |Changed name: $it
             """.trimMargin())
