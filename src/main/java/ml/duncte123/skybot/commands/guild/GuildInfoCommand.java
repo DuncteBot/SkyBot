@@ -18,10 +18,11 @@
 
 package ml.duncte123.skybot.commands.guild;
 
+import kotlin.Pair;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.extensions.PrettyTimeKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -30,12 +31,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -62,46 +59,46 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        try {
-            final Guild g = event.getGuild();
+        final Guild g = ctx.getJDAGuild();
 
-            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.retrieveInvites().queue((invites) -> {
-
-                        if (invites.isEmpty()) {
-                            sendGuildInfoEmbed(event, ctx, "");
-                            return;
-                        }
-
-                        final Invite invite = invites.get(0);
-                        sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
-                    });
-                } else {
-                    sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, g.getVanityUrl()));
-                }
-            } else {
-                sendGuildInfoEmbed(event, ctx, "");
+            // If the guild has the VANITY_URL feature enabled or the vanityCode is not null the guild has a vanity url
+            // We do this check before fetching the invites so that we can display the vanity url if they have one
+            if (g.getFeatures().contains("VANITY_URL") || g.getVanityCode() != null) {
+                sendGuildInfoEmbed(ctx, String.format(INVITE_STRING_TEMPLATE, g.getVanityCode()));
+                return;
             }
 
-        }
-        catch (Exception e) {
-            logger.error("GuildInfoCommand", e);
-            MessageUtils.sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
-        }
+            // Check if the selfuser has the manage server permissions
+            // We can only fetch the invites when we have those permissions
+            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+                // Fetch the invites for the guild
+                g.retrieveInvites().queue((invites) -> {
+
+                    // If there are no invites we will put give an empty string
+                    if (invites.isEmpty()) {
+                        sendGuildInfoEmbed(ctx, null);
+                        return;
+                    }
+
+                    // Get the first invite and format that with the code
+                    final Invite invite = invites.get(0);
+                    sendGuildInfoEmbed(ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
+                });
+
+                return;
+            }
+
+            // If there is no vanity url and we are not allowed to fetch invites
+            // we will default to the empty string for the invite so that we don't crash
+            sendGuildInfoEmbed(ctx, "");
     }
 
-    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {
-        final Guild g = event.getGuild();
+    private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
+        final Guild g = ctx.getJDAGuild();
         final double[] ratio = GuildUtils.getBotRatio(g);
         final EmbedBuilder eb = EmbedUtils.defaultEmbed();
         final GuildSettings settings = ctx.getGuildSettings();
-
-        final OffsetDateTime createTime = g.getTimeCreated();
-        final Date createTimeDate = Date.from(createTime.toInstant());
-        final String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        final String createTimeHuman = ctx.getVariables().getPrettyTime().format(createTimeDate);
+        final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), g);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
@@ -113,19 +110,19 @@ public class GuildInfoCommand extends Command {
             owner = g.getOwner().getEffectiveName();
         }
 
-        eb.setThumbnail(event.getGuild().getIconUrl())
+        eb.setThumbnail(g.getIconUrl())
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
                 "**Name:** " + g.getName() + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
                 "**Region:** " + g.getRegion().getName() + "\n" +
-                "**Created at:** " + String.format("%s (%s)", createTimeFormat, createTimeHuman) + "\n" +
+                "**Created at:** " + String.format("%s (%s)", times.getFirst(), times.getSecond()) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)
             .addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
                 "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
                 "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
-        sendEmbed(event, eb.build());
+        sendEmbed(ctx, eb.build());
     }
 
 }

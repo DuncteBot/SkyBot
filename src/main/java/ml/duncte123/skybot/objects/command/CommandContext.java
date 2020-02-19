@@ -32,6 +32,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.notfab.caching.client.CacheClient;
@@ -229,6 +230,10 @@ public class CommandContext implements ICommandContext {
     @Override
     public DunctebotGuild getGuild() {
         return this.duncteBotGuild;
+    }
+
+    public Guild getJDAGuild() {
+        return this.event.getGuild();
     }
 
     // --------------- Private methods --------------- //

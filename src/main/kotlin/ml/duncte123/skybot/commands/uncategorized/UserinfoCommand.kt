@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.getStaticAvatarUrl
+import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -39,7 +40,6 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.stream.Collectors
@@ -118,11 +118,7 @@ class UserinfoCommand : Command() {
     }
 
     private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
-
-        val createTime = user.timeCreated
-        val createTimeDate = Date.from(createTime.toInstant())
-        val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        val createTimeHuman = prettyTime.format(createTimeDate)
+        val times = prettyTime.parseTimes(user)
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(guild.getColor())
@@ -132,7 +128,7 @@ class UserinfoCommand : Command() {
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name.escapeMarkDown()}
-                        |**Account Created:** $createTimeFormat ($createTimeHuman)
+                        |**Account Created:** ${times.first} (${times.second})
                         |$nitroUserLink ${user.isNitro()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
@@ -186,26 +182,18 @@ class UserinfoCommand : Command() {
         val user = member.user
         val guild = ctx.guild
 
-        val createTime = user.timeCreated
-        val createTimeDate = Date.from(createTime.toInstant())
-        val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        val createTimeHuman = prettyTime.format(createTimeDate)
+        val userTimes = prettyTime.parseTimes(user)
+        val memberTimes = prettyTime.parseTimes(member)
 
-        val joinTime = member.timeJoined
-        val joinTimeDate = Date.from(joinTime.toInstant())
-        val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        val joinTimeHuman = prettyTime.format(joinTimeDate)
         val mStatus = member.onlineStatus
 
         val boostingSinceMsg = if (member.timeBoosted == null) {
             ""
         } else {
             val boostTime = member.timeBoosted!!
-            val boostTimeDate = Date.from(boostTime.toInstant())
-            val boostTimeFormat = boostTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
-            val boostTimeHuman = prettyTime.format(boostTimeDate)
+            val boostTimes = prettyTime.parseTimes(boostTime)
 
-            "\n**Boosting since:** ${boostTime.toBoostEmote()} $boostTimeFormat ($boostTimeHuman)"
+            "\n**Boosting since:** ${boostTime.toBoostEmote()} ${boostTimes.first} (${boostTimes.second})"
         }
 
         val embed = EmbedUtils.defaultEmbed()
@@ -216,9 +204,9 @@ class UserinfoCommand : Command() {
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${member.effectiveName.escapeMarkDown()}
-                        |**Account Created:** $createTimeFormat ($createTimeHuman)
+                        |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${user.isNitro().toEmoji()}
-                        |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
+                        |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
                         |**Online Status:** ${mStatus.toEmote()} ${mStatus.key}
