@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -38,21 +39,32 @@ class RoleInfoCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
+        // Obtain the list of target roles
+        // If the arguments are empty we will use the roles that the member has
+        // otherwise we will pick the one that is mentioned
         val roles: List<Role> = if (ctx.args.isEmpty()) {
             ctx.member.roles
         } else {
-            FinderUtil.findRoles(ctx.argsRaw, ctx.guild)
+            FinderUtil.findRoles(ctx.argsRaw, ctx.jdaGuild)
         }
 
+        // If there are no roles found we need to send an error message with a small hint
         if (roles.isEmpty()) {
-            sendMsg(ctx, "No roles found, make sure that you have a role or are typing the name of a role on this server")
+            sendMsg(ctx, """No roles found, make sure that you have a role or are typing the name of a role on this server
+                |Hint: you cna use `${ctx.prefix}roles` to get a list of the roles in this server
+            """.trimMargin())
 
             return
         }
 
+        // In order: get the highest role
+        // Map the permissions to a readable string
+        // Get the amount of members with this role
+        // Get the creation times of this role
         val role = roles[0]
         val perms = role.permissions.joinToString { it.getName() }
-        val memberCount = ctx.guild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
+        val memberCount = ctx.jdaGuild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
+        val times = ctx.variables.prettyTime.parseTimes(role)
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(role.colorRaw)
@@ -61,6 +73,7 @@ class RoleInfoCommand : Command() {
                 |**Color:** ${colorToHex(role.colorRaw)}
                 |**Id:** ${role.id}
                 |**Name:** ${role.name}
+                |**Created:** ${times.first} (${times.second})
                 |**Position:** ${role.position}
                 |**Members with this role:** $memberCount
                 |**Managed:** ${role.isManaged.toEmoji()}
