@@ -28,22 +28,29 @@ class TrashCommand : NoPatronImageCommand() {
     init {
         this.requiresArgs = true
         this.name = "trash"
+        this.helpFunction = { _, _ -> "Call someone trash"}
+        this.usageInstructions = {prefix, invoke -> "`$prefix$invoke <@user>`"}
     }
 
     override fun execute(ctx: CommandContext) {
-        // db!trash <user>
-        // if bot: send bug report form, random chance of getting a funny response
-        // if self: bot calls user trash
-
+        // Get the mentioned user from the first argument
         val mentionedArg = ctx.getMentionedArg(0)
 
+        // If there are no members found we will send an error message to the user
         if (mentionedArg.isEmpty()) {
             sendMsg(ctx, "Who do you want to call trash? (usage: ${this.getUsageInstructions(ctx)}}")
             return
         }
 
+        // Get the user that was mentioned in the message and the user that ran the command
         val trashUser = mentionedArg[0].user
         var faceUser = ctx.author
+
+        if (trashUser == ctx.selfUser) {
+            sendMsg(ctx, """It's sad to hear that I'm trash.
+                            |Try suggesting a fix for any issues that you're facing on this page <https://dunctebot.com/suggest>""".trimMargin())
+            return
+        }
 
         if (faceUser == trashUser) {
             faceUser = ctx.selfUser
