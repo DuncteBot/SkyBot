@@ -536,6 +536,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
+    fun getAnimal(type: String): JsonNode {
+        return executeDefaultGetRequest("animal/$type", false).get("data")
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error.get("errors")
 

@@ -41,7 +41,7 @@ public class LlamaCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         // https://apis.duncte123.me/animal/llama
-        final JsonNode json = ctx.getApis().executeDefaultGetRequest("llama", false).get("data");
+        final JsonNode json = ctx.getApis().getAnimal("llama");
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(json.get("file").asText()));
     }
