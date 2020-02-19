@@ -23,6 +23,6 @@ import ml.duncte123.skybot.Author;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ConsoleUser extends FakeUser {
     public ConsoleUser() {
-        super("AutoMod", 191231307290771456L, (short) 0);
+        super("DuncteBot", 210363111729790977L, (short) 1758);
     }
 }
