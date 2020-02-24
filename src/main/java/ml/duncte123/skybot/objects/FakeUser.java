@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
 
+import javax.annotation.Nonnull;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
@@ -43,16 +44,19 @@ public class FakeUser implements User {
         this.discrm = discrm;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return this.name;
     }
 
+    @Nonnull
     @Override
     public String getDiscriminator() {
         return String.format("%04d", this.discrm);
     }
 
+    @Nonnull
     @Override
     public String getId() {
         return String.valueOf(this.id);
@@ -68,16 +72,19 @@ public class FakeUser implements User {
         return null;
     }
 
+    @Nonnull
     @Override
     public String getDefaultAvatarId() {
-        return null;
+        return String.valueOf(this.discrm % 5);
     }
 
+    @Nonnull
     @Override
     public String getDefaultAvatarUrl() {
-        return null;
+        return String.format(User.DEFAULT_AVATAR_URL, getDefaultAvatarId());
     }
 
+    @Nonnull
     @Override
     public String getEffectiveAvatarUrl() {
         return "https://cdn.discordapp.com/embed/avatars/0.png";
@@ -88,11 +95,13 @@ public class FakeUser implements User {
         return false;
     }
 
+    @Nonnull
     @Override
     public RestAction<PrivateChannel> openPrivateChannel() {
         return null;
     }
 
+    @Nonnull
     @Override
     public List<Guild> getMutualGuilds() {
         return null;
@@ -103,6 +112,7 @@ public class FakeUser implements User {
         return false;
     }
 
+    @Nonnull
     @Override
     public JDA getJDA() {
         return null;
@@ -113,6 +123,7 @@ public class FakeUser implements User {
         return true;
     }
 
+    @Nonnull
     @Override
     public String getAsMention() {
         return getAsTag();
@@ -123,6 +134,7 @@ public class FakeUser implements User {
         return this.id;
     }
 
+    @Nonnull
     @Override
     public String getAsTag() {
         return getName() + '#' + getDiscriminator();
