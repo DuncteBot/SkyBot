@@ -22,9 +22,11 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.abbreviate
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -44,18 +46,18 @@ class JokeCommand : Command() {
     }
 
     private fun sendJokeFromApi(ctx: CommandContext) {
-        val json = ctx.apis.executeDefaultGetRequest("joke", false).get("data")
+        val json = ctx.apis.executeDefaultGetRequest("joke", false)["data"]
 
         val embed = EmbedUtils.defaultEmbed()
-            .setTitle(json.get("title").asText(), json.get("url").asText())
-            .setDescription(json.get("body").asText())
+            .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
+            .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
 
         sendEmbed(ctx, embed)
     }
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
-            sendEmbed(event, EmbedUtils.embedMessage(it.get("joke").asText()))
+            sendEmbed(event, EmbedUtils.embedMessage(it["joke"].asText()))
         }
     }
 }

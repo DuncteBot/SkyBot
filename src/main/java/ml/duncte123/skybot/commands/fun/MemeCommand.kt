@@ -20,9 +20,11 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
+import ml.duncte123.skybot.extensions.abbreviate
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import net.dv8tion.jda.api.entities.MessageEmbed
 
 class MemeCommand : Command() {
     init {
@@ -32,14 +34,14 @@ class MemeCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val json = ctx.apis.executeDefaultGetRequest("meme", false).get("data")
+        val json = ctx.apis.executeDefaultGetRequest("meme", false)["data"]
 
         val embed = EmbedUtils.defaultEmbed()
-            .setTitle(json.get("title").asText(), json.get("url").asText())
-            .setDescription(json.get("body").asText())
+            .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
+            .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
 
         if (json.has("image")) {
-            embed.setImage(json.get("image").asText())
+            embed.setImage(json["image"].asText())
         }
 
         MessageUtils.sendEmbed(ctx, embed)
