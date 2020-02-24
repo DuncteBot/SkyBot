@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.extensions
 
+import me.duncte123.botcommons.StringUtils
 import ml.duncte123.skybot.objects.command.Command
 
 fun String.stripFlags(command: Command): String {
@@ -33,3 +34,5 @@ fun String.stripFlags(command: Command): String {
 
     return text.trim()
 }
+
+fun String.abbreviate(length: Int) = StringUtils.abbreviate(this, length)!!
