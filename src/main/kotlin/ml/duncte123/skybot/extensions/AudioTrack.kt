@@ -20,6 +20,7 @@ package ml.duncte123.skybot.extensions
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
+import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
@@ -87,6 +88,10 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         val id = this.identifier.split("|")[0]
 
         return "https://thumbs.mixer.com/channel/$id.small.jpg?r=${System.currentTimeMillis()}"
+    }
+
+    if(this is GetyarnAudioTrack) {
+        return "https://y.yarn.co/{somehow_extract_the_id}_screenshot.jpg"
     }
 
     // The following make a REST request for the thumbnail
