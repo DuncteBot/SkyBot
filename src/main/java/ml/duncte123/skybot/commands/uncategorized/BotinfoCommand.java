@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -43,6 +42,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 })
 public class BotinfoCommand extends Command {
 
+    private final String lavaplayerVersion;
+
     public BotinfoCommand() {
         this.name = "botinfo";
         this.aliases = new String[]{
@@ -51,27 +52,27 @@ public class BotinfoCommand extends Command {
             "bi",
         };
         this.helpFunction = (prefix, invoke) -> "Displays some information about the bot";
+
+        // Calls readVersion() every time that we access the prop
+        // So we store the output ourselves for faster execution
+        this.lavaplayerVersion = PlayerLibrary.VERSION;
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
         if ("support".equals(ctx.getInvoke())) {
-            MessageUtils.sendMsg(event, "You can join my support server here: <https://discord.gg/NKM9Xtk>");
+            MessageUtils.sendMsg(ctx, "You can join my support server here: <https://discord.gg/NKM9Xtk>");
             return;
         }
 
-        final User u = event.getJDA().getSelfUser();
+        final User u = ctx.getJDA().getSelfUser();
         final String duncte = " <@191231307290771456> (duncte123#1245)";
-        final String ramid = "<@281673659834302464> (ramidzkh#4814)";
 
         final MessageEmbed eb = EmbedUtils.defaultEmbed()
             .setDescription("Here is some information about me \uD83D\uDE09")
             .setThumbnail(u.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
-                duncte + " and " + ramid + ".\n" +
+                duncte + ".\n" +
                 "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                 "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://dunctebot.com/)** \u2022 " +
                 "**[Invite me](https://lnk.dunctebot.com/invite)**" +
@@ -80,12 +81,12 @@ public class BotinfoCommand extends Command {
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION + "" +
-                "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
+                "\n**LavaPlayer version:** " + this.lavaplayerVersion + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
             .build();
 
-        sendEmbed(event, eb);
+        sendEmbed(ctx, eb);
     }
 }
