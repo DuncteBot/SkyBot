@@ -129,7 +129,7 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name.escapeMarkDown()}
                         |**Account Created:** ${times.first} (${times.second})
-                        |$nitroUserLink ${user.isNitro()}
+                        |$nitroUserLink ${user.isNitro().toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
@@ -259,7 +259,7 @@ class UserinfoCommand : Command() {
 
     private fun OffsetDateTime.toBoostEmote(): String {
         return when (this.until(OffsetDateTime.now(), ChronoUnit.MONTHS)) {
-            1L -> {
+            0L, 1L -> {
                 "<:booster:585764032162562058>"
             }
             2L -> {
