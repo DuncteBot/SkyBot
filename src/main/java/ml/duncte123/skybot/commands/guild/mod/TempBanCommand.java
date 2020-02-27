@@ -137,8 +137,8 @@ public class TempBanCommand extends ModBaseCommand {
             return null;
         }
 
-        if (duration.getMinutes() < 2) {
-            sendMsg(event, "Minimum duration is 2 minutes");
+        if (duration.getSeconds() < 30) {
+            sendMsg(event, "Minimum duration is 30 seconds");
 
             return null;
         }
