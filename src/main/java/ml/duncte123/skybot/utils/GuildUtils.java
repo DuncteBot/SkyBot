@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -79,9 +78,6 @@ public class GuildUtils {
     public static double[] getBotRatio(Guild g) {
 
         final long[] counts = getBotAndUserCount(g);
-
-        System.out.println(Arrays.toString(counts));
-
         final double totalCount = counts[2];
         final double userCount = counts[0];
         final double botCount = counts[1];
