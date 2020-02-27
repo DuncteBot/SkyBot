@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
@@ -76,10 +77,15 @@ public final class LavalinkManager {
     }
 
     public void openConnection(VoiceChannel channel) {
+        final AudioManager audioManager = channel.getGuild().getAudioManager();
+
+        // Turn on the deafen icon for the bot
+        audioManager.setSelfDeafened(true);
+
         if (isEnabled()) {
             lavalink.getLink(channel.getGuild()).connect(channel);
         } else {
-            channel.getGuild().getAudioManager().openAudioConnection(channel);
+            audioManager.openAudioConnection(channel);
         }
     }
 
