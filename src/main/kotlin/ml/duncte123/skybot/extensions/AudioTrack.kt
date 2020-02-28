@@ -91,6 +91,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
     }
 
     if(this is GetyarnAudioTrack) {
+        // Gif url https://y.yarn.co/{id}_text.gif
         return "https://y.yarn.co/{somehow_extract_the_id}_screenshot.jpg"
     }
 
