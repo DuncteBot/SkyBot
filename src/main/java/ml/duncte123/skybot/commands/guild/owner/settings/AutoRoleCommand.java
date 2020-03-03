@@ -74,11 +74,19 @@ public class AutoRoleCommand extends SettingsBase {
 
     @Nullable
     static Role getFoundRoleOrNull(CommandContext ctx) {
-        final Role foundRole = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
-            .stream()
-            .filter((role) -> ctx.getSelfMember().canInteract(role))
-            .findFirst()
-            .orElse(null);
+        final List<Role> mentionedRoles = ctx.getMessage().getMentionedRoles();
+
+        final Role foundRole;
+
+        if (mentionedRoles.isEmpty()) {
+            foundRole = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
+                .stream()
+                .filter((role) -> ctx.getSelfMember().canInteract(role))
+                .findFirst()
+                .orElse(null);
+        } else {
+            foundRole = mentionedRoles.get(0);
+        }
 
         if (foundRole == null) {
             sendMsg(ctx, "I'm sorry but I could not find any roles for your input, " +
