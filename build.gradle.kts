@@ -106,7 +106,7 @@ dependencies {
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.2.1")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "4.2.2")
 
     // Youtube Cache
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2")
