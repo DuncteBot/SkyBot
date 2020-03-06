@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.extensions
 
 import net.dv8tion.jda.api.entities.ISnowflake
+import net.dv8tion.jda.api.entities.Member
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -26,6 +27,10 @@ import java.util.*
 
 fun PrettyTime.parseTimes(entity: ISnowflake): Pair<String, String> {
     return this.parseTimes(entity.timeCreated)
+}
+
+fun PrettyTime.parseTimes(entity: Member): Pair<String, String> {
+    return this.parseTimes(entity.timeJoined)
 }
 
 fun PrettyTime.parseTimes(time: OffsetDateTime): Pair<String, String> {
