@@ -101,7 +101,7 @@ public abstract class Command implements ICommand {
             // if args are empty or the args count is less than the required args count
             (ctx.getArgs().isEmpty() || ctx.getArgs().size() < this.requiredArgCount)
         ) {
-            sendMsg(ctx, "Missing arguments, usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendMsg(ctx, "Missing arguments, usage: " + this.getUsageInstructions(ctx));
             return;
         }
 
@@ -168,7 +168,7 @@ public abstract class Command implements ICommand {
 
     @Nonnull
     public String getUsageInstructions(CommandContext ctx) {
-        return this.usageInstructions.invoke(ctx.getInvoke(), ctx.getPrefix());
+        return this.usageInstructions.invoke(ctx.getPrefix(), ctx.getInvoke());
     }
 
     protected void sendUsageInstructions(CommandContext ctx) {
