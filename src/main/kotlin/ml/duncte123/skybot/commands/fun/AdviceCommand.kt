@@ -40,16 +40,16 @@ class AdviceCommand : Command() {
             val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice").execute()
 
             if (json.has("message")) {
-                val type = json.get("message").get("type").asText()
+                val type = json["message"]["type"].asText()
 
                 if (type == "error") {
-                    sendMsg(ctx, "Something borked: ${json.get("message").get("text").asText()}")
+                    sendMsg(ctx, "Something borked: ${json["message"]["text"].asText()}")
 
                     return
                 }
             }
 
-            val advice = json.get("slip").get("advice").asText()
+            val advice = json["slip"]["advice"].asText()
 
             sendEmbed(ctx, embedMessageWithTitle("Here's some advice", advice))
         } catch (ex: RequestException) {

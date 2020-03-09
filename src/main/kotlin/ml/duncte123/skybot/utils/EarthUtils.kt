@@ -234,11 +234,11 @@ class EarthUtils {
             val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
 
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
-                val posts = it.get("data").get("children").filter { filter ->
-                    event.channel.isNSFW || !filter.get("data").get("over_18").asBoolean()
+                val posts = it["data"]["children"].filter { filter ->
+                    event.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
                 }.filter { filter ->
-                    filter.get("data").get("selftext").asText().length <= 550
-                        && filter.get("data").get("title").asText().length <= 256
+                    filter["data"]["selftext"].asText().length <= 550
+                        && filter["data"]["title"].asText().length <= 256
                 }
 
                 if (posts.isEmpty()) {
@@ -249,24 +249,24 @@ class EarthUtils {
                 }
 
                 // We don't need to check for a contains because default value will be 0
-                if (index.get(event.guild.idLong) >= posts.size) {
+                if (index[event.guild.idLong] >= posts.size) {
                     index.put(event.guild.idLong, 0)
                 }
 
-                val postI = index.get(event.guild.idLong)
+                val postI = index[event.guild.idLong]
                 var rand = ThreadLocalRandom.current().nextInt(0, posts.size)
 
                 if (postI == rand) {
                     rand = ThreadLocalRandom.current().nextInt(0, posts.size)
                 }
 
-                val post = posts[rand].get("data")
+                val post = posts[rand]["data"]
 
                 index.put(event.guild.idLong, rand)
 
-                val title: String = post.get("title").asText()
-                val text: String = post.get("selftext").asText("")
-                val url: String = post.get("id").asText()
+                val title: String = post["title"].asText()
+                val text: String = post["selftext"].asText("")
+                val url: String = post["id"].asText()
                 val embed = defaultEmbed().setTitle(title, "https://redd.it/$url")
 
                 if (text.isNotEmpty()) {
@@ -274,11 +274,11 @@ class EarthUtils {
                 }
 
                 if (post.has("preview")) {
-                    val imagesO = post.get("preview")
-                    val images = imagesO.get("images")
+                    val imagesO = post["preview"]
+                    val images = imagesO["images"]
 
                     if (images != null) {
-                        val image = images.get(0).get("source").get("url").asText()
+                        val image = images[0]["source"]["url"].asText()
                         embed.setImage(image.replaceFirst("preview", "i"))
                     }
                 }
