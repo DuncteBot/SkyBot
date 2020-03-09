@@ -71,7 +71,7 @@ public class RemindmeCommand extends Command {
         final var flags = ctx.getParsedFlags(this);
 
         if (flags.get("undefined").isEmpty()) {
-            sendMsg(ctx, "Please tell me what to remind you off, usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendMsg(ctx, "What do you want me to remind you of?\nUsage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
             return;
         }
 

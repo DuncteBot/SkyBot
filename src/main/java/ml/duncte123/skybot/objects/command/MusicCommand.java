@@ -48,7 +48,8 @@ public abstract class MusicCommand extends Command {
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
-        this.cooldown = musicCooldown;
+        // Has to be set in the individual commands
+//        this.cooldown = musicCooldown;
         this.cooldownScope = CooldownScope.GUILD;
         this.cooldownKey = (cmdName, ctx) -> generateCooldownKey.apply(ctx.getGuild().getId());
         // Patrons have no cooldown
