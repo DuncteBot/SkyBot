@@ -27,6 +27,6 @@ jobs:
             - name: Create Release
               id: create_release
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   CI: true
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: ./gradlew githubRelease
