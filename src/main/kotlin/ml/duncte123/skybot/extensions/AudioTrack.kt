@@ -19,8 +19,8 @@
 package ml.duncte123.skybot.extensions
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
+import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
@@ -92,7 +92,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
     if(this is GetyarnAudioTrack) {
         // Gif url https://y.yarn.co/{id}_text.gif
-        return "https://y.yarn.co/{somehow_extract_the_id}_screenshot.jpg"
+        return "https://y.yarn.co/${this.identifier}_screenshot.jpg"
     }
 
     // The following make a REST request for the thumbnail
