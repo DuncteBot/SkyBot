@@ -45,26 +45,26 @@ class InstaCommand : Command() {
 
         val it = ctx.apis.executeDefaultGetRequest("insta/$username", false)
 
-        if (!it.get("success").asBoolean()) {
+        if (!it["success"].asBoolean()) {
             sendMsg(event, "No data found for this user")
             return
         }
 
-        val imagesArray = it.get("images")
+        val imagesArray = it["images"]
 
         if (imagesArray.isEmpty) {
             sendMsg(ctx, "This user did not upload any images")
             return
         }
 
-        val img = imagesArray.get(0)
-        val user = it.get("user")
+        val img = imagesArray[0]
+        val user = it["user"]
 
         val embed = EmbedUtils.defaultEmbed()
-            .setAuthor(user.get("username").asText(), "https://instagram.com/$username/", user.get("profile_pic_url").asText())
-            .setTitle("Latest picture of $username", img.get("page_url").asText())
-            .setDescription(img.get("caption").asText())
-            .setImage(img.get("url").asText())
+            .setAuthor(user["username"].asText(), "https://instagram.com/$username/", user["profile_pic_url"].asText())
+            .setTitle("Latest picture of $username", img["page_url"].asText())
+            .setDescription(img["caption"].asText())
+            .setImage(img["url"].asText())
 
         MessageUtils.sendEmbed(event, embed)
 

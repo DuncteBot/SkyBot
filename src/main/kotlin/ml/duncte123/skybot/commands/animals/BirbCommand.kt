@@ -38,7 +38,7 @@ class BirbCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
-            sendEmbed(ctx.event, EmbedUtils.embedImage(it.get(0).asText()))
+            sendEmbed(ctx.event, EmbedUtils.embedImage(it[0].asText()))
         }
     }
 }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.WebHelpers.addTrelloCard
 import spark.Request
 import spark.Response
 
@@ -44,10 +45,10 @@ object Suggest {
                     .put("code", response.status())
             }
 
-            val captcha = jsonBody.get("g-recaptcha-response").asText()
-            val name = jsonBody.get("name").asText("")
-            val suggestion = jsonBody.get("sug").asText("")
-            val description = jsonBody.get("desc").asText("")
+            val captcha = jsonBody["g-recaptcha-response"].asText()
+            val name = jsonBody["name"].asText("")
+            val suggestion = jsonBody["sug"].asText("")
+            val description = jsonBody["desc"].asText("")
 
             if (name.isNullOrEmpty() || suggestion.isNullOrEmpty()) {
                 response.status(400)
@@ -60,7 +61,7 @@ object Suggest {
 
             val cap = WebHelpers.verifyCapcha(captcha, config.apis.chapta.secret, mapper)
 
-            if (!cap.get("success").asBoolean()) {
+            if (!cap["success"].asBoolean()) {
                 return mapper.createObjectNode()
                     .put("status", "failure")
                     .put("message", "captcha_failed")
@@ -70,8 +71,7 @@ object Suggest {
             val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
             val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
 
-            val url = WebHelpers.addTrelloCard(suggestion.toString(), descText, config.apis.trello, mapper)
-                .get("shortUrl").asText()
+            val url = addTrelloCard(suggestion.toString(), descText, config.apis.trello, mapper)["shortUrl"].asText()
 
             return mapper.createObjectNode()
                 .put("status", "success")
