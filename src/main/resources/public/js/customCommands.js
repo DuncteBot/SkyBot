@@ -22,12 +22,12 @@ function initModal() {
 }
 
 function showEditor() {
-    editorRow.style.display = "block";
-    editorRow.scrollIntoView({behavior: "smooth"});
+    editorRow.style.display = 'block';
+    editorRow.scrollIntoView({behavior: 'smooth'});
 }
 
 function hideEditor() {
-    editorRow.style.display = "none";
+    editorRow.style.display = 'none';
 }
 
 function initEitor() {
@@ -68,17 +68,13 @@ function loadCommands() {
             const div = id("commands");
 
             if (json.status === "error") {
-
                 div.innerHTML = `<h1 class="center">Session not valid</h1>
                               <h5 class="center">Please refresh your browser</h5>`;
-
                 return;
             }
 
-            if (json.commands.length < 0) {
-
-                div.innerHTML = `<h1 class="center">No commands here</h1>`;
-
+            if (!json.commands.length) {
+                div.innerHTML = '<h1 class="center">No custom commands have been created yet</h1>';
                 return;
             }
 
