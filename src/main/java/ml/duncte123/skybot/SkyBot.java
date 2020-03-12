@@ -119,13 +119,13 @@ public final class SkyBot {
         final EventManager eventManager = new EventManager(variables);
         // IMPORTANT: sets the chunking filter to none by default
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
-            token,
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_BANS,
             GatewayIntent.GUILD_EMOJIS,
             GatewayIntent.GUILD_VOICE_STATES,
             GatewayIntent.GUILD_MESSAGES
         )
+            .setToken(token)
             .setShardsTotal(totalShards)
             .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
