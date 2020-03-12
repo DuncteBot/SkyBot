@@ -48,8 +48,6 @@ public class GuildMemberListener extends BaseListener {
     public void onEvent(@Nonnull GenericEvent event) {
         if (event instanceof GuildMemberJoinEvent) {
             this.onGuildMemberJoin((GuildMemberJoinEvent) event);
-        } else if (event instanceof GuildMemberLeaveEvent) {
-            this.onGuildMemberLeave((GuildMemberLeaveEvent) event);
         } else if (event instanceof GuildMemberRemoveEvent) {
             this.onGuildMemberRemove((GuildMemberRemoveEvent) event);
         } else if (event instanceof GuildMemberRoleRemoveEvent) {
@@ -85,19 +83,6 @@ public class GuildMemberListener extends BaseListener {
                 guild.addRoleToMember(event.getMember(), r).queue(null, it -> {});
             }
         }
-    }
-
-    // TODO: remove after testing
-    private void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-        this.onGuildMemberRemove(
-            new GuildMemberRemoveEvent(
-                event.getJDA(),
-                event.getResponseNumber(),
-                event.getGuild(),
-                event.getUser(),
-                event.getMember()
-            )
-        );
     }
 
     private void onGuildMemberRemove(GuildMemberRemoveEvent event) {
