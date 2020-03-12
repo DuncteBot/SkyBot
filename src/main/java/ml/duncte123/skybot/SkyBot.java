@@ -117,7 +117,6 @@ public final class SkyBot {
 
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
-        // IMPORTANT: sets the chunking filter to none by default
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_BANS,
@@ -130,7 +129,9 @@ public final class SkyBot {
             .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
+            // Keep all members in cache
             .setMemberCachePolicy(MemberCachePolicy.ALL)
+            // And no lazy loading
             .setChunkingFilter(ChunkingFilter.ALL)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
