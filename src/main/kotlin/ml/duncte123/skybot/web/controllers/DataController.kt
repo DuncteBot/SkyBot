@@ -41,9 +41,9 @@ object DataController {
 
         println(updateData)
 
-        val expiredBans = updateData.get("unbans")
-        val expiredMutes = updateData.get("unmutes")
-        val expiredReminders = updateData.get("reminders")
+        val expiredBans = updateData["unbans"]
+        val expiredMutes = updateData["unmutes"]
+        val expiredReminders = updateData["reminders"]
 
         val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
         val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})

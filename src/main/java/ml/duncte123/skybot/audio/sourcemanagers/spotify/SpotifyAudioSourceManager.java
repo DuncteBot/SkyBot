@@ -24,6 +24,7 @@ import com.google.api.services.youtube.model.Video;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
 import com.sedmelluq.discord.lavaplayer.track.*;
@@ -189,6 +190,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 }
 
                 final Track track = playlistTrack.getTrack();
+
+                if (track == null) {
+                    continue;
+                }
+
                 final String videoId = searchYoutube(track.getName(), track.getArtists()[0].getName());
 
                 if (videoId != null) {
@@ -208,7 +214,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
-            throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
+            throw ExceptionTools.wrapUnfriendlyExceptions(e.getMessage(), Severity.FAULT, e);
         }
 
     }

@@ -89,9 +89,9 @@ class SkipCommand : MusicCommand() {
     private fun doSkip(ctx: CommandContext, mng: GuildMusicManager) {
         val player = mng.player
 
-        player.seekTo(player.playingTrack.duration)
+//        player.seekTo(player.playingTrack.duration)
 
-//        mng.scheduler.skipTrack()
+        mng.scheduler.specialSkipCase()
 
         if (player.playingTrack == null) {
             sendMsg(ctx, "Successfully skipped the track.\n" +

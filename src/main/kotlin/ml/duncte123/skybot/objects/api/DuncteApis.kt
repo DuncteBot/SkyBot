@@ -62,7 +62,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun deleteCustomCommand(guildId: Long, invoke: String): Boolean {
         val request = defaultRequest("customcommands/$guildId/$invoke").delete()
 
-        return executeRequest(request).get("success").asBoolean()
+        return executeRequest(request)["success"].asBoolean()
     }
 
     fun restoreCustomCommand(commandId: Int, variables: Variables): Boolean {
@@ -70,18 +70,18 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put(RequestBody.create(null, "{}"))
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             return false
         }
 
-        val command = response.get("data")
+        val command = response["data"]
         val commandManager = variables.commandManager
 
         commandManager.customCommands.add(CustomCommandImpl(
-            command.get("invoke").asText(),
-            command.get("message").asText(),
-            command.get("guildId").asLong(),
-            command.get("autoresponse").asBoolean()
+            command["invoke"].asText(),
+            command["message"].asText(),
+            command["guildId"].asLong(),
+            command["autoresponse"].asBoolean()
         ))
 
         return true
@@ -94,40 +94,40 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getGuildSetting(guildId: Long): JsonNode? {
         val res = executeRequest(defaultRequest("guildsettings/$guildId"))
 
-        if (!res.get("success").asBoolean()) {
+        if (!res["success"].asBoolean()) {
             return null
         }
 
-        return res.get("data")
+        return res["data"]
     }
 
     fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
 
-        return response.get("success").asBoolean()
+        return response["success"].asBoolean()
     }
 
     fun deleteGuildSetting(guildId: Long) {
         val response = executeRequest(defaultRequest("guildsettings/$guildId").delete())
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to delete guild setting\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
     fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = postJSON("guildsettings", json)
-        val success = response.get("success").asBoolean()
+        val success = response["success"].asBoolean()
 
         if (success) {
             return true
         }
 
         logger.error("Failed to register new guild\n" +
-            "Response: {}", response.get("error").toString())
+            "Response: {}", response["error"].toString())
 
         return false
     }
@@ -136,9 +136,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val json = mapper.createObjectNode().put("word", word)
         val response = postJSON("guildsettings/$guildId/blacklist", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to add word to blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -148,9 +148,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         words.forEach { array.add(it) }
         val response = postJSON("guildsettings/$guildId/blacklist/batch", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to batch add to blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -158,9 +158,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val json = mapper.createObjectNode().put("word", word)
         val response = deleteJSON("guildsettings/$guildId/blacklist", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to remove word from blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -168,9 +168,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest("guildsettings/$guildId/blacklist/all").delete()
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to clear blacklist for guild {}\nResponse: {}",
-                guildId, response.get("error").toString())
+                guildId, response["error"].toString())
         }
     }
 
@@ -182,9 +182,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val json = mapper.createObjectNode().put("embed_color", color)
         val response = postJSON("embedsettings/$guildId", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to save embed data\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -197,9 +197,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put("user_id", userId.toString()).put("guild_id", guildId.toString())
         val response = postJSON("patrons/oneguild", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to add one guild patron\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
 
             return false
         }
@@ -210,24 +210,24 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getOneGuildPatron(userId: Long): ArrayNode {
         val response = executeRequest(defaultRequest("patrons/oneguild/$userId"))
 
-        return response.get("data") as ArrayNode
+        return response["data"] as ArrayNode
     }
 
     fun removeOneGuildPatron(userId: Long) {
         val response = executeRequest(defaultRequest("patrons/oneguild/$userId").delete())
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to remove one guild patron\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
     fun createBan(json: JsonNode) {
         val response = postJSON("bans", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to create a ban\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -240,43 +240,43 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = postJSON("warns", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to create a warning\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
     fun createMute(json: JsonNode): JsonNode {
         val response = postJSON("mutes", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to create a mute\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
 
-        return response.get("data")
+        return response["data"]
     }
 
     fun getWarningsForUser(userId: Long, guildId: Long): ArrayNode {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
 
-        return response.get("data") as ArrayNode
+        return response["data"] as ArrayNode
     }
 
     fun removeLatestWarningForUser(userId: Long, guildId: Long): JsonNode? {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId/latest").delete())
 
-        if (!response.get("success").asBoolean() && response.get("error").get("type").asText() == "WarningNotFoundException") {
+        if (!response["success"].asBoolean() && response["error"]["type"].asText() == "WarningNotFoundException") {
             return null
         }
 
-        return response.get("data")
+        return response["data"]
     }
 
     fun getExpiredBansAndMutes(): JsonNode {
         val response = executeRequest(defaultRequest("expiredbansandmutes"))
 
-        return response.get("data")
+        return response["data"]
     }
 
     fun purgeBans(ids: List<Int>) {
@@ -287,9 +287,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = deleteJSON("bans", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to purge bans\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -301,9 +301,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = deleteJSON("mutes", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to purge mutes\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -320,9 +320,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = postJSON("vcautoroles", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to set vc autorole\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -334,9 +334,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = postJSON("vcautoroles/$guildId", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to set vc autorole in batch\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -344,9 +344,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest("vcautoroles/$voiceChannelId").delete()
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to remove vc autorole\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -354,9 +354,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest("vcautoroles/guild/$guildId").delete()
         val response = executeRequest(request)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to remove vc autorole\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -369,30 +369,30 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getPronouns(userId: Long): JsonNode? {
         val json = executeRequest(defaultRequest("pronouns/$userId"))
 
-        if (!json.get("success").asBoolean()) {
+        if (!json["success"].asBoolean()) {
             return null
         }
 
-        return json.get("data")
+        return json["data"]
     }
 
     fun getLove(name: String, name2: String): JsonNode? {
         val json = executeRequest(defaultRequest("love/${name.enc()}/${name2.enc()}", false))
 
-        if (!json.get("success").asBoolean()) {
+        if (!json["success"].asBoolean()) {
             logger.error("Failed to get love\n" +
-                "Response: {}", json.get("error").toString())
+                "Response: {}", json["error"].toString())
 
             return null
         }
 
-        return json.get("data")
+        return json["data"]
     }
 
     fun getMeguminQuote(): String {
         val json = executeRequest(defaultRequest("megumin", false))
 
-        return json.get("data").get("quote").asText()
+        return json["data"]["quote"].asText()
     }
 
     fun setPronouns(userId: Long, pronouns: String, singular: Boolean) {
@@ -402,9 +402,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = postJSON("pronouns/$userId", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to create a pronoun\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
@@ -451,17 +451,17 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun createTag(tag: ObjectNode): Pair<Boolean, String> {
         val response = postJSON("tags", tag)
 
-        if (!response.get("success").asBoolean()) {
-            val error = response.get("error") as ObjectNode
+        if (!response["success"].asBoolean()) {
+            val error = response["error"] as ObjectNode
 
-            if (error.get("type").asText() == "ValidationException") {
+            if (error["type"].asText() == "ValidationException") {
                 return Pair(false, buildValidationErrorString(error))
             }
 
             logger.error("Failed to create a tag\n" +
                 "Response: {}", error.toString())
 
-            return Pair(false, error.get("message").asText())
+            return Pair(false, error["message"].asText())
         }
 
         return Pair(true, "")
@@ -470,13 +470,13 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun deleteTag(tagName: String): Pair<Boolean, String> {
         val response = executeRequest(defaultRequest("tags/$tagName").delete())
 
-        if (!response.get("success").asBoolean()) {
-            val error = response.get("error")
+        if (!response["success"].asBoolean()) {
+            val error = response["error"]
 
             logger.error("Failed to create a tag\n" +
                 "Response: {}", error.toString())
 
-            return Pair(false, error.get("message").asText())
+            return Pair(false, error["message"].asText())
         }
 
         return Pair(true, "")
@@ -495,8 +495,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = postJSON("reminders", obj)
 
-        if (!response.get("success").asBoolean()) {
-            val error = response.get("error")
+        if (!response["success"].asBoolean()) {
+            val error = response["error"]
 
             logger.error("Failed to create a reminder\n" +
                 "Response: {}", error.toString())
@@ -510,8 +510,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getExpiredReminders(): JsonNode {
         val response = executeRequest(defaultRequest("reminders/expired"))
 
-        if (!response.get("success").asBoolean()) {
-            val error = response.get("error")
+        if (!response["success"].asBoolean()) {
+            val error = response["error"]
 
             logger.error("Failed to get expired reminders\n" +
                 "Response: {}", error.toString())
@@ -519,7 +519,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             return mapper.createArrayNode()
         }
 
-        return response.get("data")
+        return response["data"]
     }
 
     fun purgeReminders(ids: List<Int>) {
@@ -530,22 +530,22 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
         val response = deleteJSON("reminders/purge", json)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             logger.error("Failed to purge mutes\n" +
-                "Response: {}", response.get("error").toString())
+                "Response: {}", response["error"].toString())
         }
     }
 
     fun getAnimal(type: String): JsonNode {
-        return executeDefaultGetRequest("animal/$type", false).get("data")
+        return executeDefaultGetRequest("animal/$type", false)["data"]
     }
 
     private fun buildValidationErrorString(error: ObjectNode): String {
-        val errors = error.get("errors")
+        val errors = error["errors"]
 
         return buildString {
             errors.fieldNames().forEach {
-                errors.get(it).forEach { er ->
+                errors[it].forEach { er ->
                     appendln(er.toString())
                 }
             }
@@ -555,21 +555,21 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun paginateData(path: String): ArrayNode {
         val res = executeRequest(defaultRequest("$path?page=1"))
 
-        val page1 = res.get("data")
+        val page1 = res["data"]
 
-        val data = page1.get("data") as ArrayNode
+        val data = page1["data"] as ArrayNode
 
-        val totalPages = page1.get("last_page").asInt() + 1
+        val totalPages = page1["last_page"].asInt() + 1
 
         for (i in 2 until totalPages) {
-            val page = executeRequest(defaultRequest("$path?page=$i")).get("data")
+            val page = executeRequest(defaultRequest("$path?page=$i"))["data"]
 
-            val pageData = page.get("data") as ArrayNode
+            val pageData = page["data"] as ArrayNode
 
             data.addAll(pageData)
 
             /*for (i2 in 0 until pageData.length()) {
-                data.addAll(pageData.get(i2))
+                data.addAll(pageData[i2])
             }*/
         }
 
@@ -585,14 +585,14 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun parseTripleResponse(response: JsonNode): Triple<Boolean, Boolean, Boolean> {
-        val success = response.get("success").asBoolean()
+        val success = response["success"].asBoolean()
 
         if (success) {
             return Triple(first = true, second = false, third = false)
         }
 
-        val error = response.get("error")
-        val type = error.get("type").asText()
+        val error = response["error"]
+        val type = error["type"].asText()
 
         if (type == "AmountException") {
             return Triple(first = false, second = false, third = true)
@@ -602,10 +602,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             return Triple(first = false, second = false, third = false)
         }
 
-        val errors = response.get("error").get("errors")
+        val errors = response["error"]["errors"]
 
         for (key in errors.fieldNames()) {
-            errors.get(key).forEach { reason ->
+            errors[key].forEach { reason ->
                 if (reason.asText().contains("The invoke has already been taken.")) {
                     return Triple(first = false, second = true, third = false)
                 }

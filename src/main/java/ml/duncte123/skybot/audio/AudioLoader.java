@@ -27,10 +27,12 @@ import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManage
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
+import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AudioUtils;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -74,7 +76,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             this.mng.getScheduler().queue(track, this.isPatron);
 
             if (this.announce) {
-                final String msg = "Adding to queue: " + title;
+                final String msg = "Adding to queue: " + StringKt.abbreviate(title, MessageEmbed.VALUE_MAX_LENGTH);
                 sendEmbed(this.channel,
                     embedField(AudioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
@@ -124,7 +126,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by _" + this.trackUrl + "_"));
+            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by _" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + "_"));
         }
     }
 
@@ -154,7 +156,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + root.getMessage()
+        sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
 
     }

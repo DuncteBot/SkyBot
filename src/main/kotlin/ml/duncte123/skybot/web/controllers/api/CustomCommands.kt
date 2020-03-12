@@ -87,9 +87,9 @@ object CustomCommands {
                 .put("code", response.status())
         }
 
-        val invoke = commandData.get("name").asText()
-        val message = commandData.get("message").asText()
-        val autoresponse = commandData.get("autoresponse").asBoolean(false)
+        val invoke = commandData["name"].asText()
+        val message = commandData["message"].asText()
+        val autoresponse = commandData["autoresponse"].asBoolean(false)
         val manager = variables.commandManager
 
         if (!commandExists(invoke, guild.idLong, manager)) {
@@ -131,7 +131,7 @@ object CustomCommands {
                 .put("code", response.status())
         }
 
-        val invoke = commandData.get("name").asText().replace("\\s".toRegex(), "")
+        val invoke = commandData["name"].asText().replace("\\s".toRegex(), "")
 
         if (invoke.length > 25) {
             return mapper.createObjectNode()
@@ -140,7 +140,7 @@ object CustomCommands {
                 .put("code", response.status())
         }
 
-        val message = commandData.get("message").asText()
+        val message = commandData["message"].asText()
 
         if (message.length > 4000) {
             return mapper.createObjectNode()
@@ -160,7 +160,7 @@ object CustomCommands {
                 .put("code", response.status())
         }
 
-        val autoresponse = commandData.get("autoresponse").asBoolean(false)
+        val autoresponse = commandData["autoresponse"].asBoolean(false)
 
         val result = registerCustomCommand(invoke, message, guild.idLong, autoresponse, manager)
 
@@ -205,7 +205,7 @@ object CustomCommands {
                 .put("code", response.status())
         }
 
-        val invoke = commandData.get("name").asText()
+        val invoke = commandData["name"].asText()
 
         val manager = variables.commandManager
 

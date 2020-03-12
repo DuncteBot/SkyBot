@@ -35,6 +35,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class YodaSpeakCommand extends Command {
 
     public YodaSpeakCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.FUN;
         this.name = "yoda";
         this.helpFunction = (prefix, invoke) -> "Convert your input to how Yoda speaks";

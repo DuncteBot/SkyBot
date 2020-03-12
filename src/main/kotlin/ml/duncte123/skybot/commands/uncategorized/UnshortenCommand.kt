@@ -55,22 +55,22 @@ class UnshortenCommand : Command() {
 
         logger.debug("Unshorten: $json")
 
-        if (!json.get("success").asBoolean()) {
-            val error = json.get("error")
+        if (!json["success"].asBoolean()) {
+            val error = json["error"]
             logger.error("Failed to unshorten $error")
-            sendMsg(ctx, "Could not unshorten url: " + error.get("message").asText())
+            sendMsg(ctx, "Could not unshorten url: " + error["message"].asText())
             return
         }
 
-        val data = json.get("data")
+        val data = json["data"]
 
         val embed = EmbedUtils.embedMessage("""Short url:
                             |```
-                            |${data.get("short_url").asText()}
+                            |${data["short_url"].asText()}
                             |```
                             |Unshortened url:
                             |```
-                            |${data.get("long_url").asText()}
+                            |${data["long_url"].asText()}
                             |```
                         """.trimMargin())
 

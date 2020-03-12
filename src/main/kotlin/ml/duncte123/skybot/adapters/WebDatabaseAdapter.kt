@@ -143,7 +143,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val map = TLongIntHashMap()
 
             apis.loadEmbedSettings().forEach {
-                map.put(it.get("guild_id").asLong(), it.get("embed_color").asInt())
+                map.put(it["guild_id"].asLong(), it["embed_color"].asInt())
             }
 
             callback(map)
@@ -161,7 +161,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val map = TLongLongHashMap()
 
             apis.loadOneGuildPatrons().forEach {
-                map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
+                map.put(it["user_id"].asLong(), it["guild_id"].asLong())
             }
 
             callback(map)
@@ -183,7 +183,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val map = TLongLongHashMap()
 
             apis.getOneGuildPatron(userId).forEach {
-                map.put(it.get("user_id").asLong(), it.get("guild_id").asLong())
+                map.put(it["user_id"].asLong(), it["guild_id"].asLong())
             }
 
             callback(map)
@@ -249,11 +249,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             }
 
             callback(Warning(
-                json.get("id").asInt(),
-                json.get("warn_date").asText(),
-                json.get("mod_id").asText(),
-                json.get("reason").asText(),
-                json.get("guild_id").asText()
+                json["id"].asInt(),
+                json["warn_date"].asText(),
+                json["mod_id"].asText(),
+                json["reason"].asText(),
+                json["guild_id"].asText()
             ))
         }
     }
@@ -266,11 +266,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val regex = "\\s+".toRegex()
             data.forEach { json ->
                 items.add(Warning(
-                    json.get("id").asInt(),
-                    json.get("warn_date").asText().split(regex)[0],
-                    json.get("mod_id").asText(),
-                    json.get("reason").asText(),
-                    json.get("guild_id").asText()
+                    json["id"].asInt(),
+                    json["warn_date"].asText().split(regex)[0],
+                    json["mod_id"].asText(),
+                    json["reason"].asText(),
+                    json["guild_id"].asText()
                 ))
             }
 
@@ -293,8 +293,8 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
         runOnThread {
             val storedData = apis.getExpiredBansAndMutes()
-            val storedBans = storedData.get("bans")
-            val storedMutes = storedData.get("mutes")
+            val storedBans = storedData["bans"]
+            val storedMutes = storedData["mutes"]
 
             val bans: List<Ban> = jackson.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
             val mutes: List<Mute> = jackson.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
@@ -310,9 +310,9 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
             for (item in storedData) {
                 converted.add(VcAutoRole(
-                    item.get("guild_id").asLong(),
-                    item.get("voice_channel_id").asLong(),
-                    item.get("role_id").asLong()
+                    item["guild_id"].asLong(),
+                    item["voice_channel_id"].asLong(),
+                    item["role_id"].asLong()
                 ))
             }
 
@@ -357,7 +357,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
         runOnThread {
             val json = jackson.valueToTree(tag) as ObjectNode
-            json.put("owner_id", json.get("owner_id").asText())
+            json.put("owner_id", json["owner_id"].asText())
 
             val response = apis.createTag(json)
 
