@@ -130,6 +130,7 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep all members in cache
+            // TODO: find a way to make sure that this is not needed anymore
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             // And no lazy loading
             .setChunkingFilter(ChunkingFilter.ALL)
