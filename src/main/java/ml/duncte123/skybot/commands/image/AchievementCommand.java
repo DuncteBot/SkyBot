@@ -28,8 +28,8 @@ public class AchievementCommand extends NoPatronImageCommand {
 
     public AchievementCommand() {
         this.name = "achievement";
-        this.helpFunction = (prefix, invoke) -> "You got an achievement!";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
+        this.help = "You got an achievement!";
+        this.usage = "<text>";
     }
 
     @Override

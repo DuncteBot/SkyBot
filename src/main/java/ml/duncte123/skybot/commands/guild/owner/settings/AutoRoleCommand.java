@@ -36,8 +36,8 @@ public class AutoRoleCommand extends SettingsBase {
 
     public AutoRoleCommand() {
         this.name = "autorole";
-        this.helpFunction = (prefix, invoke) -> "Sets the role that members get when they join the server";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@role/disable>`";
+        this.help = "Sets the role that members get when they join the server";
+        this.usage = "<@role/disable>";
     }
 
     @Override

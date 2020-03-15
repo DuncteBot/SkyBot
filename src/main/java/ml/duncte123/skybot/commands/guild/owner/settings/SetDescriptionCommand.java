@@ -27,16 +27,16 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetDescriptionCommand extends SettingsBase {
 
     public SetDescriptionCommand() {
+        this.requiresArgs = true;
         this.name = "setdescription";
-        this.helpFunction = (prefix, invoke) -> "Sets a custom description viewable in `" + prefix + "serverinfo`";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <description/disable>`";
+        this.help = "Sets a custom description viewable in `{prefix}serverinfo`";
+        this.usage = "<description/disable>";
     }
 
     @Override
@@ -45,11 +45,6 @@ public class SetDescriptionCommand extends SettingsBase {
         final List<String> args = ctx.getArgs();
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
-
-        if (args.isEmpty()) {
-            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
-            return;
-        }
 
         if ("null".equalsIgnoreCase(args.get(0)) || "disable".equalsIgnoreCase(args.get(0))) {
             guild.setSettings(settings.setServerDesc(null));

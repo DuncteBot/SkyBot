@@ -32,7 +32,7 @@ public class ToggleAnnounceTracksCommand extends SettingsBase {
 
     public ToggleAnnounceTracksCommand() {
         this.name = "toggleannouncetracks";
-        this.helpFunction = (prefix, invoke) -> "Toggles if the bot should announce the next playing track";
+        this.help = "Toggles if the bot should announce the next playing track";
     }
 
     @Override

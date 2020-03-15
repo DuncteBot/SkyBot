@@ -147,7 +147,7 @@ public abstract class Command implements ICommand {
     @Nonnull
     @Override
     public final String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.help;
+        return this.help.replace("{prefix}", prefix).trim();
 //        return this.helpFunction.invoke(prefix, invoke);
     }
 

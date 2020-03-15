@@ -33,7 +33,7 @@ public class ToggleSpamFilterCommand extends SettingsBase {
 
     public ToggleSpamFilterCommand() {
         this.name = "togglespamfilter";
-        this.helpFunction = (prefix, invoke) -> "Toggles whether we should handle your incoming spam";
+        this.help = "Toggles whether we should handle your incoming spam";
     }
 
     @Override

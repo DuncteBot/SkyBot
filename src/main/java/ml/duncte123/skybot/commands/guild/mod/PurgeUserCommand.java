@@ -44,8 +44,8 @@ public class PurgeUserCommand extends ModBaseCommand {
     public PurgeUserCommand() {
         this.requiresArgs = true;
         this.name = "purgeuser";
-        this.helpFunction = (prefix, invoke) -> "Purges the last " + DEL_COUNT + " messages of a user";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user>`";
+        this.help = "Purges the last " + DEL_COUNT + " messages of a user";
+        this.usage = "<@user>";
         this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,

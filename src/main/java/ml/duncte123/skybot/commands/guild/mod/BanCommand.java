@@ -45,8 +45,8 @@ public class BanCommand extends ModBaseCommand {
             "dabon",
             "naenae",
         };
-        this.helpFunction = (prefix, invoke) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
+        this.help = "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usage = "<@user> [-r Reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };

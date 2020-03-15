@@ -32,7 +32,7 @@ public class ToggleKickModeCommand extends SettingsBase {
 
     public ToggleKickModeCommand() {
         this.name = "togglekickmode";
-        this.helpFunction = (prefix, invoke) -> "Toggles whether we should kick spammers or assign a role to them";
+        this.help = "Toggles whether we should kick spammers or assign a role to them";
     }
 
     @Override

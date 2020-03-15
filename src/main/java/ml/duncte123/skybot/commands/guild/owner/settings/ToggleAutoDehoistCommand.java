@@ -32,7 +32,7 @@ public class ToggleAutoDehoistCommand extends SettingsBase {
 
     public ToggleAutoDehoistCommand() {
         this.name = "toggleautodehoist";
-        this.helpFunction = (prefix, invoke) -> "Toggles if the bot should auto de-hoist users";
+        this.help = "Toggles if the bot should auto de-hoist users";
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ForceDisconnectCommand extends MusicCommand {
         this.aliases = new String[]{
             "forceleave",
         };
-        this.helpFunction = (prefix, invoke) -> "Force disconnects the bot from music for when the bot is stuck";
+        this.help = "Force disconnects the bot from music for when the bot is stuck";
     }
 
     @Override

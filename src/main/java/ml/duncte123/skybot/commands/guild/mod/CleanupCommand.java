@@ -50,9 +50,9 @@ public class CleanupCommand extends ModBaseCommand {
             "purge",
             "wipe",
         };
-        this.helpFunction = (prefix, invoke) -> "Performs a purge in the channel where the command is run.\n" +
-            "To clear an entire channel it's better to use `" + prefix + "purgechannel`";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [amount] [--keep-pinned] [--bots-only]`";
+        this.help = "Performs a purge in the channel where the command is run.\n" +
+            "To clear an entire channel it's better to use `{prefix}purgechannel`";
+        this.usage = "[amount] [--keep-pinned] [--bots-only]";
         this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,

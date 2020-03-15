@@ -41,7 +41,7 @@ public class SettingsCommand extends SettingsBase {
         this.aliases = new String[]{
             "options",
         };
-        this.helpFunction = (prefix, invoke) -> "Shows the current settings for this server";
+        this.help = "Shows the current settings for this server";
     }
 
     @Override
