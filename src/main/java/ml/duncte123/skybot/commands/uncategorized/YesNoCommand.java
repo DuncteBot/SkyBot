@@ -31,7 +31,7 @@ public class YesNoCommand extends Command {
 
     public YesNoCommand() {
         this.name = "yesno";
-        this.helpFunction = (prefix, invoke) -> "Chooses between yes or no";
+        this.help = "Chooses between yes or no";
     }
 
     @Override

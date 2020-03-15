@@ -30,8 +30,8 @@ class PPlayCommand : MusicCommand() {
     init {
         this.withAutoJoin = true
         this.name = "pplay"
-        this.helpFunction = {_,_ -> "Adds a playlist to the queue"}
-        this.usageInstructions = {prefix, invoke-> "`$prefix$invoke <playlist url>`"}
+        this.help = "Adds a playlist to the queue"
+        this.usage = "<playlist url>"
     }
 
     override fun run(ctx: CommandContext) {

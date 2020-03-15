@@ -44,7 +44,7 @@ public class ChangeLogCommand extends Command {
 
     public ChangeLogCommand() {
         this.name = "changelog";
-        this.helpFunction = (prefix, invoke) -> "Shows the latest changelog from the bot";
+        this.help = "Shows the latest changelog from the bot";
     }
 
     @Override

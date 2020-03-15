@@ -39,7 +39,7 @@ class UpdateCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "update"
-        this.helpFunction = { _, _ -> "Update the bot and restart" }
+        this.help = "Update the bot and restart"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -28,7 +28,7 @@ class RestartCommand : MusicCommand() {
 
     init {
         this.name = "restart"
-        this.helpFunction = { _, _ -> "Start the current track from the beginning" }
+        this.help = "Start the current track from the beginning"
     }
 
     override fun run(ctx: CommandContext) {

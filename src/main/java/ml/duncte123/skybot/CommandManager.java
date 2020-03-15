@@ -46,7 +46,10 @@ import ml.duncte123.skybot.commands.lgbtq.PronounsCheckCommand;
 import ml.duncte123.skybot.commands.lgbtq.SetPronounsCommand;
 import ml.duncte123.skybot.commands.mod.*;
 import ml.duncte123.skybot.commands.music.*;
-import ml.duncte123.skybot.commands.nsfw.NSFWCommands;
+import ml.duncte123.skybot.commands.nsfw.CarsAndHentaiCommand;
+import ml.duncte123.skybot.commands.nsfw.HentaiCommand;
+import ml.duncte123.skybot.commands.nsfw.LewdKitsuneCommand;
+import ml.duncte123.skybot.commands.nsfw.LewdNekoCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.WeebCommands;
@@ -143,6 +146,7 @@ public class CommandManager {
         this.addCommand(new BlurCommand());
         this.addCommand(new BotinfoCommand());
         this.addCommand(new CaptchaCommand());
+        this.addCommand(new CarsAndHentaiCommand());
         this.addCommand(new ChangeLogCommand());
         this.addCommand(new ChatCommand());
         this.addCommand(new CleanupCommand());
@@ -178,6 +182,7 @@ public class CommandManager {
         this.addCommand(new GuildJoinsCommand());
         this.addCommand(new HackbanCommand());
         this.addCommand(new HelpCommand());
+        this.addCommand(new HentaiCommand());
         this.addCommand(new ImageCommand());
         this.addCommand(new InstaCommand());
         this.addCommand(new InvertCommand());
@@ -192,6 +197,8 @@ public class CommandManager {
         this.addCommand(new KittyCommand());
         this.addCommand(new KpopCommand());
         this.addCommand(new LeaveCommand());
+        this.addCommand(new LewdKitsuneCommand());
+        this.addCommand(new LewdNekoCommand());
         this.addCommand(new LinusCommand());
         this.addCommand(new ListCommand());
         this.addCommand(new LlamaCommand());
@@ -204,7 +211,6 @@ public class CommandManager {
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
-        this.addCommand(new NSFWCommands());
         this.addCommand(new OneLinerCommands());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());

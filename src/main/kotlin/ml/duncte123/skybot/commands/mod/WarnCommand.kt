@@ -33,8 +33,8 @@ class WarnCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "warn"
-        this.helpFunction = { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user> [-r reason]`" }
+        this.help = "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server"
+        this.usage = "<@user> [-r reason]"
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
         this.flags = arrayOf(
             Flag(

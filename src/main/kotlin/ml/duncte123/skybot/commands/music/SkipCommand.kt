@@ -34,7 +34,7 @@ class SkipCommand : MusicCommand() {
     init {
         this.name = "skip"
         this.aliases = arrayOf("next", "nexttrack", "skiptrack")
-        this.helpFunction = { _, _ -> "Skips the current track" }
+        this.help = "Skips the current track"
     }
 
     override fun run(ctx: CommandContext) {

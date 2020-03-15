@@ -51,8 +51,8 @@ public class HelpCommand extends Command {
             "commands",
             "h",
         };
-        this.helpFunction = (prefix, invoke) -> "Sends you a list of all the commands";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [command]`";
+        this.help = "Sends you a list of all the commands";
+        this.usage = "[command]";
     }
 
     @Override
@@ -101,7 +101,7 @@ public class HelpCommand extends Command {
             .openPrivateChannel()
             .flatMap((pc) -> pc.sendMessage(embed))
             .queue(
-                (msg) -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
+                (msg) -> sendMsg(event, event.getAuthor().getAsMention() + " check your DM's"),
                 //When sending fails, send to the channel
                 (err) -> sendMsg(event, "You can check out my commands here:\nhttps://dunctebot.com/commands")
             );

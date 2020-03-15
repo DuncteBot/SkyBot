@@ -37,8 +37,8 @@ class DeHoistCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "dehoist"
-        this.helpFunction = { _, _ -> "De-hoists a user" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
+        this.help = "De-hoists a user"
+        this.usage = "<@user>"
         this.userPermissions = arrayOf(Permission.NICKNAME_MANAGE)
         this.botPermissions = arrayOf(Permission.NICKNAME_MANAGE)
     }

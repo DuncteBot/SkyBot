@@ -31,7 +31,7 @@ class CoffeeCommand : Command() {
         this.category = CommandCategory.FUN
         this.name = "coffee"
         this.aliases = arrayOf("coderjuice")
-        this.helpFunction = { _, _ -> "Shows a random cup of coffee" }
+        this.help = "Shows a random cup of coffee"
     }
 
     override fun execute(ctx: CommandContext) {

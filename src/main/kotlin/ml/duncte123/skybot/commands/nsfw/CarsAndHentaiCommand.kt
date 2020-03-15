@@ -16,34 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.nsfw
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.extensions.abbreviate
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.entities.MessageEmbed
 
-class MemeCommand : Command() {
+class CarsAndHentaiCommand : Command() {
+
     init {
-        this.category = CommandCategory.FUN
-        this.name = "meme"
-        this.help = "See a funny meme"
+        this.category = CommandCategory.NSFW
+        this.name = "carsandhentai"
+        this.help = "Delet this"
     }
 
     override fun execute(ctx: CommandContext) {
-        val json = ctx.apis.executeDefaultGetRequest("meme", false)["data"]
-
-        val embed = EmbedUtils.defaultEmbed()
-            .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
-            .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
-
-        if (json.has("image")) {
-            embed.setImage(json["image"].asText())
+        WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, "Cars and hentai")).async { jsonRaw ->
+            val jsonArray = jsonRaw["items"]
+            val randomItem = jsonArray[ctx.random.nextInt(jsonArray.size())]
+            sendEmbed(ctx,
+                EmbedUtils.defaultEmbed()
+                    .setTitle(
+                        randomItem["title"].asText(),
+                        randomItem["image"]["contextLink"].asText()
+                    )
+                    .setImage(randomItem["link"].asText())
+            )
         }
-
-        MessageUtils.sendEmbed(ctx, embed)
     }
 }

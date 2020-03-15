@@ -35,7 +35,7 @@ class JokeCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "joke"
-        this.helpFunction = { _, _ -> "See a funny joke. Dad's love them!"}
+        this.help = "See a funny joke. Dad's love them!"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -34,9 +34,7 @@ class LoadCommand : MusicCommand() {
     init {
         this.withAutoJoin = true
         this.name = "load"
-        this.helpFunction = { prefix, _ ->
-            "Loads the given playlist file\nThe playlist can be exported with `${prefix}save`"
-        }
+        this.help = "Loads the given playlist file\nThe playlist can be exported with `{prefix}save`"
     }
 
     override fun run(ctx: CommandContext) {

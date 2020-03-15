@@ -28,7 +28,7 @@ class StopCommand : MusicCommand() {
 
     init {
         this.name = "stop"
-        this.helpFunction = { _, _ -> "Stops the music" }
+        this.help = "Stops the music"
     }
 
     override fun run(ctx: CommandContext) {

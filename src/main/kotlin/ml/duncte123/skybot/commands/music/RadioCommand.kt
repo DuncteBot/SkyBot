@@ -38,8 +38,8 @@ class RadioCommand : MusicCommand() {
         this.withAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
-        this.helpFunction = { _, _ -> "Adds a radio http stream to your queue and goes to it" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <(full)list/station name>`" }
+        this.help = "Adds a radio http stream to your queue and goes to it"
+        this.usage = "<(full)list/station name>"
         loadStations()
     }
 

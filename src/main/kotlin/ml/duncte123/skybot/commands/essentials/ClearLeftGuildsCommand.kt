@@ -30,7 +30,7 @@ class ClearLeftGuildsCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "clearleftguilds"
-        this.helpFunction = { _, _ -> "Clears the guilds from the db that the bot is no longer in" }
+        this.help = "Clears the guilds from the db that the bot is no longer in"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -16,34 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.nsfw
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.extensions.abbreviate
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.entities.MessageEmbed
 
-class MemeCommand : Command() {
+@Author(nickname = "duncte123", author = "Duncan Sterken")
+class LewdNekoCommand : Command() {
+
     init {
-        this.category = CommandCategory.FUN
-        this.name = "meme"
-        this.help = "See a funny meme"
+        this.category = CommandCategory.NSFW
+        this.name = "lewdneko"
+        this.help = "Gives a very lewd neko"
     }
 
     override fun execute(ctx: CommandContext) {
-        val json = ctx.apis.executeDefaultGetRequest("meme", false)["data"]
-
-        val embed = EmbedUtils.defaultEmbed()
-            .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
-            .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
-
-        if (json.has("image")) {
-            embed.setImage(json["image"].asText())
+        WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
+            sendEmbed(ctx, EmbedUtils.embedImage(it["url"].asText()))
         }
-
-        MessageUtils.sendEmbed(ctx, embed)
     }
 }

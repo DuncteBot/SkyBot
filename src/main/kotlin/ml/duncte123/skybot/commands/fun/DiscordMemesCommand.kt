@@ -32,7 +32,7 @@ class DiscordMemesCommand : WeebCommandBase() {
         this.category = CommandCategory.FUN
         this.name = "discordmeme"
         this.aliases = arrayOf("dmeme", "discordmemes", "dmemes")
-        this.helpFunction = { _, _ -> "Shows a discord meme" }
+        this.help = "Shows a discord meme"
     }
 
     override fun execute(ctx: CommandContext) {

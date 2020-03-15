@@ -34,8 +34,8 @@ class ForceSkip : MusicCommand() {
     init {
         this.name = "forceskip"
         this.aliases = arrayOf("modskip")
-        this.helpFunction = { _, _ -> "Force skips the current track" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [skip count]`" }
+        this.help = "Force skips the current track"
+        this.usage = "[skip count]"
         this.userPermissions = arrayOf(
             Permission.MANAGE_SERVER
         )

@@ -29,8 +29,8 @@ public class LinusCommand extends ImageCommandBase {
 
     public LinusCommand() {
         this.name = "linus";
-        this.helpFunction = (prefix, invoke) -> "Shows a picture of Linus pointing to something on a monitor.";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [@user/url]`";
+        this.help = "Shows a picture of Linus pointing to something on a monitor.";
+        this.usage = "[@user/url]";
     }
 
     @Override

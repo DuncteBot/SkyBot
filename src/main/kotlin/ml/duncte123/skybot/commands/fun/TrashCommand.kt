@@ -28,8 +28,8 @@ class TrashCommand : NoPatronImageCommand() {
     init {
         this.requiresArgs = true
         this.name = "trash"
-        this.helpFunction = { _, _ -> "Call someone trash" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
+        this.help = "Call someone trash"
+        this.usage = "<@user>"
     }
 
     override fun execute(ctx: CommandContext) {
