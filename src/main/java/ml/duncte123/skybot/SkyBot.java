@@ -32,9 +32,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -114,12 +117,23 @@ public final class SkyBot {
 
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
-        final DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder()
+        final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
+            GatewayIntent.GUILD_MEMBERS,
+            GatewayIntent.GUILD_BANS,
+            GatewayIntent.GUILD_EMOJIS,
+            GatewayIntent.GUILD_VOICE_STATES,
+            GatewayIntent.GUILD_MESSAGES
+        )
             .setToken(token)
             .setShardsTotal(totalShards)
             .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
+            // Keep all members in cache
+            // TODO: find a way to make sure that this is not needed anymore
+            .setMemberCachePolicy(MemberCachePolicy.ALL)
+            // And no lazy loading
+            .setChunkingFilter(ChunkingFilter.ALL)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
@@ -154,6 +168,10 @@ public final class SkyBot {
             1, 1, TimeUnit.DAYS);
     }
 
+    public WebRouter getWebRouter() {
+        return webRouter;
+    }
+
     public static void main(final String[] args) throws Exception {
         /*assert AirUtils.isURL("") == false;
         assert AirUtils.isURL("https://google.com/hello") == true;
@@ -167,9 +185,5 @@ public final class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
-    }
-
-    public WebRouter getWebRouter() {
-        return webRouter;
     }
 }

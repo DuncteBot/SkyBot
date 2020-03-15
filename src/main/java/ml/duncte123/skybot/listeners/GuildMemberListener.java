@@ -28,6 +28,7 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.member.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
@@ -47,8 +48,8 @@ public class GuildMemberListener extends BaseListener {
     public void onEvent(@Nonnull GenericEvent event) {
         if (event instanceof GuildMemberJoinEvent) {
             this.onGuildMemberJoin((GuildMemberJoinEvent) event);
-        } else if (event instanceof GuildMemberLeaveEvent) {
-            this.onGuildMemberLeave((GuildMemberLeaveEvent) event);
+        } else if (event instanceof GuildMemberRemoveEvent) {
+            this.onGuildMemberRemove((GuildMemberRemoveEvent) event);
         } else if (event instanceof GuildMemberRoleRemoveEvent) {
             this.onGuildMemberRoleRemove((GuildMemberRoleRemoveEvent) event);
         } else if (event instanceof GuildMemberRoleAddEvent) {
@@ -84,28 +85,34 @@ public class GuildMemberListener extends BaseListener {
         }
     }
 
-    private void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+    private void onGuildMemberRemove(GuildMemberRemoveEvent event) {
         final Guild guild = event.getGuild();
+        final User user = event.getUser();
+        final SelfUser selfUser = event.getJDA().getSelfUser();
 
-        if (event.getMember().equals(guild.getSelfMember())) {
+        // If we are leaving we need to ignore this as we cannot send messages to any channels
+        // when this event is fired
+        if (user.equals(selfUser)) {
             return;
         }
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
+        // If the leave message is enabled and we have a welcome channel
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
+            // If we have a message and the text channel is not null
             if (!msg.isEmpty() && !"".equals(msg.trim()) && welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
             }
         }
 
         if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().getShardManager());
+            handlePatronRemoval(user.getIdLong(), event.getJDA().getShardManager());
         }
     }
 
@@ -164,9 +171,9 @@ public class GuildMemberListener extends BaseListener {
     }
 
     @Nonnull
-    private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
+    private String parseGuildVars(String rawMessage, GenericGuildEvent event) {
 
-        if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent)) {
+        if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberRemoveEvent)) {
             return "NOPE";
         }
 
@@ -174,12 +181,20 @@ public class GuildMemberListener extends BaseListener {
             return "";
         }
 
+        final User user;
+
+        if (event instanceof GuildMemberJoinEvent) {
+            user = ((GuildMemberJoinEvent) event).getUser();
+        } else {
+            user = ((GuildMemberRemoveEvent) event).getUser();
+        }
+
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
         final Parser parser = CommandUtils.PARSER_SUPPLIER.get();
 
-        final String message = parser.put("user", event.getUser())
+        final String message = parser.put("user", user)
             .put("guild", event.getGuild())
             .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
             .put("args", "")
