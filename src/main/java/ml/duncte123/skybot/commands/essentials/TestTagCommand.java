@@ -41,8 +41,8 @@ public class TestTagCommand extends Command {
         this.aliases = new String[]{
             "tt",
         };
-        this.helpFunction = (prefix, invoke) -> "Test your jagtag format before you save it as custom command etc.";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <JagTag syntax>`";
+        this.help = "Test your jagtag format before you save it as custom command etc.";
+        this.usage = "<JagTag syntax>";
     }
 
     @Override

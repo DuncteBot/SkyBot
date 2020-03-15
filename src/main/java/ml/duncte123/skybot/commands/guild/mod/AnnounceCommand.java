@@ -48,8 +48,8 @@ public class AnnounceCommand extends ModBaseCommand {
             "announce2",
             "announce3",
         };
-        this.helpFunction = (prefix, invoke) -> "Sends an announcement in the specified channel";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <#channel> <message> [--noembed] [--thumbnail]`";
+        this.help = "Sends an announcement in the specified channel";
+        this.usage = "<#channel> <message> [--noembed] [--thumbnail]";
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };

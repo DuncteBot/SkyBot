@@ -40,14 +40,15 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class LoveCommand extends Command {
 
     public LoveCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.FUN;
         this.name = "ship";
         this.aliases = new String[]{
             "love",
             "loveship",
         };
-        this.helpFunction = (prefix, invoke) -> "Ship two people and get their love score";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <@user>`";
+        this.help = "Ship two people and get their love score";
+        this.usage = "<@user> <@user>";
     }
 
     @Override
@@ -55,11 +56,6 @@ public class LoveCommand extends Command {
 
         final List<String> args = ctx.getArgs();
         final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
 
         String name1 = ctx.getMember().getEffectiveName();
         String name2 = args.get(0);
@@ -71,7 +67,6 @@ public class LoveCommand extends Command {
 
         final Member target1 = AirUtils.getMentionedMember(name1, ctx.getGuild());
         final Member target2 = AirUtils.getMentionedMember(name2, ctx.getGuild());
-
         final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
 
         if (response == null) {

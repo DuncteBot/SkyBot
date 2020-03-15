@@ -37,7 +37,7 @@ public class TranslateCommand extends Command {
     public TranslateCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "translate";
-        this.helpFunction = (prefix, invoke) -> "Translate a text from English to another language";
+        this.help = "Translate a text from English to another language";
         this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <destination language> <text>`";
     }
 

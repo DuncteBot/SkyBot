@@ -57,9 +57,8 @@ public abstract class Command implements ICommand {
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
     protected String[] aliases = new String[0];
-    // We're using the kotlin functions just so the kotlin code looks neater
-    protected Function2<String, String, String> helpFunction = (prefix, invoke) -> "No help available";
-    protected Function2<String, String, String> usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + '`';
+    protected String help = "";
+    protected String usage = "";
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
@@ -148,7 +147,8 @@ public abstract class Command implements ICommand {
     @Nonnull
     @Override
     public final String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.helpFunction.invoke(prefix, invoke);
+        return this.help;
+//        return this.helpFunction.invoke(prefix, invoke);
     }
 
     @Override
@@ -163,12 +163,15 @@ public abstract class Command implements ICommand {
 
     @Nonnull
     public String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.usageInstructions.invoke(prefix, invoke);
+        return '`' + prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix).trim() + '`';
+//        return this.usageInstructions.invoke(prefix, invoke);
     }
 
     @Nonnull
     public String getUsageInstructions(CommandContext ctx) {
-        return this.usageInstructions.invoke(ctx.getPrefix(), ctx.getInvoke());
+        // Why are these inverted?
+        return this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix());
+//        return this.usageInstructions.invoke(ctx.getPrefix(), ctx.getInvoke());
     }
 
     protected void sendUsageInstructions(CommandContext ctx) {

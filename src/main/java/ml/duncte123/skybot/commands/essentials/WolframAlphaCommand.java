@@ -54,8 +54,8 @@ public class WolframAlphaCommand extends Command {
             "wa",
             "wolframalpha",
         };
-        this.helpFunction = (prefix, invoke) -> "Ask Wolfram|Alpha all your geeky questions";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <query>`";
+        this.help = "Ask Wolfram|Alpha all your geeky questions";
+        this.usage = "<query>";
     }
 
     private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey) {

@@ -35,7 +35,7 @@ public class LlamaCommand extends Command {
     public LlamaCommand() {
         this.category = CommandCategory.ANIMALS;
         this.name = "llama";
-        this.helpFunction = (prefix, invoke) -> "Shows a llama";
+        this.help = "Shows a llama";
     }
 
     @Override

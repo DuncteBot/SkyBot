@@ -36,20 +36,15 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class UrbanCommand extends Command {
 
     public UrbanCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.NSFW;
         this.name = "urban";
-        this.helpFunction = (prefix, invoke) -> "Searches the urban dictionary";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <search term>`";
+        this.help = "Searches the urban dictionary";
+        this.usage = "<search term>";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        if (ctx.getArgs().isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final String term = ctx.getArgsRaw();
         final String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
