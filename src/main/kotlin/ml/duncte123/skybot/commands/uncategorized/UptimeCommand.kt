@@ -18,29 +18,20 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils
+import java.lang.management.ManagementFactory
 
-class ReverseCommand : Command() {
+class UptimeCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "uptime"
+        this.help = "Shows the bot's uptime"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
+        sendMsg(ctx, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
     }
 }

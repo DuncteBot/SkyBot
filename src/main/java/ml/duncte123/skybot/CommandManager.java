@@ -155,6 +155,7 @@ public class CommandManager {
         this.addCommand(new CoffeeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new ColorCommand());
+        this.addCommand(new CookieCommand());
         this.addCommand(new CrashCommand());
         this.addCommand(new CSShumorCommand());
         this.addCommand(new CustomCommandCommand());
@@ -186,6 +187,7 @@ public class CommandManager {
         this.addCommand(new ImageCommand());
         this.addCommand(new InstaCommand());
         this.addCommand(new InvertCommand());
+        this.addCommand(new InviteCommand());
         this.addCommand(new IssueCommand());
         this.addCommand(new ItsFreeRealEstateCommand());
         this.addCommand(new IWantToDieCommand());
@@ -208,10 +210,10 @@ public class CommandManager {
         this.addCommand(new LoveCommand());
         this.addCommand(new LyricsCommand());
         this.addCommand(new MemeCommand());
+        this.addCommand(new MinehCommand());
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
-        this.addCommand(new OneLinerCommands());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
         this.addCommand(new PingCommand());
@@ -222,6 +224,7 @@ public class CommandManager {
         this.addCommand(new PronounsCheckCommand());
         this.addCommand(new PurgeChannelCommand());
         this.addCommand(new PurgeUserCommand());
+        this.addCommand(new QuoteCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
         this.addCommand(new RemindmeCommand());
@@ -234,6 +237,7 @@ public class CommandManager {
         this.addCommand(new SaltyCommand());
         this.addCommand(new SaturateCommand());
         this.addCommand(new SaveCommand());
+        this.addCommand(new ScreenfetchCommand());
         this.addCommand(new ScrollCommand());
         this.addCommand(new SealCommand());
         this.addCommand(new SearchCommand());
@@ -255,6 +259,7 @@ public class CommandManager {
         this.addCommand(new SkipCommand());
         this.addCommand(new SlowModeCommand());
         this.addCommand(new SoftbanCommand());
+        this.addCommand(new SpamCommand());
         this.addCommand(new StatsCommand());
         this.addCommand(new StopCommand());
         this.addCommand(new SuggestCommand());
@@ -275,20 +280,24 @@ public class CommandManager {
         this.addCommand(new TokenCommand());
         this.addCommand(new TranslateCommand());
         this.addCommand(new TrashCommand());
+        this.addCommand(new TriggerCommand());
         this.addCommand(new UnbanCommand());
         this.addCommand(new UnlockEmoteCommand());
         this.addCommand(new UnmuteCommand());
         this.addCommand(new UnshortenCommand());
         this.addCommand(new UnwarnCommand());
         this.addCommand(new UpdateCommand());
+        this.addCommand(new UptimeCommand());
         this.addCommand(new UrbanCommand());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new VcAutoRoleCommand());
         this.addCommand(new VoiceKickCommand());
         this.addCommand(new VolumeCommand());
         this.addCommand(new VoteCommand());
+        this.addCommand(new WamCommand());
         this.addCommand(new WarnCommand());
         this.addCommand(new WarningsCommand());
+        this.addCommand(new WebsiteCommand());
         this.addCommand(new WeebCommands());
         this.addCommand(new WolframAlphaCommand());
         this.addCommand(new XkcdCommand());

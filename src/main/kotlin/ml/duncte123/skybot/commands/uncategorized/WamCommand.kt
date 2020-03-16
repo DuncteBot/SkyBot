@@ -18,29 +18,19 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ReverseCommand : Command() {
+class WamCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "wam"
+        this.help = "you need more WAM!"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
+        // sendEmbed(ctx, embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
+        sendMsg(ctx, "http://downloadmorewam.com/wam.mp4")
     }
 }

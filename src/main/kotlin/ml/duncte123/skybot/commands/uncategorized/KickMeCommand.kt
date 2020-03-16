@@ -31,7 +31,7 @@ class KickMeCommand : Command() {
 
     init {
         this.name = "kickme"
-        this.helpFunction = { _, _ -> "Kicks you off the server" }
+        this.help = "Kicks you off the server"
     }
 
     override fun execute(ctx: CommandContext) {

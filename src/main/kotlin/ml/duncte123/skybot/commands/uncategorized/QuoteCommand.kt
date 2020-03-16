@@ -18,29 +18,22 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ReverseCommand : Command() {
+class QuoteCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "quote"
+        this.help = "Shows an inspiring quote"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
+        WebUtils.ins.getText("http://inspirobot.me/api?generate=true").async {
+            sendEmbed(ctx, EmbedUtils.embedImage(it))
         }
-
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
     }
 }

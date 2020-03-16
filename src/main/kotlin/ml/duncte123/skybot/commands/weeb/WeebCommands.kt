@@ -31,7 +31,7 @@ class WeebCommands : WeebCommandBase() {
     private val weebTags = ArrayList<String>()
 
     init {
-        this.displayAliasesInHelp = true;
+        this.displayAliasesInHelp = true
         this.category = CommandCategory.WEEB
         this.name = "hug"
         this.aliases = arrayOf(
@@ -47,8 +47,8 @@ class WeebCommands : WeebCommandBase() {
             "b1nzy",
             "megumin"
         )
-        this.helpFunction = { _, invoke -> this.parseHelp(invoke) }
-        this.usageInstructions = { prefix, invoke -> this.parseUsageInstructions(invoke, prefix) }
+        this.help = this.parseHelp(this.name)
+        this.usage = this.parseUsageInstructions(this.name, "{prefix}")
     }
 
     override fun execute(ctx: CommandContext) {

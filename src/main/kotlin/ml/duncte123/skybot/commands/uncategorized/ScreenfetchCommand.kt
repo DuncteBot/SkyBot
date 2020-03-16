@@ -18,29 +18,26 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.extensions.getString
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ReverseCommand : Command() {
+class ScreenfetchCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "screenfetch"
+        this.help = "Shows some info from screenfetch"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
+        val screenfetch = Runtime.getRuntime()
+            .exec("screenfetch -N")
+            .getString()
+            // replace backticks and colors
+            .replace("`", "​'")
+            .replace("\u001B\\[[;\\d]*m", "")
 
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
+        sendMsg(ctx, "```\n$screenfetch```")
     }
 }

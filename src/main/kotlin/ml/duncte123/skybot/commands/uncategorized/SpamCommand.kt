@@ -18,29 +18,19 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ReverseCommand : Command() {
+class SpamCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "spam"
+        this.help = "What do you think \uD83D\uDE0F"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
+        MessageUtils.sendEmbed(ctx, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg"))
     }
 }

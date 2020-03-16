@@ -28,8 +28,8 @@ class InstaCommand : Command() {
 
     init {
         this.name = "insta"
-        this.helpFunction = { _, _ -> "Shows the latest picture on someones instagram account" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <username>`" }
+        this.help = "Shows the latest picture on someones instagram account"
+        this.usage = "<username>"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -54,8 +54,8 @@ class UserinfoCommand : Command() {
     init {
         this.name = "userinfo"
         this.aliases = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
-        this.helpFunction = { _, _ -> "Get some information about yourself or from another user" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user]`" }
+        this.help = "Get some information about yourself or from another user"
+        this.usage = "[@user]"
         this.cooldown = 30
     }
 
@@ -140,9 +140,7 @@ class UserinfoCommand : Command() {
 
     private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
         val joins = guild.memberCache.applyStream {
-            it.sorted(
-                Comparator.comparing<Member, OffsetDateTime> { m -> m.timeJoined }
-            ).collect(Collectors.toList())
+            it.sorted(Comparator.comparing(Member::getTimeJoined)).collect(Collectors.toList())
         }!!
 
         var index = joins.indexOf(member)

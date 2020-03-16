@@ -28,8 +28,8 @@ class AvatarCommand : Command() {
 
     init {
         this.name = "avatar"
-        this.helpFunction = { _, _ -> "Shows your avatar or the one for the specified user" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user]`" }
+        this.help = "Shows your avatar or the one for the specified user"
+        this.usage = "[@user]"
     }
 
     override fun execute(ctx: CommandContext) {

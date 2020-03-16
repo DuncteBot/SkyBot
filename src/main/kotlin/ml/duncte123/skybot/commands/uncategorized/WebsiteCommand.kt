@@ -18,29 +18,25 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ReverseCommand : Command() {
+@Authors(authors = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken"),
+    Author(nickname = "ramidzkh", author = "Ramid Khan")
+])
+class WebsiteCommand : Command() {
 
     init {
-        this.name = "reverse"
-        this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.name = "website"
+        this.help = "Shows the bots website"
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
-        val message = """**${ctx.author.asTag}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-        MessageUtils.sendMsg(ctx.event, message)
+        sendMsg(ctx, "My website is <https://dunctebot.com>")
     }
 }

@@ -26,7 +26,7 @@ class DonateCommand : Command() {
 
     init {
         this.name = "donate"
-        this.helpFunction = { _, _ -> "Help keeping the bot up by donating" }
+        this.help = "Help to keep the bot online by donating"
     }
 
     override fun execute(ctx: CommandContext) {
