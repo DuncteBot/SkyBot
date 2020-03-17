@@ -52,7 +52,7 @@ import ml.duncte123.skybot.commands.nsfw.LewdKitsuneCommand;
 import ml.duncte123.skybot.commands.nsfw.LewdNekoCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
-import ml.duncte123.skybot.commands.weeb.WeebCommands;
+import ml.duncte123.skybot.commands.weeb.*;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -138,6 +138,7 @@ public class CommandManager {
         this.addCommand(new AnnounceCommand());
         this.addCommand(new AutoRoleCommand());
         this.addCommand(new AvatarCommand());
+        this.addCommand(new B1nzyCommand());
         this.addCommand(new BanCommand());
         this.addCommand(new BaseBoostCommand());
         this.addCommand(new BirbCommand());
@@ -159,6 +160,7 @@ public class CommandManager {
         this.addCommand(new CrashCommand());
         this.addCommand(new CSShumorCommand());
         this.addCommand(new CustomCommandCommand());
+        this.addCommand(new DanceCommand());
         this.addCommand(new DeepfryCommand());
         this.addCommand(new DeHoistCommand());
         this.addCommand(new DeletCommand());
@@ -184,6 +186,7 @@ public class CommandManager {
         this.addCommand(new HackbanCommand());
         this.addCommand(new HelpCommand());
         this.addCommand(new HentaiCommand());
+        this.addCommand(new HugCommand());
         this.addCommand(new ImageCommand());
         this.addCommand(new InstaCommand());
         this.addCommand(new InvertCommand());
@@ -199,8 +202,10 @@ public class CommandManager {
         this.addCommand(new KittyCommand());
         this.addCommand(new KpopCommand());
         this.addCommand(new LeaveCommand());
+        this.addCommand(new LewdCommand());
         this.addCommand(new LewdKitsuneCommand());
         this.addCommand(new LewdNekoCommand());
+        this.addCommand(new LickCommand());
         this.addCommand(new LinusCommand());
         this.addCommand(new ListCommand());
         this.addCommand(new LlamaCommand());
@@ -209,11 +214,14 @@ public class CommandManager {
         this.addCommand(new LockEmoteCommand());
         this.addCommand(new LoveCommand());
         this.addCommand(new LyricsCommand());
+        this.addCommand(new MeguminCommand());
         this.addCommand(new MemeCommand());
         this.addCommand(new MinehCommand());
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
+        this.addCommand(new OwoCommand());
+        this.addCommand(new PatCommand());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
         this.addCommand(new PingCommand());
@@ -222,6 +230,7 @@ public class CommandManager {
         this.addCommand(new PlayRawCommand());
         this.addCommand(new PPlayCommand());
         this.addCommand(new PronounsCheckCommand());
+        this.addCommand(new PunchCommand());
         this.addCommand(new PurgeChannelCommand());
         this.addCommand(new PurgeUserCommand());
         this.addCommand(new QuoteCommand());
@@ -254,7 +263,9 @@ public class CommandManager {
         this.addCommand(new SetWelcomeChannelCommand());
         this.addCommand(new ShardInfoCommand());
         this.addCommand(new ShitCommand());
+        this.addCommand(new ShootCommand());
         this.addCommand(new ShortenCommand());
+        this.addCommand(new ShrugCommand());
         this.addCommand(new ShuffleCommand());
         this.addCommand(new SkipCommand());
         this.addCommand(new SlowModeCommand());
@@ -298,7 +309,7 @@ public class CommandManager {
         this.addCommand(new WarnCommand());
         this.addCommand(new WarningsCommand());
         this.addCommand(new WebsiteCommand());
-        this.addCommand(new WeebCommands());
+        this.addCommand(new WeebCommand());
         this.addCommand(new WolframAlphaCommand());
         this.addCommand(new XkcdCommand());
         this.addCommand(new YesNoCommand());
