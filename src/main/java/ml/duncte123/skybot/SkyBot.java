@@ -30,8 +30,6 @@ import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -49,6 +47,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
+
+import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 //Skybot version 1.0 and 2.0 were written in php
 @SinceSkybot(version = "3.0.0")
@@ -88,7 +89,7 @@ public final class SkyBot {
 
         Settings.PREFIX = config.discord.prefix;
         RestAction.setPassContext(true);
-        RestAction.setDefaultFailure(ErrorResponseException.ignore(EnumSet.of(ErrorResponse.UNKNOWN_MESSAGE)));
+        RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
 
         if (variables.useApi()) {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);

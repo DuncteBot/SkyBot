@@ -99,6 +99,11 @@ public class RemindmeCommand extends Command {
             return;
         }
 
+        if (duration.getDays() > 1460) { // 4 years in days
+            sendMsg(ctx, "Just keep it below 4 years ok ;)");
+            return;
+        }
+
         final String reminder = String.join(" ", flags.get("undefined"));
         final Date expireDate = AirUtils.getDatabaseDate(duration);
 
