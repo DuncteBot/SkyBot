@@ -63,7 +63,7 @@ public class GuildInfoCommand extends Command {
 
             // If the guild has the VANITY_URL feature enabled or the vanityCode is not null the guild has a vanity url
             // We do this check before fetching the invites so that we can display the vanity url if they have one
-            if (g.getVanityCode() != null || g.getFeatures().contains("VANITY_URL")) {
+            if (g.getFeatures().contains("VANITY_URL") || g.getVanityCode() != null) {
                 sendGuildInfoEmbed(ctx, String.format(INVITE_STRING_TEMPLATE, g.getVanityCode()));
                 return;
             }
