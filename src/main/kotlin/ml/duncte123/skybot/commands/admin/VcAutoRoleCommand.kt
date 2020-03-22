@@ -40,7 +40,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         this.usage = """add <voice channel> <@role>`
         |`{prefix}$name remove <voice channel>`
         |`{prefix}$name off`
-        |`{prefix}$name listA
+        |`{prefix}$name list
         """.trimMargin()
         this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
         this.botPermissions = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
