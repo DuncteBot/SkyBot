@@ -27,7 +27,7 @@ class ReverseCommand : Command() {
     init {
         this.name = "reverse"
         this.help = "Reverses a string"
-        this.usage = "<texxt>"
+        this.usage = "<text>"
     }
 
     override fun execute(ctx: CommandContext) {

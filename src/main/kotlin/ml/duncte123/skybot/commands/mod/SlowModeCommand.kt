@@ -34,7 +34,7 @@ class SlowModeCommand : ModBaseCommand() {
         this.name = "slowmode"
         this.aliases = arrayOf("sm")
         this.help = "Sets the slowmode in the current channel"
-        this.usage = "<seconds (1-${TextChannel.MAX_SLOWMODE})/off>"
+        this.usage = "<seconds (0-${TextChannel.MAX_SLOWMODE})/off>"
         this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
     }
