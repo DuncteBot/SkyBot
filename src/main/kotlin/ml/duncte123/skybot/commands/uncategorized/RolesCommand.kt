@@ -27,7 +27,7 @@ class RolesCommand : Command() {
 
     init {
         this.name = "roles"
-        this.helpFunction = { _, _ -> "Returns a list of roles on the server" }
+        this.help = "Returns a list of roles on the server"
     }
 
     override fun execute(ctx: CommandContext) {

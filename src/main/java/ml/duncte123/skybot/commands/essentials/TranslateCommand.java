@@ -35,22 +35,18 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class TranslateCommand extends Command {
 
     public TranslateCommand() {
+        this.requiresArgs = true;
+        this.requiredArgCount = 2;
         this.category = CommandCategory.UTILS;
         this.name = "translate";
         this.help = "Translate a text from English to another language";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <destination language> <text>`";
+        this.usage = "<destination language> <text>";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-
-        if (args.isEmpty() || args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final String targetLang = args.get(0);
         final String input = String.join(" ", args.subList(1, args.size()));
         final ArrayNode translatedJson = WebUtils.ins.translate("auto", targetLang, input);

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
@@ -26,6 +27,8 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
+import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : ModBaseCommand() {
@@ -33,8 +36,8 @@ class WarnCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "warn"
-        this.helpFunction = { _, _ -> "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user> [-r reason]`" }
+        this.help = "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server"
+        this.usage = "<@user> [-r reason]"
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
         this.flags = arrayOf(
             Flag(
@@ -46,7 +49,6 @@ class WarnCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
         val mentioned = ctx.getMentionedArg(0)
 
         if (mentioned.isEmpty()) {
@@ -56,18 +58,29 @@ class WarnCommand : ModBaseCommand() {
 
         val target = mentioned[0]
 
-        if (target.user == event.jda.selfUser) {
-            MessageUtils.sendErrorWithMessage(event.message, "You can not warn me")
+        // The bot cannot be warned
+        if (target.user == ctx.jda.selfUser) {
+            sendErrorWithMessage(ctx.message, "You can not warn me")
             return
         }
 
-        if (!canInteract(ctx.member, target, "warn", ctx.channel)) {
+        val jdaGuild = ctx.jdaGuild
+        val guild = ctx.guild
+        val member = ctx.member
+        val channel = ctx.channel
+        val author = ctx.author
+
+        // Check if we can interact
+        if (!canInteract(member, target, "warn", channel)) {
             return
         }
 
-        if (getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
-            event.guild.kick(target).reason("Reached 3 warnings").queue()
-            modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
+        // Check if the warning count is more than 3
+        // and kick the user if this threshold is exceeded
+        // TODO: make both the threshold and the action configurable
+        if (getWarningCountForUser(ctx.databaseAdapter, target.user, jdaGuild) >= 3) {
+            ctx.jdaGuild.kick(target).reason("Reached 3 warnings").queue()
+            modLog(author, target.user, "kicked", "Reached 3 warnings", guild)
             return
         }
 
@@ -78,22 +91,22 @@ class WarnCommand : ModBaseCommand() {
             reason = flags["r"]!!.joinToString(" ")
         }
 
-        val dmMessage = """You have been warned by ${event.author.asTag}
+        val dmMessage = """You have been warned by ${author.asTag}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
-        modLog(event.author, target.user, "warned", reason, ctx.guild)
+        // add the new warning to the database
+        addWarningToDb(ctx.databaseAdapter, author, target.user, reason, guild)
+        modLog(author, target.user, "warned", reason, guild)
 
+        // Yes we can warn bots (cuz why not) but we cannot dm them
         if (!target.user.isBot) {
-            target.user.openPrivateChannel().queue {
-                //Ignore the fail consumer, we don't want to have spam in the console
-                it.sendMessage(dmMessage).queue(null) { }
-            }
+            target.user.openPrivateChannel()
+                .flatMap {  it.sendMessage(dmMessage) }
+                .queue(null, ignore(CANNOT_SEND_TO_USER))
         }
 
-        MessageUtils.sendSuccess(event.message)
-
+        MessageUtils.sendSuccess(ctx.message)
     }
 
 }

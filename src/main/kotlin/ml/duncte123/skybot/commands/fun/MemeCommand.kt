@@ -30,7 +30,7 @@ class MemeCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "meme"
-        this.helpFunction = { _, _ -> "See a funny meme" }
+        this.help = "See a funny meme"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -88,10 +88,10 @@ workflows:
             - build:
                   filters:
                       branches:
-                          only: no-branch
+                          only: master
             - deploy:
                 requires:
                     - build
                 filters:
                     branches:
-                        only: no-branch
+                        only: master

@@ -27,6 +27,7 @@ import net.dv8tion.jda.internal.utils.Helpers;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,11 +47,11 @@ public class SeekCommand extends MusicCommand {
             "jumpto",
             "jp",
         };
-        this.helpFunction = (prefix, invoke) -> "Seek in the currently playing track\n" +
-            "Examples: `" + prefix + invoke + " 04:20`\n" +
-            '`' + prefix + invoke + " 00:50`\n" +
-            '`' + prefix + invoke + " 120`";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <minutes:seconds>` / `" + prefix + invoke + "[-]<seconds>";
+        this.help = "Seek in the currently playing track\n" +
+            "Examples: `{prefix}seek 04:20`\n" +
+            "`{prefix}seek 00:50`\n" +
+            "`{prefix}seek 120`";
+        this.usage = "{prefix}seek <minutes:seconds>` / `{prefix}seek [-]<seconds>";
     }
 
     @Override
@@ -140,6 +141,6 @@ public class SeekCommand extends MusicCommand {
         catch (InterruptedException ignored) {
         }
 
-        ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
+        Objects.requireNonNull(ctx.getCommandManager().getCommand("nowplaying")).executeCommand(ctx);
     }
 }

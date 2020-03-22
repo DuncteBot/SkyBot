@@ -28,8 +28,8 @@ class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
-        this.helpFunction = { _, _ -> "Shows information about an emoji or emote" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <emote>`" }
+        this.help = "Shows information about an emoji or emote"
+        this.usage = "<emote>"
     }
 
     override fun execute(ctx: CommandContext) {

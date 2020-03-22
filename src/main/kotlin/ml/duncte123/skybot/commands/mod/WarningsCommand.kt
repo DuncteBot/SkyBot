@@ -30,8 +30,8 @@ class WarningsCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "warnings"
-        this.helpFunction = { _, _ -> "Shows the active warnings that a member has" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user>`" }
+        this.help = "Shows the active warnings that a member has"
+        this.usage = "<@user>"
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
     }
 

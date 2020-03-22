@@ -31,7 +31,7 @@ public class PingCommand extends Command {
 
     public PingCommand() {
         this.name = "ping";
-        this.helpFunction = (prefix, invoke) -> "Shows the delay from the bot to the discord servers";
+        this.help = "Shows the delay from the bot to the discord servers";
     }
 
     @Override

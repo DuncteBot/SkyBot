@@ -30,6 +30,7 @@ public class Settings {
     public static final String VERSION = "@versionObj@";
     public static final boolean IS_LOCAL = VERSION.startsWith("@versionObj");
     public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
+    public static final String NEKKO_BASE = "https://nekobot.xyz/api/image?type=";
     public static final int DEFAULT_COLOUR = 0x0751c6;
 
     public static final long SUPPORT_GUILD_ID = 191245668617158656L;

@@ -32,8 +32,8 @@ class XkcdCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "xkcd"
-        this.helpFunction = { _, _ -> "Sends the latest xkcd comic" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [latest/random/number]`" }
+        this.help = "Sends the latest xkcd comic"
+        this.usage = "[latest/random/number]"
     }
 
     override fun execute(ctx: CommandContext) {

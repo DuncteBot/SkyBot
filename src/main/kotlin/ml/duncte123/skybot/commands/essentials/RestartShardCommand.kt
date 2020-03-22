@@ -44,8 +44,8 @@ class RestartShardCommand : Command() {
         this.category = CommandCategory.UNLISTED
         this.name = "restartshard"
         this.aliases = arrayOf("shardrestart")
-        this.helpFunction = {_,_ -> "Restart the bot or a shard"}
-        this.usageInstructions = {prefix, invoke-> "`$prefix$invoke [shard id]`"}
+        this.help = "Restart the bot or a shard"
+        this.usage = "[shard id]"
     }
 
     override fun execute(ctx: CommandContext) {
