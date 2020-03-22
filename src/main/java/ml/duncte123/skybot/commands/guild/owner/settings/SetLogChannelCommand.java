@@ -31,8 +31,8 @@ public class SetLogChannelCommand extends SettingsBase {
 
     public SetLogChannelCommand() {
         this.name = "setlogchannel";
-        this.helpFunction = (prefix, invoke) -> "Sets the channel for the modlogs";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <#channel/disable>`";
+        this.help = "Sets the channel for the modlogs";
+        this.usage = "<#channel/disable>";
     }
 
     @Override

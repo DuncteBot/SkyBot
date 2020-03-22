@@ -52,21 +52,22 @@ In this section we guide you through a logically ordered and structure class und
 
 ### Command constructor
 To maintain consistency between the constructors of the commands the following order has been given to the properties
-1. requiresArgs
-2. requiredArgCount
-3. displayAliasesInHelp
-4. category
-5. name
-6. aliases
-7. helpFunction (prefix, invoke)
-8. usageInstructions (prefix, invoke)
-9. userPermissions
-10. botPermissions
-11. flags
-12. cooldown
-13. cooldownScope
-14. cooldownKey
-15. overridesCooldown
+1. shouldLoadMembers
+2. requiresArgs
+3. requiredArgCount
+4. displayAliasesInHelp
+5. category
+6. name
+7. aliases
+8. helpFunction (prefix, invoke)
+9. usageInstructions (prefix, invoke)
+10. userPermissions
+11. botPermissions
+12. flags
+13. cooldown
+14. cooldownScope
+15. cooldownKey
+16. overridesCooldown
 
 ### Access Modifiers
 

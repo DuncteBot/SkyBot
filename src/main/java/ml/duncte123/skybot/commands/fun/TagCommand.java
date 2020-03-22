@@ -51,9 +51,9 @@ public class TagCommand extends Command {
             "tags",
             "t",
         };
-        this.helpFunction = (prefix, invoke) -> "Stores some text for later usage\n" +
+        this.help = "Stores some text for later usage\n" +
             "Tags follow the same parsing as custom commands and the join/leave messages";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`";
+        this.usage = "<tag-name/raw/author/delete/create/help> [tag-name] [tag content]";
 
         variables.getDatabaseAdapter().loadTags((tags) -> {
             tags.forEach((tag) -> this.tagStore.put(tag.name, tag));

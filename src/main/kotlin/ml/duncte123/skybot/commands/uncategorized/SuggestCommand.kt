@@ -28,7 +28,7 @@ class SuggestCommand : Command() {
 
     init {
         this.name = "suggest"
-        this.helpFunction = { _, _ -> "Suggest a new feature for DuncteBot!" }
+        this.help = "Suggest a new feature for DuncteBot!"
     }
 
     override fun execute(ctx: CommandContext) {

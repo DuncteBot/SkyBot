@@ -42,9 +42,9 @@ public class RemindmeCommand extends Command {
         this.aliases = new String[]{
             "remindme",
         };
-        this.helpFunction = (prefix, invoke) -> "Creates a reminder for you, add `--channel` to remind you in the current channel";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <reminder> -t <number><w/d/h/m/s>`\n" +
-            "Example: `" + prefix + "remind Clean your room :/ -t 1d5m`";
+        this.help = "Creates a reminder for you, add `--channel` to remind you in the current channel";
+        this.usage = "<reminder> -t <number><w/d/h/m/s>`\n" +
+            "Example: `{prefix}remind Clean your room :/ -t 1d5m";
         this.flags = new Flag[]{
             new Flag(
                 't',
@@ -71,7 +71,7 @@ public class RemindmeCommand extends Command {
         final var flags = ctx.getParsedFlags(this);
 
         if (flags.get("undefined").isEmpty()) {
-            sendMsg(ctx, "What do you want me to remind you of?\nUsage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendMsg(ctx, "What do you want me to remind you of?\nUsage: " + this.getUsageInstructions(ctx));
             return;
         }
 

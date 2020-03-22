@@ -38,7 +38,7 @@ public class KittyCommand extends Command {
         this.aliases = new String[]{
             "kitty",
         };
-        this.helpFunction = (prefix, invoke) -> "Shows a cat";
+        this.help = "Shows a cat";
     }
 
     @Override

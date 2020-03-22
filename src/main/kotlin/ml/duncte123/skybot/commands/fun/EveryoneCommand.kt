@@ -28,7 +28,7 @@ class EveryoneCommand : WeebCommandBase() {
     init {
         this.category = CommandCategory.FUN
         this.name = "everyone"
-        this.helpFunction = { _, _ -> "Useful for when everyone is being pinged again" }
+        this.help = "Useful for when everyone is being pinged again"
     }
 
     override fun execute(ctx: CommandContext) {

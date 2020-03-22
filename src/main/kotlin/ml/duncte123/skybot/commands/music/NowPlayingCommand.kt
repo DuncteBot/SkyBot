@@ -31,7 +31,7 @@ class NowPlayingCommand : MusicCommand() {
     init {
         this.name = "nowplaying"
         this.aliases = arrayOf("np", "song")
-        this.helpFunction = { _, _ -> "Prints information about the currently playing song (title, current time)" }
+        this.help = "Prints information about the currently playing song (title, current time)"
     }
 
     override fun execute(ctx: CommandContext) {

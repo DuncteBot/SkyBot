@@ -33,8 +33,8 @@ class TextToBricksCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "ttb"
-        this.helpFunction = { _, _ -> "Converts your text into emoji bricks" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <text>`" }
+        this.help = "Converts your text into emoji bricks"
+        this.usage = "<text>"
     }
 
     override fun execute(ctx: CommandContext) {

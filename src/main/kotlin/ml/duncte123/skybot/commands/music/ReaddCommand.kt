@@ -33,7 +33,7 @@ class ReaddCommand : MusicCommand() {
 
     init {
         this.name = "readd"
-        this.helpFunction = { _, _ -> "Adds the currently playing track to the end of the queue" }
+        this.help = "Adds the currently playing track to the end of the queue"
     }
 
     override fun run(ctx: CommandContext) {

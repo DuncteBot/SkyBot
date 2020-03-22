@@ -23,6 +23,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.web.GoogleLinkLength;
 import me.duncte123.botcommons.web.WebUtils;
@@ -49,6 +50,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -333,5 +335,14 @@ public class AirUtils {
 
     public static void setTitleFromKotlin(SearchParams params, String[] title) {
         params.setTitle(title);
+    }
+
+    public static void loadGuildMembers(Guild guild) {
+        try {
+            guild.retrieveMembers().get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Sentry.capture(e);
+        }
     }
 }

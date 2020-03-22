@@ -33,8 +33,8 @@ class ImageCommand : Command() {
     init {
         this.category = CommandCategory.PATRON
         this.name = "image"
-        this.helpFunction = { _, _ -> "Searches for an image on google" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <search term>`" }
+        this.help = "Searches for an image on google"
+        this.usage = "<search term>"
     }
 
     override fun execute(ctx: CommandContext) {

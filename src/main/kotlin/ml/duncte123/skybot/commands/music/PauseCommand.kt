@@ -29,7 +29,7 @@ class PauseCommand : MusicCommand() {
     init {
         this.name = "pause"
         this.aliases = arrayOf("resume")
-        this.helpFunction = { _, _ -> "Pauses the current song" }
+        this.help = "Pauses the current song"
     }
 
     override fun run(ctx: CommandContext) {

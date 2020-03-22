@@ -31,8 +31,8 @@ class DialogCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "dialog"
-        this.helpFunction = { _, _ -> "Displays a confirmation dialog" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <text>`" }
+        this.help = "Displays a confirmation dialog"
+        this.usage = "<text>"
     }
 
     override fun execute(ctx: CommandContext) {

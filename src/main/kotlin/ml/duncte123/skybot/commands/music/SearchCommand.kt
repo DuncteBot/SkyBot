@@ -35,8 +35,8 @@ class SearchCommand : MusicCommand() {
     init {
         this.withAutoJoin = true
         this.name = "search"
-        this.helpFunction = { _, _ -> "Search for a song to play" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <search term>`" }
+        this.help = "Search for a song to play"
+        this.usage = "<search term>"
     }
 
     override fun run(ctx: CommandContext) {

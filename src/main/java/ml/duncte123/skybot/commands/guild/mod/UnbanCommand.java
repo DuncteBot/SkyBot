@@ -41,8 +41,8 @@ public class UnbanCommand extends ModBaseCommand {
             "ban't",
             "pardon",
         };
-        this.helpFunction = (prefix, invoke) -> "Removes the ban for a user";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <user> [-r reason]`";
+        this.help = "Removes the ban for a user";
+        this.usage = "<user> [-r reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };

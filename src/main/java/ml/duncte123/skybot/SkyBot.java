@@ -71,14 +71,17 @@ public final class SkyBot {
     private WebRouter webRouter = null;
 
     private SkyBot() throws Exception {
+        // Set our animated emotes as default reactions
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
         MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
 
+        // Load in our container
         final Variables variables = new Variables();
         final DunctebotConfig config = variables.getConfig();
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
+        // Set the user-agent of the bot
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
@@ -88,8 +91,12 @@ public final class SkyBot {
         );
 
         Settings.PREFIX = config.discord.prefix;
+
+        // Set some defaults for rest-actions
         RestAction.setPassContext(true);
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
+        // If any rest-action doesn't get executed within 2 minutes we will mark it as failed
+        RestAction.setDefaultTimeout(2L, TimeUnit.MINUTES);
 
         if (variables.useApi()) {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
@@ -116,8 +123,8 @@ public final class SkyBot {
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
-        //Set up sharding for the bot
         final EventManager eventManager = new EventManager(variables);
+        // Build our shard manager
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_BANS,
@@ -133,8 +140,8 @@ public final class SkyBot {
             // Keep all members in cache
             // TODO: find a way to make sure that this is not needed anymore
             .setMemberCachePolicy(MemberCachePolicy.ALL)
-            // And no lazy loading
-            .setChunkingFilter(ChunkingFilter.ALL)
+            // Enable lazy loading
+            .setChunkingFilter(ChunkingFilter.NONE)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
@@ -145,6 +152,7 @@ public final class SkyBot {
 
         this.startGameTimer();
 
+        // If lavalink is enabled we will hook it into jda
         if (LavalinkManager.ins.isEnabled()) {
             builder.setVoiceDispatchInterceptor(LavalinkManager.ins.getLavalink().getVoiceInterceptor());
         }
@@ -153,8 +161,9 @@ public final class SkyBot {
 
         HelpEmbeds.init(commandManager);
 
+        // Load the web server if we are not running "locally"
+        // TODO: change this config value to "web_server" or something
         if (!config.discord.local) {
-            // init web server
             webRouter = new WebRouter(shardManager, variables);
         }
     }
@@ -174,13 +183,6 @@ public final class SkyBot {
     }
 
     public static void main(final String[] args) throws Exception {
-        /*assert AirUtils.isURL("") == false;
-        assert AirUtils.isURL("https://google.com/hello") == true;
-        assert AirUtils.isURL("https://google.com/ bla bla") == false;
-        assert AirUtils.isURL("https://goo gle.com/ bla bla") == false;
-        assert AirUtils.isURL("https://google.com/mycool-site") == true;
-        assert AirUtils.isURL("google.com") == false;*/
-
         instance = new SkyBot();
     }
 

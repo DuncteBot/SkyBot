@@ -28,7 +28,7 @@ class ShuffleCommand : MusicCommand() {
 
     init {
         this.name = "shuffle"
-        this.helpFunction = { _, _ -> "Shuffles the current queue" }
+        this.help = "Shuffles the current queue"
     }
 
     override fun run(ctx: CommandContext) {

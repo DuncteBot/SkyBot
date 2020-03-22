@@ -33,8 +33,8 @@ class SlowModeCommand : ModBaseCommand() {
     init {
         this.name = "slowmode"
         this.aliases = arrayOf("sm")
-        this.helpFunction = { _, _ -> "Sets the slowmode in the current channel" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <seconds (1-${TextChannel.MAX_SLOWMODE})/off>`" }
+        this.help = "Sets the slowmode in the current channel"
+        this.usage = "<seconds (0-${TextChannel.MAX_SLOWMODE})/off>"
         this.userPermissions = arrayOf(Permission.MESSAGE_MANAGE)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL)
     }

@@ -44,7 +44,7 @@ public class ColorCommand extends Command {
         this.aliases = new String[]{
             "colour",
         };
-        this.helpFunction = (prefix, invoke) -> "Shows a random color";
+        this.help = "Shows a random color";
     }
 
     @Override

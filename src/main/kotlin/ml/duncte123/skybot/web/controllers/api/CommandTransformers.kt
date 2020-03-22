@@ -46,7 +46,7 @@ object CommandTransformers {
 
     private fun Command.parseHelp(): String {
         val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
-        var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(this.name, Settings.PREFIX).mdToHtml()}"
+        var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(Settings.PREFIX, this.name).mdToHtml()}"
 
         if (this.aliases.isNotEmpty()) {
             val aliasHelp = help(this.aliases[0], Settings.PREFIX).mdToHtml()
@@ -57,7 +57,7 @@ object CommandTransformers {
                 buildString {
                     this@parseHelp.aliases.forEach {
                         append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
-                        append("<br />Usage: ${getUsageInstructions(it, Settings.PREFIX).mdToHtml()}")
+                        append("<br />Usage: ${getUsageInstructions(Settings.PREFIX, it).mdToHtml()}")
                     }
                 }
             }

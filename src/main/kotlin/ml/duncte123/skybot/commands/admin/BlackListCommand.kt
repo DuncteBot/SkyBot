@@ -38,18 +38,14 @@ class BlackListCommand : ModBaseCommand() {
         this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
         this.name = "blacklist"
-        this.helpFunction = { _, _ ->
-            """Control the blacklisted words on your server
+        this.help = """Control the blacklisted words on your server
             |Note: **People that have the kick members permission will bypass the blacklist**""".trimMargin()
-        }
-        this.usageInstructions = { prefix, invoke ->
-            """```$prefix$invoke list => Gives you a list of the current blacklisted words
-        |$prefix$invoke clear => Clears the blacklist
-        |$prefix$invoke import => Imports an exported blacklist
-        |$prefix$invoke add <word> => Adds a word to the blacklist
-        |$prefix$invoke remove <word> => Removes a word from the blacklist```
+        this.usage =  """```{prefix}$name list => Gives you a list of the current blacklisted words
+        |{prefix}$name clear => Clears the blacklist
+        |{prefix}$name import => Imports an exported blacklist
+        |{prefix}$name add <word> => Adds a word to the blacklist
+        |{prefix}$name remove <word> => Removes a word from the blacklist```
         """.trimMargin()
-        }
         this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
         this.botPermissions = arrayOf(Permission.MESSAGE_MANAGE)
     }

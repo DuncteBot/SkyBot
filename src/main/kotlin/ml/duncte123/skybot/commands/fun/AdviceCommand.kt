@@ -32,7 +32,7 @@ class AdviceCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "advice"
-        this.helpFunction = { _, _ -> "Gives some advice" }
+        this.help = "Gives some advice"
     }
 
     override fun execute(ctx: CommandContext) {

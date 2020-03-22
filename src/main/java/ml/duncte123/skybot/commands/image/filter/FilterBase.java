@@ -30,8 +30,8 @@ public abstract class FilterBase extends NoPatronImageCommand {
 
     FilterBase() {
         this.name = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
-        this.helpFunction = (prefix, invoke) -> "Overlays a " + invoke + " filter over the provided image";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [image url]`";
+        this.help = "Overlays a " + this.name + " filter over the provided image";
+        this.usage = "[image url]";
     }
 
     @Override
@@ -47,12 +47,12 @@ public abstract class FilterBase extends NoPatronImageCommand {
         if (url == null) {
             sendMsg(ctx, "Could not find image, please mention a user, upload an image, or put an image url after the command");
         } else {
-            final byte[] image = ctx.getApis().getFilter(getFilterName(), url);
+            final byte[] image = ctx.getApis().getFilter(this.getFilterName(), url);
             handleBasicImage(event, image);
         }
     }
 
     String getFilterName() {
-        return name;
+        return this.name;
     }
 }

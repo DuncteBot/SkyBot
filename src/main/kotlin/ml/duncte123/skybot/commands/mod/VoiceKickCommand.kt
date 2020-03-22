@@ -31,8 +31,8 @@ class VoiceKickCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "voicekick"
-        this.helpFunction = { _, _ -> "Kicks a user from the voice channel that they are in" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <@user/voice channel>`" }
+        this.help = "Kicks a user from the voice channel that they are in"
+        this.usage = "<@user/voice channel>"
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
         this.botPermissions = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
     }

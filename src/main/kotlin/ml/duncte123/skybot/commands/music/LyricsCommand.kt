@@ -41,8 +41,8 @@ class LyricsCommand : MusicCommand() {
 
     init {
         this.name = "lyrics"
-        this.helpFunction = { _, _ -> "Search for song lyrics or show the ones for the currently playing song" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [song name]`" }
+        this.help = "Search for song lyrics or show the ones for the currently playing song"
+        this.usage = "[song name]"
     }
 
     override fun execute(ctx: CommandContext) {

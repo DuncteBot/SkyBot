@@ -55,8 +55,8 @@ class EvalCommand : Command() {
         this.category = CommandCategory.UNLISTED
         this.name = "eval"
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
-        this.helpFunction = { _, _ -> "Evaluate groovy/java code on the bot" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <java/groovy code>`" }
+        this.help = "Evaluate groovy/java code on the bot"
+        this.usage = "<java/groovy code>"
 
         engine = GroovyShell()
 

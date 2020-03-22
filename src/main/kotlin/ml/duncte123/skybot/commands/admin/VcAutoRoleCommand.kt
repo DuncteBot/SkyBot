@@ -36,14 +36,12 @@ class VcAutoRoleCommand : ModBaseCommand() {
         this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
         this.name = "vcautorole"
-        this.helpFunction = { _, _ -> "Gives a role to a user when they join a specified voice channel" }
-        this.usageInstructions = { prefix, invoke ->
-            """`$prefix$invoke add <voice channel> <@role>`
-        |`$prefix$invoke remove <voice channel>`
-        |`$prefix$invoke off`
-        |`$prefix$invoke list`
+        this.help = "Gives a role to a user when they join a specified voice channel"
+        this.usage = """add <voice channel> <@role>`
+        |`{prefix}$name remove <voice channel>`
+        |`{prefix}$name off`
+        |`{prefix}$name list
         """.trimMargin()
-        }
         this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
         this.botPermissions = arrayOf(Permission.MANAGE_SERVER, Permission.MANAGE_ROLES)
     }

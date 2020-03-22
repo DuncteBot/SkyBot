@@ -50,8 +50,8 @@ class EightBallCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "8ball"
-        this.helpFunction = { _, _ -> "Ask a question to magic the 8ball" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <question>`" }
+        this.help = "Ask a question to magic the 8ball"
+        this.usage = "<question>"
     }
 
     override fun execute(ctx: CommandContext) {

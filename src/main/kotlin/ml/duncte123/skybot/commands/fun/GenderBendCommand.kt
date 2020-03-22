@@ -33,8 +33,8 @@ class GenderBendCommand : Command() {
         this.requiredArgCount = 2
         this.category = CommandCategory.FUN
         this.name = "genderbend"
-        this.helpFunction = {_, _ -> "Changes the gender of a name"}
-        this.usageInstructions = {prefix, invoke -> "`$prefix$invoke -<f|m> <name>`"}
+        this.help = "Changes the gender of a name"
+        this.usage = "-<f|m> <name>"
         this.flags = arrayOf(
             Flag(
                 'f',

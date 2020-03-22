@@ -30,8 +30,8 @@ class UnshortenCommand : Command() {
 
     init {
         this.name = "unshorten"
-        this.helpFunction = { _, _ -> "Gets the long url from a shortened url" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <short url>`" }
+        this.help = "Gets the long url from a shortened url"
+        this.usage = "<short url>"
     }
 
     override fun execute(ctx: CommandContext) {

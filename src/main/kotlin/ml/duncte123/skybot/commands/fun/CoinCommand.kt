@@ -35,7 +35,7 @@ class CoinCommand : Command() {
         this.category = CommandCategory.FUN
         this.name = "coin"
         this.aliases = arrayOf("coinflip", "cf")
-        this.helpFunction = { _, _ -> "Flips a coin" }
+        this.help = "Flips a coin"
     }
 
     override fun execute(ctx: CommandContext) {

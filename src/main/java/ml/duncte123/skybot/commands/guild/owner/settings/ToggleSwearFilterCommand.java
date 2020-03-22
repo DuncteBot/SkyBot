@@ -36,7 +36,7 @@ public class ToggleSwearFilterCommand extends SettingsBase {
             "enableswearfilter",
             "disableswearfilter"
         };
-        this.helpFunction = (prefix, invoke) -> "Turns the swearword filter on or off.\n" +
+        this.help = "Turns the swearword filter on or off.\n" +
             "The default filter type is `Very Toxic`, this can be changed on the dashboard";
     }
 

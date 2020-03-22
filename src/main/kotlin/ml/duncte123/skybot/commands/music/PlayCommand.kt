@@ -36,8 +36,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     init {
         this.withAutoJoin = true
         this.name = "play"
-        this.helpFunction = { _, _ -> "Plays a song on the bot or adds it to the queue" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [url/search term]`" }
+        this.help = "Plays a song on the bot or adds it to the queue"
+        this.usage = "[url/search term]"
     }
 
     override fun run(ctx: CommandContext) {

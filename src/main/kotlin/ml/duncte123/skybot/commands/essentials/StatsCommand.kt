@@ -39,7 +39,7 @@ class StatsCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "stats"
-        this.helpFunction = {_, _ -> "Shows some nerdy statistics about the bot" }
+        this.help = "Shows some nerdy statistics about the bot"
     }
 
     override fun execute(ctx: CommandContext) {

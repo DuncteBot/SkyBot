@@ -30,7 +30,7 @@ class LeaveCommand : MusicCommand() {
     init {
         this.name = "leave"
         this.aliases = arrayOf("disconnect", "exit", "fuckoff")
-        this.helpFunction = {_,_ -> "Makes the bot leave the current voice channel"}
+        this.help = "Makes the bot leave the current voice channel"
         this.cooldown = musicCooldown
     }
 

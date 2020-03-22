@@ -30,8 +30,8 @@ class RepeatCommand : MusicCommand() {
     init {
         this.name = "repeat"
         this.aliases = arrayOf("loop")
-        this.helpFunction = { _, _ -> "Makes the player repeat the currently playing song" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [playlist/status]`" }
+        this.help = "Makes the player repeat the currently playing song"
+        this.usage = "[playlist/status]"
     }
 
     override fun run(ctx: CommandContext) {

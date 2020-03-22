@@ -40,11 +40,12 @@ import static ml.duncte123.skybot.utils.ModerationUtils.*;
 public class TempBanCommand extends ModBaseCommand {
 
     public TempBanCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "tempban";
-        this.helpFunction = (prefix, invoke) -> "Temporally bans a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r Reason]`";
+        this.help = "Temporally bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usage = "<@user> <time><w/d/h/m/s> [-r Reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };

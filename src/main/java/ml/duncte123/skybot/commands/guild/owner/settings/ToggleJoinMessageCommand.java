@@ -36,7 +36,7 @@ public class ToggleJoinMessageCommand extends SettingsBase {
             "enablejoinmessage",
             "disablejoinmessage",
         };
-        this.helpFunction = (prefix, invoke) -> "Turns the join message on or off";
+        this.help = "Turns the join message on or off";
     }
 
     @Override

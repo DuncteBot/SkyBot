@@ -32,7 +32,7 @@ public class VoteCommand extends Command {
         this.aliases = new String[]{
             "upvote",
         };
-        this.helpFunction = (prefix, invoke) -> "Gives some links where you can upvote the bot";
+        this.help = "Gives some links where you can upvote the bot";
     }
 
     @Override

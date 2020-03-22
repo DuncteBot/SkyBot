@@ -37,8 +37,8 @@ class KpopCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "kpop"
-        this.helpFunction = { _, _ -> "Gives you a random kpop member, command suggestion by Exa" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [search term]`" }
+        this.help = "Gives you a random kpop member, command suggestion by Exa"
+        this.usage = "[search term]"
     }
 
     override fun execute(ctx: CommandContext) {
