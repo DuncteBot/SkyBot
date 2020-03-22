@@ -41,7 +41,7 @@ plugins {
     id("com.github.breadmoirai.github-release") version "2.2.10"
 }
 
-val numberVersion = "3.91.0"
+val numberVersion = "3.92.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -98,7 +98,7 @@ dependencies {
 
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.33")
-    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "9295a78")
+    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "914ebc2")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "97530e1")
 //    implementation(project(":Lavalink-Client"))
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.0.1")
