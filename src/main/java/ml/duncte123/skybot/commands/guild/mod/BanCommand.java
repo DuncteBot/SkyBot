@@ -38,6 +38,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class BanCommand extends ModBaseCommand {
 
     public BanCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "ban";

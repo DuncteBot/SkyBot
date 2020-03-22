@@ -44,6 +44,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class GuildJoinsCommand extends Command {
 
     public GuildJoinsCommand() {
+        this.shouldLoadMembers = true;
         this.name = "serverjoins";
         this.help = "Shows a graph with the joins for this server.\n" +
             "This is not a full history as it only looks at the members that are currently in the server.";

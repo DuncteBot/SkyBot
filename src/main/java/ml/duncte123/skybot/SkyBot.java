@@ -140,8 +140,8 @@ public final class SkyBot {
             // Keep all members in cache
             // TODO: find a way to make sure that this is not needed anymore
             .setMemberCachePolicy(MemberCachePolicy.ALL)
-            // And no lazy loading
-            .setChunkingFilter(ChunkingFilter.ALL)
+            // Enable lazy loading
+            .setChunkingFilter(ChunkingFilter.NONE)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()

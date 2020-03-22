@@ -70,8 +70,10 @@ public abstract class BaseListener implements EventListener {
     }
 
     boolean isBotfarm(Guild guild) {
+        // TODO: Fix this check
+        return true;
 
-        if (botLists.contains(guild.getIdLong())) {
+        /*if (botLists.contains(guild.getIdLong())) {
             return false;
         }
 
@@ -108,7 +110,7 @@ public abstract class BaseListener implements EventListener {
 
         botfarmCache.put(guild.getIdLong(), 'a');
 
-        return true;
+        return true;*/
     }
 
 }

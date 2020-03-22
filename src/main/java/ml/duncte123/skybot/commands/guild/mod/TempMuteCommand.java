@@ -44,6 +44,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "tempmute";

@@ -37,6 +37,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class UnmuteCommand extends ModBaseCommand {
 
     public UnmuteCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "unmute";
         this.help = "Removes the mute of a user if they are muted";

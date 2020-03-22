@@ -40,6 +40,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "kick";
         this.aliases = new String[]{"yeet"};
