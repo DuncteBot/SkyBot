@@ -148,7 +148,6 @@ public abstract class Command implements ICommand {
     @Override
     public final String help(@Nonnull String invoke, @Nonnull String prefix) {
         return this.help.replace("{prefix}", prefix).trim();
-//        return this.helpFunction.invoke(prefix, invoke);
     }
 
     @Override
@@ -162,16 +161,13 @@ public abstract class Command implements ICommand {
     }
 
     @Nonnull
-    public String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
+    public String getUsageInstructions(@Nonnull String prefix, @Nonnull String invoke) {
         return '`' + prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix).trim() + '`';
-//        return this.usageInstructions.invoke(prefix, invoke);
     }
 
     @Nonnull
     public String getUsageInstructions(CommandContext ctx) {
-        // Why are these inverted?
-        return this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix());
-//        return this.usageInstructions.invoke(ctx.getPrefix(), ctx.getInvoke());
+        return this.getUsageInstructions(ctx.getPrefix(), ctx.getInvoke());
     }
 
     protected void sendUsageInstructions(CommandContext ctx) {

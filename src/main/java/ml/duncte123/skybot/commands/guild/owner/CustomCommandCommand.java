@@ -56,10 +56,10 @@ public class CustomCommandCommand extends Command {
         this.help = "Create, edit and delete custom commands";
         // FIXME: figure out a better way of showing the subcommands
         this.usage = "list` => Shows a list of all the custom commands\n" +
-            " new <name> <text>` => Creates a new custom command\n" +
-            " edit <name> <text>` => Edits a custom command\n" +
-            " raw <name>` => Shows the raw value of a custom command\n" +
-            " delete <name>` => Deletes a custom command";
+            " `{prefix}" + this.name + " new <name> <text>` => Creates a new custom command\n" +
+            " `{prefix}" + this.name + " edit <name> <text>` => Edits a custom command\n" +
+            " `{prefix}" + this.name + " raw <name>` => Shows the raw value of a custom command\n" +
+            " `{prefix}" + this.name + " delete <name>` => Deletes a custom command";
     }
 
     @Override

@@ -51,7 +51,7 @@ public class SeekCommand extends MusicCommand {
             "Examples: `{prefix}seek 04:20`\n" +
             "`{prefix}seek 00:50`\n" +
             "`{prefix}seek 120`";
-        this.usage = "{prefix}seek <minutes:seconds>` / `{prefix}seek [-]<seconds>";
+        this.usage = "<minutes:seconds>` / `{prefix}seek [-]<seconds>";
     }
 
     @Override

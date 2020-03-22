@@ -132,7 +132,7 @@ public class HelpCommand extends Command {
             .defaultEmbed()
             .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])", url)
             .setDescription(cmd.help(invoke, prefix) +
-                "\nUsage: " + cmd.getUsageInstructions(invoke, prefix));
+                "\nUsage: " + cmd.getUsageInstructions(prefix, invoke));
 
         if (cmd.flags.length > 0) {
             builder.addField("Flags", parseFlags(cmd.flags), false);

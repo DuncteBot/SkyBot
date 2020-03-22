@@ -40,7 +40,6 @@ public class AnnounceCommand extends ModBaseCommand {
     public AnnounceCommand() {
         this.requiresArgs = true;
         this.requiredArgCount = 2;
-        this.displayAliasesInHelp = true;
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "announce";
         this.aliases = new String[]{

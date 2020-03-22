@@ -80,7 +80,7 @@ public class CleanupCommand extends ModBaseCommand {
         int total = 5;
 
         if (args.size() > 3) {
-            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getPrefix(), ctx.getInvoke()));
             return;
         }
 
