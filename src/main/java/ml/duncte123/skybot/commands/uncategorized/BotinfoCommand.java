@@ -51,7 +51,7 @@ public class BotinfoCommand extends Command {
             "support",
             "bi",
         };
-        this.helpFunction = (prefix, invoke) -> "Displays some information about the bot";
+        this.help = "Displays some information about the bot";
 
         // Calls readVersion() every time that we access the prop
         // So we store the output ourselves for faster execution

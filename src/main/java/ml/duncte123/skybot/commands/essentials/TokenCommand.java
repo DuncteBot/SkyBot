@@ -51,8 +51,8 @@ public class TokenCommand extends Command {
     public TokenCommand() {
         this.category = CommandCategory.UTILS;
         this.name = "token";
-        this.helpFunction = (prefix, invoke) -> "Deconstructs a token to get as much information as possible from it";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <token of a discord bot>`";
+        this.help = "Deconstructs a token to get as much information as possible from it";
+        this.usage = "<token of a discord bot>";
     }
 
     @Override

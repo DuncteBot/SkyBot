@@ -31,7 +31,8 @@ class JoinCommand : MusicCommand() {
     init {
         this.name = "join"
         this.aliases = arrayOf("summon", "connect")
-        this.helpFunction = { _, _ -> "Makes the bot join the voice channel that you are in." }
+        this.help = "Makes the bot join the voice channel that you are in."
+        this.cooldown = musicCooldown
     }
 
     override fun execute(ctx: CommandContext) {

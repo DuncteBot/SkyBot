@@ -29,8 +29,8 @@ public class DeleteCommand extends ImageCommandBase {
 
     public DeleteCommand() {
         this.name = "delete";
-        this.helpFunction = (prefix, invoke) -> "Creates a delete button";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
+        this.help = "Creates a delete button";
+        this.usage = "<text>";
     }
 
     @Override

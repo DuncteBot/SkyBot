@@ -38,6 +38,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class BanCommand extends ModBaseCommand {
 
     public BanCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "ban";
@@ -45,8 +46,8 @@ public class BanCommand extends ModBaseCommand {
             "dabon",
             "naenae",
         };
-        this.helpFunction = (prefix, invoke) -> "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r Reason]`";
+        this.help = "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
+        this.usage = "<@user> [-r Reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };

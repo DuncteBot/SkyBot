@@ -35,8 +35,8 @@ public class SetWelcomeChannelCommand extends SettingsBase {
             "setleavechannel",
             "setwelcomeleavechannel",
         };
-        this.helpFunction = (prefix, invoke) -> "Sets the channel that displays the welcome and leave messages";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <#chanel>`";
+        this.help = "Sets the channel that displays the welcome and leave messages";
+        this.usage = "<#chanel>";
     }
 
     @Override

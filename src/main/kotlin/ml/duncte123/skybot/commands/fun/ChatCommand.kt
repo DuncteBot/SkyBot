@@ -55,11 +55,11 @@ class ChatCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "chat"
-        this.helpFunction = { _, _ -> "Have a chat with DuncteBot" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <message>`" }
+        this.help = "Have a chat with DuncteBot"
+        this.usage = "<message>"
 
         commandService.scheduleAtFixedRate({
-            val temp = TLongObjectHashMap<ChatSession>(sessions)
+            val temp = TLongObjectHashMap(sessions)
             val now = Date()
             var cleared = 0
             for (it in temp.keys()) {

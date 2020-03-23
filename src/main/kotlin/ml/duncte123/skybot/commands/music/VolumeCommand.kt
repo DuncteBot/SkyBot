@@ -31,8 +31,8 @@ class VolumeCommand : MusicCommand() {
 
     init {
         this.name = "volume"
-        this.helpFunction = { _, _ -> "Sets the volume on the music player" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [volume]`" }
+        this.help = "Sets the volume on the music player"
+        this.usage = "[volume]"
     }
 
     override fun run(ctx: CommandContext) {

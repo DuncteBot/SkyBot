@@ -32,8 +32,8 @@ class XkcdCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "xkcd"
-        this.helpFunction = { _, _ -> "Sends the latest xkcd comic" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [latest/random/number]`" }
+        this.help = "Sends the latest xkcd comic"
+        this.usage = "[latest/random/number]"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -61,10 +61,10 @@ class XkcdCommand : Command() {
     private fun sendComic(it: ObjectNode, ctx: CommandContext) {
         val embed = EmbedUtils.defaultEmbed()
             .setTitle(
-                it.get("safe_title").asText(),
-                "http://xkcd.com/${it.get("num").asInt()}/"
+                it["safe_title"].asText(),
+                "http://xkcd.com/${it["num"].asInt()}/"
             )
-            .setImage(it.get("img").asText())
+            .setImage(it["img"].asText())
 
         sendEmbed(ctx, embed)
     }
@@ -79,7 +79,7 @@ class XkcdCommand : Command() {
 
     private fun getRandom(): Int {
         val it = getLatest()
-        val max = it.get("num").asInt()
+        val max = it["num"].asInt()
         var selected = max.maxRand()
 
         while (selected == 404) {

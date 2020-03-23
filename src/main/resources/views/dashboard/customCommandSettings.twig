@@ -1,9 +1,9 @@
 {% extends '../templates/base.twig' %}
 
 {% block style %}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/hint/show-hint.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/theme/monokai.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/hint/show-hint.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/theme/monokai.min.css">
 {% endblock %}
 
 {% block container %}
@@ -80,17 +80,15 @@
 
 {% block script %}
     <!-- Gotta love Internet Explorer-->
-    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=es6%2CJSON%2CPromise%2Cfetch"></script>
+    <!-- But discord doesn't work on IE11 so why bother -->
+    <!-- <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=es6%2CJSON%2CPromise%2Cfetch"></script> -->
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/mode/simple.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/edit/matchbrackets.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/edit/closebrackets.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/edit/matchtags.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/addon/hint/show-hint.min.js"></script>
-    <script src="/js/hinting.js"></script>
-    <script src="/js/customCommands.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/mode/javascript/javascript.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/mode/simple.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/hint/show-hint.min.js"></script>
+    <script src="/js/hinting.js?v=2"></script>
+    <script src="/js/customCommands.js?v=2"></script>
     <script src="/js/wordlist.js"></script>
     <script>
         window.guildId = "{{ guild.getIdLong() }}";

@@ -23,6 +23,7 @@ import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.api.exceptions.HttpException
 import spark.Request
 import spark.Response
 
@@ -31,18 +32,24 @@ object Callback {
 
     fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
+        // If we don't have a code from discord
+        // and we don't have a state we will return the user to the homepage
         if (!request.queryParams().contains("code") || !request.queryParams().contains("state")) {
             return response.redirect(WebRouter.HOMEPAGE)
         }
 
         return try {
+            // Get the user session
             val session = request.session()
 
+            // If the session is missing we will return the user to the homepage
             if (session.attribute<String?>(WebRouter.SESSION_ID) == null){
                 return response.redirect(WebRouter.HOMEPAGE)
             }
 
+            // Get the session id for the user
             val sesid: String? = request.session().attribute(WebRouter.SESSION_ID)
+            // Start a session to obtain the oauth2 access token
             val oauthses = oAuth2Client.startSession(
                 request.queryParams("code"),
                 request.queryParams("state"),
@@ -50,17 +57,24 @@ object Callback {
                 Scope.IDENTIFY, Scope.GUILDS
             ).complete()
 
+            // Fetch the user from discord
             val userId = oAuth2Client.getUser(oauthses).complete().id
 
+            // Store the user id in the session
             session.attribute(WebRouter.USER_ID, userId)
 
+            // If we have a previous page we will return the user there
             if (session.attributes().contains(WebRouter.OLD_PAGE)) {
                 return response.redirect(session.attribute(WebRouter.OLD_PAGE))
             }
 
+            // Otherwise the user will be send to the dashboard homepage
             response.redirect("/")
         } catch (stateEx: InvalidStateException) {
             "<h1>${stateEx.message}</h1><br /><a href=\"${WebRouter.HOMEPAGE}\">Click here to go back home</a>"
+        } catch (ignored: HttpException) {
+            // If we fail to log in we will return the user back home
+            return response.redirect(WebRouter.HOMEPAGE)
         }
     }
 

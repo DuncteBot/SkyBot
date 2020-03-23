@@ -54,7 +54,7 @@ public class GuildInfoCommand extends Command {
             "gi",
             "si",
         };
-        this.helpFunction = (prefix, invoke) -> "Shows some stats about the server";
+        this.help = "Shows some stats about the server";
     }
 
     @Override

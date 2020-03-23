@@ -37,8 +37,8 @@ class KpopCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "kpop"
-        this.helpFunction = { _, _ -> "Gives you a random kpop member, command suggestion by Exa" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [search term]`" }
+        this.help = "Gives you a random kpop member, command suggestion by Exa"
+        this.usage = "[search term]"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -63,17 +63,17 @@ class KpopCommand : Command() {
         val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
         val response = executeDefaultGetRequest("kpop$path", false)
 
-        if (!response.get("success").asBoolean()) {
+        if (!response["success"].asBoolean()) {
             return null
         }
 
-        val json = response.get("data")
+        val json = response["data"]
 
         return KpopObject(
-            json.get("id").asInt(),
-            json.get("name").asText(),
-            json.get("band").asText(),
-            json.get("img").asText()
+            json["id"].asInt(),
+            json["name"].asText(),
+            json["band"].asText(),
+            json["img"].asText()
         )
     }
 }

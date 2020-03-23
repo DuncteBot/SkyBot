@@ -78,6 +78,21 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
+    /**
+     * This is a special case for the skip command where it has to announce the next track
+     * due to it being a user interaction
+     */
+    public void specialSkipCase() {
+        // Get the currently playing track
+        final AudioTrack playingTrack = this.player.getPlayingTrack();
+        // Set in the data that it was from a skip
+        playingTrack.getUserData(TrackUserData.class).setWasFromSkip(true);
+
+        // Seek to the end to start the next track
+        // We seek to use the normal flow that allows for repeating as well
+        this.player.seekTo(playingTrack.getDuration());
+    }
+
     private void skipTrack() {
         skipTracks(1);
     }
@@ -99,7 +114,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        if (guildMusicManager.isAnnounceTracks()) {
+        final TrackUserData data = track.getUserData(TrackUserData.class);
+
+        // If the track was a skipped track or we announce tracks
+        if (data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
+            // Reset the was from skip status
+            data.setWasFromSkip(false);
+
             final EmbedBuilder message = AudioTrackKt.toEmbed(
                 track,
                 this.guildMusicManager,
@@ -107,7 +128,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 false
             );
 
-            sendEmbed(guildMusicManager.getLatestChannel(), message);
+            sendEmbed(this.guildMusicManager.getLatestChannel(), message);
         }
     }
 
@@ -118,6 +139,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         if (!endReason.mayStartNext) {
             return;
         }
+
+        // Get if the track was from a skip event
+        final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
 
         logger.debug("can start");
 
@@ -134,13 +158,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             skipTrack();
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(createNewTrackData(lastTrack));
+            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
             queue.offer(clone);
             return;
         }
 
         final AudioTrack clone = lastTrack.makeClone();
-        clone.setUserData(createNewTrackData(lastTrack));
+        clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
         this.player.playTrack(clone);
     }
 
@@ -164,14 +188,21 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         Collections.shuffle((List<?>) queue);
     }
 
-    private TrackUserData createNewTrackData(AudioTrack track) {
+    private TrackUserData createNewTrackData(AudioTrack track, boolean wasFromSkip) {
         final TrackUserData oldData = track.getUserData(TrackUserData.class);
+        final TrackUserData newData;
 
+        // If we did not have old data (unlikely) we will create it
         if (oldData == null) {
-            return new TrackUserData(0L);
+            newData = new TrackUserData(0L);
+        } else {
+            newData = oldData.copy(oldData.getRequester());
         }
 
-        return oldData.copy(oldData.getRequester());
+        // Set the was from skip status on the track
+        newData.setWasFromSkip(wasFromSkip);
+
+        return newData;
     }
 
     @Override

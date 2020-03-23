@@ -40,9 +40,9 @@ public class PronounsCheckCommand extends Command {
         this.aliases = new String[]{
             "pronouns",
         };
-        this.helpFunction = (prefix, invoke) -> "Check someones pronouns\n" +
-            "Pronouns can be set via `" + prefix + "setpronouns`";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " [@user]`";
+        this.help = "Check someones pronouns\n" +
+            "Pronouns can be set via `{prefix}setpronouns`";
+        this.usage = "[@user]";
     }
 
     @Override

@@ -34,8 +34,8 @@ class RoleInfoCommand : Command() {
     init {
         this.name = "roleinfo"
         this.aliases = arrayOf("role", "ri")
-        this.helpFunction = { _, _ -> "Displays info about a specified role or the highest role that you have" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@role]`" }
+        this.help = "Displays info about a specified role or the highest role that you have"
+        this.usage = "[@role]"
     }
 
     override fun execute(ctx: CommandContext) {

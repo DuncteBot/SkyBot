@@ -27,8 +27,8 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
 
     public ItsFreeRealEstateCommand() {
         this.name = "freerealestate";
-        this.helpFunction = (prefix, invoke) -> "It's free real estate";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <text>`";
+        this.help = "It's free real estate";
+        this.usage = "<text>";
     }
 
     @Override

@@ -35,7 +35,7 @@ class ListCommand : MusicCommand() {
     init {
         this.name = "list"
         this.aliases = arrayOf("queue", "q")
-        this.helpFunction = {_,_ -> "Shows the current queue"}
+        this.help = "Shows the current queue"
     }
 
     override fun run(ctx: CommandContext) {

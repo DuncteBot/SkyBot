@@ -42,10 +42,11 @@ public class PurgeUserCommand extends ModBaseCommand {
     private static final int DEL_COUNT = 200;
 
     public PurgeUserCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "purgeuser";
-        this.helpFunction = (prefix, invoke) -> "Purges the last " + DEL_COUNT + " messages of a user";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user>`";
+        this.help = "Purges the last " + DEL_COUNT + " messages of a user";
+        this.usage = "<@user>";
         this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,

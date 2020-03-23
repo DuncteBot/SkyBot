@@ -90,9 +90,9 @@
                 <div class="input-field col s12 m3">
 
                     <input type="color" style="display: none;" id="embedColor" name="embedColor"
-                           onchange="id('embedPreview').style.background = this.value;" value="{{ guildColor }}"/>
+                           onchange="displayColor(this.value);" value="{{ guildColor }}"/>
 
-                    <button type="button" id="embedPreview" onclick="id('embedColor').click()"
+                    <button type="button" id="embedPreview" onclick="showColorPicker()"
                             class="btn-large waves-effect waves-light waves-ripple white-text"
                             style="background: {{ guildColor }};">
                         Change embed color
@@ -176,6 +176,14 @@
 {% block script %}
     <script>
         M.FormSelect.init(document.querySelectorAll('select'));
+
+        function displayColor(value) {
+            id('embedPreview').style.background = value;
+        }
+
+        function showColorPicker() {
+            id('embedColor').click()
+        }
 
         function checkSelect(selectId, checkBox) {
             let box = id(checkBox);

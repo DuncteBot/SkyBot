@@ -40,10 +40,12 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "kick";
-        this.helpFunction = (prefix, invoke) -> "Kicks a user from the server";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> [-r reason]`";
+        this.aliases = new String[]{"yeet"};
+        this.help = "Kicks a user from the server";
+        this.usage = "<@user> [-r reason]";
         this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };

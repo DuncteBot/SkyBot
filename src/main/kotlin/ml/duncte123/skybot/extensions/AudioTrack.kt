@@ -102,9 +102,9 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
                 val split = this.identifier.split("/")
                 val id = split[split.size - 1]
                 val url = "https://vimeo.com/api/v2/video/$id.json"
-                val json = WebUtils.ins.getJSONArray(url).execute().get(0)
+                val json = WebUtils.ins.getJSONArray(url).execute()[0]
 
-                json.get("thumbnail_small").asText()
+                json["thumbnail_small"].asText()
             } catch (e: Exception) {
                 Sentry.capture(e)
                 null

@@ -36,9 +36,9 @@ public class SetRateLimitsCommand extends SettingsBase {
 
     public SetRateLimitsCommand() {
         this.name = "setratelimits";
-        this.helpFunction = (prefix, invoke) -> "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
-            "Example: `" + prefix + invoke + " 20|45|60|120|240|2400`";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <1|2|3|4|5|6/default>`";
+        this.help = "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
+            "Example: `{prefix}setratelimits 20|45|60|120|240|2400`";
+        this.usage = "<1|2|3|4|5|6/default>";
     }
 
     @Override

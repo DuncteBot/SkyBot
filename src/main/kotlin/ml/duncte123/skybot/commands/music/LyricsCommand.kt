@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -42,8 +41,8 @@ class LyricsCommand : MusicCommand() {
 
     init {
         this.name = "lyrics"
-        this.helpFunction = { _, _ -> "Search for song lyrics or show the ones for the currently playing song" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [song name]`" }
+        this.help = "Search for song lyrics or show the ones for the currently playing song"
+        this.usage = "[song name]"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -53,7 +52,6 @@ class LyricsCommand : MusicCommand() {
             handleSearch(ctx.argsRaw, ctx)
             return
         }
-
 
         val mng = ctx.audioUtils.getMusicManager(ctx.guild)
         val player = mng.player
@@ -67,7 +65,7 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun handleSearch(search: String, ctx: CommandContext) {
-        searchForSong(search, ctx.config.genius, ctx.variables.jackson) {
+        searchForSong(search, ctx.config.genius) {
             if (it.isNullOrBlank()) {
                 sendMsg(ctx, "There where no lyrics found for `$search`")
             } else {
@@ -87,7 +85,7 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    private fun getAuthToken(config: DunctebotConfig.Genius, mapper: ObjectMapper): String {
+    private fun getAuthToken(config: DunctebotConfig.Genius): String {
         if (authToken.isBlank()) {
             val formData = FormRequestBody()
             formData.append("client_id", config.client_id)
@@ -95,29 +93,29 @@ class LyricsCommand : MusicCommand() {
             formData.append("grant_type", "client_credentials")
 
             val json = WebUtils.ins.postRequest("$apiBase/oauth/token", formData)
-                .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
+                .build(WebParserUtils::toJSONObject, WebParserUtils::handleError)
                 .execute()
 
-            this.authToken = json.get("access_token").asText("")
+            this.authToken = json["access_token"].asText("")
         }
 
         return "Bearer $authToken"
     }
 
-    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, mapper: ObjectMapper, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .header("Authorization", getAuthToken(config, mapper))
-            .url("$apiBase/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}").build()
-        ) { WebParserUtils.toJSONObject(it, mapper) }
-            .async {
-                val hits = it.get("response").get("hits")
-                if (hits.isEmpty) {
-                    callback.invoke(null)
-                } else {
-                    callback.invoke(
-                        hits.get(0).get("result").get("path").asText()
-                    )
-                }
+            .header("Authorization", getAuthToken(config))
+            .url("$apiBase/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}").build(),
+            WebParserUtils::toJSONObject
+        ).async {
+            val hits = it["response"]["hits"]
+            if (hits.isEmpty) {
+                callback.invoke(null)
+            } else {
+                callback.invoke(
+                    hits[0]["result"]["path"].asText()
+                )
             }
+        }
     }
 }

@@ -40,8 +40,8 @@ class FlipCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "flip"
-        this.helpFunction = { _, _ -> "Flips someone upside down" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke [@user/text]`" }
+        this.help = "Flips someone upside down"
+        this.usage = "[@user/text]"
     }
 
     override fun execute(ctx: CommandContext) {

@@ -69,7 +69,7 @@ object OneGuildRegister {
 
         val cap = WebHelpers.verifyCapcha(captcha, variables.config.apis.chapta.secret, mapper)
 
-        if (!cap.get("success").asBoolean()) {
+        if (!cap["success"].asBoolean()) {
             return renderPage(WebVariables().put("message", "Captcha error: Please try again later"), variables.config)
         }
 

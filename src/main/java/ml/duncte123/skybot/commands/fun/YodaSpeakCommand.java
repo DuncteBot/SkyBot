@@ -35,21 +35,16 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class YodaSpeakCommand extends Command {
 
     public YodaSpeakCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.FUN;
         this.name = "yoda";
-        this.helpFunction = (prefix, invoke) -> "Convert your input to how Yoda speaks";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <your sentence>`";
+        this.help = "Convert your input to how Yoda speaks";
+        this.usage = "<your sentence>";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (ctx.getArgs().isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
 
         try {
             final QueryBuilder builder = new QueryBuilder()

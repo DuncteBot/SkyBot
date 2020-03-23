@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static ml.duncte123.skybot.utils.AirUtils.loadGuildMembers;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -51,15 +52,16 @@ public abstract class Command implements ICommand {
             return thread;
         });
 
+    // This should be set to true when we need to load the members before the command is being executed
+    protected boolean shouldLoadMembers = false;
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
     protected String[] aliases = new String[0];
-    // We're using the kotlin functions just so the kotlin code looks neater
-    protected Function2<String, String, String> helpFunction = (prefix, invoke) -> "No help available";
-    protected Function2<String, String, String> usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + '`';
+    protected String help = "";
+    protected String usage = "";
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
@@ -101,7 +103,7 @@ public abstract class Command implements ICommand {
             // if args are empty or the args count is less than the required args count
             (ctx.getArgs().isEmpty() || ctx.getArgs().size() < this.requiredArgCount)
         ) {
-            sendMsg(ctx, "Missing arguments, usage: " + this.getUsageInstructions(ctx.getInvoke(), ctx.getPrefix()));
+            sendMsg(ctx, "Missing arguments, usage: " + this.getUsageInstructions(ctx));
             return;
         }
 
@@ -128,6 +130,10 @@ public abstract class Command implements ICommand {
             }
         }
 
+        if (this.shouldLoadMembers) {
+            loadGuildMembers(ctx.getJDAGuild());
+        }
+
         execute(ctx);
     }
 
@@ -148,7 +154,7 @@ public abstract class Command implements ICommand {
     @Nonnull
     @Override
     public final String help(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.helpFunction.invoke(prefix, invoke);
+        return this.help.replace("{prefix}", prefix).trim();
     }
 
     @Override
@@ -162,13 +168,13 @@ public abstract class Command implements ICommand {
     }
 
     @Nonnull
-    public String getUsageInstructions(@Nonnull String invoke, @Nonnull String prefix) {
-        return this.usageInstructions.invoke(prefix, invoke);
+    public String getUsageInstructions(@Nonnull String prefix, @Nonnull String invoke) {
+        return '`' + prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix).trim() + '`';
     }
 
     @Nonnull
     public String getUsageInstructions(CommandContext ctx) {
-        return this.usageInstructions.invoke(ctx.getInvoke(), ctx.getPrefix());
+        return this.getUsageInstructions(ctx.getPrefix(), ctx.getInvoke());
     }
 
     protected void sendUsageInstructions(CommandContext ctx) {

@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -29,7 +30,8 @@ class LeaveCommand : MusicCommand() {
     init {
         this.name = "leave"
         this.aliases = arrayOf("disconnect", "exit", "fuckoff")
-        this.helpFunction = {_,_ -> "Makes the bot leave the current voice channel"}
+        this.help = "Makes the bot leave the current voice channel"
+        this.cooldown = musicCooldown
     }
 
     override fun run(ctx: CommandContext) {

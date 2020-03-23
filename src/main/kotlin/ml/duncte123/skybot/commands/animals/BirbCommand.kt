@@ -33,12 +33,12 @@ class BirbCommand : Command() {
         this.category = CommandCategory.ANIMALS
         this.name = "bird"
         this.aliases = arrayOf("birb")
-        this.helpFunction = { _, _ -> "Shows a bird" }
+        this.help = "Shows a bird"
     }
 
     override fun execute(ctx: CommandContext) {
         WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
-            sendEmbed(ctx.event, EmbedUtils.embedImage(it.get(0).asText()))
+            sendEmbed(ctx.event, EmbedUtils.embedImage(it[0].asText()))
         }
     }
 }

@@ -31,7 +31,7 @@ class DeletCommand : WeebCommandBase() {
         this.category = CommandCategory.FUN
         this.name = "delet"
         this.aliases = arrayOf("deletthis", "deletethis")
-        this.helpFunction = { _, _ -> "Delet this" }
+        this.help = "Delet this"
     }
 
     override fun execute(ctx: CommandContext) {

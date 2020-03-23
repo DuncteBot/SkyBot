@@ -26,8 +26,8 @@ class ReverseCommand : Command() {
 
     init {
         this.name = "reverse"
-        this.helpFunction = { _, _ -> "Reverses a string" }
-        this.usageInstructions = { prefix, invoke -> "`$prefix$invoke <texxt>`" }
+        this.help = "Reverses a string"
+        this.usage = "<text>"
     }
 
     override fun execute(ctx: CommandContext) {

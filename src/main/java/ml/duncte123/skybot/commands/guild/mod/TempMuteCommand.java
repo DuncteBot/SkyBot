@@ -44,11 +44,12 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {
+        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "tempmute";
-        this.helpFunction = (prefix, invoke) -> "Temporally mutes a user in the server, this will override any existing tempmutes for the user";
-        this.usageInstructions = (prefix, invoke) -> '`' + prefix + invoke + " <@user> <time><w/d/h/m/s> [-r reason]`";
+        this.help = "Temporally mutes a user in the server, this will override any existing tempmutes for the user";
+        this.usage = "<@user> <time><w/d/h/m/s> [-r reason]";
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,

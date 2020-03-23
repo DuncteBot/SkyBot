@@ -20,19 +20,21 @@ package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.models.WeebApi
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
+    protected var userAction = false
+
     init {
         this.displayAliasesInHelp = true
         this.category = CommandCategory.WEEB
+        this.usage = if (userAction) "[@user]" else ""
     }
 
     private fun getDefaultWeebEmbed(): EmbedBuilder {
@@ -49,44 +51,48 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    protected fun singleAction(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
-        weebApi.getRandomImage(type).async {
+    protected fun singleAction(type: String, thing: String, ctx: CommandContext) {
+        val args = ctx.args
+
+        ctx.weebApi.getRandomImage(type).async {
             val imageUrl = it.url
 
             if (args.isEmpty()) {
-                sendEmbed(event, getWeebEmbedImageAndDesc(
-                    " ${event.member!!.asMention} $thing", imageUrl))
+                sendEmbed(ctx, getWeebEmbedImageAndDesc(
+                    " ${ctx.member!!.asMention} $thing", imageUrl))
                 return@async
             }
 
-            if (event.message.mentionedMembers.isNotEmpty()) {
-                sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${event.message.mentionedMembers[0].asMention} $thing"
+            if (ctx.message.mentionedMembers.isNotEmpty()) {
+                sendEmbed(ctx, getWeebEmbedImageAndDesc(
+                    "${ctx.message.mentionedMembers[0].asMention} $thing"
                     , imageUrl))
                 return@async
             }
 
-            sendEmbed(event, getWeebEmbedImageAndDesc(
+            sendEmbed(ctx, getWeebEmbedImageAndDesc(
                 "${args.joinToString(" ")} $thing", imageUrl))
         }
     }
 
-    protected fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
-        weebApi.getRandomImage(type).async {
+    protected fun requestAndSend(type: String, thing: String, ctx: CommandContext) {
+        val args = ctx.args
+
+        ctx.weebApi.getRandomImage(type).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
-                sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "<@210363111729790977> $thing ${event.member!!.asMention}", imageUrl))
+                sendEmbed(ctx, getWeebEmbedImageAndDesc(
+                    "<@210363111729790977> $thing ${ctx.member!!.asMention}", imageUrl))
                 return@async
             }
-            if (event.message.mentionedMembers.isNotEmpty()) {
-                sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${event.member!!.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
+            if (ctx.message.mentionedMembers.isNotEmpty()) {
+                sendEmbed(ctx, getWeebEmbedImageAndDesc(
+                    "${ctx.member!!.asMention} $thing ${ctx.message.mentionedMembers[0].asMention}"
                     , imageUrl))
                 return@async
             }
-            sendEmbed(event, getWeebEmbedImageAndDesc(
-                "${event.member!!.asMention} $thing ${args.joinToString(" ")}", imageUrl))
+            sendEmbed(ctx, getWeebEmbedImageAndDesc(
+                "${ctx.member!!.asMention} $thing ${args.joinToString(" ")}", imageUrl))
         }
 
     }

@@ -23,6 +23,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.web.GoogleLinkLength;
 import me.duncte123.botcommons.web.WebUtils;
@@ -49,9 +50,12 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
+import static net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -260,10 +264,12 @@ public class AirUtils {
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
+        // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
 
         for (final Reminder reminder : reminders) {
+            // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
                 prettyTime.format(reminder.getReminder_date()),
@@ -272,31 +278,40 @@ public class AirUtils {
 
             final long channelId = reminder.getChannel_id();
 
+            // If we have a channel send the message to that
             if (channelId > 0) {
                 final TextChannel channel = shardManager.getTextChannelById(channelId);
 
+                // If we don't have a channel we can't send it there
+                // TODO: DM the user instead?
                 if (channel != null) {
+                    // Add the reminder to the list of the reminders to purge
                     toPurge.add(reminder.getId());
                     sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
                 }
             } else {
                 final User user = shardManager.getUserById(reminder.getUser_id());
 
+                // If we lost the user from the cache try again later
                 if (user != null) {
                     toPurge.add(reminder.getId());
-                    user.openPrivateChannel().queue(
-                        (channel) -> channel.sendMessage(message).queue()
-                    );
+                    user.openPrivateChannel()
+                    .flatMap(
+                        (channel) -> channel.sendMessage(message)
+                    )
+                    // Ignore when we cannot DM the user
+                    .queue(null, ignore(CANNOT_SEND_TO_USER));
                 }
             }
         }
 
-        // Remove any reminders that have not been removed after 2 days
+        // Get a calendar instance that is two days in the future
         final Calendar calendarDateAfter = Calendar.getInstance();
         calendarDateAfter.add(Calendar.DAY_OF_YEAR, 2);
 
         final Date dateAfter = calendarDateAfter.getTime();
 
+        // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()
             .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
             .map(Reminder::getId)
@@ -320,5 +335,14 @@ public class AirUtils {
 
     public static void setTitleFromKotlin(SearchParams params, String[] title) {
         params.setTitle(title);
+    }
+
+    public static void loadGuildMembers(Guild guild) {
+        try {
+            guild.retrieveMembers().get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Sentry.capture(e);
+        }
     }
 }

@@ -34,7 +34,7 @@ class SkipCommand : MusicCommand() {
     init {
         this.name = "skip"
         this.aliases = arrayOf("next", "nexttrack", "skiptrack")
-        this.helpFunction = { _, _ -> "Skips the current track" }
+        this.help = "Skips the current track"
     }
 
     override fun run(ctx: CommandContext) {
@@ -89,9 +89,9 @@ class SkipCommand : MusicCommand() {
     private fun doSkip(ctx: CommandContext, mng: GuildMusicManager) {
         val player = mng.player
 
-        player.seekTo(player.playingTrack.duration)
+//        player.seekTo(player.playingTrack.duration)
 
-//        mng.scheduler.skipTrack()
+        mng.scheduler.specialSkipCase()
 
         if (player.playingTrack == null) {
             sendMsg(ctx, "Successfully skipped the track.\n" +
