@@ -152,6 +152,9 @@ dependencies {
     // caffeine
     implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.0")
 
+    // okhttp
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.7")
+
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
     }

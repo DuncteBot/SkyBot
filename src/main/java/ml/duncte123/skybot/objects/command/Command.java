@@ -134,8 +134,6 @@ public abstract class Command implements ICommand {
             loadGuildMembers(ctx.getJDAGuild());
         }
 
-        System.out.println(ctx.getJDAGuild().getMemberCache());
-
         execute(ctx);
     }
 

@@ -379,7 +379,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     fun getLove(name: String, name2: String): JsonNode? {
         val json = executeRequest(
             defaultRequest(
-                "love/${name.replace(" ", "+").enc()}/${name2.replace(" ", "+").enc()}",
+                "love/${name.enc()}/${name2.enc()}",
                 false
             )
         )
