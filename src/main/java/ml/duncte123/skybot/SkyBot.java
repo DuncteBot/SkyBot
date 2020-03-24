@@ -142,7 +142,7 @@ public final class SkyBot {
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
-            .setDisabledCacheFlags(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
+            .disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
                     .connectTimeout(30L, TimeUnit.SECONDS)
