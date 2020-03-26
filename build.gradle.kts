@@ -72,7 +72,7 @@ repositories {
     }
 }
 
-val devDependencies = arrayOf<DependencyInfo>(
+val devDependencies = arrayOf(
     // SQLite
     DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.28.0")
 )
@@ -88,7 +88,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.83")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_123") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_126") {
         exclude(module = "opus-java")
     }
 
@@ -128,9 +128,7 @@ dependencies {
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
 
     // Oauth
-//    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "cb9b28a")
-    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-commons", version = "cb9b28a")
+    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.3")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")

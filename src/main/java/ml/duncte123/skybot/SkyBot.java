@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.util.EnumSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -142,7 +141,8 @@ public final class SkyBot {
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
-            .disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
+            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
+            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             .setHttpClientBuilder(
                 new OkHttpClient.Builder()
                     .connectTimeout(30L, TimeUnit.SECONDS)
