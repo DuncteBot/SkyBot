@@ -20,8 +20,10 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StopCommand : MusicCommand() {
@@ -36,9 +38,18 @@ class StopCommand : MusicCommand() {
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
+        val track = player.playingTrack
 
-        if (player.playingTrack == null) {
+        if (track == null) {
             sendMsg(event, "The player is not playing.")
+            return
+        }
+
+        val trackData = track.getUserData(TrackUserData::class.java)
+
+        if (trackData.requester != ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+            sendMsg(event, "Only the person that started this track " +
+                "or people with the `Manage Server` permission can stop this track")
             return
         }
 
