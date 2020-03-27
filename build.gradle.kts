@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.61"))
+        classpath(kotlin("gradle-plugin", version = "1.3.71"))
     }
 }
 
@@ -36,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.71"
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("com.github.breadmoirai.github-release") version "2.2.10"
 }
@@ -121,7 +121,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.5")
 
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
