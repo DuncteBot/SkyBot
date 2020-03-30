@@ -22,6 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -69,14 +70,16 @@ public class AudioLoader implements AudioLoadResultHandler {
     public void trackLoaded(AudioTrack track) {
         addToIndex(track);
 
-        final String title = getSteamTitle(track, track.getInfo().title, this.ctx.getCommandManager());
+        final AudioTrackInfo info = track.getInfo();
+        final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
 
         track.setUserData(new TrackUserData(this.requester));
+
         try {
             this.mng.getScheduler().queue(track, this.isPatron);
 
             if (this.announce) {
-                final String msg = "Adding to queue: " + StringKt.abbreviate(title, MessageEmbed.VALUE_MAX_LENGTH);
+                final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
                 sendEmbed(this.channel,
                     embedField(AudioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
@@ -101,7 +104,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             addToIndex(track);
             track.setUserData(userData);
         })
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
@@ -161,6 +164,12 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     }
 
+    private void addToIndex(AudioTrack track) {
+        if (!(track instanceof YoutubeAudioSourceManagerOverride.DoNotCache)) {
+            this.ctx.getYoutubeCache().addToIndex(track);
+        }
+    }
+
     private static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {
         String title = rawTitle;
 
@@ -174,11 +183,5 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         return title;
-    }
-
-    private void addToIndex(AudioTrack track) {
-        if (!(track instanceof YoutubeAudioSourceManagerOverride.DoNotCache)) {
-            this.ctx.getYoutubeCache().addToIndex(track);
-        }
     }
 }
