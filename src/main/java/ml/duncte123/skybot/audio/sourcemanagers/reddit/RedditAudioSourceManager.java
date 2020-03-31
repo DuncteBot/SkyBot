@@ -22,6 +22,7 @@ import com.dunctebot.sourcemanagers.AbstractDuncteBotHttpSource;
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
@@ -33,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
+import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -41,11 +43,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.COMMON;
+import static com.sedmelluq.discord.lavaplayer.tools.JsonBrowser.NULL_BROWSER;
+import static ml.duncte123.skybot.audio.sourcemanagers.reddit.RedditAudioTrack.getPlaybackUrl;
+import static ml.duncte123.skybot.utils.AirUtils.isURL;
 
 public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
-    private static final String URL_PART = "\\/(?:[^\\/]+)";
-    private static final Pattern FULL_LINK_REGEX = Pattern.compile("https:\\/\\/(?:www|old)\\.reddit\\.com\\/r" + URL_PART + URL_PART + "\\/([^\\/]+)(?:\\/?(?:[^\\/]+)?\\/?)?");
+    private static final Pattern FULL_LINK_REGEX = Pattern.compile("https:\\/\\/(?:www|old)\\.reddit\\.com\\/r\\/(?:[^\\/]+)\\/(?:[^\\/]+)\\/([^\\/]+)(?:\\/?(?:[^\\/]+)?\\/?)?");
     private static final Pattern VIDEO_LINK_REGEX = Pattern.compile("https:\\/\\/v\\.redd\\.it\\/([^\\/]+)(?:.*)?");
+
+    public RedditAudioSourceManager() {
+        this.configureBuilder(
+            (builder) -> builder.setUserAgent(WebUtils.getUserAgent())
+        );
+    }
 
     @Override
     public String getSourceName() {
@@ -54,24 +64,13 @@ public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
-        System.out.println(FULL_LINK_REGEX);
-
-        // https://www.reddit.com/r/Corridor/comments/frqtra/noticed_a_little_vfx_mishap_in_the_mandolorian/ // spoiler
-        // https://www.reddit.com/r/funny/comments/frn2ar/jack_blacks_quarantine_dance/
-        // https://www.reddit.com/r/nextfuckinglevel/comments/frsve4/new_york/
-        // https://www.reddit.com/r/cirkeltrek/comments/fro6fp/wat_zei_lubach/
-        // https://www.reddit.com/r/nextfuckinglevel/comments/frrtcd/youtuber_luke_towan_creating_an_ultra_realistic/ // no audio
-        // https://www.reddit.com/r/me_irl/comments/fs72im/me_irl/ // not a video
-        // https://v.redd.it/u30dunqdcsp41
-
         final String identifier = reference.identifier;
         final Matcher fullLink = FULL_LINK_REGEX.matcher(identifier);
 
+        // If it is a full link to a reddit post we can extract the id easily
+        // and send that to fetch the json and build the track
         if (fullLink.matches()) {
             final String group = fullLink.group(fullLink.groupCount());
-
-            System.out.println(group);
-
             final JsonBrowser data = this.fetchJson(group);
 
             return this.buildTrack(data, identifier);
@@ -79,8 +78,9 @@ public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
 
         final Matcher videoLink = VIDEO_LINK_REGEX.matcher(identifier);
 
+        // If we have a short video link we firstly need to follow all redirects
         if (videoLink.matches()) {
-            // we already have id, need to fetch full page for json
+            // Once we have the link we can extract the post id and build the track the normal way
             final String actualRedditUrl = this.fetchRedirectUrl(identifier);
             final String id = this.getPostId(actualRedditUrl);
             final JsonBrowser data = this.fetchJson(id);
@@ -120,7 +120,8 @@ public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
         final HttpGet httpGet = new HttpGet(vRedditUrl);
         final HttpInterface httpInterface = this.getHttpInterface();
 
-        try (final CloseableHttpResponse response = httpInterface.execute(httpGet)) {
+        // Follow all redirects until there are no more to follow and return that
+        try (final CloseableHttpResponse ignored = httpInterface.execute(httpGet)) {
             return httpInterface.getFinalLocation().toString();
         }
         catch (IOException e) {
@@ -128,24 +129,51 @@ public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
         }
     }
 
+    @Nullable
     private JsonBrowser fetchJson(String pageURl) {
-        System.out.println("https://api.reddit.com/api/info/?id=t3_" + pageURl);
-
+        // Fetch the json from the reddit api so we don't get any useless stuff we don't care about
         final HttpGet httpGet = new HttpGet("https://api.reddit.com/api/info/?id=t3_" + pageURl);
-
-        httpGet.addHeader("User-Agent", WebUtils.getUserAgent());
 
         try (final CloseableHttpResponse response = this.getHttpInterface().execute(httpGet)) {
             final String content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            final JsonBrowser child = JsonBrowser.parse(content).get("data").get("children").index(0);
 
-            return JsonBrowser.parse(content).index(0).get("data").get("children").index(0).get("data");
+            // If we have nothing in the children array we can safely return null
+            if (child.equals(NULL_BROWSER)) {
+                return null;
+            }
+
+            return child.get("data");
         }
         catch (IOException e) {
             throw ExceptionTools.wrapUnfriendlyExceptions("Could not load data from reddit", COMMON, e);
         }
     }
 
-    private RedditAudioTrack buildTrack(JsonBrowser data, String pageURl) {
+    private boolean canPlayAudio(String id) {
+        final HttpGet httpGet = new HttpGet(getPlaybackUrl(id));
+
+        // Probe the audio and check the response code, if it is 200 we have some audio
+        try (final CloseableHttpResponse response = this.getHttpInterface().execute(httpGet)) {
+            return response.getStatusLine().getStatusCode() == 200;
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+    private RedditAudioTrack buildTrack(@Nullable JsonBrowser data, String pageURl) {
+        if (data == null) {
+            return null;
+        }
+
+        final String postHint = data.get("post_hint").safeText();
+
+        if (!"hosted:video".equals(postHint)) {
+            throw new FriendlyException("This video is not hosted on the reddit website," +
+                " only videos hosted on the reddit website can be played", COMMON, null);
+        }
+
         final JsonBrowser media = data.get("media").get("reddit_video");
         final String url = data.get("url").safeText();
 
@@ -155,21 +183,28 @@ public class RedditAudioSourceManager extends AbstractDuncteBotHttpSource {
             return null;
         }
 
-        /*String thumbnail = data.get("thumbnail").safeText();
+        final String videoId = videoLink.group(videoLink.groupCount());
 
-        if (thumbnail.isBlank() || "default".equals(thumbnail)) {
+        // Probe the audio to check if we can actually play it (there's probably a better way with the dash playlists)
+        if (!this.canPlayAudio(videoId)) {
+            throw new FriendlyException("This video does not have audio", COMMON, null);
+        }
+
+        String thumbnail = data.get("thumbnail").safeText();
+
+        if (!isURL(thumbnail)) {
             thumbnail = "https://www.redditstatic.com/reddit404e.png";
-        }*/
+        }
 
         return new RedditAudioTrack(
             new AudioTrackInfoWithImage(
                 data.get("title").safeText(),
                 "u/" + data.get("author").safeText(),
                 Long.parseLong(media.get("duration").safeText()) * 1000,
-                videoLink.group(videoLink.groupCount()),
+                videoId,
                 false,
                 pageURl,
-                "https://www.redditstatic.com/reddit404e.png" // TODO
+                thumbnail
             ),
             this
         );

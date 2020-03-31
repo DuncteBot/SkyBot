@@ -153,8 +153,6 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        exception.printStackTrace();
-
         @Nullable Throwable root = ExceptionUtils.getRootCause(exception);
 
         if (root == null) {

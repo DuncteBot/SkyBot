@@ -30,9 +30,11 @@ public class RedditAudioTrack extends MpegTrack {
 
     @Override
     protected String getPlaybackUrl() {
-        System.out.println("https://v.redd.it/" + this.trackInfo.identifier + "/audio");
+        return getPlaybackUrl(this.trackInfo.identifier);
+    }
 
-        return "https://v.redd.it/" + this.trackInfo.identifier + "/audio";
+    static String getPlaybackUrl(String id) {
+        return "https://v.redd.it/" + id + "/audio?source=fallback";
     }
 
     @Override
