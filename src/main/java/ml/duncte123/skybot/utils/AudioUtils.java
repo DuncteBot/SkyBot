@@ -36,7 +36,6 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
-import ml.duncte123.skybot.audio.sourcemanagers.reddit.RedditAudioSourceManager;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -73,7 +72,6 @@ public class AudioUtils {
         setCustomSourcesOn(playerManager, false);
         addSourcesToLavaLinkPlayer();
 
-        playerManager.registerSourceManager(new RedditAudioSourceManager());
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());

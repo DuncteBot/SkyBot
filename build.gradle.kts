@@ -102,7 +102,7 @@ dependencies {
     implementation(group = "com.github.duncte123", name = "lavaplayer", version = "dd595a1")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "e5b6fa4")
 //    implementation(project(":Lavalink-Client"))
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.2.3")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.3.0")
 
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.8")
