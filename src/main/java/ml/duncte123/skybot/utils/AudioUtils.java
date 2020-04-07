@@ -42,7 +42,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.Future;
 
 @SinceSkybot(version = "3.5.1")
@@ -148,17 +147,7 @@ public class AudioUtils {
     }
 
     private static void addSourcesToLavaLinkPlayer() {
-        try {
-            final Class<LavalinkUtil> klass = LavalinkUtil.class;
-            final Field player_manager = klass.getDeclaredField("PLAYER_MANAGER");
-            player_manager.setAccessible(true);
-            final AudioPlayerManager manager = (AudioPlayerManager) player_manager.get(klass);
-
-            setCustomSourcesOn(manager, true);
-        }
-        catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
     }
 
     private static void setCustomSourcesOn(AudioPlayerManager playerManager, boolean isLavalinkPlayer) {
