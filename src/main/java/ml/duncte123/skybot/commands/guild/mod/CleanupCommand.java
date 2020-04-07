@@ -28,8 +28,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
+import net.dv8tion.jda.api.requests.Request;
+import net.dv8tion.jda.api.requests.RestFuture;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -125,12 +128,15 @@ public class CleanupCommand extends ModBaseCommand {
                 .collect(Collectors.toList());
 
             final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(ctx, "Deleting messages, please wait this might take a while (message will be deleted once complete)", hack::complete);
+            sendMsg(ctx, "Deleting messages, please wait this might take a long time (message will be deleted once complete)", hack::complete);
 
             try {
-                final List<CompletableFuture<Void>> futures = channel.purgeMessages(msgList);
+                final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
+                    .stream()
+                    .map(this::hackTimeout)
+                    .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+                CompletableFuture.allOf(futures).get();
             } catch (ErrorResponseException e) {
                 if (e.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
                     modLog(String.format("Failed to delete messages in %s, channel was deleted during progress", channel), ctx.getGuild());
@@ -165,6 +171,44 @@ public class CleanupCommand extends ModBaseCommand {
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });
         // End of the annotation
+    }
+
+    /**
+     * This method sets the timeout on a RestAction to -1 to make it not time out
+     *
+     * @param future the RestFuture to change the timeout of
+     * @return the future with a different timeout
+     */
+    @SuppressWarnings("rawtypes")
+    private CompletableFuture<Void> hackTimeout(CompletableFuture<Void> future) {
+        if (!(future instanceof RestFuture)) {
+            // Ignore stuff that is not a rest future
+            return future;
+        }
+
+        final Class<? extends RestFuture> futureClass = ((RestFuture<Void>) future).getClass();
+
+        try {
+            final Field requestField = futureClass.getDeclaredField("request");
+
+            requestField.setAccessible(true);
+
+            //noinspection unchecked
+            final Request<Void> request = (Request<Void>) requestField.get(future);
+            final Class<? extends Request> requestClass = request.getClass();
+
+            final Field deadlineField = requestClass.getDeclaredField("deadline");
+
+            deadlineField.setAccessible(true);
+
+            // Set the deadline to -1 so this rest action cannot time out
+            deadlineField.set(request, -1L);
+        }
+        catch (NoSuchFieldException | IllegalAccessException ignored) {
+            // Ignore this stuff
+        }
+
+        return future;
     }
 
     private void removeMessage(TextChannel channel, CompletableFuture<Message> hack) {
