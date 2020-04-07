@@ -42,7 +42,8 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
             new YoutubeApiSearchProvider(ytApiKey, cacheClient),
             new YoutubeSignatureCipherManager(),
             new YoutubeApiPlaylistLoader(ytApiKey),
-            new DefaultYoutubeLinkRouter()
+            new DefaultYoutubeLinkRouter(),
+            new YoutubeMixProvider()
         );
 
         this.cacheClient = cacheClient;
