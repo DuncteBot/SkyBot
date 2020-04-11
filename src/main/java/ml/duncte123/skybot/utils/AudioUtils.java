@@ -51,7 +51,7 @@ public class AudioUtils {
     public static final String EMBED_TITLE = "AirPlayer";
     private final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
-    private UserContextAudioPlayerManager playerManager;
+    private final UserContextAudioPlayerManager playerManager;
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;

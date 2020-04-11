@@ -47,15 +47,16 @@ class StopCommand : MusicCommand() {
 
         val trackData = track.getUserData(TrackUserData::class.java)
 
-        if (trackData.requester != ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
-            sendMsg(event, "Only the person that started this track " +
-                "or people with the `Manage Server` permission can stop this track")
+        if (trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+            mng.scheduler.queue.clear()
+            player.stopTrack()
+
+            sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
+
             return
         }
 
-        mng.scheduler.queue.clear()
-        player.stopTrack()
-
-        sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
+        sendMsg(event, "Only the person that started this track " +
+            "or people with the `Manage Server` permission can stop this track")
     }
 }

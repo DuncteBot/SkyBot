@@ -54,12 +54,14 @@ public class YoutubeUtils {
         }
     }
 
+    @Nullable
     public static Video getVideoById(String videoID, String apiKey) throws IOException {
-        return getVideosByIdBase(videoID, apiKey)
+        final List<Video> items = getVideosByIdBase(videoID, apiKey)
             .setMaxResults(1L)
             .execute()
-            .getItems()
-            .get(0);
+            .getItems();
+
+        return items.isEmpty() ? null : items.get(0);
     }
 
     public static List<Video> getVideosByIds(String videoIds, String apiKey) throws IOException {
@@ -132,7 +134,12 @@ public class YoutubeUtils {
         return "https://i.ytimg.com/vi/" + videoID + "/hq720.jpg";
     }
 
-    public static AudioTrackInfo videoToTrackInfo(Video video) {
+    @Nullable
+    public static AudioTrackInfo videoToTrackInfo(@Nullable Video video) {
+        if (video == null) {
+            return null;
+        }
+
         final VideoSnippet snippet = video.getSnippet();
         final VideoContentDetails details = video.getContentDetails();
 
