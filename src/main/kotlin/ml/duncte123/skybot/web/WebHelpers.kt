@@ -70,25 +70,9 @@ object WebHelpers {
         val fields = FormRequestBody()
         fields.append("secret", secret)
         fields.append("response", response)
-        val req = WebUtils.ins.postRequest("https://www.google.com/recaptcha/api/siteverify", fields)
+        val req = WebUtils.ins.postRequest("https://hcaptcha.com/siteverify", fields)
             .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
 
         return req.execute()
-    }
-
-    fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello, mapper: ObjectMapper): JsonNode {
-        val query = QueryBuilder()
-            .append("https://api.trello.com/1/cards")
-            .append("name", name)
-            .append("desc", desc)
-            .append("pos", "bottom")
-            .append("idList", "5ad2a228bef59be0aca289c9")
-            .append("keepFromSource", "all")
-            .append("key", config.key)
-            .append("token", config.token)
-
-        return WebUtils.ins.postRequest(query.build(), EmptyFromRequestBody())
-            .build({ WebParserUtils.toJSONObject(it, mapper) }, WebParserUtils::handleError)
-            .execute()
     }
 }

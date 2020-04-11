@@ -46,7 +46,13 @@ object FindUserAndGuild {
                 .put("code", response.status())
         }
 
-        val user: User? = shardManager.getUserById(userId)
+        val user: User? = try {
+            shardManager.retrieveUserById(userId).complete()
+        } catch (e: Exception) {
+            println(e)
+            null
+        }
+
         val guild: Guild? = shardManager.getGuildById(guildId)
 
         if (user == null) {
