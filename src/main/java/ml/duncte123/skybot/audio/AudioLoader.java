@@ -129,7 +129,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by _" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + "_"));
+            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
         }
     }
 

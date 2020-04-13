@@ -57,16 +57,6 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private final Supplier<List<AudioSourceManager>> sourceManagers = () -> getField("sourceManagers");
 
-    @Override
-    public void registerSourceManager(AudioSourceManager sourceManager) {
-        // TODO: temp remove when reddit is on all lavalink nodes
-        if (sourceManager instanceof RedditAudioSourceManager) {
-            return;
-        }
-
-        super.registerSourceManager(sourceManager);
-    }
-
     public Future<Void> loadItemOrdered(final Object orderingKey, final String identifier,
                                         final AudioLoadResultHandler resultHandler, final boolean isPatron) {
 

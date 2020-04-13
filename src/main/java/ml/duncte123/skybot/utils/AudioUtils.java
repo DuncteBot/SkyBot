@@ -42,7 +42,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.Future;
 
 @SinceSkybot(version = "3.5.1")
@@ -70,7 +69,7 @@ public class AudioUtils {
         playerManager.registerSourceManager(youtubeAudioSourceManager);
 
         setCustomSourcesOn(playerManager, false);
-        addSourcesToLavaLinkPlayer();
+        setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
@@ -144,20 +143,6 @@ public class AudioUtils {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {
             return String.format("%02d:%02d", minutes, seconds);
-        }
-    }
-
-    private static void addSourcesToLavaLinkPlayer() {
-        try {
-            final Class<LavalinkUtil> klass = LavalinkUtil.class;
-            final Field player_manager = klass.getDeclaredField("PLAYER_MANAGER");
-            player_manager.setAccessible(true);
-            final AudioPlayerManager manager = (AudioPlayerManager) player_manager.get(klass);
-
-            setCustomSourcesOn(manager, true);
-        }
-        catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
         }
     }
 
