@@ -69,7 +69,7 @@ public class AudioUtils {
         playerManager.registerSourceManager(youtubeAudioSourceManager);
 
         setCustomSourcesOn(playerManager, false);
-        addSourcesToLavaLinkPlayer();
+        setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
@@ -144,10 +144,6 @@ public class AudioUtils {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
-    }
-
-    private static void addSourcesToLavaLinkPlayer() {
-        setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
     }
 
     private static void setCustomSourcesOn(AudioPlayerManager playerManager, boolean isLavalinkPlayer) {
