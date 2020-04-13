@@ -38,6 +38,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class LoveCommand extends Command {
+//    private static final String EMPTY_BAR = " ";
+//    private static final String FILLED_BAR = "\u2588";
 
     public LoveCommand() {
         this.requiresArgs = true;
@@ -75,8 +77,20 @@ public class LoveCommand extends Command {
             return;
         }
 
+//        final int intScore = response.get("score_int").asInt() / 10;
+
         final EmbedBuilder embed = EmbedUtils.defaultEmbed()
             .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
+            // The idea is cool, but it looks stupid
+            /*.setDescription(
+                String.format(
+                    "[%s%s](%s) %s%%",
+                    FILLED_BAR.repeat(intScore),
+                    EMPTY_BAR.repeat(10 - intScore),
+                    "https://localhost.com",
+                    intScore
+                )
+            )*/
             .addField(response.get("score").asText(), response.get("message").asText(), false);
 
         final TextChannel channel = ctx.getChannel();
