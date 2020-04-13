@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -34,6 +36,7 @@ import net.dv8tion.jda.api.requests.RestFuture;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +48,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class CleanupCommand extends ModBaseCommand {
+    private final TLongObjectMap<CompletableFuture<Void>> futureMap = new TLongObjectHashMap<>();
 
     public CleanupCommand() {
         this.name = "cleanup";
@@ -55,7 +59,7 @@ public class CleanupCommand extends ModBaseCommand {
         };
         this.help = "Performs a purge in the channel where the command is run.\n" +
             "To clear an entire channel it's better to use `{prefix}purgechannel`";
-        this.usage = "[amount] [--keep-pinned] [--bots-only]";
+        this.usage = "[amount/cancel] [--keep-pinned] [--bots-only]";
         this.userPermissions = new Permission[]{
             Permission.MESSAGE_MANAGE,
             Permission.MESSAGE_HISTORY,
@@ -78,7 +82,28 @@ public class CleanupCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
+        final long channelId = ctx.getChannel().getIdLong();
         final List<String> args = ctx.getArgs();
+        final boolean isRunningInChannel = this.futureMap.containsKey(channelId);
+
+        if (!args.isEmpty() && "cancel".equals(args.get(0))) {
+            if (isRunningInChannel) {
+                this.futureMap.get(channelId).cancel(true);
+            } else {
+                sendMsg(ctx.getEvent(), "There is no purge running in this channel");
+            }
+
+            return;
+        }
+
+        if (isRunningInChannel) {
+            sendMsg(ctx.getEvent(),
+                "This channel is already being cleaned, you can cancel the current purge by running `" +
+                    ctx.getPrefix() + ctx.getInvoke() + " cancel`"
+            );
+
+            return;
+        }
 
         int total = 5;
 
@@ -128,7 +153,7 @@ public class CleanupCommand extends ModBaseCommand {
                 .collect(Collectors.toList());
 
             final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(ctx, "Deleting messages, please wait this might take a long time (message will be deleted once complete)", hack::complete);
+            sendMsg(ctx, "Deleting messages, please wait this might take a long time (this message will be deleted once complete)", hack::complete);
 
             try {
                 final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
@@ -136,18 +161,30 @@ public class CleanupCommand extends ModBaseCommand {
                     .map(this::hackTimeout)
                     .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(futures).get();
-            } catch (ErrorResponseException e) {
+                final CompletableFuture<Void> futureStore = CompletableFuture.allOf(futures);
+
+                futureMap.put(channel.getIdLong(), futureStore);
+
+                futureStore.get();
+            }
+            catch (ErrorResponseException e) {
                 if (e.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
                     modLog(String.format("Failed to delete messages in %s, channel was deleted during progress", channel), ctx.getGuild());
                     return -100;
                 }
 
                 Sentry.capture(e);
-            } catch (InterruptedException | ExecutionException e) {
+            }
+            catch (CancellationException e) {
+                sendSuccess(ctx.getMessage());
+                sendMsgAndDeleteAfter(ctx.getEvent(), 5L, TimeUnit.SECONDS, "Cancelled successfully.");
+            }
+            catch (InterruptedException | ExecutionException e) {
                 Sentry.capture(e);
-            } finally {
+            }
+            finally {
                 removeMessage(channel, hack);
+                futureMap.remove(channel.getIdLong());
             }
 
             return msgList.size();
@@ -176,7 +213,9 @@ public class CleanupCommand extends ModBaseCommand {
     /**
      * This method sets the timeout on a RestAction to -1 to make it not time out
      *
-     * @param future the RestFuture to change the timeout of
+     * @param future
+     *     the RestFuture to change the timeout of
+     *
      * @return the future with a different timeout
      */
     @SuppressWarnings("rawtypes")
