@@ -88,7 +88,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.83")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_133") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_136") {
         exclude(module = "opus-java")
     }
 
@@ -105,7 +105,7 @@ dependencies {
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.8")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.11")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")

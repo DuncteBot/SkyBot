@@ -44,7 +44,7 @@ function submitForm(token) {
             id("confirm").innerHTML = `
                     <div class="row">
                     <div class="col s12 m6">
-                        <div class="card small indigo">
+                        <div class="card indigo">
                             <div class="card-content white-text">
                                 <span class="card-title">Confirm your selection</span>
                                 <p>To make sure that the patron perks get added to the correct user and server,
@@ -58,7 +58,7 @@ function submitForm(token) {
                                 <p>If this is not correct please change the ids in the form and press submit again.</p>
                             </div>
                             <div class="card-action ">
-                                <a href="#" class="btn green white-text text-lighten-4" onclick="id('patrons').submit(); return false;">This is correct</a>
+                                <a href="#" class="btn green white-text text-lighten-4" onclick="submitPatronForm(); return false;">This is correct</a>
                             </div>
                         </div>
                     </div>
@@ -70,6 +70,10 @@ function submitForm(token) {
             console.log(e);
             console.error(e)
         });
+}
+
+function submitPatronForm() {
+    id('patrons').submit();
 }
 
 function reset(message) {

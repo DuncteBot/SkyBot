@@ -237,6 +237,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
             final Video v = getVideoById(videoId, this.config.googl);
 
+            if (v == null) {
+                return null;
+            }
+
             return audioTrackFromVideo(v, track.getAlbum().getImages());
         }
         catch (Exception e) {

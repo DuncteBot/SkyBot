@@ -69,6 +69,8 @@ class StatsCommand : Command() {
         val jvmMemPercent = floor((jvmMemUsage / jvmMemTotal) * 100)
         val os = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
 
+        val threadBean = ManagementFactory.getThreadMXBean()
+
         val embed = defaultEmbed()
 
             .addField("Discord/bot Stats",
@@ -90,7 +92,7 @@ class StatsCommand : Command() {
 
             .addField("JVM stats",
                 """**CPU usage:** $jvmCpuUsage
-                    |**Threads:** ${Thread.activeCount()} / ${Thread.getAllStackTraces().keys.size}
+                    |**Threads:** ${threadBean.threadCount} / ${threadBean.peakThreadCount}
                             |**Ram:** ${jvmMemUsage}MB / ${jvmMemTotal}MB ($jvmMemPercent%)
                         """.trimMargin(), false)
 

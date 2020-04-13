@@ -218,10 +218,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager, mapper)
             }
 
-            post("/suggest") { request, response ->
-                return@post Suggest.create(request, response, config, mapper)
-            }
-
             path("/customcommands/$GUILD_ID") {
                 before("") { request, response ->
                     return@before CustomCommands.before(request, response, mapper)

@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 class TextToBricksCommand : Command() {
 
     init {
+        this.requiresArgs = true
         this.category = CommandCategory.FUN
         this.name = "ttb"
         this.help = "Converts your text into emoji bricks"
@@ -38,11 +39,6 @@ class TextToBricksCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
         val message = ctx.argsRaw
             .toLowerCase()
             .replace("([a-zA-Z])".toRegex(), ":regional_indicator_\$1:")

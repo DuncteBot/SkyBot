@@ -98,13 +98,10 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
             return null;
         }
 
-        for (final AudioTrack track : tracks) {
-            if (selectedVideoId.equals(track.getIdentifier())) {
-                return track;
-            }
-        }
-
-        return null;
+        return tracks.stream()
+            .filter((track) -> selectedVideoId.equals(track.getIdentifier()))
+            .findFirst()
+            .orElse(null);
     }
 
     private String fetchNextPage(String nextPageKey, String playlistId, Function<AudioTrackInfo, AudioTrack> trackFactory,

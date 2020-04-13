@@ -184,8 +184,6 @@ class UserinfoCommand : Command() {
         val userTimes = prettyTime.parseTimes(user)
         val memberTimes = prettyTime.parseTimes(member)
 
-        val mStatus = member.onlineStatus
-
         val boostingSinceMsg = if (member.timeBoosted == null) {
             ""
         } else {
@@ -208,7 +206,6 @@ class UserinfoCommand : Command() {
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
-                        |**Online Status:** ${mStatus.toEmote()} ${mStatus.key}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
@@ -248,13 +245,13 @@ class UserinfoCommand : Command() {
 
     private fun User.isNitro() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
 
-    private fun OnlineStatus.toEmote() = when (this) {
+    /*private fun OnlineStatus.toEmote() = when (this) {
         OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
         OnlineStatus.IDLE -> "<:away2:464520569862357002>"
         OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
 
         else -> "<:offline2:464520569929334784>"
-    }
+    }*/
 
     private fun OffsetDateTime.toBoostEmote(): String {
         return when (this.until(OffsetDateTime.now(), ChronoUnit.MONTHS)) {

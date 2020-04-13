@@ -47,7 +47,6 @@ public class DunctebotConfig {
 
     public static class Apis {
         public Cache youtubeCache;
-        public Trello trello;
         public String googl;
         public String weebSh;
         public Chapta chapta;
@@ -58,11 +57,6 @@ public class DunctebotConfig {
 
         public static class Cache {
             public String endpoint;
-            public String token;
-        }
-
-        public static class Trello {
-            public String key;
             public String token;
         }
 

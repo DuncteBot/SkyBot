@@ -45,9 +45,10 @@
                               data-success=""></span>
                     </div>
 
-                    <button class="btn waves-effect waves-light waves-ripple blue accent-4 g-recaptcha"
+                    <button class="btn waves-effect waves-light waves-ripple blue accent-4 h-captcha"
                             id="btn"
                             data-sitekey="{{ chapta_sitekey }}"
+                            data-theme="dark"
                             data-callback="submitForm">Submit
                     </button>
 
@@ -61,6 +62,6 @@
 {% endblock %}
 
 {% block script %}
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
     <script src="/js/patron-guild.js?v=2"></script>
 {% endblock %}
