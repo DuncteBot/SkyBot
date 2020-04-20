@@ -41,7 +41,9 @@ appender("Sentry", SentryAppender) {
 
     filter(EvaluatorFilter) {
         evaluator(GEventEvaluator) {
+            // Stuff to ignore
             expression = """e.loggerName == 'ml.duncte123.skybot.ShardWatcher' ||
+                            e.loggerName == 'net.notfab.caching.client.CacheClient' ||
                             e.formattedMessage.startsWith('Got disconnected from WebSocket') || 
                             e.message.contains('Ignoring deprecated socket close linger time') ||
                             e.message.contains('Using SQLite as the database') ||
@@ -57,7 +59,7 @@ appender("Sentry", SentryAppender) {
 root(INFO, ["STDOUT", "Sentry"])
 
 //logger('net.dv8tion.jda.internal.requests.WebSocketClient', TRACE)
-logger('net.notfab.caching.client.CacheClient', TRACE)
+//logger('net.notfab.caching.client.CacheClient', TRACE)
 //logger('net.dv8tion.jda.internal.requests.RateLimiter', TRACE)
 
 

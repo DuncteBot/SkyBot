@@ -117,7 +117,7 @@ dependencies {
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2")
 
     // Youtube api
-    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev212-1.25.0")
+    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
@@ -140,7 +140,7 @@ dependencies {
     implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
