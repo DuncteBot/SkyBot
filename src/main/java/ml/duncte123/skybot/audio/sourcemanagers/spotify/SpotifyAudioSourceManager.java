@@ -37,6 +37,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,7 +284,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
             logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
         }
-        catch (IOException | SpotifyWebApiException e) {
+        catch (IOException | SpotifyWebApiException | ParseException e) {
             e.printStackTrace();
             logger.error("Error while fetching Spotify token", e);
 
