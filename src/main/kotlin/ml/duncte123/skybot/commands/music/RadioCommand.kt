@@ -31,23 +31,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.utils.data.DataArray
 import net.dv8tion.jda.api.utils.data.DataObject
 
-fun main(args: Array<String>) {
-    val cmd = RadioCommand()
-    val data = DataArray.empty()
-
-    cmd.radioStreams.forEach {
-        data.add(
-            DataObject.empty()
-                .put("name", it.name)
-                .put("audio", it.url)
-                .put("website", it.website)
-                .put("listed", it.listed)
-        )
-    }
-
-    println(data.toString())
-}
-
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
 class RadioCommand : MusicCommand() {
