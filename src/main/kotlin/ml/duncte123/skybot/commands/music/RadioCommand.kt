@@ -22,11 +22,31 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.utils.data.DataArray
+import net.dv8tion.jda.api.utils.data.DataObject
+
+fun main(args: Array<String>) {
+    val cmd = RadioCommand()
+    val data = DataArray.empty()
+
+    cmd.radioStreams.forEach {
+        data.add(
+            DataObject.empty()
+                .put("name", it.name)
+                .put("audio", it.url)
+                .put("website", it.website)
+                .put("listed", it.listed)
+        )
+    }
+
+    println(data.toString())
+}
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
@@ -40,6 +60,7 @@ class RadioCommand : MusicCommand() {
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
         this.help = "Adds a radio http stream to your queue and goes to it"
         this.usage = "<(full)list/station name>"
+        // TODO: load from json
         loadStations()
     }
 
@@ -87,7 +108,7 @@ class RadioCommand : MusicCommand() {
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
-        val string = streams.filter { if (!full) it.public else true }
+        val string = streams.filter { if (!full) it.listed else true }
             .joinToString(separator = "\n") { it.toEmbedString() }
         for (it in MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
@@ -98,10 +119,10 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
-        radioStreams.add(RadioStream("iloveradio", "http://stream01.iloveradio.de/iloveradio1.mp3", "http://www.iloveradio.de/streams/"))
+//        radioStreams.add(RadioStream("iloveradio", "http://stream01.iloveradio.de/iloveradio1.mp3", "http://www.iloveradio.de/streams/"))
         // TODO: why so many
         // TODO: Make a json file or api endpoint with all streams for easy updating
-        /*
+
         radioStreams.add(ILoveStream(stationName = "iloveradio", channel = 1))
         radioStreams.add(ILoveStream(stationName = "ilove2dance", channel = 2))
         radioStreams.add(ILoveStream(stationName = "ilovetop100charts", channel = 9))
@@ -122,18 +143,18 @@ class RadioCommand : MusicCommand() {
         radioStreams.add(ILoveStream(stationName = "iloveurban", channel = -1, npChannel = 12, internal = false, public = false))
         radioStreams.add(ILoveStream(stationName = "ilovegroove", channel = -1, npChannel = 13, internal = false, public = false))
         radioStreams.add(ILoveStream(stationName = "ilovenitroxedm", channel = -1, npChannel = 11, internal = false, public = false))
-        radioStreams.add(ILoveStream(stationName = "ilovenitroxdeep", channel = -1, npChannel = 24, internal = false, public = false))*/
+        radioStreams.add(ILoveStream(stationName = "ilovenitroxdeep", channel = -1, npChannel = 24, internal = false, public = false))
 
         //nl_NL radio stations
-        radioStreams.add(RadioStream("slam", "http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/"))
-        radioStreams.add(RadioStream("radio538", "http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3", "https://www.538.nl/"))
-        radioStreams.add(RadioStream("3fm", "http://icecast.omroep.nl/3fm-sb-mp3", "https://www.npo3fm.nl/", false))
-        radioStreams.add(RadioStream("skyradio", "http://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC", "http://www.skyradio.nl/", false))
-        radioStreams.add(RadioStream("qmusic", "http://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3", "http://qmusic.nl/", false))
+        radioStreams.add(RadioStream("slam", "https://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/"))
+        radioStreams.add(RadioStream("radio538", "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3", "https://www.538.nl/"))
+        radioStreams.add(RadioStream("3fm", "https://icecast.omroep.nl/3fm-sb-mp3", "https://www.npo3fm.nl/", false))
+        radioStreams.add(RadioStream("skyradio", "https://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC", "http://www.skyradio.nl/", false))
+        radioStreams.add(RadioStream("qmusic", "https://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3", "http://qmusic.nl/", false))
 
         //International radio stations
         //TODO: add international radio stations
-        radioStreams.add(RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "http://trap.fm/"))
+        radioStreams.add(RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "https://trap.fm/"))
         radioStreams.add(RadioStream("listen.moe", "https://listen.moe/stream", "https://listen.moe/stream"))
     }
 }
