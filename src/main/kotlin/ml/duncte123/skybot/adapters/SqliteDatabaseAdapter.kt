@@ -296,6 +296,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
+    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
         runOnThread {
             val map = TLongLongHashMap()

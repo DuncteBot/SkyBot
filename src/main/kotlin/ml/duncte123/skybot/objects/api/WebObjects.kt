@@ -51,4 +51,14 @@ data class Reminder(val id: Int, val user_id: Long, val reminder: String, val re
         this(id, user_id, reminder, AirUtils.fromDatabaseFormat(reminder_date), channel_id)
 }
 
+data class Patron
+@JsonCreator constructor(@JsonProperty("user_id") val userId: Long, @JsonProperty("guild_id") val guildId: Long?)
+
+data class AllPatronsData @JsonCreator constructor(
+    @JsonProperty("patrons") val patrons: List<Patron>,
+    @JsonProperty("tag_patrons") val tagPatrons: List<Patron>,
+    @JsonProperty("one_guild_patrons") val oneGuildPatrons: List<Patron>,
+    @JsonProperty("guild_patrons") val guildPatrons: List<Patron>
+)
+
 

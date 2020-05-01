@@ -94,6 +94,8 @@ abstract class DatabaseAdapter {
     ///////////////
     // Patron stuff
 
+    abstract fun loadAllPatrons(callback: (AllPatronsData) -> Unit)
+
     abstract fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit)
 
     abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
