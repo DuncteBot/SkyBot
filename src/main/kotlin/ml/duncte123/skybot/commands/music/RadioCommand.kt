@@ -26,7 +26,6 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -66,8 +65,10 @@ class RadioCommand : MusicCommand() {
                 return
             }
             else -> {
-                val search = ctx.argsRaw
-                val radio = radioStreams.firstOrNull { it.name == search }
+                val search = ctx.argsRaw.toLowerCase()
+                val radio = radioStreams.firstOrNull {
+                    it.name.toLowerCase().contains(search) || it.website.toLowerCase().contains(search)
+                }
 
                 if (radio == null) {
                     sendErrorWithMessage(ctx.message, "No stream found for \"$search\"")
@@ -95,20 +96,10 @@ class RadioCommand : MusicCommand() {
         }
 
         val string = selectedStreams.joinToString(separator = "\n", transform = RadioStream::toEmbedString)
+        val embed = EmbedUtils.embedMessage(string)
+            .setTitle("Here are 5 random entries from our radio list")
 
-        // TODO: we are only adding 5 items, surly this is not needed
-        MessageBuilder()
-            .append(string)
-            .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
-            .forEachIndexed { index, it ->
-                val embed = EmbedUtils.embedMessage(it.contentRaw)
-
-                if (index == 0) {
-                    embed.setTitle("Here are 5/${radioStreams.size} random entries from our radio list)")
-                }
-
-                sendEmbed(event, embed)
-            }
+        sendEmbed(event, embed)
     }
 
     private fun loadStations() {
@@ -119,6 +110,9 @@ class RadioCommand : MusicCommand() {
 
 //        val streams = this.javaClass.getResource("/radio_streams.json").readText()
 //        val json = DataArray.fromJson(streams)
+
+        // Clear before adding more (in case of reloading)
+        radioStreams.clear()
 
         json.forEach {
             radioStreams.add(

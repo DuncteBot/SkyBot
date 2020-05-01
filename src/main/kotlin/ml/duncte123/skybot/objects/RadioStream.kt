@@ -24,9 +24,29 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 
 @SinceSkybot("3.52.2")
-class RadioStream(var name: String, val url: String, val website: String?) {
-    private fun hasWebsite() = !website.isNullOrBlank()
+class RadioStream(var name: String, val url: String, val website: String) {
+//    private fun hasWebsite() = !website.isNullOrBlank()
 
-    fun toEmbedString(): String = "[$name]($url) ${if (hasWebsite()) "from [$website]($website)" else ""}"
+//    fun toEmbedString(): String = "[$name]($url) ${if (hasWebsite()) "from [$website]($website)" else ""}"
+    fun toEmbedString(): String = "[$name]($url) from [$website]($website)"
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is RadioStream) {
+            return false
+        }
+
+        return this.name == other.name && this.url == other.url && this.website == other.website
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + url.hashCode()
+        result = 31 * result + (website?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "RadioStream(name='$name', url='$url', website=$website)"
+    }
 }
 
