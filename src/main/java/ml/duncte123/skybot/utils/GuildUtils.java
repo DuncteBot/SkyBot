@@ -155,30 +155,40 @@ public class GuildUtils {
         );
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading one guild patrons");
 
         final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
         final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
 
-        adapter.loadOneGuildPatrons(
-            (patrons) -> {
-                patrons.forEachEntry((userId, guildId) -> {
+        adapter.loadAllPatrons((data) -> {
+            data.getPatrons().forEach((patron) -> {
+                CommandUtils.patrons.add(patron.getUserId());
+            });
 
-                    final Member memberInServer = supportGuild.getMemberById(userId);
+            data.getTagPatrons().forEach((patron) -> {
+                CommandUtils.tagPatrons.add(patron.getUserId());
+            });
 
-                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
-                        CommandUtils.oneGuildPatrons.put(userId, guildId);
-                    }
+            data.getOneGuildPatrons().forEach((patron) -> {
+                final long userId = patron.getUserId();
+                final long guildId = patron.getGuildId();
 
-                    return true;
-                });
+                final Member memberInServer = supportGuild.getMemberById(userId);
 
-                logger.info("Found {} one guild patrons", CommandUtils.oneGuildPatrons.keySet().size());
+                if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
+                    CommandUtils.oneGuildPatrons.put(userId, guildId);
+                }
+            });
 
-                return null;
-            }
-        );
+            data.getGuildPatrons().forEach((patron) -> {
+                // TODO: ?
+                CommandUtils.guildPatrons.add(patron.getGuildId());
+            });
+
+            return null;
+        });
     }
 
     public static void removeOneGuildPatron(long userId, @Nonnull DatabaseAdapter adapter) {

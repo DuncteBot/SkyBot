@@ -33,6 +33,7 @@ import spark.Spark
 object DataController {
 
     fun updateData(request: Request, jackson: ObjectMapper, shardManager: ShardManager, variables: Variables): Any {
+        // Logging in with the bots own token
         if (!request.headers().contains("Authorization") || request.headers("Authorization") != shardManager.getShardById(0)?.token) {
             Spark.halt(401)
         }
@@ -41,19 +42,31 @@ object DataController {
 
         println(updateData)
 
-        val expiredBans = updateData["unbans"]
-        val expiredMutes = updateData["unmutes"]
-        val expiredReminders = updateData["reminders"]
+        if (updateData.has("patrons")) {
+            TODO("Update patrons")
+        }
 
-        val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
-        val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
-        val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+        if (updateData.has("unbans")) {
+            val expiredBans = updateData["unbans"]
+            val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
 
-        ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
-        ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+            ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
+        }
 
-        if (reminders.isNotEmpty()) {
-            AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+        if (updateData.has("unmutes")) {
+            val expiredMutes = updateData["unmutes"]
+            val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
+
+            ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+        }
+
+        if (updateData.has("reminders")) {
+            val expiredReminders = updateData["reminders"]
+            val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+
+            if (reminders.isNotEmpty()) {
+                AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+            }
         }
 
         return jackson.createObjectNode().put("success", true)

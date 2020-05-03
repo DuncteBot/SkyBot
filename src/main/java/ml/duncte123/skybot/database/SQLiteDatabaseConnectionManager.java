@@ -19,13 +19,17 @@
 package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.api.Patron;
 import org.sqlite.JDBC;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class SQLiteDatabaseConnectionManager {
@@ -190,6 +194,20 @@ public class SQLiteDatabaseConnectionManager {
                     "user_tag VARCHAR(255) NOT NULL," +
                     "mute_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                     "unmute_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+                    ");"
+            );
+
+
+            final String namesList = Arrays.stream(Patron.Type.values())
+                .map(Patron.Type::name)
+                .collect(Collectors.joining("', '"));
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS patrons(" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "user_id VARCHAR(20) NOT NULL," +
+                    "guild_id VARCHAR(20)," +
+                    "type TEXT CHECK( type IN ('" + namesList + "'))" +
                     ");"
             );
         }

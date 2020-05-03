@@ -47,6 +47,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
+import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
@@ -136,9 +137,30 @@ public final class SkyBot {
             .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
-            // Keep all members in cache
-            // TODO: find a way to make sure that this is not needed anymore
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
+            // Keep guild owners, voice members and patrons in cache
+            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or((member) -> {
+                // TODO: make sure patrons are loaded before JDA is started?
+                final long userId = member.getIdLong();
+
+                if (patrons.contains(userId)) {
+                    return true;
+                }
+
+                if (tagPatrons.contains(userId)) {
+                    return true;
+                }
+
+                if (oneGuildPatrons.containsKey(userId)) {
+                    return true;
+                }
+
+                // TODO: this currently stores the guild id and not the user id
+                if (guildPatrons.contains(userId)) {
+                    return true;
+                }
+
+                return false;
+            }))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
