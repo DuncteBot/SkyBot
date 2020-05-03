@@ -30,6 +30,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.model_objects.IPlaylistItem;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
@@ -190,12 +191,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                     continue;
                 }
 
-                final Track track = playlistTrack.getTrack();
+                final IPlaylistItem item = playlistTrack.getTrack();
 
-                if (track == null) {
+                if (!(item instanceof Track)) {
                     continue;
                 }
 
+                final Track track = (Track) item;
                 final String videoId = searchYoutube(track.getName(), track.getArtists()[0].getName());
 
                 if (videoId != null) {
