@@ -235,6 +235,8 @@ public class CommandUtils {
     }
 
     private static boolean isUserInGuildAndGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+        // FIXME: this check is wrong
+        // We should check if any of the guild patrons are in the guild
         return g.isMember(u) && guildPatrons.contains(u.getIdLong());
     }
 }
