@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -184,8 +185,9 @@ public class CommandUtils {
         return isPatron(u, textChannel);
     }
 
+    // FIXME: Do new patron checks for guilds
     private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
-        if (isUserInGuildAndGuildPatron(u, g) || oneGuildPatrons.containsValue(g.getIdLong())) {
+        if (shouldGuildBeConsideredPremium(g) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 
@@ -234,9 +236,21 @@ public class CommandUtils {
         return false;
     }
 
-    private static boolean isUserInGuildAndGuildPatron(@Nonnull User u, @Nonnull Guild g) {
-        // FIXME: this check is wrong
-        // We should check if any of the guild patrons are in the guild
-        return g.isMember(u) && guildPatrons.contains(u.getIdLong());
+    private static boolean shouldGuildBeConsideredPremium(@Nonnull Guild g) {
+        final AtomicBoolean foundPatron = new AtomicBoolean(false);
+
+        guildPatrons.forEach((userId) -> {
+            final boolean userInGuild = g.getMemberById(userId) != null;
+
+            // Only set if we found a patron
+            if (userInGuild) {
+                foundPatron.set(true);
+            }
+
+            // return false to stop looping
+            return !userInGuild;
+        });
+
+        return foundPatron.get();
     }
 }
