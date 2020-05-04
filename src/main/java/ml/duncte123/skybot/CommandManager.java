@@ -131,6 +131,8 @@ public class CommandManager {
     public CommandManager(Variables variables) {
         this.variables = variables;
 
+        addCommand(new PatreonCheckCommand());
+
         /// <editor-fold desc="Command Loading" defaultstate="collapsed">
         this.addCommand(new AchievementCommand());
         this.addCommand(new AdviceCommand());

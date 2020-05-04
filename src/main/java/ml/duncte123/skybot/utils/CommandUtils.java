@@ -142,7 +142,7 @@ public class CommandUtils {
         return parsed;
     }
 
-    private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
+    public static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
@@ -182,11 +182,11 @@ public class CommandUtils {
 
     private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
-        return isPatron(u, textChannel);
+        return isPatron(u, textChannel) || isUserTagPatron(u);
     }
 
     // FIXME: Do new patron checks for guilds
-    private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+    public static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
         if (shouldGuildBeConsideredPremium(g) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
