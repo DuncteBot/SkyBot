@@ -297,7 +297,34 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
     }
 
     override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
-        TODO("Not yet implemented")
+        runOnThread {
+            val patrons = arrayListOf<Patron>()
+            val tagPatrons = arrayListOf<Patron>()
+            val oneGuildPatrons = arrayListOf<Patron>()
+            val guildPatrons = arrayListOf<Patron>()
+
+            connManager.connection.createStatement().use { statement ->
+                statement.executeQuery("SELECT * FROM oneGuildPatrons").use { resultSet ->
+                    while (resultSet.next()) {
+                        val guildId = if (resultSet.getLong("guild_id") == 0L) null else resultSet.getLong("guild_id")
+                        val patron = Patron(
+                            Patron.Type.valueOf(resultSet.getString("type").toUpperCase()),
+                            resultSet.getLong("user_id"),
+                            guildId
+                        )
+
+                        when (patron.type) {
+                            Patron.Type.NORMAL -> patrons.add(patron)
+                            Patron.Type.TAG -> tagPatrons.add(patron)
+                            Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                            Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                        }
+                    }
+                }
+            }
+
+            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
     }
 
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {

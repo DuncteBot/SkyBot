@@ -157,7 +157,16 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     }
 
     override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
-        TODO("Not yet implemented")
+        runOnThread {
+            val patrons = arrayListOf<Patron>()
+            val tagPatrons = arrayListOf<Patron>()
+            val oneGuildPatrons = arrayListOf<Patron>()
+            val guildPatrons = arrayListOf<Patron>()
+
+            // TODO: code
+
+            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
     }
 
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {

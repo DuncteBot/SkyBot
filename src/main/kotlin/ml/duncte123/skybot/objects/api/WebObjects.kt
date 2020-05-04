@@ -52,7 +52,9 @@ data class Reminder(val id: Int, val user_id: Long, val reminder: String, val re
 }
 
 data class Patron
-@JsonCreator constructor(val type: Type, @JsonProperty("user_id") val userId: Long, @JsonProperty("guild_id") val guildId: Long?) {
+@JsonCreator constructor(@JsonProperty("patron_type") val type: Type,
+                         @JsonProperty("user_id") val userId: Long,
+                         @JsonProperty("guild_id") val guildId: Long?) {
     enum class Type {
         NORMAL,
         TAG,

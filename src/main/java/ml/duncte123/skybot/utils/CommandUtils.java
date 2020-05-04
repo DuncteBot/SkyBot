@@ -185,8 +185,7 @@ public class CommandUtils {
     }
 
     private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
-
-        if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
+        if (isUserInGuildAndGuildPatron(u, g) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 
@@ -233,5 +232,9 @@ public class CommandUtils {
         }
 
         return false;
+    }
+
+    private static boolean isUserInGuildAndGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+        return g.isMember(u) && guildPatrons.contains(u.getIdLong());
     }
 }

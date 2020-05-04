@@ -197,7 +197,6 @@ public class SQLiteDatabaseConnectionManager {
                     ");"
             );
 
-
             final String namesList = Arrays.stream(Patron.Type.values())
                 .map(Patron.Type::name)
                 .collect(Collectors.joining("', '"));
@@ -207,7 +206,7 @@ public class SQLiteDatabaseConnectionManager {
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "user_id VARCHAR(20) NOT NULL," +
                     "guild_id VARCHAR(20)," +
-                    "type TEXT CHECK( type IN ('" + namesList + "'))" +
+                    "type TEXT CHECK( type IN ('" + namesList + "')) NOT NULL" +
                     ");"
             );
         }

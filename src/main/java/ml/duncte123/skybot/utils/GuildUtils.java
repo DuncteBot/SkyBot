@@ -37,7 +37,7 @@ import java.util.Objects;
 })
 public class GuildUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
 
     /**
      * Returns an array with the member counts of the guild
@@ -127,7 +127,6 @@ public class GuildUtils {
     }
 
     public static String verificationLvlToName(VerificationLevel lvl) {
-
         if (lvl == null) {
             return "None";
         }
@@ -183,8 +182,7 @@ public class GuildUtils {
             });
 
             data.getGuildPatrons().forEach((patron) -> {
-                // TODO: ?
-                CommandUtils.guildPatrons.add(patron.getGuildId());
+                CommandUtils.guildPatrons.add(patron.getUserId());
             });
 
             return null;
