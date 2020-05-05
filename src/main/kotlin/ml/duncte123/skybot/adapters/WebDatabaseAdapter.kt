@@ -163,7 +163,21 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val oneGuildPatrons = arrayListOf<Patron>()
             val guildPatrons = arrayListOf<Patron>()
 
-            // TODO: code
+            apis.loadAllPatrons().forEach {
+                val guildId = if (it.has("guild_id")) it["guild_id"].asLong() else null
+                val patron = Patron(
+                    Patron.Type.valueOf(it["type"].asText()),
+                    it["user_id"].asLong(),
+                    guildId
+                )
+
+                when (patron.type) {
+                    Patron.Type.NORMAL -> patrons.add(patron)
+                    Patron.Type.TAG -> tagPatrons.add(patron)
+                    Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                    Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                }
+            }
 
             callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
         }

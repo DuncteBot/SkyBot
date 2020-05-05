@@ -188,6 +188,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
+    fun loadAllPatrons(): ArrayNode {
+        return paginateData("patrons")
+    }
+
     fun loadOneGuildPatrons(): ArrayNode {
         return paginateData("patrons/oneguild")
     }
