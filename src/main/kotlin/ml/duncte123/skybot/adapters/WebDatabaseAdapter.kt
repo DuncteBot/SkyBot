@@ -163,14 +163,9 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val oneGuildPatrons = arrayListOf<Patron>()
             val guildPatrons = arrayListOf<Patron>()
 
-            apis.loadAllPatrons().forEach {
-                val guildId = if (it.has("guild_id")) it["guild_id"].asLong() else null
-                val patron = Patron(
-                    Patron.Type.valueOf(it["type"].asText()),
-                    it["user_id"].asLong(),
-                    guildId
-                )
-
+            apis.loadAllPatrons()
+                .map { jackson.readValue(it.traverse(), Patron::class.java) }
+                .forEach { patron ->
                 when (patron.type) {
                     Patron.Type.NORMAL -> patrons.add(patron)
                     Patron.Type.TAG -> tagPatrons.add(patron)

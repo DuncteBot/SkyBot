@@ -42,8 +42,28 @@ object DataController {
 
         println(updateData)
 
+        /*
+        * {
+        *   "patrons": {
+        *       "add": [
+        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" }
+        *       ],
+        *       "remove": [
+        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" }
+        *       ],
+        *   }
+        * }
+        */
         if (updateData.has("patrons")) {
-            TODO("Update patrons")
+            val patronData = updateData["patrons"]
+
+            if (patronData.has("add")) {
+                //
+            }
+
+            if (patronData.has("remove")) {
+                //
+            }
         }
 
         if (updateData.has("unbans")) {
