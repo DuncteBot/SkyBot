@@ -142,6 +142,7 @@ public class GuildMemberListener extends BaseListener {
         final User user = event.getUser();
         final long userId = user.getIdLong();
         final ShardManager manager = event.getJDA().getShardManager();
+        assert manager != null;
 
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
@@ -153,9 +154,10 @@ public class GuildMemberListener extends BaseListener {
             if (roleId == Settings.GUILD_PATRONS_ROLE) {
                 final List<Long> guilds = manager.getMutualGuilds(user).stream()
                     .filter((it) -> {
+                        // TODO: Fix this
                         Member member = it.getMember(user);
 
-                        return it.getOwner().equals(member) || member.hasPermission(Permission.ADMINISTRATOR);
+                        return it.getOwnerIdLong() == user.getIdLong() || member.hasPermission(Permission.ADMINISTRATOR);
                     })
                     .map(Guild::getIdLong)
                     .collect(Collectors.toList());

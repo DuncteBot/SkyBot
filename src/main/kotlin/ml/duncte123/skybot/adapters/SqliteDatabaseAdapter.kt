@@ -304,7 +304,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             val guildPatrons = arrayListOf<Patron>()
 
             connManager.connection.createStatement().use { statement ->
-                statement.executeQuery("SELECT * FROM oneGuildPatrons").use { resultSet ->
+                statement.executeQuery("SELECT * FROM patrons").use { resultSet ->
                     while (resultSet.next()) {
                         val guildId = if (resultSet.getLong("guild_id") == 0L) null else resultSet.getLong("guild_id")
                         val patron = Patron(

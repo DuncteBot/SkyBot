@@ -21,7 +21,11 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.CommandUtils.*
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
 
 class PatreonCheckCommand : Command() {
 
@@ -35,10 +39,13 @@ class PatreonCheckCommand : Command() {
 
         val message = """Patreon access checks:```diff
             |${true.a("default")}
-            |${isPatron(user, null).a("patron")}
+            |${getIsPatronStatus(user).a("patron")}
+            |${getIsFullPatronStatus(user).a("patron_full")}
             |${isUserTagPatron(user).a("tag_patron")}
-            |${isGuildPatron(user, guild).a("guild_patron")}
+            |${getIsGuildPatronStatus(user, guild).a("guild_patron")}
+            |${getIsGuildPremium(guild).a("guild_premium")}
             |${oneGuildPatrons.containsValue(guild.idLong).a("guild_one_guild")}
+            |${isUserOrGuildPatron(ctx.event, false).a("isUserOrGuildPatron (should be true if any is true)")}
             |```
         """.trimMargin()
 
@@ -46,4 +53,42 @@ class PatreonCheckCommand : Command() {
     }
 
     private fun Boolean.a(b: String) = "${if (this) "+" else "-"} $b: ${if (this) "yes" else "no"}"
+
+    private fun getIsPatronStatus(user: User): Boolean {
+        val klass = CommandUtils::class.java
+        val method = klass.getDeclaredMethod("isPatron", User::class.java, TextChannel::class.java)
+
+        method.isAccessible = true
+
+        return method.invoke(null, user, null) as Boolean
+    }
+
+    private fun getIsGuildPatronStatus(user: User, guild: Guild): Boolean {
+        val klass = CommandUtils::class.java
+        val method = klass.getDeclaredMethod("isGuildPatron", User::class.java, Guild::class.java)
+
+        method.isAccessible = true
+
+        return method.invoke(null, user, guild) as Boolean
+    }
+
+    private fun getIsFullPatronStatus(user: User): Boolean {
+        val klass = CommandUtils::class.java
+        val method = klass.getDeclaredMethod("isPatron", User::class.java, TextChannel::class.java, Boolean::class.java)
+
+        method.isAccessible = true
+
+        return method.invoke(null, user, null, false) as Boolean
+    }
+
+
+
+    private fun getIsGuildPremium(guild: Guild): Boolean {
+        val klass = CommandUtils::class.java
+        val method = klass.getDeclaredMethod("shouldGuildBeConsideredPremium", Guild::class.java)
+
+        method.isAccessible = true
+
+        return method.invoke(null, guild) as Boolean
+    }
 }

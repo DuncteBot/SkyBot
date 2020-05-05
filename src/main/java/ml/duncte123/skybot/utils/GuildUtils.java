@@ -156,19 +156,24 @@ public class GuildUtils {
 
     @SuppressWarnings("ConstantConditions")
     public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
-        logger.info("(Re)loading one guild patrons");
+        logger.info("(Re)loading patrons");
 
         final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
         final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
 
         adapter.loadAllPatrons((data) -> {
+
             data.getPatrons().forEach((patron) -> {
                 CommandUtils.patrons.add(patron.getUserId());
             });
 
+            logger.info("Loaded {} patrons", CommandUtils.patrons.size());
+
             data.getTagPatrons().forEach((patron) -> {
                 CommandUtils.tagPatrons.add(patron.getUserId());
             });
+
+            logger.info("Loaded {} tag patrons", CommandUtils.tagPatrons.size());
 
             data.getOneGuildPatrons().forEach((patron) -> {
                 final long userId = patron.getUserId();
@@ -181,9 +186,13 @@ public class GuildUtils {
                 }
             });
 
+            logger.info("Loaded {} one guild patrons", CommandUtils.oneGuildPatrons.size());
+
             data.getGuildPatrons().forEach((patron) -> {
                 CommandUtils.guildPatrons.add(patron.getUserId());
             });
+
+            logger.info("Loaded {} guild patrons", CommandUtils.guildPatrons.size());
 
             return null;
         });
