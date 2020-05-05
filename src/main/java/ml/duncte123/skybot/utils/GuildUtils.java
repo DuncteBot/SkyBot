@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -162,7 +163,6 @@ public class GuildUtils {
         final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
 
         adapter.loadAllPatrons((data) -> {
-
             data.getPatrons().forEach((patron) -> {
                 CommandUtils.patrons.add(patron.getUserId());
             });

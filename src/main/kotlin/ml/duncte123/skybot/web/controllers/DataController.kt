@@ -21,10 +21,13 @@ package ml.duncte123.skybot.web.controllers
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.AllPatronsData
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.CommandUtils.addPatronsFromData
+import ml.duncte123.skybot.utils.CommandUtils.removePatronsFromData
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
@@ -46,10 +49,10 @@ object DataController {
         * {
         *   "patrons": {
         *       "add": [
-        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" }
+        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" } // AllPatronsData
         *       ],
         *       "remove": [
-        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" }
+        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" } // AllPatronsData
         *       ],
         *   }
         * }
@@ -58,11 +61,15 @@ object DataController {
             val patronData = updateData["patrons"]
 
             if (patronData.has("add")) {
-                //
+                val addedPatrons = jackson.readValue(patronData["add"].traverse(), AllPatronsData::class.java)
+
+                addPatronsFromData(addedPatrons)
             }
 
             if (patronData.has("remove")) {
-                //
+                val removedPatrons = jackson.readValue(patronData["remove"].traverse(), AllPatronsData::class.java)
+
+                removePatronsFromData(removedPatrons)
             }
         }
 

@@ -25,6 +25,7 @@ import gnu.trove.set.TLongSet;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
@@ -33,6 +34,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -252,5 +254,45 @@ public class CommandUtils {
         });
 
         return foundPatron.get();
+    }
+
+    public static void addPatronsFromData(@Nonnull AllPatronsData data) {
+        Checks.notNull(data, "data");
+
+        data.getPatrons().forEach(
+            (patron) -> patrons.add(patron.getUserId())
+        );
+
+        data.getTagPatrons().forEach(
+            (patron) -> tagPatrons.add(patron.getUserId())
+        );
+
+        data.getOneGuildPatrons().forEach(
+            (patron) -> oneGuildPatrons.put(patron.getUserId(), patron.getGuildId())
+        );
+
+        data.getGuildPatrons().forEach(
+            (patron) -> guildPatrons.add(patron.getUserId())
+        );
+    }
+
+    public static void removePatronsFromData(@Nonnull AllPatronsData data) {
+        Checks.notNull(data, "data");
+
+        data.getPatrons().forEach(
+            (patron) -> patrons.remove(patron.getUserId())
+        );
+
+        data.getTagPatrons().forEach(
+            (patron) -> tagPatrons.remove(patron.getUserId())
+        );
+
+        data.getOneGuildPatrons().forEach(
+            (patron) -> oneGuildPatrons.remove(patron.getUserId())
+        );
+
+        data.getGuildPatrons().forEach(
+            (patron) -> guildPatrons.remove(patron.getUserId())
+        );
     }
 }
