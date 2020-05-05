@@ -30,7 +30,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.member.*;
-import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 
@@ -110,7 +109,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(user.getIdLong(), event.getJDA().getShardManager());
+            handlePatronRemoval(user.getIdLong());
         }
     }
 
@@ -127,7 +126,7 @@ public class GuildMemberListener extends BaseListener {
                 continue;
             }
 
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().getShardManager());
+            handlePatronRemoval(event.getUser().getIdLong());
         }
     }
 
@@ -192,7 +191,7 @@ public class GuildMemberListener extends BaseListener {
         return message;
     }
 
-    private void handlePatronRemoval(long userId, ShardManager manager) {
+    private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
         CommandUtils.patrons.remove(userId);
 
@@ -202,13 +201,7 @@ public class GuildMemberListener extends BaseListener {
             GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
         }
 
-        final User user = manager.getUserById(userId);
-
-        if (user != null) {
-            manager.getMutualGuilds(user).forEach(
-                (guild) -> CommandUtils.guildPatrons.remove(guild.getIdLong())
-            );
-        }
+        CommandUtils.guildPatrons.remove(userId);
     }
 
     private void handleNewOneGuildPatron(long userId) {
