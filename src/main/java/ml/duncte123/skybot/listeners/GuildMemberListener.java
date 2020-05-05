@@ -33,8 +33,6 @@ import net.dv8tion.jda.api.events.guild.member.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -141,8 +139,6 @@ public class GuildMemberListener extends BaseListener {
 
         final User user = event.getUser();
         final long userId = user.getIdLong();
-        final ShardManager manager = event.getJDA().getShardManager();
-        assert manager != null;
 
         for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
@@ -152,34 +148,23 @@ public class GuildMemberListener extends BaseListener {
             }
 
             if (roleId == Settings.GUILD_PATRONS_ROLE) {
-                final List<Long> guilds = manager.getMutualGuilds(user).stream()
-                    .filter((it) -> {
-                        // TODO: Fix this
-                        Member member = it.getMember(user);
-
-                        return it.getOwnerIdLong() == user.getIdLong() || member.hasPermission(Permission.ADMINISTRATOR);
-                    })
-                    .map(Guild::getIdLong)
-                    .collect(Collectors.toList());
-
-                CommandUtils.guildPatrons.addAll(guilds);
+                CommandUtils.guildPatrons.add(userId);
             }
 
             if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
                 handleNewOneGuildPatron(userId);
             }
         }
-
     }
 
     @Nonnull
     private String parseGuildVars(String rawMessage, GenericGuildEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberRemoveEvent)) {
-            return "NOPE";
+            return "This code should never run";
         }
 
-        if (rawMessage == null || "".equals(rawMessage.trim().toLowerCase())) {
+        if (rawMessage == null || "".equals(rawMessage.trim())) {
             return "";
         }
 
