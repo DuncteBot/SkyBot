@@ -70,6 +70,16 @@ public final class SkyBot {
     private final IntFunction<? extends Activity> activityProvider;
     private WebRouter webRouter = null;
 
+    private static final MemberCachePolicy PATRON_POLICY = (member) -> {
+        // TODO: make sure patrons are loaded before JDA is started?
+        final long userId = member.getIdLong();
+
+        return patrons.contains(userId) ||
+            tagPatrons.contains(userId) ||
+            oneGuildPatrons.containsKey(userId) ||
+            guildPatrons.contains(userId);
+    };
+
     private SkyBot() throws Exception {
         // Set our animated emotes as default reactions
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
@@ -138,29 +148,7 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
-            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or((member) -> {
-                // TODO: make sure patrons are loaded before JDA is started?
-                final long userId = member.getIdLong();
-
-                if (patrons.contains(userId)) {
-                    return true;
-                }
-
-                if (tagPatrons.contains(userId)) {
-                    return true;
-                }
-
-                if (oneGuildPatrons.containsKey(userId)) {
-                    return true;
-                }
-
-                // TODO: this currently stores the guild id and not the user id
-                if (guildPatrons.contains(userId)) {
-                    return true;
-                }
-
-                return false;
-            }))
+            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)

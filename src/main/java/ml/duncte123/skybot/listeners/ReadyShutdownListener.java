@@ -18,37 +18,22 @@
 
 package ml.duncte123.skybot.listeners;
 
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
-import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.internal.JDAImpl;
-import net.dv8tion.jda.internal.handle.SocketHandler;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class ReadyShutdownListener extends MessageListener {
-//    private boolean arePoolsRunning = false;
     // Using an atomic boolean because multiple shards are writing to it
     private final AtomicBoolean arePoolsRunning = new AtomicBoolean(false);
-//    private byte shardsReady = 0;
 
     public ReadyShutdownListener(Variables variables) {
         super(variables);
@@ -83,61 +68,6 @@ public class ReadyShutdownListener extends MessageListener {
             // Load the patrons here so that they are loaded once
             GuildUtils.loadAllPatrons(jda.getShardManager(), variables.getDatabaseAdapter());
         }
-
-        /*shardsReady++;
-        final ShardManager manager = jda.getShardManager();
-        if (shardsReady == manager.getShardsTotal()) {
-            loadPatrons(manager);
-        }*/
-    }
-
-    private void loadPatrons(@Nonnull ShardManager manager) {
-        logger.info("Collecting patrons");
-
-        final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
-
-        if (supportGuild == null) {
-            logger.error("Could not find support guild");
-
-            return;
-        }
-
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.PATRONS_ROLE))
-            .stream()
-            .map(Member::getUser)
-            .map(User::getIdLong)
-            .forEach(CommandUtils.patrons::add);
-
-        logger.info("Found {} normal patrons", CommandUtils.patrons.size());
-
-        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))
-            .stream().map(Member::getUser).collect(Collectors.toList());
-
-        final TLongList patronGuildsTrove = new TLongArrayList();
-
-        guildPatronsList.forEach((patron) -> {
-            final List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                .filter((it) -> it.getOwnerIdLong() == patron.getIdLong() ||
-                    it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
-                .map(Guild::getIdLong)
-                .collect(Collectors.toList());
-
-            patronGuildsTrove.addAll(guilds);
-        });
-
-        CommandUtils.guildPatrons.addAll(patronGuildsTrove);
-
-        logger.info("Found {} guild patrons", patronGuildsTrove.size());
-
-        supportGuild.getMembersWithRoles(supportGuild.getRoleById(Settings.TAG_PATRONS_ROLE))
-            .stream()
-            .map(Member::getUser)
-            .map(User::getIdLong)
-            .forEach(CommandUtils.tagPatrons::add);
-
-        logger.info("Found {} tag patrons", CommandUtils.tagPatrons.size());
-
-        GuildUtils.loadAllPatrons(manager, variables.getDatabaseAdapter());
     }
 
     private void startSQLiteTimers() {
@@ -165,26 +95,4 @@ public class ReadyShutdownListener extends MessageListener {
             }
         });
     }
-
-    // might work some day
-    /*private void customGame(JDA jda) {
-        DataObject gameObj = DataObject.empty();
-        gameObj.put("name", jda.getShardInfo().toString());
-        gameObj.put("type", Activity.ActivityType.DEFAULT.getKey());
-
-        DataObject object = DataObject.empty();
-
-        object.put("game", gameObj);
-        object.put("afk", false);
-        object.put("status", OnlineStatus.ONLINE.getKey());
-        object.put("since", System.currentTimeMillis());
-        object.put("guild_id", "191245668617158656");
-        object.put("client_status", DataObject.empty()
-            .put("mobile", "online")
-        );
-
-        ((JDAImpl) jda).getClient().send(DataObject.empty()
-            .put("d", object)
-            .put("op", WebSocketCode.PRESENCE).toString());
-    }*/
 }
