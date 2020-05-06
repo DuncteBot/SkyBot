@@ -45,18 +45,6 @@ object DataController {
 
         println(updateData)
 
-        /*
-        * {
-        *   "patrons": {
-        *       "add": [
-        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" } // AllPatronsData
-        *       ],
-        *       "remove": [
-        *           { "user_id": 191231307290771456, "guild_id": null, "type": "ALL_GUILD" } // AllPatronsData
-        *       ],
-        *   }
-        * }
-        */
         if (updateData.has("patrons")) {
             val patronData = updateData["patrons"]
 

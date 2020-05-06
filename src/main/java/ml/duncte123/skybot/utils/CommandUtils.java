@@ -145,6 +145,7 @@ public class CommandUtils {
     }
 
     private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
+        // Developers have access to paton features
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
@@ -152,12 +153,14 @@ public class CommandUtils {
         //noinspection ConstantConditions
         final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
+        // If the guild is not in cache (cuz discord) ignore the rest of the checks
         if (supportGuild == null) {
             return false;
         }
 
         final Member m = supportGuild.getMember(u);
 
+        // If the member is not in our guild we tell them to join it
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -166,6 +169,7 @@ public class CommandUtils {
             return false;
         }
 
+        // If the member is not a patron tell them to become one
         if (!m.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -189,6 +193,7 @@ public class CommandUtils {
 
     // FIXME: Do new patron checks for guilds
     private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+        // Check if the guild is a patron either via user-being admin or as a one-guild patron
         if (shouldGuildBeConsideredPremium(g) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
@@ -210,7 +215,8 @@ public class CommandUtils {
             return false;
         }
 
-        guildPatrons.add(g.getIdLong());
+        // We're adding the user here to make the checks easier
+        guildPatrons.add(u.getIdLong());
 
         return true;
     }
@@ -242,6 +248,9 @@ public class CommandUtils {
         final AtomicBoolean foundPatron = new AtomicBoolean(false);
 
         guildPatrons.forEach((userId) -> {
+            // TODO: we should check for admin perms
+            // But nah they're already paying $20+/month for this
+            // This may cause bot-lists to obtain patron status, not sure if we want that
             final boolean userInGuild = g.getMemberById(userId) != null;
 
             // Only set if we found a patron
