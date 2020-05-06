@@ -41,7 +41,7 @@ class RadioStream(var name: String, val url: String, val website: String) {
     override fun hashCode(): Int {
         var result = name.hashCode()
         result = 31 * result + url.hashCode()
-        result = 31 * result + (website?.hashCode() ?: 0)
+        result = 31 * result + website.hashCode()
         return result
     }
 

@@ -41,11 +41,14 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class ReadyShutdownListener extends MessageListener {
-    private boolean arePoolsRunning = false;
-    private byte shardsReady = 0;
+//    private boolean arePoolsRunning = false;
+    // Using an atomic boolean because multiple shards are writing to it
+    private final AtomicBoolean arePoolsRunning = new AtomicBoolean(false);
+//    private byte shardsReady = 0;
 
     public ReadyShutdownListener(Variables variables) {
         super(variables);
@@ -65,10 +68,9 @@ public class ReadyShutdownListener extends MessageListener {
     private void onReady(ReadyEvent event) {
         final JDA jda = event.getJDA();
         logger.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
-        killEvents(jda);
 
         //Start the timers if they have not been started yet
-        if (!arePoolsRunning) {
+        if (!arePoolsRunning.get()) {
             logger.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
 
@@ -76,14 +78,17 @@ public class ReadyShutdownListener extends MessageListener {
                 this.startSQLiteTimers();
             }
 
-            arePoolsRunning = true;
+            arePoolsRunning.set(true);
+
+            // Load the patrons here so that they are loaded once
+            GuildUtils.loadAllPatrons(jda.getShardManager(), variables.getDatabaseAdapter());
         }
 
-        shardsReady++;
+        /*shardsReady++;
         final ShardManager manager = jda.getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
             loadPatrons(manager);
-        }
+        }*/
     }
 
     private void loadPatrons(@Nonnull ShardManager manager) {
@@ -132,18 +137,7 @@ public class ReadyShutdownListener extends MessageListener {
 
         logger.info("Found {} tag patrons", CommandUtils.tagPatrons.size());
 
-        GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
-    }
-
-    //TODO: Remove when intends are added
-    @Deprecated
-    private void killEvents(JDA jda) {
-        final JDAImpl api = (JDAImpl) jda;
-        final SocketHandler.NOPHandler nopHandler = new SocketHandler.NOPHandler(api);
-        final var handlers = api.getClient().getHandlers();
-
-        handlers.put("TYPING_START", nopHandler);
-        handlers.put("MESSAGE_REACTION_ADD", nopHandler);
+        GuildUtils.loadAllPatrons(manager, variables.getDatabaseAdapter());
     }
 
     private void startSQLiteTimers() {

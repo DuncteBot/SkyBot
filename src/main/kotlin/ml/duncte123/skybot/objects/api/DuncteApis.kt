@@ -192,6 +192,31 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return paginateData("patrons")
     }
 
+    fun addPatron(patron: Patron) {
+        //
+    }
+
+    fun updatePatron(patron: Patron) {
+        //
+    }
+
+    fun deletePatron(patron: Patron) {
+        val json = mapper.createObjectNode()
+            .put("user_id", patron.userId)
+            .put("type", patron.type.name)
+
+        if (patron.guildId != null) {
+            json.put("guild_id", patron.guildId)
+        }
+
+        val response = deleteJSON("patrons", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to delete a patron\n" +
+                "Response: {}", response["error"].toString())
+        }
+    }
+
     fun loadOneGuildPatrons(): ArrayNode {
         return paginateData("patrons/oneguild")
     }
@@ -672,8 +697,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun String.enc() = urlEncodeString(this)
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.test/"
+//        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
     }
 }

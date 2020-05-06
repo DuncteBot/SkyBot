@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -155,23 +154,23 @@ public class GuildUtils {
         );
     }
 
-    @SuppressWarnings("ConstantConditions")
-    public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
+    @SuppressWarnings({"ConstantConditions", "unused"})
+    public static void loadAllPatrons(ShardManager manager, @Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading patrons");
 
-        final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
-        final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
+        /*final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);*/
 
         adapter.loadAllPatrons((data) -> {
-            data.getPatrons().forEach((patron) -> {
-                CommandUtils.patrons.add(patron.getUserId());
-            });
+            data.getPatrons().forEach(
+                (patron) -> CommandUtils.patrons.add(patron.getUserId())
+            );
 
-            logger.info("Loaded {} patrons", CommandUtils.patrons.size());
+            logger.info("Loaded {} normal patrons", CommandUtils.patrons.size());
 
-            data.getTagPatrons().forEach((patron) -> {
-                CommandUtils.tagPatrons.add(patron.getUserId());
-            });
+            data.getTagPatrons().forEach(
+                (patron) -> CommandUtils.tagPatrons.add(patron.getUserId())
+            );
 
             logger.info("Loaded {} tag patrons", CommandUtils.tagPatrons.size());
 
@@ -179,18 +178,21 @@ public class GuildUtils {
                 final long userId = patron.getUserId();
                 final long guildId = patron.getGuildId();
 
-                final Member memberInServer = supportGuild.getMemberById(userId);
+                CommandUtils.oneGuildPatrons.put(userId, guildId);
+
+                // TODO: keep this check?
+                /*final Member memberInServer = supportGuild.getMemberById(userId);
 
                 if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
                     CommandUtils.oneGuildPatrons.put(userId, guildId);
-                }
+                }*/
             });
 
             logger.info("Loaded {} one guild patrons", CommandUtils.oneGuildPatrons.size());
 
-            data.getGuildPatrons().forEach((patron) -> {
-                CommandUtils.guildPatrons.add(patron.getUserId());
-            });
+            data.getGuildPatrons().forEach(
+                (patron) -> CommandUtils.guildPatrons.add(patron.getUserId())
+            );
 
             logger.info("Loaded {} guild patrons", CommandUtils.guildPatrons.size());
 
