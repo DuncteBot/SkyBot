@@ -133,29 +133,39 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
-
         if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;
         }
 
-        final User user = event.getUser();
-        final long userId = user.getIdLong();
+        final long userId = event.getUser().getIdLong();
 
-        for (final Role role : event.getRoles()) {
-            final long roleId = role.getIdLong();
+        event.getRoles()
+            .stream()
+            .map(Role::getIdLong)
+            .forEach((roleId) -> {
+                // All guild patron
+                if (roleId == Settings.GUILD_PATRONS_ROLE) {
+                    CommandUtils.guildPatrons.add(userId);
+                    return;
+                }
 
-            if (roleId == Settings.PATRONS_ROLE) {
-                CommandUtils.patrons.add(userId);
-            }
+                // One guild patron
+                if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
+                    handleNewOneGuildPatron(userId);
+                    return;
+                }
 
-            if (roleId == Settings.GUILD_PATRONS_ROLE) {
-                CommandUtils.guildPatrons.add(userId);
-            }
+                // Tag patron
+                if (roleId == Settings.TAG_PATRONS_ROLE) {
+                    CommandUtils.tagPatrons.add(userId);
+                    return;
+                }
 
-            if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
-                handleNewOneGuildPatron(userId);
-            }
-        }
+                // Normal patron
+                if (roleId == Settings.PATRONS_ROLE) {
+                    CommandUtils.patrons.add(userId);
+                }
+        });
     }
 
     @Nonnull
