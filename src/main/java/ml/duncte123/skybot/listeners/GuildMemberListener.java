@@ -139,6 +139,7 @@ public class GuildMemberListener extends BaseListener {
 
         final long userId = event.getUser().getIdLong();
 
+        // TODO: register patrons on api
         event.getRoles()
             .stream()
             .map(Role::getIdLong)
