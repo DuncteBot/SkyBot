@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -248,10 +249,9 @@ public class CommandUtils {
         final AtomicBoolean foundPatron = new AtomicBoolean(false);
 
         guildPatrons.forEach((userId) -> {
-            // TODO: we should check for admin perms
-            // But nah they're already paying $20+/month for this
-            // This may cause bot-lists to obtain patron status, not sure if we want that
-            final boolean userInGuild = g.getMemberById(userId) != null;
+            // Check if we have the member in the guild and if they are an admin
+            final Member m = g.getMemberById(userId);
+            final boolean userInGuild = m != null && m.hasPermission(Permission.ADMINISTRATOR);
 
             // Only set if we found a patron
             if (userInGuild) {

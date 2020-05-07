@@ -22,7 +22,6 @@ import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,12 +153,8 @@ public class GuildUtils {
         );
     }
 
-    @SuppressWarnings({"ConstantConditions", "unused"})
-    public static void loadAllPatrons(ShardManager manager, @Nonnull DatabaseAdapter adapter) {
+    public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading patrons");
-
-        /*final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
-        final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);*/
 
         adapter.loadAllPatrons((data) -> {
             data.getPatrons().forEach(
@@ -176,16 +171,10 @@ public class GuildUtils {
 
             data.getOneGuildPatrons().forEach((patron) -> {
                 final long userId = patron.getUserId();
-                final long guildId = patron.getGuildId();
+                // The guild id is never null here, and if it is something is terribly wrong
+                @SuppressWarnings("ConstantConditions") final long guildId = patron.getGuildId();
 
                 CommandUtils.oneGuildPatrons.put(userId, guildId);
-
-                // TODO: keep this check?
-                /*final Member memberInServer = supportGuild.getMemberById(userId);
-
-                if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
-                    CommandUtils.oneGuildPatrons.put(userId, guildId);
-                }*/
             });
 
             logger.info("Loaded {} one guild patrons", CommandUtils.oneGuildPatrons.size());
@@ -198,10 +187,6 @@ public class GuildUtils {
 
             return null;
         });
-    }
-
-    public static void removeOneGuildPatron(long userId, @Nonnull DatabaseAdapter adapter) {
-        adapter.removeOneGuildPatron(userId);
     }
 
     public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {

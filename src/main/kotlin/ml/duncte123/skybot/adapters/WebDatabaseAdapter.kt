@@ -164,10 +164,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val guildPatrons = arrayListOf<Patron>()
 
             apis.loadAllPatrons()
-                .map {
-                    println(it)
-                    jackson.readValue(it.traverse(), Patron::class.java)
-                }
+                .map { jackson.readValue(it.traverse(), Patron::class.java) }
                 .forEach { patron ->
                 when (patron.type) {
                     Patron.Type.NORMAL -> patrons.add(patron)
@@ -178,6 +175,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             }
 
             callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
+    }
+
+    override fun removePatron(userId: Long) {
+        runOnThread {
+            apis.deletePatron(userId)
         }
     }
 

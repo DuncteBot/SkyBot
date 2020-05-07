@@ -24,12 +24,14 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import net.dv8tion.jda.api.events.guild.member.*;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 
 import javax.annotation.Nonnull;
 
@@ -193,15 +195,21 @@ public class GuildMemberListener extends BaseListener {
 
     private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
-        CommandUtils.patrons.remove(userId);
+        boolean removed = CommandUtils.patrons.remove(userId);
 
         if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
             // Remove the user from the one guild patrons
             CommandUtils.oneGuildPatrons.remove(userId);
-            GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
+//            variables.getDatabaseAdapter().removeOneGuildPatron(userId);
+
+            removed = true;
         }
 
-        CommandUtils.guildPatrons.remove(userId);
+        removed = removed || CommandUtils.guildPatrons.remove(userId);
+
+        if (removed) {
+            variables.getDatabaseAdapter().removePatron(userId);
+        }
     }
 
     private void handleNewOneGuildPatron(long userId) {

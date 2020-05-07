@@ -327,6 +327,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
+    override fun removePatron(userId: Long) {
+        runOnThread {
+            connManager.connection.createStatement()
+                .execute("DELETE FROM patrons WHERE user_id = $userId")
+        }
+    }
+
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
         runOnThread {
             val map = TLongLongHashMap()
