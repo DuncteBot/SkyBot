@@ -184,6 +184,14 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
+    override fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+        runOnThread {
+            val patron = Patron(type, userId, guildId)
+
+            apis.createOrUpdatePatron(patron)
+        }
+    }
+
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
         runOnThread {
             val map = TLongLongHashMap()

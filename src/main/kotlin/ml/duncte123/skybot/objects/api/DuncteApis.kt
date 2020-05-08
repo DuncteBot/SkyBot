@@ -192,7 +192,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return paginateData("patrons")
     }
 
-    fun addPatron(patron: Patron) {
+    fun createOrUpdatePatron(patron: Patron) {
         val json = mapper.createObjectNode()
             .put("user_id", patron.userId.toString())
             .put("type", patron.type.name)
@@ -204,23 +204,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val response = postJSON("patrons", json)
 
         if (!response["success"].asBoolean()) {
-            logger.error("Failed to create a patron\n" +
-                "Response: {}", response["error"].toString())
-        }
-    }
-
-    fun updatePatron(updatedPatron: Patron) {
-        val json = mapper.createObjectNode()
-            .put("type", updatedPatron.type.name)
-
-        if (updatedPatron.guildId != null) {
-            json.put("guild_id", updatedPatron.guildId.toString())
-        }
-
-        val response = patchJSON("patrons/${updatedPatron.userId}", json)
-
-        if (!response["success"].asBoolean()) {
-            logger.error("Failed to update a patron\n" +
+            logger.error("Failed to create or update a patron\n" +
                 "Response: {}", response["error"].toString())
         }
     }

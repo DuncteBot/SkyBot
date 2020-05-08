@@ -334,6 +334,50 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
+    override fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+        runOnThread {
+            connManager.connection.use { connection ->
+                var id = 0
+
+                // Check for an existing patron in the database and store the id
+                connection.prepareStatement("SELECT id FROM patrons WHERE user_id = ? LIMIT 1").use { smt ->
+                    smt.setLong(1, userId)
+
+                    smt.executeQuery().use { res ->
+                        while (res.next()) {
+                            id = res.getInt("id")
+                        }
+                    }
+                }
+
+                // Update the patron if we found an id
+                if (id > 0) {
+                    connection.prepareStatement("UPDATE patrons SET user_id = ?, guild_id = ?, type = ? WHERE id = ?").use { smt ->
+                        smt.setLong(1, userId)
+                        smt.setString(2, guildId?.toString())
+                        smt.setString(3, type.name)
+                        smt.setInt(4, id)
+
+                        smt.executeUpdate()
+                        smt.closeOnCompletion()
+                    }
+
+                    return@runOnThread
+                }
+
+                // Create a patron if we didn't find one in the database
+                connection.prepareStatement("INSERT INTO patrons (user_id, guild_id, type) VALUES (?, ?, ?)").use { smt ->
+                    smt.setLong(1, userId)
+                    smt.setString(2, guildId?.toString())
+                    smt.setString(3, type.name)
+
+                    smt.executeUpdate()
+                    smt.closeOnCompletion()
+                }
+            }
+        }
+    }
+
     override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
         runOnThread {
             val map = TLongLongHashMap()

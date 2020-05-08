@@ -188,31 +188,4 @@ public class GuildUtils {
             return null;
         });
     }
-
-    public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {
-        variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
-            final SkyBot instance = SkyBot.getInstance();
-            final Guild dbGuild = instance.getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
-
-            if (dbGuild == null) {
-                return null;
-            }
-
-            final Member newPatron = dbGuild.getMemberById(userId);
-
-            if (newPatron == null) {
-                return null;
-            }
-
-            final boolean hasRole = newPatron.getRoles().stream()
-                .map(Role::getIdLong)
-                .anyMatch((role) -> role == Settings.ONE_GUILD_PATRONS_ROLE);
-
-            if (hasRole) {
-                CommandUtils.oneGuildPatrons.put(userId, guildId);
-            }
-
-            return null;
-        });
-    }
 }

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.objects.api.Patron;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -139,7 +140,6 @@ public class GuildMemberListener extends BaseListener {
 
         final long userId = event.getUser().getIdLong();
 
-        // TODO: register patrons on api
         event.getRoles()
             .stream()
             .map(Role::getIdLong)
@@ -147,24 +147,28 @@ public class GuildMemberListener extends BaseListener {
                 // All guild patron
                 if (roleId == Settings.GUILD_PATRONS_ROLE) {
                     CommandUtils.guildPatrons.add(userId);
+                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.ALL_GUILD, userId, null);
                     return;
                 }
 
                 // One guild patron
                 if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
                     handleNewOneGuildPatron(userId);
+                    // We assume that the patron already did the steps to register
                     return;
                 }
 
                 // Tag patron
                 if (roleId == Settings.TAG_PATRONS_ROLE) {
                     CommandUtils.tagPatrons.add(userId);
+                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.TAG, userId, null);
                     return;
                 }
 
                 // Normal patron
                 if (roleId == Settings.PATRONS_ROLE) {
                     CommandUtils.patrons.add(userId);
+                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.NORMAL, userId, null);
                 }
         });
     }
