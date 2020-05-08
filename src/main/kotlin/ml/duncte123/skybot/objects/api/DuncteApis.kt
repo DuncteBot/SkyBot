@@ -234,10 +234,14 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return true
     }
 
-    fun getOneGuildPatron(userId: Long): ArrayNode {
+    fun getOneGuildPatron(userId: Long): JsonNode? {
         val response = executeRequest(defaultRequest("patrons/oneguild/$userId"))
 
-        return response["data"] as ArrayNode
+        if (!response["success"].asBoolean()) {
+            return null
+        }
+
+        return response["data"]
     }
 
     fun createBan(json: JsonNode) {

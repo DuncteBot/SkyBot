@@ -36,6 +36,8 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 
 import javax.annotation.Nonnull;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildMemberListener extends BaseListener {
@@ -117,18 +119,19 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
-
         if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
             return;
         }
 
-        for (final Role role : event.getRoles()) {
-            final long roleId = role.getIdLong();
+        final boolean patronRemoved = event.getRoles()
+            .stream()
+            .map(Role::getIdLong)
+            .anyMatch(
+                (roleId) -> roleId == Settings.PATRONS_ROLE || roleId == Settings.TAG_PATRONS_ROLE ||
+                    roleId == Settings.GUILD_PATRONS_ROLE || roleId == Settings.ONE_GUILD_PATRONS_ROLE
+            );
 
-            if (roleId != Settings.PATRONS_ROLE && roleId != Settings.GUILD_PATRONS_ROLE && roleId != Settings.ONE_GUILD_PATRONS_ROLE) {
-                continue;
-            }
-
+        if (patronRemoved) {
             handlePatronRemoval(event.getUser().getIdLong());
         }
     }
@@ -139,6 +142,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final long userId = event.getUser().getIdLong();
+        AtomicReference<Patron.Type> typeToSet = new AtomicReference<>(null);
 
         event.getRoles()
             .stream()
@@ -147,7 +151,7 @@ public class GuildMemberListener extends BaseListener {
                 // All guild patron
                 if (roleId == Settings.GUILD_PATRONS_ROLE) {
                     CommandUtils.guildPatrons.add(userId);
-                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.ALL_GUILD, userId, null);
+                    typeToSet.set(Patron.Type.ALL_GUILD);
                     return;
                 }
 
@@ -161,16 +165,22 @@ public class GuildMemberListener extends BaseListener {
                 // Tag patron
                 if (roleId == Settings.TAG_PATRONS_ROLE) {
                     CommandUtils.tagPatrons.add(userId);
-                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.TAG, userId, null);
+                    typeToSet.set(Patron.Type.TAG);
                     return;
                 }
 
                 // Normal patron
                 if (roleId == Settings.PATRONS_ROLE) {
                     CommandUtils.patrons.add(userId);
-                    variables.getDatabaseAdapter().createOrUpdatePatron(Patron.Type.NORMAL, userId, null);
+                    typeToSet.set(Patron.Type.NORMAL);
                 }
-        });
+            });
+
+        // if we have a type set it in the database
+        // Type is set in the database here to prevent un-needed updates
+        if (typeToSet.get() != null) {
+            variables.getDatabaseAdapter().createOrUpdatePatron(typeToSet.get(), userId, null);
+        }
     }
 
     @Nonnull
@@ -209,20 +219,49 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void handlePatronRemoval(long userId) {
+        // .remove returns true if item was removed, if it is false it means that the user was not present
+        // check with the booleans what the highest type is and apply that type
+        // type should be null to delete patron
+        // Normal > tag > one_guild > all_guild
+
         // Remove the user from the patrons list
-        boolean removed = CommandUtils.patrons.remove(userId);
+        final boolean hadNormalRank = CommandUtils.patrons.remove(userId);
+
+        // If the main patron role is removed we can just remove the patron from the database
+        if (hadNormalRank) {
+            variables.getDatabaseAdapter().removePatron(userId);
+            return;
+        }
+
+        final boolean hadTag = CommandUtils.tagPatrons.remove(userId);
+        Patron.Type newType = null;
+
+        if (hadTag) {
+            newType = Patron.Type.NORMAL;
+        }
+
+        boolean hadOneGuild = false;
 
         if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
             // Remove the user from the one guild patrons
             CommandUtils.oneGuildPatrons.remove(userId);
 
-            removed = true;
+            hadOneGuild = true;
         }
 
-        removed = removed || CommandUtils.guildPatrons.remove(userId);
+        if (hadOneGuild) {
+            newType = Patron.Type.TAG;
+        }
 
-        if (removed) {
-            variables.getDatabaseAdapter().removePatron(userId);
+        final boolean hadGuildPatron = CommandUtils.guildPatrons.remove(userId);
+
+        if (hadGuildPatron) {
+            newType = Patron.Type.TAG;
+        }
+
+        // Remove when null?
+        if (newType != null) {
+            variables.getDatabaseAdapter().createOrUpdatePatron(newType, userId, null);
         }
     }
 

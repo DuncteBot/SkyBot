@@ -71,10 +71,11 @@ public final class SkyBot {
     private WebRouter webRouter = null;
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
-        // TODO: make sure patrons are loaded before JDA is started?
+        // TODO: Member needs to be cached for JDA to fire role update event
         final long userId = member.getIdLong();
 
-        return patrons.contains(userId) ||
+        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
+            patrons.contains(userId) ||
             tagPatrons.contains(userId) ||
             oneGuildPatrons.containsKey(userId) ||
             guildPatrons.contains(userId);
