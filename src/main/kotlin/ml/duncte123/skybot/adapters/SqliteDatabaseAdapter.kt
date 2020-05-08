@@ -378,19 +378,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
-    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
-        runOnThread {
-            val map = TLongLongHashMap()
-            val resultSet = connManager.connection.createStatement().executeQuery("SELECT * FROM oneGuildPatrons")
-
-            while (resultSet.next()) {
-                map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
-            }
-
-            callback.invoke(map)
-        }
-    }
-
     override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
         runOnThread {
             // language=SQLite
@@ -431,13 +418,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             }
 
             callback.invoke(map)
-        }
-    }
-
-    override fun removeOneGuildPatron(userId: Long) {
-        runOnThread {
-            connManager.connection.createStatement()
-                .execute("DELETE FROM oneGuildPatrons WHERE user_id = $userId")
         }
     }
 

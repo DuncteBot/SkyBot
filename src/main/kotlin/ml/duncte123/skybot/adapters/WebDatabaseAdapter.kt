@@ -192,18 +192,6 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
-        runOnThread {
-            val map = TLongLongHashMap()
-
-            apis.loadOneGuildPatrons().forEach {
-                map.put(it["user_id"].asLong(), it["guild_id"].asLong())
-            }
-
-            callback(map)
-        }
-    }
-
     override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
         runOnThread {
             val status = apis.updateOrCreateOneGuildPatron(userId, guildId)
@@ -223,12 +211,6 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             }
 
             callback(map)
-        }
-    }
-
-    override fun removeOneGuildPatron(userId: Long) {
-        runOnThread {
-            apis.removeOneGuildPatron(userId)
         }
     }
 

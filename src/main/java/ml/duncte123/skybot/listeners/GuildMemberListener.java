@@ -215,7 +215,6 @@ public class GuildMemberListener extends BaseListener {
         if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
             // Remove the user from the one guild patrons
             CommandUtils.oneGuildPatrons.remove(userId);
-//            variables.getDatabaseAdapter().removeOneGuildPatron(userId);
 
             removed = true;
         }

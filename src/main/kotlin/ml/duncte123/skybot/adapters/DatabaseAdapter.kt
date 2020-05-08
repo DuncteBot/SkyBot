@@ -100,13 +100,9 @@ abstract class DatabaseAdapter {
 
     abstract fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?)
 
-    abstract fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit)
-
     abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
 
     abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
-
-    abstract fun removeOneGuildPatron(userId: Long)
 
     /////////////
     // Moderation

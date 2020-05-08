@@ -219,10 +219,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    fun loadOneGuildPatrons(): ArrayNode {
-        return paginateData("patrons/oneguild")
-    }
-
     fun updateOrCreateOneGuildPatron(userId: Long, guildId: Long): Boolean {
         val json = mapper.createObjectNode()
             .put("user_id", userId.toString()).put("guild_id", guildId.toString())
@@ -242,15 +238,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val response = executeRequest(defaultRequest("patrons/oneguild/$userId"))
 
         return response["data"] as ArrayNode
-    }
-
-    fun removeOneGuildPatron(userId: Long) {
-        val response = executeRequest(defaultRequest("patrons/oneguild/$userId").delete())
-
-        if (!response["success"].asBoolean()) {
-            logger.error("Failed to remove one guild patron\n" +
-                "Response: {}", response["error"].toString())
-        }
     }
 
     fun createBan(json: JsonNode) {
