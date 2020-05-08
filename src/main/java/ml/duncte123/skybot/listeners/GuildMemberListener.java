@@ -142,7 +142,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final long userId = event.getUser().getIdLong();
-        AtomicReference<Patron.Type> typeToSet = new AtomicReference<>(null);
+        final AtomicReference<Patron.Type> typeToSet = new AtomicReference<>(null);
 
         event.getRoles()
             .stream()
