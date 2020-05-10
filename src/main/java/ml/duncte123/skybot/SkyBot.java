@@ -152,6 +152,8 @@ public final class SkyBot {
             .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
+            // Enable lazy loading for guilds other than our own
+//            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             .setHttpClientBuilder(

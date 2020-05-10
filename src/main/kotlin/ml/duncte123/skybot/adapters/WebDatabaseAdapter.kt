@@ -184,10 +184,8 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+    override fun createOrUpdatePatron(patron: Patron) {
         runOnThread {
-            val patron = Patron(type, userId, guildId)
-
             apis.createOrUpdatePatron(patron)
         }
     }

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
@@ -36,6 +37,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 
 import javax.annotation.Nonnull;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -157,6 +159,7 @@ public class GuildMemberListener extends BaseListener {
 
                 // One guild patron
                 if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
+                    CommandUtils.patrons.remove(userId);
                     handleNewOneGuildPatron(userId);
                     // We assume that the patron already did the steps to register
                     return;
@@ -164,6 +167,7 @@ public class GuildMemberListener extends BaseListener {
 
                 // Tag patron
                 if (roleId == Settings.TAG_PATRONS_ROLE) {
+                    CommandUtils.patrons.remove(userId);
                     CommandUtils.tagPatrons.add(userId);
                     typeToSet.set(Patron.Type.TAG);
                     return;
@@ -250,19 +254,23 @@ public class GuildMemberListener extends BaseListener {
             hadOneGuild = true;
         }
 
-        if (hadOneGuild) {
-            newType = Patron.Type.TAG;
-        }
-
         final boolean hadGuildPatron = CommandUtils.guildPatrons.remove(userId);
 
-        if (hadGuildPatron) {
+        if (hadOneGuild || hadGuildPatron) {
             newType = Patron.Type.TAG;
         }
 
         // Remove when null?
         if (newType != null) {
-            variables.getDatabaseAdapter().createOrUpdatePatron(newType, userId, null);
+            final Patron patron = new Patron(newType, userId, null);
+
+            variables.getDatabaseAdapter().createOrUpdatePatron(patron);
+            CommandUtils.addPatronsFromData(new AllPatronsData(
+                List.of(patron),
+                List.of(),
+                List.of(),
+                List.of()
+            ));
         }
     }
 

@@ -98,7 +98,13 @@ abstract class DatabaseAdapter {
 
     abstract fun removePatron(userId: Long)
 
-    abstract fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?)
+    fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+        val patron = Patron(type, userId, guildId)
+
+        this.createOrUpdatePatron(patron)
+    }
+
+    abstract fun createOrUpdatePatron(patron: Patron)
 
     abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
 
