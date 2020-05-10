@@ -241,7 +241,13 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             return null
         }
 
-        return response["data"]
+        val patrons = response["data"]
+
+        if (patrons.isEmpty) {
+            return null
+        }
+
+        return patrons[0]
     }
 
     fun createBan(json: JsonNode) {
