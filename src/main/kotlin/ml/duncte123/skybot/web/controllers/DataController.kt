@@ -21,10 +21,13 @@ package ml.duncte123.skybot.web.controllers
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.AllPatronsData
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.CommandUtils.addPatronsFromData
+import ml.duncte123.skybot.utils.CommandUtils.removePatronsFromData
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
@@ -33,6 +36,7 @@ import spark.Spark
 object DataController {
 
     fun updateData(request: Request, jackson: ObjectMapper, shardManager: ShardManager, variables: Variables): Any {
+        // Logging in with the bots own token
         if (!request.headers().contains("Authorization") || request.headers("Authorization") != shardManager.getShardById(0)?.token) {
             Spark.halt(401)
         }
@@ -41,19 +45,43 @@ object DataController {
 
         println(updateData)
 
-        val expiredBans = updateData["unbans"]
-        val expiredMutes = updateData["unmutes"]
-        val expiredReminders = updateData["reminders"]
+        if (updateData.has("patrons")) {
+            val patronData = updateData["patrons"]
 
-        val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
-        val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
-        val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+            if (patronData.has("add")) {
+                val addedPatrons = jackson.readValue(patronData["add"].traverse(), AllPatronsData::class.java)
 
-        ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
-        ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+                addPatronsFromData(addedPatrons)
+            }
 
-        if (reminders.isNotEmpty()) {
-            AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+            if (patronData.has("remove")) {
+                val removedPatrons = jackson.readValue(patronData["remove"].traverse(), AllPatronsData::class.java)
+
+                removePatronsFromData(removedPatrons)
+            }
+        }
+
+        if (updateData.has("unbans")) {
+            val expiredBans = updateData["unbans"]
+            val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
+
+            ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
+        }
+
+        if (updateData.has("unmutes")) {
+            val expiredMutes = updateData["unmutes"]
+            val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
+
+            ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+        }
+
+        if (updateData.has("reminders")) {
+            val expiredReminders = updateData["reminders"]
+            val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+
+            if (reminders.isNotEmpty()) {
+                AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+            }
         }
 
         return jackson.createObjectNode().put("success", true)

@@ -156,15 +156,37 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
+    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
         runOnThread {
-            val map = TLongLongHashMap()
+            val patrons = arrayListOf<Patron>()
+            val tagPatrons = arrayListOf<Patron>()
+            val oneGuildPatrons = arrayListOf<Patron>()
+            val guildPatrons = arrayListOf<Patron>()
 
-            apis.loadOneGuildPatrons().forEach {
-                map.put(it["user_id"].asLong(), it["guild_id"].asLong())
+            apis.loadAllPatrons()
+                .map { jackson.readValue(it.traverse(), Patron::class.java) }
+                .forEach { patron ->
+                when (patron.type) {
+                    Patron.Type.NORMAL -> patrons.add(patron)
+                    Patron.Type.TAG -> tagPatrons.add(patron)
+                    Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                    Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                }
             }
 
-            callback(map)
+            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
+    }
+
+    override fun removePatron(userId: Long) {
+        runOnThread {
+            apis.deletePatron(userId)
+        }
+    }
+
+    override fun createOrUpdatePatron(patron: Patron) {
+        runOnThread {
+            apis.createOrUpdatePatron(patron)
         }
     }
 
@@ -181,18 +203,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
         runOnThread {
             val map = TLongLongHashMap()
+            val patron = apis.getOneGuildPatron(userId) ?: return@runOnThread
 
-            apis.getOneGuildPatron(userId).forEach {
-                map.put(it["user_id"].asLong(), it["guild_id"].asLong())
-            }
+            map.put(patron["user_id"].asLong(), patron["guild_id"].asLong())
 
             callback(map)
-        }
-    }
-
-    override fun removeOneGuildPatron(userId: Long) {
-        runOnThread {
-            apis.removeOneGuildPatron(userId)
         }
     }
 

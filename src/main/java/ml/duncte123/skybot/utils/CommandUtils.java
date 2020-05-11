@@ -25,14 +25,17 @@ import gnu.trove.set.TLongSet;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -142,6 +146,7 @@ public class CommandUtils {
     }
 
     private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
+        // Developers have access to paton features
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
@@ -149,12 +154,14 @@ public class CommandUtils {
         //noinspection ConstantConditions
         final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
+        // If the guild is not in cache (cuz discord) ignore the rest of the checks
         if (supportGuild == null) {
             return false;
         }
 
         final Member m = supportGuild.getMember(u);
 
+        // If the member is not in our guild we tell them to join it
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -163,6 +170,7 @@ public class CommandUtils {
             return false;
         }
 
+        // If the member is not a patron tell them to become one
         if (!m.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -181,12 +189,13 @@ public class CommandUtils {
 
     private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
-        return isPatron(u, textChannel);
+        return isPatron(u, textChannel) || isUserTagPatron(u);
     }
 
+    // FIXME: Do new patron checks for guilds
     private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
-
-        if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
+        // Check if the guild is a patron either via user-being admin or as a one-guild patron
+        if (shouldGuildBeConsideredPremium(g) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 
@@ -207,7 +216,8 @@ public class CommandUtils {
             return false;
         }
 
-        guildPatrons.add(g.getIdLong());
+        // We're adding the user here to make the checks easier
+        guildPatrons.add(u.getIdLong());
 
         return true;
     }
@@ -233,5 +243,65 @@ public class CommandUtils {
         }
 
         return false;
+    }
+
+    private static boolean shouldGuildBeConsideredPremium(@Nonnull Guild g) {
+        final AtomicBoolean foundPatron = new AtomicBoolean(false);
+
+        guildPatrons.forEach((userId) -> {
+            // Check if we have the member in the guild and if they are an admin
+            final Member m = g.getMemberById(userId);
+            final boolean userInGuild = m != null && m.hasPermission(Permission.ADMINISTRATOR);
+
+            // Only set if we found a patron
+            if (userInGuild) {
+                foundPatron.set(true);
+            }
+
+            // return false to stop looping
+            return !userInGuild;
+        });
+
+        return foundPatron.get();
+    }
+
+    public static void addPatronsFromData(@Nonnull AllPatronsData data) {
+        Checks.notNull(data, "data");
+
+        data.getPatrons().forEach(
+            (patron) -> patrons.add(patron.getUserId())
+        );
+
+        data.getTagPatrons().forEach(
+            (patron) -> tagPatrons.add(patron.getUserId())
+        );
+
+        data.getOneGuildPatrons().forEach(
+            (patron) -> oneGuildPatrons.put(patron.getUserId(), patron.getGuildId())
+        );
+
+        data.getGuildPatrons().forEach(
+            (patron) -> guildPatrons.add(patron.getUserId())
+        );
+    }
+
+    public static void removePatronsFromData(@Nonnull AllPatronsData data) {
+        Checks.notNull(data, "data");
+
+        data.getPatrons().forEach(
+            (patron) -> patrons.remove(patron.getUserId())
+        );
+
+        data.getTagPatrons().forEach(
+            (patron) -> tagPatrons.remove(patron.getUserId())
+        );
+
+        data.getOneGuildPatrons().forEach(
+            (patron) -> oneGuildPatrons.remove(patron.getUserId())
+        );
+
+        data.getGuildPatrons().forEach(
+            (patron) -> guildPatrons.remove(patron.getUserId())
+        );
     }
 }

@@ -188,8 +188,35 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    fun loadOneGuildPatrons(): ArrayNode {
-        return paginateData("patrons/oneguild")
+    fun loadAllPatrons(): ArrayNode {
+        return paginateData("patrons")
+    }
+
+    fun createOrUpdatePatron(patron: Patron) {
+        val json = mapper.createObjectNode()
+            .put("user_id", patron.userId.toString())
+            .put("type", patron.type.name)
+
+        if (patron.guildId != null) {
+            json.put("guild_id", patron.guildId.toString())
+        }
+
+        val response = postJSON("patrons", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to create or update a patron\n" +
+                "Response: {}", response["error"].toString())
+        }
+    }
+
+    fun deletePatron(userId: Long) {
+        val request = defaultRequest("patrons/${userId}").delete()
+        val response = executeRequest(request)
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to delete a patron\n" +
+                "Response: {}", response["error"].toString())
+        }
     }
 
     fun updateOrCreateOneGuildPatron(userId: Long, guildId: Long): Boolean {
@@ -207,19 +234,20 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return true
     }
 
-    fun getOneGuildPatron(userId: Long): ArrayNode {
+    fun getOneGuildPatron(userId: Long): JsonNode? {
         val response = executeRequest(defaultRequest("patrons/oneguild/$userId"))
 
-        return response["data"] as ArrayNode
-    }
-
-    fun removeOneGuildPatron(userId: Long) {
-        val response = executeRequest(defaultRequest("patrons/oneguild/$userId").delete())
-
         if (!response["success"].asBoolean()) {
-            logger.error("Failed to remove one guild patron\n" +
-                "Response: {}", response["error"].toString())
+            return null
         }
+
+        val patrons = response["data"]
+
+        if (patrons.isEmpty) {
+            return null
+        }
+
+        return patrons[0]
     }
 
     fun createBan(json: JsonNode) {

@@ -47,6 +47,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
+import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
@@ -68,6 +69,17 @@ public final class SkyBot {
     });
     private final IntFunction<? extends Activity> activityProvider;
     private WebRouter webRouter = null;
+
+    private static final MemberCachePolicy PATRON_POLICY = (member) -> {
+        // TODO: Member needs to be cached for JDA to fire role update event
+        final long userId = member.getIdLong();
+
+        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
+            patrons.contains(userId) ||
+            tagPatrons.contains(userId) ||
+            oneGuildPatrons.containsKey(userId) ||
+            guildPatrons.contains(userId);
+    };
 
     private SkyBot() throws Exception {
         // Set our animated emotes as default reactions
@@ -136,11 +148,12 @@ public final class SkyBot {
             .setActivityProvider(this.activityProvider)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
-            // Keep all members in cache
-            // TODO: find a way to make sure that this is not needed anymore
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
+            // Keep guild owners, voice members and patrons in cache
+            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
+            // Enable lazy loading for guilds other than our own
+//            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             .setHttpClientBuilder(

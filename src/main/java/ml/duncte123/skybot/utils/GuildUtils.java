@@ -22,7 +22,6 @@ import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ import java.util.Objects;
 })
 public class GuildUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
 
     /**
      * Returns an array with the member counts of the guild
@@ -127,7 +126,6 @@ public class GuildUtils {
     }
 
     public static String verificationLvlToName(VerificationLevel lvl) {
-
         if (lvl == null) {
             return "None";
         }
@@ -155,58 +153,37 @@ public class GuildUtils {
         );
     }
 
-    public static void reloadOneGuildPatrons(@Nonnull ShardManager manager, @Nonnull DatabaseAdapter adapter) {
-        logger.info("(Re)loading one guild patrons");
+    public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
+        logger.info("(Re)loading patrons");
 
-        final Guild supportGuild = manager.getGuildById(Settings.SUPPORT_GUILD_ID);
-        final Role oneGuildRole = supportGuild.getRoleById(Settings.ONE_GUILD_PATRONS_ROLE);
+        adapter.loadAllPatrons((data) -> {
+            data.getPatrons().forEach(
+                (patron) -> CommandUtils.patrons.add(patron.getUserId())
+            );
 
-        adapter.loadOneGuildPatrons(
-            (patrons) -> {
-                patrons.forEachEntry((userId, guildId) -> {
+            logger.info("Loaded {} normal patrons", CommandUtils.patrons.size());
 
-                    final Member memberInServer = supportGuild.getMemberById(userId);
+            data.getTagPatrons().forEach(
+                (patron) -> CommandUtils.tagPatrons.add(patron.getUserId())
+            );
 
-                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
-                        CommandUtils.oneGuildPatrons.put(userId, guildId);
-                    }
+            logger.info("Loaded {} tag patrons", CommandUtils.tagPatrons.size());
 
-                    return true;
-                });
+            data.getOneGuildPatrons().forEach((patron) -> {
+                final long userId = patron.getUserId();
+                // The guild id is never null here, and if it is something is terribly wrong
+                @SuppressWarnings("ConstantConditions") final long guildId = patron.getGuildId();
 
-                logger.info("Found {} one guild patrons", CommandUtils.oneGuildPatrons.keySet().size());
-
-                return null;
-            }
-        );
-    }
-
-    public static void removeOneGuildPatron(long userId, @Nonnull DatabaseAdapter adapter) {
-        adapter.removeOneGuildPatron(userId);
-    }
-
-    public static void addOneGuildPatron(long userId, long guildId, @Nonnull Variables variables) {
-        variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
-            final SkyBot instance = SkyBot.getInstance();
-            final Guild dbGuild = instance.getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
-
-            if (dbGuild == null) {
-                return null;
-            }
-
-            final Member newPatron = dbGuild.getMemberById(userId);
-
-            if (newPatron == null) {
-                return null;
-            }
-
-            final boolean hasRole = newPatron.getRoles().stream()
-                .map(Role::getIdLong)
-                .anyMatch((role) -> role == Settings.ONE_GUILD_PATRONS_ROLE);
-
-            if (hasRole) {
                 CommandUtils.oneGuildPatrons.put(userId, guildId);
-            }
+            });
+
+            logger.info("Loaded {} one guild patrons", CommandUtils.oneGuildPatrons.size());
+
+            data.getGuildPatrons().forEach(
+                (patron) -> CommandUtils.guildPatrons.add(patron.getUserId())
+            );
+
+            logger.info("Loaded {} guild patrons", CommandUtils.guildPatrons.size());
 
             return null;
         });

@@ -20,15 +20,18 @@ package ml.duncte123.skybot.web.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.getParamsMap
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.ModelAndView
@@ -81,7 +84,8 @@ object OneGuildRegister {
             return renderPage(WebVariables().put("message", "This user is already registered, please contact a bot admin to have it changed."), variables.config)
         }
 
-        GuildUtils.addOneGuildPatron(user.idLong, guild.idLong, variables)
+        // IMPORTANT: Keep using the one guild endpoint so it doesn't override old patrons
+        addOneGuildPatron(user.idLong, guild.idLong, variables.databaseAdapter)
 
         return renderPage(WebVariables().put("message", "Server successfully registered")
             .put("hideForm", true), variables.config)
@@ -92,6 +96,23 @@ object OneGuildRegister {
             .put("chapta_sitekey", config.apis.chapta.sitekey)
 
         return map.toModelAndView("oneGuildRegister.twig")
+    }
+
+    // IMPORTANT: Keep using the one guild endpoint so it doesn't override old patrons
+    private fun addOneGuildPatron(userId: Long, guildId: Long, database: DatabaseAdapter) {
+        database.addOneGuildPatrons(userId, guildId) { _, _ ->
+            val instance = SkyBot.getInstance()
+            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@addOneGuildPatrons
+            val newPatron = dbGuild.getMemberById(userId) ?: return@addOneGuildPatrons
+
+            val hasRole = newPatron.roles
+                .map(Role::getIdLong)
+                .any { it == Settings.ONE_GUILD_PATRONS_ROLE }
+
+            if (hasRole) {
+                CommandUtils.oneGuildPatrons.put(userId, guildId)
+            }
+        }
     }
 
 }

@@ -296,16 +296,85 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
-    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
+    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
         runOnThread {
-            val map = TLongLongHashMap()
-            val resultSet = connManager.connection.createStatement().executeQuery("SELECT * FROM oneGuildPatrons")
+            val patrons = arrayListOf<Patron>()
+            val tagPatrons = arrayListOf<Patron>()
+            val oneGuildPatrons = arrayListOf<Patron>()
+            val guildPatrons = arrayListOf<Patron>()
 
-            while (resultSet.next()) {
-                map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
+            connManager.connection.createStatement().use { statement ->
+                statement.executeQuery("SELECT * FROM patrons").use { resultSet ->
+                    while (resultSet.next()) {
+                        val guildId = if (resultSet.getLong("guild_id") == 0L) null else resultSet.getLong("guild_id")
+                        val patron = Patron(
+                            Patron.Type.valueOf(resultSet.getString("type").toUpperCase()),
+                            resultSet.getLong("user_id"),
+                            guildId
+                        )
+
+                        when (patron.type) {
+                            Patron.Type.NORMAL -> patrons.add(patron)
+                            Patron.Type.TAG -> tagPatrons.add(patron)
+                            Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                            Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                        }
+                    }
+                }
             }
 
-            callback.invoke(map)
+            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
+    }
+
+    override fun removePatron(userId: Long) {
+        runOnThread {
+            connManager.connection.createStatement()
+                .execute("DELETE FROM patrons WHERE user_id = $userId")
+        }
+    }
+
+    override fun createOrUpdatePatron(patron: Patron) {
+        runOnThread {
+            connManager.connection.use { connection ->
+                var id = 0
+
+                // Check for an existing patron in the database and store the id
+                connection.prepareStatement("SELECT id FROM patrons WHERE user_id = ? LIMIT 1").use { smt ->
+                    smt.setLong(1, patron.userId)
+
+                    smt.executeQuery().use { res ->
+                        while (res.next()) {
+                            id = res.getInt("id")
+                        }
+                    }
+                }
+
+                // Update the patron if we found an id
+                if (id > 0) {
+                    connection.prepareStatement("UPDATE patrons SET user_id = ?, guild_id = ?, type = ? WHERE id = ?").use { smt ->
+                        smt.setLong(1, patron.userId)
+                        smt.setString(2, patron.guildId?.toString())
+                        smt.setString(3, patron.type.name)
+                        smt.setInt(4, id)
+
+                        smt.executeUpdate()
+                        smt.closeOnCompletion()
+                    }
+
+                    return@runOnThread
+                }
+
+                // Create a patron if we didn't find one in the database
+                connection.prepareStatement("INSERT INTO patrons (user_id, guild_id, type) VALUES (?, ?, ?)").use { smt ->
+                    smt.setLong(1, patron.userId)
+                    smt.setString(2, patron.guildId?.toString())
+                    smt.setString(3, patron.type.name)
+
+                    smt.executeUpdate()
+                    smt.closeOnCompletion()
+                }
+            }
         }
     }
 
@@ -349,13 +418,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
             }
 
             callback.invoke(map)
-        }
-    }
-
-    override fun removeOneGuildPatron(userId: Long) {
-        runOnThread {
-            connManager.connection.createStatement()
-                .execute("DELETE FROM oneGuildPatrons WHERE user_id = $userId")
         }
     }
 

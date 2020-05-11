@@ -301,7 +301,7 @@ public class TagCommand extends Command {
     private boolean isTagPatron(Member member) {
         final User u = member.getUser();
 
-        if (isDev(u) || tagPatrons.contains(u.getIdLong())) {
+        if (isUserTagPatron(u)) {
             return true;
         }
 

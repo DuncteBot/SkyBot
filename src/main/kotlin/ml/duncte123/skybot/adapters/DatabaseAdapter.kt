@@ -94,13 +94,21 @@ abstract class DatabaseAdapter {
     ///////////////
     // Patron stuff
 
-    abstract fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit)
+    abstract fun loadAllPatrons(callback: (AllPatronsData) -> Unit)
+
+    abstract fun removePatron(userId: Long)
+
+    fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+        val patron = Patron(type, userId, guildId)
+
+        this.createOrUpdatePatron(patron)
+    }
+
+    abstract fun createOrUpdatePatron(patron: Patron)
 
     abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
 
     abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
-
-    abstract fun removeOneGuildPatron(userId: Long)
 
     /////////////
     // Moderation

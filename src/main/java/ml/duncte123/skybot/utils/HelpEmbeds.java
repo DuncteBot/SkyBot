@@ -20,7 +20,6 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
+@SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal"})
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
     /// <editor-fold desc="Command storage" defaultstate="collapsed">
@@ -65,7 +64,6 @@ public class HelpEmbeds {
 
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
         final EmbedBuilder embed = defaultEmbed()
-            .setThumbnail(Settings.DEFAULT_ICON)
             .setTitle("Click here for the support server", "https://discord.gg/NKM9Xtk")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 
