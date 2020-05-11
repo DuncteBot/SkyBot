@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import net.notfab.caching.shared.SearchParams
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
@@ -91,21 +90,13 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     }
 
     private fun searchCache(search: String, ctx: CommandContext): String? {
-        val params = SearchParams().setSearch(search)
-        AirUtils.setTitleFromKotlin(params, ctx.args.toTypedArray())
-        val tracks = ctx.youtubeCache.search(params)
+        val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
 
-        if (tracks.isEmpty()) {
-            val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
-
-            if(res.isEmpty()) {
-                return null
-            }
-
-             return res[0].id.videoId
+        if(res.isEmpty()) {
+            return null
         }
 
-        return tracks[0].id
+        return res[0].id.videoId
     }
 
     private fun handlePlay(toPlay: String, event: GuildMessageReceivedEvent, ctx: CommandContext, mng: GuildMusicManager?) {
