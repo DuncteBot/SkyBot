@@ -131,8 +131,6 @@ public class CommandManager {
     public CommandManager(Variables variables) {
         this.variables = variables;
 
-        addCommand(new PatreonCheckCommand());
-
         /// <editor-fold desc="Command Loading" defaultstate="collapsed">
         this.addCommand(new AchievementCommand());
         this.addCommand(new AdviceCommand());
@@ -224,6 +222,8 @@ public class CommandManager {
         this.addCommand(new NowPlayingCommand());
         this.addCommand(new OwoCommand());
         this.addCommand(new PatCommand());
+        // TODO: remove, some day, can't do any harm really
+        this.addCommand(new PatreonCheckCommand());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
         this.addCommand(new PingCommand());
