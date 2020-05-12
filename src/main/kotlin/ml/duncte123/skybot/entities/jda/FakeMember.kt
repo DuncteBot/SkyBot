@@ -145,4 +145,6 @@ class FakeMember(private val name: String) : Member {
     }
 
     override fun isFake() = true
+
+    override fun hasTimeJoined() = false
 }
