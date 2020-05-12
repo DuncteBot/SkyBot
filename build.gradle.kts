@@ -38,7 +38,7 @@ plugins {
 
     kotlin("jvm") version "1.3.71"
     id("com.github.johnrengelman.shadow") version "5.2.0"
-    id("com.github.breadmoirai.github-release") version "2.2.10"
+    id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
 val numberVersion = "3.92.0"
