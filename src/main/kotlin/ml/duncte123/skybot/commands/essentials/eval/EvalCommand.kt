@@ -96,6 +96,7 @@ class EvalCommand : Command() {
     @ExperimentalCoroutinesApi
     override fun execute(ctx: CommandContext) {
         if (!isDev(ctx.author) && ctx.author.idLong != Settings.OWNER_ID) {
+            sendError(ctx.message)
             return
         }
 

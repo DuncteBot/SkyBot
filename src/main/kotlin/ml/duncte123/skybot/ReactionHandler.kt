@@ -19,39 +19,40 @@
 package ml.duncte123.skybot
 
 import com.google.api.services.youtube.model.SearchResult
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.hooks.EventListener
 import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
-import java.util.function.BiConsumer
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class ReactionHandler : ListenerAdapter() {
-    private val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(2) { r ->
+class ReactionHandler : EventListener {
+    private val requirementsCache = arrayListOf<ReactionCacheElement>()
+    private val consumerCache = hashMapOf<Long, Pair<CommandContext, List<SearchResult>>>()
+    private val executor = Executors.newScheduledThreadPool(2) { r ->
         val t = Thread(r, "ReactionAwaiter")
         t.isDaemon = true
         return@newScheduledThreadPool t
     }
-    private var requirementsCache: List<ReactionCacheElement> = ArrayList()
-    private var consumerCache: Map<Long, Pair<CommandContext, List<SearchResult>>> = HashMap()
 
-    private val defaultConsumer: BiConsumer<CommandContext, List<SearchResult>> = BiConsumer { ctx, resSet ->
+    private fun TextChannel.editMsg(id: Long, msg: String) = this.editMessageById(id, msg).override(true).queue(null, {})
 
+    private fun handleUserInput (ctx: CommandContext, resSet: List<SearchResult>) {
         if (!ctx.reactionEventIsSet() && !ctx.replyIsSet()) {
-            MessageUtils.sendErrorWithMessage(ctx.message, "Internal error!")
-            return@BiConsumer
+            sendErrorWithMessage(ctx.message, "Internal error!")
+            return
         }
 
         val cacheElement = requirementsCache.firstOrNull { ctx.sendId == it.authorId }
 
         if (cacheElement == null) {
-            MessageUtils.sendMsg(ctx.event, "Internal error!")
-            return@BiConsumer
+            sendMsg(ctx.event, "Internal error!")
+            return
         }
 
         if (cacheElement.equals(ctx.reactionEvent)) {
@@ -62,52 +63,55 @@ class ReactionHandler : ListenerAdapter() {
             val msgId = cacheElement.msgID
 
             if (content == "cancel") {
-                channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue(null, {})
-                requirementsCache = requirementsCache - cacheElement
-
-                return@BiConsumer
+                channel.editMsg(msgId, "\uD83D\uDD0E Search canceled")
+                requirementsCache.remove(cacheElement)
+                return
             }
 
             if (index < 1 || index > resSet.size) {
-                channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
-
-                return@BiConsumer
+                channel.editMsg(msgId, "\uD83D\uDD0E Invalid index")
+                return
             }
 
             val res = resSet.getOrNull(index - 1)
-            if (res == null) {
-                channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
 
-                return@BiConsumer
+            if (res == null) {
+                channel.editMsg(msgId, "\uD83D\uDD0E Invalid index")
+                return
             }
 
-            ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild),
-                "https://www.youtube.com/watch?v=${res.id.videoId}", ctx)
-            requirementsCache = requirementsCache - cacheElement
+            ctx.audioUtils.loadAndPlay(
+                ctx.audioUtils.getMusicManager(ctx.guild),
+                "https://www.youtube.com/watch?v=${res.id.videoId}",
+                ctx
+            )
+            requirementsCache.remove(cacheElement)
 
             channel.deleteMessageById(msgId).queue(null, {}) // Ignore the error if the message has already been deleted
         }
-
     }
 
     fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, ctx: CommandContext, resultSet: List<SearchResult>) {
         val cacheElement = ReactionCacheElement(msg.idLong, userId)
         val pair = userId to (ctx.applySentId(userId) to resultSet)
 
-        requirementsCache = requirementsCache + cacheElement
-        consumerCache = consumerCache + pair
+        requirementsCache.add(cacheElement)
+        consumerCache[pair.first] = pair.second
 
         executor.schedule({
             if (requirementsCache.contains(cacheElement)) {
-                requirementsCache = requirementsCache - cacheElement
-                consumerCache = consumerCache - userId
-
-                ctx.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue(null, {})
+                requirementsCache.remove(cacheElement)
+                consumerCache.remove(userId)
+                ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
             }
         }, timeoutInMillis, TimeUnit.MILLISECONDS)
     }
 
-    override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
+    override fun onEvent(event: GenericEvent) {
+        if (event !is GuildMessageReceivedEvent) {
+            return
+        }
+
         val checkId = event.author.idLong
         val content = event.message.contentRaw
         val intCheck = AirUtils.isInt(content) || content.toLowerCase() == "cancel"
@@ -117,12 +121,11 @@ class ReactionHandler : ListenerAdapter() {
         }
 
         val pair = consumerCache[checkId] ?: return
-
         val ctx = pair.first.applyReactionEvent(event)
 
         if (ctx.author.idLong == event.author.idLong) {
-            defaultConsumer.accept(ctx, pair.second)
-            consumerCache = consumerCache - checkId
+            handleUserInput(ctx, pair.second)
+            consumerCache.remove(checkId)
         }
     }
 }
