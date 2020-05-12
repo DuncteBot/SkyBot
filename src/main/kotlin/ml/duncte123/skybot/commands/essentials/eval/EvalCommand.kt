@@ -35,7 +35,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.requests.RestAction
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
@@ -96,16 +95,14 @@ class EvalCommand : Command() {
 
     @ExperimentalCoroutinesApi
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-
-        if (!isDev(event.author) || event.author.idLong != Settings.OWNER_ID) {
+        if (!isDev(ctx.author) && ctx.author.idLong != Settings.OWNER_ID) {
             return
         }
 
-        val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
+        val userInput = ctx.message.contentRaw.split("\\s+".toRegex(), 2)
 
         if (userInput.size < 2) {
-            sendSuccess(event.message)
+            sendSuccess(ctx.message)
             return
         }
 
@@ -119,9 +116,7 @@ class EvalCommand : Command() {
 
         val script = importString + userIn
 
-
         engine.setVariable("commandManager", ctx.commandManager)
-
         engine.setVariable("message", ctx.message)
         engine.setVariable("channel", ctx.message.textChannel)
         engine.setVariable("guild", ctx.guild)
@@ -129,7 +124,7 @@ class EvalCommand : Command() {
         engine.setVariable("author", ctx.author)
         engine.setVariable("jda", ctx.jda)
         engine.setVariable("shardManager", ctx.jda.shardManager)
-        engine.setVariable("event", event)
+        engine.setVariable("event", ctx.event)
 
         engine.setVariable("skraa", script)
         engine.setVariable("args", ctx.args)
@@ -138,79 +133,76 @@ class EvalCommand : Command() {
 
         @SinceSkybot("3.58.0")
         GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
-            return@launch eval(event, script, 60000L, ctx)
+            return@launch eval(ctx, script, 60000L)
         })
     }
 
     @SinceSkybot("3.58.0")
-    private suspend fun eval(event: GuildMessageReceivedEvent, script: String, millis: Long, ctx: CommandContext) {
+    private suspend fun eval(ctx: CommandContext, script: String, millis: Long) {
         val time = measureTimeMillis {
             withTimeoutOrNull(millis) {
                 val out = try {
                     engine.setVariable("scope", this)
 
                     engine.evaluate(script)
-
                 } catch (ex: Throwable) {
                     ex
                 }
 
-                parseEvalResponse(out, event, ctx)
+                parseEvalResponse(out, ctx)
             }
         }
 
-        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${event.author})" +
+        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${ctx.author})" +
             "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}")
     }
 
-    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, ctx: CommandContext) {
+    private fun parseEvalResponse(out: Any?, ctx: CommandContext) {
         when (out) {
-            null -> {
-                sendSuccess(event.message)
-            }
+            null -> sendSuccess(ctx.message)
 
             is ArrayIndexOutOfBoundsException -> {
-                sendSuccess(event.message)
+                sendSuccess(ctx.message)
             }
 
             is ExecutionException, is ScriptException -> {
                 out as Exception
-                sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
+                sendErrorWithMessage(ctx.message, "ERROR: " + out.cause.toString())
             }
 
             is TimeoutException, is InterruptedException, is IllegalStateException -> {
                 out as Exception
-                sendErrorWithMessage(event.message, "ERROR: $out")
+                sendErrorWithMessage(ctx.message, "ERROR: $out")
             }
 
             is IllegalArgumentException -> {
-                sendErrorWithMessage(event.message, "ERROR: $out")
+                sendErrorWithMessage(ctx.message, "ERROR: $out")
             }
 
             is Throwable -> {
                 if (Settings.USE_JSON) {
-                    sendErrorJSON(event.message, out, false, ctx.variables.jackson)
+                    sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)
                 } else {
-                    sendMsg(event, "ERROR: $out")
+                    sendMsg(ctx, "ERROR: $out")
 //                        out.printStackTrace()
                 }
             }
 
             is RestAction<*> -> {
                 out.queue()
-                sendSuccess(event.message)
+                sendSuccess(ctx.message)
             }
 
             else -> {
                 if (out.toString().isEmpty() || out.toString().isBlank()) {
-                    sendSuccess(event.message)
+                    sendSuccess(ctx.message)
                     return
                 }
 
                 MessageBuilder()
                     .appendCodeBlock(out.toString(), "")
                     .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                    .forEach { sendMsg(event, it) }
+                    .forEach { sendMsg(ctx, it) }
 
             }
         }
