@@ -67,16 +67,7 @@ class AvatarCommand : Command() {
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
 
-    /*private fun searchMembers(input: String, guild: Guild): List<Member> {
-        val mentionMatcher = USER_MENTION.matcher(input)
-
-        if (mentionMatcher.matches()) {
-            return guild.retrieveMembersByIds(false, mentionMatcher.group(1)).get()
-        }
-
-        return guild.retrieveMembersByPrefix(input, 10).get()
-    }*/
-
+    // Attempt to fetch mentioned members from message
     private fun searchMembers(input: String, guild: Guild): List<Member> {
         var searchId: String? = null
         val mentionMatcher = USER_MENTION.matcher(input)
