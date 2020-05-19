@@ -350,7 +350,7 @@ public class AirUtils {
 
         json.set("dynamicLinkInfo",
             mapper.createObjectNode()
-                .put("domainUriPrefix", "lnk.dunctebot.com")
+                .put("domainUriPrefix", "dunctebot.link")
                 .put("link", url)
         );
         json.set("suffix",

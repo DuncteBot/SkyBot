@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import java.util.concurrent.CompletableFuture
 import java.util.regex.Pattern
 
 class AvatarCommand : Command() {
@@ -66,7 +67,7 @@ class AvatarCommand : Command() {
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
 
-    private fun searchMembers(input: String, guild: Guild): List<Member> {
+    /*private fun searchMembers(input: String, guild: Guild): List<Member> {
         val mentionMatcher = USER_MENTION.matcher(input)
 
         if (mentionMatcher.matches()) {
@@ -74,9 +75,9 @@ class AvatarCommand : Command() {
         }
 
         return guild.retrieveMembersByPrefix(input, 10).get()
-    }
+    }*/
 
-    private fun searchMembersAsync(input: String, guild: Guild, callback: (List<Member>) -> Unit) {
+    private fun searchMembers(input: String, guild: Guild): List<Member> {
         var searchId: String? = null
         val mentionMatcher = USER_MENTION.matcher(input)
         val idMatcher = DISCORD_ID.matcher(input)
@@ -88,11 +89,18 @@ class AvatarCommand : Command() {
         }
 
         if (searchId != null) {
-            guild.retrieveMembersByIds(false, searchId).onSuccess(callback)
+            val memberById = guild.getMemberById(searchId)
 
-            return
+            return if (memberById != null) {
+                listOf(memberById)
+            } else {
+                listOf(guild.retrieveMemberById(searchId, false).complete())
+            }
         }
 
-        guild.retrieveMembersByPrefix(input, 10).onSuccess(callback)
+        val future = CompletableFuture<List<Member>>()
+        guild.retrieveMembersByPrefix(input, 10).onSuccess { future.complete(it) }
+
+        return future.get()
     }
 }
