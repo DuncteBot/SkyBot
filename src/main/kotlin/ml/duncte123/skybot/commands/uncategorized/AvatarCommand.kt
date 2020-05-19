@@ -22,9 +22,16 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import java.util.regex.Pattern
 
 class AvatarCommand : Command() {
+    val DISCORD_ID = Pattern.compile("\\d{17,20}") // ID
+    val FULL_USER_REF = Pattern.compile("(\\S.{0,30}\\S)\\s*#(\\d{4})") // $1 -> username, $2 -> discriminator
+    val USER_MENTION = Pattern.compile("<@!?(\\d{17,20})>") // $1 -> ID
+
 
     init {
         this.name = "avatar"
@@ -36,8 +43,12 @@ class AvatarCommand : Command() {
         var user: User? = ctx.author
 
         if (ctx.args.isNotEmpty()) {
+            val fromFinderUtil = FinderUtil.findMembers(ctx.argsRaw, ctx.jdaGuild)
             // We're searching for members in the guild to get more accurate results
-            val foundMembers = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+            val foundMembers = this.searchMembers(ctx.argsRaw, ctx.jdaGuild)
+
+            println(foundMembers)
+            println(fromFinderUtil)
 
             user = if (foundMembers.isEmpty()) {
                 val foundUsers = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
@@ -55,4 +66,33 @@ class AvatarCommand : Command() {
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
 
+    private fun searchMembers(input: String, guild: Guild): List<Member> {
+        val mentionMatcher = USER_MENTION.matcher(input)
+
+        if (mentionMatcher.matches()) {
+            return guild.retrieveMembersByIds(false, mentionMatcher.group(1)).get()
+        }
+
+        return guild.retrieveMembersByPrefix(input, 10).get()
+    }
+
+    private fun searchMembersAsync(input: String, guild: Guild, callback: (List<Member>) -> Unit) {
+        var searchId: String? = null
+        val mentionMatcher = USER_MENTION.matcher(input)
+        val idMatcher = DISCORD_ID.matcher(input)
+
+        if (mentionMatcher.matches()) {
+            searchId = mentionMatcher.group(1)
+        } else if (idMatcher.matches()) {
+            searchId = input
+        }
+
+        if (searchId != null) {
+            guild.retrieveMembersByIds(false, searchId).onSuccess(callback)
+
+            return
+        }
+
+        guild.retrieveMembersByPrefix(input, 10).onSuccess(callback)
+    }
 }

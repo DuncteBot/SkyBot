@@ -18,15 +18,20 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.PendingRequest;
+import com.github.natanbc.reliqua.util.PendingRequestBuilder;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
-import me.duncte123.botcommons.web.GoogleLinkLength;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -44,9 +49,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.notfab.caching.shared.SearchParams;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -54,6 +59,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.web.WebParserUtils.toJSONObject;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER;
 
@@ -189,10 +195,6 @@ public class AirUtils {
         }
 
         return foundChannels.get(0);
-    }
-
-    public static PendingRequest<String> shortenUrl(String url, String googleKey) {
-        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey, GoogleLinkLength.SHORT);
     }
 
     public static String colorToHex(int hex) {
@@ -333,16 +335,44 @@ public class AirUtils {
         ((JDAImpl) jda).setContext();
     }
 
-    public static void setTitleFromKotlin(SearchParams params, String[] title) {
-        params.setTitle(title);
-    }
-
     public static void loadGuildMembers(Guild guild) {
         try {
             guild.retrieveMembers().get();
         }
         catch (InterruptedException | ExecutionException e) {
             Sentry.capture(e);
+        }
+    }
+
+    @Nonnull
+    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
+        final ObjectNode json = mapper.createObjectNode();
+
+        json.set("dynamicLinkInfo",
+            mapper.createObjectNode()
+                .put("domainUriPrefix", "lnk.dunctebot.com")
+                .put("link", url)
+        );
+        json.set("suffix",
+            mapper.createObjectNode()
+                .put("option", "SHORT") // SHORT or UNGUESSABLE
+        );
+
+        try {
+            return WebUtils.ins.postRequest(
+                "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + googleKey,
+                JSONRequestBody.fromJackson(json)
+            )
+                .build(
+                    (r) -> toJSONObject(r, mapper).get("shortLink").asText(),
+                    WebParserUtils::handleError
+                );
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+
+            // Return a fake pending request to make sure that things don't break
+            return new PendingRequestBuilder(WebUtils.ins, WebUtils.defaultRequest().build())
+                .build((__) -> "JSON PARSING FAILED", null);
         }
     }
 }

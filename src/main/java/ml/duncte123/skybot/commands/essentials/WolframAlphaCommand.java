@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import me.duncte123.botcommons.messaging.EmbedUtils;
@@ -35,7 +36,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
@@ -47,6 +47,7 @@ public class WolframAlphaCommand extends Command {
     private WAEngine waEngine = null;
 
     public WolframAlphaCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.UTILS;
         this.name = "alpha";
         this.aliases = new String[]{
@@ -58,10 +59,10 @@ public class WolframAlphaCommand extends Command {
         this.usage = "<query>";
     }
 
-    private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey) {
+    private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey, ObjectMapper mapper) {
         final Member m = event.getMember();
         final EmbedBuilder eb = EmbedUtils.defaultEmbed();
-        eb.setAuthor(m.getUser().getName(), "https://patreon.com/DuncteBot", m.getUser().getAvatarUrl());
+        eb.setAuthor(m.getEffectiveName(), "https://patreon.com/DuncteBot", m.getUser().getAvatarUrl());
 
         eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
@@ -84,7 +85,7 @@ public class WolframAlphaCommand extends Command {
                     String d = "";
                     if (v instanceof WAImage) {
                         final WAImage i = (WAImage) v;
-                        d += "[Image by text](" + shortenUrl(i.getURL(), googleKey).execute() + ")";
+                        d += "[Image by text](" + shortenUrl(i.getURL(), googleKey, mapper).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         final WAInfo i = (WAInfo) v;
                         d += parseString(i.getText());
@@ -93,13 +94,13 @@ public class WolframAlphaCommand extends Command {
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         final WALink l = (WALink) v;
-                        d += "[" + parseString(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey).execute() + ")";
+                        d += "[" + parseString(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey, mapper).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         final WAPlainText pt = (WAPlainText) v;
                         d += parseString(pt.getText());
                     } else if (v instanceof WASound) {
                         final WASound sound = (WASound) v;
-                        d += shortenUrl(sound.getURL(), googleKey).execute();
+                        d += shortenUrl(sound.getURL(), googleKey, mapper).execute();
                     }
 
                     e.append(d).append("\n\n");
@@ -116,26 +117,20 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-
-        if (!isUserOrGuildPatron(event)) return;
-
-        if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, ":x: Must give a question!!!");
+        if (!isUserOrGuildPatron(ctx.getEvent())) {
             return;
         }
 
         final WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
+
         if (engine == null) {
-            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
+            MessageUtils.sendMsg(ctx, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
         final AtomicReference<Message> message = new AtomicReference<>();
 
-        MessageUtils.sendMsg(event, "Calculating.....", message::set);
+        MessageUtils.sendMsg(ctx, "Calculating.....", message::set);
 
         final String queryString = ctx.getArgsRaw();
         final WAQuery query = engine.createQuery(queryString);
@@ -156,7 +151,9 @@ public class WolframAlphaCommand extends Command {
         }
 
         editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
-            .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
+            .setEmbed(
+                generateEmbed(ctx.getEvent(), result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
+            ).build());
     }
 
     private void editMsg(AtomicReference<Message> ref, TextChannel channel, Message message) {

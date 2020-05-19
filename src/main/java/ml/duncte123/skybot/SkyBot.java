@@ -149,7 +149,7 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
-            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
+            .setMemberCachePolicy(MemberCachePolicy.DEFAULT/*.or(PATRON_POLICY)*/)
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             // Enable lazy loading for guilds other than our own

@@ -102,6 +102,8 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
+        System.out.println(event.getMember());
+
         if (event.getAuthor().isFake() ||
             event.getAuthor().isBot() ||
             event.isWebhookMessage() ||
