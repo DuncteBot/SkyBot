@@ -38,7 +38,7 @@ public class TheSearchCommand extends ImageCommandBase {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passes(event, ctx.getArgs())) {
+        if (!passes(event)) {
             return;
         }
 

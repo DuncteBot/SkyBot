@@ -49,7 +49,7 @@ class FakeWordCommand : Command() {
             }
 
             shortenLongHashUrl(json.get("permalink_url").asText(), ctx) { url ->
-                embed.setTitle(word.get("word").asText(), url)
+                embed.setTitle(word.get("word").asText(), url).setFooter("Permalink: $url")
 
                 // We need to send the embed here since these methods are running async
                 sendEmbed(ctx, embed)

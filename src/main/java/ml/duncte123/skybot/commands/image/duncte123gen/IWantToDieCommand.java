@@ -33,7 +33,7 @@ public class IWantToDieCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
+        if (!passes(ctx.getEvent(), false)) {
             return;
         }
 

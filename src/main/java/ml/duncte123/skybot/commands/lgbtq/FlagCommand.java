@@ -47,15 +47,14 @@ public class FlagCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
 
-        if (!passes(event, ctx.getArgs(), false)) {
+        if (!passes(event, false)) {
             return;
         }
 
-        final String flag = ctx.getArgs().get(0).toLowerCase();
+        final List<String> args = ctx.getArgs();
+        final String flag = args.get(0).toLowerCase();
 
         if (flag.equalsIgnoreCase("list")) {
             sendMsg(event, "A list of flags can be found at https://dunctebot.com/flags");
@@ -71,7 +70,7 @@ public class FlagCommand extends ImageCommandBase {
 
         User user = ctx.getAuthor();
 
-        if (ctx.getArgs().size() > 1) {
+        if (args.size() > 1) {
             final String search = String.join(" ", args.subList(1, args.size()));
             final List<User> foundUsers = FinderUtil.findUsers(search, ctx.getJDA());
 

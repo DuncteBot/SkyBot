@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 public class ClintCommand extends ImageCommandBase {
 
     public ClintCommand() {
+        this.requiresArgs = false;
         this.name = "clint";
         this.help = "Shows a picture of Clint staring at something on a monitor.";
         this.usage = "[image url]";
@@ -38,7 +39,7 @@ public class ClintCommand extends ImageCommandBase {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passesNoArgs(event)) {
+        if (!passes(event)) {
             return;
         }
 
