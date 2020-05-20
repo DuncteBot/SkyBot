@@ -22,7 +22,6 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import java.util.concurrent.CompletableFuture
@@ -46,10 +45,10 @@ class AvatarCommand : Command() {
         if (ctx.args.isNotEmpty()) {
             val fromFinderUtil = FinderUtil.findMembers(ctx.argsRaw, ctx.jdaGuild)
             // We're searching for members in the guild to get more accurate results
-            val foundMembers = this.searchMembers(ctx.argsRaw, ctx.jdaGuild)
+            val foundMembers = this.searchMembers(ctx.argsRaw, ctx)
 
-            println(foundMembers)
             println(fromFinderUtil)
+            println(foundMembers)
 
             user = if (foundMembers.isEmpty()) {
                 val foundUsers = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
@@ -67,30 +66,62 @@ class AvatarCommand : Command() {
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
 
-    // Attempt to fetch mentioned members from message
-    private fun searchMembers(input: String, guild: Guild): List<Member> {
+    private fun searchMembers(input: String, ctx: CommandContext): List<Member> {
         var searchId: String? = null
         val mentionMatcher = USER_MENTION.matcher(input)
-        val idMatcher = DISCORD_ID.matcher(input)
 
         if (mentionMatcher.matches()) {
             searchId = mentionMatcher.group(1)
-        } else if (idMatcher.matches()) {
+
+            val mentioned = ctx.mentionedMembers.find { it.id == searchId }
+
+            if (mentioned != null) {
+                println("Found in mentioned")
+                return listOf(mentioned)
+            }
+        }
+
+        val idMatcher = DISCORD_ID.matcher(input)
+
+        if (idMatcher.matches()) {
             searchId = input
         }
+
+        val guild = ctx.jdaGuild
 
         if (searchId != null) {
             val memberById = guild.getMemberById(searchId)
 
             return if (memberById != null) {
+                println("Found in getMemberById")
                 listOf(memberById)
             } else {
-                listOf(guild.retrieveMemberById(searchId, false).complete())
+                println("Trying retrieveMemberById")
+
+                val retrieveFuture = CompletableFuture<List<Member>>()
+
+                guild.retrieveMemberById(searchId, false)
+                    .queue(
+                        { retrieveFuture.complete(listOf(it)) },
+                        {
+                            it.printStackTrace()
+                            retrieveFuture.complete(listOf())
+                        }
+                    )
+
+                retrieveFuture.get()
             }
         }
 
         val future = CompletableFuture<List<Member>>()
-        guild.retrieveMembersByPrefix(input, 10).onSuccess { future.complete(it) }
+
+        guild.retrieveMembersByPrefix(input, 10)
+            .onSuccess { future.complete(it) }
+            // Empty list on error
+            .onError {
+                it.printStackTrace()
+                future.complete(listOf())
+            }
 
         return future.get()
     }

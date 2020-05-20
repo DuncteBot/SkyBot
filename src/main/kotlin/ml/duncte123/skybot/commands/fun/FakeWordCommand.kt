@@ -41,6 +41,7 @@ class FakeWordCommand : Command() {
                 .setAuthor(word.get("pos").asText())
                 .addField(word.get("definition").asText(), word.get("example").asText(), false)
                 .addField("a word that does not exist; it was invented, defined and used by a machine learning algorithm.", "", false)
+                .setTimestamp(null)
 
             val syllables = word.get("syllables")
 

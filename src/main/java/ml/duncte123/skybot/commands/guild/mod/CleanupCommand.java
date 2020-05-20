@@ -218,7 +218,7 @@ public class CleanupCommand extends ModBaseCommand {
      *
      * @return the future with a different timeout
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private CompletableFuture<Void> hackTimeout(CompletableFuture<Void> future) {
         if (!(future instanceof RestFuture)) {
             // Ignore stuff that is not a rest future
@@ -232,7 +232,6 @@ public class CleanupCommand extends ModBaseCommand {
 
             requestField.setAccessible(true);
 
-            //noinspection unchecked
             final Request<Void> request = (Request<Void>) requestField.get(future);
             final Class<? extends Request> requestClass = request.getClass();
 

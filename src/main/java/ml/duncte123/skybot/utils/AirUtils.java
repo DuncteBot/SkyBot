@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.PendingRequest;
-import com.github.natanbc.reliqua.util.PendingRequestBuilder;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
@@ -39,6 +38,7 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.JDA;
@@ -371,8 +371,7 @@ public class AirUtils {
             e.printStackTrace();
 
             // Return a fake pending request to make sure that things don't break
-            return new PendingRequestBuilder(WebUtils.ins, WebUtils.defaultRequest().build())
-                .build((__) -> "JSON PARSING FAILED", null);
+            return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
         }
     }
 }
