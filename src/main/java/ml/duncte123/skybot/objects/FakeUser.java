@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
@@ -138,6 +139,17 @@ public class FakeUser implements User {
     @Override
     public String getAsTag() {
         return getName() + '#' + getDiscriminator();
+    }
+
+    @Nonnull
+    @Override
+    public EnumSet<UserFlag> getFlags() {
+        return EnumSet.noneOf(UserFlag.class);
+    }
+
+    @Override
+    public int getFlagsRaw() {
+        return 0;
     }
 
     @Override
