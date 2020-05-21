@@ -215,7 +215,7 @@ public class AirUtils {
         User target = ctx.getAuthor();
 
         if (!ctx.getArgs().isEmpty()) {
-            final List<User> foundUsers = FinderUtil.findUsers(ctx.getArgsRaw(), ctx.getJDA());
+            final List<User> foundUsers = FinderUtils.searchUsers(ctx.getArgsRaw(), ctx);
 
             if (!foundUsers.isEmpty()) {
                 target = foundUsers.get(0);
@@ -225,8 +225,8 @@ public class AirUtils {
         return target;
     }
 
-    public static Member getMentionedMember(String argument, Guild guild) {
-        final List<Member> foundMembers = FinderUtil.findMembers(argument, guild);
+    public static Member getMentionedMember(String argument, CommandContext ctx) {
+        final List<Member> foundMembers = FinderUtils.searchMembers(argument, ctx);
 
         if (foundMembers.isEmpty()) {
             return new FakeMember(argument);

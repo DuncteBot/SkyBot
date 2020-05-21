@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.commands.ICommandContext;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
@@ -31,6 +30,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
+import ml.duncte123.skybot.utils.FinderUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -172,7 +172,7 @@ public class CommandContext implements ICommandContext {
     }
 
     public List<Member> getMentionedArg(int index) {
-        return FinderUtil.findMembers(this.getArgs().get(index), this.getGuild());
+        return FinderUtils.searchMembers(this.getArgs().get(index), this);
     }
 
     public List<Member> getMentionedMembers() {
@@ -182,8 +182,9 @@ public class CommandContext implements ICommandContext {
             if (!this.getMessage().getMentionedMembers().isEmpty()) {
                 this.mentionedInMessage.addAll(this.getMessage().getMentionedMembers());
             } else {
+                // TODO: limit this input to prevent api spam
                 this.getArgs().forEach(
-                    (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, this.getGuild()))
+                    (arg) -> this.mentionedInMessage.addAll(FinderUtils.searchMembers(arg, this))
                 );
             }
         }

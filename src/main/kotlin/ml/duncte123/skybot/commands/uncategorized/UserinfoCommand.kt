@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.weebJava.types.StatusType
@@ -30,6 +29,7 @@ import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.FinderUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission
@@ -87,11 +87,11 @@ class UserinfoCommand : Command() {
             u = event.author
             m = event.member
         } else {
-            val members = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+            val members = FinderUtils.searchMembers(ctx.argsRaw, ctx)
             var users = members.stream().map { it.user }.collect(Collectors.toList())
 
             if (users.isEmpty()) {
-                users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
+                users = FinderUtils.searchUsers(ctx.argsRaw, ctx)
 
                 if (users.isNotEmpty()) {
                     u = users[0]
