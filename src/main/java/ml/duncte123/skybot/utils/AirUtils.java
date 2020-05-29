@@ -308,14 +308,7 @@ public class AirUtils {
             catch (NullPointerException ignored) {
                 // this should never happen, shard 0 is always there
             }
-            catch (Exception e) {
-                if (!(e instanceof ErrorResponseException)) {
-                    Sentry.capture(e);
-
-                    continue;
-                }
-
-                final ErrorResponseException errorResponseEx = (ErrorResponseException) e;
+            catch (ErrorResponseException errorResponseEx) {
                 final ErrorResponse errorResponse = errorResponseEx.getErrorResponse();
 
                 if (
@@ -326,6 +319,9 @@ public class AirUtils {
                 ) {
                     toPurge.add(reminder.getId());
                 }
+            }
+            catch (Exception e) {
+                Sentry.capture(e);
             }
         }
 
