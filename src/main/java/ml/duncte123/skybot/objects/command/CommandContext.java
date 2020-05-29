@@ -37,7 +37,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.notfab.caching.client.CacheClient;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,6 @@ public class CommandContext implements ICommandContext {
     private final Variables variables;
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
-    private List<Member> mentionedInMessage;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -173,23 +171,6 @@ public class CommandContext implements ICommandContext {
 
     public List<Member> getMentionedArg(int index) {
         return FinderUtils.searchMembers(this.getArgs().get(index), this);
-    }
-
-    public List<Member> getMentionedMembers() {
-        if (this.mentionedInMessage == null) {
-            this.mentionedInMessage = new ArrayList<>();
-
-            if (!this.getMessage().getMentionedMembers().isEmpty()) {
-                this.mentionedInMessage.addAll(this.getMessage().getMentionedMembers());
-            } else {
-                // TODO: limit this input to prevent api spam
-                this.getArgs().forEach(
-                    (arg) -> this.mentionedInMessage.addAll(FinderUtils.searchMembers(arg, this))
-                );
-            }
-        }
-
-        return this.mentionedInMessage;
     }
 
     // --------------- Reaction processing methods --------------- //

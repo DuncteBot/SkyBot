@@ -45,7 +45,7 @@ public class UnwarnCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final List<Member> mentioned = ctx.getMentionedMembers();
+        final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {
             sendMsg(ctx, "No users found for query");

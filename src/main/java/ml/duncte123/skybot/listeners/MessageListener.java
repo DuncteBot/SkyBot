@@ -102,6 +102,17 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
+        // This happens?
+        if (event.getMember() == null && !event.isWebhookMessage()) {
+            Sentry.capture(new Exception(String.format(
+                "Got null member for webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s)",
+                event.getMember(),
+                event.getMessage(),
+                event.getAuthor(),
+                event.getAuthor().isBot()
+            )));
+        }
+
         if (event.getAuthor().isFake() ||
             event.getAuthor().isBot() ||
             event.isWebhookMessage() ||
@@ -442,31 +453,31 @@ public abstract class MessageListener extends BaseListener {
 
     public void killAllShards(@Nonnull ShardManager manager, boolean kill) {
         final Thread shutdownThread = new Thread(() -> {
-            manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
-
             try {
+                manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
+
                 // Sleep for 3 seconds
                 TimeUnit.SECONDS.sleep(3);
-            }
-            catch (InterruptedException ignored) {
-            }
 
-            // Kill all threads
-            this.systemPool.shutdown();
+                // Kill all threads
+                this.systemPool.shutdown();
 
-            final WebRouter router = SkyBot.getInstance().getWebRouter();
+                final WebRouter router = SkyBot.getInstance().getWebRouter();
 
-            if (router != null) {
-                router.shutdown();
-            }
+                if (router != null) {
+                    router.shutdown();
+                }
 
-            AirUtils.stop(variables.getAudioUtils(), manager);
-            BotCommons.shutdown(manager);
+                AirUtils.stop(variables.getAudioUtils(), manager);
+                BotCommons.shutdown(manager);
 
-            // There are *some* applications (weeb.java *cough*) that are stupid
-            // and do not allow us to shut down okhttp or create deamon threads
-            if (kill) {
-                System.exit(0);
+                // There are *some* applications (weeb.java *cough*) that are stupid
+                // and do not allow us to shut down okhttp or create deamon threads
+                if (kill) {
+                    System.exit(0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, "shutdown-thread");
         shutdownThread.start();
