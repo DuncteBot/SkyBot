@@ -105,16 +105,17 @@ public abstract class MessageListener extends BaseListener {
         // This happens?
         if (event.getMember() == null && !event.isWebhookMessage()) {
             Sentry.capture(new Exception(String.format(
-                "Got null member for webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s)",
+                "Got null member for webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s fake &s)",
                 event.getMember(),
                 event.getMessage(),
                 event.getAuthor(),
-                event.getAuthor().isBot()
+                event.getAuthor().isBot(),
+                event.getAuthor().isFake()
             )));
         }
 
-        if (event.getAuthor().isFake() ||
-            event.getAuthor().isBot() ||
+        if (/*event.getAuthor().isFake() ||
+            */event.getAuthor().isBot() ||
             event.isWebhookMessage() ||
             event.getMember() == null // Just in case Discord fucks up *again*
         ) {
