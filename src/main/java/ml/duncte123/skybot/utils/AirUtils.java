@@ -47,6 +47,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -60,8 +62,6 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 import static me.duncte123.botcommons.web.WebParserUtils.toJSONObject;
-import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
-import static net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -291,18 +291,40 @@ public class AirUtils {
                     toPurge.add(reminder.getId());
                     sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
                 }
-            } else {
-                final User user = shardManager.getUserById(reminder.getUser_id());
 
-                // If we lost the user from the cache try again later
-                if (user != null) {
-                    toPurge.add(reminder.getId());
-                    user.openPrivateChannel()
+                // go to the next one and don't run the user code
+                continue;
+            }
+
+            try {
+                Objects.requireNonNull(shardManager.getShardById(0))
+                    .openPrivateChannelById(reminder.getUser_id())
                     .flatMap(
-                        (channel) -> channel.sendMessage(message)
+                        (c) -> c.sendMessage(message)
                     )
-                    // Ignore when we cannot DM the user
-                    .queue(null, ignore(CANNOT_SEND_TO_USER));
+                    .complete();
+                toPurge.add(reminder.getId());
+            }
+            catch (NullPointerException ignored) {
+                // this should never happen, shard 0 is always there
+            }
+            catch (Exception e) {
+                if (!(e instanceof ErrorResponseException)) {
+                    Sentry.capture(e);
+
+                    continue;
+                }
+
+                final ErrorResponseException errorResponseEx = (ErrorResponseException) e;
+                final ErrorResponse errorResponse = errorResponseEx.getErrorResponse();
+
+                if (
+                    // The account probably got deleted or something
+                    errorResponse == ErrorResponse.UNKNOWN_USER ||
+                        // we cannot dm this user (has dms blocked?)
+                        errorResponse == ErrorResponse.CANNOT_SEND_TO_USER
+                ) {
+                    toPurge.add(reminder.getId());
                 }
             }
         }
@@ -367,7 +389,8 @@ public class AirUtils {
                     (r) -> toJSONObject(r, mapper).get("shortLink").asText(),
                     WebParserUtils::handleError
                 );
-        } catch (JsonProcessingException e) {
+        }
+        catch (JsonProcessingException e) {
             e.printStackTrace();
 
             // Return a fake pending request to make sure that things don't break

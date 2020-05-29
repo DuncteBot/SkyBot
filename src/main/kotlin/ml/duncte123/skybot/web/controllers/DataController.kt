@@ -79,6 +79,7 @@ object DataController {
             val expiredReminders = updateData["reminders"]
             val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
+            // Uses complete, must be handled last
             if (reminders.isNotEmpty()) {
                 AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
             }
