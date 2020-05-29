@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
@@ -25,8 +28,9 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
-import me.duncte123.botcommons.web.GoogleLinkLength;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -34,6 +38,7 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.JDA;
@@ -44,9 +49,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.notfab.caching.shared.SearchParams;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -54,6 +59,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.web.WebParserUtils.toJSONObject;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER;
 
@@ -191,10 +197,6 @@ public class AirUtils {
         return foundChannels.get(0);
     }
 
-    public static PendingRequest<String> shortenUrl(String url, String googleKey) {
-        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey, GoogleLinkLength.SHORT);
-    }
-
     public static String colorToHex(int hex) {
         final int r = (hex & 0xFF0000) >> 16;
         final int g = (hex & 0xFF00) >> 8;
@@ -213,7 +215,7 @@ public class AirUtils {
         User target = ctx.getAuthor();
 
         if (!ctx.getArgs().isEmpty()) {
-            final List<User> foundUsers = FinderUtil.findUsers(ctx.getArgsRaw(), ctx.getJDA());
+            final List<User> foundUsers = FinderUtils.searchUsers(ctx.getArgsRaw(), ctx);
 
             if (!foundUsers.isEmpty()) {
                 target = foundUsers.get(0);
@@ -223,8 +225,8 @@ public class AirUtils {
         return target;
     }
 
-    public static Member getMentionedMember(String argument, Guild guild) {
-        final List<Member> foundMembers = FinderUtil.findMembers(argument, guild);
+    public static Member getMentionedMember(String argument, CommandContext ctx) {
+        final List<Member> foundMembers = FinderUtils.searchMembers(argument, ctx);
 
         if (foundMembers.isEmpty()) {
             return new FakeMember(argument);
@@ -333,16 +335,43 @@ public class AirUtils {
         ((JDAImpl) jda).setContext();
     }
 
-    public static void setTitleFromKotlin(SearchParams params, String[] title) {
-        params.setTitle(title);
-    }
-
     public static void loadGuildMembers(Guild guild) {
         try {
             guild.retrieveMembers().get();
         }
         catch (InterruptedException | ExecutionException e) {
             Sentry.capture(e);
+        }
+    }
+
+    @Nonnull
+    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
+        final ObjectNode json = mapper.createObjectNode();
+
+        json.set("dynamicLinkInfo",
+            mapper.createObjectNode()
+                .put("domainUriPrefix", "dunctebot.link")
+                .put("link", url)
+        );
+        json.set("suffix",
+            mapper.createObjectNode()
+                .put("option", "SHORT") // SHORT or UNGUESSABLE
+        );
+
+        try {
+            return WebUtils.ins.postRequest(
+                "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + googleKey,
+                JSONRequestBody.fromJackson(json)
+            )
+                .build(
+                    (r) -> toJSONObject(r, mapper).get("shortLink").asText(),
+                    WebParserUtils::handleError
+                );
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+
+            // Return a fake pending request to make sure that things don't break
+            return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
         }
     }
 }

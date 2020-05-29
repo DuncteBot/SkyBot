@@ -32,7 +32,7 @@ public class ScrollCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), ctx.getArgs(), true)) {
+        if (!passes(ctx.getEvent())) {
             return;
         }
 

@@ -85,10 +85,10 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.83")
+    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.88")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_152") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_155") {
         exclude(module = "opus-java")
     }
 
@@ -96,13 +96,13 @@ dependencies {
         exclude(module = "opus-java")
     }*/
 
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.33")
     // build override for age-restricted videos
-    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "be6e364")
+    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "dad33f1")
     implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "107d4bb")
 //    implementation(project(":Lavalink-Client"))
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
 
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.11")

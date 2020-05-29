@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.FinderUtils
 import net.dv8tion.jda.api.entities.User
 
 class AvatarCommand : Command() {
-
     init {
         this.name = "avatar"
         this.help = "Shows your avatar or the one for the specified user"
@@ -37,10 +36,10 @@ class AvatarCommand : Command() {
 
         if (ctx.args.isNotEmpty()) {
             // We're searching for members in the guild to get more accurate results
-            val foundMembers = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+            val foundMembers = FinderUtils.searchMembers(ctx.argsRaw, ctx)
 
             user = if (foundMembers.isEmpty()) {
-                val foundUsers = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
+                val foundUsers = FinderUtils.searchUsers(ctx.argsRaw, ctx)
 
                 if (foundUsers.isNotEmpty()) foundUsers[0] else null
             } else foundMembers[0].user
@@ -54,5 +53,4 @@ class AvatarCommand : Command() {
 
         sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
     }
-
 }

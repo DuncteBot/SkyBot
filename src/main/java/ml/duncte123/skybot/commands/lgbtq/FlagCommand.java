@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
@@ -47,15 +47,14 @@ public class FlagCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
 
-        if (!passes(event, ctx.getArgs(), false)) {
+        if (!passes(event, false)) {
             return;
         }
 
-        final String flag = ctx.getArgs().get(0).toLowerCase();
+        final List<String> args = ctx.getArgs();
+        final String flag = args.get(0).toLowerCase();
 
         if (flag.equalsIgnoreCase("list")) {
             sendMsg(event, "A list of flags can be found at https://dunctebot.com/flags");
@@ -71,9 +70,9 @@ public class FlagCommand extends ImageCommandBase {
 
         User user = ctx.getAuthor();
 
-        if (ctx.getArgs().size() > 1) {
+        if (args.size() > 1) {
             final String search = String.join(" ", args.subList(1, args.size()));
-            final List<User> foundUsers = FinderUtil.findUsers(search, ctx.getJDA());
+            final List<User> foundUsers = FinderUtils.searchUsers(search, ctx);
 
             if (!foundUsers.isEmpty()) {
                 user = foundUsers.get(0);

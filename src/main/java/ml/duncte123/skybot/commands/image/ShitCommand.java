@@ -48,7 +48,7 @@ public class ShitCommand extends NoPatronImageCommand {
     public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passes(event, ctx.getArgs(), false)) {
+        if (!passes(event, false)) {
             return;
         }
 

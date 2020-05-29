@@ -155,6 +155,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T getField(String name) {
         final Class<?> klass = this.getClass().getSuperclass();
 
@@ -162,7 +163,6 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
             final Field field = klass.getDeclaredField(name);
             field.setAccessible(true);
 
-            //noinspection unchecked
             return (T) field.get(this);
         }
         catch (NoSuchFieldException | IllegalAccessException e) {

@@ -67,8 +67,8 @@ public class LoveCommand extends Command {
             name2 = args.get(1);
         }
 
-        final Member target1 = AirUtils.getMentionedMember(name1, ctx.getGuild());
-        final Member target2 = AirUtils.getMentionedMember(name2, ctx.getGuild());
+        final Member target1 = AirUtils.getMentionedMember(name1, ctx);
+        final Member target2 = AirUtils.getMentionedMember(name2, ctx);
         final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
 
         if (response == null) {

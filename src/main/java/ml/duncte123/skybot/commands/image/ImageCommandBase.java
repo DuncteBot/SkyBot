@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.extensions.UserKt;
@@ -26,6 +25,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -48,6 +48,10 @@ import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public abstract class ImageCommandBase extends Command {
 
+    public ImageCommandBase() {
+        this.requiresArgs = true;
+    }
+
     private boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
@@ -57,24 +61,12 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
-        if (args.isEmpty()) {
-            sendMsg(event, "Too little arguments");
-            return false;
-        }
-        return true;
+    boolean passes(GuildMessageReceivedEvent event) {
+        return passes(event, true);
     }
 
-    boolean passes(GuildMessageReceivedEvent event, List<String> args) {
-        return passes(event, args, true);
-    }
-
-    protected boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
-        return passesNoArgs(event, patron) && hasArgs(event, args);
-    }
-
-    boolean passesNoArgs(GuildMessageReceivedEvent event) {
-        return passesNoArgs(event, true);
+    protected boolean passes(GuildMessageReceivedEvent event, boolean patron) {
+        return passesNoArgs(event, patron);
     }
 
     protected boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
@@ -123,7 +115,7 @@ public abstract class ImageCommandBase extends Command {
         }
 
         if (url  == null) {
-            final List<Member> textMentions = FinderUtil.findMembers(ctx.getArgsJoined(), ctx.getGuild());
+            final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
             if (!textMentions.isEmpty()) {
                 url = getAvatarUrl(textMentions.get(0).getUser());

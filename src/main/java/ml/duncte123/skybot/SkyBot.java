@@ -150,6 +150,7 @@ public final class SkyBot {
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
             .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
+//            .setMemberCachePolicy(MemberCachePolicy.NONE)
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             // Enable lazy loading for guilds other than our own

@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 public class LinusCommand extends ImageCommandBase {
 
     public LinusCommand() {
+        this.requiresArgs = false;
         this.name = "linus";
         this.help = "Shows a picture of Linus pointing to something on a monitor.";
         this.usage = "[@user/url]";
@@ -38,7 +39,7 @@ public class LinusCommand extends ImageCommandBase {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passesNoArgs(event)) {
+        if (!passes(event)) {
             return;
         }
 

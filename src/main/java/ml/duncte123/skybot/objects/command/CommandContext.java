@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.commands.ICommandContext;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
@@ -31,13 +30,13 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
+import ml.duncte123.skybot.utils.FinderUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.notfab.caching.client.CacheClient;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,6 @@ public class CommandContext implements ICommandContext {
     private final Variables variables;
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
-    private List<Member> mentionedInMessage;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -172,23 +170,7 @@ public class CommandContext implements ICommandContext {
     }
 
     public List<Member> getMentionedArg(int index) {
-        return FinderUtil.findMembers(this.getArgs().get(index), this.getGuild());
-    }
-
-    public List<Member> getMentionedMembers() {
-        if (this.mentionedInMessage == null) {
-            this.mentionedInMessage = new ArrayList<>();
-
-            if (!this.getMessage().getMentionedMembers().isEmpty()) {
-                this.mentionedInMessage.addAll(this.getMessage().getMentionedMembers());
-            } else {
-                this.getArgs().forEach(
-                    (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, this.getGuild()))
-                );
-            }
-        }
-
-        return this.mentionedInMessage;
+        return FinderUtils.searchMembers(this.getArgs().get(index), this);
     }
 
     // --------------- Reaction processing methods --------------- //

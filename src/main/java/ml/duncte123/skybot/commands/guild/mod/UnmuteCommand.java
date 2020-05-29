@@ -58,13 +58,12 @@ public class UnmuteCommand extends ModBaseCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final List<Member> mentioned = ctx.getMentionedMembers();
+        final List<Member> mentioned = ctx.getMentionedArg(0);
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
         final GuildSettings settings = ctx.getGuildSettings();
 
-        if (mentioned.isEmpty() || args.isEmpty()) {
+        if (mentioned.isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
         }

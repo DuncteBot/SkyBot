@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 class ShortenCommand : Command() {
 
     init {
+        this.requiresArgs = true
         this.name = "shorten"
         this.aliases = arrayOf("short", "url", "bitly", "googl")
         this.help = "Shortens a link"
@@ -39,17 +40,12 @@ class ShortenCommand : Command() {
         val event = ctx.event
         val args = ctx.args
 
-        if (args.isEmpty() || args[0].isEmpty()) {
-            this.sendUsageInstructions(ctx)
-            return
-        }
-
         if (!isURL(args[0])) {
             sendMsg(event, "That does not look like a valid url")
             return
         }
 
-        shortenUrl(args[0], ctx.config.apis.googl).async({
+        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async({
             sendMsg(event, "Here is your shortened url: <$it>")
         }, {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")
