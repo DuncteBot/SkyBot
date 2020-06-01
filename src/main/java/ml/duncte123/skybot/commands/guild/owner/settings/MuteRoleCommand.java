@@ -75,6 +75,6 @@ public class MuteRoleCommand extends SettingsBase {
 
         guild.setSettings(settings.setMuteRoleId(foundRole.getIdLong()));
 
-        sendMsg(ctx, "SpamRole has been set to " + foundRole.getAsMention());
+        sendMsg(ctx, "SpamRole has been set to " + foundRole.getName());
     }
 }

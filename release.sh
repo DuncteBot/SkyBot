@@ -2,6 +2,6 @@
 git push
 git checkout master
 git pull
-git rebase development
+git merge development
 git push
 git checkout development

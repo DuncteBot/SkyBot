@@ -69,7 +69,7 @@ public class AutoRoleCommand extends SettingsBase {
 
         guild.setSettings(settings.setAutoroleRole(foundRole.getIdLong()));
 
-        sendMsg(ctx, "AutoRole has been set to " + foundRole.getAsMention());
+        sendMsg(ctx, "AutoRole has been set to " + foundRole.getName());
     }
 
     @Nullable
