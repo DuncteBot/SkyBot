@@ -159,10 +159,10 @@ abstract class DatabaseAdapter {
 
     abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit)
 
-    // why the user id as well?
+    // user id for security, a user can only remove their own reminders
     abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
 
-    abstract fun showReminder(reminderId: Int, callback: (Reminder) -> Unit)
+    abstract fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit)
 
     abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
 

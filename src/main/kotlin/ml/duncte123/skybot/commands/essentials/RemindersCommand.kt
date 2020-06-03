@@ -85,14 +85,21 @@ class RemindersCommand : Command() {
     }
 
     private fun ensureReminderExists(reminderId: Int, ctx: CommandContext, callback: (Reminder) -> Unit) {
-        //
+        ctx.databaseAdapter.showReminder(reminderId, ctx.author.idLong) {
+            if (it == null) {
+                sendMsg(ctx, "Reminder with id `$reminderId` was not found")
+                return@showReminder
+            }
+
+            callback(it)
+        }
     }
 
     private fun showReminder(reminder: Reminder, ctx: CommandContext) {
-        //
+        sendMsg(ctx, "Reminder: $reminder")
     }
 
     private fun deleteReminder(reminder: Reminder, ctx: CommandContext) {
-        //
+        sendMsg(ctx, "Confirm delete: $reminder")
     }
 }
