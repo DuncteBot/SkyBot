@@ -804,6 +804,34 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         })
     }
 
+    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
+        runOnThread {
+            val reminders = arrayListOf<Reminder>()
+
+            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use {
+                it.setLong(1, userId)
+
+                it.executeQuery().use { result ->
+                    while (result.next()) {
+                        reminders.add(Reminder(
+                            result.getInt("id"),
+                            result.getLong("user_id"),
+                            result.getString("reminder"),
+                            result.getDate("remind_create_date"),
+                            result.getLong("channel_id")
+                        ))
+                    }
+
+                    callback(reminders)
+                }
+            }
+        }
+    }
+
     override fun purgeReminders(ids: List<Int>) {
         runOnThread {
             val inClause = '(' + ids.joinToString() + ')'

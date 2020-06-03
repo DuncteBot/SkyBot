@@ -401,6 +401,14 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
     override fun purgeReminders(ids: List<Int>) {
         runOnThread {
             apis.purgeReminders(ids)

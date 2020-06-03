@@ -239,6 +239,7 @@ public class CommandManager {
         this.addCommand(new QuoteCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
+        this.addCommand(new RemindersCommand());
         this.addCommand(new RemindmeCommand());
         this.addCommand(new RepeatCommand());
         this.addCommand(new RestartCommand());
