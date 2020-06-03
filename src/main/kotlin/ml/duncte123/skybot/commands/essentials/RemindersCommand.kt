@@ -39,7 +39,15 @@ class RemindersCommand : Command() {
         //
     }
 
+    private fun ensureReminderExists(reminderId: Int, ctx: CommandContext, callback: (Reminder) -> Unit) {
+        //
+    }
+
     private fun showReminder(reminder: Reminder, ctx: CommandContext) {
+        //
+    }
+
+    private fun deleteReminder(reminder: Reminder, ctx: CommandContext) {
         //
     }
 }
