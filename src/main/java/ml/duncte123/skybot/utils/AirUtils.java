@@ -56,6 +56,9 @@ import org.ocpsoft.prettytime.PrettyTime;
 import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -235,11 +238,38 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    private static SimpleDateFormat getFormatter() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+    private static SkyFormatter getFormatter() {
+//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        return format;
+        return new SkyFormatter();
+    }
+
+    // Temp because we are switching date formats
+    private static class SkyFormatter {
+        private SimpleDateFormat getSimpleFormat() {
+            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            return format;
+        }
+
+        public String format(Date date) {
+//            return DateTimeFormatter.ISO_INSTANT.format(date.toInstant());
+            return getSimpleFormat().format(date);
+        }
+
+        public Date parse(String date) throws ParseException {
+            try {
+                return Date.from(
+                    Instant.from(DateTimeFormatter.ISO_INSTANT.parse(date))
+                );
+            } catch (DateTimeParseException ignored) {
+                // Probably wrong format
+            }
+
+            return getSimpleFormat().parse(date);
+        }
     }
 
     public static String getDatabaseDateFormat(Duration duration) {
