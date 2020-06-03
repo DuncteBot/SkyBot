@@ -18,9 +18,11 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils
 
 class RemindersCommand : Command() {
 
@@ -32,11 +34,54 @@ class RemindersCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        TODO("Not yet implemented")
+        val args = ctx.args
+
+        if (args.isEmpty()) {
+            listReminders(ctx)
+            return
+        }
+
+        val action = args[0].toLowerCase()
+
+        if (action == "list") {
+            listReminders(ctx)
+            return
+        }
+
+        if (args.size < 2) {
+            sendUsageInstructions(ctx)
+            return
+        }
+
+        val actions = arrayOf("cancel", "delete", "show", "info")
+
+        if (!actions.contains(action)) {
+            sendMsg(ctx, "`$action` is an unknown action, available actions are ${actions.joinToString()}")
+            return
+        }
+
+        val reminderIdStr = args[1]
+
+        if (!AirUtils.isInt(reminderIdStr)) {
+            sendMsg(ctx, "`$reminderIdStr` is not a valid id (the id is the number you see in `${ctx.prefix}reminders list`)")
+            return
+        }
+
+        val reminderId = reminderIdStr.toInt()
+
+        ensureReminderExists(reminderId, ctx) {
+            when (action) {
+                "info", "show" -> showReminder(it, ctx)
+
+                "cancel", "delete" -> deleteReminder(it, ctx)
+            }
+        }
     }
 
     private fun listReminders(ctx: CommandContext) {
-        //
+        ctx.databaseAdapter.listReminders(ctx.author.idLong) {
+            sendMsg(ctx, it.joinToString( separator = "\n"))
+        }
     }
 
     private fun ensureReminderExists(reminderId: Int, ctx: CommandContext, callback: (Reminder) -> Unit) {

@@ -120,6 +120,7 @@ public class RemindmeCommand extends Command {
     }
 
     private void createReminder(CommandContext ctx, Date expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
+        // TODO: get reminder id from response
         if (flags.containsKey("c")) {
             ctx.getDatabaseAdapter().createReminder(
                 ctx.getAuthor().getIdLong(),
