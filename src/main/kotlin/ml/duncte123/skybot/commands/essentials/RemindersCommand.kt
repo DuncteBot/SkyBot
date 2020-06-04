@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.objects.command.Command
@@ -37,14 +39,14 @@ class RemindersCommand : Command() {
         val args = ctx.args
 
         if (args.isEmpty()) {
-            listReminders(ctx)
+            showRemindersList(ctx)
             return
         }
 
         val action = args[0].toLowerCase()
 
         if (action == "list") {
-            listReminders(ctx)
+            showRemindersList(ctx)
             return
         }
 
@@ -78,9 +80,14 @@ class RemindersCommand : Command() {
         }
     }
 
-    private fun listReminders(ctx: CommandContext) {
+    private fun showRemindersList(ctx: CommandContext) {
         ctx.databaseAdapter.listReminders(ctx.author.idLong) {
-            sendMsg(ctx, it.joinToString( separator = "\n"))
+            if (it.isEmpty()) {
+                sendMsg(ctx, "You don't have any reminders set currently")
+                return@listReminders
+            }
+
+            sendEmbed(ctx, EmbedUtils.embedMessage(it.joinToString(separator = "\n")))
         }
     }
 
@@ -96,10 +103,30 @@ class RemindersCommand : Command() {
     }
 
     private fun showReminder(reminder: Reminder, ctx: CommandContext) {
-        sendMsg(ctx, "Reminder: $reminder")
+        val remindChannel = if (reminder.channel_id > 0) "<#${reminder.channel_id}>" else "Direct Messages"
+        val reminderInfo = """**Id:** ${reminder.id}
+            |**Message:** ${reminder.reminder}
+            |**Remind in:** $remindChannel
+            |**Created:** ${reminder.create_date}
+            |**Remind on:** ${reminder.reminder_date}
+        """.trimMargin()
+
+        sendEmbed(ctx, EmbedUtils.embedMessage(reminderInfo))
     }
 
     private fun deleteReminder(reminder: Reminder, ctx: CommandContext) {
-        sendMsg(ctx, "Confirm delete: $reminder")
+        val args = ctx.args
+
+        if (args.size >= 3 && args[2].toLowerCase() == "--just-flipping-do-it") {
+            ctx.databaseAdapter.removeReminder(reminder) {
+                sendMsg(ctx, "Successfully deleted reminder with id `${reminder.id}`")
+            }
+            return
+        }
+
+        sendMsg(ctx, "To prevent accidental deleting of reminders, you will need to confirm that you want to delete this reminder.\n" +
+            "To confirm that you want to delete the reminder please run the following command" +
+            "`${ctx.prefix}reminders delete ${reminder.id} --just-flipping-do-it`"
+        )
     }
 }

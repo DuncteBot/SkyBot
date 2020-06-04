@@ -515,7 +515,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return Pair(true, "")
     }
 
-    fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long): Boolean {
+    fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long): Pair<Boolean, Int> {
         val obj = mapper.createObjectNode()
             .put("user_id", userId.toString())
             .put("reminder", reminder)
@@ -534,10 +534,12 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             logger.error("Failed to create a reminder\n" +
                 "Response: {}", error.toString())
 
-            return false
+            return false to -1
         }
 
-        return true
+        println(response)
+
+        return true to response["data"]["id"].asInt()
     }
 
     fun getExpiredReminders(): JsonNode {

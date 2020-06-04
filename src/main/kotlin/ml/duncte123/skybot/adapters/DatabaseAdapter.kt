@@ -22,6 +22,7 @@ import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
@@ -29,9 +30,15 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.util.*
+import java.util.concurrent.Executors
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class DatabaseAdapter {
+abstract class DatabaseAdapter(threads: Int = 2) {
+    private val coroutineContext = Executors.newFixedThreadPool(threads) {
+        val t = Thread(it, "DatabaseThread")
+        t.isDaemon = true
+        t
+    }.asCoroutineDispatcher()
 
     //////////////////
     // Custom commands
@@ -153,11 +160,15 @@ abstract class DatabaseAdapter {
 
     // Reminders
 
-    fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean) -> Unit) {
+    fun createReminder(userId: Long, reminder: String, expireDate: Date, callback: (Boolean, Int) -> Unit) {
         createReminder(userId, reminder, expireDate, 0, callback)
     }
 
-    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit)
+    abstract fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean, Int) -> Unit)
+
+    fun removeReminder(reminder: Reminder, callback: (Boolean) -> Unit) {
+        removeReminder(reminder.id, reminder.user_id, callback)
+    }
 
     // user id for security, a user can only remove their own reminders
     abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
@@ -181,7 +192,7 @@ abstract class DatabaseAdapter {
 
     // Cannot be an option callback due to it targeting the onFail param
     protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
-        GlobalScope.launch {
+        GlobalScope.launch(coroutineContext) {
             try {
                 r.invoke()
             } catch (thr: Throwable) {
@@ -190,14 +201,5 @@ abstract class DatabaseAdapter {
                 thr.printStackTrace()
             }
         }
-    }
-
-    protected fun String.parseDate(): Date {
-        val split = this.split("-").map(String::toInt)
-        val cal = Calendar.getInstance()
-
-            cal.set(split[0], split[1], split[2])
-
-        return cal.time
     }
 }
