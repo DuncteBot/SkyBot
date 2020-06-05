@@ -38,5 +38,5 @@ fun PrettyTime.parseTimes(time: OffsetDateTime): Pair<String, String> {
     val createTimeFormat = time.format(DateTimeFormatter.RFC_1123_DATE_TIME)
     val createTimeHuman: String = this.format(createTimeDate)
 
-    return Pair(createTimeFormat, createTimeHuman)
+    return createTimeFormat to createTimeHuman
 }

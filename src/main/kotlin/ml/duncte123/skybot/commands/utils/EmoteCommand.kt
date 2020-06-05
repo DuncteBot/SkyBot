@@ -52,7 +52,7 @@ class EmoteCommand : Command() {
 
         // ¯\_(ツ)_/¯
         if (arg.codePoints().count() > 10) {
-            sendMsg(ctx, "Invalid emote or input is too long");
+            sendMsg(ctx, "Invalid emote or input is too long")
             return
         }
 

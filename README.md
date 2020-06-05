@@ -6,7 +6,7 @@
 [dblLink]: https://discordbots.org/bot/210363111729790977
 [discord]: https://discordapp.com/api/guilds/191245668617158656/embed.png
 [discordLink]: https://discord.gg/NKM9Xtk
-[inviteLink]: https://lnk.dunctebot.com/invite
+[inviteLink]: https://dunctebot.link/invite
 [patronLink]: https://patreon.com/DuncteBot
 [patronImage]: https://img.shields.io/badge/Donate-Patreon-orange.svg
 
@@ -22,7 +22,7 @@ If you want to support development of the bot [consider to be come a patron][pat
 
 
 # How to invite the bot to a server?
-Go to [`https://lnk.dunctebot.com/invite`][inviteLink] and follow the steps on the website
+Go to [`https://dunctebotlink/invite`][inviteLink] and follow the steps on the website
 
 
 # How to setup? / Self-hosting

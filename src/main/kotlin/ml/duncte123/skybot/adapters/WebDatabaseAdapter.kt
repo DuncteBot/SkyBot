@@ -32,7 +32,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.AirUtils
-import java.util.*
+import java.time.temporal.TemporalAccessor
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: ObjectMapper) : DatabaseAdapter() {
@@ -388,17 +388,39 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, channelId: Long, callback: (Boolean, Int) -> Unit) {
         runOnThread {
             val date = AirUtils.getDatabaseDateFormat(expireDate)
-            val res = apis.createReminder(userId, reminder, date, channelId)
+            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId)
 
-            callback(res)
+            callback(res, reminderId)
         }
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        runOnThread {
+            callback(
+                apis.deleteReminder(userId, reminderId)
+            )
+        }
+    }
+
+    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
+        runOnThread {
+            val reminderJson = apis.showReminder(userId, reminderId)
+            val reminder: Reminder? = jackson.readValue(reminderJson.traverse(), Reminder::class.java)
+
+            callback(reminder)
+        }
+    }
+
+    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
+        runOnThread {
+            val remindersJson = apis.listReminders(userId)
+            val reminders = jackson.readValue(remindersJson.traverse(), object : TypeReference<List<Reminder>>() {})
+
+            callback(reminders)
+        }
     }
 
     override fun purgeReminders(ids: List<Int>) {
@@ -410,7 +432,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val expiredReminders = apis.getExpiredReminders()
-            val reminders = jackson.readValue<List<Reminder>>(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
+            val reminders = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
             if (reminders.isNotEmpty()) {
                 callback(reminders)

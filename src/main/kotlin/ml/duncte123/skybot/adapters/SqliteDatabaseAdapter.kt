@@ -35,10 +35,12 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.time.Instant
+import java.time.temporal.TemporalAccessor
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class SqliteDatabaseAdapter : DatabaseAdapter() {
+class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     private val connManager = SQLiteDatabaseConnectionManager(File("database.db"))
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
@@ -759,7 +761,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, channelId: Long, callback: (Boolean, Int) -> Unit) {
         runOnThread {
             val sql = if (channelId > 0) {
                 // language=SQLite
@@ -782,10 +784,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
 
             try {
                 smt.execute()
-                callback.invoke(true)
+                callback.invoke(true, smt.generatedKeys.getInt(1))
             } catch (e: SQLException) {
                 e.printStackTrace()
-                callback.invoke(false)
+                callback.invoke(false, -1)
             }
         }
     }
@@ -802,6 +804,60 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         }, {
             callback.invoke(false)
         })
+    }
+
+    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
+        runOnThread {
+            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ? LIMIT 1").use {
+                it.setInt(1, reminderId)
+                it.setLong(2, userId)
+
+                it.executeQuery().use results@ { result ->
+                    if (!result.next()) {
+                        callback(null)
+                        return@results
+                    }
+
+                    callback(Reminder(
+                        result.getInt("id"),
+                        result.getLong("user_id"),
+                        result.getString("reminder"),
+                        result.getDate("remind_create_date").asInstant(),
+                        result.getDate("remind_date").asInstant(),
+                        result.getLong("channel_id")
+                    ))
+                }
+
+                it.closeOnCompletion()
+            }
+        }
+    }
+
+    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
+        runOnThread {
+            val reminders = arrayListOf<Reminder>()
+
+            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use {
+                it.setLong(1, userId)
+
+                it.executeQuery().use { result ->
+                    while (result.next()) {
+                        reminders.add(Reminder(
+                            result.getInt("id"),
+                            result.getLong("user_id"),
+                            result.getString("reminder"),
+                            result.getDate("remind_create_date").asInstant(),
+                            result.getDate("remind_date").asInstant(),
+                            result.getLong("channel_id")
+                        ))
+                    }
+
+                    it.closeOnCompletion()
+
+                    callback(reminders)
+                }
+            }
+        }
     }
 
     override fun purgeReminders(ids: List<Int>) {
@@ -832,7 +888,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
                     result.getInt("id"),
                     result.getLong("user_id"),
                     result.getString("reminder"),
-                    result.getDate("remind_create_date"),
+                    result.getDate("remind_create_date").asInstant(),
+                    result.getDate("remind_date").asInstant(),
                     result.getLong("channel_id")
                 ))
             }
@@ -881,7 +938,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter() {
         return list
     }
 
-    private fun Date.toSQL() = java.sql.Date(this.time)
+    private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
+
+    private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
 
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 

@@ -24,11 +24,14 @@ import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebRouter
 import net.dv8tion.jda.api.exceptions.HttpException
+import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object Callback {
+    private val logger = LoggerFactory.getLogger(Callback::class.java)
+
 
     fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
@@ -72,7 +75,9 @@ object Callback {
             response.redirect("/")
         } catch (stateEx: InvalidStateException) {
             "<h1>${stateEx.message}</h1><br /><a href=\"${WebRouter.HOMEPAGE}\">Click here to go back home</a>"
-        } catch (ignored: HttpException) {
+        } catch (e: HttpException) {
+            logger.error("Failed to log user in with discord", e)
+
             // If we fail to log in we will return the user back home
             return response.redirect(WebRouter.HOMEPAGE)
         }

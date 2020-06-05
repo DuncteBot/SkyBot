@@ -42,6 +42,7 @@ import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
+import okhttp3.OkHttpClient
 import spark.ModelAndView
 import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
@@ -55,6 +56,27 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
+        .setOkHttpClient(
+            OkHttpClient.Builder()
+                // hack until JDA-Utils fixes their shit
+                .addInterceptor {
+                    var request = it.request()
+                    val httpUrl = request.url()
+
+                    if (httpUrl.host().contains("discordapp")){
+                        val newHttpUrl = httpUrl.newBuilder()
+                            .host("discord.com")
+                            .build()
+
+                        request = request.newBuilder()
+                            .url(newHttpUrl)
+                            .build()
+                    }
+
+                    it.proceed(request)
+                }
+                .build()
+        )
         .build()
 
 
@@ -94,10 +116,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             request.session().invalidate()
 
             return@get response.redirect(HOMEPAGE)
-        }
-
-        get("/invite") { _, response ->
-            return@get response.redirect("https://lnk.dunctebot.com/invite")
         }
 
         getWithDefaultData("/register-server", WebVariables()

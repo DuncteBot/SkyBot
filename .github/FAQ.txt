@@ -1,5 +1,5 @@
 Q: How can I add the bot to my server?
-A: You can add the bot to your server by following the instructions on this page <https://lnk.dunctebot.com/invite>
+A: You can add the bot to your server by following the instructions on this page <https://dunctebot.link/invite>
 
 Q: Is the bot open source?
 A: Yes, you can find the source at <https://github.com/DuncteBot>
@@ -13,7 +13,7 @@ A: Yes you can, you can become a patron (<https://www.patreon.com/DuncteBot>) or
 Q: Why don't commands work in <#191245668617158656>?
 A: Read :clap: The :clap: Channel :clap: Topics :clap:
 
-Q: Why does the bot shutdown?
+Q: Why is the bot offline?
 A: Maintenance or an update
 
 Q: How can I help?

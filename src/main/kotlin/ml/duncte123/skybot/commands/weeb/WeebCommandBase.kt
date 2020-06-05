@@ -40,7 +40,6 @@ abstract class WeebCommandBase : Command() {
     private fun getDefaultWeebEmbed(): EmbedBuilder {
         return EmbedUtils.defaultEmbed()
             .setFooter("Powered by weeb.sh", null)
-            .setTimestamp(null)
     }
 
     protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {

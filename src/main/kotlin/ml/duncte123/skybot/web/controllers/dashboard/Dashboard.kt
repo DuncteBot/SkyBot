@@ -27,6 +27,7 @@ import ml.duncte123.skybot.web.WebRouter
 import ml.duncte123.skybot.web.getGuild
 import ml.duncte123.skybot.web.getUserId
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
@@ -76,8 +77,11 @@ object Dashboard {
         }
 
         val userId = request.getUserId()
-        val member = guild.getMemberById(userId)
-                ?: return response.redirect("/server/${guildId}/noperms")
+        val member = try {
+            guild.retrieveMemberById(userId).complete()
+        } catch (e: ErrorResponseException) {
+            return response.redirect("/server/${guildId}/noperms")
+        }
 
         if (!member.hasPermission(Permission.MANAGE_SERVER) && !request.url().contains("noperms")) {
             return response.redirect("/server/${guildId}/noperms")

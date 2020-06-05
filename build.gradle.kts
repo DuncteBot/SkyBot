@@ -88,7 +88,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.88")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_155") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_157") {
         exclude(module = "opus-java")
     }
 
@@ -137,7 +137,7 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
-    implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
+    implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.5.Final")
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")

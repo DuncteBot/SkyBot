@@ -27,12 +27,13 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
 
 import javax.annotation.Nonnull;
-import java.util.Date;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class RemindmeCommand extends Command {
 
@@ -105,7 +106,7 @@ public class RemindmeCommand extends Command {
         }
 
         final String reminder = String.join(" ", flags.get("undefined"));
-        final Date expireDate = AirUtils.getDatabaseDate(duration);
+        final TemporalAccessor expireDate = AirUtils.getDatabaseDate(duration);
 
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
@@ -119,32 +120,32 @@ public class RemindmeCommand extends Command {
         }
     }
 
-    private void createReminder(CommandContext ctx, Date expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
-        if (flags.containsKey("c")) {
-            ctx.getDatabaseAdapter().createReminder(
-                ctx.getAuthor().getIdLong(),
-                reminder,
-                expireDate,
-                ctx.getChannel().getIdLong(),
-                (success) -> {
-                    if (success) {
-                        sendMsg(ctx, "Got it, I'll remind you here in _" + duration + "_ about \"" + reminder + "\"");
-                    } else {
-                        sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
-                    }
+    private void createReminder(CommandContext ctx, TemporalAccessor expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
+        final boolean isChannel = flags.containsKey("c");
+        final long channelId = isChannel ? ctx.getChannel().getIdLong() : -1L;
+        final String where = isChannel ? " here" : "";
 
-                    return null;
-                });
-        } else {
-            ctx.getDatabaseAdapter().createReminder(ctx.getAuthor().getIdLong(), reminder, expireDate, (success) -> {
+        ctx.getDatabaseAdapter().createReminder(
+            ctx.getAuthor().getIdLong(),
+            reminder,
+            expireDate,
+            channelId,
+            (success, id) -> {
                 if (success) {
-                    sendMsg(ctx, "Got it, I'll remind you in _" + duration + "_ about \"" + reminder + "\"");
+                    sendMsgFormat(
+                        ctx,
+                        "Got it, I'll remind you%s in _%s_ about \"%s\" (Reminder id %d)",
+                        where,
+                        duration,
+                        reminder,
+                        id
+                    );
+//                    sendMsg(ctx, "Got it, I'll remind you" + where + "in _" + duration + "_ about \"" + reminder + "\"");
                 } else {
                     sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
                 }
 
                 return null;
             });
-        }
     }
 }

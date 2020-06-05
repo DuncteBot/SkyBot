@@ -41,7 +41,6 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -98,7 +97,7 @@ public final class SkyBot {
             () -> new EmbedBuilder()
                 .setColor(Settings.DEFAULT_COLOUR)
 //                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
-                .setTimestamp(Instant.now())
+//                .setTimestamp(Instant.now())
         );
 
         Settings.PREFIX = config.discord.prefix;
