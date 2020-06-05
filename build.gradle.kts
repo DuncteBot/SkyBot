@@ -137,7 +137,7 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
-    implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.2.Final")
+    implementation(group = "org.ocpsoft.prettytime", name = "prettytime", version = "4.0.5.Final")
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")

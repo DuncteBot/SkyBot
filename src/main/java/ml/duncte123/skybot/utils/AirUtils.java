@@ -260,6 +260,7 @@ public class AirUtils {
         }
     }
 
+    // I want to get rid of this method
     public static Date toDate(TemporalAccessor accessor) {
         return Date.from(Instant.from(accessor));
     }
