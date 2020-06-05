@@ -22,7 +22,7 @@ If you want to support development of the bot [consider to be come a patron][pat
 
 
 # How to invite the bot to a server?
-Go to [`https://lnk.dunctebot.com/invite`][inviteLink] and follow the steps on the website
+Go to [`https://dunctebotlink/invite`][inviteLink] and follow the steps on the website
 
 
 # How to setup? / Self-hosting
