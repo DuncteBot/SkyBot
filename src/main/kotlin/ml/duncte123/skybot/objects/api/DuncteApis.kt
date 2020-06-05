@@ -738,8 +738,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun String.enc() = urlEncodeString(this)
 
     companion object {
-//        const val API_HOST = "https://apis.duncte123.me"
-        const val API_HOST = "http://duncte123-apis-lumen.test/"
+        const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
     }
 }
