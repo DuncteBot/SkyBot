@@ -35,6 +35,8 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.time.Instant
+import java.time.temporal.TemporalAccessor
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -759,7 +761,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Date, channelId: Long, callback: (Boolean, Int) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, channelId: Long, callback: (Boolean, Int) -> Unit) {
         runOnThread {
             val sql = if (channelId > 0) {
                 // language=SQLite
@@ -820,8 +822,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         result.getInt("id"),
                         result.getLong("user_id"),
                         result.getString("reminder"),
-                        result.getDate("remind_create_date"),
-                        result.getDate("remind_date"),
+                        result.getDate("remind_create_date").asInstant(),
+                        result.getDate("remind_date").asInstant(),
                         result.getLong("channel_id")
                     ))
                 }
@@ -844,8 +846,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                             result.getInt("id"),
                             result.getLong("user_id"),
                             result.getString("reminder"),
-                            result.getDate("remind_create_date"),
-                            result.getDate("remind_date"),
+                            result.getDate("remind_create_date").asInstant(),
+                            result.getDate("remind_date").asInstant(),
                             result.getLong("channel_id")
                         ))
                     }
@@ -886,8 +888,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                     result.getInt("id"),
                     result.getLong("user_id"),
                     result.getString("reminder"),
-                    result.getDate("remind_create_date"),
-                    result.getDate("remind_date"),
+                    result.getDate("remind_create_date").asInstant(),
+                    result.getDate("remind_date").asInstant(),
                     result.getLong("channel_id")
                 ))
             }
@@ -936,7 +938,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         return list
     }
 
-    private fun Date.toSQL() = java.sql.Date(this.time)
+    private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
+
+    private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
 
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 

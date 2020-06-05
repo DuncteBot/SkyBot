@@ -54,11 +54,10 @@ import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -238,61 +237,36 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    private static SkyFormatter getFormatter() {
-//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        return new SkyFormatter();
-    }
-
-    // Temp because we are switching date formats
-    private static class SkyFormatter {
-        private SimpleDateFormat getSimpleFormat() {
-            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-            return format;
-        }
-
-        public String format(Date date) {
-//            return DateTimeFormatter.ISO_INSTANT.format(date.toInstant());
-            return getSimpleFormat().format(date);
-        }
-
-        public Date parse(String date) throws ParseException {
-            try {
-                return Date.from(
-                    Instant.from(DateTimeFormatter.ISO_INSTANT.parse(date))
-                );
-            } catch (DateTimeParseException ignored) {
-                // Probably wrong format
-            }
-
-            return getSimpleFormat().parse(date);
-        }
+    private static DateTimeFormatter getIsoFormat() {
+        return DateTimeFormatter.ISO_INSTANT;
     }
 
     public static String getDatabaseDateFormat(Duration duration) {
-        return getFormatter().format(getDatabaseDate(duration));
+        return getIsoFormat().format(getDatabaseDate(duration));
     }
 
-    public static String getDatabaseDateFormat(Date date) {
-        return getFormatter().format(date);
+    public static String getDatabaseDateFormat(TemporalAccessor date) {
+        return getIsoFormat().format(date);
     }
 
-    public static Date fromDatabaseFormat(String date) {
+    public static TemporalAccessor fromDatabaseFormat(String date) {
         try {
-            return getFormatter().parse(date);
+            return getIsoFormat().parse(date);
         }
-        catch (ParseException e) {
+        catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return new Date();
+            return new Date().toInstant();
         }
     }
 
-    public static Date getDatabaseDate(Duration duration) {
-        return new Date(System.currentTimeMillis() + duration.getMilis());
+    public static Date toDate(TemporalAccessor accessor) {
+        return Date.from(Instant.from(accessor));
+    }
+
+    public static TemporalAccessor getDatabaseDate(Duration duration) {
+        return Instant.ofEpochMilli(System.currentTimeMillis() + duration.getMilis());
+//        return new Date(System.currentTimeMillis() + duration.getMilis());
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
@@ -304,7 +278,7 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                prettyTime.format(reminder.getCreate_date()),
+                prettyTime.format(toDate(reminder.getCreate_date())),
                 reminder.getReminder().trim()
             );
 
@@ -363,7 +337,7 @@ public class AirUtils {
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()
-            .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
+            .filter((reminder) -> toDate(reminder.getReminder_date()).after(dateAfter))
             .map(Reminder::getId)
             .collect(Collectors.toList());
 
@@ -412,7 +386,15 @@ public class AirUtils {
                 JSONRequestBody.fromJackson(json)
             )
                 .build(
-                    (r) -> toJSONObject(r, mapper).get("shortLink").asText(),
+                    (r) -> {
+                        final ObjectNode response = toJSONObject(r, mapper);
+
+                        if (response == null) {
+                            return "Google did a fucky wucky and send invalid json";
+                        }
+
+                        return response.get("shortLink").asText();
+                    },
                     WebParserUtils::handleError
                 );
         }

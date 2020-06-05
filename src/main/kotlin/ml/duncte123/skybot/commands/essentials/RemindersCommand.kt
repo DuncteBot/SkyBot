@@ -30,7 +30,7 @@ class RemindersCommand : Command() {
 
     init {
         this.name = "reminders"
-        this.aliases = arrayOf("remindmanager")
+        this.aliases = arrayOf("remindmanager", "reminder")
         this.help = "Shows the reminders that are currently active for you and allows you to manage your reminders"
         this.usage = "[list/cancel/delete/show/info] [reminder id]"
     }
@@ -83,7 +83,7 @@ class RemindersCommand : Command() {
     private fun showRemindersList(ctx: CommandContext) {
         ctx.databaseAdapter.listReminders(ctx.author.idLong) {
             if (it.isEmpty()) {
-                sendMsg(ctx, "You don't have any reminders set currently")
+                sendMsg(ctx, "You do not have any currently active reminders")
                 return@listReminders
             }
 
@@ -107,8 +107,8 @@ class RemindersCommand : Command() {
         val reminderInfo = """**Id:** ${reminder.id}
             |**Message:** ${reminder.reminder}
             |**Remind in:** $remindChannel
-            |**Created:** ${reminder.create_date}
-            |**Remind on:** ${reminder.reminder_date}
+            |**Created:** ${reminder.reminderCreateDateDate}
+            |**Remind on:** ${reminder.reminderDateDate}
         """.trimMargin()
 
         sendEmbed(ctx, EmbedUtils.embedMessage(reminderInfo))

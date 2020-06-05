@@ -118,10 +118,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             return@get response.redirect(HOMEPAGE)
         }
 
-        get("/invite") { _, response ->
-            return@get response.redirect("https://lnk.dunctebot.com/invite")
-        }
-
         getWithDefaultData("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")

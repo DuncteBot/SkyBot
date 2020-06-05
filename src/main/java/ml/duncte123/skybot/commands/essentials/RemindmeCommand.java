@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
 
 import javax.annotation.Nonnull;
-import java.util.Date;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -106,7 +106,7 @@ public class RemindmeCommand extends Command {
         }
 
         final String reminder = String.join(" ", flags.get("undefined"));
-        final Date expireDate = AirUtils.getDatabaseDate(duration);
+        final TemporalAccessor expireDate = AirUtils.getDatabaseDate(duration);
 
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
@@ -120,7 +120,7 @@ public class RemindmeCommand extends Command {
         }
     }
 
-    private void createReminder(CommandContext ctx, Date expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
+    private void createReminder(CommandContext ctx, TemporalAccessor expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
         final boolean isChannel = flags.containsKey("c");
         final long channelId = isChannel ? ctx.getChannel().getIdLong() : -1L;
         final String where = isChannel ? " here" : "";

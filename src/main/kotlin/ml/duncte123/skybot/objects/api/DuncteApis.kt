@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import me.duncte123.botcommons.web.ContentType.JSON
 import me.duncte123.botcommons.web.WebUtils
@@ -34,7 +35,8 @@ import ml.duncte123.skybot.utils.AirUtils
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.time.Clock
+import java.time.Instant
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
@@ -122,14 +124,12 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val response = postJSON("guildsettings", json)
         val success = response["success"].asBoolean()
 
-        if (success) {
-            return true
+        if (!success) {
+            logger.error("Failed to register new guild\n" +
+                "Response: {}", response["error"].toString())
         }
 
-        logger.error("Failed to register new guild\n" +
-            "Response: {}", response["error"].toString())
-
-        return false
+        return success
     }
 
     fun addWordToBlacklist(guildId: Long, word: String) {
@@ -227,11 +227,9 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         if (!response["success"].asBoolean()) {
             logger.error("Failed to add one guild patron\n" +
                 "Response: {}", response["error"].toString())
-
-            return false
         }
 
-        return true
+        return response["success"].asBoolean()
     }
 
     fun getOneGuildPatron(userId: Long): JsonNode? {
@@ -488,16 +486,16 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             val error = response["error"] as ObjectNode
 
             if (error["type"].asText() == "ValidationException") {
-                return Pair(false, buildValidationErrorString(error))
+                return false to buildValidationErrorString(error)
             }
 
             logger.error("Failed to create a tag\n" +
                 "Response: {}", error.toString())
 
-            return Pair(false, error["message"].asText())
+            return false to error["message"].asText()
         }
 
-        return Pair(true, "")
+        return true to ""
     }
 
     fun deleteTag(tagName: String): Pair<Boolean, String> {
@@ -509,10 +507,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             logger.error("Failed to create a tag\n" +
                 "Response: {}", error.toString())
 
-            return Pair(false, error["message"].asText())
+            return false to error["message"].asText()
         }
 
-        return Pair(true, "")
+        return true to ""
     }
 
     fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long): Pair<Boolean, Int> {
@@ -520,7 +518,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put("user_id", userId.toString())
             .put("reminder", reminder)
             .put("remind_date", expireDate)
-            .put("remind_create_date", AirUtils.getDatabaseDateFormat(Date()))
+            .put("remind_create_date", AirUtils.getDatabaseDateFormat(Instant.now(Clock.systemUTC())))
 
         if (channelId > 0) {
             obj.put("channel_id", channelId.toString())
@@ -537,9 +535,40 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             return false to -1
         }
 
-        println(response)
-
         return true to response["data"]["id"].asInt()
+    }
+
+    fun listReminders(userId: Long): JsonNode {
+        val response = executeRequest(defaultRequest("reminders/$userId"))
+
+        if (!response["success"].asBoolean()) {
+            val error = response["error"]
+
+            logger.error("Failed to get reminders for user\n" +
+                "Response: {}", error.toString())
+
+            // Can't use that as jackson will make the list null
+//            return NullNode.instance
+            return mapper.createArrayNode()
+        }
+
+        return response["data"]
+    }
+
+    fun showReminder(userId: Long, reminderId: Int): JsonNode {
+        val response = executeRequest(defaultRequest("reminders/$userId/$reminderId"))
+
+        if (!response["success"].asBoolean()) {
+            val error = response["error"]
+
+            logger.error("Failed to get reminders for user\n" +
+                "Response: {}", error.toString())
+
+            // NOTE: Jackson will make this null when we parse it
+            return NullNode.instance
+        }
+
+        return response["data"]
     }
 
     fun getExpiredReminders(): JsonNode {
@@ -566,9 +595,20 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         val response = deleteJSON("reminders/purge", json)
 
         if (!response["success"].asBoolean()) {
-            logger.error("Failed to purge mutes\n" +
+            logger.error("Failed to purge reminders\n" +
                 "Response: {}", response["error"].toString())
         }
+    }
+
+    fun deleteReminder(userId: Long, reminderId: Int): Boolean {
+        val response = executeRequest(defaultRequest("reminders/$userId/$reminderId").delete())
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to delete reminder\n" +
+                "Response: {}", response["error"].toString())
+        }
+
+        return response["success"].asBoolean()
     }
 
     fun getAnimal(type: String): JsonNode {
@@ -698,8 +738,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun String.enc() = urlEncodeString(this)
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.test/"
+//        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
     }
 }
