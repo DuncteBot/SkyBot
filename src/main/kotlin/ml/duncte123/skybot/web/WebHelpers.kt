@@ -24,10 +24,7 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
-import me.duncte123.botcommons.web.requests.EmptyFromRequestBody
 import me.duncte123.botcommons.web.requests.FormRequestBody
-import me.duncte123.weebJava.helpers.QueryBuilder
-import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
