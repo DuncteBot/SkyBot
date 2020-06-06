@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.71"))
+        classpath(kotlin("gradle-plugin", version = "1.3.72"))
     }
 }
 
@@ -36,12 +36,12 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.3.72"
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
-val numberVersion = "3.92.1"
+val numberVersion = "3.93.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -105,7 +105,7 @@ dependencies {
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.11")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.12")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
@@ -114,14 +114,14 @@ dependencies {
     implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.0.0")
 
     // Youtube Cache
-    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2")
+    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2.1")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.5")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.7")
 
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
