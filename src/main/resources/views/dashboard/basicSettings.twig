@@ -25,8 +25,8 @@
                         <option value="" selected disabled>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getWelcomeLeaveChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getIdLong() }}" selected>
-                                    #{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}"
+                                        selected>#{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
@@ -60,23 +60,12 @@
                         <option value="">Disable</option>
                     </select>
                     <label for="autoRoleRole">AutoRole</label>
-                    <!-- Switch -->
-                    <div class="switch">
-                        State:
-                        <label>
-                            Disabled
-                            <input type="checkbox" name="autoRoleRoleCB" id="autoRoleRoleCB"
-                                   {% if settings.isAutoroleEnabled() %}checked="checked"{% endif %} disabled>
-                            <span class="lever"></span>
-                            Enabled
-                        </label>
-                    </div>
                 </div>
 
                 {# Other boolean flags #}
-                <div class="input-field col s12 m3">
+                <div class="input-field col s12 m4">
                     <div class="switch">
-                        Announce tracks:
+                        Announce tracks:<br/>
                         <label>
                             Disabled
                             <input type="checkbox" name="announceTracks" id=""
@@ -85,8 +74,24 @@
                             Enabled
                         </label>
                     </div>
-                </div>
 
+                    <br/>
+
+                    <!-- Switch -->
+                    <div class="switch">
+                        Stop command behavior:<br/>
+                        <label>
+                            Default behavior
+                            <input type="checkbox" name="allowAllToStop" id="allowAllToStop"
+                                   {% if settings.isAllowAllToStop() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Allow all
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="input-field col s12 m3">
 
                     <input type="color" style="display: none;" id="embedColor" name="embedColor"
@@ -99,7 +104,6 @@
                     </button>
 
                 </div>
-
             </div>
 
             <div class="row">

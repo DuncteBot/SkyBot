@@ -47,7 +47,7 @@ class StopCommand : MusicCommand() {
 
         val trackData = track.getUserData(TrackUserData::class.java)
 
-        if (trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+        if (ctx.guild.getSettings().isAllowAllToStop || trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
             mng.scheduler.queue.clear()
             player.stopTrack()
 

@@ -103,7 +103,8 @@ public class SQLiteDatabaseConnectionManager {
                     "logMute TINYINT(1) NOT NULL DEFAULT '1'," +
                     "logWarn TINYINT(1) NOT NULL DEFAULT '1'," +
                     "profanity_type VARCHAR(20) default 'SEVERE_TOXICITY'," +
-                    "aiSensitivity FLOAT(3, 2) default 0.7" +
+                    "aiSensitivity FLOAT(3, 2) default 0.7," +
+                    "allow_all_to_stop TINYINT(1) NOT NULL DEFAULT '1'" +
                     ");"
             );
 

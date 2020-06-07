@@ -68,6 +68,7 @@ public class GuildSettings {
     private int spam_threshold = 7;
     private ProfanityFilterType filterType = ProfanityFilterType.SEVERE;
     private float aiSensitivity = 0.7f;
+    private boolean allowAllToStop = false;
     // logging
     private boolean banLogging = true;
     private boolean unbanLogging = true;
@@ -420,6 +421,17 @@ public class GuildSettings {
     @JsonProperty("aiSensitivity")
     public GuildSettings setAiSensitivity(float aiSensitivity) {
         this.aiSensitivity = aiSensitivity;
+        return this;
+    }
+
+    @JsonProperty("allowAllToStop")
+    public boolean isAllowAllToStop() {
+        return allowAllToStop;
+    }
+
+    @JsonProperty("allowAllToStop")
+    public GuildSettings setAllowAllToStop(boolean allowAllToStop) {
+        this.allowAllToStop = allowAllToStop;
         return this;
     }
 

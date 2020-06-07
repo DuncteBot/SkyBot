@@ -48,6 +48,7 @@ object BasicSettings {
         val autorole = params["autoRoleRole"]
         //val autoRoleEnabled = params["autoRoleRoleCB"]
         val announceTracks = params["announceTracks"].toCBBool()
+        val allowAllToStop = params["allowAllToStop"].toCBBool()
         val color = colorToInt(params["embedColor"])
         var leaveTimeout = GuildSettingsUtils.toLong(params["leaveTimeout"]).toInt()
 
@@ -65,6 +66,7 @@ object BasicSettings {
             .setAutoroleRole(GuildSettingsUtils.toLong(autorole))
             .setAnnounceTracks(announceTracks)
             .setLeaveTimeout(leaveTimeout)
+            .setAllowAllToStop(allowAllToStop)
 
         guild.setSettings(newSettings)
 
