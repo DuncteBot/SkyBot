@@ -824,8 +824,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         result.getInt("id"),
                         result.getLong("user_id"),
                         result.getString("reminder"),
-                        result.getDate("remind_create_date").asInstant(),
-                        result.getDate("remind_date").asInstant(),
+                        result.getDate("remind_create_date"),
+                        result.getDate("remind_date"),
                         result.getLong("channel_id")
                     ))
                 }
@@ -848,8 +848,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                             result.getInt("id"),
                             result.getLong("user_id"),
                             result.getString("reminder"),
-                            result.getDate("remind_create_date").asInstant(),
-                            result.getDate("remind_date").asInstant(),
+                            result.getDate("remind_create_date"),
+                            result.getDate("remind_date"),
                             result.getLong("channel_id")
                         ))
                     }
@@ -890,8 +890,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                     result.getInt("id"),
                     result.getLong("user_id"),
                     result.getString("reminder"),
-                    result.getDate("remind_create_date").asInstant(),
-                    result.getDate("remind_date").asInstant(),
+                    result.getDate("remind_create_date"),
+                    result.getDate("remind_date"),
                     result.getLong("channel_id")
                 ))
             }
@@ -940,6 +940,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         return list
     }
 
+    private fun Date.toSQL() = java.sql.Date(this.time)
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
 
     private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)

@@ -35,8 +35,8 @@ import ml.duncte123.skybot.utils.AirUtils
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
-import java.time.Clock
 import java.time.Instant
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
@@ -518,7 +518,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put("user_id", userId.toString())
             .put("reminder", reminder)
             .put("remind_date", expireDate)
-            .put("remind_create_date", AirUtils.getDatabaseDateFormat(Instant.now(Clock.systemUTC())))
+            .put("remind_create_date", AirUtils.getDatabaseDateFormat(AirUtils.getEpochInstant()))
 
         if (channelId > 0) {
             obj.put("channel_id", channelId.toString())
@@ -738,8 +738,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun String.enc() = urlEncodeString(this)
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.test/"
+//        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
     }
 }

@@ -44,8 +44,8 @@ data class Mute
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
 
-data class Reminder(val id: Int, val user_id: Long, val reminder: String, val create_date: TemporalAccessor,
-                    val reminder_date: TemporalAccessor, val channel_id: Long) {
+data class Reminder(val id: Int, val user_id: Long, val reminder: String, val create_date: Date,
+                    val reminder_date: Date, val channel_id: Long) {
     @JsonCreator
     constructor(@JsonProperty("id") id: Int, @JsonProperty("user_id") user_id: Long,
                 @JsonProperty("reminder") reminder: String,
@@ -54,8 +54,8 @@ data class Reminder(val id: Int, val user_id: Long, val reminder: String, val cr
                 @JsonProperty("channel_id") channel_id: Long) :
         this(id, user_id, reminder, AirUtils.fromDatabaseFormat(create_date), AirUtils.fromDatabaseFormat(reminder_date), channel_id)
 
-    val reminderDateDate: Date = AirUtils.toDate(reminder_date)
-    val reminderCreateDateDate: Date = AirUtils.toDate(create_date)
+    val reminderDateDate: String = AirUtils.makeDatePretty(reminder_date)
+    val reminderCreateDateDate: String = AirUtils.makeDatePretty(create_date)
 
     override fun toString(): String {
         return "$id) `$reminder` on $reminderDateDate"

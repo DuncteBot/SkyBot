@@ -54,10 +54,14 @@ import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -238,7 +242,9 @@ public class AirUtils {
     }
 
     private static DateTimeFormatter getIsoFormat() {
-        return DateTimeFormatter.ISO_INSTANT;
+        return DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("UTC+2"));
+//        return DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
+//        return DateTimeFormatter.ISO_INSTANT;
     }
 
     public static String getDatabaseDateFormat(Duration duration) {
@@ -249,23 +255,73 @@ public class AirUtils {
         return getIsoFormat().format(date);
     }
 
-    public static TemporalAccessor fromDatabaseFormat(String date) {
+    // Parsing goes wrong right here
+    public static Date fromDatabaseFormat(String date) {
         try {
-            return getIsoFormat().parse(date);
+//            return Date.from(Instant.parse(date));
+
+            final Instant plus = getIsoFormat()
+                .parse(date, Instant::from)
+                .plus(1, ChronoUnit.HOURS);
+
+            System.out.println(
+                plus
+            );
+
+//            return Date.from(getIsoFormat().parse(date, Instant::from));
+//            return getIsoFormat().parse(date);
+            return Date.from(plus);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return new Date().toInstant();
+            return new Date();
         }
     }
 
     // I want to get rid of this method
     public static Date toDate(TemporalAccessor accessor) {
-        return Date.from(Instant.from(accessor));
+        /*final Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+        utc.setTimeInMillis(Instant.from(accessor).toEpochMilli());
+        utc.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        System.out.println(utc.getTime());*/
+
+        return toCalendar(accessor).getTime();
+    }
+
+    private static SimpleDateFormat getSimpleFormatter() {
+//        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        return format;
+    }
+
+    public static String makeDatePretty(Date accessor) {
+//        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("UTC")).format(accessor);
+//        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.systemDefault()).format(accessor);
+
+        return getSimpleFormatter().format(accessor);
+    }
+
+    public static Calendar toCalendar(TemporalAccessor accessor) {
+        final Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+        utc.setTimeInMillis(Instant.from(accessor).toEpochMilli());
+
+        return utc;
+    }
+
+    public static TemporalAccessor getEpochInstant() {
+//        return Instant.ofEpochMilli(System.currentTimeMillis());
+//        return Calendar.getInstance(TimeZone.getTimeZone("UTC")).toInstant();
+        return Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault())).toInstant();
     }
 
     public static TemporalAccessor getDatabaseDate(Duration duration) {
+//        return Instant.now().plusMillis(duration.getMilis());
         return Instant.ofEpochMilli(System.currentTimeMillis() + duration.getMilis());
 //        return new Date(System.currentTimeMillis() + duration.getMilis());
     }
@@ -279,7 +335,8 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                prettyTime.format(toDate(reminder.getCreate_date())),
+//                prettyTime.format(toCalendar(reminder.getCreate_date())),
+                prettyTime.format(reminder.getCreate_date()),
                 reminder.getReminder().trim()
             );
 
@@ -338,7 +395,8 @@ public class AirUtils {
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()
-            .filter((reminder) -> toDate(reminder.getReminder_date()).after(dateAfter))
+//            .filter((reminder) -> toCalendar(reminder.getReminder_date()).after(calendarDateAfter))
+            .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
             .map(Reminder::getId)
             .collect(Collectors.toList());
 
