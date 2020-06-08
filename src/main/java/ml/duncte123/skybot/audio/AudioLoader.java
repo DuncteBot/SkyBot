@@ -160,7 +160,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
-            + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+            + "\nIf this happens often try another link or join our [support guild](https://dunctebot.link/server) for more!"));
 
     }
 

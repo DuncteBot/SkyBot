@@ -61,7 +61,7 @@ public class BotinfoCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         if ("support".equals(ctx.getInvoke())) {
-            MessageUtils.sendMsg(ctx, "You can join my support server here: <https://discord.gg/NKM9Xtk>");
+            MessageUtils.sendMsg(ctx, "You can join my support server here: <https://dunctebot.link/server>");
             return;
         }
 
@@ -74,7 +74,7 @@ public class BotinfoCommand extends Command {
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                 duncte + ".\n" +
                 "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://dunctebot.com/)** \u2022 " +
+                "\n**[Support server](https://dunctebot.link/server)** \u2022 **[Website](https://dunctebot.com/)** \u2022 " +
                 "**[Invite me](https://dunctebot.link/invite)**" +
                 " \u2022 **[Twitter](https://twitter.com/DuncteBot)**  \u2022 **[Cheap hosting](https://billing.oxide.host/aff.php?aff=6)**" +
                 "\n\u200B", true)

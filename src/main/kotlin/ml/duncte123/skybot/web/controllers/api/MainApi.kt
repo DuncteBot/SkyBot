@@ -33,8 +33,4 @@ object MainApi {
             .put("shard_count", shardManager.shardsTotal)
             .put("code", response.status())
     }
-
-    fun joinGuild(response: Response) {
-        response.redirect("https://discord.gg/NKM9Xtk")
-    }
 }

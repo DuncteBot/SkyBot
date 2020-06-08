@@ -228,10 +228,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@get MainApi.serverCount(response, shardManager, mapper)
             }
 
-            get("/joinGuild") { _, response ->
-                return@get MainApi.joinGuild(response)
-            }
-
             get("/getUserGuilds") { request, response ->
                 return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager, mapper)
             }

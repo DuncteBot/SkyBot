@@ -80,7 +80,7 @@ class IssueCommand : Command() {
                     sendEmbed(ctx.shardManager.getTextChannelById(424146177626210305L), embed)
 
                     sendMsg(ctx, "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
-                        "https://discord.gg/NKM9Xtk")
+                        "https://dunctebot.link/server")
                 } catch (ex: Exception) {
                     Sentry.capture(ex)
 
