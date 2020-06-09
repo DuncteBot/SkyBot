@@ -4,15 +4,14 @@
         <p>The following settings determine what actions the bot take when a user reaches a set amount of warnings</p>
 
         <div class="row">
-            <div class="col m1">
-                <button id="add_warn_action">add action</button>
-            </div>
+            <div class="col s12">
+                <button id="add_warn_action" type="button" class="btn btn-primary">add action</button>
 
-            <div class="col s12 m3">
+
 
                 <ul id="actions">
 
-                    <li>
+                    <li id="warningAction1-m">
 
                         <div class="input-field">
                             <select id="warningAction1" name="warningAction1">
@@ -28,13 +27,13 @@
                             <input type="text" id="threshold1" name="threshold1">
                             <label for="threshold1">Warning threshold</label>
                         </div>
-                        <button>remove action</button>
+                        <button type="button" class="btn btn-danger"
+                                data-remove-action="warningAction1-m">remove action</button>
 
                     </li>
 
 
                 </ul>
-
             </div>
         </div>
     </div>

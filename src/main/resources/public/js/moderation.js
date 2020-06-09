@@ -19,4 +19,17 @@
 M.FormSelect.init(document.querySelectorAll('select'));
 M.Range.init(document.querySelector('input[name="ai-sensitivity"]'));
 
-id('add_warn_action').addEventListener('click', addWarnAction);
+eventBus.on('click', (event) => {
+    const element = event.target;
+
+    if (element.id === 'add_warn_action') {
+        addWarnAction();
+        return;
+    }
+
+    const data = element.dataset;
+
+    if (data.removeAction) {
+        id(data.removeAction).remove();
+    }
+});

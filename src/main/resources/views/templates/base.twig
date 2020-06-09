@@ -115,9 +115,13 @@
 
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+{#Why is this needed?#}
+{#<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>#}
 <!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/eventemitter3/4.0.4/index.min.js"
+        integrity="sha256-bFwL2rD40dqBZsSyKL35Z5KgclBS7QCnxf2LBvbN48E=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+        integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
 <script src="/js/main.js"></script>
 {% block script %}{% endblock %}
 </body>

@@ -161,7 +161,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             get("/invalid") { request, response ->
                 response.status(404)
 
-                return@get "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
+                return@get "DuncteBot is not in the requested server, why don't you <a href=\"https://discord.com/oauth2" +
                     "/authorize?client_id=210363111729790977&guild_id=${request.params(GUILD_ID)}" +
                     "&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
@@ -306,7 +306,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     map.put("guild", guild)
                     map.put("guildColor", colorToHex(colorRaw))
 
-                    map.put("guild_patron", false)
+                    map.put("guild_patron", true)
 
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)

@@ -20,11 +20,13 @@ const actions = id('actions');
 
 function addWarnAction() {
     const li = document.createElement('li');
-    const size = actions.childNodes.length + 1;
+    const size = actions.children.length + 1;
 
     if (size >= 3) {
         return;
     }
+
+    li.id = `warningAction${size}-m`;
 
     li.innerHTML = `
         <div class="input-field">
@@ -37,7 +39,7 @@ function addWarnAction() {
             </select>
             <label for="warningAction${size}">Warning action</label>
         </div>
-        <button>remove action</button>
+        <button data-remove-action="warningAction${size}">remove action</button>
     `;
 
     actions.appendChild(li);
