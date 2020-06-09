@@ -23,7 +23,6 @@ import org.apache.velocity.app.VelocityEngine
 import spark.ModelAndView
 import spark.TemplateEngine
 import java.io.StringWriter
-import java.nio.charset.StandardCharsets
 import java.util.*
 
 // Temp hack
@@ -31,14 +30,13 @@ fun ModelAndView.getEngineName() = if (this.viewName.endsWith("twig")) "twig" el
 
 class VelocityRenderer : TemplateEngine() {
     private val velocityEngine: VelocityEngine
-    private val encoding: String = StandardCharsets.UTF_8.name()
 
     init {
         val properties = Properties()
-        properties.setProperty("resource.loader", "class")
-        properties.setProperty("velocimacro.library.autoreload", "true")
+        properties.setProperty("resource.loaders", "class")
+//        properties.setProperty("velocimacro.library.autoreload", "true")
         properties.setProperty(
-            "class.resource.loader.class",
+            "resource.loader.class.class",
             "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"
         )
 
@@ -53,9 +51,7 @@ class VelocityRenderer : TemplateEngine() {
             throw IllegalArgumentException("modelAndView must be of type java.util.Map")
         }
 
-        println("views/${modelAndView.viewName}")
-
-        val template = velocityEngine.getTemplate("views/${modelAndView.viewName}", this.encoding)
+        val template = velocityEngine.getTemplate("views/${modelAndView.viewName}")
         val context = VelocityContext(modelMap as Map<String, Any>)
         val writer = StringWriter()
 

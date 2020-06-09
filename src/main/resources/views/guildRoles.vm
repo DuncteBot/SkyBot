@@ -10,8 +10,8 @@
     <tbody>
         #foreach($role in $roles)
         <tr>
-            <td>$role.id</td>
-            <td>$role.name</td>
+            <td>$role.getIdLong()</td>
+            <td>$role.getName()</td>
         </tr>
         #end
     </tbody>

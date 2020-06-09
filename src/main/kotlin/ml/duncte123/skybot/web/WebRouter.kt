@@ -27,6 +27,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.objects.guild.ProfanityFilterType
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
@@ -101,6 +102,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     mapper.writeValueAsString(it)
                 }
                 is ModelAndView -> {
+                    println(it.getEngineName())
                     if (it.getEngineName() == "twig") {
                         twigEngine.render(it)
                     } else {
@@ -188,8 +190,9 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             // Moderation settings
             getWithDefaultData("/moderation", WebVariables()
                 .put("filterValues", ProfanityFilterType.values())
-                .put("title", "Dashboard"),
-                "dashboard/moderationSettings.twig", true)
+                .put("title", "Dashboard")
+                .put("loggingTypes", GuildSettings.LOGGING_TYPES),
+                "dashboard/moderationSettings.vm", true)
 
             post("/moderation") { request, response ->
                 return@post ModerationSettings.save(request, response, shardManager, variables)

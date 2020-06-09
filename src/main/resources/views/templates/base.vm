@@ -10,7 +10,7 @@
     <meta name="keywords" content="discord, bot, music, youtube, google, best discord bot, spotify, rythm"/>
     <meta name="description" content="DuncteBot, a multi-propose bot for moderation and music"/>
     <meta content="DuncteBot" property="og:site_name"/>
-    <meta content="{{ title }}" property="og:title"/>
+    <meta content="$title" property="og:title"/>
     <meta content="website" property="og:type"/>
     <meta content="DuncteBot, a multi-propose bot for moderation and music" property="og:description"/>
     <meta name="theme-color" content="#0751c6"/>
