@@ -55,9 +55,10 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -237,21 +238,17 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    private static DateTimeFormatter getIsoFormat() {
-        return DateTimeFormatter.ISO_INSTANT;
-    }
-
     public static String getDatabaseDateFormat(Duration duration) {
-        return getIsoFormat().format(getDatabaseDate(duration));
+        return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
-    public static String getDatabaseDateFormat(TemporalAccessor date) {
-        return getIsoFormat().format(date);
+    public static String getDatabaseDateFormat(Instant date) {
+        return date.truncatedTo(ChronoUnit.MILLIS).toString();
     }
 
-    public static TemporalAccessor fromDatabaseFormat(String date) {
+    public static Instant fromDatabaseFormat(String date) {
         try {
-            return getIsoFormat().parse(date);
+            return Instant.parse(date).plus(2, ChronoUnit.HOURS);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
@@ -260,14 +257,12 @@ public class AirUtils {
         }
     }
 
-    // I want to get rid of this method
-    public static Date toDate(TemporalAccessor accessor) {
-        return Date.from(Instant.from(accessor));
+    public static String makeDatePretty(Instant accessor) {
+        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("UTC")).format(accessor);
     }
 
-    public static TemporalAccessor getDatabaseDate(Duration duration) {
-        return Instant.ofEpochMilli(System.currentTimeMillis() + duration.getMilis());
-//        return new Date(System.currentTimeMillis() + duration.getMilis());
+    public static Instant getDatabaseDate(Duration duration) {
+        return Instant.now().plusMillis(duration.getMilis());
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
@@ -279,7 +274,7 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                prettyTime.format(toDate(reminder.getCreate_date())),
+                prettyTime.format(Date.from(reminder.getCreate_date())),
                 reminder.getReminder().trim()
             );
 
@@ -330,15 +325,12 @@ public class AirUtils {
             }
         }
 
-        // Get a calendar instance that is two days in the future
-        final Calendar calendarDateAfter = Calendar.getInstance();
-        calendarDateAfter.add(Calendar.DAY_OF_YEAR, 2);
-
-        final Date dateAfter = calendarDateAfter.getTime();
+        // get a date that is 2 days in the future
+        final Instant plusTwoDays = Instant.now().plus(2L, ChronoUnit.DAYS);
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()
-            .filter((reminder) -> toDate(reminder.getReminder_date()).after(dateAfter))
+            .filter((reminder) -> reminder.getReminder_date().isAfter(plusTwoDays))
             .map(Reminder::getId)
             .collect(Collectors.toList());
 

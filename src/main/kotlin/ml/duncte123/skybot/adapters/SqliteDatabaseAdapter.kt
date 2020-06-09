@@ -763,7 +763,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, channelId: Long, callback: (Boolean, Int) -> Unit) {
+    override fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit) {
         runOnThread {
             val sql = if (channelId > 0) {
                 // language=SQLite
@@ -941,9 +941,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
-
     private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
-
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {

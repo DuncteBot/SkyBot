@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
-import java.time.temporal.TemporalAccessor
+import java.time.Instant
 import java.util.concurrent.Executors
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -160,11 +160,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     // Reminders
 
-    fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, callback: (Boolean, Int) -> Unit) {
-        createReminder(userId, reminder, expireDate, 0, callback)
-    }
-
-    abstract fun createReminder(userId: Long, reminder: String, expireDate: TemporalAccessor, channelId: Long, callback: (Boolean, Int) -> Unit)
+    abstract fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit)
 
     fun removeReminder(reminder: Reminder, callback: (Boolean) -> Unit) {
         removeReminder(reminder.id, reminder.user_id, callback)
