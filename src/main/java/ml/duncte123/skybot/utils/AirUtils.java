@@ -54,16 +54,11 @@ import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -243,51 +238,17 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    private static DateTimeFormatter getIsoFormat() {
-        return DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("UTC"));
-//        return DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("UTC+2"));
-//        return DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
-//        return DateTimeFormatter.ISO_INSTANT;
-    }
-
     public static String getDatabaseDateFormat(Duration duration) {
         return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
     public static String getDatabaseDateFormat(Instant date) {
-//        return getSimpleFormatter().format(Date.from((Instant) date));
-//        return getIsoFormat().format(date);
         return date.truncatedTo(ChronoUnit.MILLIS).toString();
     }
 
-    // Parsing goes wrong right here
     public static Instant fromDatabaseFormat(String date) {
         try {
-//            return Date.from(Instant.parse(date));
-
-            /*final Instant plus = getIsoFormat()
-                .parse(date, Instant::from)
-                .plus(2, ChronoUnit.HOURS);*/
-
-//            System.out.println("input " + date);
-//            System.out.println("plus " + plus);
-
-//            final ZonedDateTime zonedDateTime = ZonedDateTime.parse(date).withZoneSameInstant(ZoneId.of("Europe/Paris"));
-//            final ZonedDateTime zonedDateTime = ZonedDateTime.parse(date).withZoneSameInstant(ZoneId.systemDefault());
-//
-//            System.out.println(zonedDateTime);
-
-//            return zonedDateTime;
-
-//            return Date.from(getIsoFormat().parse(date, Instant::from));
-//            return getIsoFormat().parse(date);
-//            return getIsoFormat().parse(date,  Instant::from);
-//            return Date.from(plus);
-//            return plus;
-//            return Instant.parse(date);
-            return ZonedDateTime.parse(date)
-                .toInstant()
-                .plus(2, ChronoUnit.HOURS);
+            return Instant.parse(date).plus(2, ChronoUnit.HOURS);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
@@ -296,41 +257,12 @@ public class AirUtils {
         }
     }
 
-    private static SimpleDateFormat getSimpleFormatter() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        final SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        return format;
-    }
-
     public static String makeDatePretty(Instant accessor) {
         return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("UTC")).format(accessor);
-//        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.systemDefault()).format(accessor);
-//        return getSimpleFormatter().format(accessor);
-    }
-
-    public static Calendar toCalendar(Instant accessor) {
-        final Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-//        final Calendar utc = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault()));
-//        final Calendar utc = Calendar.getInstance();
-
-        utc.setTimeInMillis(accessor.toEpochMilli());
-
-        return utc;
-    }
-
-    public static Instant getEpochInstant() {
-//        return Instant.ofEpochMilli(System.currentTimeMillis());
-//        return Calendar.getInstance(TimeZone.getTimeZone("UTC")).toInstant();
-        return Instant.now();
-//        return Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault())).toInstant();
     }
 
     public static Instant getDatabaseDate(Duration duration) {
         return Instant.now().plusMillis(duration.getMilis());
-//        return Instant.ofEpochMilli(System.currentTimeMillis() + duration.getMilis());
-//        return new Date(System.currentTimeMillis() + duration.getMilis());
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
@@ -395,18 +327,12 @@ public class AirUtils {
             }
         }
 
-        // Get a calendar instance that is two days in the future
-        /*final Calendar calendarDateAfter = Calendar.getInstance();
-        calendarDateAfter.add(Calendar.DAY_OF_YEAR, 2);
-
-        final Date dateAfter = calendarDateAfter.getTime();*/
-
+        // get a date that is 2 days in the future
         final Instant plusTwoDays = Instant.now().plus(2L, ChronoUnit.DAYS);
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()
             .filter((reminder) -> reminder.getReminder_date().isAfter(plusTwoDays))
-//            .filter((reminder) -> reminder.getReminder_date().after(dateAfter))
             .map(Reminder::getId)
             .collect(Collectors.toList());
 
