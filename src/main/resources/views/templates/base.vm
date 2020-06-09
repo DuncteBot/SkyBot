@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8"/>
+
+    <meta name="author" content="duncte123"/>
+    <meta name="application-name" content="DuncteBot"/>
+    <meta name="keywords" content="discord, bot, music, youtube, google, best discord bot, spotify, rythm"/>
+    <meta name="description" content="DuncteBot, a multi-propose bot for moderation and music"/>
+    <meta content="DuncteBot" property="og:site_name"/>
+    <meta content="{{ title }}" property="og:title"/>
+    <meta content="website" property="og:type"/>
+    <meta content="DuncteBot, a multi-propose bot for moderation and music" property="og:description"/>
+    <meta name="theme-color" content="#0751c6"/>
+    <meta name="msapplication-TileColor" content="#0751c6"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@DuncteBot"/>
+    <meta name="twitter:title" content="DuncteBot (Discord bot)"/>
+    <meta name="twitter:description" content="DuncteBot, a multi-propose bot for moderation and music"/>
+    <meta name="twitter:image" content="/img/favicon.png"/>
+
+    <meta content="/img/favicon.png" property="og:image"/>
+    <link href="/img/favicon.png" rel="icon" type="image/png"/>
+    <link href="/img/favicon.png" rel="shortcut icon" type="image/png"/>
+    <link href="/img/favicon.png" rel="apple-touch-icon" type="image/png"/>
+
+    <style>
+        * {
+            --color: #0751c6;
+        }
+    </style>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://dunctebot.com/css/materialize.custom.css"/>
+    <link rel="stylesheet" href="https://dunctebot.com/css/style.css"/>
+    <link rel="stylesheet" href="https://dunctebot.com/css/animate.css"/>
+
+    <title>$title</title>
+
+    $!styles
+
+</head>
+<body class="discord dark-not-black">
+<header>
+    <div class="navbar-fixed">
+        <nav class="indigo">
+            <div class="nav-wrapper container">
+                <a href="/" class="brand-logo">Dashboard</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    #if($message)
+        <div class="container">
+            <div class="row">
+                <div class="col s5">
+                    <div class="card white">
+                        <div class="card-content black-text">
+                            <p>$message</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    #end
+
+    <div class="${containerClass|'container'}">
+
+        $!content
+
+    </div>
+</main>
+
+<footer class="page-footer indigo">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text">DuncteBot</h5>
+                <p class="grey-text text-lighten-4">A fast multipurpose discord bot that plays music from Spotify</p>
+                <a href="https://twitter.com/DuncteBot?ref_src=twsrc%5Etfw" class="twitter-follow-button"
+                   data-show-count="true">Follow @DuncteBot</a>
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li><a class="grey-text text-lighten-3" href="https://dunctebot.link/invite" target="_blank">Invite bot</a></li>
+                    <li><a class="grey-text text-lighten-3" href="/api/joinGuild" target="_blank">Join server</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://paypal.me/duncte123"
+                           target="_blank">Donate</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://patreon.com/DuncteBot"
+                           target="_blank">Patreon</a></li>
+                    <li><a href="https://www.patreon.com/bePatron?u=6419542" data-patreon-widget-type="become-patron-button">Become a Patron!</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright indigo darken-3">
+        <div class="container">
+            &copy; 2017-<span id="year"></span> DuncteBot Team
+
+            <small class="right">
+                This site is protected by hCaptcha and its
+                <a href="https://hcaptcha.com/privacy" target="_blank">Privacy Policy</a> and
+                <a href="https://hcaptcha.com/terms" target="_blank">Terms of Service</a> apply.
+            </small>
+        </div>
+    </div>
+</footer>
+
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+## Why is this needed?
+## {#<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>#}
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/eventemitter3/4.0.4/index.min.js"
+        integrity="sha256-bFwL2rD40dqBZsSyKL35Z5KgclBS7QCnxf2LBvbN48E=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+        integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+$!scripts
+</body>
+</html>

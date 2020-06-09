@@ -33,7 +33,7 @@ object HttpErrorHandlers {
 
             return WebVariables()
                 .put("title", "404 - Page Not Found")
-                .toModelAndView("errors/404.twig")
+                .toModelAndView("errors/404.vm")
         }
 
         response.type(ContentType.JSON.type)
@@ -51,7 +51,7 @@ object HttpErrorHandlers {
 
             return WebVariables()
                 .put("title", "500 - Internal Server error")
-                .toModelAndView("errors/500.twig")
+                .toModelAndView("errors/500.vm")
         }
 
         response.type(ContentType.JSON.type)

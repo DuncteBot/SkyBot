@@ -93,6 +93,6 @@ object Dashboard {
             .put("title", "Dashboard")
             .put("id", request.params(WebRouter.GUILD_ID))
             .put("name", request.getGuild(shardManager)?.name)
-            .toModelAndView("dashboard/panelSelection.twig")
+            .toModelAndView("dashboard/panelSelection.vm")
     }
 }

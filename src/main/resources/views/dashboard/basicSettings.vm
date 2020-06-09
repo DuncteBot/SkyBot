@@ -1,0 +1,136 @@
+#define ($content)
+<div class="row">
+    <h5>Selected guild: $guild.getName()</h5>
+    <a href="/server/$guild.getIdLong()/">Go back</a>
+</div>
+
+<div class="row">
+    <form class="col s12" method="post">
+        ## Basic settings
+        <div class="row section">
+            <h6>Basic settings:</h6> <br/>
+
+            <div class="input-field col s12 m1">
+                <input placeholder="db!" id="prefix" name="prefix" type="text" maxlength="10"
+                       value="$settings.getCustomPrefix()" required>
+                <label for="prefix">Prefix</label>
+            </div>
+
+            #parse('/views/dashboard/includes/basic/welcomeLeave.vm')
+            #parse('/views/dashboard/includes/basic/autoRole.vm')
+            #parse('/views/dashboard/includes/basic/switches.vm')
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12 m3">
+
+                <input type="color" style="display: none;" id="embedColor" name="embedColor"
+                       onchange="displayColor(this.value);" value="$guildColor"/>
+
+                <button type="button" id="embedPreview" onclick="showColorPicker()"
+                        class="btn-large waves-effect waves-light waves-ripple white-text"
+                        style="background: $guildColor;">
+                    Change embed color
+                </button>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="divider"></div>
+        </div>
+
+        <div class="row section">
+            <h6>Leave timeout:</h6>
+            <p>The following value indicates the amount of seconds before the bot checks if the vc is empty and
+                automatically leaves</p>
+
+            <div class="col s5">
+                <div class="input-field inline">
+                    <input type="number" name="leaveTimeout" value="$settings.getLeaveTimeout()" min="1"
+                           max="60" required/>
+                </div>
+                Seconds
+            </div>
+        </div>
+
+        ## TODO: make this work
+        #*
+        <div class="row">
+        <div class="divider"></div>
+    </div>
+
+        <div class="row section">
+            <h6>Vc Autorole settings:</h6> <br/>
+            #}{# VC auto role #}{#
+            <div class="input-field col s12 m3">
+                <select id="vcAutoRoleVc" name="vcAutoRoleVc">
+                    <option value="" selected disabled>Select a voice channel</option>
+                    {% for voiceChannel in voiceChannels %}
+                    {% if currentVcAutoRole.getVoiceChannelId() == voiceChannel.getIdLong() %}
+                    <option value="{{ voiceChannel.getIdLong() }}" selected>🔊 {{ voiceChannel.getName() }}</option>
+                    {% else %}
+                    <option value="{{ voiceChannel.getIdLong() }}">🔊 {{ voiceChannel.getName() }}</option>
+                    {% endif %}
+                    {% endfor %}
+                    <option value="0">🔇 Disable</option>
+                </select>
+                <label for="vcAutoRoleVc">Voice Channel</label>
+            </div>
+
+            <div class="input-field col s12 m3">
+                <select id="vcAutoRoleRole" name="vcAutoRoleRole">
+                    <option value="" selected disabled>Select a role</option>
+                    {% for role in goodRoles %}
+                    <p>{{ currentVcAutoRole.getRoleId() }} == {{ role.getIdLong() }}</p>
+                    {% if currentVcAutoRole.getRoleId() == role.getIdLong() %}
+                    <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
+                    {% else %}
+                    <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
+                    {% endif %}
+                    {% endfor %}
+                    <option value="0">Disable</option>
+                </select>
+                <label for="vcAutoRoleRole">Role</label>
+            </div>
+        </div>
+    *#
+
+        <div class="row">
+            <div class="divider"></div>
+        </div>
+
+        <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
+            Save
+        </button>
+    </form>
+</div>
+#end
+
+#define ($scripts)
+<script>
+    M.FormSelect.init(document.querySelectorAll('select'));
+
+    function displayColor(value) {
+        id('embedPreview').style.background = value;
+    }
+
+    function showColorPicker() {
+        id('embedColor').click()
+    }
+
+    function checkSelect(selectId, checkBox) {
+        let box = id(checkBox);
+        let select = id(selectId);
+        if (select.value) {
+            box.checked = true;
+            box.disabled = false;
+        } else {
+            box.checked = false;
+            box.disabled = true;
+        }
+    }
+</script>
+#end
+
+#parse('/views/templates/base.vm')

@@ -1,0 +1,22 @@
+#define ($content)
+<h1>List of roles for $guild_name</h1>
+<table class="striped centered">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>name</th>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach($role in $roles)
+        <tr>
+            <td>$role.id</td>
+            <td>$role.name</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+#end
+
+#parse('/views/templates/base.vm')
+

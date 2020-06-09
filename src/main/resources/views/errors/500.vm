@@ -1,0 +1,8 @@
+#define ($content)
+<div class="center">
+    <h4>Internal server error.</h4>
+    <h6>Please contact the developers on <a href="https://dunctebot.link/server" target="_blank">discord</a></h6>
+</div>
+#end
+
+#parse('/views/templates/base.vm')

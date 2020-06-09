@@ -40,6 +40,8 @@ import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
+import ml.duncte123.skybot.web.renderes.VelocityRenderer
+import ml.duncte123.skybot.web.renderes.getEngineName
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.OkHttpClient
@@ -52,7 +54,8 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
     private val config = variables.config
     private val mapper = variables.jackson
 
-    private val engine = JtwigTemplateEngine("views")
+    private val twigEngine = JtwigTemplateEngine("views")
+    private val engine = VelocityRenderer()
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
@@ -98,7 +101,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     mapper.writeValueAsString(it)
                 }
                 is ModelAndView -> {
-                    engine.render(it)
+                    if (it.getEngineName() == "twig") {
+                        twigEngine.render(it)
+                    } else {
+                        engine.render(it)
+                    }
                 }
                 else -> {
                     it.toString()
@@ -132,7 +139,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@before Dashboard.before(request, response, oAuth2Client, config)
             }
 
-            getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
+            getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.vm")
         }
 
         get("/roles/$GUILD_ID") { request, response ->
@@ -143,7 +150,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     .put("title", "Roles for ${guild.name}")
                     .put("guild_name", guild.name)
                     .put("roles", guild.roles)
-                    .toModelAndView("guildRoles.twig")
+                    .toModelAndView("guildRoles.vm")
             } catch (ignored: NumberFormatException) {
                 haltNotFound(request, response)
             }
@@ -172,7 +179,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
             // Basic settings
             getWithDefaultData("/basic", WebVariables().put("title", "Dashboard"),
-                "dashboard/basicSettings.twig", true)
+                "dashboard/basicSettings.vm", true)
 
             post("/basic") { request, response ->
                 return@post BasicSettings.save(request, response, shardManager, variables)
