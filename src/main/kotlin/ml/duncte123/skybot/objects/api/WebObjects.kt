@@ -25,8 +25,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.Instant
-import java.time.temporal.TemporalAccessor
-import java.util.*
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
