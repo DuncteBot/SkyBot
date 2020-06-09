@@ -306,6 +306,8 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     map.put("guild", guild)
                     map.put("guildColor", colorToHex(colorRaw))
 
+                    map.put("guild_patron", false)
+
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)
 

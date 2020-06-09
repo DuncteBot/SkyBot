@@ -9,206 +9,25 @@
     <div class="row">
         <form class="col s12" method="post">
             {# Spam filter #}
-            <section class="section">
-                <div class="row">
-                    <h6>Moderation:</h6> <br/>
-
-                    {# Modlog #}
-                    <div class="col s12">
-                        <div class="col s12 m5">
-                            <div class="input-field">
-                                <select id="modChannel" name="modChannel">
-                                    <option value="" disabled selected>Select a channel</option>
-                                    {% for textChannel in goodChannels %}
-                                        {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                            <option value="{{ textChannel.getIdLong() }}"
-                                                    selected>#{{ textChannel.getName() }}</option>
-                                        {% else %}
-                                            <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <option value="">Disable</option>
-                                </select>
-                                <label for="modChannel">ModLog Channel</label>
-                            </div>
-                        </div>
-
-                        <div class="col s12 m5">
-                            {% for logType in constant("ml.duncte123.skybot.objects.guild.GuildSettings.LOGGING_TYPES") %}
-                                <div class="switch">
-                                    {{ logType }} logging:
-                                    <label>
-                                        Disabled
-                                        <input type="checkbox" name="log{{ logType }}" id="log{{ logType }}"
-                                               {% if settings.call('is' ~ logType ~ 'Logging') %}checked="checked"{% endif %}>
-                                        <span class="lever"></span>
-                                        Enabled
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <br>
-                    </div>
-
-                    {# Other boolean flags #}
-
-                    <div class="col">
-                        <div class="s4">
-                            <div class="switch">
-                                Auto de-hoist:
-                                <label>
-                                    Disabled
-                                    <input type="checkbox" name="autoDeHoist" id=""
-                                           {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
-                                    <span class="lever"></span>
-                                    Enabled
-                                </label>
-                            </div>
-
-                            <div class="switch">
-                                Filter invites:
-                                <label>
-                                    Disabled
-                                    <input type="checkbox" name="filterInvites" id=""
-                                           {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
-                                    <span class="lever"></span>
-                                    Enabled
-                                </label>
-                            </div>
-
-                            <div class="switch">
-                                Swearword filter:
-                                <label>
-                                    Disabled
-                                    <input type="checkbox" name="swearFilter" id=""
-                                           {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
-                                    <span class="lever"></span>
-                                    Enabled
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="row">
-                    <div class="col s12 m5">
-                        <p><a
-                                href="https://github.com/DuncteBot/SkyBot/wiki/What-filter-type-do-I-choose%3F"
-                                target="_blank"
-                                title="Explanation of the models"
-                            >What type do I choose?</a></p>
-                        <div class="input-field">
-                            <select id="filterType" name="filterType">
-                                {% for profanityType in filterValues %}
-                                    <option
-                                        value="{{ profanityType.getType() }}"
-                                        {%- if settings.getFilterType() == profanityType -%}
-                                            selected
-                                        {%- endif -%}
-                                    >{{ profanityType.getName() }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="filterType">Swear filter type</label>
-                        </div>
-                    </div>
-
-                    <div class="col s12 m5">
-                        <p>A value between 0.7 and 0.85 is recommended (higher means less sensitive)</p>
-                        <div id="range-field" style="position: relative;">
-                            <label for="ai-sensitivity">Sensitivity</label>
-                            <input type="range" id="ai-sensitivity" name="ai-sensitivity"
-                                   value="{{ settings.getAiSensitivity() }}"
-                                   min="0" max="1" step="0.01" />
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {% include "includes/moderation/modlogAndSwitches.twig"%}
 
             <div class="row">
                 <hr>
             </div>
 
-            <div class="row section">
-
-                {# Mute role #}
-                <div class="input-field col s12 m3">
-                    <select id="muteRole" name="muteRole" {#onchange="checkSelect(this.id, 'autoRoleRoleCB');"#}>
-                        <option value="" selected disabled>Select a role</option>
-                        {% for role in goodRoles %}
-                            {% if settings.getMuteRoleId() == role.getIdLong() %}
-                                <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
-                            {% else %}
-                                <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
-                            {% endif %}
-                        {% endfor %}
-                        <option value="">Disable</option>
-                    </select>
-                    <label for="muteRole">Mute role</label>
-                </div>
-
-                {# Kick mode #}
-                <div class="input-field col s12 m4">
-
-                    <div class="switch">
-                        Toggle spam filter:
-                        <label>
-                            Disabled
-                            <input type="checkbox" name="spamFilter" id=""
-                                   {% if settings.isEnableSpamFilter() %}checked="checked"{% endif %}>
-                            <span class="lever"></span>
-                            Enabled
-                        </label>
-                    </div>
-
-                    <!-- Switch -->
-                    <div class="switch">
-                        Kick mode:
-                        <label>
-                            Mute members
-                            <input type="checkbox" name="kickMode" id="kickMode"
-                                   {% if settings.getKickState() %}checked="checked"{% endif %}>
-                            <span class="lever"></span>
-                            Kick members
-                        </label>
-                    </div>
-                </div>
-            </div>
+            {% include "includes/moderation/muteAndKick.twig"%}
 
             <div class="row">
                 <hr>
             </div>
 
-            <div class="row section">
-                <div class="col s6">
-                    <h6>Ratelimits:</h6>
-                    <p>The following values indicate the mutes duration in minutes for incrementing amount of
-                        violations
-                    </p>
-                    <br/>
-                    {% for i,r in settings.getRateLimitsForTwig() %}
-                        <div class="input-field col s12 m2">
-                            <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" min="1" max="1000000" required/>
-                        </div>
-                    {% endfor %}
-                </div>
+            {% include "includes/moderation/spamLimits.twig"%}
 
-                <div class="col s6">
-                    <h6>Spam threshold:</h6>
-                    <p>This value indicates how many messages must have been sent before the bot considers it as
-                        spam</p>
-                    <br>
-
-                    <div>
-                        Moderate for spam if a user has sent more than
-                        <div class="input-field inline">
-                            <input type="number" name="spamThreshold" value="{{ settings.getSpamThreshold() }}" min="1"
-                                   max="99" required/>
-                        </div>
-                        messages
-                    </div>
-                </div>
+            <div class="row">
+                <hr>
             </div>
+
+            {% include "includes/moderation/warnActions.twig"%}
 
             <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
                 Save
@@ -220,7 +39,16 @@
 
 {% block script %}
     <script>
-        M.FormSelect.init(document.querySelectorAll('select'));
-        M.Range.init(document.querySelector('input[name="ai-sensitivity"]'));
+        window.isPatronGuild = {{ guild_patron }};
     </script>
+    {% if guild_patron %}
+        <script src="/js/warnactions.js"></script>
+    {% else %}
+        <script>
+            function addWarnAction() {
+                alert('Free servers only get one warn action\nWant more? Consider supporting the bot by making your server a patron server');
+            }
+        </script>
+    {% endif %}
+    <script src="/js/moderation.js"></script>
 {% endblock %}

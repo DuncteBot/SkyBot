@@ -1,0 +1,41 @@
+<div class="row section">
+    <div class="col s6">
+        <h5>Warn actions:</h5>
+        <p>The following settings determine what actions the bot take when a user reaches a set amount of warnings</p>
+
+        <div class="row">
+            <div class="col m1">
+                <button id="add_warn_action">add action</button>
+            </div>
+
+            <div class="col s12 m3">
+
+                <ul id="actions">
+
+                    <li>
+
+                        <div class="input-field">
+                            <select id="warningAction1" name="warningAction1">
+                                <option value="mute">Mute</option>
+                                <option value="tempmute">Temp Mute</option>
+                                <option value="kick">Kick</option>
+                                <option value="tempban">Temp Ban</option>
+                                <option value="ban">Ban</option>
+                            </select>
+                            <label for="warningAction1">Warning action</label>
+                        </div>
+                        <div class="input-field">
+                            <input type="text" id="threshold1" name="threshold1">
+                            <label for="threshold1">Warning threshold</label>
+                        </div>
+                        <button>remove action</button>
+
+                    </li>
+
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>

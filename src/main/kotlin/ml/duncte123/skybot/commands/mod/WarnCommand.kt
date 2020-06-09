@@ -110,4 +110,26 @@ class WarnCommand : ModBaseCommand() {
         MessageUtils.sendSuccess(ctx.message)
     }
 
+    // ideas:
+    //     Able to create many actions
+    //     Max action of 1 for normal guilds
+    //     Max action of 3 for patron guilds
+    private fun getThresholdGuild(ctx: CommandContext): Int {
+        return 3
+    }
+
+    private fun getActionForThreshold(threshold: Int, ctx: CommandContext): String {
+        return "kick"
+    }
+
+    private fun invokeAction(warnings: Int, action: String, ctx: CommandContext) {
+        when (action) {
+            "mute" -> {}
+            "tempmute" -> {}
+            "kick" -> {}
+            "tempban" -> {}
+            "ban" -> {}
+        }
+    }
+
 }

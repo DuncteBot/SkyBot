@@ -1,0 +1,30 @@
+<div class="row section">
+    <div class="col s6">
+        <h6>Ratelimits:</h6>
+        <p>The following values indicate the mutes duration in minutes for incrementing amount of
+            violations
+        </p>
+        <br/>
+        {% for i,r in settings.getRateLimitsForTwig() %}
+            <div class="input-field col s12 m2">
+                <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" min="1" max="1000000" required/>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="col s6">
+        <h6>Spam threshold:</h6>
+        <p>This value indicates how many messages must have been sent before the bot considers it as
+            spam</p>
+        <br>
+
+        <div>
+            Moderate for spam if a user has sent more than
+            <div class="input-field inline">
+                <input type="number" name="spamThreshold" value="{{ settings.getSpamThreshold() }}" min="1"
+                       max="99" required/>
+            </div>
+            messages
+        </div>
+    </div>
+</div>
