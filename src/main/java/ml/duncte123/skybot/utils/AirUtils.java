@@ -274,8 +274,6 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-//                prettyTime.format(toCalendar(reminder.getCreate_date())),
-//                prettyTime.format(toCalendar(reminder.getCreate_date())),
                 prettyTime.format(Date.from(reminder.getCreate_date())),
                 reminder.getReminder().trim()
             );
