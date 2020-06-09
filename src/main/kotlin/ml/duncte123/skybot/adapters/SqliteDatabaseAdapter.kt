@@ -824,8 +824,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         result.getInt("id"),
                         result.getLong("user_id"),
                         result.getString("reminder"),
-                        result.getDate("remind_create_date").toInstant(),
-                        result.getDate("remind_date").toInstant(),
+                        result.getDate("remind_create_date").asInstant(),
+                        result.getDate("remind_date").asInstant(),
                         result.getLong("channel_id")
                     ))
                 }
@@ -848,8 +848,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                             result.getInt("id"),
                             result.getLong("user_id"),
                             result.getString("reminder"),
-                            result.getDate("remind_create_date").toInstant(),
-                            result.getDate("remind_date").toInstant(),
+                            result.getDate("remind_create_date").asInstant(),
+                            result.getDate("remind_date").asInstant(),
                             result.getLong("channel_id")
                         ))
                     }
@@ -890,8 +890,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                     result.getInt("id"),
                     result.getLong("user_id"),
                     result.getString("reminder"),
-                    result.getDate("remind_create_date").toInstant(),
-                    result.getDate("remind_date").toInstant(),
+                    result.getDate("remind_create_date").asInstant(),
+                    result.getDate("remind_date").asInstant(),
                     result.getLong("channel_id")
                 ))
             }
@@ -941,6 +941,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
+    private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {
