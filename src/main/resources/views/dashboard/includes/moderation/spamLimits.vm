@@ -5,11 +5,12 @@
             violations
         </p>
         <br/>
-        {% for i,r in settings.getRateLimitsForTwig() %}
+
+        #foreach($rateLimit in $settings.getRatelimits())
             <div class="input-field col s12 m2">
-                <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" min="1" max="1000000" required/>
+                <input type="number" name="rateLimits[$foreach.count]" value="$rateLimit" min="1" max="1000000" required/>
             </div>
-        {% endfor %}
+        #end
     </div>
 
     <div class="col s6">
@@ -21,7 +22,7 @@
         <div>
             Moderate for spam if a user has sent more than
             <div class="input-field inline">
-                <input type="number" name="spamThreshold" value="{{ settings.getSpamThreshold() }}" min="1"
+                <input type="number" name="spamThreshold" value="$settings.getSpamThreshold()" min="1"
                        max="99" required/>
             </div>
             messages

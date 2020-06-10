@@ -1,0 +1,64 @@
+#set($pattern = '[0-9]{17,20}')
+#set($link = 'https://support.discord.com/hc/en-us/articles/206346498')
+
+#define ($content)
+<div class="row col s12">
+    <div class="rowInner">
+        <h3>Register your server for patron perks</h3>
+        <div class="divider"></div>
+        <p>If you bought the <strong>One server premium features</strong> from
+            <a href="https://www.patreon.com/DuncteBot" target="_blank">our Patreon</a> you can enter the id of
+            you and the server that you want the perks to be active in here to have the patron perks enabled</p>
+
+        <p>Don't know how to get these ids? No problem, here's <a href="$link" target="_blank">an article</a> explaining how
+            to obtain these ids: <a href="$link" target="_blank">$link</a></p>
+
+        <div id="confirm">
+            #if($message)
+                <div class="row">
+                    <div class="col s5">
+                        <p>$message</p>
+                    </div>
+                </div>
+            #end
+        </div>
+
+        #if(!$hideForm)
+            <form id="patrons" action="" method="post" autocomplete="off">
+
+                <div class="input-field">
+                    <input type="text" pattern="$pattern"
+                           class="input-field validate" name="user_id" id="user_id" required/>
+                    <label for="user_id">Your discord user id</label>
+                    <span class="helper-text" data-error="That does not look like a discord id"
+                          data-success=""></span>
+                </div>
+
+                <div class="input-field">
+                    <input type="text" pattern="$pattern"
+                           class="input-field validate" name="guild_id" id="guild_id" required/>
+                    <label for="guild_id">Your discord server id</label>
+                    <span class="helper-text" data-error="That does not look like a discord id"
+                          data-success=""></span>
+                </div>
+
+                <button class="btn waves-effect waves-light waves-ripple blue accent-4 h-captcha"
+                        id="btn"
+                        data-sitekey="$chapta_sitekey"
+                        data-theme="dark"
+                        data-callback="submitForm">Submit
+                </button>
+
+                <span id="msg"></span>
+            </form>
+        #end
+    </div>
+</div>
+#end
+
+#define ($scripts)
+<script src="https://hcaptcha.com/1/api.js" async defer></script>
+<script src="/js/patron-guild.js?v=2"></script>
+#end
+
+#parse('/views/templates/base.vm')

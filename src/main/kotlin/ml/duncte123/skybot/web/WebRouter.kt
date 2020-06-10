@@ -42,20 +42,17 @@ import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
-import ml.duncte123.skybot.web.renderes.getEngineName
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.OkHttpClient
 import spark.ModelAndView
 import spark.Spark.*
-import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(private val shardManager: ShardManager, private val variables: Variables) {
     private val config = variables.config
     private val mapper = variables.jackson
 
-    private val twigEngine = JtwigTemplateEngine("views")
     private val engine = VelocityRenderer()
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
@@ -102,12 +99,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     mapper.writeValueAsString(it)
                 }
                 is ModelAndView -> {
-                    println(it.getEngineName())
-                    if (it.getEngineName() == "twig") {
-                        twigEngine.render(it)
-                    } else {
-                        engine.render(it)
-                    }
+                    engine.render(it)
                 }
                 else -> {
                     it.toString()
@@ -129,7 +121,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
         getWithDefaultData("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
-            .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
+            .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.vm")
 
         post("/register-server") { request, _ ->
             return@post OneGuildRegister.post(request, shardManager, variables, mapper)
@@ -167,18 +159,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@get Dashboard.serverSelection(request, shardManager)
             }
 
-            get("/invalid") { request, response ->
-                response.status(404)
-
-                return@get "DuncteBot is not in the requested server, why don't you <a href=\"https://discord.com/oauth2" +
-                    "/authorize?client_id=210363111729790977&guild_id=${request.params(GUILD_ID)}" +
-                    "&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
-            }
-
-            get("/noperms") { _, _ ->
-                return@get "<h1>You don't have permission to edit this server</h1>"
-            }
-
             // Basic settings
             getWithDefaultData("/basic", WebVariables().put("title", "Dashboard"),
                 "dashboard/basicSettings.vm", true)
@@ -200,11 +180,11 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
             // Custom command settings
             getWithDefaultData("/customcommands", WebVariables().put("title", "Dashboard"),
-                "dashboard/customCommandSettings.twig", true)
+                "dashboard/customCommandSettings.vm", true)
 
             // Message settings
             getWithDefaultData("/messages", WebVariables().put("title", "Dashboard"),
-                "dashboard/welcomeLeaveDesc.twig", true)
+                "dashboard/welcomeLeaveDesc.vm", true)
 
             post("/messages") { request, response ->
                 return@post MessageSettings.save(request, response, shardManager, variables)

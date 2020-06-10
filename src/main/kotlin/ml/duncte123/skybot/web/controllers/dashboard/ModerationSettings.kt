@@ -57,8 +57,8 @@ object ModerationSettings {
         val aiSensitivity = ((params["ai-sensitivity"] ?: "0.7").toFloatOrNull() ?: 0.7f).minMax(0f, 1f)
 
         for (i in 0..5) {
-
-            val value = params.getValue("rateLimits[$i]")
+            val reqItemId = i + 1
+            val value = params.getValue("rateLimits[$reqItemId]")
 
             if (value.isEmpty()) {
                 request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")

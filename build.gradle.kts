@@ -125,7 +125,6 @@ dependencies {
 
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
-    implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
     implementation(group = "org.apache.velocity", name = "velocity-engine-core", version = "2.2")
 
     // Oauth

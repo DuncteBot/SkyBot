@@ -273,12 +273,6 @@ public class GuildSettings {
         return this;
     }
 
-    // because for some reason twig casts long[] to an object
-    @JsonIgnore
-    public Long[] getRateLimitsForTwig() {
-        return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
-    }
-
     @JsonProperty("kickInsteadState")
     public boolean getKickState() {
         return kickInsteadState;

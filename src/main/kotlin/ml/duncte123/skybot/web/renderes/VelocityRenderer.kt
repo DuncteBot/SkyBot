@@ -25,9 +25,6 @@ import spark.TemplateEngine
 import java.io.StringWriter
 import java.util.*
 
-// Temp hack
-fun ModelAndView.getEngineName() = if (this.viewName.endsWith("twig")) "twig" else "velocity"
-
 class VelocityRenderer : TemplateEngine() {
     private val velocityEngine: VelocityEngine
 

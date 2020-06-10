@@ -95,7 +95,7 @@ object OneGuildRegister {
         map.put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey)
 
-        return map.toModelAndView("oneGuildRegister.twig")
+        return map.toModelAndView("oneGuildRegister.vm")
     }
 
     // IMPORTANT: Keep using the one guild endpoint so it doesn't override old patrons

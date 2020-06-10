@@ -12,19 +12,19 @@
             <hr>
         </div>
 
-        #parse('/views/dashboard/includes/moderation/muteAndKick.twig')
+        #parse('/views/dashboard/includes/moderation/muteAndKick.vm')
 
         <div class="row">
             <hr>
         </div>
 
-        #parse('/views/dashboard/includes/moderation/spamLimits.twig')
+        #parse('/views/dashboard/includes/moderation/spamLimits.vm')
 
         <div class="row">
             <hr>
         </div>
 
-        #parse('/views/dashboard/includes/moderation/warnActions.twig')
+        #parse('/views/dashboard/includes/moderation/warnActions.vm')
 
         <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
             Save
