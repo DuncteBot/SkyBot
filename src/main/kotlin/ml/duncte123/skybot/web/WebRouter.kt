@@ -29,7 +29,9 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.objects.guild.ProfanityFilterType
+import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers.haltNotFound
 import ml.duncte123.skybot.web.controllers.Callback
@@ -170,6 +172,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             // Moderation settings
             getWithDefaultData("/moderation", WebVariables()
                 .put("filterValues", ProfanityFilterType.values())
+                .put("warnActionTypes", WarnAction.Type.values())
                 .put("title", "Dashboard")
                 .put("loggingTypes", GuildSettings.LOGGING_TYPES),
                 "dashboard/moderationSettings.vm", true)
@@ -296,7 +299,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     map.put("guild", guild)
                     map.put("guildColor", colorToHex(colorRaw))
 
-                    map.put("guild_patron", true)
+                    map.put("guild_patron", CommandUtils.isGuildPatron(guild))
 
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)

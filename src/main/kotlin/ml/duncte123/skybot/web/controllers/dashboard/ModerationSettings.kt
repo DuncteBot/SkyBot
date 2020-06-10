@@ -20,6 +20,8 @@ package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.guild.WarnAction
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebRouter
 import ml.duncte123.skybot.web.getGuild
@@ -69,7 +71,18 @@ object ModerationSettings {
             rateLimits[i] = value.toLong()
         }
 
-        val guild = request.getGuild(shardManager)
+        val guild = request.getGuild(shardManager)!!
+        val isGuildPatron = CommandUtils.isGuildPatron(guild)
+        val warnActionsCount = if(isGuildPatron) 3 else 1
+        val warnActionsList = ArrayList<WarnAction>(warnActionsCount)
+
+        for (i in 1 until warnActionsCount + 1) {
+            val action = WarnAction.Type.valueOf(params.getValue("warningAction$i"))
+            val duration = if (action.isTemp) params.getValue("tempDays$i").toInt() else -1
+            val threshold = params.getValue("threshold$i").toInt()
+
+            warnActionsList.add(WarnAction(action, threshold, duration))
+        }
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)
             .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
@@ -88,6 +101,7 @@ object ModerationSettings {
             .setKickLogging(logKick)
             .setWarnLogging(logWarn)
             .setAiSensitivity(aiSensitivity)
+            .setWarnActions(warnActionsList)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

@@ -18,6 +18,16 @@
 
 const actions = id('actions');
 
+function getLiId(id) {
+    return `warningAction${id}-li`;
+}
+
+eventBus.once('loaded', () => {
+    if (actions.children.length >= 3) {
+        id('add_warn_action').remove();
+    }
+});
+
 function addWarnAction() {
     const li = document.createElement('li');
     const size = actions.children.length + 1;
@@ -26,7 +36,7 @@ function addWarnAction() {
         return;
     }
 
-    li.id = `warningAction${size}-m`;
+    li.id = getLiId(size);
 
     li.innerHTML = `
         <div class="input-field">
@@ -39,8 +49,12 @@ function addWarnAction() {
             </select>
             <label for="warningAction${size}">Warning action</label>
         </div>
-        <button data-remove-action="warningAction${size}">remove action</button>
+        <button data-remove-action="warningAction${size}" type="button">remove action</button>
     `;
 
     actions.appendChild(li);
+}
+
+function removeWarnAction(itemId) {
+    id(getLiId(itemId)).remove();
 }

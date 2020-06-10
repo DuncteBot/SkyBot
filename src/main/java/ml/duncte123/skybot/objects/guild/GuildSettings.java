@@ -429,6 +429,20 @@ public class GuildSettings {
         return this;
     }
 
+    public List<WarnAction> getWarnActions() {
+        return List.of(
+            new WarnAction(WarnAction.Type.KICK, 3),
+            new WarnAction(WarnAction.Type.TEMP_MUTE, 30, 4),
+            new WarnAction(WarnAction.Type.TEMP_BAN, 5, 10),
+            new WarnAction(WarnAction.Type.BAN, 10)
+        );
+    }
+
+    public GuildSettings setWarnActions(List<WarnAction> warnings) {
+        // we just swalow the actions for now
+        return this;
+    }
+
     @JsonIgnore
     public Object call(String methodName) {
         final Class<? extends GuildSettings> klass = this.getClass();

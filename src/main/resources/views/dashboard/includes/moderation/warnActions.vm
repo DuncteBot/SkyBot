@@ -1,38 +1,66 @@
+#macro(actionTypeOptions $selected)
+    #if(!$selected)
+        #set($selected = '')
+    #end
+
+    #foreach($actionType in $warnActionTypes)
+    <option value="$actionType.getId()"
+            #if($actionType.getId() == $selected)selected#end
+    >$actionType.getName()</option>
+    #end
+#end
+
 <div class="row section">
-    <div class="col s6">
+    <div class="col s12">
         <h5>Warn actions:</h5>
         <p>The following settings determine what actions the bot take when a user reaches a set amount of warnings</p>
+        <p>Temp bans are in days and temp mutes are in minutes</p>
 
         <div class="row">
             <div class="col s12">
                 <button id="add_warn_action" type="button" class="btn btn-primary">add action</button>
-
-
-
                 <ul id="actions">
 
-                    <li id="warningAction1-m">
+                    #foreach($action in $settings.getWarnActions())
+                        <li id="warningAction${foreach.count}-li" class="row">
+                            <div class="col s3">
+                                <div class="input-field">
+                                    <select id="warningAction${foreach.count}"
+                                            name="warningAction${foreach.count}">
+                                        #actionTypeOptions($action.getType().getId())
+                                    </select>
+                                    <label for="warningAction${foreach.count}">Warning action</label>
+                                </div>
+                            </div>
 
-                        <div class="input-field">
-                            <select id="warningAction1" name="warningAction1">
-                                <option value="mute">Mute</option>
-                                <option value="tempmute">Temp Mute</option>
-                                <option value="kick">Kick</option>
-                                <option value="tempban">Temp Ban</option>
-                                <option value="ban">Ban</option>
-                            </select>
-                            <label for="warningAction1">Warning action</label>
-                        </div>
-                        <div class="input-field">
-                            <input type="text" id="threshold1" name="threshold1">
-                            <label for="threshold1">Warning threshold</label>
-                        </div>
-                        <button type="button" class="btn btn-danger"
-                                data-remove-action="warningAction1-m">remove action</button>
+                            #if($action.isTemp())
+                                <div class="col s3">
+                                    <div class="input-field">
+                                        <input type="number" id="tempDays${foreach.count}"
+                                               name="tempDays${foreach.count}"
+                                               value="$action.getDuration()"/>
+                                        <label for="tempDays${foreach.count}">Duration</label>
+                                    </div>
+                                </div>
+                            #end
 
-                    </li>
+                            <div class="col s3">
+                                <div class="input-field">
+                                    <input type="number" id="threshold${foreach.count}"
+                                           name="threshold${foreach.count}"
+                                           value="$action.getThreshold()"/>
+                                    <label for="threshold${foreach.count}">Warning threshold</label>
+                                </div>
+                            </div>
 
-
+                            #if($guild_patron)
+                                <div class="col s1">
+                                    <button type="button" class="btn btn-danger"
+                                            data-remove-action="${foreach.count}">remove</button>
+                                </div>
+                            #end
+                        </li>
+                    #end
                 </ul>
             </div>
         </div>

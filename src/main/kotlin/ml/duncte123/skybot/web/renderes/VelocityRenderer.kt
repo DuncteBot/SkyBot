@@ -30,6 +30,7 @@ class VelocityRenderer : TemplateEngine() {
 
     init {
         val properties = Properties()
+//        properties.setProperty("parser.space_gobbling", "none")
         properties.setProperty("resource.loaders", "class")
 //        properties.setProperty("velocimacro.library.autoreload", "true")
         properties.setProperty(

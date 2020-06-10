@@ -44,6 +44,10 @@
         function addWarnAction() {
             alert('Free servers only get one warn action\nWant more warn actions?\nConsider supporting the bot by making your server a patron server');
         }
+
+        function removeWarnAction() {
+            // wellllll
+        }
     </script>
     #end
 <script src="/js/moderation.js"></script>

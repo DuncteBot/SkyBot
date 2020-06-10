@@ -30,6 +30,6 @@ eventBus.on('click', (event) => {
     const data = element.dataset;
 
     if (data.removeAction) {
-        id(data.removeAction).remove();
+        removeWarnAction(data.removeAction);
     }
 });

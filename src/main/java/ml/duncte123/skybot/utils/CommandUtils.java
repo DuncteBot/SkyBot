@@ -192,6 +192,10 @@ public class CommandUtils {
         return isPatron(u, textChannel) || isUserTagPatron(u);
     }
 
+    public static boolean isGuildPatron(@Nonnull Guild g) {
+        return shouldGuildBeConsideredPremium(g) || oneGuildPatrons.containsValue(g.getIdLong());
+    }
+
     // FIXME: Do new patron checks for guilds
     private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
         // Check if the guild is a patron either via user-being admin or as a one-guild patron
