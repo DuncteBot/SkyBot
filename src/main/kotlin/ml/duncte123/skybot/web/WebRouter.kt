@@ -59,7 +59,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
-        .setOkHttpClient(
+        /*.setOkHttpClient(
             OkHttpClient.Builder()
                 // hack until JDA-Utils fixes their shit
                 .addInterceptor {
@@ -79,7 +79,7 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     it.proceed(request)
                 }
                 .build()
-        )
+        )*/
         .build()
 
 

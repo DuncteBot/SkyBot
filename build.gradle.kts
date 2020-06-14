@@ -128,7 +128,7 @@ dependencies {
     implementation(group = "org.apache.velocity", name = "velocity-engine-core", version = "2.2")
 
     // Oauth
-    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.3")
+    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.4")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
