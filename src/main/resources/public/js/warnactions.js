@@ -22,9 +22,11 @@ function getLiId(id) {
     return `warningAction${id}-li`;
 }
 
+const actionTypes = warnActionTypes.map(({id, name}) => `<option value="${id}">${name}</option>`)
+
 eventBus.once('loaded', () => {
     if (actions.children.length >= 3) {
-        id('add_warn_action').remove();
+        // id('add_warn_action').remove();
     }
 });
 
@@ -32,27 +34,50 @@ function addWarnAction() {
     const li = document.createElement('li');
     const size = actions.children.length + 1;
 
-    if (size >= 3) {
+    /*if (size >= 3) {
         return;
-    }
+    }*/
 
     li.id = getLiId(size);
+    li.classList.add('row');
 
     li.innerHTML = `
-        <div class="input-field">
-            <select id="warningAction${size}" name="warningAction${size}">
-                <option value="mute">Mute</option>
-                <option value="tempmute">Temp Mute</option>
-                <option value="kick">Kick</option>
-                <option value="tempban">Temp Ban</option>
-                <option value="ban">Ban</option>
-            </select>
-            <label for="warningAction${size}">Warning action</label>
+        <div class="col s3">
+            <div class="input-field">
+                <select id="warningAction${size}" name="warningAction${size}">
+                    ${actionTypes}
+                </select>
+                <label for="warningAction${size}">Warning action</label>
+            </div>
         </div>
-        <button data-remove-action="warningAction${size}" type="button">remove action</button>
+        
+        <div class="col s3" style="display: none">
+            <div class="input-field">
+                <input type="number" id="tempDays${size}"
+                       name="tempDays${size}"
+                       value="5"/>
+                <label for="tempDays${size}">Duration</label>
+            </div>
+        </div>
+        
+        <div class="col s3">
+            <div class="input-field">
+                <input type="number" id="threshold${size}"
+                       name="threshold${size}"
+                       value="3"/>
+                <label for="threshold${size}">Warning threshold</label>
+            </div>
+        </div>
+        
+        <div class="col s1">
+            <button type="button" class="btn btn-danger"
+                    data-remove-action="${size}" >remove</button>
+        </div>
     `;
 
     actions.appendChild(li);
+
+    M.FormSelect.init(li.querySelector('select'));
 }
 
 function removeWarnAction(itemId) {

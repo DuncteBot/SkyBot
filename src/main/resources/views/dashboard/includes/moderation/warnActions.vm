@@ -33,16 +33,14 @@
                                 </div>
                             </div>
 
-                            #if($action.isTemp())
-                                <div class="col s3">
-                                    <div class="input-field">
-                                        <input type="number" id="tempDays${foreach.count}"
-                                               name="tempDays${foreach.count}"
-                                               value="$action.getDuration()"/>
-                                        <label for="tempDays${foreach.count}">Duration</label>
-                                    </div>
+                            <div class="col s3" style="display: #if($action.isTemp())block#{else}none#{end}">
+                                <div class="input-field">
+                                    <input type="number" id="tempDays${foreach.count}"
+                                           name="tempDays${foreach.count}"
+                                           value="$action.getDuration()"/>
+                                    <label for="tempDays${foreach.count}">Duration</label>
                                 </div>
-                            #end
+                            </div>
 
                             <div class="col s3">
                                 <div class="input-field">
@@ -66,3 +64,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.warnActionTypes = $warnActionTypes;
+</script>

@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.web.renderes
 
+import ml.duncte123.skybot.Settings
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
+import org.apache.velocity.runtime.RuntimeConstants
 import spark.ModelAndView
 import spark.TemplateEngine
 import java.io.StringWriter
@@ -31,12 +33,20 @@ class VelocityRenderer : TemplateEngine() {
     init {
         val properties = Properties()
 //        properties.setProperty("parser.space_gobbling", "none")
-        properties.setProperty("resource.loaders", "class")
 //        properties.setProperty("velocimacro.library.autoreload", "true")
-        properties.setProperty(
-            "resource.loader.class.class",
-            "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"
-        )
+
+        if (Settings.IS_LOCAL) {
+            // load templates from file for instant-reload when developing
+            properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file")
+            properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "${System.getProperty("user.dir")}/src/main/resources/")
+        } else {
+            // load templates from jar
+            properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "class")
+            properties.setProperty(
+                "resource.loader.class.class",
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"
+            )
+        }
 
         this.velocityEngine = VelocityEngine(properties)
     }

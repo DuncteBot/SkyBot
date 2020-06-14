@@ -77,5 +77,10 @@ public class WarnAction {
 
             return out.toString().trim();
         }
+
+        @Override
+        public String toString() {
+            return String.format("{id: \"%s\", name: \"%s\"}", this.getId(), this.getName());
+        }
     }
 }

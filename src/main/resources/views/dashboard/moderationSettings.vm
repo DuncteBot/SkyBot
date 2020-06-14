@@ -41,13 +41,10 @@
     <script src="/js/warnactions.js"></script>
     #else
     <script>
-        function addWarnAction() {
-            alert('Free servers only get one warn action\nWant more warn actions?\nConsider supporting the bot by making your server a patron server');
-        }
-
-        function removeWarnAction() {
-            // wellllll
-        }
+        const addWarnAction = () => alert('Free servers only get one warn action\n' +
+            'Want more warn actions?\n' +
+            'Consider supporting the bot by making your server a patron server');
+        const removeWarnAction = () => {};
     </script>
     #end
 <script src="/js/moderation.js"></script>
