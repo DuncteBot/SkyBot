@@ -26,7 +26,8 @@
                             <div class="col s3">
                                 <div class="input-field">
                                     <select id="warningAction${foreach.count}"
-                                            name="warningAction${foreach.count}">
+                                            name="warningAction${foreach.count}"
+                                            onchange="checkTempDuration(this)">
                                         #actionTypeOptions($action.getType().getId())
                                     </select>
                                     <label for="warningAction${foreach.count}">Warning action</label>
@@ -67,4 +68,12 @@
 
 <script>
     window.warnActionTypes = $warnActionTypes;
+
+    function checkTempDuration(element) {
+        const theId = `tempDays#[[${element.id.replace(/[^0-9]/g, '')}]]#`;
+        const theDiv = id(theId).parentNode.parentNode;
+        const isTemp = element.value.startsWith('TEMP');
+
+        theDiv.style.display = isTemp ? 'block' : 'none';
+    }
 </script>

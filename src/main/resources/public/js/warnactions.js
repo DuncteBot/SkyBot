@@ -22,11 +22,11 @@ function getLiId(id) {
     return `warningAction${id}-li`;
 }
 
-const actionTypes = warnActionTypes.map(({id, name}) => `<option value="${id}">${name}</option>`)
+const actionTypes = warnActionTypes.map(({id, name}) => `<option value="${id}">${name}</option>`);
 
 eventBus.once('loaded', () => {
     if (actions.children.length >= 3) {
-        // id('add_warn_action').remove();
+        id('add_warn_action').remove();
     }
 });
 
@@ -34,9 +34,9 @@ function addWarnAction() {
     const li = document.createElement('li');
     const size = actions.children.length + 1;
 
-    /*if (size >= 3) {
+    if (size >= 3) {
         return;
-    }*/
+    }
 
     li.id = getLiId(size);
     li.classList.add('row');
@@ -44,7 +44,9 @@ function addWarnAction() {
     li.innerHTML = `
         <div class="col s3">
             <div class="input-field">
-                <select id="warningAction${size}" name="warningAction${size}">
+                <select id="warningAction${size}"
+                        name="warningAction${size}"
+                        onchange="checkTempDuration(this)">
                     ${actionTypes}
                 </select>
                 <label for="warningAction${size}">Warning action</label>
