@@ -59,12 +59,6 @@ public class MuteCommand extends ModBaseCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-
-        if (args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {
