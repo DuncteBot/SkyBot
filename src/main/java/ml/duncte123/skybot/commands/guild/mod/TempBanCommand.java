@@ -40,7 +40,6 @@ import static ml.duncte123.skybot.utils.ModerationUtils.*;
 public class TempBanCommand extends ModBaseCommand {
 
     public TempBanCommand() {
-        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.requiredArgCount = 2;
         this.name = "tempban";

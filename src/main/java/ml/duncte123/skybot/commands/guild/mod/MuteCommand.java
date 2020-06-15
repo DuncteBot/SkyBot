@@ -38,7 +38,6 @@ import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProce
 public class MuteCommand extends ModBaseCommand {
 
     public MuteCommand() {
-        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "mute";
         this.help = "Mutes a user in the server";
