@@ -16,29 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.objects.web;
 
-import ml.duncte123.skybot.Author;
-import spark.ModelAndView;
-
-import java.util.HashMap;
 import java.util.Map;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class WebVariables {
-
-    private final Map<String, Object> map;
-
-    public WebVariables() {
-        this.map = new HashMap<>();
+public class ModelAndView extends spark.ModelAndView {
+    public ModelAndView(Map<String, Object> model, String viewName) {
+        super(model, viewName);
     }
 
-    public WebVariables put(String key, Object value) {
-        this.map.put(key, value);
-        return this;
-    }
-
-    public ModelAndView toModelAndView(String view) {
-        return new ModelAndView(this.map, view);
+    @Override
+    public Map<String, Object> getModel() {
+        return (Map<String, Object>) super.getModel();
     }
 }

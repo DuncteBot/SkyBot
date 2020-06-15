@@ -26,10 +26,11 @@ import me.duncte123.botcommons.web.ContentType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.objects.guild.ProfanityFilterType
 import ml.duncte123.skybot.objects.guild.WarnAction
+import ml.duncte123.skybot.objects.web.ModelAndView
+import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
@@ -46,8 +47,6 @@ import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
-import okhttp3.OkHttpClient
-import spark.ModelAndView
 import spark.Spark.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

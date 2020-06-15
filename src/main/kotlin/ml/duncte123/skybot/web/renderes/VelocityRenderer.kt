@@ -23,6 +23,7 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.runtime.RuntimeConstants
 import spark.ModelAndView
+import ml.duncte123.skybot.objects.web.ModelAndView as DbModelAndView
 import spark.TemplateEngine
 import java.io.StringWriter
 import java.util.*
@@ -38,7 +39,10 @@ class VelocityRenderer : TemplateEngine() {
         if (Settings.IS_LOCAL) {
             // load templates from file for instant-reload when developing
             properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file")
-            properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "${System.getProperty("user.dir")}/src/main/resources/")
+            properties.setProperty(
+                RuntimeConstants.FILE_RESOURCE_LOADER_PATH,
+                "${System.getProperty("user.dir")}/src/main/resources/"
+            )
         } else {
             // load templates from jar
             properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "class")
@@ -51,16 +55,14 @@ class VelocityRenderer : TemplateEngine() {
         this.velocityEngine = VelocityEngine(properties)
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun render(modelAndView: ModelAndView): String {
-        val modelMap = modelAndView.model
-
-        if (modelMap !is Map<*, *>) {
-            throw IllegalArgumentException("modelAndView must be of type java.util.Map")
+        if (modelAndView !is DbModelAndView) {
+            throw IllegalArgumentException("modelAndView is not a of correct type")
         }
 
+        val modelMap = modelAndView.model
         val template = velocityEngine.getTemplate("views/${modelAndView.viewName}")
-        val context = VelocityContext(modelMap as Map<String, Any>)
+        val context = VelocityContext(modelMap)
         val writer = StringWriter()
 
         template.merge(context, writer)

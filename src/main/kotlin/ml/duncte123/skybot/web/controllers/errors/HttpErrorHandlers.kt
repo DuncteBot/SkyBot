@@ -20,7 +20,7 @@ package ml.duncte123.skybot.web.controllers.errors
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.web.ContentType
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.web.WebVariables
 import spark.Request
 import spark.Response
 

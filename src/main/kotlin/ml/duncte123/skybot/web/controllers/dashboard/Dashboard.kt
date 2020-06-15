@@ -21,7 +21,7 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.web.WebRouter
 import ml.duncte123.skybot.web.getGuild

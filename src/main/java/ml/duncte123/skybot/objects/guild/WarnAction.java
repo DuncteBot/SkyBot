@@ -18,12 +18,16 @@
 
 package ml.duncte123.skybot.objects.guild;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class WarnAction {
     private final Type type;
     private final int threshold;
     private final int duration;
 
-    public WarnAction(Type type, int threshold, int duration) {
+    @JsonCreator
+    public WarnAction(@JsonProperty("type") Type type, @JsonProperty("threshold") int threshold, @JsonProperty("duration") int duration) {
         this.type = type;
         this.threshold = threshold;
         this.duration = duration;
