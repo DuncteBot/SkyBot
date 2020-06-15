@@ -24,6 +24,14 @@ function id(el) {
     return document.getElementById(el);
 }
 
+function hide(itemId) {
+    id(itemId).style.display = 'none';
+}
+
+function unHide(itemId) {
+    id(itemId).style.display = 'block';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     id('year').innerHTML = `${(new Date()).getFullYear()}`;
     M.Sidenav.init(document.querySelectorAll('.sidenav'));

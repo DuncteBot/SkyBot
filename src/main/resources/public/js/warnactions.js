@@ -34,7 +34,7 @@ eventBus.once('loaded', () => {
     }
 
     if (actions.children.length >= 3) {
-        id('add_warn_action').remove();
+        hide('add_warn_action');
     }
 });
 
@@ -42,7 +42,7 @@ function addWarnAction() {
     const size = actions.children.length + 1;
 
     if (size > 3) {
-        id('add_warn_action').remove();
+        hide('add_warn_action');
         return;
     }
 
@@ -69,8 +69,8 @@ function buildLi(warnAction) {
 function buildTemplate(warnAction, num) {
     warnAction = warnAction || {
         type: {id: null, temp: false},
-        threshold: 5,
-        duration: 3
+        threshold: 3,
+        duration: 5
     };
 
     return `
@@ -114,6 +114,6 @@ function removeWarnAction(itemId) {
     id(getLiId(itemId)).remove();
 
     if (actions.children.length < 3) {
-        // somehow add the button back
+        unHide('add_warn_action');
     }
 }
