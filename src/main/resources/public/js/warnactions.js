@@ -22,66 +22,98 @@ function getLiId(id) {
     return `warningAction${id}-li`;
 }
 
-const actionTypes = warnActionTypes.map(({id, name}) => `<option value="${id}">${name}</option>`);
+const mapActionTypes = (selectedType) => warnActionTypes.map(
+    ({id, name}) => `<option value="${id}" ${selectedType === id ? 'selected' : ''}>${name}</option>`
+);
 
 eventBus.once('loaded', () => {
+    for (const action of warnActions) {
+        const li = buildLi(action);
+
+        actions.appendChild(li);
+    }
+
     if (actions.children.length >= 3) {
         id('add_warn_action').remove();
     }
 });
 
 function addWarnAction() {
-    const li = document.createElement('li');
     const size = actions.children.length + 1;
 
-    if (size >= 3) {
+    if (size > 3) {
+        id('add_warn_action').remove();
         return;
     }
 
-    li.id = getLiId(size);
-    li.classList.add('row');
-
-    li.innerHTML = `
-        <div class="col s3">
-            <div class="input-field">
-                <select id="warningAction${size}"
-                        name="warningAction${size}"
-                        onchange="checkTempDuration(this)">
-                    ${actionTypes}
-                </select>
-                <label for="warningAction${size}">Warning action</label>
-            </div>
-        </div>
-        
-        <div class="col s3" style="display: none">
-            <div class="input-field">
-                <input type="number" id="tempDays${size}"
-                       name="tempDays${size}"
-                       value="5"/>
-                <label for="tempDays${size}">Duration</label>
-            </div>
-        </div>
-        
-        <div class="col s3">
-            <div class="input-field">
-                <input type="number" id="threshold${size}"
-                       name="threshold${size}"
-                       value="3"/>
-                <label for="threshold${size}">Warning threshold</label>
-            </div>
-        </div>
-        
-        <div class="col s1">
-            <button type="button" class="btn btn-danger"
-                    data-remove-action="${size}" >remove</button>
-        </div>
-    `;
+    const li = buildLi(null);
 
     actions.appendChild(li);
 
     M.FormSelect.init(li.querySelector('select'));
+    M.updateTextFields();
+}
+
+function buildLi(warnAction) {
+    const li = document.createElement('li');
+    const size = actions.children.length + 1;
+
+    li.id = getLiId(size);
+    li.classList.add('row');
+
+    li.innerHTML = buildTemplate(warnAction, size);
+
+    return li;
+}
+
+function buildTemplate(warnAction, num) {
+    warnAction = warnAction || {
+        type: {id: null, temp: false},
+        threshold: 5,
+        duration: 3
+    };
+
+    return `
+        <div class="col s3">
+            <div class="input-field">
+                <select id="warningAction${num}"
+                        name="warningAction${num}"
+                        onchange="checkTempDuration(this)">
+                    ${mapActionTypes(warnAction.type.id)}
+                </select>
+                <label for="warningAction${num}">Warning action</label>
+            </div>
+        </div>
+        
+        <div class="col s3" style="display: ${warnAction.type.temp ? 'block' : 'none'}">
+            <div class="input-field">
+                <input type="number" id="tempDays${num}"
+                       name="tempDays${num}"
+                       value="${warnAction.duration}"/>
+                <label for="tempDays${num}">Duration</label>
+            </div>
+        </div>
+        
+        <div class="col s3">
+            <div class="input-field">
+                <input type="number" id="threshold${num}"
+                       name="threshold${num}"
+                       value="${warnAction.threshold}"/>
+                <label for="threshold${num}">Warning threshold</label>
+            </div>
+        </div>
+        
+        <div class="col s1">
+            <button type="button" class="btn red"
+                    data-remove-action="${num}">remove</button>
+        </div>
+    `;
 }
 
 function removeWarnAction(itemId) {
     id(getLiId(itemId)).remove();
+
+    if (actions.children.length < 3) {
+        // somehow add the button back
+    }
 }

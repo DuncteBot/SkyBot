@@ -16,8 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-M.FormSelect.init(document.querySelectorAll('select'));
-M.Range.init(document.querySelector('input[name="ai-sensitivity"]'));
+eventBus.once('loaded', () => {
+    M.FormSelect.init(document.querySelectorAll('select'));
+    M.updateTextFields();
+    M.Range.init(document.querySelector('input[name="ai-sensitivity"]'));
+});
 
 eventBus.on('click', (event) => {
     const element = event.target;

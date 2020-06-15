@@ -49,6 +49,14 @@ public class WarnAction {
         return this.type.isTemp();
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "{type: %s, threshold: %s, duration: %s}",
+            this.type, this.threshold, this.duration
+        );
+    }
+
     public enum Type {
         MUTE,
         TEMP_MUTE,
@@ -80,7 +88,10 @@ public class WarnAction {
 
         @Override
         public String toString() {
-            return String.format("{id: \"%s\", name: \"%s\"}", this.getId(), this.getName());
+            return String.format(
+                "{id: \"%s\", name: \"%s\", temp: %s}",
+                this.getId(), this.getName(), this.isTemp()
+            );
         }
     }
 }

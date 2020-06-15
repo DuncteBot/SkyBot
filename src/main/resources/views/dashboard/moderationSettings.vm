@@ -34,9 +34,6 @@
 #end
 
 #define ($scripts)
-<script>
-    window.isPatronGuild = $guild_patron;
-</script>
     #if($guild_patron)
     <script src="/js/warnactions.js"></script>
     #else

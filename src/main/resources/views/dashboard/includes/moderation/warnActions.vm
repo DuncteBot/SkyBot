@@ -1,15 +1,3 @@
-#macro(actionTypeOptions $selected)
-    #if(!$selected)
-        #set($selected = '')
-    #end
-
-    #foreach($actionType in $warnActionTypes)
-    <option value="$actionType.getId()"
-            #if($actionType.getId() == $selected)selected#end
-    >$actionType.getName()</option>
-    #end
-#end
-
 <div class="row section">
     <div class="col s12">
         <h5>Warn actions:</h5>
@@ -20,46 +8,7 @@
             <div class="col s12">
                 <button id="add_warn_action" type="button" class="btn btn-primary">add action</button>
                 <ul id="actions">
-
-                    #foreach($action in $settings.getWarnActions())
-                        <li id="warningAction${foreach.count}-li" class="row">
-                            <div class="col s3">
-                                <div class="input-field">
-                                    <select id="warningAction${foreach.count}"
-                                            name="warningAction${foreach.count}"
-                                            onchange="checkTempDuration(this)">
-                                        #actionTypeOptions($action.getType().getId())
-                                    </select>
-                                    <label for="warningAction${foreach.count}">Warning action</label>
-                                </div>
-                            </div>
-
-                            <div class="col s3" style="display: #if($action.isTemp())block#{else}none#{end}">
-                                <div class="input-field">
-                                    <input type="number" id="tempDays${foreach.count}"
-                                           name="tempDays${foreach.count}"
-                                           value="$action.getDuration()"/>
-                                    <label for="tempDays${foreach.count}">Duration</label>
-                                </div>
-                            </div>
-
-                            <div class="col s3">
-                                <div class="input-field">
-                                    <input type="number" id="threshold${foreach.count}"
-                                           name="threshold${foreach.count}"
-                                           value="$action.getThreshold()"/>
-                                    <label for="threshold${foreach.count}">Warning threshold</label>
-                                </div>
-                            </div>
-
-                            #if($guild_patron)
-                                <div class="col s1">
-                                    <button type="button" class="btn btn-danger"
-                                            data-remove-action="${foreach.count}">remove</button>
-                                </div>
-                            #end
-                        </li>
-                    #end
+                    <!-- Items to be placed here -->
                 </ul>
             </div>
         </div>
@@ -67,13 +16,18 @@
 </div>
 
 <script>
+    window.warnActions = $settings.getWarnActions();
     window.warnActionTypes = $warnActionTypes;
+</script>
 
+#[[
+<script>
     function checkTempDuration(element) {
-        const theId = `tempDays#[[${element.id.replace(/[^0-9]/g, '')}]]#`;
+        const theId = `tempDays${element.id.replace(/[^0-9]/g, '')}`;
         const theDiv = id(theId).parentNode.parentNode;
         const isTemp = element.value.startsWith('TEMP');
 
         theDiv.style.display = isTemp ? 'block' : 'none';
     }
 </script>
+]]#

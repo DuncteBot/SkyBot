@@ -30,6 +30,7 @@ import ml.duncte123.skybot.web.toCBBool
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
+import spark.Spark.halt
 import kotlin.math.max
 import kotlin.math.min
 
@@ -63,7 +64,7 @@ object ModerationSettings {
             val value = params.getValue("rateLimits[$reqItemId]")
 
             if (value.isEmpty()) {
-                request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")
+                request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Rate limits are invalid</h4>")
 
                 return response.redirect(request.url())
             }
@@ -77,8 +78,14 @@ object ModerationSettings {
         val warnActionsList = ArrayList<WarnAction>(warnActionsCount)
 
         for (i in 1 until warnActionsCount + 1) {
+            if (!params.containsKey("warningAction$i") ||
+                !params.containsKey("tempDays$i") ||
+                !params.containsKey("threshold$i")) {
+                halt(400, "Invalid warn action detected")
+            }
+
             val action = WarnAction.Type.valueOf(params.getValue("warningAction$i"))
-            val duration = if (action.isTemp) params.getValue("tempDays$i").toInt() else -1
+            val duration = params.getValue("tempDays$i").toInt()
             val threshold = params.getValue("threshold$i").toInt()
 
             warnActionsList.add(WarnAction(action, threshold, duration))
