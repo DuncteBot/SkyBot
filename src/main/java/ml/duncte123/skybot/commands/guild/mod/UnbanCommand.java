@@ -62,39 +62,32 @@ public class UnbanCommand extends ModBaseCommand {
         final String argsJoined = String.join(" ", flags.get("undefined"));
         final User mod = ctx.getAuthor();
 
-        try {
-            event.getGuild().retrieveBanList().queue((list) -> {
-
-                for (final Guild.Ban ban : list) {
-                    final User bannedUser = ban.getUser();
-                    final String userFormatted = bannedUser.getAsTag();
+        event.getGuild().retrieveBanList().queue((list) -> {
+            for (final Guild.Ban ban : list) {
+                final User bannedUser = ban.getUser();
+                final String userFormatted = bannedUser.getAsTag();
 
 
-                    if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||
-                        userFormatted.equalsIgnoreCase(argsJoined)) {
+                if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||
+                    userFormatted.equalsIgnoreCase(argsJoined)) {
 
-                        String reason = "Unbanned by " + mod.getAsTag();
+                    String reason = "Unbanned by " + mod.getAsTag();
 
-                        if (flags.containsKey("r")) {
-                            reason = reason + ": " + String.join(" ", flags.get("r"));
-                        }
-
-                        event.getGuild().unban(bannedUser)
-                            .reason(reason)
-                            .queue();
-
-                        sendMsg(event, "User " + userFormatted + " unbanned.");
-                        modLog(mod, ban.getUser(), "unbanned", ctx.getGuild());
-                        return;
+                    if (flags.containsKey("r")) {
+                        reason = reason + ": " + String.join(" ", flags.get("r"));
                     }
-                }
-                sendMsg(event, "This user is not banned");
-            });
 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
-        }
+                    event.getGuild().unban(bannedUser)
+                        .reason(reason)
+                        .queue();
+
+                    sendMsg(event, "User " + userFormatted + " unbanned.");
+                    modLog(mod, ban.getUser(), "unbanned", ctx.getGuild());
+                    return;
+                }
+            }
+
+            sendMsg(event, "This user is not banned");
+        });
     }
 }

@@ -39,14 +39,13 @@ public class BanCommand extends ModBaseCommand {
 
     public BanCommand() {
         this.requiresArgs = true;
-        this.requiredArgCount = 2;
         this.name = "ban";
         this.aliases = new String[]{
             "dabon",
             "naenae",
         };
         this.help = "Bans a user from the server **(THIS WILL DELETE MESSAGES)**";
-        this.usage = "<@user> [-r Reason]";
+        this.usage = "<@user> [-r Reason] [--nodel]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
