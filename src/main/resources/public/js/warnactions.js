@@ -38,22 +38,6 @@ eventBus.once('loaded', () => {
     }
 });
 
-function addWarnAction() {
-    const size = actions.children.length + 1;
-
-    if (size > 3) {
-        hide('add_warn_action');
-        return;
-    }
-
-    const li = buildLi(null);
-
-    actions.appendChild(li);
-
-    M.FormSelect.init(li.querySelector('select'));
-    M.updateTextFields();
-}
-
 function buildLi(warnAction) {
     const li = document.createElement('li');
     const size = actions.children.length + 1;
@@ -108,6 +92,23 @@ function buildTemplate(warnAction, num) {
                     data-remove-action="${num}">remove</button>
         </div>
     `;
+}
+
+/////////////
+// Public api
+
+function addWarnAction() {
+    if (actions.children.length + 1 > 3) {
+        hide('add_warn_action');
+        return;
+    }
+
+    const li = buildLi(null);
+
+    actions.appendChild(li);
+
+    M.FormSelect.init(li.querySelector('select'));
+    M.updateTextFields();
 }
 
 function removeWarnAction(itemId) {
