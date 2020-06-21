@@ -54,8 +54,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class ModerationUtils {
-
-    private static Logger logger = LoggerFactory.getLogger(ModerationUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
 
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
 
@@ -106,10 +105,12 @@ public class ModerationUtils {
 
     private static boolean isLogEnabled(String type, DunctebotGuild guild) {
         final GuildSettings settings = guild.getSettings();
+
         switch (type) {
             case "ban":
             case "banned":
             case "softban":
+            case "temporally banned":
                 return settings.isBanLogging();
 
             case "unban":
@@ -142,10 +143,6 @@ public class ModerationUtils {
         modLog(mod, unbannedUser, punishment, "", g);
     }
 
-    public static void addBannedUserToDb(DatabaseAdapter adapter, long modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
-        adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
-    }
-
     public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) throws ExecutionException, InterruptedException {
         final CompletableFuture<List<Warning>> future = new CompletableFuture<>();
 
@@ -163,7 +160,7 @@ public class ModerationUtils {
     }
 
     public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
-        logger.debug("Checking for users to unmute");
+        LOG.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
         for (final Mute mute : mutes) {
@@ -185,7 +182,7 @@ public class ModerationUtils {
 
             final User targetUser = target.getUser();
 
-            logger.debug("Unmuting " + mute.getUserTag());
+            LOG.debug("Unmuting " + mute.getUserTag());
 
             final DunctebotGuild dbGuild = new DunctebotGuild(guild, variables);
             final long muteRoleId = dbGuild.getSettings().getMuteRoleId();
@@ -209,7 +206,7 @@ public class ModerationUtils {
             modLog(new ConsoleUser(), targetUser, "unmuted", dbGuild);
         }
 
-        logger.debug("Checking done, unmuted {} users.", mutes.size());
+        LOG.debug("Checking done, unmuted {} users.", mutes.size());
 
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
@@ -219,7 +216,7 @@ public class ModerationUtils {
     }
 
     public static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
-        logger.debug("Checking for users to unban");
+        LOG.debug("Checking for users to unban");
 
         // Get the ShardManager from our instance
         // Via the ShardManager we can fetch guilds and unban users
@@ -235,7 +232,7 @@ public class ModerationUtils {
                 continue;
             }
 
-            logger.debug("Unbanning " + ban.getUserName());
+            LOG.debug("Unbanning " + ban.getUserName());
 
             // Unban the user and set the reason to "Ban expired"
             guild.unban(ban.getUserId())
@@ -256,7 +253,7 @@ public class ModerationUtils {
             modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild, variables));
         }
 
-        logger.debug("Checking done, unbanned {} users.", bans.size());
+        LOG.debug("Checking done, unbanned {} users.", bans.size());
 
         // Map all the bans to just the id
         final List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());

@@ -194,7 +194,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
         //
     }
 
-    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>, callback: (Boolean) -> Unit = { })
+    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>)
 
     protected fun runOnThread(r: () -> Unit) {
         runOnThread(r) {

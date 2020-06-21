@@ -25,8 +25,11 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
+import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 
@@ -34,8 +37,8 @@ import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 class WarnCommand : ModBaseCommand() {
 
     init {
-        this.shouldLoadMembers = true
-        this.requiresArgs = true
+//        this.shouldLoadMembers = true
+//        this.requiresArgs = true
         this.name = "warn"
         this.help = "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server"
         this.usage = "<@user> [-r reason]"
@@ -47,6 +50,14 @@ class WarnCommand : ModBaseCommand() {
                 "Sets the reason for this warning"
             )
         )
+    }
+
+    fun execute__(ctx: CommandContext) {
+        for (i in 1..260) {
+            println(
+                "$i: ${getSelectedWarnAction(i, ctx)}"
+            )
+        }
     }
 
     override fun execute(ctx: CommandContext) {
@@ -67,21 +78,12 @@ class WarnCommand : ModBaseCommand() {
 
         val jdaGuild = ctx.jdaGuild
         val guild = ctx.guild
-        val member = ctx.member
+        val moderator = ctx.member
         val channel = ctx.channel
-        val author = ctx.author
+        val modUser = ctx.author
 
         // Check if we can interact
-        if (!canInteract(member, target, "warn", channel)) {
-            return
-        }
-
-        // Check if the warning count is more than 3
-        // and kick the user if this threshold is exceeded
-        // TODO: make both the threshold and the action configurable
-        if (getWarningCountForUser(ctx.databaseAdapter, target.user, jdaGuild) >= 3) {
-            ctx.jdaGuild.kick(target).reason("Reached 3 warnings").queue()
-            modLog(author, target.user, "kicked", "Reached 3 warnings", guild)
+        if (!canInteract(moderator, target, "warn", channel)) {
             return
         }
 
@@ -92,13 +94,13 @@ class WarnCommand : ModBaseCommand() {
             reason = flags["r"]!!.joinToString(" ")
         }
 
-        val dmMessage = """You have been warned by ${author.asTag}
+        val dmMessage = """You have been warned by ${modUser.asTag}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
         // add the new warning to the database
-        addWarningToDb(ctx.databaseAdapter, author, target.user, reason, guild)
-        modLog(author, target.user, "warned", reason, guild)
+        addWarningToDb(ctx.databaseAdapter, modUser, target.user, reason, guild)
+        modLog(modUser, target.user, "warned", reason, guild)
 
         // Yes we can warn bots (cuz why not) but we cannot dm them
         if (!target.user.isBot) {
@@ -108,27 +110,47 @@ class WarnCommand : ModBaseCommand() {
         }
 
         MessageUtils.sendSuccess(ctx.message)
+
+
+        // Check if the warning count is more than 3
+        // and kick the user if this threshold is exceeded
+        // TODO: make both the threshold and the action configurable
+        val warnCount = getWarningCountForUser(ctx.databaseAdapter, target.user, jdaGuild)
+        val action = getSelectedWarnAction(warnCount, ctx)
+
+        if (action != null) {
+            invokeAction(warnCount, action, modUser, target, ctx)
+        }
     }
 
     // ideas:
     //     Able to create many actions
     //     Max action of 1 for normal guilds
     //     Max action of 3 for patron guilds
-    private fun getThresholdGuild(ctx: CommandContext): Int {
-        return 3
+    private fun getSelectedWarnAction(threshold: Int, ctx: CommandContext): WarnAction? {
+        return ctx.guild.getSettings()
+            .warnActions
+            // we reverse the list so we start with the highest one
+            // preventing that everything is selected for the lowest number
+            .reversed()
+            .find { threshold >= it.threshold }
     }
 
-    private fun getActionForThreshold(threshold: Int, ctx: CommandContext): String {
-        return "kick"
-    }
+    private fun invokeAction(warnings: Int, action: WarnAction, modUser: User, target: Member, ctx: CommandContext) {
+        val guild = ctx.guild
 
-    private fun invokeAction(warnings: Int, action: String, ctx: CommandContext) {
-        when (action) {
-            "mute" -> {}
-            "tempmute" -> {}
-            "kick" -> {}
-            "tempban" -> {}
-            "ban" -> {}
+        when (action.type) {
+            WarnAction.Type.MUTE -> {}
+            WarnAction.Type.TEMP_MUTE -> {}
+            WarnAction.Type.KICK -> {
+                ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
+                modLog(modUser, target.user, "kicked", "Reached $warnings warnings", guild)
+            }
+            WarnAction.Type.TEMP_BAN -> {}
+            WarnAction.Type.BAN -> {
+                ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
+                modLog(modUser, target.user, "banned", "Reached $warnings warnings", guild)
+            }
         }
     }
 

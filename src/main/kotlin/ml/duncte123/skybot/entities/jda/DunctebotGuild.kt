@@ -30,6 +30,11 @@ import net.dv8tion.jda.api.entities.Guild
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
 
+    // TODO: change this to work the "kotlin way"
+    /*var settings: GuildSettings
+        get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
+        set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)*/
+
     fun getSettings() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
 
     fun setSettings(settings: GuildSettings) {

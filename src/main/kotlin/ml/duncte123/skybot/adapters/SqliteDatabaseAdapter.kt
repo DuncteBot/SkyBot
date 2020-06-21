@@ -903,7 +903,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun setWarnActions(guildId: Long, actions: List<WarnAction>, callback: (Boolean) -> Unit) {
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
         runOnThread {
             // clear all warn actions
             connManager.connection.createStatement().use {

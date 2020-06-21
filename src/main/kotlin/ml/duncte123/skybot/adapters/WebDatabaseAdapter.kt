@@ -441,7 +441,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun setWarnActions(guildId: Long, actions: List<WarnAction>, callback: (Boolean) -> Unit) {
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
         TODO("Not yet implemented")
     }
 }

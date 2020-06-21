@@ -21,6 +21,8 @@ package ml.duncte123.skybot.objects.guild;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.annotation.Nonnull;
+
 public class WarnAction {
     public static final int PATRON_MAX_ACTIONS = 3;
 
@@ -47,6 +49,7 @@ public class WarnAction {
         return this.duration;
     }
 
+    @Nonnull
     public Type getType() {
         return this.type;
     }
