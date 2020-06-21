@@ -68,6 +68,7 @@ public class GuildMusicManager {
     public void stopAndClear() {
         final TrackScheduler scheduler = this.getScheduler();
         this.player.removeListener(scheduler);
+        this.player.setPaused(false);
 
         if (this.player.getPlayingTrack() != null) {
             this.player.stopTrack();
