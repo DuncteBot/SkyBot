@@ -31,6 +31,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.Instant
 
@@ -438,5 +439,9 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 callback(reminders)
             }
         }
+    }
+
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>, callback: (Boolean) -> Unit) {
+        TODO("Not yet implemented")
     }
 }

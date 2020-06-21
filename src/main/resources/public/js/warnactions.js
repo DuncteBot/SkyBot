@@ -18,10 +18,7 @@
 
 const actions = id('actions');
 
-function getLiId(id) {
-    return `warningAction${id}-li`;
-}
-
+const getLiId = (id) => `warningAction${id}-li`;
 const mapActionTypes = (selectedType) => warnActionTypes.map(
     ({id, name}) => `<option value="${id}" ${selectedType === id ? 'selected' : ''}>${name}</option>`
 );
@@ -33,7 +30,7 @@ eventBus.once('loaded', () => {
         actions.appendChild(li);
     }
 
-    if (actions.children.length >= 3) {
+    if (actions.children.length >= maxActions) {
         hide('add_warn_action');
     }
 });
@@ -98,7 +95,7 @@ function buildTemplate(warnAction, num) {
 // Public api
 
 function addWarnAction() {
-    if (actions.children.length + 1 > 3) {
+    if (actions.children.length + 1 > maxActions) {
         hide('add_warn_action');
         return;
     }
@@ -114,7 +111,7 @@ function addWarnAction() {
 function removeWarnAction(itemId) {
     id(getLiId(itemId)).remove();
 
-    if (actions.children.length < 3) {
+    if (actions.children.length < maxActions) {
         unHide('add_warn_action');
     }
 }

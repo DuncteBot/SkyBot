@@ -20,6 +20,7 @@ package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.Patron;
+import ml.duncte123.skybot.objects.guild.WarnAction;
 import org.sqlite.JDBC;
 
 import java.io.File;
@@ -155,6 +156,12 @@ public class SQLiteDatabaseConnectionManager {
             );
 
             connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
+                    "(user_id VARCHAR(255) NOT NULL PRIMARY KEY," +
+                    "guild_id VARCHAR(255) NOT NULL);"
+            );
+
+            connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS vcAutoRoles" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guild_id VARCHAR(255) NOT NULL," +
@@ -191,21 +198,33 @@ public class SQLiteDatabaseConnectionManager {
                     ");"
             );
 
-            final String namesList = Arrays.stream(Patron.Type.values())
-                .map(Patron.Type::name)
-                .collect(Collectors.joining("', '"));
-
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS patrons(" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "user_id VARCHAR(20) NOT NULL," +
                     "guild_id VARCHAR(20)," +
-                    "type TEXT CHECK( type IN ('" + namesList + "')) NOT NULL" +
+                    "type TEXT CHECK( type IN ('" + toListString(Patron.Type.values()) + "')) NOT NULL" +
+                    ");"
+            );
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS warn_actions(" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guild_id VARCHAR(20) NOT NULL," +
+                    "duration INTEGER DEFAULT 5," +
+                    "threshold INTEGER DEFAULT 5," +
+                    "type TEXT CHECK( type IN ('" + toListString(WarnAction.Type.values()) + "')) NOT NULL" +
                     ");"
             );
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String toListString(Enum<?>[] e) {
+        return Arrays.stream(e)
+            .map(Enum::name)
+            .collect(Collectors.joining("', '"));
     }
 }

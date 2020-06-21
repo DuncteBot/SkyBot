@@ -99,6 +99,6 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
         val matcher = regex.matches(memberName)
         return (!memberName.startsWith(dehoistChar) && matcher &&
             member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
-            GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
+            GuildSettingsUtils.getGuild(member.guild.idLong, this.variables).isAutoDeHoist)
     }
 }

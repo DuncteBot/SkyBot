@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WarnAction {
+    public static final int PATRON_MAX_ACTIONS = 3;
+
     private final Type type;
     private final int threshold;
     private final int duration;
@@ -47,10 +49,6 @@ public class WarnAction {
 
     public Type getType() {
         return this.type;
-    }
-
-    public boolean isTemp() {
-        return this.type.isTemp();
     }
 
     @Override

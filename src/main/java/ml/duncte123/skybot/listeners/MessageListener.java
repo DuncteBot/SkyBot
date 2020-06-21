@@ -169,7 +169,7 @@ public abstract class MessageListener extends BaseListener {
     private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
         final User selfUser = event.getJDA().getSelfUser();
         final String selfRegex = "<@!?" + selfUser.getId() + '>';
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
 
         if (!commandManager.isCommand(customPrefix, rw) && doAutoModChecks(event, settings, rw)) {

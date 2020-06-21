@@ -41,16 +41,16 @@ object MessageSettings {
         val serverDescription = params["serverDescription"]
         val welcomeChannel = params["welcomeChannel"]
 
-        val guild = request.getGuild(shardManager)
+        val guildId = request.getGuild(shardManager)!!.idLong
 
-        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+        val newSettings = GuildSettingsUtils.getGuild(guildId, variables)
             .setServerDesc(serverDescription)
             .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
             .setCustomJoinMessage(welcomeMessage)
             .setCustomLeaveMessage(leaveMessage)
             .setEnableJoinMessage(welcomeLeaveEnabled)
 
-        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+        GuildSettingsUtils.updateGuildSettings(guildId, newSettings, variables)
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 

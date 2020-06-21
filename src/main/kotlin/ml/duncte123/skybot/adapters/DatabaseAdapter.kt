@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.objects.guild.WarnAction
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -179,6 +180,21 @@ abstract class DatabaseAdapter(threads: Int = 2) {
      * Important: Callback must not be called if the list is empty
      */
     abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
+
+    // warn actions
+    fun addWarnAction() {
+        //
+    }
+
+    fun updateWarnAction() {
+        //
+    }
+
+    fun removeWarnAction() {
+        //
+    }
+
+    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>, callback: (Boolean) -> Unit = { })
 
     protected fun runOnThread(r: () -> Unit) {
         runOnThread(r) {

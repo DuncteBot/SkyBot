@@ -28,7 +28,6 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +46,11 @@ public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
-
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
         loadEmbedColors(variables.getDatabaseAdapter());
         loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
-
 
     private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSettings> guildSettings) {
         logger.info("Loading Guild settings.");
@@ -121,45 +118,45 @@ public class GuildSettingsUtils {
     }
 
     @Nonnull
-    public static GuildSettings getGuild(Guild guild, Variables variables) {
-        final GuildSettings setting = variables.getGuildSettingsCache().get(guild.getIdLong());
+    public static GuildSettings getGuild(long guildId, Variables variables) {
+        final GuildSettings setting = variables.getGuildSettingsCache().get(guildId);
 
         if (setting == null) {
-            return registerNewGuild(guild, variables);
+            return registerNewGuild(guildId, variables);
         }
 
         return setting;
     }
 
-    public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
+    public static void updateGuildSettings(long guildId, GuildSettings settings, Variables variables) {
         if (variables.getGuildSettingsCache().get(settings.getGuildId()) == null) {
-            registerNewGuild(guild, variables, settings);
+            registerNewGuild(guildId, variables, settings);
             return;
         }
 
         variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
     }
 
-    public static GuildSettings registerNewGuild(Guild g, Variables variables) {
-        return registerNewGuild(g, variables, new GuildSettings(g.getIdLong()));
+    public static GuildSettings registerNewGuild(long guildId, Variables variables) {
+        return registerNewGuild(guildId, variables, new GuildSettings(guildId));
     }
 
-    private static GuildSettings registerNewGuild(Guild g, Variables variables, GuildSettings newGuildSettings) {
+    private static GuildSettings registerNewGuild(long guildId, Variables variables, GuildSettings newGuildSettings) {
         final LoadingCache<Long, GuildSettings> guildSettingsCache = variables.getGuildSettingsCache();
-        final GuildSettings settingForGuild = guildSettingsCache.get(g.getIdLong());
+        final GuildSettings settingForGuild = guildSettingsCache.get(guildId);
 
         if (settingForGuild != null) {
             return settingForGuild;
         }
 
         variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
-        variables.getGuildSettingsCache().put(g.getIdLong(), newGuildSettings);
+        variables.getGuildSettingsCache().put(guildId, newGuildSettings);
 
         return newGuildSettings;
     }
 
-    public static void updateEmbedColor(Guild g, int color, Variables variables) {
-        variables.getDatabaseAdapter().updateOrCreateEmbedColor(g.getIdLong(), color);
+    public static void updateEmbedColor(long guildId, int color, Variables variables) {
+        variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
     }
 
     public static String replaceNewLines(String entery) {

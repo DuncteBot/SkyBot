@@ -73,13 +73,18 @@ object ModerationSettings {
         }
 
         val guild = request.getGuild(shardManager)!!
+        val guildId = guild.idLong
         val isGuildPatron = CommandUtils.isGuildPatron(guild)
-        val warnActionsCount = if(isGuildPatron) 3 else 1
-        val warnActionsList = ArrayList<WarnAction>(warnActionsCount)
+        val maxWarningActionCount = if(isGuildPatron) WarnAction.PATRON_MAX_ACTIONS else 1
+        val warnActionsList = arrayListOf<WarnAction>()
 
-        for (i in 1 until warnActionsCount + 1) {
-            if (!params.containsKey("warningAction$i") ||
-                !params.containsKey("tempDays$i") ||
+        for (i in 1 until maxWarningActionCount + 1) {
+            // TODO: check to see for missing warn actions
+            if (!params.containsKey("warningAction$i")) {
+                continue
+            }
+
+            if (!params.containsKey("tempDays$i") ||
                 !params.containsKey("threshold$i")) {
                 halt(400, "Invalid warn action detected")
             }
@@ -91,7 +96,7 @@ object ModerationSettings {
             warnActionsList.add(WarnAction(action, threshold, duration))
         }
 
-        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+        val newSettings = GuildSettingsUtils.getGuild(guildId, variables)
             .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
             .setAutoDeHoist(autoDeHoist)
             .setFilterInvites(filterInvites)
@@ -110,7 +115,9 @@ object ModerationSettings {
             .setAiSensitivity(aiSensitivity)
             .setWarnActions(warnActionsList)
 
-        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+        GuildSettingsUtils.updateGuildSettings(guildId, newSettings, variables)
+
+        variables.databaseAdapter.setWarnActions(guildId, newSettings.warnActions)
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 

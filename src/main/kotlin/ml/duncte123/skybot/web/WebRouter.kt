@@ -173,7 +173,8 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 .put("filterValues", ProfanityFilterType.values())
                 .put("warnActionTypes", WarnAction.Type.values())
                 .put("title", "Dashboard")
-                .put("loggingTypes", GuildSettings.LOGGING_TYPES),
+                .put("loggingTypes", GuildSettings.LOGGING_TYPES)
+                .put("patronMaxWarnActions", WarnAction.PATRON_MAX_ACTIONS),
                 "dashboard/moderationSettings.vm", true)
 
             post("/moderation") { request, response ->
@@ -278,6 +279,8 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 val guild = request.getGuild(shardManager)
 
                 if (guild != null) {
+                    val guildId = guild.idLong
+
                     val tcs = guild.textChannelCache.filter {
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
@@ -286,15 +289,15 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                         guild.selfMember.canInteract(it) && it.name != "@everyone" && it.name != "@here"
                     }.filter { !it.isManaged }.toList()
 
-                    val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.DEFAULT_COLOUR)
-                    val currVcAutoRole = variables.vcAutoRoleCache.get(guild.idLong)
-                        ?: variables.vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+                    val colorRaw = EmbedUtils.getColorOrDefault(guildId, Settings.DEFAULT_COLOUR)
+                    val currVcAutoRole = variables.vcAutoRoleCache.get(guildId)
+                        ?: variables.vcAutoRoleCache.put(guildId, TLongLongHashMap())
 
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
                     map.put("voiceChannels", guild.voiceChannelCache)
                     map.put("currentVcAutoRole", currVcAutoRole)
-                    map.put("settings", GuildSettingsUtils.getGuild(guild, variables))
+                    map.put("settings", GuildSettingsUtils.getGuild(guildId, variables))
                     map.put("guild", guild)
                     map.put("guildColor", colorToHex(colorRaw))
 

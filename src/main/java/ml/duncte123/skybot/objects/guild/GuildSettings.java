@@ -74,10 +74,10 @@ public class GuildSettings {
     private boolean warnLogging = true;
     //
     private List<WarnAction> warnActions = List.of(
-        new WarnAction(WarnAction.Type.KICK, 3),
+        new WarnAction(WarnAction.Type.KICK, 3)/*,
         new WarnAction(WarnAction.Type.TEMP_MUTE, 30, 4),
         new WarnAction(WarnAction.Type.TEMP_BAN, 5, 10),
-        new WarnAction(WarnAction.Type.BAN, 10)
+        new WarnAction(WarnAction.Type.BAN, 10)*/
     );
 
     @JsonCreator
@@ -413,7 +413,11 @@ public class GuildSettings {
 
     @JsonProperty("warn_actions")
     public GuildSettings setWarnActions(List<WarnAction> warnings) {
-        this.warnActions = warnings;
+
+        // if there are warn actions we can set them
+        if (!warnings.isEmpty()) {
+            this.warnActions = warnings;
+        }
 
         return this;
     }

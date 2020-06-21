@@ -26,6 +26,7 @@ public class ModelAndView extends spark.ModelAndView {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getModel() {
         return (Map<String, Object>) super.getModel();
     }
