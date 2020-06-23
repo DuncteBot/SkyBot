@@ -30,8 +30,10 @@ import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -41,6 +43,7 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -102,6 +105,12 @@ public final class SkyBot {
 
         Settings.PREFIX = config.discord.prefix;
 
+        MessageAction.setDefaultMentions(List.of(
+            Message.MentionType.USER
+            // These two don't get parsed
+            // Message.MentionType.CHANNEL,
+            // Message.MentionType.EMOTE
+        ));
         // Set some defaults for rest-actions
         RestAction.setPassContext(true);
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));

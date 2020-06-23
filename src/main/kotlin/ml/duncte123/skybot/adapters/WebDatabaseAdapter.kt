@@ -294,6 +294,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
+    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
+        callback(-1)
+        TODO("ADD CODE FOR FETCHING WARN COUNT")
+    }
+
     override fun purgeBans(ids: List<Int>) {
         runOnThread {
             apis.purgeBans(ids)

@@ -145,7 +145,12 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
 
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
 
-                ModerationUtils.addWarningToDb(adapter, jda.selfUser, user, "Spam", guild)
+                adapter.createWarning(
+                    jda.selfUser.idLong,
+                    user.idLong,
+                    guild.idLong,
+                    "Spam"
+                )
 
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")

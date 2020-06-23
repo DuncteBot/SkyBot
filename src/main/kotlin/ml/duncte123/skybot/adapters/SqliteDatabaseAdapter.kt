@@ -586,6 +586,29 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
+    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
+        runOnThread {
+            var count = 0
+            val smt = connManager.connection.prepareStatement(
+                // language=SQLite
+                "SELECT COUNT(id) as counter FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
+            ).use {
+                it.setString(1, userId.toString())
+                it.setString(2, guildId.toString())
+                it.closeOnCompletion()
+                return@use it
+            }
+
+            val result = smt.executeQuery()
+
+            while (result.next()) {
+                count = result.getInt("counter")
+            }
+
+            callback.invoke(count)
+        }
+    }
+
     override fun purgeBans(ids: List<Int>) {
         runOnThread {
             val idsString = ids.joinToString(separator = ", ")

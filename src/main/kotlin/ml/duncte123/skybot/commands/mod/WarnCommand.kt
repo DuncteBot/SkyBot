@@ -69,9 +69,10 @@ class WarnCommand : ModBaseCommand() {
         }
 
         val target = mentioned[0]
+        val targetUser = target.user
 
         // The bot cannot be warned
-        if (target.user == ctx.jda.selfUser) {
+        if (targetUser == ctx.jda.selfUser) {
             sendErrorWithMessage(ctx.message, "You can not warn me")
             return
         }
@@ -99,12 +100,17 @@ class WarnCommand : ModBaseCommand() {
         """.trimMargin()
 
         // add the new warning to the database
-        addWarningToDb(ctx.databaseAdapter, modUser, target.user, reason, guild)
-        modLog(modUser, target.user, "warned", reason, guild)
+        ctx.databaseAdapter.createWarning(
+            modUser.idLong,
+            target.idLong,
+            guild.idLong,
+            reason
+        )
+        modLog(modUser, targetUser, "warned", reason, guild)
 
         // Yes we can warn bots (cuz why not) but we cannot dm them
-        if (!target.user.isBot) {
-            target.user.openPrivateChannel()
+        if (!targetUser.isBot) {
+            targetUser.openPrivateChannel()
                 .flatMap {  it.sendMessage(dmMessage) }
                 .queue(null, ignore(CANNOT_SEND_TO_USER))
         }
@@ -115,7 +121,7 @@ class WarnCommand : ModBaseCommand() {
         // Check if the warning count is more than 3
         // and kick the user if this threshold is exceeded
         // TODO: make both the threshold and the action configurable
-        val warnCount = getWarningCountForUser(ctx.databaseAdapter, target.user, jdaGuild)
+        val warnCount = getWarningCountForUser(ctx.databaseAdapter, targetUser, jdaGuild)
         val action = getSelectedWarnAction(warnCount, ctx)
 
         if (action != null) {
@@ -139,14 +145,21 @@ class WarnCommand : ModBaseCommand() {
     private fun invokeAction(warnings: Int, action: WarnAction, modUser: User, target: Member, ctx: CommandContext) {
         val guild = ctx.guild
 
+        // That's a lot of duped mod logs
         when (action.type) {
-            WarnAction.Type.MUTE -> {}
-            WarnAction.Type.TEMP_MUTE -> {}
+            WarnAction.Type.MUTE -> {
+                modLog(modUser, target.user, "muted", "Reached $warnings warnings", guild)
+            }
+            WarnAction.Type.TEMP_MUTE -> {
+                modLog(modUser, target.user, "muted", "Reached $warnings warnings", guild)
+            }
             WarnAction.Type.KICK -> {
                 ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
                 modLog(modUser, target.user, "kicked", "Reached $warnings warnings", guild)
             }
-            WarnAction.Type.TEMP_BAN -> {}
+            WarnAction.Type.TEMP_BAN -> {
+                modLog(modUser, target.user, "temporally banned", "Reached $warnings warnings", guild)
+            }
             WarnAction.Type.BAN -> {
                 ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
                 modLog(modUser, target.user, "banned", "Reached $warnings warnings", guild)

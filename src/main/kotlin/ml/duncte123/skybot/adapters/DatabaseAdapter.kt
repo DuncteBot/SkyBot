@@ -129,6 +129,8 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
 
+    abstract fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit)
+
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
 
     abstract fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit)
