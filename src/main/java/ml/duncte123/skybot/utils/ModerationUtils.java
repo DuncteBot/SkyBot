@@ -144,16 +144,15 @@ public class ModerationUtils {
     }
 
     public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) throws ExecutionException, InterruptedException {
-        // TODO: make endpoint that just fetches count
-        final CompletableFuture<List<Warning>> future = new CompletableFuture<>();
+        final CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        adapter.getWarningsForUser(u.getIdLong(), g.getIdLong(), (it) -> {
+        adapter.getWarningCountForUser(u.getIdLong(), g.getIdLong(), (it) -> {
             future.complete(it);
 
             return null;
         });
 
-        return future.get().size();
+        return future.get();
     }
 
     public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
