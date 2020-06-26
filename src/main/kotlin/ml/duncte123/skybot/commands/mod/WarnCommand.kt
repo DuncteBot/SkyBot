@@ -115,6 +115,7 @@ class WarnCommand : ModBaseCommand() {
         // Check if the warning count is more than 3
         // and kick the user if this threshold is exceeded
         // TODO: make both the threshold and the action configurable
+        // TODO: implement in web database
         val warnCount = getWarningCountForUser(ctx.databaseAdapter, targetUser, jdaGuild)
         val action = getSelectedWarnAction(warnCount, ctx)
 
