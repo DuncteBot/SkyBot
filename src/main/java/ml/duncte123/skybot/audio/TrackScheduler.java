@@ -107,7 +107,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         if (nextTrack == null) {
             player.stopTrack();
             sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
-        } else  {
+        } else {
             player.playTrack(nextTrack);
         }
     }

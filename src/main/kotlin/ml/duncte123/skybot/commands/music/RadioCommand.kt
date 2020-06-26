@@ -76,6 +76,7 @@ class RadioCommand : MusicCommand() {
                 }
 
                 mng.player.stopTrack()
+                mng.player.isPaused = false
                 scheduler.queue.clear()
                 ctx.audioUtils.loadAndPlay(mng, radio.url, ctx)
             }

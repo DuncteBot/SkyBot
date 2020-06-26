@@ -38,7 +38,6 @@ import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProce
 public class MuteCommand extends ModBaseCommand {
 
     public MuteCommand() {
-        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "mute";
         this.help = "Mutes a user in the server";
@@ -59,12 +58,6 @@ public class MuteCommand extends ModBaseCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-
-        if (args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {

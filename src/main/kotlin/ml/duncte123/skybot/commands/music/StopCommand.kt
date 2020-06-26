@@ -50,6 +50,7 @@ class StopCommand : MusicCommand() {
         if (ctx.guild.getSettings().isAllowAllToStop || trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
             mng.scheduler.queue.clear()
             player.stopTrack()
+            player.isPaused = false
 
             sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
 

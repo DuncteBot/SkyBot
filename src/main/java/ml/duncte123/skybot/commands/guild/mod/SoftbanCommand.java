@@ -38,7 +38,6 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {
-        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "softban";
         this.help = "Kicks a user from the server **(THIS WILL DELETE MESSAGES)**";

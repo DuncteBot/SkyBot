@@ -42,7 +42,6 @@ public class PurgeUserCommand extends ModBaseCommand {
     private static final int DEL_COUNT = 200;
 
     public PurgeUserCommand() {
-        this.shouldLoadMembers = true;
         this.requiresArgs = true;
         this.name = "purgeuser";
         this.help = "Purges the last " + DEL_COUNT + " messages of a user";
