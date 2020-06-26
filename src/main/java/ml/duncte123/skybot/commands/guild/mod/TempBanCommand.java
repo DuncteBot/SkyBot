@@ -120,7 +120,7 @@ public class TempBanCommand extends ModBaseCommand {
     }
 
     @Nullable
-    static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
+    public static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
         Optional<Duration> optionalDuration;
 
         try {

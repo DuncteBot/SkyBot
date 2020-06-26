@@ -33,7 +33,16 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
     // TODO: change this to work the "kotlin way"
     /*var settings: GuildSettings
         get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
-        set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)*/
+        set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
+
+    var color: Int
+        get() = EmbedUtils.getColorOrDefault(this.idLong, Settings.DEFAULT_COLOUR)
+        set(color) {
+            EmbedUtils.addColor(this.idLong, color)
+            GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
+        }
+
+        val hexColor = AirUtils.colorToHex(color)*/
 
     fun getSettings() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
 

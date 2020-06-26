@@ -23,9 +23,12 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.objects.guild.WarnAction
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
@@ -37,8 +40,8 @@ import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 class WarnCommand : ModBaseCommand() {
 
     init {
-//        this.shouldLoadMembers = true
-//        this.requiresArgs = true
+        this.shouldLoadMembers = true
+        this.requiresArgs = true
         this.name = "warn"
         this.help = "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server"
         this.usage = "<@user> [-r reason]"
@@ -50,14 +53,6 @@ class WarnCommand : ModBaseCommand() {
                 "Sets the reason for this warning"
             )
         )
-    }
-
-    fun execute__(ctx: CommandContext) {
-        for (i in 1..260) {
-            println(
-                "$i: ${getSelectedWarnAction(i, ctx)}"
-            )
-        }
     }
 
     override fun execute(ctx: CommandContext) {
@@ -144,27 +139,74 @@ class WarnCommand : ModBaseCommand() {
 
     private fun invokeAction(warnings: Int, action: WarnAction, modUser: User, target: Member, ctx: CommandContext) {
         val guild = ctx.guild
+        val targetUser = target.user
+
+        if ((action.type == WarnAction.Type.MUTE || action.type == WarnAction.Type.TEMP_MUTE) &&
+            !muteRoleCheck(guild)) {
+            modLog("[warn actions] Failed to apply automatic mute `${targetUser.asTag}` as there is no mute role set in the settings of this server", guild)
+            return
+        }
 
         // That's a lot of duped mod logs
         when (action.type) {
             WarnAction.Type.MUTE -> {
-                modLog(modUser, target.user, "muted", "Reached $warnings warnings", guild)
+                applyMuteRole(target, guild)
+                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.TEMP_MUTE -> {
-                modLog(modUser, target.user, "muted", "Reached $warnings warnings", guild)
+                applyMuteRole(target, guild)
+
+                val duration = getDuration("${action.duration}m", null, null, null)
+                val finalDate = AirUtils.getDatabaseDateFormat(duration)
+
+                ctx.databaseAdapter.createMute(
+                    modUser.idLong,
+                    targetUser.idLong,
+                    targetUser.asTag,
+                    finalDate,
+                    guild.idLong
+                ) {}
+
+                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.KICK -> {
                 ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
-                modLog(modUser, target.user, "kicked", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.TEMP_BAN -> {
-                modLog(modUser, target.user, "temporally banned", "Reached $warnings warnings", guild)
+                val duration = getDuration("${action.duration}d", null, null, null)
+                val finalUnbanDate = AirUtils.getDatabaseDateFormat(duration)
+
+                ctx.databaseAdapter.createBan(
+                    modUser.idLong,
+                    targetUser.name,
+                    targetUser.discriminator,
+                    targetUser.idLong,
+                    finalUnbanDate,
+                    guild.idLong
+                )
+
+                ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
+                modLog(modUser, targetUser, "temporally banned", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.BAN -> {
                 ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
-                modLog(modUser, target.user, "banned", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "banned", "Reached $warnings warnings", guild)
             }
         }
     }
 
+    private fun applyMuteRole(target: Member, guild: DunctebotGuild) {
+        val roleId = guild.getSettings().muteRoleId
+        val role = guild.getRoleById(roleId)
+
+        if (role == null) {
+            modLog("[warn actions] Failed to apply automatic mute `${target.user.asTag}` as I could not find the role that is specified in the settings", guild)
+            return
+        }
+
+        guild.addRoleToMember(target, role).queue()
+    }
+
+    private fun muteRoleCheck(guild: DunctebotGuild) = guild.getSettings().muteRoleId > 0
 }
