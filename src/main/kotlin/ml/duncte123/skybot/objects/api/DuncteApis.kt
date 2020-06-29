@@ -306,9 +306,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     fun setWarnActions(guildId: Long, warnActions: List<WarnAction>) {
-        val json = mapper.valueToTree<JsonNode>(warnActions)
+        val json = mapper.createObjectNode()
 
-        println(json)
+        json.putArray("warn_actions")
+            .addAll(mapper.valueToTree<ArrayNode>(warnActions))
 
         val response = postJSON("guildsettings/$guildId/warn-actions", json)
 

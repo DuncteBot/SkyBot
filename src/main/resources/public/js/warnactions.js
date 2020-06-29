@@ -90,28 +90,3 @@ function buildTemplate(warnAction, num) {
         </div>
     `;
 }
-
-/////////////
-// Public api
-
-function addWarnAction() {
-    if (actions.children.length + 1 > maxActions) {
-        hide('add_warn_action');
-        return;
-    }
-
-    const li = buildLi(null);
-
-    actions.appendChild(li);
-
-    M.FormSelect.init(li.querySelector('select'));
-    M.updateTextFields();
-}
-
-function removeWarnAction(itemId) {
-    id(getLiId(itemId)).remove();
-
-    if (actions.children.length < maxActions) {
-        unHide('add_warn_action');
-    }
-}

@@ -34,8 +34,31 @@
 #end
 
 #define ($scripts)
+<script src="/js/warnactions.js"></script>
     #if($guild_patron)
-    <script src="/js/warnactions.js"></script>
+    <script>
+        function addWarnAction() {
+            if (actions.children.length + 1 > maxActions) {
+                hide('add_warn_action');
+                return;
+            }
+
+            const li = buildLi(null);
+
+            actions.appendChild(li);
+
+            M.FormSelect.init(li.querySelector('select'));
+            M.updateTextFields();
+        }
+
+        function removeWarnAction(itemId) {
+            id(getLiId(itemId)).remove();
+
+            if (actions.children.length < maxActions) {
+                unHide('add_warn_action');
+            }
+        }
+    </script>
     #else
     <script>
         const addWarnAction = () => alert('Free servers only get one warn action\n' +
