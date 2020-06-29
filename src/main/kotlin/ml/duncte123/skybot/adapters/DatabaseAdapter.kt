@@ -125,7 +125,8 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String)
 
-    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit)
+    // callback is option since we don't always need it
+    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit = {})
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
 

@@ -156,8 +156,7 @@ class WarnCommand : ModBaseCommand() {
             WarnAction.Type.TEMP_MUTE -> {
                 applyMuteRole(target, guild)
 
-                val duration = getDuration("${action.duration}m", null, null, null)
-                val finalDate = AirUtils.getDatabaseDateFormat(duration)
+                val finalDate = "${action.duration}m".toDuration()
 
                 ctx.databaseAdapter.createMute(
                     modUser.idLong,
@@ -165,7 +164,7 @@ class WarnCommand : ModBaseCommand() {
                     targetUser.asTag,
                     finalDate,
                     guild.idLong
-                ) {}
+                )
 
                 modLog(modUser, targetUser, "muted", "Reached $warnings warnings", guild)
             }
@@ -174,8 +173,7 @@ class WarnCommand : ModBaseCommand() {
                 modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.TEMP_BAN -> {
-                val duration = getDuration("${action.duration}d", null, null, null)
-                val finalUnbanDate = AirUtils.getDatabaseDateFormat(duration)
+                val finalUnbanDate = "${action.duration}d".toDuration()
 
                 ctx.databaseAdapter.createBan(
                     modUser.idLong,
@@ -206,6 +204,12 @@ class WarnCommand : ModBaseCommand() {
         }
 
         guild.addRoleToMember(target, role).queue()
+    }
+
+    private fun String.toDuration(): String {
+        val duration = getDuration(this, null, null, null)
+
+        return AirUtils.getDatabaseDateFormat(duration)
     }
 
     private fun muteRoleCheck(guild: DunctebotGuild) = guild.getSettings().muteRoleId > 0

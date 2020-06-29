@@ -295,8 +295,11 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     }
 
     override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
-        callback(-1)
-        TODO("ADD CODE FOR FETCHING WARN COUNT")
+        runOnThread {
+            callback(
+                apis.getWarningCountForUser(userId, guildId)
+            )
+        }
     }
 
     override fun purgeBans(ids: List<Int>) {
@@ -312,16 +315,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     }
 
     override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
-        runOnThread {
-            val storedData = apis.getExpiredBansAndMutes()
-            val storedBans = storedData["bans"]
-            val storedMutes = storedData["mutes"]
-
-            val bans: List<Ban> = jackson.readValue(storedBans.traverse(), object : TypeReference<List<Ban>>() {})
-            val mutes: List<Mute> = jackson.readValue(storedMutes.traverse(), object : TypeReference<List<Mute>>() {})
-
-            callback(bans, mutes)
-        }
+        throw UnsupportedOperationException("Not used anymore")
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
@@ -436,17 +430,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     }
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
-        runOnThread {
-            val expiredReminders = apis.getExpiredReminders()
-            val reminders = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
-
-            if (reminders.isNotEmpty()) {
-                callback(reminders)
-            }
-        }
+        throw UnsupportedOperationException("Not used anymore")
     }
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
-        TODO("Not yet implemented")
+        runOnThread {
+            apis.setWarnActions(guildId, actions)
+        }
     }
 }

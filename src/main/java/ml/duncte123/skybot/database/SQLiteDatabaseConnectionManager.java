@@ -212,7 +212,7 @@ public class SQLiteDatabaseConnectionManager {
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guild_id VARCHAR(20) NOT NULL," +
                     "duration INTEGER DEFAULT 5," +
-                    "threshold INTEGER DEFAULT 5," +
+                    "threshold INTEGER DEFAULT 3," +
                     "type TEXT CHECK( type IN ('" + toListString(WarnAction.Type.values()) + "')) NOT NULL" +
                     ");"
             );
