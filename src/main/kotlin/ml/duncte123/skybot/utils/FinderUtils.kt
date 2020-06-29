@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils
 
-import ml.duncte123.skybot.extensions.sync
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
@@ -143,7 +142,7 @@ object FinderUtils {
             }
         }
 
-        /*val future = CompletableFuture<List<Member>>()
+        val future = CompletableFuture<List<Member>>()
 
         guild.retrieveMembersByPrefix(input, 10)
             .onSuccess { future.complete(it) }
@@ -151,8 +150,10 @@ object FinderUtils {
             .onError {
                 logger.error("Failed to retrieve member by prefix", it)
                 future.complete(listOf())
-            }*/
+            }
 
-        return guild.retrieveMembersByPrefix(input, 10).sync()
+        // Lol this actually breaks behavior
+//        return guild.retrieveMembersByPrefix(input, 10).sync()
+        return future.get()
     }
 }
