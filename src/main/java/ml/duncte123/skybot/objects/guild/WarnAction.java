@@ -82,7 +82,7 @@ public class WarnAction {
             final String[] split = this.name().split("_");
             final StringBuilder out = new StringBuilder();
 
-            for (String s : split) {
+            for (final String s : split) {
                 out.append(s, 0, 1)
                     .append(s.substring(1).toLowerCase())
                     .append(" ");

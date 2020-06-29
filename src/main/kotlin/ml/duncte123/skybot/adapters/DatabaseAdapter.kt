@@ -184,19 +184,6 @@ abstract class DatabaseAdapter(threads: Int = 2) {
      */
     abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
 
-    // warn actions
-    fun addWarnAction() {
-        //
-    }
-
-    fun updateWarnAction() {
-        //
-    }
-
-    fun removeWarnAction() {
-        //
-    }
-
     abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>)
 
     protected fun runOnThread(r: () -> Unit) {
