@@ -223,12 +223,6 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void handlePatronRemoval(long userId) {
-        // .remove returns true if item was removed, if it is false it means that the user was not present
-        // check with the booleans what the highest type is and apply that type
-        // type should be null to delete patron
-        // Normal > tag > one_guild > all_guild
-        // TODO: normal > delete doesn't work yet
-
         // Remove the user from the patrons list
         final boolean hadNormalRank = CommandUtils.patrons.remove(userId);
 

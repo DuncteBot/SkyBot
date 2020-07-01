@@ -69,7 +69,9 @@ public final class SkyBot {
         thread.setDaemon(true);
         return thread;
     });
-    private final IntFunction<? extends Activity> activityProvider;
+    private final IntFunction<? extends Activity> activityProvider = (shardId) -> Activity.playing(
+        Settings.PREFIX + "help | Shard " + (shardId + 1)
+    );
     private WebRouter webRouter = null;
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
@@ -84,9 +86,7 @@ public final class SkyBot {
     };
 
     private SkyBot() throws Exception {
-        // Set our animated emotes as default reactions
-        MessageUtils.setErrorReaction("a:_no:577795484060483584");
-        MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
+        this.configureJDADefaults();
 
         // Load in our container
         final Variables variables = new Variables();
@@ -94,28 +94,7 @@ public final class SkyBot {
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
-        // Set the user-agent of the bot
-        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
-        EmbedUtils.setEmbedBuilder(
-            () -> new EmbedBuilder()
-                .setColor(Settings.DEFAULT_COLOUR)
-//                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
-//                .setTimestamp(Instant.now())
-        );
-
         Settings.PREFIX = config.discord.prefix;
-
-        MessageAction.setDefaultMentions(List.of(
-            Message.MentionType.USER
-            // These two don't get parsed
-            // Message.MentionType.CHANNEL,
-            // Message.MentionType.EMOTE
-        ));
-        // Set some defaults for rest-actions
-        RestAction.setPassContext(true);
-        RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
-        // If any rest-action doesn't get executed within 2 minutes we will mark it as failed
-        RestAction.setDefaultTimeout(2L, TimeUnit.MINUTES);
 
         if (variables.useApi()) {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
@@ -129,14 +108,8 @@ public final class SkyBot {
 
         //Set the token to a string
         final String token = config.discord.token;
-
         //But this time we are going to shard it
         final int totalShards = config.discord.totalShards;
-
-        this.activityProvider = (shardId) -> Activity.playing(
-            config.discord.prefix + "help | Shard " + (shardId + 1)
-        );
-
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
@@ -188,6 +161,33 @@ public final class SkyBot {
         if (!config.discord.local) {
             webRouter = new WebRouter(shardManager, variables);
         }
+    }
+
+    private void configureJDADefaults() {
+        // Set our animated emotes as default reactions
+        MessageUtils.setErrorReaction("a:_no:577795484060483584");
+        MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
+
+        // Set the user-agent of the bot
+        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
+        EmbedUtils.setEmbedBuilder(
+            () -> new EmbedBuilder()
+                .setColor(Settings.DEFAULT_COLOUR)
+//                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
+//                .setTimestamp(Instant.now())
+        );
+
+        MessageAction.setDefaultMentions(List.of(
+            Message.MentionType.USER
+            // These two don't get parsed
+            // Message.MentionType.CHANNEL,
+            // Message.MentionType.EMOTE
+        ));
+        // Set some defaults for rest-actions
+        RestAction.setPassContext(true);
+        RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
+        // If any rest-action doesn't get executed within 2 minutes we will mark it as failed
+        RestAction.setDefaultTimeout(2L, TimeUnit.MINUTES);
     }
 
     public ShardManager getShardManager() {

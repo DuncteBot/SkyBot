@@ -29,6 +29,8 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.CommandUtils
+import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
@@ -124,12 +126,14 @@ class WarnCommand : ModBaseCommand() {
         }
     }
 
-    // ideas:
-    //     Able to create many actions
-    //     Max action of 1 for normal guilds
-    //     Max action of 3 for patron guilds
     private fun getSelectedWarnAction(threshold: Int, ctx: CommandContext): WarnAction? {
-        return ctx.guild.getSettings()
+        val guild = ctx.guild
+
+        if (!CommandUtils.isGuildPatron(guild)) {
+            return guild.getSettings().warnActions.firstOrNull()
+        }
+
+        return guild.getSettings()
             .warnActions
             // we reverse the list so we start with the highest one
             // preventing that everything is selected for the lowest number

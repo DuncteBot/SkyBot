@@ -39,8 +39,12 @@
     <script>
         function addWarnAction() {
             if (actions.children.length + 1 > maxActions) {
-                hide('add_warn_action');
                 return;
+            }
+
+            // Extra safe check so we hide the button on 3 but still add the action
+            if (actions.children.length + 1 >= maxActions) {
+                hide('add_warn_action');
             }
 
             const li = buildLi(null);
@@ -60,12 +64,19 @@
         }
     </script>
     #else
+    #[[
     <script>
         const addWarnAction = () => alert('Free servers only get one warn action\n' +
             'Want more warn actions?\n' +
             'Consider supporting the bot by making your server a patron server');
-        const removeWarnAction = () => {};
+        const removeWarnAction = (itemId) => {
+            const element = document.querySelector(`button[data-remove-action="${itemId}"]`);
+
+            element.classList.add('disabled');
+            element.disabled = true;
+        };
     </script>
+    ]]#
     #end
 <script src="/js/moderation.js"></script>
 #end
