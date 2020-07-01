@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.Flag
 import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
-import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
