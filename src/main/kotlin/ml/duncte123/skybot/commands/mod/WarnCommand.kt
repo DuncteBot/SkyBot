@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
+import java.util.concurrent.CompletableFuture
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : ModBaseCommand() {
@@ -94,13 +95,16 @@ class WarnCommand : ModBaseCommand() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
+        val future = CompletableFuture<Unit>()
+
         // add the new warning to the database
         ctx.databaseAdapter.createWarning(
             modUser.idLong,
             target.idLong,
             guild.idLong,
             reason
-        )
+        ) { future.complete(null) }
+
         modLog(modUser, targetUser, "warned", reason, guild)
 
         // Yes we can warn bots (cuz why not) but we cannot dm them
@@ -112,11 +116,9 @@ class WarnCommand : ModBaseCommand() {
 
         MessageUtils.sendSuccess(ctx.message)
 
+        // Wait for the request to pass and then get the updated warn count
+        future.get()
 
-        // Check if the warning count is more than 3
-        // and kick the user if this threshold is exceeded
-        // TODO: make both the threshold and the action configurable
-        // TODO: implement in web database
         val warnCount = getWarningCountForUser(ctx.databaseAdapter, targetUser, jdaGuild)
         val action = getSelectedWarnAction(warnCount, ctx)
 
@@ -159,7 +161,7 @@ class WarnCommand : ModBaseCommand() {
             WarnAction.Type.TEMP_MUTE -> {
                 applyMuteRole(target, guild)
 
-                val finalDate = "${action.duration}m".toDuration()
+                val (finalDate, dur) = "${action.duration}m".toDuration()
 
                 ctx.databaseAdapter.createMute(
                     modUser.idLong,
@@ -169,14 +171,14 @@ class WarnCommand : ModBaseCommand() {
                     guild.idLong
                 )
 
-                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", dur, guild)
             }
             WarnAction.Type.KICK -> {
                 ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", guild)
             }
             WarnAction.Type.TEMP_BAN -> {
-                val finalUnbanDate = "${action.duration}d".toDuration()
+                val (finalUnbanDate, dur) = "${action.duration}d".toDuration()
 
                 ctx.databaseAdapter.createBan(
                     modUser.idLong,
@@ -188,7 +190,7 @@ class WarnCommand : ModBaseCommand() {
                 )
 
                 ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
-                modLog(modUser, targetUser, "temporally banned", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "banned", "Reached $warnings warnings", dur, guild)
             }
             WarnAction.Type.BAN -> {
                 ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
@@ -209,10 +211,10 @@ class WarnCommand : ModBaseCommand() {
         guild.addRoleToMember(target, role).queue()
     }
 
-    private fun String.toDuration(): String {
-        val duration = getDuration(this, null, null, null)
+    private fun String.toDuration(): Pair<String, String> {
+        val duration = getDuration(this, null, null, null)!!
 
-        return AirUtils.getDatabaseDateFormat(duration)
+        return AirUtils.getDatabaseDateFormat(duration) to duration.toString()
     }
 
     private fun muteRoleCheck(guild: DunctebotGuild) = guild.getSettings().muteRoleId > 0

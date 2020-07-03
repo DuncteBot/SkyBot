@@ -226,9 +226,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {
         runOnThread {
             apis.createWarning(modId, userId, guildId, reason)
+
+            // invoke callback here as the apis request is sync
+            callback()
         }
     }
 

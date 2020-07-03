@@ -447,7 +447,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit ) {
         runOnThread {
             connManager.connection.prepareStatement(
                 // language=SQLite
@@ -462,6 +462,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.executeUpdate()
                 it.closeOnCompletion()
             }
+
+            // invoke callback here as the apis request is sync
+            callback()
         }
     }
 

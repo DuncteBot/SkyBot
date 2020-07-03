@@ -107,7 +107,7 @@ public class TempBanCommand extends ModBaseCommand {
                         ctx.getGuild().getIdLong()
                     );
 
-                    modLog(ctx.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     logger.error("Perm ban code in temp ban ran {}", args);
                     modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());

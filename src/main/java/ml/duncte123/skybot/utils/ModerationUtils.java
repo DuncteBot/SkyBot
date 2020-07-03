@@ -31,6 +31,8 @@ import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +111,6 @@ public class ModerationUtils {
             case "ban":
             case "banned":
             case "softban":
-            case "temporally banned":
                 return settings.isBanLogging();
 
             case "unban":
@@ -165,7 +166,17 @@ public class ModerationUtils {
                 continue;
             }
 
-            final Member target = guild.getMemberById(mute.getUserId());
+            Member target = null;
+
+            try {
+                target = guild.retrieveMemberById(mute.getUserId()).complete();
+            } catch (ErrorResponseException e) {
+                // if it's not unknown member or unknown user we will rethroww the exception
+                if (e.getErrorResponse() != ErrorResponse.UNKNOWN_MEMBER
+                    && e.getErrorResponse() != ErrorResponse.UNKNOWN_USER) {
+                    throw e;
+                }
+            }
 
             if (target == null) {
                 continue;

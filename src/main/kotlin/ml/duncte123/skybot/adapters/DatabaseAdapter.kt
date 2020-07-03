@@ -123,7 +123,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long)
 
-    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String)
+    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit = {})
 
     // callback is option since we don't always need it
     abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit = {})
