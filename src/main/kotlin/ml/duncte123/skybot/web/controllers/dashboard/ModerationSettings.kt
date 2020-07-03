@@ -124,13 +124,18 @@ object ModerationSettings {
             }
 
             if (!params.containsKey("tempDays$i") ||
-                !params.containsKey("threshold$i") ||
+                !params.containsKey("threshold$i")
+            ) {
+                halt(400, "Invalid warn action detected")
+            }
+
+            if (
                 // Check for empty values (they should never be empty)
                 params["warningAction$i"].isNullOrEmpty() ||
                 params["tempDays$i"].isNullOrEmpty() ||
                 params["threshold$i"].isNullOrEmpty()
             ) {
-                halt(400, "Invalid warn action detected")
+                halt(400, "One or more warn actions has empty values")
             }
 
             val action = WarnAction.Type.valueOf(params.getValue("warningAction$i"))
