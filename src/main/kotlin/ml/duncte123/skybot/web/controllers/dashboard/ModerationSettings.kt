@@ -124,7 +124,12 @@ object ModerationSettings {
             }
 
             if (!params.containsKey("tempDays$i") ||
-                !params.containsKey("threshold$i")) {
+                !params.containsKey("threshold$i") ||
+                // Check for empty values (they should never be empty)
+                params["warningAction$i"].isNullOrEmpty() ||
+                params["tempDays$i"].isNullOrEmpty() ||
+                params["threshold$i"].isNullOrEmpty()
+            ) {
                 halt(400, "Invalid warn action detected")
             }
 
