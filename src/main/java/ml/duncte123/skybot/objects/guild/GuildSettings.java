@@ -30,7 +30,6 @@ import ml.duncte123.skybot.Settings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
