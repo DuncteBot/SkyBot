@@ -30,6 +30,7 @@ import ml.duncte123.skybot.Settings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
@@ -415,7 +416,9 @@ public class GuildSettings {
     public GuildSettings setWarnActions(List<WarnAction> warnings) {
 
         // if there are warn actions we can set them
-        if (!warnings.isEmpty()) {
+        if (warnings.isEmpty()) {
+            this.warnActions = List.of(new WarnAction(WarnAction.Type.KICK, 3));
+        } else {
             this.warnActions = warnings;
         }
 

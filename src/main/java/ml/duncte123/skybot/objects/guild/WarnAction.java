@@ -38,7 +38,7 @@ public class WarnAction {
     }
 
     public WarnAction(Type type, int threshold) {
-        this(type, threshold, -1);
+        this(type, threshold, 5);
     }
 
     public int getThreshold() {
