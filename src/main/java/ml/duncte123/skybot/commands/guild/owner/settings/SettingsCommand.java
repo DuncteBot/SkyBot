@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,6 +30,10 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
@@ -36,16 +41,46 @@ import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends SettingsBase {
 
+    // db!setting prefix
+    // db!setting prefix --set !
+
+    private final Map<String, BiConsumer<CommandContext, String>> settingsMap = new HashMap<>();
+
     public SettingsCommand() {
         this.name = "settings";
         this.aliases = new String[]{
+            "setting",
             "options",
         };
         this.help = "Shows the current settings for this server";
+        this.usage = "[item] [--set value]";
+        this.flags = new Flag[] {
+            new Flag(
+                "set",
+                "Sets the value for this item"
+            ),
+        };
+
+        this.loadSettingsMap();
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
+        final List<String> args = ctx.getArgs();
+
+        if (args.isEmpty()) {
+            showSettingsOverview(ctx);
+            return;
+        }
+
+        final String item = args.get(0);
+
+        if (!this.settingsMap.containsKey(item)) {
+            // TODO
+        }
+    }
+
+    private void showSettingsOverview(CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
@@ -78,5 +113,34 @@ public class SettingsCommand extends SettingsBase {
         );
 
         sendEmbed(ctx.getEvent(), message);
+    }
+
+    private void loadSettingsMap() {
+        this.settingsMap.put("autoRole", this::setAutoRole);
+        this.settingsMap.put("muteRole", this::dummyMethod);
+        this.settingsMap.put("embedColor", this::dummyMethod);
+        this.settingsMap.put("color", this::dummyMethod);
+        this.settingsMap.put("description", this::dummyMethod);
+        this.settingsMap.put("joinMessage", this::dummyMethod);
+        this.settingsMap.put("leaveMessage", this::dummyMethod);
+        this.settingsMap.put("logChannel", this::dummyMethod);
+        this.settingsMap.put("prefix", this::dummyMethod);
+        this.settingsMap.put("rateLimits", this::dummyMethod);
+        this.settingsMap.put("welcomeChannel", this::dummyMethod);
+        this.settingsMap.put("announceTracks", this::dummyMethod);
+        this.settingsMap.put("autoDehoist", this::dummyMethod);
+        this.settingsMap.put("filterInvites", this::dummyMethod);
+        this.settingsMap.put("enableWelcomeMessage", this::dummyMethod);
+        this.settingsMap.put("kickMode", this::dummyMethod);
+        this.settingsMap.put("spamFilter", this::dummyMethod);
+        this.settingsMap.put("swearFilter", this::dummyMethod);
+    }
+
+    private void setAutoRole(CommandContext ctx, String name) {
+        //
+    }
+
+    private void dummyMethod(CommandContext ctx, String name) {
+        //
     }
 }
