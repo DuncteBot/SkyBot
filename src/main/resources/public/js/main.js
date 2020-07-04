@@ -16,26 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+window.eventBus = new EventEmitter();
+
 // We had to rename this form _ to id because
 // the fucking patreon button has lodash
 function id(el) {
     return document.getElementById(el);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    id("year").innerHTML = new Date().getFullYear();
-    M.Sidenav.init(document.querySelectorAll(".sidenav"));
+function hide(itemId) {
+    id(itemId).style.display = 'none';
+}
+
+function unHide(itemId) {
+    id(itemId).style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    id('year').innerHTML = `${(new Date()).getFullYear()}`;
+    M.Sidenav.init(document.querySelectorAll('.sidenav'));
+
+    // M.AutoInit();
+
+    eventBus.emit('loaded');
 });
 
-function getMessage(m) {
+document.addEventListener('click', (event) => eventBus.emit('click', event));
 
+function getMessage(m) {
     switch (m) {
-        case "missing_input":
-            return "Please fill in all fields";
-        case "no_user":
-            return "The specified user id did not resolve any users.";
-        case "no_guild":
-            return "The specified server id did not resolve any servers.";
+        case 'missing_input':
+            return 'Please fill in all fields';
+        case 'no_user':
+            return 'The specified user id did not resolve any users.';
+        case 'no_guild':
+            return 'The specified server id did not resolve any servers.';
         default:
             return m;
     }

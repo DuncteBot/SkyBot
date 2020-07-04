@@ -20,7 +20,7 @@ package ml.duncte123.skybot.web.controllers.errors
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.botcommons.web.ContentType
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.web.WebVariables
 import spark.Request
 import spark.Response
 
@@ -33,7 +33,7 @@ object HttpErrorHandlers {
 
             return WebVariables()
                 .put("title", "404 - Page Not Found")
-                .toModelAndView("errors/404.twig")
+                .toModelAndView("errors/404.vm")
         }
 
         response.type(ContentType.JSON.type)
@@ -51,7 +51,7 @@ object HttpErrorHandlers {
 
             return WebVariables()
                 .put("title", "500 - Internal Server error")
-                .toModelAndView("errors/500.twig")
+                .toModelAndView("errors/500.vm")
         }
 
         response.type(ContentType.JSON.type)

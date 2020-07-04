@@ -1,0 +1,15 @@
+## Autorole
+<div class="input-field col s12 m3">
+    <select id="autoRoleRole" name="autoRoleRole">
+        <option value="" selected disabled>Select a role</option>
+        #foreach($role in $goodRoles)
+            #if($settings.getAutoroleRole() == $role.getIdLong())
+                <option value="$role.getIdLong()" selected>@$role.getName()</option>
+            #else
+                <option value="$role.getIdLong()">@$role.getName()</option>
+            #end
+        #end
+        <option value="">Disable</option>
+    </select>
+    <label for="autoRoleRole">AutoRole</label>
+</div>

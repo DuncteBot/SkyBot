@@ -74,7 +74,7 @@ repositories {
 
 val devDependencies = arrayOf(
     // SQLite
-    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.28.0")
+    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.32.3")
 )
 
 dependencies {
@@ -88,7 +88,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.88")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.1.1_163") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_172") {
         exclude(module = "opus-java")
     }
 
@@ -125,10 +125,10 @@ dependencies {
 
     //Spark
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
-    implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
+    implementation(group = "org.apache.velocity", name = "velocity-engine-core", version = "2.2")
 
     // Oauth
-    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.3")
+    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.4")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")

@@ -10,7 +10,7 @@
     <meta name="keywords" content="discord, bot, music, youtube, google, best discord bot, spotify, rythm"/>
     <meta name="description" content="DuncteBot, a multi-propose bot for moderation and music"/>
     <meta content="DuncteBot" property="og:site_name"/>
-    <meta content="{{ title }}" property="og:title"/>
+    <meta content="$title" property="og:title"/>
     <meta content="website" property="og:type"/>
     <meta content="DuncteBot, a multi-propose bot for moderation and music" property="og:description"/>
     <meta name="theme-color" content="#0751c6"/>
@@ -38,9 +38,10 @@
     <link rel="stylesheet" href="https://dunctebot.com/css/style.css"/>
     <link rel="stylesheet" href="https://dunctebot.com/css/animate.css"/>
 
-    <title>{{ title }}</title>
+    <title>$title</title>
 
-    {% block style %}{% endblock %}
+    $!styles
+
 </head>
 <body class="discord dark-not-black">
 <header>
@@ -54,27 +55,25 @@
 </header>
 
 <main>
-    {% if message %}
+    #if($message)
         <div class="container">
             <div class="row">
                 <div class="col s5">
                     <div class="card white">
                         <div class="card-content black-text">
-                            <p>{{ message | raw }}</p>
+                            <p>$message</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    {% endif %}
+    #end
 
-    {% block main %}
-        <div class="container">
+    <div class="${containerClass|'container'}">
 
-            {% block container %}
-            {% endblock %}
-        </div>
-    {% endblock %}
+        $!content
+
+    </div>
 </main>
 
 <footer class="page-footer indigo">
@@ -115,10 +114,14 @@
 
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+## Why is this needed?
+## {#<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>#}
 <!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/eventemitter3/4.0.4/index.min.js"
+        integrity="sha256-bFwL2rD40dqBZsSyKL35Z5KgclBS7QCnxf2LBvbN48E=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+        integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
 <script src="/js/main.js"></script>
-{% block script %}{% endblock %}
+$!scripts
 </body>
 </html>

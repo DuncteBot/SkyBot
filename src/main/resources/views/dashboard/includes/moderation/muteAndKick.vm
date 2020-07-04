@@ -1,0 +1,44 @@
+<div class="row section">
+    ## Mute role
+    <div class="input-field col s12 m3">
+        <select id="muteRole" name="muteRole">
+            <option value="" selected disabled>Select a role</option>
+            #foreach($role in $goodRoles)
+                #if($settings.getMuteRoleId() == $role.getIdLong())
+                    <option value="$role.getIdLong()" selected>@$role.getName()</option>
+                #else
+                    <option value="$role.getIdLong()">@$role.getName()</option>
+                #end
+            #end
+            <option value="">Disable</option>
+        </select>
+        <label for="muteRole">Mute role</label>
+    </div>
+
+    ## Kick mode
+    <div class="input-field col s12 m4">
+
+        <div class="switch">
+            Toggle spam filter:
+            <label>
+                Disabled
+                <input type="checkbox" name="spamFilter" id=""
+                       #if($settings.isEnableSpamFilter())checked="checked"#{end}>
+                <span class="lever"></span>
+                Enabled
+            </label>
+        </div>
+
+        <!-- Switch -->
+        <div class="switch">
+            Kick mode:
+            <label>
+                Mute members
+                <input type="checkbox" name="kickMode" id="kickMode"
+                       #if($settings.getKickState())checked="checked"#{end}>
+                <span class="lever"></span>
+                Kick members
+            </label>
+        </div>
+    </div>
+</div>

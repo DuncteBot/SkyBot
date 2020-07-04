@@ -1,0 +1,97 @@
+#macro(switch $name $value $id)
+<div class="switch">
+    $name:
+    <label>
+        Disabled
+        <input type="checkbox" name="$id" id="$id"
+               #if($value)checked="checked"#{end}>
+        <span class="lever"></span>
+        Enabled
+    </label>
+</div>
+#end
+
+<section class="section">
+    <div class="row">
+        <h6>Moderation:</h6> <br/>
+
+        ## Modlog
+        <div class="col s12">
+            <div class="col s12 m5">
+                <div class="input-field">
+                    <select id="modChannel" name="modChannel">
+                        <option value="" disabled selected>Select a channel</option>
+                        #foreach($textChannel in $goodChannels)
+                            #if($settings.getLogChannel() == $textChannel.getIdLong())
+                                <option value="$textChannel.getIdLong()"
+                                selected>#$textChannel.getName()</option>
+                            #else
+                                <option value="$textChannel.getIdLong()">#$textChannel.getName()</option>
+                            #end
+                        #end
+                        <option value="">Disable</option>
+                    </select>
+                    <label for="modChannel">ModLog Channel</label>
+                </div>
+            </div>
+
+            <div class="col s12 m5">
+                #foreach($logType in $loggingTypes)
+                    <div class="switch">
+                        $logType logging:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="log$logType" id="log$logType"
+                                   #if($settings.call("is${logType}Logging"))checked="checked"#{end}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+                #end
+            </div>
+            <br>
+        </div>
+
+        ## Other boolean flags
+
+        <div class="col">
+            <div class="s4">
+                #switch('Auto de-hoist', $settings.isAutoDeHoist(), 'autoDeHoist')
+                #switch('Filter invites', $settings.isFilterInvites(), 'filterInvites')
+                #switch('Swearword filter', $settings.isEnableSwearFilter(), 'swearFilter')
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col s12 m5">
+            <p><a
+                    href="https://github.com/DuncteBot/SkyBot/wiki/What-filter-type-do-I-choose%3F"
+                    target="_blank"
+                    title="Explanation of the models"
+                >What type do I choose?</a></p>
+            <div class="input-field">
+                <select id="filterType" name="filterType">
+                    #foreach($profanityType in $filterValues)
+                        <option
+                            value="$profanityType.getType()"
+                            #if($settings.getFilterType() == $profanityType)selected#end
+                        >$profanityType.getName()</option>
+                    #end
+                </select>
+                <label for="filterType">Swear filter type</label>
+            </div>
+        </div>
+
+        <div class="col s12 m5">
+            <p>A value between 0.7 and 0.85 is recommended (higher means less sensitive)</p>
+            <div id="range-field" style="position: relative;">
+                <label for="ai-sensitivity">Sensitivity</label>
+                <input type="range" id="ai-sensitivity" name="ai-sensitivity"
+                       value="$settings.getAiSensitivity()"
+                       min="0" max="1" step="0.01" />
+            </div>
+        </div>
+    </div>
+</section>

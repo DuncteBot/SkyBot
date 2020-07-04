@@ -152,6 +152,8 @@ object FinderUtils {
                 future.complete(listOf())
             }
 
+        // Lol this actually breaks behavior
+//        return guild.retrieveMembersByPrefix(input, 10).sync()
         return future.get()
     }
 }

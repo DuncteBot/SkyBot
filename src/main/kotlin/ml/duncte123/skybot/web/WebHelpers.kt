@@ -36,6 +36,10 @@ fun Request.getParamsMap() : Map<String, String> {
     val list = URLEncodedUtils.parse(this.body(), StandardCharsets.UTF_8)
     val map = HashMap<String, String>()
     list.forEach { pair ->
+        /*if (pair.name.endsWith("[]") && !map.containsKey(pair.name)) {
+            map[pair.name] = listOf<String>()
+        }*/
+
         map[pair.name] = pair.value
     }
     return map

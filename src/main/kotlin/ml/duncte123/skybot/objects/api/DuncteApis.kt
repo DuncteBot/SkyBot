@@ -31,6 +31,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -288,6 +289,12 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return response["data"] as ArrayNode
     }
 
+    fun getWarningCountForUser(userId: Long, guildId: Long): Int {
+        val response = executeRequest(defaultRequest("warns/$userId/$guildId/count"))
+
+        return response["data"].asInt(0)
+    }
+
     fun removeLatestWarningForUser(userId: Long, guildId: Long): JsonNode? {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId/latest").delete())
 
@@ -298,10 +305,18 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return response["data"]
     }
 
-    fun getExpiredBansAndMutes(): JsonNode {
-        val response = executeRequest(defaultRequest("expiredbansandmutes"))
+    fun setWarnActions(guildId: Long, warnActions: List<WarnAction>) {
+        val json = mapper.createObjectNode()
 
-        return response["data"]
+        json.putArray("warn_actions")
+            .addAll(mapper.valueToTree<ArrayNode>(warnActions))
+
+        val response = postJSON("guildsettings/$guildId/warn-actions", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to set warn actions for $guildId\n" +
+                "Response: {}", response["error"].toString())
+        }
     }
 
     fun purgeBans(ids: List<Int>) {
@@ -565,21 +580,6 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
             // NOTE: Jackson will make this null when we parse it
             return NullNode.instance
-        }
-
-        return response["data"]
-    }
-
-    fun getExpiredReminders(): JsonNode {
-        val response = executeRequest(defaultRequest("reminders/expired"))
-
-        if (!response["success"].asBoolean()) {
-            val error = response["error"]
-
-            logger.error("Failed to get expired reminders\n" +
-                "Response: {}", error.toString())
-
-            return mapper.createArrayNode()
         }
 
         return response["data"]

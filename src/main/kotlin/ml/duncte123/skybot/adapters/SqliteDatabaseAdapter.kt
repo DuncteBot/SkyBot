@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
@@ -446,7 +447,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit ) {
         runOnThread {
             connManager.connection.prepareStatement(
                 // language=SQLite
@@ -461,6 +462,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.executeUpdate()
                 it.closeOnCompletion()
             }
+
+            // invoke callback here as the apis request is sync
+            callback()
         }
     }
 
@@ -582,6 +586,29 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
 
             callback.invoke(warnings)
+        }
+    }
+
+    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
+        runOnThread {
+            var count = 0
+            val smt = connManager.connection.prepareStatement(
+                // language=SQLite
+                "SELECT COUNT(id) as counter FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
+            ).use {
+                it.setString(1, userId.toString())
+                it.setString(2, guildId.toString())
+                it.closeOnCompletion()
+                return@use it
+            }
+
+            val result = smt.executeQuery()
+
+            while (result.next()) {
+                count = result.getInt("counter")
+            }
+
+            callback.invoke(count)
         }
     }
 
@@ -902,6 +929,35 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
+        runOnThread {
+            // clear all warn actions
+            connManager.connection.createStatement().use {
+                it.execute("DELETE FROM warn_actions WHERE guild_id = '$guildId'")
+            }
+
+            connManager.connection.prepareStatement(
+                "INSERT INTO warn_actions (guild_id, duration, threshold, type) VALUES ${actions.indices.joinToString { " (? ,? ,? ,?)" }};"
+            ).use { smt ->
+                var loopIndex = 1
+
+                for (item in actions) {
+                    val firstIndex = 1 * loopIndex
+
+                    smt.setString(firstIndex, guildId.toString())
+                    smt.setInt(firstIndex + 1, item.duration)
+                    smt.setInt(firstIndex + 2, item.threshold)
+                    smt.setString(firstIndex + 3, item.type.id)
+
+                    loopIndex += 4
+                }
+
+                smt.execute()
+                smt.closeOnCompletion()
+            }
+        }
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val sqlQuerry = if (isEdit) {
             //language=SQLite
@@ -940,12 +996,34 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         return list
     }
 
+    private fun getWarnActionsForGuild(guildId: Long): List<WarnAction> {
+        val list = arrayListOf<WarnAction>()
+
+        connManager.connection.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
+            smt.setString(1, guildId.toString())
+
+            smt.executeQuery().use { res ->
+                while(res.next()) {
+                    list.add(WarnAction(
+                        WarnAction.Type.valueOf(res.getString("type")),
+                        res.getInt("threshold"),
+                        res.getInt("duration")
+                    ))
+                }
+            }
+        }
+
+
+        return list
+    }
+
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
     private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {
         val blackList = getBlackListsForGuild(guildId)
+        val warnActions = getWarnActionsForGuild(guildId)
 
         return GuildSettings(guildId)
             .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
@@ -975,5 +1053,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setAiSensitivity(this.getFloat("aiSensitivity"))
             .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
             .setBlacklistedWords(blackList)
+            .setWarnActions(warnActions)
     }
 }

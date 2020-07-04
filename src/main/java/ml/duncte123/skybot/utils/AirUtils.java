@@ -38,6 +38,7 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.extensions.TaskKt;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -352,7 +353,7 @@ public class AirUtils {
 
     public static void loadGuildMembers(Guild guild) {
         try {
-            guild.retrieveMembers().get();
+            TaskKt.sync(guild.loadMembers());
         }
         catch (InterruptedException | ExecutionException e) {
             Sentry.capture(e);

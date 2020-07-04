@@ -21,7 +21,7 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.web.WebRouter
 import ml.duncte123.skybot.web.getGuild
@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
+import spark.Spark.halt
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object Dashboard {
@@ -62,12 +63,10 @@ object Dashboard {
         val guild = request.getGuild(shardManager)
         val guildId = request.params(WebRouter.GUILD_ID)
 
-        if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${guildId}/invalid")
-        }
-
-        if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${guildId}/")
+        if (guild == null) {
+            halt(404, "DuncteBot is not in the requested server, why don't you <a href=\"https://discord.com/oauth2" +
+                "/authorize?client_id=210363111729790977&guild_id=$guildId" +
+                "&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?")
         }
 
         // Because this method gets called before every /server/... we have to return on null guilds
@@ -80,11 +79,11 @@ object Dashboard {
         val member = try {
             guild.retrieveMemberById(userId).complete()
         } catch (e: ErrorResponseException) {
-            return response.redirect("/server/${guildId}/noperms")
+            throw halt(200, "<h1>Either discord did a fucky wucky or you are not in the server that you are trying to edit</h1>")
         }
 
-        if (!member.hasPermission(Permission.MANAGE_SERVER) && !request.url().contains("noperms")) {
-            return response.redirect("/server/${guildId}/noperms")
+        if (!member.hasPermission(Permission.MANAGE_SERVER)) {
+            halt(200, "<h1>You do not have permission to edit this server</h1>")
         }
     }
 
@@ -93,6 +92,6 @@ object Dashboard {
             .put("title", "Dashboard")
             .put("id", request.params(WebRouter.GUILD_ID))
             .put("name", request.getGuild(shardManager)?.name)
-            .toModelAndView("dashboard/panelSelection.twig")
+            .toModelAndView("dashboard/panelSelection.vm")
     }
 }

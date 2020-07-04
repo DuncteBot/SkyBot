@@ -109,7 +109,7 @@ public class AudioUtils {
         GuildMusicManager mng = musicManagers.get(guildId);
 
         if (mng == null) {
-            mng = new GuildMusicManager(guild, variables);
+            mng = new GuildMusicManager(guildId, variables);
             musicManagers.put(guildId, mng);
         }
 

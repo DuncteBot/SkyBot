@@ -1,0 +1,13 @@
+#define ($styles)
+    ## nothing
+#end
+
+#define ($content)
+    ## nothing
+#end
+
+#define ($scripts)
+    ## nothing
+#end
+
+#parse('/views/templates/base.vm')

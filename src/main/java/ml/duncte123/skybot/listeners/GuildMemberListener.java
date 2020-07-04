@@ -67,7 +67,7 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
@@ -100,7 +100,7 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         // If the leave message is enabled and we have a welcome channel
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
@@ -207,7 +207,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final Guild guild = event.getGuild();
-        final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
+        final GuildSettings s = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
         final Parser parser = CommandUtils.PARSER_SUPPLIER.get();
 
@@ -223,12 +223,6 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void handlePatronRemoval(long userId) {
-        // .remove returns true if item was removed, if it is false it means that the user was not present
-        // check with the booleans what the highest type is and apply that type
-        // type should be null to delete patron
-        // Normal > tag > one_guild > all_guild
-        // TODO: normal > delete doesn't work yet
-
         // Remove the user from the patrons list
         final boolean hadNormalRank = CommandUtils.patrons.remove(userId);
 

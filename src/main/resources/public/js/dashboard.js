@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+eventBus.once('loaded', () => {
     fetch("/api/getUserGuilds", {
         credentials: "same-origin"
     })
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (const guild of json.guilds) {
                 let members = "Bot not in server";
-                let settingsLink = `<a href="https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}" target="_blank">Invite Bot</a>`;
+                let settingsLink = `<a href="https://discord.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}" target="_blank">Invite Bot</a>`;
 
                 if (guild.members > -1) {
                     members = guild.members + " members";

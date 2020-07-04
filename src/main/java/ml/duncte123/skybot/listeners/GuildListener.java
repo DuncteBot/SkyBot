@@ -84,7 +84,7 @@ public class GuildListener extends BaseListener {
             TextColor.RESET
         );
 
-        GuildSettingsUtils.registerNewGuild(guild, variables);
+        GuildSettingsUtils.registerNewGuild(guild.getIdLong(), variables);
     }
 
     private void onGuildLeave(GuildLeaveEvent event) {
@@ -255,7 +255,7 @@ public class GuildListener extends BaseListener {
         this.handlerThread.submit(() -> {
             try {
                 // Run the disconnecting after timeout so we allow JDA to receive updates
-                final long timeout = GuildSettingsUtils.getGuild(guild, variables).getLeaveTimeout();
+                final long timeout = GuildSettingsUtils.getGuild(guild.getIdLong(), variables).getLeaveTimeout();
                 TimeUnit.SECONDS.sleep(timeout);
 
                 // Make sure to get the vc from JDA because the guild might now update

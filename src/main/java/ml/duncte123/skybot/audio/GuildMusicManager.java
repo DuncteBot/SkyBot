@@ -24,9 +24,9 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
@@ -37,11 +37,11 @@ public class GuildMusicManager {
     private final AtomicLong lastChannel = new AtomicLong(-1);
     private final Supplier<Boolean> isAnnounceTracksSupplier;
 
-    public GuildMusicManager(Guild g, Variables variables) {
-        this.player = LavalinkManager.ins.createPlayer(g.getIdLong());
+    public GuildMusicManager(long guildId, Variables variables) {
+        this.player = LavalinkManager.ins.createPlayer(guildId);
         this.scheduler = new TrackScheduler(this.player, this);
         this.player.addListener(this.getScheduler());
-        this.isAnnounceTracksSupplier = () -> GuildSettingsUtils.getGuild(g, variables).isAnnounceTracks();
+        this.isAnnounceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
     }
 
     public AudioPlayerSenderHandler getSendHandler() {
@@ -77,6 +77,7 @@ public class GuildMusicManager {
         scheduler.queue.clear();
     }
 
+    @Nullable
     TextChannel getLatestChannel() {
         final long last = this.getLastChannel();
 

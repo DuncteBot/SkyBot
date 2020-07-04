@@ -158,7 +158,7 @@ public class CommandContext implements ICommandContext {
     }
 
     public GuildSettings getGuildSettings() {
-        return GuildSettingsUtils.getGuild(this.event.getGuild(), this.variables);
+        return GuildSettingsUtils.getGuild(this.event.getGuild().getIdLong(), this.variables);
     }
 
     public String getPrefix() {

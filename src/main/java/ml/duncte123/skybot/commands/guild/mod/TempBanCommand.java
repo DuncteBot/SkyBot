@@ -98,10 +98,16 @@ public class TempBanCommand extends ModBaseCommand {
         ctx.getGuild().ban(toBan.getId(), 1, fReason).queue(
             (__) -> {
                 if (duration.getSeconds() > 0) {
-                    addBannedUserToDb(ctx.getDatabaseAdapter(), ctx.getAuthor().getIdLong(),
-                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, ctx.getGuild().getIdLong());
+                    ctx.getDatabaseAdapter().createBan(
+                        ctx.getAuthor().getIdLong(),
+                        toBan.getName(),
+                        toBan.getDiscriminator(),
+                        toBan.getIdLong(),
+                        finalUnbanDate,
+                        ctx.getGuild().getIdLong()
+                    );
 
-                    modLog(ctx.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     logger.error("Perm ban code in temp ban ran {}", args);
                     modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
@@ -113,7 +119,7 @@ public class TempBanCommand extends ModBaseCommand {
     }
 
     @Nullable
-    static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
+    public static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
         Optional<Duration> optionalDuration;
 
         try {

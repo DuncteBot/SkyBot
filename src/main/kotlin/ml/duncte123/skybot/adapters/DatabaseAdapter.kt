@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.objects.guild.WarnAction
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -122,11 +123,14 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long)
 
-    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String)
+    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit = {})
 
-    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit)
+    // callback is option since we don't always need it
+    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit = {})
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
+
+    abstract fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit)
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
 
@@ -179,6 +183,8 @@ abstract class DatabaseAdapter(threads: Int = 2) {
      * Important: Callback must not be called if the list is empty
      */
     abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
+
+    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>)
 
     protected fun runOnThread(r: () -> Unit) {
         runOnThread(r) {

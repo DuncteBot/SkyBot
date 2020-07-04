@@ -90,6 +90,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         // Seek to the end to start the next track
         // We seek to use the normal flow that allows for repeating as well
+        // TODO: maybe just call onTrackEnd with AudioTrackEndReason#FINISHED?
+        // this actually does a youtube request
         this.player.seekTo(playingTrack.getDuration());
     }
 

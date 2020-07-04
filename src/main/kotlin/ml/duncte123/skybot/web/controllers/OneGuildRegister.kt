@@ -24,8 +24,9 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.adapters.DatabaseAdapter
-import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
+import ml.duncte123.skybot.objects.web.ModelAndView
+import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
@@ -34,7 +35,6 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
-import spark.ModelAndView
 import spark.Request
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -95,7 +95,7 @@ object OneGuildRegister {
         map.put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey)
 
-        return map.toModelAndView("oneGuildRegister.twig")
+        return map.toModelAndView("oneGuildRegister.vm")
     }
 
     // IMPORTANT: Keep using the one guild endpoint so it doesn't override old patrons

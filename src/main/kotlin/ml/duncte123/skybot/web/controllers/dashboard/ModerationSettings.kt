@@ -20,14 +20,18 @@ package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.guild.WarnAction
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebRouter
 import ml.duncte123.skybot.web.getGuild
 import ml.duncte123.skybot.web.getParamsMap
 import ml.duncte123.skybot.web.toCBBool
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Request
 import spark.Response
+import spark.Spark.halt
 import kotlin.math.max
 import kotlin.math.min
 
@@ -46,7 +50,6 @@ object ModerationSettings {
         val kickMode = params["kickMode"].toCBBool()
         val spamThreshold = (params["spamThreshold"] ?: "7").toInt()
         val filterType = params["filterType"]
-        val rateLimits = LongArray(6)
 
         val logBan = params["logBan"].toCBBool()
         val logUnban = params["logUnban"].toCBBool()
@@ -55,23 +58,13 @@ object ModerationSettings {
         val logWarn = params["logWarn"].toCBBool()
 
         val aiSensitivity = ((params["ai-sensitivity"] ?: "0.7").toFloatOrNull() ?: 0.7f).minMax(0f, 1f)
+        val rateLimits = parseRateLimits(request, params) ?: return response.redirect(request.url())
 
-        for (i in 0..5) {
+        val guild = request.getGuild(shardManager)!!
+        val guildId = guild.idLong
+        val warnActionsList = parseWarnActions(guild, params)
 
-            val value = params.getValue("rateLimits[$i]")
-
-            if (value.isEmpty()) {
-                request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")
-
-                return response.redirect(request.url())
-            }
-
-            rateLimits[i] = value.toLong()
-        }
-
-        val guild = request.getGuild(shardManager)
-
-        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+        val newSettings = GuildSettingsUtils.getGuild(guildId, variables)
             .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
             .setAutoDeHoist(autoDeHoist)
             .setFilterInvites(filterInvites)
@@ -88,12 +81,71 @@ object ModerationSettings {
             .setKickLogging(logKick)
             .setWarnLogging(logWarn)
             .setAiSensitivity(aiSensitivity)
+            .setWarnActions(warnActionsList)
 
-        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+        GuildSettingsUtils.updateGuildSettings(guildId, newSettings, variables)
+
+        variables.databaseAdapter.setWarnActions(guildId, newSettings.warnActions)
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
         return response.redirect(request.url())
+    }
+
+    private fun parseRateLimits(request: Request, params: Map<String, String>): LongArray? {
+        val rateLimits = LongArray(6)
+
+        for (i in 0..5) {
+            val reqItemId = i + 1
+            val value = params.getValue("rateLimits[$reqItemId]")
+
+            if (value.isEmpty()) {
+                request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Rate limits are invalid</h4>")
+
+                return null
+            }
+
+            rateLimits[i] = value.toLong()
+        }
+
+        return rateLimits
+    }
+
+    private fun parseWarnActions(guild: Guild, params: Map<String, String>): List<WarnAction> {
+        val warnActionsList = arrayListOf<WarnAction>()
+        val isGuildPatron = CommandUtils.isGuildPatron(guild)
+        val maxWarningActionCount = if(isGuildPatron) WarnAction.PATRON_MAX_ACTIONS else 1
+
+
+        for (i in 1 until maxWarningActionCount + 1) {
+            // TODO: check to see for missing warn actions
+            if (!params.containsKey("warningAction$i")) {
+                continue
+            }
+
+            if (!params.containsKey("tempDays$i") ||
+                !params.containsKey("threshold$i")
+            ) {
+                halt(400, "Invalid warn action detected")
+            }
+
+            if (
+                // Check for empty values (they should never be empty)
+                params["warningAction$i"].isNullOrEmpty() ||
+                params["tempDays$i"].isNullOrEmpty() ||
+                params["threshold$i"].isNullOrEmpty()
+            ) {
+                halt(400, "One or more warn actions has empty values")
+            }
+
+            val action = WarnAction.Type.valueOf(params.getValue("warningAction$i"))
+            val duration = params.getValue("tempDays$i").toInt()
+            val threshold = params.getValue("threshold$i").toInt()
+
+            warnActionsList.add(WarnAction(action, threshold, duration))
+        }
+
+        return warnActionsList
     }
 
     private fun Float.minMax(min: Float, max: Float): Float {
