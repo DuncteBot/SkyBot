@@ -34,9 +34,9 @@ import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHelpers.haltNotFound
 import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.DataController
+import ml.duncte123.skybot.web.controllers.GuildStuffController
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
 import ml.duncte123.skybot.web.controllers.api.*
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
@@ -137,18 +137,8 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.vm")
         }
 
-        get("/roles/$GUILD_ID") { request, response ->
-            try {
-                val guild = request.getGuild(shardManager) ?: return@get haltNotFound(request, response)
-
-                WebVariables()
-                    .put("title", "Roles for ${guild.name}")
-                    .put("guild_name", guild.name)
-                    .put("roles", guild.roles)
-                    .toModelAndView("guildRoles.vm")
-            } catch (ignored: NumberFormatException) {
-                haltNotFound(request, response)
-            }
+        get("/roles/:hash") { request, response ->
+            return@get GuildStuffController.showGuildRoles(request, response, shardManager)
         }
 
         path("/server/$GUILD_ID") {

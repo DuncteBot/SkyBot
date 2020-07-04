@@ -22,6 +22,10 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.web.controllers.GuildStuffController
+import net.dv8tion.jda.api.entities.Guild
+import java.math.BigInteger
+import java.security.MessageDigest
 
 class RolesCommand : Command() {
 
@@ -32,7 +36,18 @@ class RolesCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val domain = if (Settings.IS_LOCAL) "http://localhost:2000" else "https://dashboard.dunctebot.com"
+        val guild = ctx.jdaGuild
+        val hash = generateHash(guild)
 
-        sendMsg(ctx, "Check out the roles on this server here: $domain/roles/${ctx.event.guild.id}")
+        GuildStuffController.guildHashes.put(hash, guild.idLong)
+        sendMsg(ctx, "Check out the roles on this server here: $domain/roles/$hash\nThis link is valid for 2 hours")
+    }
+
+    private fun generateHash(guild: Guild): String {
+        val md = MessageDigest.getInstance("MD5")
+        val content = guild.id + System.currentTimeMillis()
+        val digest = md.digest(content.toByteArray())
+
+        return BigInteger(1, digest).toString(16).padStart(32, '0')
     }
 }

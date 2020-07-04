@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.web.controllers.GuildStuffController;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -58,6 +59,14 @@ public class ReadyShutdownListener extends MessageListener {
         if (!arePoolsRunning.get()) {
             logger.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
+
+            // clean the hashes pool every hour
+            systemPool.scheduleAtFixedRate(
+                GuildStuffController.INSTANCE.getGuildHashes()::cleanUp,
+                1,
+                1,
+                TimeUnit.HOURS
+            );
 
             if (!variables.useApi()) {
                 this.startSQLiteTimers();

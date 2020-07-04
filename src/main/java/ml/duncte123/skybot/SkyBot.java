@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.GatewayEncoding;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -39,7 +40,6 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,12 +138,7 @@ public final class SkyBot {
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
-            .setHttpClientBuilder(
-                new OkHttpClient.Builder()
-                    .connectTimeout(30L, TimeUnit.SECONDS)
-                    .readTimeout(30L, TimeUnit.SECONDS)
-                    .writeTimeout(30L, TimeUnit.SECONDS)
-            );
+            .setGatewayEncoding(GatewayEncoding.ETF);
 
         this.startGameTimer();
 
