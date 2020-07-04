@@ -74,7 +74,7 @@ repositories {
 
 val devDependencies = arrayOf(
     // SQLite
-    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.28.0")
+    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.32.3")
 )
 
 dependencies {
@@ -88,7 +88,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "1.0.88")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_171") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_172") {
         exclude(module = "opus-java")
     }
 
