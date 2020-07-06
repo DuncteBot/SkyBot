@@ -58,7 +58,10 @@ abstract class SettingsBase extends Command {
     }
 
     protected boolean shouldDisable(CommandContext ctx) {
-        return List.of("disable", "disabled", "off", "remove", "removed").contains(ctx.getArgs().get(2));
+        // TODO: make a cache of the parsed flags
+        final String query = String.join(", ", ctx.getParsedFlags(this).get("set"));
+
+        return List.of("disable", "disabled", "off", "remove", "removed", "none").contains(query);
     }
 
     boolean doesNotPassRolePermCheck(CommandContext ctx) {
@@ -109,7 +112,9 @@ abstract class SettingsBase extends Command {
         final Role foundRole;
 
         if (mentionedRoles.isEmpty()) {
-            foundRole = FinderUtil.findRoles(ctx.getArgs().get(2), ctx.getGuild())
+            final String query = String.join(", ", ctx.getParsedFlags(this).get("set"));
+
+            foundRole = FinderUtil.findRoles(query, ctx.getGuild())
                 .stream()
                 .filter((role) -> ctx.getSelfMember().canInteract(role))
                 .findFirst()

@@ -36,8 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -154,13 +153,17 @@ public class SettingsCommand extends SettingsBase {
     }
 
     private void setAutoRole(CommandContext ctx, String name, boolean setValue) {
-        if (!setValue) {
-            sendMsg(ctx, "Required set argument for the role is missing, append `--set @role` to select a role");
-            return;
-        }
-
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(
+                ctx,
+                "Autorole is currently set to %s",
+                settings.getAutoroleRole() > 0 ? "<@&" + settings.getAutoroleRole() + '>' : "`None`"
+            );
+            return;
+        }
 
         if (shouldDisable(ctx)) {
             sendMsg(ctx, "AutoRole feature has been disabled");
