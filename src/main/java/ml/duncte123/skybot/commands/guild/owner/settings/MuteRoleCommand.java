@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.commands.guild.owner.settings.AutoRoleCommand.getFoundRoleOrNull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MuteRoleCommand extends SettingsBase {
@@ -46,7 +45,7 @@ public class MuteRoleCommand extends SettingsBase {
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
 
-        if (rolePermCheck(ctx)) {
+        if (doesNotPassRolePermCheck(ctx)) {
             return;
         }
 

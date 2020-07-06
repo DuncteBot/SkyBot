@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.entities.jda
 
-import ml.duncte123.skybot.objects.FakeUser
+import ml.duncte123.skybot.objects.user.FakeUser
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission

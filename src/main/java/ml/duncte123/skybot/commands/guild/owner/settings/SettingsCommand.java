@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.TriConsumer;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -30,12 +31,13 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -44,7 +46,7 @@ public class SettingsCommand extends SettingsBase {
     // db!setting prefix
     // db!setting prefix --set !
 
-    private final Map<String, BiConsumer<CommandContext, String>> settingsMap = new HashMap<>();
+    private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new HashMap<>();
 
     public SettingsCommand() {
         this.name = "settings";
@@ -77,7 +79,13 @@ public class SettingsCommand extends SettingsBase {
 
         if (!this.settingsMap.containsKey(item)) {
             // TODO
+            return;
         }
+
+        final var settingsFn = this.settingsMap.get(item);
+        final boolean shouldSetValue = args.size() >= 3 && "--set".equals(args.get(1));
+
+        settingsFn.accept(ctx, item, shouldSetValue);
     }
 
     private void showSettingsOverview(CommandContext ctx) {
@@ -97,14 +105,14 @@ public class SettingsCommand extends SettingsBase {
             "**Spamfilter:** " + toEmoji(settings.isEnableSpamFilter()) + "\n" +
             "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
 
-            "**MuteRole:** " + (settings.getMuteRoleId() <= 0
-            ? "Not Set" : (muteRole == null ? "Not set" : muteRole.getAsMention())) + "\n" +
+            "**MuteRole:** " + (settings.getMuteRoleId() <= 0 || muteRole == null
+            ? "Not Set" : muteRole.getAsMention()) + "\n" +
 
             "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
             "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
 
-            "**AutoRole:** " + (settings.getAutoroleRole() <= 0
-            ? "Not Set" : (autoRole == null ? "Not Set" : autoRole.getAsMention())) + "\n" +
+            "**AutoRole:** " + (settings.getAutoroleRole() <= 0 || autoRole == null
+            ? "Not Set" : autoRole.getAsMention()) + "\n" +
 
             "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
             "**Modlog Channel:** " + (logChan == null ? "Not set" : logChan.getAsMention()) + "\n" +
@@ -136,11 +144,42 @@ public class SettingsCommand extends SettingsBase {
         this.settingsMap.put("swearFilter", this::dummyMethod);
     }
 
-    private void setAutoRole(CommandContext ctx, String name) {
-        //
+    @Nullable
+    private Role fetchRoleWithChecks(CommandContext ctx) {
+        if (doesNotPassRolePermCheck(ctx)) {
+            return null;
+        }
+
+        return getFoundRoleOrNull(ctx);
     }
 
-    private void dummyMethod(CommandContext ctx, String name) {
+    private void setAutoRole(CommandContext ctx, String name, boolean setValue) {
+        if (!setValue) {
+            sendMsg(ctx, "Required set argument for the role is missing, append `--set @role` to select a role");
+            return;
+        }
+
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (shouldDisable(ctx)) {
+            sendMsg(ctx, "AutoRole feature has been disabled");
+            guild.setSettings(settings.setAutoroleRole(0L));
+            return;
+        }
+
+        final Role role = fetchRoleWithChecks(ctx);
+
+        if (role == null) {
+            return;
+        }
+
+        guild.setSettings(settings.setAutoroleRole(role.getIdLong()));
+
+        sendMsg(ctx, "AutoRole has been set to " + role.getAsMention());
+    }
+
+    private void dummyMethod(CommandContext ctx, String name, boolean setValue) {
         //
     }
 }

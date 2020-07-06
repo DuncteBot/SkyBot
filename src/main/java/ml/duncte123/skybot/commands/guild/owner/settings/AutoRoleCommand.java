@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -26,7 +25,6 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -46,7 +44,7 @@ public class AutoRoleCommand extends SettingsBase {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
-        if (rolePermCheck(ctx)) {
+        if (doesNotPassRolePermCheck(ctx)) {
             return;
         }
 
@@ -70,30 +68,5 @@ public class AutoRoleCommand extends SettingsBase {
         guild.setSettings(settings.setAutoroleRole(foundRole.getIdLong()));
 
         sendMsg(ctx, "AutoRole has been set to " + foundRole.getName());
-    }
-
-    @Nullable
-    static Role getFoundRoleOrNull(CommandContext ctx) {
-        final List<Role> mentionedRoles = ctx.getMessage().getMentionedRoles();
-
-        final Role foundRole;
-
-        if (mentionedRoles.isEmpty()) {
-            foundRole = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
-                .stream()
-                .filter((role) -> ctx.getSelfMember().canInteract(role))
-                .findFirst()
-                .orElse(null);
-        } else {
-            foundRole = mentionedRoles.get(0);
-        }
-
-        if (foundRole == null) {
-            sendMsg(ctx, "I'm sorry but I could not find any roles for your input, " +
-                "make sure that the target role is below my role.");
-            return null;
-        }
-
-        return foundRole;
     }
 }

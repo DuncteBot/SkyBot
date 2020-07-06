@@ -57,7 +57,11 @@ abstract class SettingsBase extends Command {
         super.executeCommand(ctx);
     }
 
-    boolean rolePermCheck(CommandContext ctx) {
+    protected boolean shouldDisable(CommandContext ctx) {
+        return List.of("disable", "disabled", "off", "remove", "removed").contains(ctx.getArgs().get(2));
+    }
+
+    boolean doesNotPassRolePermCheck(CommandContext ctx) {
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             sendMsg(ctx, "I need the _Manage Roles_ permission in order for this feature to work.");
 
@@ -87,5 +91,39 @@ abstract class SettingsBase extends Command {
             .filter(TextChannel::canTalk)
             .findFirst()
             .orElse(null);
+    }
+
+    protected void showNewHelp(CommandContext ctx, String name, @Nullable String input) {
+        if (input == null) {
+            sendMsg(ctx, "Command changed, please use `" + ctx.getPrefix() + "settings " + name + '`');
+            return;
+        }
+
+        sendMsg(ctx, "Command changed, please use `" + ctx.getPrefix() + "settings " + name + " --set " + input + '`');
+    }
+
+    @Nullable
+    protected Role getFoundRoleOrNull(CommandContext ctx) {
+        final List<Role> mentionedRoles = ctx.getMessage().getMentionedRoles();
+
+        final Role foundRole;
+
+        if (mentionedRoles.isEmpty()) {
+            foundRole = FinderUtil.findRoles(ctx.getArgs().get(2), ctx.getGuild())
+                .stream()
+                .filter((role) -> ctx.getSelfMember().canInteract(role))
+                .findFirst()
+                .orElse(null);
+        } else {
+            foundRole = mentionedRoles.get(0);
+        }
+
+        if (foundRole == null) {
+            sendMsg(ctx, "I'm sorry but I could not find any roles for your input, " +
+                "make sure that the target role is below my role.");
+            return null;
+        }
+
+        return foundRole;
     }
 }

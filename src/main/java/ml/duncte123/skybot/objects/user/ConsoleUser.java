@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.objects.user;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.user.FakeUser;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ConsoleUser extends FakeUser {
