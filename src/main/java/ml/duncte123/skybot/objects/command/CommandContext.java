@@ -56,6 +56,7 @@ public class CommandContext implements ICommandContext {
     private final Variables variables;
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
+    private Map<String, List<String>> cachedFlags;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -118,7 +119,11 @@ public class CommandContext implements ICommandContext {
     }
 
     public Map<String, List<String>> getParsedFlags(Command cmd) {
-        return CommandUtils.parseInput(cmd.flags, this.getArgs());
+        if (this.cachedFlags == null) {
+            this.cachedFlags = CommandUtils.parseInput(cmd.flags, this.getArgs());
+        }
+
+        return this.cachedFlags;
     }
 
     // --------------- Normal methods --------------- //

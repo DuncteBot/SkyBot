@@ -58,7 +58,7 @@ abstract class SettingsBase extends Command {
     }
 
     protected boolean shouldDisable(CommandContext ctx) {
-        // TODO: make a cache of the parsed flags
+        // This call is safe as the flags are cached
         final String query = String.join(", ", ctx.getParsedFlags(this).get("set"));
 
         return List.of("disable", "disabled", "off", "remove", "removed", "none").contains(query);

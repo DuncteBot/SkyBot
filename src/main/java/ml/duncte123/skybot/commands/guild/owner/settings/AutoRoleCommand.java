@@ -19,15 +19,9 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AutoRoleCommand extends SettingsBase {
@@ -40,33 +34,8 @@ public class AutoRoleCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final List<String> args = ctx.getArgs();
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
 
-        if (doesNotPassRolePermCheck(ctx)) {
-            return;
-        }
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
-        if ("disable".equals(args.get(0))) {
-            sendMsg(ctx, "AutoRole feature has been disabled");
-            guild.setSettings(settings.setAutoroleRole(0L));
-            return;
-        }
-
-        final Role foundRole = getFoundRoleOrNull(ctx);
-
-        if (foundRole == null) {
-            return;
-        }
-
-        guild.setSettings(settings.setAutoroleRole(foundRole.getIdLong()));
-
-        sendMsg(ctx, "AutoRole has been set to " + foundRole.getName());
+        this.showNewHelp(ctx, "autoRole", inp);
     }
 }

@@ -123,8 +123,9 @@ public class SettingsCommand extends SettingsBase {
     }
 
     private void loadSettingsMap() {
-        this.settingsMap.put("autoRole", this::setAutoRole);
-        this.settingsMap.put("muteRole", this::dummyMethod);
+        this.settingsMap.put("autoRole", this::autoRoleSetting);
+        // TODO: add spamrole as well?
+        this.settingsMap.put("muteRole", this::muteRoleSetting);
         this.settingsMap.put("embedColor", this::dummyMethod);
         this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::dummyMethod);
@@ -152,7 +153,7 @@ public class SettingsCommand extends SettingsBase {
         return getFoundRoleOrNull(ctx);
     }
 
-    private void setAutoRole(CommandContext ctx, String name, boolean setValue) {
+    private void autoRoleSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
@@ -182,7 +183,39 @@ public class SettingsCommand extends SettingsBase {
         sendMsg(ctx, "AutoRole has been set to " + role.getAsMention());
     }
 
+    private void muteRoleSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(
+                ctx,
+                "Mute role is currently set to %s",
+                settings.getMuteRoleId() > 0 ? "<@&" + settings.getMuteRoleId() + '>' : "`None`"
+            );
+            return;
+        }
+
+        if (shouldDisable(ctx)) {
+            sendMsg(ctx, "Mute role feature & spam filter have been disabled");
+            //Never clean the role's id so activating the filter wont cause issues.
+            //GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(0L));
+            guild.setSettings(settings.setEnableSpamFilter(false));
+            return;
+        }
+
+        final Role role = fetchRoleWithChecks(ctx);
+
+        if (role == null) {
+            return;
+        }
+
+        guild.setSettings(settings.setMuteRoleId(role.getIdLong()));
+
+        sendMsg(ctx, "Mute role has been set to " + role.getAsMention());
+    }
+
     private void dummyMethod(CommandContext ctx, String name, boolean setValue) {
-        //
+        sendMsg(ctx, name + " is not yet implemented");
     }
 }
