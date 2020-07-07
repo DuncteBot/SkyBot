@@ -39,7 +39,7 @@ abstract class SettingsBase extends Command {
 
     public SettingsBase() {
         this.displayAliasesInHelp = true;
-        this.category = CommandCategory.ADMINISTRATION;
+        this.category = CommandCategory.UNLISTED;
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
@@ -59,7 +59,7 @@ abstract class SettingsBase extends Command {
 
     protected boolean shouldDisable(CommandContext ctx) {
         // This call is safe as the flags are cached
-        final String query = String.join(", ", ctx.getParsedFlags(this).get("set"));
+        final String query = this.getSetValue(ctx);
 
         return List.of("disable", "disabled", "off", "remove", "removed", "none").contains(query);
     }
@@ -112,7 +112,7 @@ abstract class SettingsBase extends Command {
         final Role foundRole;
 
         if (mentionedRoles.isEmpty()) {
-            final String query = String.join(", ", ctx.getParsedFlags(this).get("set"));
+            final String query = this.getSetValue(ctx);
 
             foundRole = FinderUtil.findRoles(query, ctx.getGuild())
                 .stream()
@@ -130,5 +130,9 @@ abstract class SettingsBase extends Command {
         }
 
         return foundRole;
+    }
+
+    protected String getSetValue(CommandContext ctx) {
+        return String.join(", ", ctx.getParsedFlags(this).get("set"));
     }
 }

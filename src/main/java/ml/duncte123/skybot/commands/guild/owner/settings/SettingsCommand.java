@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.TriConsumer;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -35,19 +36,28 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
+import static ml.duncte123.skybot.utils.AirUtils.colorToHex;
+import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends SettingsBase {
+    public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
     // db!setting prefix
     // db!setting prefix --set !
 
     private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new HashMap<>();
 
+    // TODO: make clear help of all the items
+
     public SettingsCommand() {
+        // Override category here to make sure that we can hide all the other settings commands
+        this.category = CommandCategory.ADMINISTRATION;
         this.name = "settings";
         this.aliases = new String[]{
             "setting",
@@ -87,6 +97,7 @@ public class SettingsCommand extends SettingsBase {
         settingsFn.accept(ctx, item, shouldSetValue);
     }
 
+    /// <editor-fold desc="Settings overview" defaultstate="collapsed">
     private void showSettingsOverview(CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -121,13 +132,16 @@ public class SettingsCommand extends SettingsBase {
 
         sendEmbed(ctx.getEvent(), message);
     }
+    /// </editor-fold>
 
     private void loadSettingsMap() {
         this.settingsMap.put("autoRole", this::autoRoleSetting);
         // TODO: add spamrole as well?
         this.settingsMap.put("muteRole", this::muteRoleSetting);
-        this.settingsMap.put("embedColor", this::dummyMethod);
-        this.settingsMap.put("color", this::dummyMethod);
+//        this.settingsMap.put("spamrole", this::muteRoleSetting);
+        this.settingsMap.put("embedColor", this::embedColorSetting);
+        // TODO: add color as well?
+//        this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::dummyMethod);
         this.settingsMap.put("joinMessage", this::dummyMethod);
         this.settingsMap.put("leaveMessage", this::dummyMethod);
@@ -153,6 +167,7 @@ public class SettingsCommand extends SettingsBase {
         return getFoundRoleOrNull(ctx);
     }
 
+    /// <editor-fold desc="autoRoleSetting" defaultstate="collapsed">
     private void autoRoleSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -182,7 +197,9 @@ public class SettingsCommand extends SettingsBase {
 
         sendMsg(ctx, "AutoRole has been set to " + role.getAsMention());
     }
+    /// </editor-fold>
 
+    /// <editor-fold desc="muteRoleSetting" defaultstate="collapsed">
     private void muteRoleSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -214,8 +231,44 @@ public class SettingsCommand extends SettingsBase {
 
         sendMsg(ctx, "Mute role has been set to " + role.getAsMention());
     }
+    /// </editor-fold>
 
+    /// <editor-fold desc="embedColorSetting" defaultstate="collapsed">
+    private void embedColorSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+
+        if (!setValue) {
+            final String msg = String.format("Current embed color is `%s`", colorToHex(guild.getColor()));
+
+            sendEmbed(ctx, EmbedUtils.embedMessage(msg));
+            return;
+        }
+
+        final String colorString = this.getSetValue(ctx);
+        final Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
+
+        if (!colorMatcher.matches()) {
+            sendMsg(ctx, "That color does not look like a valid hex color, hex colors start with a pound sign.\n" +
+                "Tip: you can use <http://colorpicker.com/> to generate a hex code.");
+            return;
+        }
+
+        final int colorInt = colorToInt(colorString);
+
+        guild.setColor(colorInt);
+
+        final String msg = String.format("Embed color has been set to `%s`", colorString);
+
+        sendEmbed(ctx, EmbedUtils.embedMessage(msg));
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="dummyMethod" defaultstate="uncollapsed">
     private void dummyMethod(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
         sendMsg(ctx, name + " is not yet implemented");
     }
+    /// </editor-fold>
 }
