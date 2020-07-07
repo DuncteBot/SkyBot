@@ -57,9 +57,9 @@ object BasicSettings {
         }
 
         val guild = DunctebotGuild(request.getGuild(shardManager)!!, variables)
-        guild.setColor(color)
+        guild.color = color
 
-        val newSettings = guild.getSettings()
+        val newSettings = guild.settings
             .setCustomPrefix(prefix)
             .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
             .setEnableJoinMessage(welcomeLeaveEnabled)
@@ -68,7 +68,7 @@ object BasicSettings {
             .setLeaveTimeout(leaveTimeout)
             .setAllowAllToStop(allowAllToStop)
 
-        guild.setSettings(newSettings)
+        guild.settings = newSettings
 
         /* val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
          val autoVcRoleRole = (params["vcAutoRoleRole"] ?: "0").toLong()

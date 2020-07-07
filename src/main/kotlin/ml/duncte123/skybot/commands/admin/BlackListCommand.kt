@@ -56,7 +56,7 @@ class BlackListCommand : ModBaseCommand() {
 
         when (args[0]) {
             "list", "export" -> {
-                listBlackList(ctx.guild.getSettings().blacklistedWords, event, ctx.variables.jackson)
+                listBlackList(ctx.guild.settings.blacklistedWords, event, ctx.variables.jackson)
                 return
             }
             "clear" -> {
@@ -111,7 +111,7 @@ class BlackListCommand : ModBaseCommand() {
     private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
         adapter.clearBlacklist(guild.idLong)
 
-        guild.getSettings().blacklistedWords.clear()
+        guild.settings.blacklistedWords.clear()
 
         sendMsg(event, "The blacklist has been cleared")
     }
@@ -154,7 +154,7 @@ class BlackListCommand : ModBaseCommand() {
     }
 
     private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
-        val list = guild.getSettings().blacklistedWords
+        val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
             sendMsg(event, "This word is already in the blacklist")
@@ -170,7 +170,7 @@ class BlackListCommand : ModBaseCommand() {
     }
 
     private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
-        val list = guild.getSettings().blacklistedWords
+        val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {
             sendMsg(event, "This word is not in the blacklist")

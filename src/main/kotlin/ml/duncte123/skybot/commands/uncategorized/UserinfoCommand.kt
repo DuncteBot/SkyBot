@@ -121,7 +121,7 @@ class UserinfoCommand : Command() {
         val times = prettyTime.parseTimes(user)
 
         val embed = EmbedUtils.defaultEmbed()
-            .setColor(guild.getColor())
+            .setColor(guild.color)
             .setThumbnail(user.getStaticAvatarUrl())
             .setDescription("""User info for ${user.asMention}
                         |
@@ -132,7 +132,7 @@ class UserinfoCommand : Command() {
                         |$nitroUserLink ${user.isNitro().toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
-                        |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
+                        |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         sendEmbed(event.channel, embed)

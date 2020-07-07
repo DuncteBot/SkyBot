@@ -131,10 +131,10 @@ class WarnCommand : ModBaseCommand() {
         val guild = ctx.guild
 
         if (!CommandUtils.isGuildPatron(guild)) {
-            return guild.getSettings().warnActions.firstOrNull()
+            return guild.settings.warnActions.firstOrNull()
         }
 
-        return guild.getSettings()
+        return guild.settings
             .warnActions
             // we reverse the list so we start with the highest one
             // preventing that everything is selected for the lowest number
@@ -200,7 +200,7 @@ class WarnCommand : ModBaseCommand() {
     }
 
     private fun applyMuteRole(target: Member, guild: DunctebotGuild) {
-        val roleId = guild.getSettings().muteRoleId
+        val roleId = guild.settings.muteRoleId
         val role = guild.getRoleById(roleId)
 
         if (role == null) {
@@ -217,5 +217,5 @@ class WarnCommand : ModBaseCommand() {
         return AirUtils.getDatabaseDateFormat(duration) to duration.toString()
     }
 
-    private fun muteRoleCheck(guild: DunctebotGuild) = guild.getSettings().muteRoleId > 0
+    private fun muteRoleCheck(guild: DunctebotGuild) = guild.settings.muteRoleId > 0
 }
