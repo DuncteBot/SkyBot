@@ -39,6 +39,7 @@ abstract class SettingsBase extends Command {
 
     public SettingsBase() {
         this.displayAliasesInHelp = true;
+        // TODO: change back to ADMINISTRATION once all settings commands have been fazed out for at least half a year
         this.category = CommandCategory.UNLISTED;
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
@@ -47,7 +48,6 @@ abstract class SettingsBase extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-
         if (isDev(ctx.getAuthor())) {
             execute(ctx);
 
@@ -61,7 +61,16 @@ abstract class SettingsBase extends Command {
         // This call is safe as the flags are cached
         final String query = this.getSetValue(ctx);
 
-        return List.of("disable", "disabled", "off", "remove", "removed", "none").contains(query);
+        return List.of(
+            "disable",
+            "disabled",
+            "off",
+            "remove",
+            "removed",
+            "none",
+            "null",
+            "reset"
+        ).contains(query);
     }
 
     boolean doesNotPassRolePermCheck(CommandContext ctx) {

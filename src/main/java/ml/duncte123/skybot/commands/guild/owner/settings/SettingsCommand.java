@@ -21,12 +21,14 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.TriConsumer;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -142,7 +144,7 @@ public class SettingsCommand extends SettingsBase {
         this.settingsMap.put("embedColor", this::embedColorSetting);
         // TODO: add color as well?
 //        this.settingsMap.put("color", this::dummyMethod);
-        this.settingsMap.put("description", this::dummyMethod);
+        this.settingsMap.put("description", this::descriptionSetting);
         this.settingsMap.put("joinMessage", this::dummyMethod);
         this.settingsMap.put("leaveMessage", this::dummyMethod);
         this.settingsMap.put("logChannel", this::dummyMethod);
@@ -260,6 +262,37 @@ public class SettingsCommand extends SettingsBase {
         final String msg = String.format("Embed color has been set to `%s`", colorString);
 
         sendEmbed(ctx, EmbedUtils.embedMessage(msg));
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="descriptionSetting" defaultstate="collapsed">
+    private void descriptionSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(ctx, "Current server description is set to `%s`", settings.getServerDesc());
+            return;
+        }
+
+        if (shouldDisable(ctx)) {
+            sendMsg(ctx, "Description has been reset.");
+            guild.setSettings(settings.setServerDesc(null));
+            return;
+        }
+
+        final String description = StringKt.stripFlags(
+            ctx.getArgsRaw(false),
+            this
+        )
+            .replaceFirst(name, "")
+            .strip();
+
+        System.out.println(description);
+
+        guild.setSettings(settings.setServerDesc(description));
+
+        sendMsg(ctx, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
     }
     /// </editor-fold>
 

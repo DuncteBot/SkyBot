@@ -49,7 +49,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     public static final int QUEUE_SIZE = 50;
     public final Queue<AudioTrack> queue;
-    private static long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
+    private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
