@@ -93,7 +93,7 @@ abstract class SettingsBase extends Command {
 
     @Nullable
     protected TextChannel findTextChannel(@Nonnull CommandContext ctx) {
-        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
+        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(this.getSetValue(ctx), ctx.getGuild());
 
         if (foundChannels.isEmpty()) {
             return null;

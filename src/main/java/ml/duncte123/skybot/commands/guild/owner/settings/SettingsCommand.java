@@ -144,9 +144,9 @@ public class SettingsCommand extends SettingsBase {
         // TODO: add color as well?
 //        this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::descriptionSetting);
-        this.settingsMap.put("joinMessage", this::joinMessage);
-        this.settingsMap.put("leaveMessage", this::leaveMessage);
-        this.settingsMap.put("logChannel", this::dummyMethod);
+        this.settingsMap.put("joinMessage", this::joinMessageSetting);
+        this.settingsMap.put("leaveMessage", this::leaveMessageSetting);
+        this.settingsMap.put("logChannel", this::logChannelSetting);
         this.settingsMap.put("prefix", this::dummyMethod);
         this.settingsMap.put("rateLimits", this::dummyMethod);
         this.settingsMap.put("welcomeChannel", this::dummyMethod);
@@ -293,8 +293,8 @@ public class SettingsCommand extends SettingsBase {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="joinMessage" defaultstate="uncollapsed">
-    private void joinMessage(CommandContext ctx, String name, boolean setValue) {
+    /// <editor-fold desc="joinMessageSetting" defaultstate="collapsed">
+    private void joinMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
             sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
             return;
@@ -316,8 +316,8 @@ public class SettingsCommand extends SettingsBase {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="leaveMessage" defaultstate="uncollapsed">
-    private void leaveMessage(CommandContext ctx, String name, boolean setValue) {
+    /// <editor-fold desc="leaveMessageSetting" defaultstate="collapsed">
+    private void leaveMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
             sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
             return;
@@ -336,6 +336,39 @@ public class SettingsCommand extends SettingsBase {
 
         guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
         sendMsg(ctx, "The new leave message has been set to `" + newLeaveMessage + '`');
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="logChannelSetting" defaultstate="collapsed">
+    private void logChannelSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(
+                ctx,
+                "The current log channel is %s",
+                settings.getLogChannel() > 0 ? "<#" + settings.getLogChannel() + '>' : "`None`"
+            );
+            return;
+        }
+
+        if (this.shouldDisable(ctx)) {
+            guild.setSettings(settings.setLogChannel(0L));
+            sendMsg(ctx, "Logging has been turned off");
+            return;
+        }
+
+        final TextChannel channel = findTextChannel(ctx);
+
+        if (channel == null) {
+            sendMsg(ctx, "I could not found a text channel for your query.\n" +
+                "Make sure that it's a valid channel that I can speak in");
+            return;
+        }
+
+        guild.setSettings(settings.setLogChannel(channel.getIdLong()));
+        sendMsg(ctx, "The new log channel has been set to " + channel.getAsMention());
     }
     /// </editor-fold>
 
