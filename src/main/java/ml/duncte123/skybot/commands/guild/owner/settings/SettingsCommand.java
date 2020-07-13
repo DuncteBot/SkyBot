@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -145,7 +144,7 @@ public class SettingsCommand extends SettingsBase {
         // TODO: add color as well?
 //        this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::descriptionSetting);
-        this.settingsMap.put("joinMessage", this::dummyMethod);
+        this.settingsMap.put("joinMessage", this::joinMessage);
         this.settingsMap.put("leaveMessage", this::dummyMethod);
         this.settingsMap.put("logChannel", this::dummyMethod);
         this.settingsMap.put("prefix", this::dummyMethod);
@@ -265,13 +264,13 @@ public class SettingsCommand extends SettingsBase {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="descriptionSetting" defaultstate="collapsed">
+    /// <editor-fold desc="descriptionSetting" defaultstate="uncollapsed">
     private void descriptionSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(ctx, "Current server description is set to `%s`", settings.getServerDesc());
+            sendMsgFormat(ctx, "You can see the current server description by running `%sguildinfo`", settings.getCustomPrefix());
             return;
         }
 
@@ -288,11 +287,37 @@ public class SettingsCommand extends SettingsBase {
             .replaceFirst(name, "")
             .strip();
 
+
+        // TODO: test
         System.out.println(description);
 
         guild.setSettings(settings.setServerDesc(description));
 
         sendMsg(ctx, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="joinMessage" defaultstate="uncollapsed">
+    private void joinMessage(CommandContext ctx, String name, boolean setValue) {
+        if (!setValue) {
+            sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+        }
+
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        final String newJoinMessage = StringKt.stripFlags(
+            ctx.getArgsRaw(false),
+            this
+        )
+            .replaceFirst(name, "")
+            .replaceAll("\\\\n", "\n")
+            .strip();
+
+        // TODO: test
+
+        guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
+        sendMsg(ctx, "The new join message has been set to `" + newJoinMessage + '`');
     }
     /// </editor-fold>
 

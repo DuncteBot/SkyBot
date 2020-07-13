@@ -23,8 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetJoinMessageCommand extends SettingsBase {
 
@@ -44,8 +42,6 @@ public class SetJoinMessageCommand extends SettingsBase {
             return;
         }
 
-        final String newJoinMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n");
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomJoinMessage(newJoinMessage));
-        sendMsg(ctx.getEvent(), "The new join message has been set to `" + newJoinMessage + '`');
+        this.showNewHelp(ctx, "muteRole", ctx.getArgsRaw());
     }
 }

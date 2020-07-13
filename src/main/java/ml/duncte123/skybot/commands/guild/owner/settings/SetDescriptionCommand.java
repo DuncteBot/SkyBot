@@ -41,20 +41,8 @@ public class SetDescriptionCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
 
-        if ("null".equalsIgnoreCase(args.get(0)) || "disable".equalsIgnoreCase(args.get(0))) {
-            guild.setSettings(settings.setServerDesc(null));
-            sendMsg(event, "Description has been reset.");
-            return;
-        }
-
-        final String description = ctx.getArgsRaw(false);
-        guild.setSettings(settings.setServerDesc(description));
-
-        sendMsg(event, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
+        this.showNewHelp(ctx, "description", inp);
     }
 }
