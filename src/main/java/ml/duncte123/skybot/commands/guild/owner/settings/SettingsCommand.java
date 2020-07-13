@@ -145,7 +145,7 @@ public class SettingsCommand extends SettingsBase {
 //        this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::descriptionSetting);
         this.settingsMap.put("joinMessage", this::joinMessage);
-        this.settingsMap.put("leaveMessage", this::dummyMethod);
+        this.settingsMap.put("leaveMessage", this::leaveMessage);
         this.settingsMap.put("logChannel", this::dummyMethod);
         this.settingsMap.put("prefix", this::dummyMethod);
         this.settingsMap.put("rateLimits", this::dummyMethod);
@@ -264,7 +264,7 @@ public class SettingsCommand extends SettingsBase {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="descriptionSetting" defaultstate="uncollapsed">
+    /// <editor-fold desc="descriptionSetting" defaultstate="collapsed">
     private void descriptionSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
@@ -287,10 +287,6 @@ public class SettingsCommand extends SettingsBase {
             .replaceFirst(name, "")
             .strip();
 
-
-        // TODO: test
-        System.out.println(description);
-
         guild.setSettings(settings.setServerDesc(description));
 
         sendMsg(ctx, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
@@ -301,6 +297,7 @@ public class SettingsCommand extends SettingsBase {
     private void joinMessage(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
             sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            return;
         }
 
         final DunctebotGuild guild = ctx.getGuild();
@@ -314,10 +311,31 @@ public class SettingsCommand extends SettingsBase {
             .replaceAll("\\\\n", "\n")
             .strip();
 
-        // TODO: test
-
         guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
         sendMsg(ctx, "The new join message has been set to `" + newJoinMessage + '`');
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="leaveMessage" defaultstate="uncollapsed">
+    private void leaveMessage(CommandContext ctx, String name, boolean setValue) {
+        if (!setValue) {
+            sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            return;
+        }
+
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        final String newLeaveMessage = StringKt.stripFlags(
+            ctx.getArgsRaw(false),
+            this
+        )
+            .replaceFirst(name, "")
+            .replaceAll("\\\\n", "\n")
+            .strip();
+
+        guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
+        sendMsg(ctx, "The new leave message has been set to `" + newLeaveMessage + '`');
     }
     /// </editor-fold>
 

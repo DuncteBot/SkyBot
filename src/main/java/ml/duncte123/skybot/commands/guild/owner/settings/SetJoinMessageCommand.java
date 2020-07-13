@@ -42,6 +42,6 @@ public class SetJoinMessageCommand extends SettingsBase {
             return;
         }
 
-        this.showNewHelp(ctx, "muteRole", ctx.getArgsRaw());
+        this.showNewHelp(ctx, "joinMessage", ctx.getArgsRaw());
     }
 }
