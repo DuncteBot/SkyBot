@@ -142,6 +142,10 @@ abstract class SettingsBase extends Command {
     }
 
     protected String getSetValue(CommandContext ctx) {
-        return String.join(", ", ctx.getParsedFlags(this).get("set"));
+        return this.getSetValue(ctx, " ");
+    }
+
+    protected String getSetValue(CommandContext ctx, String joiner) {
+        return String.join(joiner, ctx.getParsedFlags(this).get("set"));
     }
 }

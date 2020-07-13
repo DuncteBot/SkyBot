@@ -28,17 +28,20 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
@@ -66,6 +69,7 @@ public class SettingsCommand extends SettingsBase {
         };
         this.help = "Shows the current settings for this server";
         this.usage = "[item] [--set value]";
+        // TODO: add extra data for the user to see
         this.flags = new Flag[] {
             new Flag(
                 "set",
@@ -147,10 +151,10 @@ public class SettingsCommand extends SettingsBase {
         this.settingsMap.put("joinMessage", this::joinMessageSetting);
         this.settingsMap.put("leaveMessage", this::leaveMessageSetting);
         this.settingsMap.put("logChannel", this::logChannelSetting);
-        this.settingsMap.put("prefix", this::dummyMethod);
-        this.settingsMap.put("rateLimits", this::dummyMethod);
-        this.settingsMap.put("welcomeChannel", this::dummyMethod);
-        this.settingsMap.put("announceTracks", this::dummyMethod);
+        this.settingsMap.put("prefix", this::prefixSetting);
+        this.settingsMap.put("rateLimits", this::rateLimitSetting);
+        this.settingsMap.put("welcomeChannel", this::welcomeChannelSetting);
+        this.settingsMap.put("announceTracks", this::announceTracksSetting);
         this.settingsMap.put("autoDehoist", this::dummyMethod);
         this.settingsMap.put("filterInvites", this::dummyMethod);
         this.settingsMap.put("enableWelcomeMessage", this::dummyMethod);
@@ -296,7 +300,7 @@ public class SettingsCommand extends SettingsBase {
     /// <editor-fold desc="joinMessageSetting" defaultstate="collapsed">
     private void joinMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The join message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
             return;
         }
 
@@ -319,7 +323,7 @@ public class SettingsCommand extends SettingsBase {
     /// <editor-fold desc="leaveMessageSetting" defaultstate="collapsed">
     private void leaveMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, name + " can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The leave message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
             return;
         }
 
@@ -369,6 +373,99 @@ public class SettingsCommand extends SettingsBase {
 
         guild.setSettings(settings.setLogChannel(channel.getIdLong()));
         sendMsg(ctx, "The new log channel has been set to " + channel.getAsMention());
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="prefixSetting" defaultstate="collapsed">
+    private void prefixSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(ctx, "The current custom prefix on this server is `%s`", settings.getCustomPrefix());
+            return;
+        }
+
+        final String newPrefix = this.getSetValue(ctx);
+
+        if (newPrefix.length() > 10) {
+            sendErrorWithMessage(ctx.getMessage(), "The length of the prefix must not exceed 10 characters");
+            return;
+        }
+
+        guild.setSettings(settings.setCustomPrefix(newPrefix));
+        sendMsg(ctx, "New prefix has been set to `" + newPrefix + '`');
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="rateLimitSetting" defaultstate="collapsed">
+    private void rateLimitSetting(CommandContext ctx, String name, boolean setValue) {
+        if (!setValue) {
+            sendMsg(ctx, "The rate limits can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            return;
+        }
+
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final String newRateLimit = this.getSetValue(ctx, "");
+
+        if ("default".equals(newRateLimit) || "reset".equals(newRateLimit)) {
+            sendMsg(ctx, "Rate limits have been reset.");
+            guild.setSettings(settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
+            return;
+        }
+
+        final long[] rates = GuildSettingsUtils.ratelimmitChecks(newRateLimit);
+
+        if (rates.length != 6) {
+            sendMsg(ctx, "Invalid rate limit settings (example settings are `20|45|60|120|240|2400`)");
+            return;
+        }
+
+        guild.setSettings(settings.setRatelimits(rates));
+        final String steps = Arrays.stream(rates).mapToObj(String::valueOf)
+            .collect(Collectors.joining(", ", "", " minutes"));
+
+        sendMsg(ctx, "New rate limit settings have been set to `" + steps + '`');
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="welcomeChannelSetting" defaultstate="collapsed">
+    private void welcomeChannelSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+
+        if (!setValue) {
+            sendMsgFormat(
+                ctx,
+                "The welcome channel is %s",
+                settings.getWelcomeLeaveChannel() > 0 ? "<#" + settings.getWelcomeLeaveChannel() + '>' : "`None`"
+            );
+            return;
+        }
+
+        final TextChannel channel = findTextChannel(ctx);
+
+        if (channel == null) {
+            sendMsg(ctx, "I could not found a text channel for your query.\n" +
+                "Make sure that it's a valid channel that I can speak in");
+            return;
+        }
+
+        guild.setSettings(settings.setWelcomeLeaveChannel(channel.getIdLong()));
+        sendMsg(ctx, "The new channel for join and leave messages has been set to " + channel.getAsMention());
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="announceTracksSetting" defaultstate="collapsed">
+    private void announceTracksSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
+
+        guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
+        sendMsg(ctx.getEvent(), "Announcing the next track has been toggled **"
+            + (shouldAnnounceTracks ? "on" : "off") + "**");
     }
     /// </editor-fold>
 
