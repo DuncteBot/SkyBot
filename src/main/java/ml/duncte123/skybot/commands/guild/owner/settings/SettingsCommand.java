@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.TriConsumer;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
@@ -30,6 +32,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -47,9 +50,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 import static ml.duncte123.skybot.utils.AirUtils.colorToHex;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
+import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SettingsCommand extends SettingsBase {
+public class SettingsCommand extends Command {
     public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
     // db!setting prefix
@@ -60,6 +64,7 @@ public class SettingsCommand extends SettingsBase {
     // TODO: make clear help of all the items
 
     public SettingsCommand() {
+        this.displayAliasesInHelp = true;
         // Override category here to make sure that we can hide all the other settings commands
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "settings";
@@ -70,6 +75,9 @@ public class SettingsCommand extends SettingsBase {
         this.help = "Shows the current settings for this server";
         this.usage = "[item] [--set value]";
         // TODO: add extra data for the user to see
+        this.userPermissions = new Permission[]{
+            Permission.MANAGE_SERVER,
+        };
         this.flags = new Flag[] {
             new Flag(
                 "set",
@@ -78,6 +86,16 @@ public class SettingsCommand extends SettingsBase {
         };
 
         this.loadSettingsMap();
+    }
+
+    // This is to allow developers to execute the commands as well, regardless of permissions
+    @Override
+    public void executeCommand(@Nonnull CommandContext ctx) {
+        if (isDev(ctx.getAuthor())) {
+            execute(ctx);
+        } else {
+            super.executeCommand(ctx);
+        }
     }
 
     @Override
@@ -138,39 +156,6 @@ public class SettingsCommand extends SettingsBase {
         sendEmbed(ctx, message);
     }
     /// </editor-fold>
-
-    private void loadSettingsMap() {
-        this.settingsMap.put("autoRole", this::autoRoleSetting);
-        // TODO: add spamrole as well?
-        this.settingsMap.put("muteRole", this::muteRoleSetting);
-//        this.settingsMap.put("spamrole", this::muteRoleSetting);
-        this.settingsMap.put("embedColor", this::embedColorSetting);
-        // TODO: add color as well?
-//        this.settingsMap.put("color", this::dummyMethod);
-        this.settingsMap.put("description", this::descriptionSetting);
-        this.settingsMap.put("joinMessage", this::joinMessageSetting);
-        this.settingsMap.put("leaveMessage", this::leaveMessageSetting);
-        this.settingsMap.put("logChannel", this::logChannelSetting);
-        this.settingsMap.put("prefix", this::prefixSetting);
-        this.settingsMap.put("rateLimits", this::rateLimitSetting);
-        this.settingsMap.put("welcomeChannel", this::welcomeChannelSetting);
-        this.settingsMap.put("announceTracks", this::announceTracksSetting);
-        this.settingsMap.put("autoDehoist", this::autoDehoistSetting);
-        this.settingsMap.put("filterInvites", this::filterInvitesSetting);
-        this.settingsMap.put("joinMessageState", this::joinMessageStateSetting);
-        this.settingsMap.put("kickMode", this::kickModeSetting);
-        this.settingsMap.put("spamFilter", this::spamFilterSetting);
-        this.settingsMap.put("swearFilter", this::dummyMethod);
-    }
-
-    @Nullable
-    private Role fetchRoleWithChecks(CommandContext ctx) {
-        if (doesNotPassRolePermCheck(ctx)) {
-            return null;
-        }
-
-        return getFoundRoleOrNull(ctx);
-    }
 
     /// <editor-fold desc="autoRoleSetting" defaultstate="collapsed">
     private void autoRoleSetting(CommandContext ctx, String name, boolean setValue) {
@@ -512,7 +497,7 @@ public class SettingsCommand extends SettingsBase {
         final boolean kickState = !settings.getKickState();
 
         guild.setSettings(settings.setKickState(kickState));
-        sendMsg(ctx, "Kick-Mode is set to **"
+        sendMsg(ctx, "Kick-Mode is now set to **"
             + (kickState ? "kick" : "mute") + "** members");
     }
     /// </editor-fold>
@@ -521,7 +506,6 @@ public class SettingsCommand extends SettingsBase {
     private void spamFilterSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
-        // TODO: test
         final long muteRoleId = settings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
@@ -549,12 +533,136 @@ public class SettingsCommand extends SettingsBase {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="dummyMethod" defaultstate="uncollapsed">
-    private void dummyMethod(CommandContext ctx, String name, boolean setValue) {
+    /// <editor-fold desc="swearFilterSetting" defaultstate="collapsed">
+    private void swearFilterSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSettings settings = guild.getSettings();
+        final boolean isEnabled = !settings.isEnableSwearFilter();
 
-        sendMsg(ctx, name + " is not yet implemented");
+        guild.setSettings(settings.setEnableSwearFilter(isEnabled));
+        sendMsg(ctx, "The swearword filter has been toggled **" +
+            (isEnabled ? "on" : "off") +
+            "**.\nThe current filter type is set to `" +
+            settings.getFilterType().getName() + "`, this can be changed on <https://dashboard.dunctebot.com>");
     }
+    /// </editor-fold>
+
+    /// <editor-fold desc="helpers" defaultstate="uncollapsed">
+    private void loadSettingsMap() {
+        this.settingsMap.put("autoRole", this::autoRoleSetting);
+        // TODO: add spamrole as well?
+        this.settingsMap.put("muteRole", this::muteRoleSetting);
+//        this.settingsMap.put("spamrole", this::muteRoleSetting);
+        this.settingsMap.put("embedColor", this::embedColorSetting);
+        // TODO: add color as well?
+//        this.settingsMap.put("color", this::dummyMethod);
+        this.settingsMap.put("description", this::descriptionSetting);
+        this.settingsMap.put("joinMessage", this::joinMessageSetting);
+        this.settingsMap.put("leaveMessage", this::leaveMessageSetting);
+        this.settingsMap.put("logChannel", this::logChannelSetting);
+        this.settingsMap.put("prefix", this::prefixSetting);
+        this.settingsMap.put("rateLimits", this::rateLimitSetting);
+        this.settingsMap.put("welcomeChannel", this::welcomeChannelSetting);
+        this.settingsMap.put("announceTracks", this::announceTracksSetting);
+        this.settingsMap.put("autoDehoist", this::autoDehoistSetting);
+        this.settingsMap.put("filterInvites", this::filterInvitesSetting);
+        this.settingsMap.put("joinMessageState", this::joinMessageStateSetting);
+        this.settingsMap.put("kickMode", this::kickModeSetting);
+        this.settingsMap.put("spamFilter", this::spamFilterSetting);
+        this.settingsMap.put("swearFilter", this::swearFilterSetting);
+    }
+
+    @Nullable
+    private Role fetchRoleWithChecks(CommandContext ctx) {
+        if (doesNotPassRolePermCheck(ctx)) {
+            return null;
+        }
+
+        return getFoundRoleOrNull(ctx);
+    }
+
+    @Nullable
+    private Role getFoundRoleOrNull(CommandContext ctx) {
+        final List<Role> mentionedRoles = ctx.getMessage().getMentionedRoles();
+
+        final Role foundRole;
+
+        if (mentionedRoles.isEmpty()) {
+            final String query = this.getSetValue(ctx);
+
+            foundRole = FinderUtil.findRoles(query, ctx.getGuild())
+                .stream()
+                .filter((role) -> ctx.getSelfMember().canInteract(role))
+                .findFirst()
+                .orElse(null);
+        } else {
+            foundRole = mentionedRoles.get(0);
+        }
+
+        if (foundRole == null) {
+            sendMsg(ctx, "I'm sorry but I could not find any roles for your input, " +
+                "make sure that the target role is below my role.");
+            return null;
+        }
+
+        return foundRole;
+    }
+
+    private String getSetValue(CommandContext ctx) {
+        return this.getSetValue(ctx, " ");
+    }
+
+    private String getSetValue(CommandContext ctx, String joiner) {
+        return String.join(joiner, ctx.getParsedFlags(this).get("set"));
+    }
+
+    @Nullable
+    private TextChannel findTextChannel(@Nonnull CommandContext ctx) {
+        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(this.getSetValue(ctx), ctx.getGuild());
+
+        if (foundChannels.isEmpty()) {
+            return null;
+        }
+
+        return foundChannels.stream()
+            .filter(TextChannel::canTalk)
+            .findFirst()
+            .orElse(null);
+    }
+
+    private boolean shouldDisable(CommandContext ctx) {
+        // This call is safe as the flags are cached
+        final String query = this.getSetValue(ctx);
+
+        return List.of(
+            "disable",
+            "disabled",
+            "off",
+            "remove",
+            "removed",
+            "none",
+            "null",
+            "reset"
+        ).contains(query);
+    }
+
+    private boolean doesNotPassRolePermCheck(CommandContext ctx) {
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+            sendMsg(ctx, "I need the _Manage Roles_ permission in order for this feature to work.");
+
+            return true;
+        }
+
+        final List<Role> selfRoles = ctx.getSelfMember().getRoles();
+
+        if (selfRoles.isEmpty()) {
+            sendMsg(ctx, "I need a role above the specified role in order for this feature to work.");
+
+            return true;
+        }
+
+        return false;
+    }
+
     /// </editor-fold>
 }
