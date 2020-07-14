@@ -614,6 +614,10 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return executeDefaultGetRequest("animal/$type", false)["data"]
     }
 
+    fun getOrlyImage(): String {
+        return executeDefaultGetRequest("orly", false)["data"].asText()
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error["errors"]
 

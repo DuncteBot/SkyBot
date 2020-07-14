@@ -222,6 +222,7 @@ public class CommandManager {
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
         this.addCommand(new OwoCommand());
+        this.addCommand(new OrlyCommand());
         this.addCommand(new PatCommand());
         // TODO: remove, some day, can't do any harm really
         this.addCommand(new PatreonCheckCommand());
