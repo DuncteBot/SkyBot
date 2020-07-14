@@ -35,7 +35,7 @@ abstract class SettingsBase extends Command {
 
     public SettingsBase() {
         this.displayAliasesInHelp = true;
-        // TODO: change back to ADMINISTRATION once all settings commands have been fazed out for at least half a year
+        // TODO: Delete this and all old settings commands in about a year
         this.category = CommandCategory.UNLISTED;
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,

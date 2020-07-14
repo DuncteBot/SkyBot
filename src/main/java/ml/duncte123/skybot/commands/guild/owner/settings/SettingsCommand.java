@@ -56,9 +56,6 @@ import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 public class SettingsCommand extends Command {
     public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
-    // db!setting prefix
-    // db!setting prefix --set !
-
     private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new HashMap<>();
 
     // TODO: make clear help of all the items
