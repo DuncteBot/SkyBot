@@ -44,8 +44,8 @@ public class RemindmeCommand extends Command {
             "remindme",
         };
         this.help = "Creates a reminder for you, add `--channel` to remind you in the current channel";
-        this.usage = "<reminder> -t <number><w/d/h/m/s>`\n" +
-            "Example: `{prefix}remind Clean your room :/ -t 1d5m";
+        this.usage = "<reminder> -t <number><w/d/h/m/s>";
+        this.extraInfo = "Example: `{prefix}remind Clean your room :/ -t 1d5m";
         this.flags = new Flag[]{
             new Flag(
                 't',

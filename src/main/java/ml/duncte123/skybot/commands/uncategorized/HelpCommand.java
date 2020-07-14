@@ -134,6 +134,13 @@ public class HelpCommand extends Command {
             .setDescription(cmd.help(invoke, prefix) +
                 "\nUsage: " + cmd.getUsageInstructions(prefix, invoke));
 
+        final String extra = cmd.getExtraInfo(prefix);
+
+        if (extra != null) {
+            builder.appendDescription("\n")
+                .appendDescription(extra);
+        }
+
         if (cmd.flags.length > 0) {
             builder.addField("Flags", parseFlags(cmd.flags), false);
         }

@@ -59,15 +59,16 @@ To maintain consistency between the constructors of the commands the following o
 5. category
 6. name
 7. aliases
-8. helpFunction (prefix, invoke)
-9. usageInstructions (prefix, invoke)
-10. userPermissions
-11. botPermissions
-12. flags
-13. cooldown
-14. cooldownScope
-15. cooldownKey
-16. overridesCooldown
+8. help
+9. usage
+10. extraInfo
+11. userPermissions
+12. botPermissions
+13. flags
+14. cooldown
+15. cooldownScope
+16. cooldownKey
+17. overridesCooldown
 
 ### Access Modifiers
 

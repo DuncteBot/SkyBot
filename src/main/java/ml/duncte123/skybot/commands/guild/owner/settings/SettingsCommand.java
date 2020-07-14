@@ -72,7 +72,24 @@ public class SettingsCommand extends Command {
         };
         this.help = "Shows the current settings for this server";
         this.usage = "[item] [--set value]";
-        // TODO: add extra data for the user to see
+        this.extraInfo = "Available items are as follows:\n" +
+            "\u2022 `autoRole`: Sets the role given to users on join, set value is a role\n" +
+            "\u2022 `muteRole`: Sets the role given to users when they get muted, set value is a role\n" +
+            "\u2022 `embedColor`: Sets the color of the embeds DuncteBot sends, set value is a valid hex color\n" +
+            "\u2022 `description`: Sets the description in the server info command, set value is a piece of text\n" +
+            "\u2022 `joinMessage`: Sets the message being send to `welcomeChannel` when a user joins, set value is the message\n" +
+            "\u2022 `leaveMessage`: Sets the message being send to `welcomeChannel` when a user leaves, set value is the message\n" +
+            "\u2022 `logChannel`: Sets the channel where moderation actions are logged, set value is a text channel\n" +
+            "\u2022 `prefix`: Sets a custom prefix for the bot, set value is your desired prefix\n" +
+            "\u2022 `rateLimits`: Sets the cooldown in minutes for un-muting your spammer of choice, set value is in the format `1|2|3|4|5|6` or `default`\n" +
+            "\u2022 `welcomeChannel`: Sets the channel where the join and leave messages are send, set value is a text channel\n" +
+            "\u2022 `announceTracks`: Toggles the announcing of the next playing track on or off, this item has no set value\n" +
+            "\u2022 `autoDehoist`: Toggles the enabled state of auto de-hoisting, this item has no set value\n" +
+            "\u2022 `filterInvites`: Toggles if the bot should filter discord invites for messages, this item has no set value\n" +
+            "\u2022 `joinMessageState`: Toggles the join and leave messages on or off, this item has no set value\n" +
+            "\u2022 `kickMode`: Toggles the kick mode for spammers between muting and kicking, this item has no set value\n" +
+            "\u2022 `spamFilter`: Toggles the spam filter on or off, this item has no set value\n" +
+            "\u2022 `swearFilter`: Toggles the swear filter on or off, this item has no set value";
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
@@ -548,12 +565,8 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="helpers" defaultstate="uncollapsed">
     private void loadSettingsMap() {
         this.settingsMap.put("autoRole", this::autoRoleSetting);
-        // TODO: add spamrole as well?
         this.settingsMap.put("muteRole", this::muteRoleSetting);
-//        this.settingsMap.put("spamrole", this::muteRoleSetting);
         this.settingsMap.put("embedColor", this::embedColorSetting);
-        // TODO: add color as well?
-//        this.settingsMap.put("color", this::dummyMethod);
         this.settingsMap.put("description", this::descriptionSetting);
         this.settingsMap.put("joinMessage", this::joinMessageSetting);
         this.settingsMap.put("leaveMessage", this::leaveMessageSetting);

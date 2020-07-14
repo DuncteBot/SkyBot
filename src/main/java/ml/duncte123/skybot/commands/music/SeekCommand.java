@@ -47,11 +47,11 @@ public class SeekCommand extends MusicCommand {
             "jumpto",
             "jp",
         };
-        this.help = "Seek in the currently playing track\n" +
-            "Examples: `{prefix}seek 04:20`\n" +
-            "`{prefix}seek 00:50`\n" +
-            "`{prefix}seek 120`";
+        this.help = "Seek in the currently playing track";
         this.usage = "<minutes:seconds>` / `{prefix}seek [-]<seconds>";
+        this.extraInfo = "Examples: `{prefix}seek 04:20`\n" +
+                "`{prefix}seek 00:50`\n" +
+                "`{prefix}seek 120`";
     }
 
     @Override
