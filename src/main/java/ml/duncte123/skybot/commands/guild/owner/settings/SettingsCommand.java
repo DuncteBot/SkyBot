@@ -39,9 +39,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -52,11 +52,12 @@ import static ml.duncte123.skybot.utils.AirUtils.colorToHex;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
+@SuppressWarnings("PMD.UnusedFormalParameter")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends Command {
     public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
-    private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new HashMap<>();
+    private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new ConcurrentHashMap<>();
 
     // TODO: make clear help of all the items
 
