@@ -37,12 +37,6 @@ public class ToggleKickModeCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final boolean kickState = !settings.getKickState();
-        guild.setSettings(settings.setKickState(kickState));
-
-        sendMsg(ctx.getEvent(), "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
+        this.showNewHelp(ctx, "kickMode", null);
     }
 }

@@ -135,7 +135,7 @@ public class SettingsCommand extends SettingsBase {
             "**Embed color code:** " + guild.getHexColor()
         );
 
-        sendEmbed(ctx.getEvent(), message);
+        sendEmbed(ctx, message);
     }
     /// </editor-fold>
 
@@ -155,11 +155,11 @@ public class SettingsCommand extends SettingsBase {
         this.settingsMap.put("rateLimits", this::rateLimitSetting);
         this.settingsMap.put("welcomeChannel", this::welcomeChannelSetting);
         this.settingsMap.put("announceTracks", this::announceTracksSetting);
-        this.settingsMap.put("autoDehoist", this::dummyMethod);
-        this.settingsMap.put("filterInvites", this::dummyMethod);
-        this.settingsMap.put("enableWelcomeMessage", this::dummyMethod);
-        this.settingsMap.put("kickMode", this::dummyMethod);
-        this.settingsMap.put("spamFilter", this::dummyMethod);
+        this.settingsMap.put("autoDehoist", this::autoDehoistSetting);
+        this.settingsMap.put("filterInvites", this::filterInvitesSetting);
+        this.settingsMap.put("joinMessageState", this::joinMessageStateSetting);
+        this.settingsMap.put("kickMode", this::kickModeSetting);
+        this.settingsMap.put("spamFilter", this::spamFilterSetting);
         this.settingsMap.put("swearFilter", this::dummyMethod);
     }
 
@@ -464,8 +464,88 @@ public class SettingsCommand extends SettingsBase {
         final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
 
         guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
-        sendMsg(ctx.getEvent(), "Announcing the next track has been toggled **"
+        sendMsg(ctx, "Announcing the next track has been toggled **"
             + (shouldAnnounceTracks ? "on" : "off") + "**");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="autoDehoistSetting" defaultstate="collapsed">
+    private void autoDehoistSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
+
+        guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
+        sendMsg(ctx, "Auto de-hoisting has been toggled **"
+            + (shouldAutoDeHoist ? "on" : "off") + "**");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
+    private void filterInvitesSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final boolean shouldFilterInvites = !settings.isFilterInvites();
+
+        guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
+        sendMsg(ctx, "Filtering discord invites has been toggled **"
+            + (shouldFilterInvites ? "on" : "off") + "**");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
+    private void joinMessageStateSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final boolean isEnabled = !settings.isEnableJoinMessage();
+
+        guild.setSettings(settings.setEnableJoinMessage(isEnabled));
+        sendMsg(ctx, "The join and leave messages have been toggled **"
+            + (isEnabled ? "on" : "off") + "**");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="kickModeSetting" defaultstate="collapsed">
+    private void kickModeSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        final boolean kickState = !settings.getKickState();
+
+        guild.setSettings(settings.setKickState(kickState));
+        sendMsg(ctx, "Kick-Mode is set to **"
+            + (kickState ? "kick" : "mute") + "** members");
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="spamFilterSetting" defaultstate="collapsed">
+    private void spamFilterSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
+        // TODO: test
+        final long muteRoleId = settings.getMuteRoleId();
+
+        if (muteRoleId <= 0) {
+            sendMsg(ctx, "**__Please set a spam/mute role first!__** (`" +
+                ctx.getPrefix() + "settings muteRole --set <@role>`)");
+            return;
+        }
+
+        final boolean spamState = !settings.isEnableSpamFilter();
+
+        guild.setSettings(settings.setEnableSpamFilter(spamState));
+
+        final Role muteRole = guild.getRoleById(muteRoleId);
+        final String muteRoleString = muteRole == null ?
+            "`Deleted`, please update it using `%ssettings muteRole --set <@role>`" :
+            muteRole.getAsMention() + ", make sure to change this using `%ssettings muteRole --set <@role>` if that is incorrect";
+
+        final String message = String.format(
+            "The spam filter has been toggled **%s**\nThe current mute role is " + muteRoleString,
+            spamState ? "on" : "off",
+            ctx.getPrefix()
+        );
+
+        sendMsg(ctx, message);
     }
     /// </editor-fold>
 

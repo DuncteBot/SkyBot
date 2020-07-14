@@ -35,13 +35,6 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final boolean shouldFilterInvites = !settings.isFilterInvites();
-        guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
-
-        sendMsg(ctx.getEvent(), "Filtering discord invites has been **"
-            + (shouldFilterInvites ? "enabled" : "disabled") + "**");
+        this.showNewHelp(ctx, "filterInvites", null);
     }
 }
