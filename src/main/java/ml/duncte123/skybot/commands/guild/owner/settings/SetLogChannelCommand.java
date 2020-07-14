@@ -20,11 +20,8 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetLogChannelCommand extends SettingsBase {
@@ -37,29 +34,8 @@ public class SetLogChannelCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (ctx.getArgs().isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsJoined();
 
-        final String in = ctx.getArgsJoined();
-
-        if ("null".equalsIgnoreCase(in) || "none".equalsIgnoreCase(in) ||
-            "off".equalsIgnoreCase(in) || "disable".equalsIgnoreCase(in)) {
-            ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(0L));
-            sendMsg(ctx.getEvent(), "Logging has been turned off");
-            return;
-        }
-
-        final TextChannel channel = findTextChannel(ctx);
-
-        if (channel == null) {
-            sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
-                "Make sure that it's a valid channel that I can speak in");
-            return;
-        }
-
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(channel.getIdLong()));
-        sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
+        this.showNewHelp(ctx, "logChannel", inp);
     }
 }

@@ -128,7 +128,7 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                 val msgs = cache[user.idLong]
 
                 if (msgs != null) {
-                    if (msgs.size() > guild.getSettings().spamThreshold) {
+                    if (msgs.size() > guild.settings.spamThreshold) {
                         shouldModerate = true
                     }
                 }

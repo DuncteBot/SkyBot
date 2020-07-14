@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects;
+package ml.duncte123.skybot.objects.user;
 
 import ml.duncte123.skybot.Author;
 import net.dv8tion.jda.api.JDA;

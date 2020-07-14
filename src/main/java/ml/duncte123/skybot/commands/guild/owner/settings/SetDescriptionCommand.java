@@ -19,15 +19,9 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetDescriptionCommand extends SettingsBase {
@@ -41,20 +35,8 @@ public class SetDescriptionCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
 
-        if ("null".equalsIgnoreCase(args.get(0)) || "disable".equalsIgnoreCase(args.get(0))) {
-            guild.setSettings(settings.setServerDesc(null));
-            sendMsg(event, "Description has been reset.");
-            return;
-        }
-
-        final String description = ctx.getArgsRaw(false);
-        guild.setSettings(settings.setServerDesc(description));
-
-        sendMsg(event, "Description has been updated, check `" + ctx.getPrefix() + "guildinfo` to see your description");
+        this.showNewHelp(ctx, "description", inp);
     }
 }

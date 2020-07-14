@@ -18,18 +18,14 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
@@ -39,7 +35,8 @@ abstract class SettingsBase extends Command {
 
     public SettingsBase() {
         this.displayAliasesInHelp = true;
-        this.category = CommandCategory.ADMINISTRATION;
+        // TODO: Delete this and all old settings commands in about a year
+        this.category = CommandCategory.UNLISTED;
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
@@ -47,7 +44,6 @@ abstract class SettingsBase extends Command {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-
         if (isDev(ctx.getAuthor())) {
             execute(ctx);
 
@@ -57,35 +53,12 @@ abstract class SettingsBase extends Command {
         super.executeCommand(ctx);
     }
 
-    boolean rolePermCheck(CommandContext ctx) {
-        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            sendMsg(ctx, "I need the _Manage Roles_ permission in order for this feature to work.");
-
-            return true;
+    protected void showNewHelp(CommandContext ctx, String name, @Nullable String input) {
+        if (input == null) {
+            sendMsg(ctx, "This command changed, please use `" + ctx.getPrefix() + "settings " + name + '`');
+            return;
         }
 
-        final List<Role> selfRoles = ctx.getSelfMember().getRoles();
-
-        if (selfRoles.isEmpty()) {
-            sendMsg(ctx, "I need a role above the specified role in order for this feature to work.");
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @Nullable
-    protected TextChannel findTextChannel(@Nonnull CommandContext ctx) {
-        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
-
-        if (foundChannels.isEmpty()) {
-            return null;
-        }
-
-        return foundChannels.stream()
-            .filter(TextChannel::canTalk)
-            .findFirst()
-            .orElse(null);
+        sendMsg(ctx, "This command changed, please use `" + ctx.getPrefix() + "settings " + name + " --set " + input + '`');
     }
 }

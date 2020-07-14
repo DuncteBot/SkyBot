@@ -19,13 +19,9 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
 
 import javax.annotation.Nonnull;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ToggleAnnounceTracksCommand extends SettingsBase {
@@ -37,13 +33,6 @@ public class ToggleAnnounceTracksCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
-        guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
-
-        sendMsg(ctx.getEvent(), "Announcing the next track has been **"
-            + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
+        this.showNewHelp(ctx, "announceTracks", null);
     }
 }

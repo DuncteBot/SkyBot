@@ -29,9 +29,7 @@ import net.dv8tion.jda.api.entities.Guild
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
-
-    // TODO: change this to work the "kotlin way"
-    /*var settings: GuildSettings
+    var settings: GuildSettings
         get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
         set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
 
@@ -42,26 +40,7 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
             GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
         }
 
-        val hexColor = AirUtils.colorToHex(color)*/
-
-    fun getSettings() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
-
-    fun setSettings(settings: GuildSettings) {
-        GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
-    }
-
-    fun setColor(color: Int) {
-        EmbedUtils.addColor(this.idLong, color)
-        GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
-    }
-
-    fun getColor(): Int {
-        return EmbedUtils.getColorOrDefault(this.idLong, Settings.DEFAULT_COLOUR)
-    }
-
-    fun getHexColor(): String {
-        return AirUtils.colorToHex(getColor())
-    }
+    val hexColor = AirUtils.colorToHex(color)
 
     override fun toString() = this.guild.toString()
 }

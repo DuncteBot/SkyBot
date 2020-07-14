@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.commands.guild.owner.settings.SetColorCommand.COLOR_REGEX;
+import static ml.duncte123.skybot.commands.guild.owner.settings.SettingsCommand.COLOR_REGEX;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

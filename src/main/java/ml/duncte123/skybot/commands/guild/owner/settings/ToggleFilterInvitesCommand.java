@@ -18,13 +18,9 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
 
 import javax.annotation.Nonnull;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class ToggleFilterInvitesCommand extends SettingsBase {
 
@@ -35,13 +31,6 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final boolean shouldFilterInvites = !settings.isFilterInvites();
-        guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
-
-        sendMsg(ctx.getEvent(), "Filtering discord invites has been **"
-            + (shouldFilterInvites ? "enabled" : "disabled") + "**");
+        this.showNewHelp(ctx, "filterInvites", null);
     }
 }

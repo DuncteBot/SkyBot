@@ -18,24 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetColorCommand extends SettingsBase {
-
-    public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
-
     public SetColorCommand() {
         this.name = "setcolor";
         this.aliases = new String[]{
@@ -47,29 +36,8 @@ public class SetColorCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
 
-        final List<String> args = ctx.getArgs();
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
-        final String colorString = args.get(0);
-        final Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
-
-        if (!colorMatcher.matches()) {
-            sendMsg(ctx.getEvent(), "That color does not look like a valid hex color, hex colors start with a pound sign.\n" +
-                "Tip: you can use <http://colorpicker.com/> to generate a hex code.");
-            return;
-        }
-
-        final int colorInt = colorToInt(colorString);
-
-        ctx.getGuild().setColor(colorInt);
-
-        final String msg = String.format("Embed color has been set to `%s`", colorString);
-
-        sendEmbed(ctx.getEvent(), EmbedUtils.embedMessage(msg));
+        this.showNewHelp(ctx, "embedColor", inp);
     }
 }

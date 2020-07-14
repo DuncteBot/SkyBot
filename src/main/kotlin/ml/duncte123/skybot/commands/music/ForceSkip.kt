@@ -23,7 +23,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.extensions.getImageUrl
-import ml.duncte123.skybot.objects.ConsoleUser
+import ml.duncte123.skybot.objects.user.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand

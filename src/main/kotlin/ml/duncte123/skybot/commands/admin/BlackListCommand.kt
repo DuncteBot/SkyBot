@@ -40,7 +40,8 @@ class BlackListCommand : ModBaseCommand() {
         this.name = "blacklist"
         this.help = """Control the blacklisted words on your server
             |Note: **People that have the kick members permission will bypass the blacklist**""".trimMargin()
-        this.usage =  """```{prefix}$name list => Gives you a list of the current blacklisted words
+        this.usage = "<list/clear/import/add/remove> [word]"
+        this.extraInfo = """```{prefix}$name list => Gives you a list of the current blacklisted words
         |{prefix}$name clear => Clears the blacklist
         |{prefix}$name import => Imports an exported blacklist
         |{prefix}$name add <word> => Adds a word to the blacklist
@@ -56,7 +57,7 @@ class BlackListCommand : ModBaseCommand() {
 
         when (args[0]) {
             "list", "export" -> {
-                listBlackList(ctx.guild.getSettings().blacklistedWords, event, ctx.variables.jackson)
+                listBlackList(ctx.guild.settings.blacklistedWords, event, ctx.variables.jackson)
                 return
             }
             "clear" -> {
@@ -111,7 +112,7 @@ class BlackListCommand : ModBaseCommand() {
     private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
         adapter.clearBlacklist(guild.idLong)
 
-        guild.getSettings().blacklistedWords.clear()
+        guild.settings.blacklistedWords.clear()
 
         sendMsg(event, "The blacklist has been cleared")
     }
@@ -154,7 +155,7 @@ class BlackListCommand : ModBaseCommand() {
     }
 
     private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
-        val list = guild.getSettings().blacklistedWords
+        val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
             sendMsg(event, "This word is already in the blacklist")
@@ -170,7 +171,7 @@ class BlackListCommand : ModBaseCommand() {
     }
 
     private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
-        val list = guild.getSettings().blacklistedWords
+        val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {
             sendMsg(event, "This word is not in the blacklist")

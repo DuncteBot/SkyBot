@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -62,6 +63,7 @@ public abstract class Command implements ICommand {
     protected String[] aliases = new String[0];
     protected String help = "";
     protected String usage = "";
+    protected String extraInfo = null;
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
     public Flag[] flags = new Flag[0];
@@ -179,6 +181,11 @@ public abstract class Command implements ICommand {
 
     protected void sendUsageInstructions(CommandContext ctx) {
         sendMsg(ctx, "Usage: " + this.getUsageInstructions(ctx));
+    }
+
+    @Nullable
+    public String getExtraInfo(String prefix) {
+        return this.extraInfo == null ? null : this.extraInfo.replace("{prefix}", prefix).trim();
     }
 
     @Override

@@ -16,26 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.guild.owner.settings;
+package ml.duncte123.skybot.objects;
 
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.command.CommandContext;
+import java.util.Objects;
 
-import javax.annotation.Nonnull;
+@FunctionalInterface
+public interface TriConsumer<T, U, K> {
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AutoRoleCommand extends SettingsBase {
+    void accept(T t, U u, K k);
 
-    public AutoRoleCommand() {
-        this.name = "autorole";
-        this.help = "Sets the role that members get when they join the server";
-        this.usage = "<@role/disable>";
-    }
+    default TriConsumer<T, U, K> andThen(TriConsumer<? super T, ? super U, ? super K> after) {
+        Objects.requireNonNull(after);
 
-    @Override
-    public void execute(@Nonnull CommandContext ctx) {
-        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
-
-        this.showNewHelp(ctx, "autoRole", inp);
+        return (l, r, k) -> {
+            accept(l, r, k);
+            after.accept(l, r, k);
+        };
     }
 }

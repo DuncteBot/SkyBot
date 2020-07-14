@@ -31,7 +31,6 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -56,6 +55,7 @@ public class CommandContext implements ICommandContext {
     private final Variables variables;
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
+    private Map<String, List<String>> cachedFlags;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -70,7 +70,7 @@ public class CommandContext implements ICommandContext {
     // --------------- Methods from the Variables class --------------- //
 
     public Variables getVariables() {
-        return variables;
+        return this.variables;
     }
 
     public CacheClient getYoutubeCache() {
@@ -118,7 +118,11 @@ public class CommandContext implements ICommandContext {
     }
 
     public Map<String, List<String>> getParsedFlags(Command cmd) {
-        return CommandUtils.parseInput(cmd.flags, this.getArgs());
+        if (this.cachedFlags == null) {
+            this.cachedFlags = CommandUtils.parseInput(cmd.flags, this.getArgs());
+        }
+
+        return this.cachedFlags;
     }
 
     // --------------- Normal methods --------------- //
@@ -150,19 +154,19 @@ public class CommandContext implements ICommandContext {
     }
 
     public String getArgsRaw(boolean fixlines) {
-        return parseRawArgs(this.event.getMessage().getContentRaw(), fixlines);
+        return this.parseRawArgs(this.event.getMessage().getContentRaw(), fixlines);
     }
 
     public String getArgsDisplay() {
-        return parseRawArgs(this.event.getMessage().getContentDisplay());
+        return this.parseRawArgs(this.event.getMessage().getContentDisplay());
     }
 
     public GuildSettings getGuildSettings() {
-        return GuildSettingsUtils.getGuild(this.event.getGuild().getIdLong(), this.variables);
+        return this.duncteBotGuild.getSettings();
     }
 
     public String getPrefix() {
-        return getGuildSettings().getCustomPrefix();
+        return this.getGuildSettings().getCustomPrefix();
     }
 
     public GuildMessageReceivedEvent getEvent() {

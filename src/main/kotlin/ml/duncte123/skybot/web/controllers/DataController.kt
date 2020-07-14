@@ -20,6 +20,9 @@ package ml.duncte123.skybot.web.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.AllPatronsData
 import ml.duncte123.skybot.objects.api.Ban
@@ -46,43 +49,45 @@ object DataController {
 
         println(updateData)
 
-        if (updateData.has("patrons")) {
-            val patronData = updateData["patrons"]
+        GlobalScope.launch(context = Dispatchers.IO) {
+            if (updateData.has("patrons")) {
+                val patronData = updateData["patrons"]
 
-            if (patronData.has("add")) {
-                val addedPatrons = jackson.readValue(patronData["add"].traverse(), AllPatronsData::class.java)
+                if (patronData.has("add")) {
+                    val addedPatrons = jackson.readValue(patronData["add"].traverse(), AllPatronsData::class.java)
 
-                addPatronsFromData(addedPatrons)
+                    addPatronsFromData(addedPatrons)
+                }
+
+                if (patronData.has("remove")) {
+                    val removedPatrons = jackson.readValue(patronData["remove"].traverse(), AllPatronsData::class.java)
+
+                    removePatronsFromData(removedPatrons)
+                }
             }
 
-            if (patronData.has("remove")) {
-                val removedPatrons = jackson.readValue(patronData["remove"].traverse(), AllPatronsData::class.java)
+            if (updateData.has("unbans")) {
+                val expiredBans = updateData["unbans"]
+                val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
 
-                removePatronsFromData(removedPatrons)
+                ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
             }
-        }
 
-        if (updateData.has("unbans")) {
-            val expiredBans = updateData["unbans"]
-            val bans: List<Ban> = jackson.readValue(expiredBans.traverse(), object : TypeReference<List<Ban>>() {})
+            if (updateData.has("unmutes")) {
+                val expiredMutes = updateData["unmutes"]
+                val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
 
-            ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
-        }
+                ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+            }
 
-        if (updateData.has("unmutes")) {
-            val expiredMutes = updateData["unmutes"]
-            val mutes: List<Mute> = jackson.readValue(expiredMutes.traverse(), object : TypeReference<List<Mute>>() {})
+            if (updateData.has("reminders")) {
+                val expiredReminders = updateData["reminders"]
+                val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
-            ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
-        }
-
-        if (updateData.has("reminders")) {
-            val expiredReminders = updateData["reminders"]
-            val reminders: List<Reminder> = jackson.readValue(expiredReminders.traverse(), object : TypeReference<List<Reminder>>() {})
-
-            // Uses complete, must be handled last
-            if (reminders.isNotEmpty()) {
-                AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+                // Uses complete, must be handled last
+                if (reminders.isNotEmpty()) {
+                    AirUtils.handleExpiredReminders(reminders, variables.databaseAdapter, variables.prettyTime)
+                }
             }
         }
 

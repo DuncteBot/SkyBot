@@ -201,6 +201,7 @@ public class AirUtils {
         return foundChannels.get(0);
     }
 
+    @Nonnull
     public static String colorToHex(int hex) {
         final int r = (hex & 0xFF0000) >> 16;
         final int g = (hex & 0xFF00) >> 8;

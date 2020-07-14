@@ -36,40 +36,15 @@ public class SetRateLimitsCommand extends SettingsBase {
 
     public SetRateLimitsCommand() {
         this.name = "setratelimits";
-        this.help = "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
-            "Example: `{prefix}setratelimits 20|45|60|120|240|2400`";
+        this.help = "Sets our cooldown in minutes for un-muting your spammer of choice.\n";
+        this.extraInfo = "Example: `{prefix}setratelimits 20|45|60|120|240|2400`";
         this.usage = "<1|2|3|4|5|6/default>";
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
 
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
-        if ("default".equals(args.get(0))) {
-            sendMsg(event, "Ratelimits have beed reset.");
-            guild.setSettings(settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
-            return;
-        }
-
-        final long[] rates = GuildSettingsUtils.ratelimmitChecks(String.join("", args));
-
-        if (rates.length != 6) {
-            sendMsg(event, "Invalid rate limit settings");
-            return;
-        }
-
-        guild.setSettings(settings.setRatelimits(rates));
-        final String steps = Arrays.stream(rates).mapToObj(String::valueOf)
-            .collect(Collectors.joining(", ", "", " minutes"));
-
-        sendMsg(event, "The new rates are " + steps);
+        this.showNewHelp(ctx, "rateLimits", inp);
     }
 }
