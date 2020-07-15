@@ -21,6 +21,8 @@ package ml.duncte123.skybot.utils
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
 import java.util.regex.Pattern
@@ -83,7 +85,11 @@ object FinderUtils {
                     .queue(
                         { retrieveFuture.complete(listOf(it)) },
                         {
-                            logger.error("Failed to retrieve member by id", it)
+                            if (it is ErrorResponseException && it.errorResponse != ErrorResponse.UNKNOWN_USER) {
+                                // only log if it's not unknown user
+                                logger.error("Failed to retrieve user by id", it)
+                            }
+
                             retrieveFuture.complete(listOf())
                         }
                     )
@@ -133,7 +139,11 @@ object FinderUtils {
                     .queue(
                         { retrieveFuture.complete(listOf(it)) },
                         {
-                            logger.error("Failed to retrieve member by id", it)
+                            if (it is ErrorResponseException && it.errorResponse != ErrorResponse.UNKNOWN_USER && it.errorResponse != ErrorResponse.UNKNOWN_MEMBER) {
+                                // only log if it's not unknown user/member
+                                logger.error("Failed to retrieve member by id", it)
+                            }
+
                             retrieveFuture.complete(listOf())
                         }
                     )
