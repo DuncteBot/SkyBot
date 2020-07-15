@@ -33,115 +33,115 @@ class FakeMember(private val name: String) : Member {
     override fun getUser() = FakeUser(name, 0, 0)
 
     override fun canInteract(member: Member): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun canInteract(role: Role): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun canInteract(emote: Emote): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getTimeJoined(): OffsetDateTime {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getActivities(): MutableList<Activity> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getIdLong(): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getTimeBoosted(): OffsetDateTime? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun isOwner(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getColor(): Color {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getOnlineStatus(): OnlineStatus {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getVoiceState(): GuildVoiceState {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getJDA(): JDA {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getAsMention(): String {
-        TODO("not implemented") //To change body of creategetAsMentiond functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getDefaultChannel(): TextChannel? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getNickname(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getRoles(): MutableList<Role> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getColorRaw(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun hasPermission(vararg permissions: Permission?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getGuild(): Guild {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getOnlineStatus(type: ClientType): OnlineStatus {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun hasPermission(permissions: MutableCollection<Permission>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun hasPermission(channel: GuildChannel, vararg permissions: Permission?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun hasPermission(channel: GuildChannel, permissions: MutableCollection<Permission>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getPermissions(): EnumSet<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getPermissions(channel: GuildChannel): EnumSet<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getPermissionsExplicit(): EnumSet<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getPermissionsExplicit(channel: GuildChannel): EnumSet<Permission> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun getActiveClients(): EnumSet<ClientType> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
     override fun isFake() = true

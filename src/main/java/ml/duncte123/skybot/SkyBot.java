@@ -75,7 +75,7 @@ public final class SkyBot {
     private WebRouter webRouter = null;
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
-        // TODO: Member needs to be cached for JDA to fire role update event
+        // Member needs to be cached for JDA to fire role update event
         final long userId = member.getIdLong();
 
         return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
@@ -86,7 +86,7 @@ public final class SkyBot {
     };
 
     private SkyBot() throws Exception {
-        this.configureJDADefaults();
+        this.configureDefaults();
 
         // Load in our container
         final Variables variables = new Variables();
@@ -158,7 +158,7 @@ public final class SkyBot {
         }
     }
 
-    private void configureJDADefaults() {
+    private void configureDefaults() {
         // Set our animated emotes as default reactions
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
         MessageUtils.setSuccessReaction("a:_yes:577795293546938369");

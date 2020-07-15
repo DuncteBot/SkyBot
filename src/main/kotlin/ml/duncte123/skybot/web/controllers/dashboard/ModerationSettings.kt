@@ -118,7 +118,6 @@ object ModerationSettings {
 
 
         for (i in 1 until maxWarningActionCount + 1) {
-            // TODO: check to see for missing warn actions
             if (!params.containsKey("warningAction$i")) {
                 continue
             }

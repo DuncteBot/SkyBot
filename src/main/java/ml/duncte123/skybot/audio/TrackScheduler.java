@@ -88,11 +88,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         // Set in the data that it was from a skip
         playingTrack.getUserData(TrackUserData.class).setWasFromSkip(true);
 
-        // Seek to the end to start the next track
-        // We seek to use the normal flow that allows for repeating as well
-        // TODO: maybe just call onTrackEnd with AudioTrackEndReason#FINISHED?
-        // this actually does a youtube request
-        this.player.seekTo(playingTrack.getDuration());
+        // We trigger a fake on track end here to make it adhere to the normal loop flow
+        // and inject a boolean for forcing the announcement on skip
+        this.onTrackEnd(null, playingTrack, AudioTrackEndReason.FINISHED);
     }
 
     private void skipTrack() {

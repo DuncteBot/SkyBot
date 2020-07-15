@@ -59,8 +59,6 @@ public class SettingsCommand extends Command {
 
     private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new ConcurrentHashMap<>();
 
-    // TODO: make clear help of all the items
-
     public SettingsCommand() {
         this.displayAliasesInHelp = true;
         // Override category here to make sure that we can hide all the other settings commands
@@ -125,7 +123,7 @@ public class SettingsCommand extends Command {
         final String item = args.get(0);
 
         if (!this.settingsMap.containsKey(item)) {
-            // TODO
+            sendMsg(ctx, "I do not know what `" + item + "` is, you can see a full list of settings in `" + ctx.getPrefix() + "help settings`");
             return;
         }
 

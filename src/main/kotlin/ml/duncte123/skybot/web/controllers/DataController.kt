@@ -38,7 +38,6 @@ import spark.Spark
 
 object DataController {
 
-    // TODO: push this stuff to it's own thread
     fun updateData(request: Request, jackson: ObjectMapper, shardManager: ShardManager, variables: Variables): Any {
         // Logging in with the bots own token
         if (!request.headers().contains("Authorization") || request.headers("Authorization") != shardManager.getShardById(0)?.token) {
