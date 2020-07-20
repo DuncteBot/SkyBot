@@ -105,17 +105,15 @@ public abstract class MessageListener extends BaseListener {
         // This happens?
         if (event.getMember() == null && !event.isWebhookMessage()) {
             Sentry.capture(new Exception(String.format(
-                "Got null member for webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s fake &s)",
+                "Got null member for no webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s)",
                 event.getMember(),
                 event.getMessage(),
                 event.getAuthor(),
-                event.getAuthor().isBot(),
-                event.getAuthor().isFake()
+                event.getAuthor().isBot()
             )));
         }
 
-        if (/*event.getAuthor().isFake() ||
-            */event.getAuthor().isBot() ||
+        if (event.getAuthor().isBot() ||
             event.isWebhookMessage() ||
             event.getMember() == null // Just in case Discord fucks up *again*
         ) {
@@ -124,8 +122,7 @@ public abstract class MessageListener extends BaseListener {
 
         final String rw = event.getMessage().getContentRaw().trim();
 
-        if (rw.equals(Settings.PREFIX + "shutdown")
-            && isDev(event.getAuthor().getIdLong())) {
+        if (rw.equals(Settings.PREFIX + "shutdown") && isDev(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());

@@ -62,7 +62,7 @@ class EmoteCommand : Command() {
     private fun customEmoteMentioned(ctx: CommandContext, emote: Emote) {
         val name = emote.name
         val id = emote.id
-        val guild = if (emote.isFake) "Unknown" else emote.guild!!.name
+        val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
 
         sendMsg(ctx, """**Emote:** $name
