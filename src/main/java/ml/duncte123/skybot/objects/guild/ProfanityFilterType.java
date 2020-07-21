@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 public enum ProfanityFilterType {
     NORMAL("TOXICITY", "Toxic"),
-    SEVERE("SEVERE_TOXICITY", "Very Toxic"),
+    SEVERE_TOXICITY("SEVERE_TOXICITY", "Very Toxic"),
     INSULT("INSULT", "Insult (Experimental)"),
     PROFANITY("PROFANITY", "Profanity (Experimental)");
 
@@ -55,6 +55,6 @@ public enum ProfanityFilterType {
         }
 
         // Default to severe as that was the old permanent setting
-        return SEVERE;
+        return SEVERE_TOXICITY;
     }
 }

@@ -30,7 +30,8 @@ eventBus.once('loaded', () => {
         actions.appendChild(li);
     }
 
-    if (actions.children.length >= maxActions) {
+    // Keep the button there for non patrons
+    if (actions.children.length >= maxActions && guildPatron) {
         hide('add_warn_action');
     }
 });

@@ -18,6 +18,7 @@
 <script>
     const warnActions = $settings.getWarnActions();
     const warnActionTypes = $warnActionTypes;
+    const guildPatron = $guild_patron;
     const maxActions = #if($guild_patron)$patronMaxWarnActions#{else}1#{end};
 </script>
 

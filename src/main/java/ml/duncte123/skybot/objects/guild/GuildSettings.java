@@ -23,7 +23,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
@@ -63,7 +65,7 @@ public class GuildSettings {
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private int leave_timeout = 1;
     private int spam_threshold = 7;
-    private ProfanityFilterType filterType = ProfanityFilterType.SEVERE;
+    private ProfanityFilterType filterType = ProfanityFilterType.SEVERE_TOXICITY;
     private float aiSensitivity = 0.7f;
     private boolean allowAllToStop = false;
     // logging
@@ -86,6 +88,7 @@ public class GuildSettings {
     }
 
     @JsonProperty("guildId")
+    @JsonSerialize(using = ToStringSerializer.class)
     public long getGuildId() {
         return this.guildId;
     }
@@ -146,6 +149,7 @@ public class GuildSettings {
     }
 
     @JsonProperty("logChannelId")
+    @JsonSerialize(using = ToStringSerializer.class)
     public long getLogChannel() {
         return this.logChannelId;
     }
@@ -158,6 +162,7 @@ public class GuildSettings {
     }
 
     @JsonProperty("autorole")
+    @JsonSerialize(using = ToStringSerializer.class)
     public long getAutoroleRole() {
         return this.autoRole;
     }
@@ -175,6 +180,7 @@ public class GuildSettings {
     }
 
     @JsonProperty("welcomeLeaveChannel")
+    @JsonSerialize(using = ToStringSerializer.class)
     public long getWelcomeLeaveChannel() {
         return this.welcomeLeaveChannel;
     }
@@ -247,6 +253,7 @@ public class GuildSettings {
     }
 
     @JsonProperty("muteRoleId")
+    @JsonSerialize(using = ToStringSerializer.class)
     public long getMuteRoleId() {
         return this.muteRoleId;
     }
