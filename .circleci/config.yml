@@ -71,14 +71,25 @@ jobs:
             # Customize the JVM maximum heap limit
             JVM_OPTS: -Xmx3200m
             TERM: dumb
+            SENTRY_ORG: duncte123
 
         steps:
             - attach_workspace:
                   at: ./
 
             - run:
-                  name: "Upload to github if on master"
-                  command: ./gradlew githubRelease;
+                name: Add sentry version
+                command: |
+                    curl -sL https://sentry.io/get-cli/ | bash
+                    VERSION=$(sentry-cli releases propose-version)
+                    sentry-cli releases new $VERSION
+                    sentry-cli releases set-commits --auto $VERSION
+                    npx sentry-cli releases deploys $VERSION new -e "production"
+                    sentry-cli releases finalize $VERSION
+
+            - run:
+                name: "Upload to github if on master"
+                command: ./gradlew githubRelease;
 
 
 workflows:
