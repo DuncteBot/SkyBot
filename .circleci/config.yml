@@ -79,10 +79,12 @@ jobs:
                   at: ./
 
             - run:
+                # other version thing
+                #VERSION=$(sentry-cli releases propose-version)
                 name: Add sentry version
                 command: |
                     curl -sL https://sentry.io/get-cli/ | bash
-                    VERSION=$(sentry-cli releases propose-version)
+                    VERSION=$(./gradlew -q botVersion > tmp.txt && cat tmp.txt | grep "v:" | sed "s/v: //")
                     sentry-cli releases new $VERSION
                     sentry-cli releases set-commits --auto $VERSION
                     sentry-cli releases deploys $VERSION new -e "production"

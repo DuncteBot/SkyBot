@@ -171,6 +171,11 @@ val printVersion = task<Task>("printVersion") {
     println(project.version)
 }
 
+task<Exec>("botVersion") {
+    executable = "echo"
+    args("v:", project.version)
+}
+
 build.apply {
     dependsOn(printVersion)
     dependsOn(clean)
