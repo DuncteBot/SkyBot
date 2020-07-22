@@ -41,7 +41,7 @@ plugins {
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
-val numberVersion = "3.95.0"
+val numberVersion = "3.95.1"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -173,7 +173,7 @@ val printVersion = task<Task>("printVersion") {
 
 task<Exec>("botVersion") {
     executable = "echo"
-    args("v:", project.version)
+    args("v:", numberVersion)
 }
 
 build.apply {
