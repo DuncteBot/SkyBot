@@ -47,6 +47,7 @@ class WarnCommand : ModBaseCommand() {
         this.help = "Warns a user\nWhen a user has reached 3 warnings they will be kicked from the server"
         this.usage = "<@user> [-r reason]"
         this.userPermissions = arrayOf(Permission.KICK_MEMBERS)
+        this.botPermissions = arrayOf(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)
         this.flags = arrayOf(
             Flag(
                 'r',
