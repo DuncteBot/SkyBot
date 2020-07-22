@@ -72,6 +72,7 @@ jobs:
             JVM_OPTS: -Xmx3200m
             TERM: dumb
             SENTRY_ORG: duncte123
+            SENTRY_PROJECT: dunctebot
 
         steps:
             - attach_workspace:
