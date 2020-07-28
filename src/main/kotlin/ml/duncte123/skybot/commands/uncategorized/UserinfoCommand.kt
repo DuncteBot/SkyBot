@@ -87,25 +87,28 @@ class UserinfoCommand : Command() {
             m = event.member
         } else {
             val members = FinderUtils.searchMembers(ctx.argsRaw, ctx)
-            var users = members.stream().map { it.user }.collect(Collectors.toList())
 
-            if (users.isEmpty()) {
-                users = FinderUtils.searchUsers(ctx.argsRaw, ctx)
+            if (members.isNotEmpty()) {
+                m = members[0]
+                u = m.user
+            } else {
+                val users = FinderUtils.searchUsers(ctx.argsRaw, ctx)
 
                 if (users.isNotEmpty()) {
                     u = users[0]
-                    m = ctx.guild.getMember(u)
-                }
+                    // TODO: Only add if I see some broken shit
+                    /*m = getMemberSyc(ctx.jdaGuild, u)
 
-            } else {
-                u = users[0]
-                m = ctx.guild.getMember(u)
+                    if (m == null) {
+                        logger.warn("Unknown member for user ${u.asTag}(${u.id}) in users.isNotEmpty() {}DELETE METHOD IF THIS HAPPENS TOO OFTEN{}", TextColor.RED, TextColor.RESET)
+                    }*/
+                }
             }
         }
 
+        // if we have a user but not a member
         if (u != null && m == null) {
             renderUserEmbed(event, u, ctx.guild, ctx.variables.prettyTime)
-
             return
         }
 

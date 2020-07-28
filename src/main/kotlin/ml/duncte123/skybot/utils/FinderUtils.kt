@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils
 
+import ml.duncte123.skybot.extensions.sync
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
@@ -55,12 +56,12 @@ object FinderUtils {
         val refMatcher = FULL_USER_REF.matcher(input)
 
         if (refMatcher.matches()) {
-            val nameLower = refMatcher.group(1)
+            val name = refMatcher.group(1)
             val discrim = refMatcher.group(2)
 
             val users = jda.userCache.applyStream { s ->
                 s.filter {
-                    it.name.equals(nameLower, ignoreCase = true) && it.discriminator == discrim
+                    it.name.equals(name, ignoreCase = true) && it.discriminator == discrim
                 }.toList()
             }!!
 
@@ -126,6 +127,20 @@ object FinderUtils {
         }
 
         val guild = ctx.jdaGuild
+        val refMatcher = FULL_USER_REF.matcher(input)
+
+        if (refMatcher.matches()) {
+            val name = refMatcher.group(1)
+            val discrim = refMatcher.group(2)
+
+            val membersByTag = guild.findMembers {
+                it.user.name.equals(name, ignoreCase = true) && it.user.discriminator == discrim
+            }.sync()
+
+            if (membersByTag.isNotEmpty()) {
+                return membersByTag
+            }
+        }
 
         if (searchId != null) {
             val memberById = guild.getMemberById(searchId)

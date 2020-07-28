@@ -55,6 +55,7 @@ import net.dv8tion.jda.internal.JDAImpl;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -398,6 +399,21 @@ public class AirUtils {
 
             // Return a fake pending request to make sure that things don't break
             return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
+        }
+    }
+
+    // TODO: is this the best way?
+    @Nullable
+    public static Member getMemberSyc(@Nonnull Guild guild, @Nonnull User user) {
+        try {
+            return guild.retrieveMember(user).complete();
+        } catch (final ErrorResponseException e) {
+            // Unknown member will be returned when the member is not in the guild
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MEMBER) {
+                return null;
+            }
+
+            throw e;
         }
     }
 }
