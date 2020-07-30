@@ -5,6 +5,7 @@
     <tr>
         <th>Id</th>
         <th>name</th>
+        <th>Members with this role</th>
     </tr>
     </thead>
     <tbody>
@@ -12,6 +13,7 @@
         <tr>
             <td>$role.getIdLong()</td>
             <td>$role.getName()</td>
+            <td>$role.getMemberCount() Members</td>
         </tr>
         #end
     </tbody>

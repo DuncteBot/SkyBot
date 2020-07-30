@@ -19,8 +19,11 @@
 package ml.duncte123.skybot.web.controllers
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import ml.duncte123.skybot.extensions.sync
 import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.web.WebHelpers
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.*
 import java.util.concurrent.TimeUnit
@@ -34,11 +37,16 @@ object GuildStuffController {
         val hash = request.params("hash")
         val guildId = guildHashes.getIfPresent(hash) ?: return WebHelpers.haltNotFound(request, response)
         val guild = shardManager.getGuildById(guildId) ?: return WebHelpers.haltNotFound(request, response)
+        val allMembers = guild.loadMembers().sync()
 
         return WebVariables()
             .put("title", "Roles for ${guild.name}")
             .put("guild_name", guild.name)
-            .put("roles", guild.roles)
+            .put("roles", guild.roles.map { CustomRole(it, allMembers) })
             .toModelAndView("guildRoles.vm")
+    }
+
+    class CustomRole(private val realRole: Role, allMembers: List<Member>) : Role by realRole {
+        val memberCount = allMembers.filter { it.roles.contains(realRole) }.size
     }
 }
