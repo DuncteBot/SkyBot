@@ -34,7 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
-import static ml.duncte123.skybot.utils.AirUtils.loadGuildMembers;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -53,8 +52,6 @@ public abstract class Command implements ICommand {
             return thread;
         });
 
-    // This should be set to true when we need to load the members before the command is being executed
-    protected boolean shouldLoadMembers = false;
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
@@ -130,10 +127,6 @@ public abstract class Command implements ICommand {
                 // Set the cooldown for the command
                 commandManager.setCooldown(cooldownKey, this.cooldown);
             }
-        }
-
-        if (this.shouldLoadMembers) {
-            loadGuildMembers(ctx.getJDAGuild());
         }
 
         execute(ctx);

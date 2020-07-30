@@ -18,7 +18,9 @@
 
 package ml.duncte123.skybot.commands.guild;
 
+import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.extensions.TaskKt;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -34,9 +36,9 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -44,7 +46,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class GuildJoinsCommand extends Command {
 
     public GuildJoinsCommand() {
-        this.shouldLoadMembers = true;
         this.name = "serverjoins";
         this.help = "Shows a graph with the joins for this server.\n" +
             "This is not a full history as it only looks at the members that are currently in the server.";
@@ -57,53 +58,59 @@ public class GuildJoinsCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final long startTime = ctx.getGuild().getTimeCreated().toEpochSecond();
-        final OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-        final long currentTime = now.toEpochSecond();
-        final int imageWidth = 1000;
-        final int imageHeight = 600;
-        final List<Member> members = new ArrayList<>(ctx.getGuild().getMemberCache().asList());
-        final BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-        final Graphics2D graphics2D = bufferedImage.createGraphics();
+        try {
+            final long startTime = ctx.getGuild().getTimeCreated().toEpochSecond();
+            final OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+            final long currentTime = now.toEpochSecond();
+            final int imageWidth = 1000;
+            final int imageHeight = 600;
+            final List<Member> members = TaskKt.sync(ctx.getJDAGuild().loadMembers());
+            final BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+            final Graphics2D graphics2D = bufferedImage.createGraphics();
 
-        members.sort(Comparator.comparing(Member::getTimeJoined));
-        graphics2D.setColor(Color.BLACK);
-        graphics2D.fillRect(0, 0, imageWidth, imageHeight);
+            members.sort(Comparator.comparing(Member::getTimeJoined));
+            graphics2D.setColor(Color.BLACK);
+            graphics2D.fillRect(0, 0, imageWidth, imageHeight);
 
-        double lastXPos = 0;
-        int lastYPos = imageHeight;
-        final int membersSize = members.size();
+            double lastXPos = 0;
+            int lastYPos = imageHeight;
+            final int membersSize = members.size();
 
-        for (int i = 0; i < membersSize; i++) {
-            final long joinMinStart = members.get(i).getTimeJoined().toEpochSecond() - startTime;
-            final long joinTimesWidth = joinMinStart * imageWidth;
-            final double xPos = joinTimesWidth / (currentTime - startTime);
-            final int yPos = imageHeight - ((i * imageHeight) / membersSize);
-            final double angle = xPos == lastXPos ? 1 : Math.tan((lastYPos - yPos) / (xPos - lastXPos)) / (Math.PI / 2);
+            for (int i = 0; i < membersSize; i++) {
+                final long joinMinStart = members.get(i).getTimeJoined().toEpochSecond() - startTime;
+                final long joinTimesWidth = joinMinStart * imageWidth;
+                final double xPos = joinTimesWidth / (currentTime - startTime);
+                final int yPos = imageHeight - ((i * imageHeight) / membersSize);
+                final double angle = xPos == lastXPos ? 1 : Math.tan((lastYPos - yPos) / (xPos - lastXPos)) / (Math.PI / 2);
 
-            graphics2D.setColor(Color.getHSBColor((float) angle / 4, 1f, 1f));
-            graphics2D.drawLine((int) xPos, yPos, (int) lastXPos, lastYPos);
+                graphics2D.setColor(Color.getHSBColor((float) angle / 4, 1f, 1f));
+                graphics2D.drawLine((int) xPos, yPos, (int) lastXPos, lastYPos);
 
-            lastXPos = xPos;
-            lastYPos = yPos;
-        }
+                lastXPos = xPos;
+                lastYPos = yPos;
+            }
 
-        graphics2D.setFont(graphics2D.getFont().deriveFont(24f));
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.drawString("0 - " + membersSize + " Users", 20, 26);
-        graphics2D.drawString(ctx.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
-        graphics2D.drawString(now.format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 90);
+            graphics2D.setFont(graphics2D.getFont().deriveFont(24f));
+            graphics2D.setColor(Color.WHITE);
+            graphics2D.drawString("0 - " + membersSize + " Users", 20, 26);
+            graphics2D.drawString(ctx.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
+            graphics2D.drawString(now.format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 90);
 
-        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ImageIO.write(bufferedImage, "png", outputStream);
+            try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                ImageIO.write(bufferedImage, "png", outputStream);
 
-            ctx.getChannel()
-                .sendFile(outputStream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
-                .appendFormat("Here is the join graph for _%s_", ctx.getGuild().getName())
-                .queue();
-        }
-        catch (IOException e) {
+                ctx.getChannel()
+                    .sendFile(outputStream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
+                    .appendFormat("Here is the join graph for _%s_", ctx.getGuild().getName())
+                    .queue();
+            }
+            catch (IOException e) {
+                sendMsg(ctx, "Could not generate join graph: " + e.getMessage());
+                Sentry.capture(e);
+            }
+        } catch (final InterruptedException | ExecutionException e) {
             sendMsg(ctx, "Could not generate join graph: " + e.getMessage());
+            Sentry.capture(e);
         }
     }
 }

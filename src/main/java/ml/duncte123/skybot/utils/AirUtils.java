@@ -38,7 +38,6 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
-import ml.duncte123.skybot.extensions.TaskKt;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -62,7 +61,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
@@ -351,15 +349,6 @@ public class AirUtils {
 
     public static void setJDAContext(JDA jda) {
         ((JDAImpl) jda).setContext();
-    }
-
-    public static void loadGuildMembers(Guild guild) {
-        try {
-            TaskKt.sync(guild.loadMembers());
-        }
-        catch (InterruptedException | ExecutionException e) {
-            Sentry.capture(e);
-        }
     }
 
     @Nonnull
