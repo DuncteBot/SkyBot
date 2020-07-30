@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.User
 class AvatarCommand : Command() {
     init {
         this.name = "avatar"
+        this.aliases = arrayOf("av", "pfp", "picture", "profilepicture")
         this.help = "Shows your avatar or the one for the specified user"
         this.usage = "[@user]"
     }
