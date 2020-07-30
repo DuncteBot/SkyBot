@@ -137,6 +137,8 @@ public final class SkyBot {
             // Enable lazy loading for guilds other than our own
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
+            // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
+            // (is it worth it to enable it for one command?)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             .setGatewayEncoding(GatewayEncoding.ETF);
 

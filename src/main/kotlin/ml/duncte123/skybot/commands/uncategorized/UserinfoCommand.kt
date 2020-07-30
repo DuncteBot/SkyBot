@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.User.UserFlag
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
@@ -126,13 +127,13 @@ class UserinfoCommand : Command() {
         val embed = EmbedUtils.defaultEmbed()
             .setColor(guild.color)
             .setThumbnail(user.getStaticAvatarUrl())
-            .setDescription("""User info for ${user.asMention}
+            .setDescription("""User info for ${user.asMention} ${user.badgeLine}
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name.escapeMarkDown()}
                         |**Account Created:** ${times.first} (${times.second})
-                        |$nitroUserLink ${user.isNitro().toEmoji()}
+                        |$nitroUserLink ${user.isNitro.toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
@@ -185,6 +186,7 @@ class UserinfoCommand : Command() {
 
         val userTimes = prettyTime.parseTimes(user)
         val memberTimes = prettyTime.parseTimes(member)
+        var boostEmote = ""
 
         val boostingSinceMsg = if (member.timeBoosted == null) {
             ""
@@ -192,19 +194,21 @@ class UserinfoCommand : Command() {
             val boostTime = member.timeBoosted!!
             val boostTimes = prettyTime.parseTimes(boostTime)
 
-            "\n**Boosting since:** ${boostTime.toBoostEmote()} ${boostTimes.first} (${boostTimes.second})"
+            boostEmote = boostTime.toBoostEmote()
+
+            "\n**Boosting since:** ${boostTimes.first} (${boostTimes.second})"
         }
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
-            .setDescription("""User info for ${member.asMention}
+            .setDescription("""User info for ${member.asMention} ${user.badgeLine} $boostEmote
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${member.effectiveName.escapeMarkDown()}
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
-                        |$nitroUserLink ${user.isNitro().toEmoji()}
+                        |$nitroUserLink ${user.isNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
@@ -245,7 +249,34 @@ class UserinfoCommand : Command() {
         }
     }
 
-    private fun User.isNitro() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
+    private val User.isNitro: Boolean
+        get() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
+
+    private val User.badgeLine: String
+        get() = this.flags.mapNotNull { it.toEmote() }.joinToString(" ")
+
+    private fun UserFlag.toEmote(): String? {
+        return when (this) {
+            UserFlag.STAFF -> "<:staff:738364360413675530>"
+            UserFlag.PARTNER -> "<:partner:738364264242348043>"
+
+            UserFlag.HYPESQUAD -> "<:hypesquad_events:738370746732249128>"
+            UserFlag.HYPESQUAD_BRAVERY -> "<:bravery:738364042585833593>"
+            UserFlag.HYPESQUAD_BRILLIANCE -> "<:brilliance:738364094767431722>"
+            UserFlag.HYPESQUAD_BALANCE -> "<:balance:738363963577729024>"
+
+            UserFlag.BUG_HUNTER_LEVEL_1 -> "<:bughunter_1:738364610536538213>"
+            UserFlag.BUG_HUNTER_LEVEL_2 -> "<:bughunter_2:738370659528212573>"
+
+            UserFlag.EARLY_SUPPORTER -> "<:early_supporter:738364464734404688>"
+            // No emotes / not needed
+//            UserFlag.TEAM_USER -> ""
+//            UserFlag.SYSTEM -> ""
+//            UserFlag.VERIFIED_BOT -> ""
+            UserFlag.VERIFIED_DEVELOPER -> "<:verified_developer:738370070480420865>"
+            else -> null
+        }
+    }
 
     /*private fun OnlineStatus.toEmote() = when (this) {
         OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
@@ -258,16 +289,16 @@ class UserinfoCommand : Command() {
     private fun OffsetDateTime.toBoostEmote(): String {
         return when (this.until(OffsetDateTime.now(), ChronoUnit.MONTHS)) {
             0L, 1L -> {
-                "<:booster:585764032162562058>"
+                "<:booster:738374009300975686>"
             }
             2L -> {
-                "<:booster2:585764446253744128>"
+                "<:booster2:738374044247654480>"
             }
             3L -> {
-                "<:booster3:585764446220189716>"
+                "<:booster3:738374173159850054>"
             }
             else -> {
-                "<:booster4:585764446178246657>"
+                "<:booster4:738374213970165782>"
             }
         }
     }

@@ -149,7 +149,7 @@ public class GuildUtils {
         return member.getGuild().getMemberCache().applyStream(
             (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
                 .takeWhile((it) -> !it.equals(member))
-                .count()
+                .count() + 1
         );
     }
 
