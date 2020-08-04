@@ -221,8 +221,9 @@ public class CommandManager {
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
-        this.addCommand(new OwoCommand());
+        this.addCommand(new OldestCommand());
         this.addCommand(new OrlyCommand());
+        this.addCommand(new OwoCommand());
         this.addCommand(new PatCommand());
         // TODO: remove, some day, can't do any harm really
         this.addCommand(new PatreonCheckCommand());
@@ -319,6 +320,7 @@ public class CommandManager {
         this.addCommand(new XkcdCommand());
         this.addCommand(new YesNoCommand());
         this.addCommand(new YodaSpeakCommand());
+        this.addCommand(new YoungestCommand());
         /// </editor-fold>
 
         loadCustomCommands();
