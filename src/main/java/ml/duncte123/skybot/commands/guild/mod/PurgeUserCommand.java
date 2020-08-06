@@ -30,9 +30,9 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static me.duncte123.botcommons.messaging.MessageConfigDefaults.DELETE_MESSAGE_AFTER_SECONDS;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
@@ -107,7 +107,10 @@ public class PurgeUserCommand extends ModBaseCommand {
                 return 0;
             })
             .whenCompleteAsync((count, thr) -> {
-                sendMsgFormatAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
+                sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+                    .setChannel(ctx.getChannel())
+                    .setMessageFormat("Removed %d messages! (this message will auto delete in 5 seconds)", count)
+                    .build());
 
                 channel.deleteMessageById(message.getIdLong()).queue(null, ignore(UNKNOWN_MESSAGE));
 

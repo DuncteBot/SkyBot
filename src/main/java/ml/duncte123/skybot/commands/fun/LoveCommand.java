@@ -79,7 +79,7 @@ public class LoveCommand extends Command {
 
 //        final int intScore = response.get("score_int").asInt() / 10;
 
-        final EmbedBuilder embed = EmbedUtils.defaultEmbed()
+        final EmbedBuilder embed = EmbedUtils.getDefaultEmbed()
             .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
             // The idea is cool, but it looks stupid
             /*.setDescription(
@@ -109,7 +109,7 @@ public class LoveCommand extends Command {
                     .queue();
             });
         } else {
-            sendEmbed(event, embed);
+            sendEmbed(ctx, embed);
         }
     }
 }

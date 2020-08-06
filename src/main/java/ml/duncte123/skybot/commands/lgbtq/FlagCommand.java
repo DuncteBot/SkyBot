@@ -57,13 +57,13 @@ public class FlagCommand extends ImageCommandBase {
         final String flag = args.get(0).toLowerCase();
 
         if (flag.equalsIgnoreCase("list")) {
-            sendMsg(event, "A list of flags can be found at https://dunctebot.com/flags");
+            sendMsg(ctx, "A list of flags can be found at https://dunctebot.com/flags");
 
             return;
         }
 
         if (!flags.contains(flag)) {
-            sendMsg(event, "I do not know what this flag is, visit <https://dunctebot.com/flags> for a list of available flags.");
+            sendMsg(ctx, "I do not know what this flag is, visit <https://dunctebot.com/flags> for a list of available flags.");
 
             return;
         }

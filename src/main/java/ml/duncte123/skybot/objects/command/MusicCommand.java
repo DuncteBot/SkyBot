@@ -60,7 +60,7 @@ public abstract class MusicCommand extends Command {
     public void execute(@Nonnull CommandContext ctx) {
         if (this.withAutoJoin) {
             runWithAutoJoin(ctx);
-        } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils(), ctx.getPrefix())) {
+        } else if (channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
             run(ctx);
         }
     }
@@ -72,7 +72,7 @@ public abstract class MusicCommand extends Command {
     private void runWithAutoJoin(@Nonnull CommandContext ctx) {
         if (isAbleToJoinChannel(ctx.getEvent())) {
             ctx.getCommandManager().getCommand("join").executeCommand(ctx);
-        } else if (!channelChecks(ctx.getEvent(), ctx.getAudioUtils(), ctx.getPrefix())) {
+        } else if (!channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
             return;
         }
 
@@ -83,19 +83,19 @@ public abstract class MusicCommand extends Command {
         return audioUtils.getMusicManager(guild);
     }
 
-    private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply, String prefix) {
+    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, boolean reply, String prefix) {
 
-        if (!event.getMember().getVoiceState().inVoiceChannel()) {
-            sendMsg(event, "Please join a voice channel first");
+        if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
+            sendMsg(ctx, "Please join a voice channel first");
             return false;
         }
 
         final LavalinkManager lavalinkManager = getLavalinkManager();
-        final Guild guild = event.getGuild();
+        final Guild guild = ctx.getGuild();
 
         if (!lavalinkManager.isConnected(guild)) {
             if (reply) {
-                sendMsg(event, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
+                sendMsg(ctx, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
                     "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
 
@@ -103,21 +103,21 @@ public abstract class MusicCommand extends Command {
         }
 
         if (lavalinkManager.getConnectedChannel(guild) != null &&
-            !lavalinkManager.getConnectedChannel(guild).getMembers().contains(event.getMember())) {
+            !lavalinkManager.getConnectedChannel(guild).getMembers().contains(ctx.getMember())) {
             if (reply) {
-                sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+                sendMsg(ctx, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             }
 
             return false;
         }
 
-        getMusicManager(guild, audioUtils).setLastChannel(event.getChannel().getIdLong());
+        getMusicManager(guild, audioUtils).setLastChannel(ctx.getChannel().getIdLong());
 
         return true;
     }
 
-    private boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, String prefix) {
-        return channelChecks(event, audioUtils, true, prefix);
+    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
+        return channelChecks(ctx, audioUtils, true, prefix);
     }
 
     private boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {

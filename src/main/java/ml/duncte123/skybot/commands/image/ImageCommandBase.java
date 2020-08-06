@@ -56,7 +56,7 @@ public abstract class ImageCommandBase extends Command {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(event.getChannel(), "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }

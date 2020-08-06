@@ -54,7 +54,7 @@ public class PronounsCheckCommand extends Command {
         final boolean isSelf = userId == ctx.getAuthor().getIdLong();
 
         if (json == null) {
-            sendMsg(event, (isSelf ? "You do" : target.getName() + " does") + " not have any pronouns set");
+            sendMsg(ctx, (isSelf ? "You do" : target.getName() + " does") + " not have any pronouns set");
             return;
         }
 
@@ -64,6 +64,6 @@ public class PronounsCheckCommand extends Command {
 
         final String format = "%s current pronouns are:%n**%s** (%s)";
 
-        sendMsg(event, String.format(format, userName, pronouns, singular));
+        sendMsg(ctx, String.format(format, userName, pronouns, singular));
     }
 }

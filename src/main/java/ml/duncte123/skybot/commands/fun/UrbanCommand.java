@@ -50,14 +50,14 @@ public class UrbanCommand extends Command {
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async((json) -> {
             if (json.get("list").isEmpty()) {
-                sendMsg(ctx.getEvent(), "Nothing found");
+                sendMsg(ctx, "Nothing found");
                 return;
             }
 
             final JsonNode item = json.get("list").get(0);
             final String permaLink = item.get("permalink").asText();
 
-            final EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
 //                    .setTitle("term", webUrl)
                 .setAuthor("Author: " + item.get("author").asText())
                 .setDescription("_TOP DEFINITION:_\n\n")
@@ -67,7 +67,7 @@ public class UrbanCommand extends Command {
                 .addField("Upvotes:", item.get("thumbs_up").asInt() + "", true)
                 .addField("Downvotes:", item.get("thumbs_down").asInt() + "", true)
                 .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
-            sendEmbed(ctx.getEvent(), eb.build());
+            sendEmbed(ctx, eb);
         });
 
     }

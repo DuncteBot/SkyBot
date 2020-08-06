@@ -81,7 +81,7 @@ public class KickCommand extends ModBaseCommand {
 
             final User toKick = toKickMember.getUser();
             if (toKick.equals(event.getAuthor()) || !event.getMember().canInteract(toKickMember)) {
-                sendMsg(event, "You are not permitted to perform this action.");
+                sendMsg(ctx, "You are not permitted to perform this action.");
                 return;
             }
 
@@ -108,7 +108,7 @@ public class KickCommand extends ModBaseCommand {
             );
         }
         catch (HierarchyException ignored) {
-            sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
+            sendMsg(ctx, "I can't kick that member because his roles are above or equals to mine.");
         }
 
 

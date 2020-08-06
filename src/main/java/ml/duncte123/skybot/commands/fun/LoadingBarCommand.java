@@ -59,7 +59,7 @@ public class LoadingBarCommand extends Command {
                 .appendFormat("**%s** is **%s**%% complete.", year, progress).queue();
         }
         catch (IOException e) {
-            sendMsg(ctx.getEvent(), "Something went wrong with generating the image.");
+            sendMsg(ctx, "Something went wrong with generating the image.");
         }
 
     }
