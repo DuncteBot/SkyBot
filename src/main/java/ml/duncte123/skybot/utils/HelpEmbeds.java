@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
+import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal"})
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -63,7 +63,7 @@ public class HelpEmbeds {
     private static final boolean INLINE = true;
 
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
-        final EmbedBuilder embed = defaultEmbed()
+        final EmbedBuilder embed = getDefaultEmbed()
             .setTitle("Click here for the support server", "https://dunctebot.link/server")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 

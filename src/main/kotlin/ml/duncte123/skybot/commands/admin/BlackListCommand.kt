@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.admin
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.sentry.Sentry
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
@@ -29,7 +30,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.atomic.AtomicLong
 
 class BlackListCommand : ModBaseCommand() {
@@ -52,16 +52,15 @@ class BlackListCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
         val args = ctx.args
 
         when (args[0]) {
             "list", "export" -> {
-                listBlackList(ctx.guild.settings.blacklistedWords, event, ctx.variables.jackson)
+                listBlackList(ctx.guild.settings.blacklistedWords, ctx, ctx.variables.jackson)
                 return
             }
             "clear" -> {
-                clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
+                clearBlacklist(ctx.databaseAdapter, ctx.guild, ctx)
                 return
             }
             "import" -> {
@@ -71,50 +70,50 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         if (args.size < 2) {
-            sendMsg(event, "Missing arguments, check `${ctx.prefix}help $name`")
+            sendMsg(ctx, "Missing arguments, check `${ctx.prefix}help $name`")
 
             return
         }
 
         when (args[0]) {
-            "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
-            "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
-            else -> sendMsg(event, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
+            "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, ctx)
+            "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, ctx)
+            else -> sendMsg(ctx, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }
 
-    private fun listBlackList(blacklist: List<String>, event: GuildMessageReceivedEvent, jackson: ObjectMapper) {
+    private fun listBlackList(blacklist: List<String>, ctx: CommandContext, jackson: ObjectMapper) {
         if (blacklist.isEmpty()) {
-            sendMsg(event, "The current blacklist is empty")
+            sendMsg(ctx, "The current blacklist is empty")
 
             return
         }
 
-        if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)) {
-            sendMsg(event, "This command requires me to be able to upload files to this channel")
+        if (!ctx.guild.selfMember.hasPermission(ctx.channel, Permission.MESSAGE_ATTACH_FILES)) {
+            sendMsg(ctx, "This command requires me to be able to upload files to this channel")
 
             return
         }
 
         val listBytes = jackson.writeValueAsBytes(blacklist)
-        val isOwner = event.author.idLong == event.guild.ownerIdLong
+        val isOwner = ctx.author.idLong == ctx.guild.ownerIdLong
 
-        event.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
+        ctx.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
             .addFile(
                 listBytes,
-                "blacklist_${event.guild.id}.json"
+                "blacklist_${ctx.guild.id}.json"
             )
             .queue(null) {
-                sendMsg(event, "This command requires me to be able to upload files to this channel")
+                sendMsg(ctx, "This command requires me to be able to upload files to this channel")
             }
     }
 
-    private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+    private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
         adapter.clearBlacklist(guild.idLong)
 
         guild.settings.blacklistedWords.clear()
 
-        sendMsg(event, "The blacklist has been cleared")
+        sendMsg(ctx, "The blacklist has been cleared")
     }
 
     private fun importBlackList(ctx: CommandContext) {
@@ -128,9 +127,12 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         val msgId = AtomicLong() // Bad ideas with duncte123 episode 5
-        sendMsg(ctx, "Importing....") {
-            msgId.set(it.idLong)
-        }
+        sendMsg(MessageConfig.Builder.fromCtx(ctx)
+            .setMessage("Importing....")
+            .setSuccessAction {
+                msgId.set(it.idLong)
+            }
+            .build())
 
         val jackson = ctx.variables.jackson
         val current = ctx.guildSettings.blacklistedWords
@@ -154,11 +156,11 @@ class BlackListCommand : ModBaseCommand() {
         }
     }
 
-    private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+    private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
-            sendMsg(event, "This word is already in the blacklist")
+            sendMsg(ctx, "This word is already in the blacklist")
 
             return
         }
@@ -167,14 +169,14 @@ class BlackListCommand : ModBaseCommand() {
 
         adapter.addWordToBlacklist(guild.idLong, word)
 
-        sendMsg(event, "`$word` has been added to the blacklist")
+        sendMsg(ctx, "`$word` has been added to the blacklist")
     }
 
-    private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+    private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {
-            sendMsg(event, "This word is not in the blacklist")
+            sendMsg(ctx, "This word is not in the blacklist")
 
             return
         }
@@ -183,7 +185,7 @@ class BlackListCommand : ModBaseCommand() {
 
         adapter.removeWordFromBlacklist(guild.idLong, word)
 
-        sendMsg(event, "`$word` has been removed from the blacklist")
+        sendMsg(ctx, "`$word` has been removed from the blacklist")
     }
 
     private fun TextChannel.edit(id: AtomicLong, content: String) {

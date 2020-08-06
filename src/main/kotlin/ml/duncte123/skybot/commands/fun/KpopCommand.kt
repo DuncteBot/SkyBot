@@ -46,17 +46,15 @@ class KpopCommand : Command() {
         val member = ctx.variables.apis.getRandomKpopMember(queryString)
 
         if (member == null) {
-            MessageUtils.sendMsg(ctx.event, "Nothing found, but we're open to suggestions")
+            MessageUtils.sendMsg(ctx, "Nothing found, but we're open to suggestions")
             return
         }
 
-        val eb = EmbedUtils.defaultEmbed()
+        sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
             .setDescription("Here is a kpop member from the group ${member.band}")
             .addField("Name of the member", member.name, false)
             .setImage(member.image)
-            .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
-
-        sendEmbed(ctx.event, eb.build())
+            .setFooter("Query id: ${member.id}"))
     }
 
     private fun DuncteApis.getRandomKpopMember(search: String): KpopObject? {

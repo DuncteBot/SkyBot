@@ -37,7 +37,7 @@ class FakeWordCommand : Command() {
     override fun execute(ctx: CommandContext) {
         fetchRandomWordData { json ->
             val word = json.get("word")
-            val embed = EmbedUtils.defaultEmbed()
+            val embed = EmbedUtils.getDefaultEmbed()
                 .setAuthor(word.get("pos").asText())
                 .addField(word.get("definition").asText(), word.get("example").asText(), false)
                 .addField("a word that does not exist; it was invented, defined and used by a machine learning algorithm.", "", false)

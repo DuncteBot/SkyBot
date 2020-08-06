@@ -167,6 +167,7 @@ public final class SkyBot {
 
         // Set the user-agent of the bot
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
+        EmbedUtils.setDefaultColor(Settings.DEFAULT_COLOUR);
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
                 .setColor(Settings.DEFAULT_COLOUR)

@@ -72,7 +72,7 @@ class UserinfoCommand : Command() {
             }
 
             ctx.jda.retrieveUserById(args[0]).queue({
-                renderUserEmbed(event, it, ctx.guild, ctx.variables.prettyTime)
+                renderUserEmbed(ctx, it, ctx.guild, ctx.variables.prettyTime)
             }, {
                 sendMsg(ctx, "Could not get user info: ${it.message}")
             })
@@ -109,22 +109,22 @@ class UserinfoCommand : Command() {
 
         // if we have a user but not a member
         if (u != null && m == null) {
-            renderUserEmbed(event, u, ctx.guild, ctx.variables.prettyTime)
+            renderUserEmbed(ctx, u, ctx.guild, ctx.variables.prettyTime)
             return
         }
 
         if (m == null) {
-            sendMsg(event, "This user could not be found.")
+            sendMsg(ctx, "This user could not be found.")
             return
         }
 
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
+    private fun renderUserEmbed(ctx: CommandContext, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
         val times = prettyTime.parseTimes(user)
 
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setColor(guild.color)
             .setThumbnail(user.getStaticAvatarUrl())
             .setDescription("""User info for ${user.asMention} ${user.badgeLine}
@@ -139,7 +139,7 @@ class UserinfoCommand : Command() {
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
-        sendEmbed(event.channel, embed)
+        sendEmbed(ctx, embed)
     }
 
     private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
@@ -199,7 +199,7 @@ class UserinfoCommand : Command() {
             "\n**Boosting since:** ${boostTimes.first} (${boostTimes.second})"
         }
 
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
             .setDescription("""User info for ${member.asMention} ${user.badgeLine} $boostEmote
@@ -221,7 +221,7 @@ class UserinfoCommand : Command() {
         // If we don't have permission to send files or our weebSh key is null
         if (!ctx.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
             || ctx.config.apis.weebSh == null) {
-            sendEmbedRaw(event.channel, embed.build(), null)
+            sendEmbed(ctx, embed, true)
             return
         }
 
@@ -230,7 +230,7 @@ class UserinfoCommand : Command() {
             event.channel.sendFile(it, "stat.png")
                 .embed(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
-                    sendEmbedRaw(event.channel, embed.setThumbnail(user.effectiveAvatarUrl).build(), null)
+                    sendEmbed(ctx, embed.setThumbnail(user.effectiveAvatarUrl), true)
                 }
         }
     }

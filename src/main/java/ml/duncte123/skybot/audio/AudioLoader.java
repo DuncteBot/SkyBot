@@ -34,7 +34,6 @@ import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
@@ -44,12 +43,11 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
     private final CommandContext ctx;
-    private final TextChannel channel;
     private final long requester;
     private final GuildMusicManager mng;
     private final boolean announce;
@@ -58,7 +56,6 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, boolean isPatron) {
         this.ctx = ctx;
-        this.channel = ctx.getChannel();
         this.requester = ctx.getAuthor().getIdLong();
         this.mng = mng;
         this.announce = announce;
@@ -80,21 +77,21 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
-                sendEmbed(this.channel,
+                sendEmbed(this.ctx,
                     embedField(AudioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
                 );
             }
         }
         catch (LimitReachedException e) {
-            sendMsgFormat(ctx, "You exceeded the maximum queue size of %s tracks", e.getSize());
+            sendMsg(this.ctx, String.format("You exceeded the maximum queue size of %s tracks", e.getSize()));
         }
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Error: This playlist is empty."));
+            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Error: This playlist is empty."));
 
             return;
         }
@@ -115,12 +112,12 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-                sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, msg));
+                sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, msg));
             }
         }
         catch (LimitReachedException e) {
             if (this.announce) {
-                sendMsgFormat(ctx, "The first %s tracks have been queued up", e.getSize());
+                sendMsg(this.ctx, String.format("The first %s tracks have been queued up", e.getSize()));
             }
         }
 
@@ -129,7 +126,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
+            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
         }
     }
 
@@ -138,7 +135,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
             final LimitReachedException ex = (LimitReachedException) exception.getCause();
-            sendMsgFormat(this.channel, "%s, maximum of %d tracks exceeded", ex.getMessage(), ex.getSize());
+            sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", ex.getMessage(), ex.getSize()));
 
             return;
         }
@@ -148,7 +145,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
+            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -159,7 +156,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.channel, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+        sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
             + "\nIf this happens often try another link or join our [support guild](https://dunctebot.link/server) for more!"));
 
     }

@@ -32,7 +32,7 @@ class SuggestCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        MessageUtils.sendMsg(ctx.event, """You can leave you suggestions for the bot on his page: https://dunctebot.com/suggest
+        MessageUtils.sendMsg(ctx, """You can leave you suggestions for the bot on his page: https://dunctebot.com/suggest
             |Make sure to join our server so we can contact you when needed: <https://dunctebot.link/server>
         """.trimMargin())
     }

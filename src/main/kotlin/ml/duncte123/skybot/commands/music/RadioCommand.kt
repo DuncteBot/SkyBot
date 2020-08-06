@@ -57,7 +57,7 @@ class RadioCommand : MusicCommand() {
 
         when (ctx.args[0]) {
             "list" -> {
-                sendRadioSender(ctx.event)
+                sendRadioSender(ctx)
                 return
             }
             "fulllist" -> {
@@ -83,7 +83,7 @@ class RadioCommand : MusicCommand() {
         }
     }
 
-    private fun sendRadioSender(event: GuildMessageReceivedEvent) {
+    private fun sendRadioSender(ctx: CommandContext) {
         val selectedStreams = arrayListOf<RadioStream>()
 
         repeat(5) {
@@ -100,7 +100,7 @@ class RadioCommand : MusicCommand() {
         val embed = EmbedUtils.embedMessage(string)
             .setTitle("Here are 5 random entries from our radio list")
 
-        sendEmbed(event, embed)
+        sendEmbed(ctx, embed)
     }
 
     private fun loadStations() {

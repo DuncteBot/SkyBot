@@ -81,7 +81,7 @@ class ChatCommand : Command() {
         }
 
         if (event.message.contentRaw.contains("prefix")) {
-            sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
+            sendMsg(ctx, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
                 .replace("{PREFIX}", ctx.prefix))
             return
         }
@@ -110,7 +110,7 @@ class ChatCommand : Command() {
 
         session.think(message) {
             val response = parseATags(it)
-            sendMsg(event, "${event.author.asMention}, $response")
+            sendMsg(ctx, "${event.author.asMention}, $response")
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 

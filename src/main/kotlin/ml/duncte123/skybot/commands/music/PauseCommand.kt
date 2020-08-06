@@ -33,16 +33,15 @@ class PauseCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
+        val mng = getMusicManager(ctx.guild, ctx.audioUtils)
         val player = mng.player
 
         if (player.playingTrack == null) {
-            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
+            sendMsg(ctx, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
         player.isPaused = !player.isPaused
-        sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        sendMsg(ctx, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 }

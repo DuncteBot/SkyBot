@@ -39,7 +39,7 @@ class NowPlayingCommand : MusicCommand() {
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
-        sendEmbed(event, when {
+        sendEmbed(ctx, when {
             player.playingTrack != null -> player.playingTrack.toEmbed(mng, ctx.shardManager)
 
             else -> embedMessage("The player is not currently playing anything!")

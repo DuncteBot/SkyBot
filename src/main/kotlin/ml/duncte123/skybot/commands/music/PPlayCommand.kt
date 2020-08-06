@@ -35,25 +35,23 @@ class PPlayCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-
-        val event = ctx.event
-        val guild = event.guild
+        val guild = ctx.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "To few arguments, use `${ctx.prefix}$name <media link>`")
+            sendMsg(ctx, "To few arguments, use `${ctx.prefix}$name <media link>`")
             return
         }
 
         val toPlay = ctx.argsRaw
 
         if (toPlay.length > 1024) {
-            sendError(event.message)
-            sendMsg(event, "Input cannot be longer than 1024 characters.")
+            sendError(ctx.message)
+            sendMsg(ctx, "Input cannot be longer than 1024 characters.")
             return
         }
 
-        sendMsg(event, "Loading playlist.......\n" +
+        sendMsg(ctx, "Loading playlist.......\n" +
             "This may take a while depending on the size.")
 
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)

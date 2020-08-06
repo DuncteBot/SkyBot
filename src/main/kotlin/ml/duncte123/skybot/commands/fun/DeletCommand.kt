@@ -37,7 +37,7 @@ class DeletCommand : WeebCommandBase() {
     override fun execute(ctx: CommandContext) {
         //delet_this
         ctx.weebApi.getRandomImage("delet_this").async {
-            sendEmbed(ctx.event, getWeebEmbedImage(it.url))
+            sendEmbed(ctx, getWeebEmbedImage(it.url))
         }
     }
 }

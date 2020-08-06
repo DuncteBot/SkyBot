@@ -37,12 +37,12 @@ class ShuffleCommand : MusicCommand() {
         val scheduler = mng.scheduler
 
         if (scheduler.queue.isEmpty()) {
-            MessageUtils.sendMsg(event, "There are no songs to shuffle")
+            MessageUtils.sendMsg(ctx, "There are no songs to shuffle")
             return
         }
 
         scheduler.shuffle()
 
-        MessageUtils.sendMsg(event, "The queue has been shuffled!")
+        MessageUtils.sendMsg(ctx, "The queue has been shuffled!")
     }
 }

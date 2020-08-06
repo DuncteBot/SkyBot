@@ -37,7 +37,7 @@ class DiscordMemesCommand : WeebCommandBase() {
 
     override fun execute(ctx: CommandContext) {
         ctx.weebApi.getRandomImage("discord_memes").async {
-            sendEmbed(ctx.event, getWeebEmbedImage(it.url))
+            sendEmbed(ctx, getWeebEmbedImage(it.url))
         }
     }
 }

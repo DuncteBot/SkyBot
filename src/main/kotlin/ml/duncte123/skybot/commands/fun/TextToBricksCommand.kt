@@ -48,11 +48,11 @@ class TextToBricksCommand : Command() {
             .replace("?", "\u2753")
 
         if (message.length > MessageEmbed.TEXT_MAX_LENGTH) {
-            sendMsg(ctx.event, "Your input is too long, please limit it (${message.length} out of ${MessageEmbed.TEXT_MAX_LENGTH} max chars)")
+            sendMsg(ctx, "Your input is too long, please limit it (${message.length} out of ${MessageEmbed.TEXT_MAX_LENGTH} max chars)")
 
             return
         }
 
-        sendEmbed(ctx.event, EmbedUtils.embedMessage(message))
+        sendEmbed(ctx, EmbedUtils.embedMessage(message))
     }
 }

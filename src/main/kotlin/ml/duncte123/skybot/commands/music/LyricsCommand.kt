@@ -74,12 +74,11 @@ class LyricsCommand : MusicCommand() {
                     val text = doc.select("div.lyrics").first().child(0).wholeText()
                         .replace("<br>", "\n")
 
-                    sendEmbed(ctx, EmbedUtils.defaultEmbed()
+                    sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
                         .setTitle("Lyrics for $search", url)
                         .setDescription(StringUtils.abbreviate(text, 1900))
                         .appendDescription("\n\n Full lyrics on [genius.com]($url)")
-                        .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
-                        .build())
+                        .setFooter("Powered by genius.com"))
                 }
             }
         }

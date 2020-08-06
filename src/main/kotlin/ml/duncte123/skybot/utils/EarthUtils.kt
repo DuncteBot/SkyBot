@@ -27,7 +27,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import gnu.trove.map.TLongIntMap
 import lavalink.client.player.IPlayer
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed
+import me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -39,7 +39,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.time.OffsetDateTime
 import java.util.concurrent.ThreadLocalRandom
 
@@ -254,30 +253,32 @@ object EarthUtils {
     }
 
     @JvmStatic
-    fun sendRedditPost(reddit: String, index: TLongIntMap, event: GuildMessageReceivedEvent, all: Boolean = false) {
+    fun sendRedditPost(reddit: String, index: TLongIntMap, ctx: CommandContext, all: Boolean = false) {
         val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
 
         WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
             val posts = it["data"]["children"].filter { filter ->
-                event.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
+                ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
             }.filter { filter ->
                 filter["data"]["selftext"].asText().length <= 550
                     && filter["data"]["title"].asText().length <= 256
             }
 
             if (posts.isEmpty()) {
-                sendError(event.message)
-                sendMsg(event, """Whoops I could not find any posts.
+                sendError(ctx.message)
+                sendMsg(ctx, """Whoops I could not find any posts.
                     |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)""".trimMargin())
                 return@async
             }
 
+            val guildId = ctx.guild.idLong
+
             // We don't need to check for a contains because default value will be 0
-            if (index[event.guild.idLong] >= posts.size) {
-                index.put(event.guild.idLong, 0)
+            if (index[guildId] >= posts.size) {
+                index.put(guildId, 0)
             }
 
-            val postI = index[event.guild.idLong]
+            val postI = index[guildId]
             var rand = ThreadLocalRandom.current().nextInt(0, posts.size)
 
             if (postI == rand) {
@@ -286,12 +287,12 @@ object EarthUtils {
 
             val post = posts[rand]["data"]
 
-            index.put(event.guild.idLong, rand)
+            index.put(guildId, rand)
 
             val title: String = post["title"].asText()
             val text: String = post["selftext"].asText("")
             val url: String = post["id"].asText()
-            val embed = defaultEmbed().setTitle(title, "https://redd.it/$url")
+            val embed = getDefaultEmbed().setTitle(title, "https://redd.it/$url")
 
             if (text.isNotEmpty()) {
                 embed.setDescription(text)
@@ -307,7 +308,7 @@ object EarthUtils {
                 }
             }
 
-            sendEmbed(event, embed)
+            sendEmbed(ctx, embed)
         }
 
     }

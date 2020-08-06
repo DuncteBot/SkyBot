@@ -39,7 +39,7 @@ class LeaveCommand : MusicCommand() {
         val guild = event.guild
 
         if (!getLavalinkManager().isConnected(guild)) {
-            sendMsg(event, "I'm not connected to any channels.")
+            sendMsg(ctx, "I'm not connected to any channels.")
             return
         }
 

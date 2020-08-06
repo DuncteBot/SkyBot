@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.MessageBuilder
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommand : WeebCommandBase() {
@@ -48,10 +48,13 @@ class WeebCommand : WeebCommandBase() {
         }
 
         if (args[0] == "categories") {
-            sendMsg(ctx, MessageBuilder()
+            val builder = MessageConfig.Builder.fromCtx(ctx)
+
+            builder.messageBuilder
                 .append("Here is a list of all the valid categories")
                 .appendCodeBlock(weebTags.joinToString(), "LDIF")
-                .build())
+
+            sendMsg(builder.build())
             return
         }
 
