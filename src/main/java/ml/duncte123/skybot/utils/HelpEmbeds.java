@@ -62,7 +62,7 @@ public class HelpEmbeds {
 
     private static final boolean INLINE = true;
 
-    public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
+    public static EmbedBuilder generateCommandEmbed(String prefix, CommandCategory... categories) {
         final EmbedBuilder embed = getDefaultEmbed()
             .setTitle("Click here for the support server", "https://dunctebot.link/server")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
@@ -81,8 +81,7 @@ public class HelpEmbeds {
 
         return embed.addField("Support",
             "Support server: [https://dunctebot.link/server](https://dunctebot.link/server)\n" +
-                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
-            .build();
+                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false);
     }
 
     /// <editor-fold desc="Reflection magic" defaultstate="collapsed">

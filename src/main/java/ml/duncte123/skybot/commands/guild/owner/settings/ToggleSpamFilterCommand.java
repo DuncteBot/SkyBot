@@ -44,7 +44,7 @@ public class ToggleSpamFilterCommand extends SettingsBase {
         final long muteRoleId = settings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
-            sendMsg(ctx.getEvent(), "**__Please set a spam/mute role first!__**");
+            sendMsg(ctx, "**__Please set a spam/mute role first!__**");
             return;
         }
 
@@ -55,6 +55,6 @@ public class ToggleSpamFilterCommand extends SettingsBase {
         final Role r = guild.getRoleById(muteRoleId);
         message += "\nThe spam role is " + ((r == null) ? "deleted. Please update it." : r.getName() + ". Change it if it's outdated.");
 
-        sendMsg(ctx.getEvent(), message);
+        sendMsg(ctx, message);
     }
 }

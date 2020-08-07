@@ -43,6 +43,6 @@ public class LlamaCommand extends Command {
         // https://apis.duncte123.me/animal/llama
         final JsonNode json = ctx.getApis().getAnimal("llama");
 
-        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(json.get("file").asText()));
+        sendEmbed(ctx, EmbedUtils.embedImage(json.get("file").asText()));
     }
 }

@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.ShardCacheView;
 import net.dv8tion.jda.internal.utils.Checks;
@@ -129,8 +128,6 @@ public class ShardInfoCommand extends Command {
         headers.add("Guilds");
         headers.add("VCs");
 
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
         List<List<String>> table = new ArrayList<>();
         final int currentShard = ctx.getJDA().getShardInfo().getShardId();
         final ShardManager shardManager = ctx.getJDA().getShardManager();
@@ -152,13 +149,13 @@ public class ShardInfoCommand extends Command {
             table.add(row);
 
             if (table.size() == 20) {
-                MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
+                MessageUtils.sendMsg(ctx, makeAsciiTable(headers, table, shardManager));
                 table = new ArrayList<>();
             }
         }
 
         if (!table.isEmpty()) {
-            MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
+            MessageUtils.sendMsg(ctx, makeAsciiTable(headers, table, shardManager));
         }
     }
 

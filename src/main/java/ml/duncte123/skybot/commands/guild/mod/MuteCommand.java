@@ -77,7 +77,7 @@ public class MuteCommand extends ModBaseCommand {
         final Member toMute = mentioned.get(0);
         final Role role = ctx.getGuild().getRoleById(settings.getMuteRoleId());
 
-        if (canNotProceed(ctx, ctx.getEvent(), mod, toMute, role, self)) {
+        if (canNotProceed(ctx, mod, toMute, role, self)) {
             return;
         }
 
