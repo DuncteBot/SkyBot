@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {

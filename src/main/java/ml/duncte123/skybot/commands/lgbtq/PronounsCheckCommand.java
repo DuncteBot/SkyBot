@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -47,7 +46,6 @@ public class PronounsCheckCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final User target = getMentionedUser(ctx);
         final long userId = target.getIdLong();
         final JsonNode json = ctx.getApis().getPronouns(userId);

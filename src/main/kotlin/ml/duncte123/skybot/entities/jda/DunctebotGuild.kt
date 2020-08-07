@@ -20,7 +20,6 @@ package ml.duncte123.skybot.entities.jda
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.AirUtils

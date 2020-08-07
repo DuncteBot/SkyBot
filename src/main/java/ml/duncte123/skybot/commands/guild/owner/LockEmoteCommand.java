@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -57,8 +56,6 @@ public class LockEmoteCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
         if (ctx.getArgs().isEmpty()) {

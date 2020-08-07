@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.api.DuncteApis
 import ml.duncte123.skybot.objects.api.KpopObject
 import ml.duncte123.skybot.objects.command.Command

@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.MessageEmbed
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
