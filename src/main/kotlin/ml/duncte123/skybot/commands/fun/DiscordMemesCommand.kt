@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -36,7 +37,7 @@ class DiscordMemesCommand : WeebCommandBase() {
     }
 
     override fun execute(ctx: CommandContext) {
-        ctx.weebApi.getRandomImage("discord_memes").async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("discord_memes").build()).async {
             sendEmbed(ctx, getWeebEmbedImage(it.url))
         }
     }

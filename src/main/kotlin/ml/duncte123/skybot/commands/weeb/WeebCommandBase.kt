@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -52,7 +53,7 @@ abstract class WeebCommandBase : Command() {
     protected fun singleAction(type: String, thing: String, ctx: CommandContext) {
         val args = ctx.args
 
-        ctx.weebApi.getRandomImage(type).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType(type).build()).async {
             val imageUrl = it.url
 
             if (args.isEmpty()) {
@@ -76,7 +77,7 @@ abstract class WeebCommandBase : Command() {
     protected fun requestAndSend(type: String, thing: String, ctx: CommandContext) {
         val args = ctx.args
 
-        ctx.weebApi.getRandomImage(type).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType(type).build()).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 sendEmbed(ctx, getWeebEmbedImageAndDesc(

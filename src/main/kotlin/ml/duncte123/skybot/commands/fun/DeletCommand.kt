@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -36,8 +37,8 @@ class DeletCommand : WeebCommandBase() {
 
     override fun execute(ctx: CommandContext) {
         //delet_this
-        ctx.weebApi.getRandomImage("delet_this").async {
-            sendEmbed(ctx, getWeebEmbedImage(it.url))
-        }
+        ctx.weebApi.getRandomImage(ImageConfig.Builder()
+            .setType("delet_this")
+            .build()).async { sendEmbed(ctx, getWeebEmbedImage(it.url)) }
     }
 }

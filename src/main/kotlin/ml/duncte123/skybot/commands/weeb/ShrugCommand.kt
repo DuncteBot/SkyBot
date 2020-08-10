@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class ShrugCommand : WeebCommandBase() {
@@ -32,7 +33,7 @@ class ShrugCommand : WeebCommandBase() {
         sendEmbed(ctx,
             getWeebEmbedImageAndDesc(
                 "${ctx.member!!.asMention} shrugs",
-                ctx.weebApi.getRandomImage("shrug").execute().url
+                ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("shrug").build()).execute().url
             )
         )
     }
