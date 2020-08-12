@@ -86,7 +86,7 @@ dependencies {
     implementation(group = "com.github.duncte123", name = "weeb.java", version = "18ba8fc")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "BETA_2.0.107")
+    implementation(group = "me.duncte123", name = "botCommons", version = "BETA_2.0.110")
 
     // JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_189") {

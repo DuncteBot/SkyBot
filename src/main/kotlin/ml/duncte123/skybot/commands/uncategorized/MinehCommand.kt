@@ -35,13 +35,12 @@ class MinehCommand : Command() {
     override fun execute(ctx: CommandContext) {
         val builder = MessageConfig.Builder.fromCtx(ctx)
             .setMessage("Insert creepy music here")
-
-        builder.messageBuilder.setTTS(true)
-        builder.setSuccessAction {
-            sendEmbed(ctx,
-                embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
-            )
-        }
+            .configureMessageBuilder { it.setTTS(true) }
+            .setSuccessAction {
+                sendEmbed(ctx,
+                    embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
+                )
+            }
 
         sendMsg(builder.build())
     }

@@ -52,13 +52,12 @@ class WeebCommand : WeebCommandBase() {
         }
 
         if (args[0] == "categories") {
-            val builder = MessageConfig.Builder.fromCtx(ctx)
-
-            builder.messageBuilder
-                .append("Here is a list of all the valid categories")
-                .appendCodeBlock(weebTags.joinToString(), "LDIF")
-
-            sendMsg(builder.build())
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .configureMessageBuilder {
+                    it.append("Here is a list of all the valid categories")
+                    .appendCodeBlock(weebTags.joinToString(), "LDIF")
+                }
+                .build())
             return
         }
 
