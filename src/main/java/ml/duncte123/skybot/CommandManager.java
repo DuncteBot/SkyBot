@@ -50,6 +50,7 @@ import ml.duncte123.skybot.commands.nsfw.CarsAndHentaiCommand;
 import ml.duncte123.skybot.commands.nsfw.HentaiCommand;
 import ml.duncte123.skybot.commands.nsfw.LewdKitsuneCommand;
 import ml.duncte123.skybot.commands.nsfw.LewdNekoCommand;
+import ml.duncte123.skybot.commands.patreon.ScreenshotCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.*;
@@ -253,6 +254,7 @@ public class CommandManager {
         this.addCommand(new SaturateCommand());
         this.addCommand(new SaveCommand());
         this.addCommand(new ScreenfetchCommand());
+        this.addCommand(new ScreenshotCommand());
         this.addCommand(new ScrollCommand());
         this.addCommand(new SealCommand());
         this.addCommand(new SearchCommand());
