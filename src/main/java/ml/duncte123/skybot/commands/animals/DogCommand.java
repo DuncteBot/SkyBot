@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -43,22 +42,21 @@ public class DogCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final String base = "https://random.dog/";
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         try {
             WebUtils.ins.getText(base + "woof").async((it) -> {
                 final String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {
-                    sendEmbed(event, EmbedUtils.embedField("A video", "[Click for video](" + finalS + ")"));
+                    sendEmbed(ctx, EmbedUtils.embedField("A video", "[Click for video](" + finalS + ")"));
                 } else {
-                    sendEmbed(event, EmbedUtils.embedImage(finalS));
+                    sendEmbed(ctx, EmbedUtils.embedImage(finalS));
                 }
             });
 
         }
         catch (Exception e) {
             //e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
+            sendEmbed(ctx, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
             Sentry.capture(e);
         }
 

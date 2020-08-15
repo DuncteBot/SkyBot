@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects
 
 import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
@@ -52,7 +53,7 @@ object EvalFunctions {
 
     @JvmStatic
     fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .addField("Guilds", shardManager.guildCache.size().toString(), true)
             .addField("Users", shardManager.userCache.size().toString(), true)
             .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
@@ -81,7 +82,10 @@ object EvalFunctions {
     @JvmStatic
     fun pinnedMessageCheck(channel: TextChannel) {
         channel.retrievePinnedMessages().queue {
-            MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
+            MessageUtils.sendMsg(MessageConfig.Builder()
+                .setChannel(channel)
+                .setMessage("${it.size}/50 messages pinned in this channel")
+                .build())
         }
     }
 

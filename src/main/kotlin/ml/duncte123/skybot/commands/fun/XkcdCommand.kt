@@ -59,7 +59,7 @@ class XkcdCommand : Command() {
     }
 
     private fun sendComic(it: ObjectNode, ctx: CommandContext) {
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setTitle(
                 it["safe_title"].asText(),
                 "http://xkcd.com/${it["num"].asInt()}/"

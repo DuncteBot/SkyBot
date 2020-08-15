@@ -36,7 +36,7 @@ class MemeCommand : Command() {
     override fun execute(ctx: CommandContext) {
         val json = ctx.apis.executeDefaultGetRequest("meme", false)["data"]
 
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
             .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
 

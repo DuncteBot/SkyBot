@@ -48,7 +48,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
         val guild = ctx.guild
         val args = ctx.args
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
@@ -56,7 +55,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         if (args.size == 1) {
 
             if (!vcAutoRoleCache.containsKey(guild.idLong)) {
-                sendMsg(event, "No vc autorole has been set for this server")
+                sendMsg(ctx, "No vc autorole has been set for this server")
                 return
             }
 
@@ -66,14 +65,14 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             if (args[0] != "off") {
-                sendMsg(event, "Missing arguments, check `${ctx.prefix}help $name`")
+                sendMsg(ctx, "Missing arguments, check `${ctx.prefix}help $name`")
                 return
             }
 
             vcAutoRoleCache.remove(guild.idLong)
             ctx.databaseAdapter.removeVcAutoRoleForGuild(guild.idLong)
 
-            sendMsg(event, "All Auto VC Roles has been disabled")
+            sendMsg(ctx, "All Auto VC Roles has been disabled")
             return
         }
 
@@ -91,12 +90,11 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
         }
 
-        sendMsg(event, "Unknown operation, check `${ctx.prefix}$name`")
+        sendMsg(ctx, "Unknown operation, check `${ctx.prefix}$name`")
 
     }
 
     private fun removeVcAutoRole(ctx: CommandContext) {
-        val event = ctx.event
         val guild = ctx.guild
         val args = ctx.args
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
@@ -105,11 +103,11 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
 
         if (foundVoiceChannels.isEmpty()) {
-            sendMsgFormat(
-                event,
-                "I could not find any voice channels for `%s`%n" +
+            sendMsg(
+                ctx,
+                String.format("I could not find any voice channels for `%s`%n" +
                     "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[1]
+                args[1])
             )
 
             return
@@ -118,17 +116,16 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val targetChannel = foundVoiceChannels[0].idLong
 
         if (!cache.containsKey(targetChannel)) {
-            sendMsg(event, "This voice channel does not have an autorole set")
+            sendMsg(ctx, "This voice channel does not have an autorole set")
             return
         }
 
         cache.remove(targetChannel)
         ctx.databaseAdapter.removeVcAutoRole(targetChannel)
-        sendMsg(event, "Autorole removed for <#$targetChannel>")
+        sendMsg(ctx, "Autorole removed for <#$targetChannel>")
     }
 
     private fun addVcAutoRole(ctx: CommandContext) {
-        val event = ctx.event
         val guild = ctx.guild
         val args = ctx.args
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
@@ -136,11 +133,11 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val foundRoles = FinderUtil.findRoles(args[2], guild)
 
         if (foundRoles.isEmpty()) {
-            sendMsgFormat(
-                event,
-                "I could not find any role for `%s`%n" +
+            sendMsg(
+                ctx,
+                String.format("I could not find any role for `%s`%n" +
                     "TIP: If your role name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[2]
+                args[2])
             )
 
             return
@@ -164,17 +161,17 @@ class VcAutoRoleCommand : ModBaseCommand() {
             ctx.databaseAdapter.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
             ids.forEach { cache.put(it, targetRole) }
 
-            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
+            sendMsg(ctx, "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
                 "(excluding ones that are created after the command was ran)")
         } else {
             val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
 
             if (foundVoiceChannels.isEmpty()) {
-                sendMsgFormat(
-                    event,
-                    "I could not find any voice channels for `%s`%n" +
+                sendMsg(
+                    ctx,
+                    String.format("I could not find any voice channels for `%s`%n" +
                         "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                    args[1]
+                    args[1])
                 )
 
                 return
@@ -185,15 +182,13 @@ class VcAutoRoleCommand : ModBaseCommand() {
             cache.put(targetChannel, targetRole)
             ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
 
-            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
+            sendMsg(ctx, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
         }
     }
 
     private fun listAutoVcRoles(ctx: CommandContext) {
-
         val items = ctx.variables.vcAutoRoleCache.get(ctx.guild.idLong)
-
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setDescription("List of vc auto roles:\n")
 
         items.forEachEntry { vc, role ->
@@ -203,6 +198,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
             return@forEachEntry true
         }
 
-        sendEmbed(ctx.event, embed)
+        sendEmbed(ctx, embed)
     }
 }

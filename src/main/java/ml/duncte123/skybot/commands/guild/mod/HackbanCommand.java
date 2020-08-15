@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HackbanCommand extends ModBaseCommand {
@@ -74,12 +73,12 @@ public class HackbanCommand extends ModBaseCommand {
             } else if (arg0.matches("\\d{17,20}")) {
                 id = arg0;
             } else {
-                sendMsg(event, "id `" + arg0 + "` does not match anything valid or is not a known user");
+                sendMsg(ctx, "id `" + arg0 + "` does not match anything valid or is not a known user");
                 continue;
             }
 
             if (id.isBlank()) {
-                sendMsg(event, "Found empty id, aborting");
+                sendMsg(ctx, "Found empty id, aborting");
 
                 return;
             }
@@ -91,7 +90,7 @@ public class HackbanCommand extends ModBaseCommand {
                     .reason(reason)
                     .queue(null, (thr) -> {
                         if (thr instanceof ErrorResponseException) {
-                            sendMsg(event, "Could not ban `" + finalId + "`, reason: " + ((ErrorResponseException) thr).getMeaning());
+                            sendMsg(ctx, "Could not ban `" + finalId + "`, reason: " + ((ErrorResponseException) thr).getMeaning());
                         } else {
                             RestActionImpl.getDefaultFailure().accept(thr);
                         }
@@ -99,14 +98,14 @@ public class HackbanCommand extends ModBaseCommand {
                 messages.add(finalId);
             }
             catch (HierarchyException e) {
-              sendMsgFormat(ctx, "Could not ban id `%s`", id);
+              sendMsg(ctx, String.format("Could not ban id `%s`", id));
             } catch (Exception e) {
                 Sentry.capture(e);
-                sendMsg(event, "ERROR: " + e.getMessage());
+                sendMsg(ctx, "ERROR: " + e.getMessage());
                 return;
             }
         }
 
-        sendMsg(event, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
+        sendMsg(ctx, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
     }
 }

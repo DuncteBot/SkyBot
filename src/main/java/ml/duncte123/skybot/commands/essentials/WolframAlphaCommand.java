@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
@@ -61,7 +62,7 @@ public class WolframAlphaCommand extends Command {
 
     private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey, ObjectMapper mapper) {
         final Member m = event.getMember();
-        final EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
         eb.setAuthor(m.getEffectiveName(), "https://patreon.com/DuncteBot", m.getUser().getAvatarUrl());
 
         eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
@@ -130,7 +131,10 @@ public class WolframAlphaCommand extends Command {
 
         final AtomicReference<Message> message = new AtomicReference<>();
 
-        MessageUtils.sendMsg(ctx, "Calculating.....", message::set);
+        MessageUtils.sendMsg(MessageConfig.Builder.fromCtx(ctx)
+            .setMessage("Calculating.....")
+            .setSuccessAction(message::set)
+            .build());
 
         final String queryString = ctx.getArgsRaw();
         final WAQuery query = engine.createQuery(queryString);

@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -57,8 +56,6 @@ public class LockEmoteCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final Message message = ctx.getMessage();
 
         if (ctx.getArgs().isEmpty()) {
@@ -83,13 +80,13 @@ public class LockEmoteCommand extends Command {
 
         final Emote emote = mentionedEmotes.get(0);
 
-        if (cannotInteractWithEmote(event, emote)) return;
+        if (cannotInteractWithEmote(ctx, emote)) return;
 
         emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
         sendSuccess(message);
         final List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
 
-        sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
+        sendMsg(ctx, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
             "following roles: `" + String.join("`, `", roleNames) + "`");
     }
 }

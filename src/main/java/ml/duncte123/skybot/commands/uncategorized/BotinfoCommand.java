@@ -27,8 +27,8 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDAInfo;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
@@ -68,7 +68,7 @@ public class BotinfoCommand extends Command {
         final User u = ctx.getJDA().getSelfUser();
         final String duncte = " <@191231307290771456> (duncte123#1245)";
 
-        final MessageEmbed eb = EmbedUtils.defaultEmbed()
+        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
             .setDescription("Here is some information about me \uD83D\uDE09")
             .setThumbnail(u.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
@@ -84,8 +84,7 @@ public class BotinfoCommand extends Command {
                 "\n**LavaPlayer version:** " + this.lavaplayerVersion + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
-                "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
-            .build();
+                "[becoming a patron](https://www.patreon.com/DuncteBot).", false);
 
         sendEmbed(ctx, eb);
     }

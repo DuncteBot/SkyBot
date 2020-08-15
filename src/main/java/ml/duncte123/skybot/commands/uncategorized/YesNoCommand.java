@@ -37,7 +37,7 @@ public class YesNoCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         WebUtils.ins.getJSONObject("https://yesno.wtf/api").async((it) ->
-            sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle(
+            sendEmbed(ctx, EmbedUtils.embedImageWithTitle(
                 it.get("answer").asText(),
                 it.get("image").asText(),
                 it.get("image").asText())

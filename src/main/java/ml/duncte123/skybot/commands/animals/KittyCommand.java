@@ -50,7 +50,7 @@ public class KittyCommand extends Command {
         WebUtils.ins.scrapeWebPage(url).async((doc) -> {
             final String fullUrl = doc.selectFirst("url").text();
             final String sourceUrl = doc.selectFirst("source_url").text();
-            sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("Source", sourceUrl, fullUrl));
+            sendEmbed(ctx, EmbedUtils.embedImageWithTitle("Source", sourceUrl, fullUrl));
         });
     }
 }

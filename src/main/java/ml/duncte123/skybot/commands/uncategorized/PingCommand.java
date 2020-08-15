@@ -25,7 +25,8 @@ import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
 
 public class PingCommand extends Command {
 
@@ -41,16 +42,18 @@ public class PingCommand extends Command {
         }
 
         ctx.getJDA().getRestPing().queue((restPing) ->
-            sendMsgFormat(ctx.getChannel(),
-                "PONG!\n" +
-                    "Rest ping: %sms\n" +
-                    "Message ping: %sms\n" +
-                    "Websocket ping: %sms\n" +
-                    "Average shard ping: %sms",
-                restPing,
-                ctx.getMessage().getTimeCreated().until(OffsetDateTime.now(), ChronoUnit.MILLIS),
-                ctx.getJDA().getGatewayPing(),
-                ctx.getShardManager().getAverageGatewayPing())
+            sendMsg(ctx,
+                String.format(
+                    "PONG!\n" +
+                        "Rest ping: %sms\n" +
+                        "Message ping: %sms\n" +
+                        "Websocket ping: %sms\n" +
+                        "Average shard ping: %sms",
+                    restPing,
+                    ctx.getMessage().getTimeCreated().until(OffsetDateTime.now(), ChronoUnit.MILLIS),
+                    ctx.getJDA().getGatewayPing(),
+                    ctx.getShardManager().getAverageGatewayPing())
+                )
         );
 
     }

@@ -37,7 +37,7 @@ public class SetLeaveMessageCommand extends SettingsBase {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + ctx.getPrefix() + "setleavemessage <new leave message>`");
+            sendMsg(ctx, "Correct usage is `" + ctx.getPrefix() + "setleavemessage <new leave message>`");
             return;
         }
 

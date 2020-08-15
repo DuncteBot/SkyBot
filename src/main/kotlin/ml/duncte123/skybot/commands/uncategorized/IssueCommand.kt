@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
@@ -67,7 +68,7 @@ class IssueCommand : Command() {
                         invite = event.channel.createInvite().complete().url
                     }
 
-                    val embed = EmbedUtils.defaultEmbed()
+                    val embed = EmbedUtils.getDefaultEmbed()
                         .setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
                         .setFooter(null, null)
                         .setDescription("""
@@ -77,7 +78,10 @@ class IssueCommand : Command() {
                         .addField("Invite:", invite, false)
                         .addField("List of recent run commands:", cmds, false)
 
-                    sendEmbed(ctx.shardManager.getTextChannelById(424146177626210305L), embed)
+                    sendMsg(MessageConfig.Builder()
+                        .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!)
+                        .setEmbed(embed)
+                        .build())
 
                     sendMsg(ctx, "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
                         "https://dunctebot.link/server")

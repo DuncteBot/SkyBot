@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.weebJava.configs.ImageConfig
+import me.duncte123.weebJava.configs.TypesConfig
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
-import net.dv8tion.jda.api.MessageBuilder
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommand : WeebCommandBase() {
@@ -44,13 +46,17 @@ class WeebCommand : WeebCommandBase() {
         }
 
         if (weebTags.isEmpty()) {
-            weebTags.addAll(ctx.weebApi.getTypes(HiddenMode.DEFAULT).execute().types)
+            weebTags.addAll(ctx.weebApi.getTypes(TypesConfig.Builder()
+                .setHiddenMode(HiddenMode.DEFAULT)
+                .build()).execute().types)
         }
 
         if (args[0] == "categories") {
-            sendMsg(ctx, MessageBuilder()
-                .append("Here is a list of all the valid categories")
-                .appendCodeBlock(weebTags.joinToString(), "LDIF")
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .configureMessageBuilder {
+                    it.append("Here is a list of all the valid categories")
+                    .appendCodeBlock(weebTags.joinToString(), "LDIF")
+                }
                 .build())
             return
         }
@@ -62,7 +68,9 @@ class WeebCommand : WeebCommandBase() {
             return
         }
 
-        val img = ctx.weebApi.getRandomImage(type).execute()
+        val img = ctx.weebApi.getRandomImage(
+            ImageConfig.Builder().setType(type).build()
+        ).execute()
         sendEmbed(ctx, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
     }
 }

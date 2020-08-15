@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SeekCommand extends MusicCommand {
@@ -121,7 +120,7 @@ public class SeekCommand extends MusicCommand {
         final long newPosition = currentPosition + seconds;
 
         if (newPosition < 0) {
-            sendMsgFormat(ctx, "%s is not above 0", newPosition);
+            sendMsg(ctx, String.format("%s is not above 0", newPosition));
             return;
         }
 

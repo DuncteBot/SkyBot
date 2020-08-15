@@ -41,7 +41,7 @@ class JoinCommand : MusicCommand() {
         val voiceState = member.voiceState!!
 
         if (!voiceState.inVoiceChannel()) {
-            sendMsg(event, "Please join a voice channel first.")
+            sendMsg(ctx, "Please join a voice channel first.")
             return
         }
 
@@ -54,12 +54,12 @@ class JoinCommand : MusicCommand() {
         val lavalink = getLavalinkManager()
 
         if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
-            sendMsg(event, "I'm already in a channel.")
+            sendMsg(ctx, "I'm already in a channel.")
             return
         }
 
         if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-            sendMsg(event, "I cannot connect to <#${vc.id}>")
+            sendMsg(ctx, "I cannot connect to <#${vc.id}>")
 
             return
         }
@@ -69,9 +69,9 @@ class JoinCommand : MusicCommand() {
             sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                sendMsg(event, "I don't have permission to join `${vc.name}`")
+                sendMsg(ctx, "I don't have permission to join `${vc.name}`")
             } else {
-                sendMsg(event, "Error while joining channel `${vc.name}`: ${e.message}")
+                sendMsg(ctx, "Error while joining channel `${vc.name}`: ${e.message}")
             }
         } catch (other: Exception) {
             sendErrorWithMessage(ctx.message, "Could not join channel: ${other.message}")

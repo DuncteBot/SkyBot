@@ -75,7 +75,7 @@ public class TempMuteCommand extends ModBaseCommand {
         }
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "spamrole <Role>` to set it");
+            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "spamrole <Role>` to set it");
             return;
         }
 
@@ -87,7 +87,7 @@ public class TempMuteCommand extends ModBaseCommand {
         final Role role = guild.getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
-        if (canNotProceed(ctx, event, mod, toMute, role, self)) {
+        if (canNotProceed(ctx, mod, toMute, role, self)) {
             return;
         }
 
@@ -98,7 +98,7 @@ public class TempMuteCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final Duration duration = getDuration(args.get(1), getName(), event, ctx.getPrefix());
+        final Duration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -123,7 +123,7 @@ public class TempMuteCommand extends ModBaseCommand {
                         modName = oldMuteMod.getAsTag();
                     }
 
-                    sendMsg(event, String.format(
+                    sendMsg(ctx, String.format(
                         "Previously created muted for %#s removed, mute was created by %s",
                         mutee,
                         modName
@@ -144,9 +144,9 @@ public class TempMuteCommand extends ModBaseCommand {
             );
     }
 
-    static boolean canNotProceed(@Nonnull CommandContext ctx, GuildMessageReceivedEvent event, Member mod, Member toMute, Role role, Member self) {
+    static boolean canNotProceed(@Nonnull CommandContext ctx, Member mod, Member toMute, Role role, Member self) {
         if (role == null) {
-            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
+            sendMsg(ctx, "The current mute role does not exist on this server, please contact your server administrator about this.");
 
             return true;
         }
@@ -156,7 +156,7 @@ public class TempMuteCommand extends ModBaseCommand {
         }
 
         if (!self.canInteract(role)) {
-            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+            sendMsg(ctx, "I cannot mute this member, is the mute role above mine?");
 
             return true;
         }

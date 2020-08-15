@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -57,7 +56,6 @@ public class LoveCommand extends Command {
     public void execute(@Nonnull CommandContext ctx) {
 
         final List<String> args = ctx.getArgs();
-        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         String name1 = ctx.getMember().getEffectiveName();
         String name2 = args.get(0);
@@ -79,7 +77,7 @@ public class LoveCommand extends Command {
 
 //        final int intScore = response.get("score_int").asInt() / 10;
 
-        final EmbedBuilder embed = EmbedUtils.defaultEmbed()
+        final EmbedBuilder embed = EmbedUtils.getDefaultEmbed()
             .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
             // The idea is cool, but it looks stupid
             /*.setDescription(
@@ -109,7 +107,7 @@ public class LoveCommand extends Command {
                     .queue();
             });
         } else {
-            sendEmbed(event, embed);
+            sendEmbed(ctx, embed);
         }
     }
 }

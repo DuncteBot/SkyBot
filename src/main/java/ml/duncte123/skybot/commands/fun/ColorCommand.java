@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -29,9 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.commands.guild.owner.settings.SettingsCommand.COLOR_REGEX;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
@@ -57,7 +56,7 @@ public class ColorCommand extends Command {
             final Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
 
             if (!colorMatcher.matches()) {
-                sendMsg(ctx.getEvent(), "That color does not look like a valid hex color, hex colors start with a pound sign and have 6 alphanumeric characters.\n" +
+                sendMsg(ctx, "That color does not look like a valid hex color, hex colors start with a pound sign and have 6 alphanumeric characters.\n" +
                     "Tip: you can use <http://colorpicker.com/> to generate a hex code.");
                 return;
             }
@@ -73,7 +72,7 @@ public class ColorCommand extends Command {
             final String name = data.name;
             final String rgb = data.rgb;
 
-            final EmbedBuilder embed = defaultEmbed()
+            final EmbedBuilder embed = EmbedUtils.getDefaultEmbed()
                 .setColor(colorToInt(hex))
                 .setThumbnail(image);
 
@@ -81,7 +80,7 @@ public class ColorCommand extends Command {
                 name, hex, integer, rgb, brightness, data.blackorwhite_text);
             embed.setDescription(desc);
 
-            sendEmbedRaw(ctx.getChannel(), embed.build(), null);
+            sendEmbed(ctx.getChannel(), embed, true);
         });
     }
 }

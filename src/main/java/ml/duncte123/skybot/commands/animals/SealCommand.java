@@ -46,6 +46,6 @@ public class SealCommand extends Command {
         // https://apis.duncte123.me/animal/seal
         final JsonNode data = ctx.getApis().getAnimal("seal");
 
-        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(data.get("file").asText()));
+        sendEmbed(ctx, EmbedUtils.embedImage(data.get("file").asText()));
     }
 }

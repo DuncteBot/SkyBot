@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
+import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
@@ -65,7 +65,7 @@ public class JSONMessageErrorsHelper {
                         .writeValueAsBytes(EarthUtils.throwableToJSONObject(error, mapper)),
                     "error.json"
                 ).embed(
-                defaultEmbed().setTitle("We got an error!")
+                getDefaultEmbed().setTitle("We got an error!")
                     .setDescription(String.format("Error type: %s",
                         error.getClass().getSimpleName())).build()
             ).queue();

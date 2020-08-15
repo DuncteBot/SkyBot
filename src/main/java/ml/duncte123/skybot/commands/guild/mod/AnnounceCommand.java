@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -114,7 +115,7 @@ public class AnnounceCommand extends ModBaseCommand {
         }
 
 
-        final EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
+        final EmbedBuilder embed = EmbedUtils.getDefaultEmbed().setDescription(msg).setFooter(null, "");
         final List<Message.Attachment> attachments = ctx.getMessage().getAttachments();
 
         if (!attachments.isEmpty()) {
@@ -127,7 +128,11 @@ public class AnnounceCommand extends ModBaseCommand {
             });
         }
 
-        sendEmbed(targetChannel, embed);
+        sendMsg(new MessageConfig.Builder()
+            .setChannel(targetChannel)
+            .setEmbed(embed)
+            .build());
+
         sendSuccess(ctx.getMessage());
     }
 }

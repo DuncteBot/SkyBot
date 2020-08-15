@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
@@ -33,7 +34,8 @@ import javax.annotation.Nullable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings("SameParameterValue")
@@ -43,6 +45,7 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
     @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public abstract class Command implements ICommand {
+    public Flag[] flags = new Flag[0];
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
@@ -51,7 +54,6 @@ public abstract class Command implements ICommand {
             thread.setDaemon(true);
             return thread;
         });
-
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;
@@ -63,7 +65,6 @@ public abstract class Command implements ICommand {
     protected String extraInfo = null;
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
-    public Flag[] flags = new Flag[0];
     // This is the cooldown in seconds
     protected int cooldown = 0;
     // Sets the scope of the cooldown, default is on user level
@@ -79,10 +80,12 @@ public abstract class Command implements ICommand {
         if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(ctx.getChannel(), this.userPermissions)) {
             final String permissionsWord = "permission" + (this.userPermissions.length > 1 ? "s" : "");
 
-            sendMsgFormat(ctx,
-                "You need the `%s` %s for this command\nPlease contact your server administrator if this is incorrect.",
-                parsePerms(this.userPermissions), permissionsWord
-            );
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .setMessageFormat(
+                    "You need the `%s` %s for this command\nPlease contact your server administrator if this is incorrect.",
+                    parsePerms(this.userPermissions), permissionsWord
+                )
+                .build());
 
             return;
         }
@@ -90,11 +93,12 @@ public abstract class Command implements ICommand {
         if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(ctx.getChannel(), this.botPermissions)) {
             final String permissionsWord = "permission" + (this.botPermissions.length > 1 ? "s" : "");
 
-            sendMsgFormat(ctx,
-                "I need the `%s` %s for this command to work\nPlease contact your server administrator about this.",
-                parsePerms(this.botPermissions), permissionsWord
-            );
-
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .setMessageFormat(
+                    "I need the `%s` %s for this command to work\nPlease contact your server administrator about this.",
+                    parsePerms(this.botPermissions), permissionsWord
+                )
+                .build());
             return;
         }
 
@@ -115,12 +119,13 @@ public abstract class Command implements ICommand {
 
             if (remainingCooldown > 0) {
                 // TODO: delete after?
-                sendMsgFormat(
-                    ctx,
-                    "This command is on cooldown for %s more seconds%s!",
-                    remainingCooldown,
-                    this.cooldownScope.getExtraErrorMsg()
-                );
+                sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                    .setMessageFormat(
+                        "This command is on cooldown for %s more seconds%s!",
+                        remainingCooldown,
+                        this.cooldownScope.getExtraErrorMsg()
+                    )
+                    .build());
                 sendError(ctx.getMessage());
                 return;
             } else {

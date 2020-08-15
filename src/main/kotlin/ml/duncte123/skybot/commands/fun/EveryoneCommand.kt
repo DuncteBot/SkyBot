@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -32,7 +33,7 @@ class EveryoneCommand : WeebCommandBase() {
     }
 
     override fun execute(ctx: CommandContext) {
-        ctx.weebApi.getRandomImage(arrayListOf("everyone")).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("everyone")).build()).async {
             sendEmbed(ctx, getWeebEmbedImage(it.url))
         }
     }

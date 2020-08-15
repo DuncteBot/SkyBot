@@ -51,13 +51,13 @@ class ImageCommand : Command() {
             WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonArray = it["items"]
                 val randomItem = jsonArray[ctx.random.nextInt(jsonArray.size())]
-                sendEmbed(event,
-                    EmbedUtils.defaultEmbed()
+                sendEmbed(ctx,
+                    EmbedUtils.getDefaultEmbed()
                         .setTitle(
                             randomItem["title"].asText(),
                             randomItem["image"]["contextLink"].asText()
                         )
-                        .setImage(randomItem["link"].asText()).build()
+                        .setImage(randomItem["link"].asText())
                 )
             }
         }

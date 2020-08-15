@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
@@ -51,12 +50,12 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
                 player.isPaused -> {
                     player.isPaused = false
 
-                    sendMsg(event, "Playback has been resumed.")
+                    sendMsg(ctx, "Playback has been resumed.")
                 }
 
-                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
+                player.playingTrack != null -> sendMsg(ctx, "Player is already playing!")
 
-                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
+                scheduler.queue.isEmpty() -> sendMsg(ctx, "The current audio queue is empty! Add something to the queue first!\n" +
                     "For example `${ctx.prefix}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
 
@@ -71,7 +70,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (skipParsing) {
-            handlePlay(toPlay, event, ctx, mng)
+            handlePlay(toPlay, ctx, mng)
             return
         }
 
@@ -80,13 +79,13 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
             if (vidId == null) {
                 MessageUtils.sendError(event.message)
-                sendMsg(event, "No tracks where found")
+                sendMsg(ctx, "No tracks where found")
                 return
             }
             toPlay = "https://www.youtube.com/watch?v=${vidId}"
         }
 
-        handlePlay(toPlay, event, ctx, mng)
+        handlePlay(toPlay, ctx, mng)
     }
 
     private fun searchCache(search: String, ctx: CommandContext): String? {
@@ -99,10 +98,10 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return res[0].id.videoId
     }
 
-    private fun handlePlay(toPlay: String, event: GuildMessageReceivedEvent, ctx: CommandContext, mng: GuildMusicManager?) {
+    private fun handlePlay(toPlay: String, ctx: CommandContext, mng: GuildMusicManager?) {
         if (toPlay.length > 1024) {
-            MessageUtils.sendError(event.message)
-            sendMsg(event, "Input cannot be longer than 1024 characters.")
+            MessageUtils.sendError(ctx.message)
+            sendMsg(ctx, "Input cannot be longer than 1024 characters.")
             return
         }
 

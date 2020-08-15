@@ -26,8 +26,6 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -57,8 +55,6 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final String prefix = ctx.getPrefix();
 
         if (!ctx.getArgs().isEmpty()) {
@@ -68,15 +64,15 @@ public class HelpCommand extends Command {
                     Pattern.quote(prefix) + ")", "");
 
             if (isCategory(toSearch)) {
-                sendCategoryHelp(event, prefix, toSearch.toUpperCase());
+                sendCategoryHelp(ctx, prefix, toSearch.toUpperCase());
                 return;
             }
 
-            sendCommandHelp(event, toSearch, ctx.getCommandManager(), prefix);
+            sendCommandHelp(ctx, toSearch, ctx.getCommandManager(), prefix);
 
             return;
         }
-        sendHelp(event, HelpEmbeds.generateCommandEmbed(prefix));
+        sendHelp(ctx, HelpEmbeds.generateCommandEmbed(prefix));
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -96,31 +92,31 @@ public class HelpCommand extends Command {
         }
     }
 
-    private void sendHelp(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        event.getAuthor()
+    private void sendHelp(CommandContext ctx, EmbedBuilder embed) {
+        ctx.getAuthor()
             .openPrivateChannel()
-            .flatMap((pc) -> pc.sendMessage(embed))
+            .flatMap((pc) -> pc.sendMessage(embed.build()))
             .queue(
-                (msg) -> sendMsg(event, event.getAuthor().getAsMention() + " check your DM's"),
+                (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " check your DM's"),
                 //When sending fails, send to the channel
-                (err) -> sendMsg(event, "You can check out my commands here:\nhttps://dunctebot.com/commands")
+                (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://dunctebot.com/commands")
             );
     }
 
-    private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager, String prefix) {
+    private void sendCommandHelp(CommandContext ctx, String toSearch, CommandManager manager, String prefix) {
 
         final ICommand cmd = manager.getCommand(toSearch);
 
         if (cmd != null) {
-            sendCommandHelpMessage(event, (Command) cmd, prefix, toSearch);
+            sendCommandHelpMessage(ctx, (Command) cmd, prefix, toSearch);
 
             return;
         }
 
-        sendMsg(event, "That command could not be found, try `" + prefix + "help` for a list of commands");
+        sendMsg(ctx, "That command could not be found, try `" + prefix + "help` for a list of commands");
     }
 
-    private void sendCommandHelpMessage(GuildMessageReceivedEvent event, Command cmd, String prefix, String invoke) {
+    private void sendCommandHelpMessage(CommandContext ctx, Command cmd, String prefix, String invoke) {
         final Class<? extends Command> commandClass = cmd.getClass();
         final String clsPath = commandClass.getName().replace('.', '/');
         final boolean isKotlin = isKotlin(commandClass);
@@ -129,7 +125,7 @@ public class HelpCommand extends Command {
         final String url = String.format("https://github.com/DuncteBot/SkyBot/blob/master/src/main/%s/%s%s", type, clsPath, extension);
 
         final EmbedBuilder builder = EmbedUtils
-            .defaultEmbed()
+            .getDefaultEmbed()
             .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])", url)
             .setDescription(cmd.help(invoke, prefix) +
                 "\nUsage: " + cmd.getUsageInstructions(prefix, invoke));
@@ -145,13 +141,13 @@ public class HelpCommand extends Command {
             builder.addField("Flags", parseFlags(cmd.flags), false);
         }
 
-        sendEmbed(event, builder);
+        sendEmbed(ctx, builder);
     }
 
-    private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {
+    private void sendCategoryHelp(CommandContext ctx, String prefix, String toSearch) {
         final CommandCategory cat = getCategory(toSearch);
-        final MessageEmbed embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
-        sendEmbed(event, embed);
+        final EmbedBuilder embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
+        sendEmbed(ctx, embed);
     }
 
     private String parseFlags(Flag[] flags) {

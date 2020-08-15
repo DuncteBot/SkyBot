@@ -24,10 +24,8 @@ import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
@@ -36,7 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.*;
 
 public class TagCommand extends Command {
@@ -175,10 +174,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        final Message message = new MessageBuilder()
-            .appendCodeBlock(this.tagStore.get(tagName).content, "").build();
-
-        sendMsg(ctx, message);
+        sendMsg(ctx, "```\n" + this.tagStore.get(tagName).content + "\n```");
     }
 
     private void sendTagsList(CommandContext ctx) {
@@ -189,7 +185,7 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.size() < 100) {
-            sendMsgFormat(ctx, "Here is the current tag list: `%s`", String.join("`, `", this.tagStore.keySet()));
+            sendMsg(ctx, String.format("Here is the current tag list: `%s`", String.join("`, `", this.tagStore.keySet())));
 
             return;
         }
@@ -221,7 +217,7 @@ public class TagCommand extends Command {
         final User user = ctx.getShardManager().getUserById(ownerId);
         final String userTag = user == null ? "UnknownUser#0000" : user.getAsTag();
 
-        sendMsgFormat(ctx, "`%s` was created by `%s`", tagName, userTag);
+        sendMsg(ctx, String.format("`%s` was created by `%s`", tagName, userTag));
     }
 
     private void removeTag(CommandContext ctx, String tagName) {
@@ -248,7 +244,7 @@ public class TagCommand extends Command {
 
             this.tagStore.remove(tag.name);
 
-            sendMsgFormat(ctx, "Tag `%s` deleted", tag.name);
+            sendMsg(ctx, String.format("Tag `%s` deleted", tag.name));
 
             return null;
         });
@@ -292,7 +288,7 @@ public class TagCommand extends Command {
 
             this.tagStore.put(tagName, newTag);
 
-            sendMsgFormat(ctx, "Tag `%s` created", tagName);
+            sendMsg(ctx, String.format("Tag `%s` created", tagName));
 
             return null;
         });

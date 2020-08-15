@@ -19,14 +19,9 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ToggleSpamFilterCommand extends SettingsBase {
@@ -38,23 +33,6 @@ public class ToggleSpamFilterCommand extends SettingsBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
-
-        final long muteRoleId = settings.getMuteRoleId();
-
-        if (muteRoleId <= 0) {
-            sendMsg(ctx.getEvent(), "**__Please set a spam/mute role first!__**");
-            return;
-        }
-
-        final boolean spamState = !settings.isEnableSpamFilter();
-        guild.setSettings(settings.setEnableSpamFilter(spamState));
-        String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
-
-        final Role r = guild.getRoleById(muteRoleId);
-        message += "\nThe spam role is " + ((r == null) ? "deleted. Please update it." : r.getName() + ". Change it if it's outdated.");
-
-        sendMsg(ctx.getEvent(), message);
+        this.showNewHelp(ctx, "swearFilter", null);
     }
 }

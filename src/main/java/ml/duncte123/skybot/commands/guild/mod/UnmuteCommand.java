@@ -70,13 +70,13 @@ public class UnmuteCommand extends ModBaseCommand {
         final Member toMute = mentioned.get(0);
 
         if (settings.getMuteRoleId() <= 0) {
-            sendMsg(event, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");
+            sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");
             return;
         }
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         if (role == null) {
-            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
+            sendMsg(ctx, "The current mute role does not exist on this server, please contact your server administrator about this.");
             return;
         }
 
@@ -85,7 +85,7 @@ public class UnmuteCommand extends ModBaseCommand {
         }
 
         if (!self.canInteract(role)) {
-            sendMsg(event, "I cannot unmute this member, is the mute role above mine?");
+            sendMsg(ctx, "I cannot unmute this member, is the mute role above mine?");
             return;
         }
 

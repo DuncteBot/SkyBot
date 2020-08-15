@@ -41,6 +41,6 @@ class ReverseCommand : Command() {
                     |**Output:** ${ctx.argsRaw.reversed()}
                 """.trimMargin()
 
-        MessageUtils.sendMsg(ctx.event, message)
+        MessageUtils.sendMsg(ctx, message)
     }
 }

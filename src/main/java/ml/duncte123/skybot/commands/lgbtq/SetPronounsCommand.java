@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -81,8 +80,6 @@ public class SetPronounsCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
         if (ctx.getArgs().isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
@@ -92,12 +89,12 @@ public class SetPronounsCommand extends Command {
         final String[] pronounsSplit = pronouns.split("/");
 
         if (pronounsSplit.length != 4) {
-            sendMsg(event, "Incorrect format, check `" + ctx.getPrefix() + "help " + getName() + '`');
+            sendMsg(ctx, "Incorrect format, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return;
         }
 
         if (pronouns.length() > 30) {
-            sendMsg(event, "Maximum length for pronouns is 30 characters, " +
+            sendMsg(ctx, "Maximum length for pronouns is 30 characters, " +
                 "please contact duncte123#1245 to have this changed");
             return;
         }
@@ -112,7 +109,7 @@ public class SetPronounsCommand extends Command {
             "Here is a preview:\n" +
             String.format(format, items.toArray());
 
-        sendMsg(event, message);
+        sendMsg(ctx, message);
 
         ctx.getApis().setPronouns(ctx.getAuthor().getIdLong(), pronouns, singular);
     }

@@ -20,7 +20,6 @@ package ml.duncte123.skybot.entities.jda
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.AirUtils
@@ -34,7 +33,7 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
         set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
 
     var color: Int
-        get() = EmbedUtils.getColorOrDefault(this.idLong, Settings.DEFAULT_COLOUR)
+        get() = EmbedUtils.getColorOrDefault(this.idLong)
         set(color) {
             EmbedUtils.addColor(this.idLong, color)
             GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)

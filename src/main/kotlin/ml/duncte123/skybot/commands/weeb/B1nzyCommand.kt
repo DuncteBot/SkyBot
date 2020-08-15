@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class B1nzyCommand : WeebCommandBase() {
@@ -29,6 +30,6 @@ class B1nzyCommand : WeebCommandBase() {
     }
 
     override fun execute(ctx: CommandContext) {
-        sendEmbed(ctx, getWeebEmbedImage(ctx.weebApi.getRandomImage(listOf("b1nzy")).execute().url))
+        sendEmbed(ctx, getWeebEmbedImage(ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("b1nzy")).build()).execute().url))
     }
 }
