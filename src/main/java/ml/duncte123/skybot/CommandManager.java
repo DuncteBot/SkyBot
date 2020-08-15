@@ -22,6 +22,7 @@ import com.jagrosh.jagtag.Parser;
 import gnu.trove.map.TObjectLongMap;
 import io.sentry.Sentry;
 import kotlin.Triple;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.commands.admin.BlackListCommand;
 import ml.duncte123.skybot.commands.admin.VcAutoRoleCommand;
 import ml.duncte123.skybot.commands.animals.*;
@@ -60,8 +61,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -395,7 +395,9 @@ public class CommandManager {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
                 Pattern.quote(customPrefix),
-            "").split("\\s+", 2);
+            "")
+            .trim()
+            .split("\\s+", 2);
         final String invoke = split[0];
 
         final List<String> args = new ArrayList<>();
@@ -484,15 +486,19 @@ public class CommandManager {
             catch (Throwable ex) {
                 Sentry.capture(ex);
                 ex.printStackTrace();
-                sendMsg(event, "Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage());
+                sendMsg(MessageConfig.Builder.fromEvent(event)
+                    .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
+                    .build());
             }
         });
     }
 
     private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
         if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
-            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
-                "Please mark this channel as NSFW to use this command");
+            sendMsg(MessageConfig.Builder.fromEvent(event)
+                .setMessage("Woops, this channel is not marked as NSFW.\n" +
+                    "Please mark this channel as NSFW to use this command")
+                .build());
             return;
         }
 
@@ -518,29 +524,34 @@ public class CommandManager {
             final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
 
             final String message = parser.parse(cc.getMessage());
-            final MessageBuilder messageBuilder = new MessageBuilder();
+            final MessageConfig.Builder messageBuilder = MessageConfig.Builder.fromEvent(event);
             final DataObject object = parser.get("embed");
+            boolean hasContent = false;
 
             if (!message.isEmpty()) {
-                messageBuilder.setContent("\u200B" + message);
+                messageBuilder.setMessage("\u200B" + message);
+                hasContent = true;
             }
 
             if (object != null) {
                 final JDAImpl jda = (JDAImpl) event.getJDA();
-                final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(object);
+                final EmbedBuilder embed = new EmbedBuilder(jda.getEntityBuilder().createMessageEmbed(object));
 
-                messageBuilder.setEmbed(embed);
+                messageBuilder.setEmbed(embed, true);
+                hasContent = true;
             }
 
-            if (!messageBuilder.isEmpty()) {
-                sendMsg(event, messageBuilder.build());
+            if (hasContent) {
+                sendMsg(messageBuilder.build());
             }
 
 
             parser.clear();
         }
         catch (Exception e) {
-            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+            sendMsg(MessageConfig.Builder.fromEvent(event)
+                .setMessage("Error with parsing custom command: " + e.getMessage())
+                .build());
             Sentry.capture(e);
         }
     }

@@ -43,6 +43,6 @@ public class AlpacaCommand extends Command {
         // https://apis.duncte123.me/animal/alpaca
         final JsonNode json = ctx.getApis().getAnimal("alpaca");
 
-        sendEmbed(ctx.getEvent(), embedImage(json.get("file").asText()));
+        sendEmbed(ctx, embedImage(json.get("file").asText()));
     }
 }

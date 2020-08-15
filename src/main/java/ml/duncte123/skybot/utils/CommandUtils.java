@@ -166,7 +166,7 @@ public class CommandUtils {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot).\n" +
-                "You will also need to join our discord server [here](https://dunctebot.link/server)"));
+                "You will also need to join our discord server [here](https://dunctebot.link/server)"), false);
             return false;
         }
 
@@ -174,7 +174,7 @@ public class CommandUtils {
         if (!m.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
-                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."));
+                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."), false);
             return false;
         }
 

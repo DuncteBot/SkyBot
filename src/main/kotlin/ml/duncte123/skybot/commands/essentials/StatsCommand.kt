@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import com.sun.management.OperatingSystemMXBean
-import me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed
+import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
@@ -71,8 +71,7 @@ class StatsCommand : Command() {
 
         val threadBean = ManagementFactory.getThreadMXBean()
 
-        val embed = defaultEmbed()
-
+        val embed = EmbedUtils.getDefaultEmbed()
             .addField("Discord/bot Stats",
                 """**Guilds:** ${shardManager.guildCache.size()}
                     |**Users (unique):** ${shardManager.userCache.size()}
@@ -96,7 +95,7 @@ class StatsCommand : Command() {
                             |**Ram:** ${jvmMemUsage}MB / ${jvmMemTotal}MB ($jvmMemPercent%)
                         """.trimMargin(), false)
 
-        sendEmbed(ctx.event, embed)
+        sendEmbed(ctx, embed)
 
     }
 }

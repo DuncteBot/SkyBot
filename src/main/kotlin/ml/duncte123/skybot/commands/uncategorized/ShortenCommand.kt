@@ -37,18 +37,17 @@ class ShortenCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
         val args = ctx.args
 
         if (!isURL(args[0])) {
-            sendMsg(event, "That does not look like a valid url")
+            sendMsg(ctx, "That does not look like a valid url")
             return
         }
 
         shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async({
-            sendMsg(event, "Here is your shortened url: <$it>")
+            sendMsg(ctx, "Here is your shortened url: <$it>")
         }, {
-            sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")
+            sendMsg(ctx, "Something went wrong, please make sure that your url to shorten is valid")
         })
     }
 }

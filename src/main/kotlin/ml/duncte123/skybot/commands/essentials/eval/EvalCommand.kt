@@ -203,7 +203,7 @@ class EvalCommand : Command() {
                 MessageBuilder()
                     .appendCodeBlock(out.toString(), "")
                     .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                    .forEach { sendMsg(ctx, it) }
+                    .forEach { sendMsg(ctx, it.contentRaw) }
 
             }
         }

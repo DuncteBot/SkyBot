@@ -46,7 +46,7 @@ class ListCommand : MusicCommand() {
 
         synchronized(queue) {
             if (queue.isEmpty()) {
-                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, "The queue is currently empty!"))
+                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, "The queue is currently empty!"))
             } else {
                 val queueLength = queue.map { it.duration }.sum()
                 val maxTracks = 10
@@ -65,7 +65,7 @@ class ListCommand : MusicCommand() {
                     appendln("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, queueText))
+                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, queueText))
             }
         }
     }

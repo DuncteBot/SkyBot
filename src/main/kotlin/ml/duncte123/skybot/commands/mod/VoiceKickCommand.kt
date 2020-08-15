@@ -38,7 +38,6 @@ class VoiceKickCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
         val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
         val guild = ctx.guild
 
@@ -60,7 +59,7 @@ class VoiceKickCommand : ModBaseCommand() {
             val member = mentioned[0]
 
             if (member.voiceState!!.channel == null) {
-                sendMsg(event, "That member is not in a voice channel")
+                sendMsg(ctx, "That member is not in a voice channel")
                 return
             }
 
@@ -70,6 +69,6 @@ class VoiceKickCommand : ModBaseCommand() {
             return
         }
 
-        sendMsg(event, "I could not find any Voice Channel or member to kick from voice")
+        sendMsg(ctx, "I could not find any Voice Channel or member to kick from voice")
     }
 }

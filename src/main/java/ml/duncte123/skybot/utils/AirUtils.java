@@ -63,7 +63,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.web.WebParserUtils.toJSONObject;
 
 @Authors(authors = {
@@ -290,7 +290,7 @@ public class AirUtils {
                 if (channel != null) {
                     // Add the reminder to the list of the reminders to purge
                     toPurge.add(reminder.getId());
-                    sendMsgFormat(channel, "<@%s>, %s", reminder.getUser_id(), message);
+                    sendMsg(channel, String.format("<@%s>, %s", reminder.getUser_id(), message));
                 }
 
                 // go to the next one and don't run the user code

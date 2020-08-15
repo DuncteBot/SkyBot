@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -57,17 +58,19 @@ class UpdateCommand : Command() {
             return
         }
 
-        sendMsg(ctx, "✅ Updating") {
-            // This will also shutdown eval
-            val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
+        sendMsg(MessageConfig.Builder()
+            .setChannel(ctx.channel)
+            .setMessage("✅ Updating")
+            .setSuccessAction {
+                val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
 
-            listener.killAllShards(ctx.shardManager!!, false)
+                listener.killAllShards(ctx.shardManager!!, false)
 
-            // Wait for 2 seconds to allow everything to shut down
-            sleep(2000)
+                // Wait for 2 seconds to allow everything to shut down
+                sleep(2000)
 
-            // Magic code. Tell the updater to update
-            exitProcess(0x54)
-        }
+                // Magic code. Tell the updater to update
+                exitProcess(0x54) }
+            .build())
     }
 }

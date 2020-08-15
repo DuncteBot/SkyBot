@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
@@ -39,10 +40,10 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.duncte123.botcommons.messaging.MessageConfigDefaults.DELETE_MESSAGE_AFTER_SECONDS;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
@@ -90,14 +91,14 @@ public class CleanupCommand extends ModBaseCommand {
             if (isRunningInChannel) {
                 this.futureMap.get(channelId).cancel(true);
             } else {
-                sendMsg(ctx.getEvent(), "There is no purge running in this channel");
+                sendMsg(ctx, "There is no purge running in this channel");
             }
 
             return;
         }
 
         if (isRunningInChannel) {
-            sendMsg(ctx.getEvent(),
+            sendMsg(ctx,
                 "This channel is already being cleaned, you can cancel the current purge by running `" +
                     ctx.getPrefix() + ctx.getInvoke() + " cancel`"
             );
@@ -128,8 +129,10 @@ public class CleanupCommand extends ModBaseCommand {
                     return;
                 }
                 if (total < 1 || total > 1000) {
-                    sendMsgAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
-                        "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`");
+                    sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+                        .setMessage("Error: count must be minimal 2 and maximal 1000\n" +
+                            "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`")
+                        .build());
                     return;
                 }
             }
@@ -153,7 +156,10 @@ public class CleanupCommand extends ModBaseCommand {
                 .collect(Collectors.toList());
 
             final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(ctx, "Deleting messages, please wait this might take a long time (this message will be deleted once complete)", hack::complete);
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .setMessage("Deleting messages, please wait this might take a long time (this message will be deleted once complete)")
+                .setSuccessAction(hack::complete)
+                .build());
 
             try {
                 final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
@@ -177,7 +183,10 @@ public class CleanupCommand extends ModBaseCommand {
             }
             catch (CancellationException e) {
                 sendSuccess(ctx.getMessage());
-                sendMsgAndDeleteAfter(ctx.getEvent(), 5L, TimeUnit.SECONDS, "Cancelled successfully.");
+                sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+                    .setChannel(ctx.getChannel())
+                    .setMessage("Cancelled successfully.")
+                    .build());
             }
             catch (InterruptedException | ExecutionException e) {
                 Sentry.capture(e);
@@ -203,7 +212,10 @@ public class CleanupCommand extends ModBaseCommand {
                 return;
             }
 
-            sendMsgFormatAndDeleteAfter(ctx.getEvent(), 5, TimeUnit.SECONDS, "Removed %d messages! (this message will auto delete in 5 seconds)", count);
+            sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+                .setChannel(ctx.getChannel())
+                .setMessageFormat("Removed %d messages! (this message will auto delete in 5 seconds)", count)
+                .build());
 
             modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
         });

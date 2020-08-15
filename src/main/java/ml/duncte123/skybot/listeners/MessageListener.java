@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
@@ -57,7 +58,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
@@ -174,9 +174,14 @@ public abstract class MessageListener extends BaseListener {
         }
 
         if (rw.matches(selfRegex)) {
-            sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                event.getAuthor(),
-                customPrefix)
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(event.getChannel())
+                    .setMessageFormat(
+                        "Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                        event.getAuthor(),
+                        customPrefix)
+                    .build()
             );
             return;
         }
@@ -314,8 +319,10 @@ public abstract class MessageListener extends BaseListener {
                     //Check if the invite is for this guild, if it is not delete the message
                     if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                         event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
-                                sendMsg(event, event.getAuthor().getAsMention() +
-                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
+                                sendMsg(MessageConfig.Builder.fromEvent(event)
+                                    .setMessage(event.getAuthor().getAsMention() + ", please don't post invite links here.")
+                                    .setSuccessAction(m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                                    .build()),
                             (t) -> {}
                         );
                     }
@@ -346,11 +353,16 @@ public abstract class MessageListener extends BaseListener {
                 .reason("Blocked for swearing: " + display)
                 .queue(null, (t) -> {});
 
-            sendMsg(event.getChannel(),
-                String.format("Hello there, %s please do not use cursive language within this Discord.",
+            sendMsg(new MessageConfig.Builder()
+                .setChannel(event.getChannel())
+                .setMessageFormat(
+                    "Hello there, %s please do not use cursive language within this Discord.",
                     messageToCheck.getAuthor().getAsMention()
-                ),
-                (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
+                )
+                .setSuccessAction(
+                    (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                )
+                    .build());
 
             modLog(String.format(
                 "Message with score %.2f by %#s deleted in %s for profanity, message content was:```\n%s```",
@@ -385,14 +397,17 @@ public abstract class MessageListener extends BaseListener {
                     foundWord
                 ), dbG);
 
-                sendMsgFormatAndDeleteAfter(
-                    (TextChannel) messageToCheck.getChannel(),
-                    5,
-                    TimeUnit.SECONDS,
-                    "%s the word \"%s\" is blacklisted on this server",
-                    messageToCheck.getMember(),
-                    foundWord
-                );
+                sendMsg(new MessageConfig.Builder()
+                    .setChannel((TextChannel) messageToCheck.getChannel())
+                    .setMessageFormat(
+                        "%s the word \"%s\" is blacklisted on this server",
+                        messageToCheck.getMember(),
+                        foundWord
+                    )
+                    .setSuccessAction(
+                        (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                    )
+                    .build());
 
                 return true;
             }
@@ -474,7 +489,8 @@ public abstract class MessageListener extends BaseListener {
                 if (kill) {
                     System.exit(0);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }, "shutdown-thread");

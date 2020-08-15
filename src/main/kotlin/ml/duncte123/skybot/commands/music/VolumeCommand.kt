@@ -47,7 +47,7 @@ class VolumeCommand : MusicCommand() {
         val player = mng.player
 
         if (args.isEmpty()) {
-            sendMsg(event, "The current volume is **${player.volume}**")
+            sendMsg(ctx, "The current volume is **${player.volume}**")
             return
         }
 
@@ -57,9 +57,9 @@ class VolumeCommand : MusicCommand() {
 
             player.volume = newVolume
 
-            sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
+            sendMsg(ctx, "Player volume changed from **$oldVolume** to **$newVolume**")
         } catch (e: NumberFormatException) {
-            sendMsg(event, "**${args[0]}** is not a valid integer. (5 - 1000)")
+            sendMsg(ctx, "**${args[0]}** is not a valid integer. (5 - 1000)")
         }
 
     }

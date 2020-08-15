@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.MessageEmbed
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
@@ -38,22 +38,22 @@ abstract class WeebCommandBase : Command() {
     }
 
     private fun getDefaultWeebEmbed(): EmbedBuilder {
-        return EmbedUtils.defaultEmbed()
+        return EmbedUtils.getDefaultEmbed()
             .setFooter("Powered by weeb.sh", null)
     }
 
-    protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {
-        return getDefaultWeebEmbed().setDescription(description).setImage(imageUrl).build()
+    protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): EmbedBuilder {
+        return getDefaultWeebEmbed().setDescription(description).setImage(imageUrl)
     }
 
-    protected fun getWeebEmbedImage(imageUrl: String): MessageEmbed {
-        return getDefaultWeebEmbed().setImage(imageUrl).build()
+    protected fun getWeebEmbedImage(imageUrl: String): EmbedBuilder {
+        return getDefaultWeebEmbed().setImage(imageUrl)
     }
 
     protected fun singleAction(type: String, thing: String, ctx: CommandContext) {
         val args = ctx.args
 
-        ctx.weebApi.getRandomImage(type).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType(type).build()).async {
             val imageUrl = it.url
 
             if (args.isEmpty()) {
@@ -77,7 +77,7 @@ abstract class WeebCommandBase : Command() {
     protected fun requestAndSend(type: String, thing: String, ctx: CommandContext) {
         val args = ctx.args
 
-        ctx.weebApi.getRandomImage(type).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType(type).build()).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 sendEmbed(ctx, getWeebEmbedImageAndDesc(

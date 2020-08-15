@@ -64,6 +64,6 @@ class DialogCommand : Command() {
             appendln("```")
         }
 
-        MessageUtils.sendMsg(ctx.event, string)
+        MessageUtils.sendMsg(ctx, string)
     }
 }

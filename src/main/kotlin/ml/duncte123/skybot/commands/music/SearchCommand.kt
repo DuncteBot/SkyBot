@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -62,7 +62,7 @@ class SearchCommand : MusicCommand() {
         val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
 
         if (res.isEmpty()) {
-            sendMsg(event, "\uD83D\uDD0E No results found.")
+            sendMsg(ctx, "\uD83D\uDD0E No results found.")
             return
         }
 
@@ -75,9 +75,14 @@ class SearchCommand : MusicCommand() {
             append("Type the number of the song that you want to play or type `cancel` to cancel your search")
         }
 
-        sendEmbed(ctx.channel, EmbedUtils.embedMessage(string)) {
-            handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
-        }
-
+        sendMsg(
+            MessageConfig.Builder()
+                .setChannel(ctx.channel)
+                .setEmbed(EmbedUtils.embedMessage(string))
+                .setSuccessAction {
+                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
+                }
+                .build()
+        )
     }
 }

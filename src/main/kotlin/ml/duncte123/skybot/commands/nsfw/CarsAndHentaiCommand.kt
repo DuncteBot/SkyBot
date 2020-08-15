@@ -38,7 +38,7 @@ class CarsAndHentaiCommand : Command() {
             val jsonArray = jsonRaw["items"]
             val randomItem = jsonArray[ctx.random.nextInt(jsonArray.size())]
             sendEmbed(ctx,
-                EmbedUtils.defaultEmbed()
+                EmbedUtils.getDefaultEmbed()
                     .setTitle(
                         randomItem["title"].asText(),
                         randomItem["image"]["contextLink"].asText()

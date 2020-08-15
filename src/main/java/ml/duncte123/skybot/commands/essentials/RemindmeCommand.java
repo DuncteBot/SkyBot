@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class RemindmeCommand extends Command {
 
@@ -132,13 +131,15 @@ public class RemindmeCommand extends Command {
             channelId,
             (success, id) -> {
                 if (success) {
-                    sendMsgFormat(
+                    sendMsg(
                         ctx,
-                        "Got it, I'll remind you%s in _%s_ about \"%s\" (Reminder id %d)",
-                        where,
-                        duration,
-                        reminder,
-                        id
+                        String.format(
+                            "Got it, I'll remind you%s in _%s_ about \"%s\" (Reminder id %d)",
+                            where,
+                            duration,
+                            reminder,
+                            id
+                        )
                     );
 //                    sendMsg(ctx, "Got it, I'll remind you" + where + "in _" + duration + "_ about \"" + reminder + "\"");
                 } else {

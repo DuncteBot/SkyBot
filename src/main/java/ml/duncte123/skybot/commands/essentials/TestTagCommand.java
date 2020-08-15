@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -53,11 +52,10 @@ public class TestTagCommand extends Command {
             return;
         }
 
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final String input = ctx.getArgsRaw();
 
         if (input.length() > 1000) {
-            sendMsg(event, "Please limit your input to 1000 characters.");
+            sendMsg(ctx, "Please limit your input to 1000 characters.");
             return;
         }
 
@@ -71,7 +69,7 @@ public class TestTagCommand extends Command {
             .append(output)
             .getStringBuilder().toString();
 
-        sendEmbed(event, EmbedUtils.embedMessage(message));
+        sendEmbed(ctx, EmbedUtils.embedMessage(message));
 
     }
 }

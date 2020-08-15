@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class MeguminCommand : WeebCommandBase() {
@@ -30,7 +31,9 @@ class MeguminCommand : WeebCommandBase() {
 
     override fun execute(ctx: CommandContext) {
         val quote = ctx.apis.getMeguminQuote()
-        val img = ctx.weebApi.getRandomImage("megumin")
+        val img = ctx.weebApi.getRandomImage(ImageConfig.Builder()
+            .setType("megumin")
+            .build())
 
         sendEmbed(ctx, getWeebEmbedImageAndDesc(quote, img.execute().url))
     }

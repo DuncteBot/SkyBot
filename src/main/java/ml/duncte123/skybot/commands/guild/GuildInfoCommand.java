@@ -96,7 +96,7 @@ public class GuildInfoCommand extends Command {
     private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
         final Guild g = ctx.getJDAGuild();
         final double[] ratio = GuildUtils.getBotRatio(g);
-        final EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
         final GuildSettings settings = ctx.getGuildSettings();
         final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), g);
 
@@ -122,7 +122,7 @@ public class GuildInfoCommand extends Command {
                 "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
                 "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
-        sendEmbed(ctx, eb.build());
+        sendEmbed(ctx, eb);
     }
 
 }

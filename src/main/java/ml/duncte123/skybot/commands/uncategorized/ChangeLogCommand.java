@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
 
@@ -49,9 +48,8 @@ public class ChangeLogCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         if (embedJson == null || embedJson.isEmpty()) {
-            fetchLatetstGitHubCommits(ctx.getEvent());
+            fetchLatetstGitHubCommits(ctx);
             return;
         }
 
@@ -59,14 +57,14 @@ public class ChangeLogCommand extends Command {
 
         final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(DataObject.fromJson(embedJson));
 
-        sendEmbed(ctx.getEvent(), embed);
+        sendEmbed(ctx, new EmbedBuilder(embed));
     }
 
-    private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
+    private void fetchLatetstGitHubCommits(CommandContext ctx) {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
             final String body = json.get("body").asText();
             final String version = json.get("tag_name").asText();
-            final EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
                 .setTitle("Changelog for DuncteBot v" + version, json.get("html_url").asText());
 
             for (final String item : body.split("\n")) {
@@ -81,15 +79,15 @@ public class ChangeLogCommand extends Command {
                 eb.setDescription(body);
             }
 
-            final MessageEmbed embed = eb.setFooter("Released on", null)
-                .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())))
-                .build();
+            final EmbedBuilder embed = eb.setFooter("Released on", null)
+                .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())));
 
-            embedJson = embed.toData()
+            embedJson = embed.build()
+                .toData()
                 .put("type", "rich")
                 .toString();
 
-            sendEmbed(event, embed);
+            sendEmbed(ctx, embed);
         });
     }
 

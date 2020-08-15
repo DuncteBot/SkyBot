@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
@@ -45,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
@@ -326,7 +326,10 @@ public class ModerationUtils {
                     final String message = String.format("%#s bypassed the mute.", member.getUser());
 
                     if (sendMessages) {
-                        sendEmbed(logChannel, embedMessage(message));
+                        sendMsg(new MessageConfig.Builder()
+                            .setChannel(logChannel)
+                            .setEmbed(embedMessage(message))
+                            .build());
                     }
                 }
             });

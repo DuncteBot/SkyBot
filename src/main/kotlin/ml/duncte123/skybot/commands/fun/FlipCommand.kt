@@ -45,11 +45,10 @@ class FlipCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-        var uname = event.member!!.effectiveName
+        var uname = ctx.member!!.effectiveName
 
-        if (event.message.mentionedMembers.isNotEmpty()) {
-            uname = event.message.mentionedMembers[0].effectiveName
+        if (ctx.message.mentionedMembers.isNotEmpty()) {
+            uname = ctx.message.mentionedMembers[0].effectiveName
         } else if (ctx.args.isNotEmpty()) {
             uname = ctx.argsJoined
         }
@@ -73,7 +72,7 @@ class FlipCommand : Command() {
             }
         }
 
-        sendMsg(event, "${getFlip()} $output")
+        sendMsg(ctx, "${getFlip()} $output")
     }
 
     private fun getFlip() = flips[floor(Math.random() * flips.size).toInt()]

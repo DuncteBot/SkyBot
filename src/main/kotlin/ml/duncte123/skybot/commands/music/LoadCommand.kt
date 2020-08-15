@@ -39,18 +39,17 @@ class LoadCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val mapper = ctx.variables.jackson
-        val event = ctx.event
-        val attachments = event.message.attachments
+        val attachments = ctx.message.attachments
 
         if (attachments.size == 0) {
-            sendError(event.message)
-            sendMsg(event, "No attachment given")
+            sendError(ctx.message)
+            sendMsg(ctx, "No attachment given")
             return
         }
 
         if (attachments.size > 1) {
-            sendError(event.message)
-            sendMsg(event, "Please only attach one file at a time")
+            sendError(ctx.message)
+            sendMsg(ctx, "Please only attach one file at a time")
             return
         }
 
@@ -70,10 +69,10 @@ class LoadCommand : MusicCommand() {
 
                 val array = node as ArrayNode
 
-                val musicManager = getMusicManager(event.guild, ctx.audioUtils)
+                val musicManager = getMusicManager(ctx.guild, ctx.audioUtils)
                 var shouldAnnounce = true
 
-                sendMsg(event, "Loading ${array.size()} tracks, please wait...")
+                sendMsg(ctx, "Loading ${array.size()} tracks, please wait...")
 
                 array.filter(Objects::nonNull)
                     .forEach { obj ->
@@ -86,11 +85,11 @@ class LoadCommand : MusicCommand() {
                         shouldAnnounce = false
                     }
 
-                sendEmbed(event, EmbedUtils.embedField(AudioUtils.EMBED_TITLE,
+                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE,
                     "Added ${array.size()} requested tracks."))
             } catch (exception: Exception) {
-                sendError(event.message)
-                sendMsg(event, "Invalid JSON file!")
+                sendError(ctx.message)
+                sendMsg(ctx, "Invalid JSON file!")
             } finally {
                 it.close()
             }

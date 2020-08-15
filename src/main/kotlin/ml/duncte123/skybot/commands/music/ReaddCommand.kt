@@ -43,7 +43,7 @@ class ReaddCommand : MusicCommand() {
 
         if (t == null) {
             sendError(event.message)
-            sendMsg(event, "No tracks in queue")
+            sendMsg(ctx, "No tracks in queue")
             return
         }
 
@@ -67,7 +67,7 @@ class ReaddCommand : MusicCommand() {
         try {
             manager.scheduler.queue(track, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
-            sendEmbed(event.channel, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
+            sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
         } catch (e: LimitReachedException) {
             sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")
         }
