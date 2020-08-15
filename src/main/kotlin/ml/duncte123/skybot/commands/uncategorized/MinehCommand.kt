@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
 import me.duncte123.botcommons.messaging.MessageConfig
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -35,12 +34,8 @@ class MinehCommand : Command() {
     override fun execute(ctx: CommandContext) {
         val builder = MessageConfig.Builder.fromCtx(ctx)
             .setMessage("Insert creepy music here")
+            .setEmbed(embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"))
             .configureMessageBuilder { it.setTTS(true) }
-            .setSuccessAction {
-                sendEmbed(ctx,
-                    embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
-                )
-            }
 
         sendMsg(builder.build())
     }

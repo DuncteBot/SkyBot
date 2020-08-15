@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.Permission
 
 class ScreenshotCommand : Command() {
 
@@ -33,6 +34,7 @@ class ScreenshotCommand : Command() {
         this.name = "screenshot"
         this.help = "Screenshots a website"
         this.usage = "<webpage url>"
+        this.botPermissions = arrayOf(Permission.MESSAGE_ATTACH_FILES)
         this.cooldown = 10
         this.cooldownScope = CooldownScope.GUILD
     }
