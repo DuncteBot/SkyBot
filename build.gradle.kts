@@ -41,7 +41,7 @@ plugins {
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
-val numberVersion = "3.96.0"
+val numberVersion = "3.97.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -89,7 +89,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "BETA_2.0.110")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_189") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_194") {
         exclude(module = "opus-java")
     }
 
