@@ -24,12 +24,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,9 +63,19 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
-        this.messageDebouncer = new Debouncer<>((msg) ->
-            sendMsg(guildMusicManager.getLatestChannel(), msg, null, (t) -> {})
-            , DEBOUNCE_INTERVAL);
+        this.messageDebouncer = new Debouncer<>((msg) -> {
+            final TextChannel latestChannel = guildMusicManager.getLatestChannel();
+
+            if (latestChannel == null) {
+                return;
+            }
+
+            sendMsg(new MessageConfig.Builder()
+                .setChannel(latestChannel)
+                .setMessage(msg)
+                .setFailureAction((__) -> {})
+                .build());
+        }, DEBOUNCE_INTERVAL);
     }
 
     public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
@@ -128,7 +140,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 false
             );
 
-            sendEmbed(this.guildMusicManager.getLatestChannel(), message);
+            sendEmbed(this.guildMusicManager.getLatestChannel(), message, false);
         }
     }
 

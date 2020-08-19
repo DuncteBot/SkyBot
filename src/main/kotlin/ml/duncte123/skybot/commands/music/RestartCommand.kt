@@ -38,12 +38,12 @@ class RestartCommand : MusicCommand() {
 
         if (player.playingTrack == null) {
             sendError(event.message)
-            sendMsg(event, "No track currently playing")
+            sendMsg(ctx, "No track currently playing")
             return
         }
 
         if (!player.playingTrack.isSeekable) {
-            sendMsg(event, "This track is not seekable")
+            sendMsg(ctx, "This track is not seekable")
             return
         }
 

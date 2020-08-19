@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -44,8 +43,6 @@ public class YodaSpeakCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
         try {
             final QueryBuilder builder = new QueryBuilder()
                 .append("yoda")
@@ -55,17 +52,17 @@ public class YodaSpeakCommand extends Command {
             logger.debug("Yoda response: " + response);
 
             if (!response.get("success").asBoolean()) {
-                sendMsg(event, "Could not connect to yoda service, try again in a few hours");
+                sendMsg(ctx, "Could not connect to yoda service, try again in a few hours");
                 return;
             }
 
             final String yoda = ctx.getRandom().nextInt(2) == 1 ? "<:yoda:578198258351079438> " : "<:BABY_YODA:670269491736870972> ";
 
-            sendMsg(event, yoda + response.get("data").asText());
+            sendMsg(ctx, yoda + response.get("data").asText());
         }
         catch (Exception e) {
             Sentry.capture(e);
-            sendMsg(event, "Could not connect to yoda service, try again in a few hours");
+            sendMsg(ctx, "Could not connect to yoda service, try again in a few hours");
         }
     }
 }

@@ -34,7 +34,6 @@ class InstaCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val args = ctx.args
-        val event = ctx.event
 
         if (args.isEmpty()) {
             this.sendUsageInstructions(ctx)
@@ -46,7 +45,7 @@ class InstaCommand : Command() {
         val it = ctx.apis.executeDefaultGetRequest("insta/$username", false)
 
         if (!it["success"].asBoolean()) {
-            sendMsg(event, "No data found for this user")
+            sendMsg(ctx, "No data found for this user")
             return
         }
 
@@ -60,13 +59,13 @@ class InstaCommand : Command() {
         val img = imagesArray[0]
         val user = it["user"]
 
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setAuthor(user["username"].asText(), "https://instagram.com/$username/", user["profile_pic_url"].asText())
             .setTitle("Latest picture of $username", img["page_url"].asText())
             .setDescription(img["caption"].asText())
             .setImage(img["url"].asText())
 
-        MessageUtils.sendEmbed(event, embed)
+        MessageUtils.sendEmbed(ctx, embed)
 
     }
 }

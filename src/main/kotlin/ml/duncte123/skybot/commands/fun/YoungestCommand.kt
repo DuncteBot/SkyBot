@@ -16,23 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.guild.owner.settings;
+package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.CooldownScope
+import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.EarthUtils.sendYoungestOldesetEmbed
 
-import javax.annotation.Nonnull;
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class ToggleSpamFilterCommand extends SettingsBase {
-
-    public ToggleSpamFilterCommand() {
-        this.name = "togglespamfilter";
-        this.help = "Toggles whether we should handle your incoming spam";
+class YoungestCommand : Command() {
+    init {
+        this.category = CommandCategory.FUN
+        this.name = "youngest"
+        this.help = "Shows the youngest member in the server"
+        this.cooldown = 10
+        this.cooldownScope = CooldownScope.GUILD
+        this.cooldownKey = {_, _ -> "youngest|oldest"}
     }
 
-    @Override
-    public void execute(@Nonnull CommandContext ctx) {
-        this.showNewHelp(ctx, "swearFilter", null);
+    override fun execute(ctx: CommandContext) {
+        sendYoungestOldesetEmbed(ctx, false)
     }
 }

@@ -34,12 +34,12 @@ public abstract class NoPatronImageCommand extends ImageCommandBase {
         final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
+            sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return null;
         }
 
         if (split[0].trim().equals("") || split[1].trim().equals("")) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
+            sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return null;
         }
 

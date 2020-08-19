@@ -40,15 +40,11 @@ class SlowModeCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-
-        val event = ctx.event
-
         if (ctx.args.isEmpty()) {
-
             val currentMode = ctx.channel.slowmode
             val currentModeString = if (currentMode == 0) "disabled" else "$currentMode seconds"
 
-            sendMsg(event, "Current slowmode is `$currentModeString`")
+            sendMsg(ctx, "Current slowmode is `$currentModeString`")
             return
         }
 
@@ -61,14 +57,14 @@ class SlowModeCommand : ModBaseCommand() {
         }
 
         if (!AirUtils.isInt(delay)) {
-            sendMsg(event, "Provided argument is not an integer")
+            sendMsg(ctx, "Provided argument is not an integer")
             return
         }
 
         val intDelay = delay.toInt()
 
         if (intDelay < 0 || intDelay > TextChannel.MAX_SLOWMODE) {
-            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 0-${TextChannel.MAX_SLOWMODE} (21600 is 6 hours in seconds)")
+            sendMsg(ctx, "$intDelay is not valid, a valid delay is a number in the range 0-${TextChannel.MAX_SLOWMODE} (21600 is 6 hours in seconds)")
             return
         }
 

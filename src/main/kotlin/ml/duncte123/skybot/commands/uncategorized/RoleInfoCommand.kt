@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
@@ -66,7 +66,7 @@ class RoleInfoCommand : Command() {
         val memberCount = ctx.jdaGuild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
         val times = ctx.variables.prettyTime.parseTimes(role)
 
-        val embed = EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.getDefaultEmbed()
             .setColor(role.colorRaw)
             .setDescription("""__Role info for ${role.asMention}__
                 |
@@ -82,6 +82,6 @@ class RoleInfoCommand : Command() {
                 |**Permissions:** $perms
             """.trimMargin())
 
-        sendEmbedRaw(ctx.channel, embed.build()) {}
+        sendEmbed(ctx, embed, true)
     }
 }

@@ -34,14 +34,13 @@ class StopCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val guild = event.guild
+        val guild = ctx.jdaGuild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val track = player.playingTrack
 
         if (track == null) {
-            sendMsg(event, "The player is not playing.")
+            sendMsg(ctx, "The player is not playing.")
             return
         }
 
@@ -52,12 +51,12 @@ class StopCommand : MusicCommand() {
             player.stopTrack()
             player.isPaused = false
 
-            sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
+            sendMsg(ctx, "Playback has been completely stopped and the queue has been cleared.")
 
             return
         }
 
-        sendMsg(event, "Only the person that started this track " +
+        sendMsg(ctx, "Only the person that started this track " +
             "or people with the `Manage Server` permission can stop this track")
     }
 }

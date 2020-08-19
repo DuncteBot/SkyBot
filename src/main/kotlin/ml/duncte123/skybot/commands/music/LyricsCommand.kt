@@ -25,7 +25,6 @@ import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
@@ -34,6 +33,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
+// TODO: switch to musixmatch
 class LyricsCommand : MusicCommand() {
 
     private var authToken = ""
@@ -74,12 +74,11 @@ class LyricsCommand : MusicCommand() {
                     val text = doc.select("div.lyrics").first().child(0).wholeText()
                         .replace("<br>", "\n")
 
-                    sendEmbed(ctx, EmbedUtils.defaultEmbed()
+                    sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
                         .setTitle("Lyrics for $search", url)
                         .setDescription(StringUtils.abbreviate(text, 1900))
                         .appendDescription("\n\n Full lyrics on [genius.com]($url)")
-                        .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
-                        .build())
+                        .setFooter("Powered by genius.com"))
                 }
             }
         }

@@ -32,7 +32,7 @@ class DonateCommand : Command() {
     override fun execute(ctx: CommandContext) {
         val amount = if (ctx.args.isNotEmpty()) "/" + ctx.argsRaw else ""
 
-        MessageUtils.sendMsg(ctx.event, """Hey there thank you for your interest in supporting the bot.
+        MessageUtils.sendMsg(ctx, """Hey there thank you for your interest in supporting the bot.
                         |You can use one of the following methods to donate:
                         |**Patreon:** <https://patreon.com/DuncteBot>
                         |**PayPal:** <https://paypal.me/duncte123$amount>

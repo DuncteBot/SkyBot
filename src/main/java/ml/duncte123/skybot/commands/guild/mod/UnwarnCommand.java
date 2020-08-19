@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class UnwarnCommand extends ModBaseCommand {
@@ -65,7 +64,7 @@ public class UnwarnCommand extends ModBaseCommand {
                     return null;
                 }
 
-                sendMsgFormat(ctx, "Latest warning for _%s_ removed\nReason was: %s", target.getAsTag(), latestWarning.getReason());
+                sendMsg(ctx, String.format("Latest warning for _%s_ removed\nReason was: %s", target.getAsTag(), latestWarning.getReason()));
                 modLog(String.format(
                     "**%s** removed the latest warning for **%s**\nReason was: %s",
                     ctx.getAuthor().getAsTag(),

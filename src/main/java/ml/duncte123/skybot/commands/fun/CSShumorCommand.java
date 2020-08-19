@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MapUtils;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jsoup.nodes.Element;
 
 import javax.annotation.Nonnull;
@@ -52,14 +51,14 @@ public class CSShumorCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         if (ctx.getRandom().nextInt(2) == 1) {
-            sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
+            sendRedditPost("css_irl", cssIndex, ctx, true);
         } else {
-            sendCssJoke(ctx.getEvent());
+            sendCssJoke(ctx);
         }
     }
 
     @Author(nickname = "ramidzkh", author = "Ramid Khan") // Thanks for the regex bud
-    private void sendCssJoke(GuildMessageReceivedEvent event) {
+    private void sendCssJoke(CommandContext ctx) {
         WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
             final Element code = doc.selectFirst(".crayon-pre");
             final String text = code.text()
@@ -69,10 +68,9 @@ public class CSShumorCommand extends Command {
                 .replace("; }", ";\n}");
             final String message = String.format("```CSS\n%s```", text);
             final Element link = doc.selectFirst(".funny h2 a");
-            sendEmbed(event, EmbedUtils.defaultEmbed()
+            sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
                 .setTitle(link.text(), link.attr("href"))
-                .setDescription(message)
-                .build());
+                .setDescription(message));
         });
     }
 }

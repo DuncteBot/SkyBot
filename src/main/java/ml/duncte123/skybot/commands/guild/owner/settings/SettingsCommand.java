@@ -176,11 +176,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(
-                ctx,
+            sendMsg(ctx, String.format(
                 "Autorole is currently set to %s",
                 settings.getAutoroleRole() > 0 ? "<@&" + settings.getAutoroleRole() + '>' : "`None`"
-            );
+            ));
             return;
         }
 
@@ -208,11 +207,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(
-                ctx,
+            sendMsg(ctx, String.format(
                 "Mute role is currently set to %s",
                 settings.getMuteRoleId() > 0 ? "<@&" + settings.getMuteRoleId() + '>' : "`None`"
-            );
+            ));
             return;
         }
 
@@ -272,7 +270,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(ctx, "You can see the current server description by running `%sguildinfo`", settings.getCustomPrefix());
+            sendMsg(ctx, String.format(
+                "You can see the current server description by running `%sguildinfo`",
+                settings.getCustomPrefix()
+            ));
             return;
         }
 
@@ -347,11 +348,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(
-                ctx,
+            sendMsg(ctx, String.format(
                 "The current log channel is %s",
                 settings.getLogChannel() > 0 ? "<#" + settings.getLogChannel() + '>' : "`None`"
-            );
+            ));
             return;
         }
 
@@ -380,7 +380,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(ctx, "The current custom prefix on this server is `%s`", settings.getCustomPrefix());
+            sendMsg(ctx, String.format(
+                "The current custom prefix on this server is `%s`",
+                settings.getCustomPrefix()
+            ));
             return;
         }
 
@@ -434,11 +437,10 @@ public class SettingsCommand extends Command {
         final GuildSettings settings = guild.getSettings();
 
         if (!setValue) {
-            sendMsgFormat(
-                ctx,
+            sendMsg(ctx, String.format(
                 "The welcome channel is %s",
                 settings.getWelcomeLeaveChannel() > 0 ? "<#" + settings.getWelcomeLeaveChannel() + '>' : "`None`"
-            );
+            ));
             return;
         }
 

@@ -61,7 +61,7 @@ class RestartShardCommand : Command() {
         try {
             when (ctx.args.size) {
                 0 -> {
-                    MessageUtils.sendMsg(ctx.event, "All shards will restart in $restartInSec seconds")
+                    MessageUtils.sendMsg(ctx, "All shards will restart in $restartInSec seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, shardManager, ctx.audioUtils)
@@ -77,11 +77,11 @@ class RestartShardCommand : Command() {
                     val id = ctx.args[0].toInt()
 
                     if (id > shardManager.shardsTotal - 1) {
-                        MessageUtils.sendMsg(ctx.event, "$id is an invalid shard id")
+                        MessageUtils.sendMsg(ctx, "$id is an invalid shard id")
                         return
                     }
 
-                    MessageUtils.sendMsg(ctx.event, "Shard $id will restart in $restartInSec seconds")
+                    MessageUtils.sendMsg(ctx, "Shard $id will restart in $restartInSec seconds")
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, shardManager, ctx.audioUtils)

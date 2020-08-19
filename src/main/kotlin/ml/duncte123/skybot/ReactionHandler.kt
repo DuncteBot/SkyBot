@@ -51,7 +51,7 @@ class ReactionHandler : EventListener {
         val cacheElement = requirementsCache.firstOrNull { ctx.sendId == it.authorId }
 
         if (cacheElement == null) {
-            sendMsg(ctx.event, "Internal error!")
+            sendMsg(ctx, "Internal error!")
             return
         }
 

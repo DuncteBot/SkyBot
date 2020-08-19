@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,7 +84,7 @@ public class TempBanCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final Duration duration = getDuration(args.get(1), getName(), ctx.getEvent(), ctx.getPrefix());
+        final Duration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -119,7 +118,7 @@ public class TempBanCommand extends ModBaseCommand {
     }
 
     @Nullable
-    public static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event, String prefix) {
+    public static Duration getDuration(String arg, String name, CommandContext ctx, String prefix) {
         Optional<Duration> optionalDuration;
 
         try {
@@ -130,7 +129,7 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         if (optionalDuration.isEmpty()) {
-            sendMsg(event, "Usage is `" + prefix + name + " <@user> <time><w/d/h/m/s> [Reason]`");
+            sendMsg(ctx, "Usage is `" + prefix + name + " <@user> <time><w/d/h/m/s> [Reason]`");
 
             return null;
         }
@@ -138,13 +137,13 @@ public class TempBanCommand extends ModBaseCommand {
         final Duration duration = optionalDuration.get();
 
         if (duration.getMilis() == 0) {
-            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
+            sendMsg(ctx, "Your specified time is too short or the time syntax is invalid.");
 
             return null;
         }
 
         if (duration.getSeconds() < 30) {
-            sendMsg(event, "Minimum duration is 30 seconds");
+            sendMsg(ctx, "Minimum duration is 30 seconds");
 
             return null;
         }

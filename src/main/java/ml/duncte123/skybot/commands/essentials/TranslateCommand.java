@@ -24,7 +24,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -45,14 +44,13 @@ public class TranslateCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final String targetLang = args.get(0);
         final String input = String.join(" ", args.subList(1, args.size()));
         final ArrayNode translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
         if (translatedJson.isEmpty()) {
-            sendMsg(ctx.getEvent(), "No translation found");
+            sendMsg(ctx, "No translation found");
             return;
         }
 
@@ -60,6 +58,6 @@ public class TranslateCommand extends Command {
         final String message = "Original: " + input + "\n" +
             "Translation to " + targetLang + " : " + translation;
 
-        sendMsg(event, message);
+        sendMsg(ctx, message);
     }
 }

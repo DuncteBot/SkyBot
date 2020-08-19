@@ -82,13 +82,14 @@ dependencies {
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
 
     // Weeb api
-    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
+//    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
+    implementation(group = "com.github.duncte123", name = "weeb.java", version = "18ba8fc")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "1.0.88")
+    implementation(group = "me.duncte123", name = "botCommons", version = "BETA_2.0.110")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_183") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_189") {
         exclude(module = "opus-java")
     }
 
@@ -152,7 +153,7 @@ dependencies {
     implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.0")
 
     // okhttp
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.7")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
 
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)

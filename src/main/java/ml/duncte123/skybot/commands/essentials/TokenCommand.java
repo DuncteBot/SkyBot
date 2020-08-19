@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,8 +57,6 @@ public class TokenCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
@@ -69,7 +67,7 @@ public class TokenCommand extends Command {
         final Matcher matcher = TOKEN_REGEX.matcher(args.get(0));
 
         if (!matcher.matches()) {
-            sendMsg(event, "Your input `" + args.get(0) + "` has the wrong token format.");
+            sendMsg(ctx, "Your input `" + args.get(0) + "` has the wrong token format.");
             return;
         }
 
@@ -77,7 +75,7 @@ public class TokenCommand extends Command {
         final JsonNode json = apis.decodeToken(args.get(0));
 
         if (json.get("success").asBoolean()) {
-            handleSuccess(args.get(0), (ObjectNode) json.get("data"), event);
+            handleSuccess(args.get(0), (ObjectNode) json.get("data"), ctx);
 
             return;
         }
@@ -86,7 +84,7 @@ public class TokenCommand extends Command {
         final String errorType = error.get("type").asText();
         final String errorMessage = error.get("message").asText();
 
-        sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
+        sendMsg(ctx, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
 
     @Nullable
@@ -112,46 +110,49 @@ public class TokenCommand extends Command {
         }
     }
 
-    private void handleSuccess(String arg, ObjectNode data, GuildMessageReceivedEvent event) {
+    private void handleSuccess(String arg, ObjectNode data, CommandContext ctx) {
         final String id = data.get("id").asText();
         final OffsetDateTime time = toTimeStamp(data.get("timestamp").asLong());
 
         if (time == null) {
-            sendMsg(event, "Could not decode timestamp.");
+            sendMsg(ctx, "Could not decode timestamp.");
             return;
         }
 
         final String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
-        sendMsg(event, String.format(STRING_FORMAT, arg, id, timestamp, ""), (message) -> {
-            try {
-                if (!isLong(id)) {
-                    final String info = String.format("%n%n%s is not a valid long id", id);
-                    final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
-                    message.editMessage(newMessage).queue();
-
-                    return;
-                }
-
-                event.getJDA().retrieveUserById(id).queue(
-                    (user) -> {
-                        final String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
-                        final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, userinfo);
-                        message.editMessage(newMessage).queue();
-                    },
-                    (error) -> {
-                        final String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
+        sendMsg(MessageConfig.Builder.fromCtx(ctx)
+            .setMessage(String.format(STRING_FORMAT, arg, id, timestamp, ""))
+            .setSuccessAction((message) -> {
+                try {
+                    if (!isLong(id)) {
+                        final String info = String.format("%n%n%s is not a valid long id", id);
                         final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
                         message.editMessage(newMessage).queue();
-                    }
-                );
 
-            }
-            catch (IllegalArgumentException e) {
-                final String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
-                final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
-                message.editMessage(newMessage).queue();
-            }
-        });
+                        return;
+                    }
+
+                    ctx.getJDA().retrieveUserById(id).queue(
+                        (user) -> {
+                            final String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
+                            final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, userinfo);
+                            message.editMessage(newMessage).queue();
+                        },
+                        (error) -> {
+                            final String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
+                            final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
+                            message.editMessage(newMessage).queue();
+                        }
+                    );
+
+                }
+                catch (IllegalArgumentException e) {
+                    final String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
+                    final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
+                    message.editMessage(newMessage).queue();
+                }
+            })
+            .build());
     }
 }
