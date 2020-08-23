@@ -98,6 +98,13 @@ public abstract class ImageCommandBase extends Command {
             return;
         }
 
+        handleBasicImage(event, image);
+    }
+
+
+    public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
+        final TextChannel channel = event.getChannel();
+
         if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
             channel.sendFile(image, getFileName()).queue();
         } else {
