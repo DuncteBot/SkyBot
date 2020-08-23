@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.Pair;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.extensions.UserKt;
@@ -77,8 +79,24 @@ public abstract class ImageCommandBase extends Command {
         return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
-    public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
+    public void handleBasicImage(GuildMessageReceivedEvent event, Pair<byte[], JsonNode> data) {
         final TextChannel channel = event.getChannel();
+        final var image = data.getFirst();
+
+        if (image == null) {
+            final JsonNode json = data.getSecond();
+            final String message;
+
+            // Success should always be false but you never know
+            if (json.get("success").asBoolean()) {
+                message = json.get("message").asText();
+            } else {
+                message = json.get("error").get("message").asText();
+            }
+
+            sendMsg(channel, "Error while generating image: " + message);
+            return;
+        }
 
         if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
             channel.sendFile(image, getFileName()).queue();

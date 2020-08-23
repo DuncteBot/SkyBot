@@ -457,32 +457,32 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
     fun getFilter(flag: String, avatarUrl: String) = getImageRaw("filters", flag, avatarUrl)
 
-    private fun getImageRaw(path: String, item: String, avatarUrl: String): ByteArray {
+    private fun getImageRaw(path: String, item: String, avatarUrl: String): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode().put("image", avatarUrl)
 
         return postJSONBytes("$path/$item", json)
     }
 
-    fun getIWantToDie(text: String): ByteArray {
+    fun getIWantToDie(text: String): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode().put("text", text)
 
         return postJSONBytes("memes/wanttodie", json)
     }
 
-    fun getFreeRealEstate(text: String): ByteArray {
+    fun getFreeRealEstate(text: String): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode().put("text", text)
 
         return postJSONBytes("memes/itsfreerealestate", json)
     }
 
-    fun getDannyDrake(top: String, bottom: String, dabbing: Boolean = false): ByteArray {
+    fun getDannyDrake(top: String, bottom: String, dabbing: Boolean = false): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode()
             .put("top", top).put("bottom", bottom).put("dabbing", dabbing)
 
         return postJSONBytes("memes/dannyphantomdrake", json)
     }
 
-    fun getDrakeMeme(top: String, bottom: String): ByteArray {
+    fun getDrakeMeme(top: String, bottom: String): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode()
             .put("top", top).put("bottom", bottom)
 
@@ -654,12 +654,18 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return data
     }
 
-    private fun postJSONBytes(path: String, json: JsonNode): ByteArray {
+    private fun postJSONBytes(path: String, json: JsonNode): Pair<ByteArray?, JsonNode?> {
         val body = RequestBody.create(null, json.toJsonString())
         val request = defaultRequest(path, false)
             .post(body).addHeader("Content-Type", JSON.type)
 
-        return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
+        return WebUtils.ins.prepareRaw(request.build()) {
+            if (it.header("Content-Type") == "application/json") {
+                return@prepareRaw null to mapper.readTree(it.body()!!.byteStream())
+            }
+
+            return@prepareRaw IOHelper.read(it) to null
+        }.execute()
     }
 
     private fun parseTripleResponse(response: JsonNode): Triple<Boolean, Boolean, Boolean> {

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.Pair;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.extensions.UserKt;
@@ -80,7 +82,7 @@ public class FlagCommand extends ImageCommandBase {
         }
 
         final String imageUrl = UserKt.getStaticAvatarUrl(user) + "?size=512";
-        final byte[] image = ctx.getApis().getFlag(flag, imageUrl);
+        final Pair<byte[], JsonNode> image = ctx.getApis().getFlag(flag, imageUrl);
 
         handleBasicImage(event, image);
 
