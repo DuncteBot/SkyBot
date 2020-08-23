@@ -16,27 +16,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.uncategorized
+package ml.duncte123.skybot.commands.patreon
 
-import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
-import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.objects.CooldownScope
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.Permission
 
-class MinehCommand : Command() {
+class ScreenshotCommand : Command() {
 
     init {
-        this.name = "mineh"
-        this.help = "HERE COMES MINEH!"
+        this.requiresArgs = true
+        this.category = CommandCategory.PATRON
+        this.name = "screenshot"
+        this.help = "Screenshots a website"
+        this.usage = "<webpage url>"
+        this.botPermissions = arrayOf(Permission.MESSAGE_ATTACH_FILES)
+        this.cooldown = 10
+        this.cooldownScope = CooldownScope.GUILD
     }
 
     override fun execute(ctx: CommandContext) {
-        val builder = MessageConfig.Builder.fromCtx(ctx)
-            .setMessage("Insert creepy music here")
-            .setEmbed(embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"))
-            .configureMessageBuilder { it.setTTS(true) }
+        val url = ctx.argsRaw
 
-        sendMsg(builder.build())
+        if (!AirUtils.isURL(url)) {
+            sendMsg(ctx, "`$url` is not a valid link")
+            return
+        }
+
+        // decode base64 to byte array
+        val base64 = ctx.apis.screenshotWebsite(url)
+
+        ctx.channel.sendFile(base64, "screenshot.png")
+            .append("><").append(url).append('>')
+            .queue()
     }
 }

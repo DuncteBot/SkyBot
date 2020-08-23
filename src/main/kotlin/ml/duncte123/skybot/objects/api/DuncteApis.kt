@@ -37,6 +37,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
 import java.time.Instant
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
@@ -457,6 +458,12 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
     fun getFilter(flag: String, avatarUrl: String) = getImageRaw("filters", flag, avatarUrl)
 
+    fun screenshotWebsite(url: String): ByteArray {
+        val response = executeRequest(defaultRequest("screenshot?url=${url.enc()}"))
+
+        return Base64.getDecoder().decode(response["data"].asText())
+    }
+
     private fun getImageRaw(path: String, item: String, avatarUrl: String): Pair<ByteArray?, JsonNode?> {
         val json = mapper.createObjectNode().put("image", avatarUrl)
 
@@ -747,8 +754,8 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     private fun String.enc() = urlEncodeString(this)
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.test/"
 //        const val API_HOST = "http://localhost:8081"
+//        const val API_HOST = "http://duncte123-apis-lumen.test/"
+        const val API_HOST = "https://apis.duncte123.me"
     }
 }
