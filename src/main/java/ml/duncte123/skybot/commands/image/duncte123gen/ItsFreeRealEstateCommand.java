@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.image.duncte123gen;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.Pair;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -37,8 +39,8 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
             return;
         }
 
-        final byte[] image = ctx.getApis().getFreeRealEstate(parseTextArgsForImage(ctx));
+        final Pair<byte[], JsonNode> freeRealEstate = ctx.getApis().getFreeRealEstate(parseTextArgsForImage(ctx));
 
-        handleBasicImage(ctx.getEvent(), image);
+        handleBasicImage(ctx.getEvent(), freeRealEstate);
     }
 }

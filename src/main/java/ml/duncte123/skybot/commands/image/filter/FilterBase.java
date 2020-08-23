@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.Pair;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -47,8 +49,24 @@ public abstract class FilterBase extends NoPatronImageCommand {
         if (url == null) {
             sendMsg(ctx, "Could not find image, please mention a user, upload an image, or put an image url after the command");
         } else {
-            final byte[] image = ctx.getApis().getFilter(this.getFilterName(), url);
-            handleBasicImage(event, image);
+            final Pair<byte[], JsonNode> filter = ctx.getApis().getFilter(this.getFilterName(), url);
+
+            if (filter.getFirst() == null) {
+                final JsonNode json = filter.getSecond();
+                final String message;
+
+                // Success should always be false but you never know
+                if (json.get("success").asBoolean()) {
+                    message = json.get("message").asText();
+                } else {
+                    message = json.get("error").get("message").asText();
+                }
+
+                sendMsg(ctx, "Error while applying filter: " + message);
+                return;
+            }
+
+            handleBasicImage(event, filter);
         }
     }
 

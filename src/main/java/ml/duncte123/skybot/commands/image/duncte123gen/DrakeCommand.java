@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.image.duncte123gen;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import kotlin.Pair;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -60,14 +62,14 @@ public class DrakeCommand extends NoPatronImageCommand {
 
         if (invoke.equalsIgnoreCase("ddrake") || invoke.equalsIgnoreCase("dddrake")) {
             final boolean shouldDab = invoke.equalsIgnoreCase("dddrake");
-            final byte[] drake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
+            final Pair<byte[], JsonNode> dannyDrake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
 
-            handleBasicImage(ctx.getEvent(), drake);
+            handleBasicImage(ctx.getEvent(), dannyDrake);
 
             return;
         }
 
-        final byte[] image = ctx.getApis().getDrakeMeme(split[0], split[1]);
-        handleBasicImage(ctx.getEvent(), image);
+        final Pair<byte[], JsonNode> drakeMeme = ctx.getApis().getDrakeMeme(split[0], split[1]);
+        handleBasicImage(ctx.getEvent(), drakeMeme);
     }
 }
