@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.web.controllers.GuildStuffController
 import net.dv8tion.jda.api.entities.Guild
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -39,7 +38,8 @@ class RolesCommand : Command() {
         val guild = ctx.jdaGuild
         val hash = generateHash(guild)
 
-        GuildStuffController.guildHashes.put(hash, guild.idLong)
+        // TODO: find a way to implement this in the remote dashboard (websocket?)
+        //GuildStuffController.guildHashes.put(hash, guild.idLong)
         sendMsg(ctx, "Check out the roles on this server here: $domain/roles/$hash\nThis link is valid for 2 hours")
     }
 

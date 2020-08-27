@@ -34,9 +34,7 @@ import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.DataController
-import ml.duncte123.skybot.web.controllers.GuildStuffController
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
 import ml.duncte123.skybot.web.controllers.api.*
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
@@ -110,35 +108,12 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
         defaultResponseTransformer(responseTransformer)
 
-        get("/callback") { request, response ->
-            return@get Callback.handle(request, response, oAuth2Client)
-        }
-
-        get("/logout") { request, response ->
-            request.session().invalidate()
-
-            return@get response.redirect(HOMEPAGE)
-        }
-
         getWithDefaultData("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.vm")
 
         post("/register-server") { request, _ ->
             return@post OneGuildRegister.post(request, shardManager, variables, mapper)
-        }
-
-        path("/") {
-
-            before("") { request, response ->
-                return@before Dashboard.before(request, response, oAuth2Client, config)
-            }
-
-            getWithDefaultData("", WebVariables().put("title", "Dashboard"), "dashboard/index.vm")
-        }
-
-        get("/roles/:hash") { request, response ->
-            return@get GuildStuffController.showGuildRoles(request, response, shardManager)
         }
 
         path("/server/$GUILD_ID") {
