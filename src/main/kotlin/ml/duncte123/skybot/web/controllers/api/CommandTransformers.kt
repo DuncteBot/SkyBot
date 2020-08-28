@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.web.controllers.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
@@ -26,7 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 
 object CommandTransformers {
 
-    fun toJson(commandManager: CommandManager, mapper: ObjectMapper): Any {
+    fun toJson(commandManager: CommandManager, mapper: ObjectMapper): ArrayNode {
         val commands = commandManager.getCommandsList().sortedBy { it.name }
         val output = mapper.createArrayNode()
 

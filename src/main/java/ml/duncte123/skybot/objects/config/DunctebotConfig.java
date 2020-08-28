@@ -28,6 +28,7 @@ public class DunctebotConfig {
     public Genius genius;
     public Lavalink lavalink;
     public Sentry sentry;
+    public Websocket websocket;
     public boolean use_database;
 
     public static class Discord {
@@ -90,5 +91,10 @@ public class DunctebotConfig {
     public static class Sentry {
         public boolean enabled;
         public String dsn;
+    }
+
+    public static class Websocket {
+        public String url;
+        public boolean enable;
     }
 }

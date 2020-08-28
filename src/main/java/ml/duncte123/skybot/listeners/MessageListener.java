@@ -38,6 +38,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import ml.duncte123.skybot.web.WebRouter;
+import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -479,6 +480,12 @@ public abstract class MessageListener extends BaseListener {
 
                 if (router != null) {
                     router.shutdown();
+                }
+
+                final WebSocketClient client = SkyBot.getInstance().getWebsocketClient();
+
+                if (client != null) {
+                    client.shutdown();
                 }
 
                 AirUtils.stop(variables.getAudioUtils(), manager);

@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
+import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.GatewayEncoding;
 import net.dv8tion.jda.api.entities.Activity;
@@ -40,6 +41,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.internal.JDAImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,7 @@ public final class SkyBot {
         Settings.PREFIX + "help | Shard " + (shardId + 1)
     );
     private WebRouter webRouter = null;
+    private WebSocketClient client;
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
         // Member needs to be cached for JDA to fire role update event
@@ -158,6 +161,10 @@ public final class SkyBot {
         if (!config.discord.local) {
             webRouter = new WebRouter(shardManager, variables);
         }
+        
+        if (config.websocket.enable) {
+            client = new WebSocketClient(config, variables, shardManager);
+        }
     }
 
     private void configureDefaults() {
@@ -200,6 +207,10 @@ public final class SkyBot {
 
     public WebRouter getWebRouter() {
         return webRouter;
+    }
+
+    public WebSocketClient getWebsocketClient() {
+        return client;
     }
 
     public static void main(final String[] args) throws Exception {

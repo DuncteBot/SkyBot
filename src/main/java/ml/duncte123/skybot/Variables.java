@@ -20,7 +20,7 @@ package ml.duncte123.skybot;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
@@ -51,7 +51,7 @@ import java.util.concurrent.*;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = new JsonMapper();
     private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
@@ -179,7 +179,7 @@ public final class Variables {
         return this.alexflipnote;
     }
 
-    public ObjectMapper getJackson() {
+    public JsonMapper getJackson() {
         return this.mapper;
     }
 
