@@ -41,7 +41,6 @@ import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
 import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
-import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -56,27 +55,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
-        /*.setOkHttpClient(
-            OkHttpClient.Builder()
-                // hack until JDA-Utils fixes their shit
-                .addInterceptor {
-                    var request = it.request()
-                    val httpUrl = request.url()
-
-                    if (httpUrl.host().contains("discordapp")){
-                        val newHttpUrl = httpUrl.newBuilder()
-                            .host("discord.com")
-                            .build()
-
-                        request = request.newBuilder()
-                            .url(newHttpUrl)
-                            .build()
-                    }
-
-                    it.proceed(request)
-                }
-                .build()
-        )*/
         .build()
 
 
@@ -223,18 +201,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
             post("/update-data") { request, _ ->
                 return@post DataController.updateData(request, mapper, shardManager, variables)
             }
-        }
-
-        notFound { request, response ->
-            val result = HttpErrorHandlers.notFound(request, response, mapper)
-
-            return@notFound responseTransformer(result)
-        }
-
-        internalServerError { request, response ->
-            val result = HttpErrorHandlers.internalServerError(request, response, mapper)
-
-            return@internalServerError responseTransformer(result)
         }
     }
 
