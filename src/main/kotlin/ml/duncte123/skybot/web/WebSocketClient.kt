@@ -28,9 +28,11 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 
 class WebSocketClient(
-    private val config: DunctebotConfig, private val variables: Variables, private val shardManager: ShardManager
+    private val variables: Variables, private val shardManager: ShardManager
 ): WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
+
+    private val config = variables.config
 
     private val socket: WebSocket
 
@@ -41,8 +43,9 @@ class WebSocketClient(
 
         socket = factory.createSocket(config.websocket.url)
 
-        socket.setDirectTextMessage(false)
+        socket.setDirectTextMessage(true)
             .addHeader("Accept-Encoding", "gzip")
+            .addHeader("Authorization", variables.apis.apiKey)
             .addListener(this)
             .connect()
     }
@@ -56,6 +59,7 @@ class WebSocketClient(
 
     override fun onDisconnected(websocket: WebSocket, serverCloseFrame: WebSocketFrame, clientCloseFrame: WebSocketFrame, closedByServer: Boolean) {
         // Reconnect?
+        println("disconnected")
     }
 
     override fun onTextMessage(websocket: WebSocket, text: String) {
@@ -63,7 +67,9 @@ class WebSocketClient(
     }
 
     override fun onTextMessage(websocket: WebSocket, data: ByteArray) {
-        //
+        val json = variables.jackson.readTree(data)
+
+        println(json)
     }
 
     override fun onError(websocket: WebSocket, cause: WebSocketException) {

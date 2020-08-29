@@ -40,7 +40,7 @@ import java.time.Instant
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
+class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 

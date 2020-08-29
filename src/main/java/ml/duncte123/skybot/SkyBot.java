@@ -163,7 +163,7 @@ public final class SkyBot {
         }
         
         if (config.websocket.enable) {
-            client = new WebSocketClient(config, variables, shardManager);
+            client = new WebSocketClient(variables, shardManager);
         }
     }
 
