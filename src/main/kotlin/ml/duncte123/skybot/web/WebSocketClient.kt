@@ -18,10 +18,12 @@
 
 package ml.duncte123.skybot.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.utils.data.DataObject
 import net.dv8tion.jda.internal.utils.IOUtil
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -51,10 +53,7 @@ class WebSocketClient(
     }
 
     override fun onConnected(websocket: WebSocket, headers: MutableMap<String, MutableList<String>>) {
-        println(headers)
-        // session is ready
-
-        websocket.sendText("This is a test")
+        log.info("Connected to dashboard WebSocket")
     }
 
     override fun onDisconnected(websocket: WebSocket, serverCloseFrame: WebSocketFrame, clientCloseFrame: WebSocketFrame, closedByServer: Boolean) {
@@ -86,11 +85,20 @@ class WebSocketClient(
         }
     }
 
+    // TODO: SEND ON OWN THREAD
+    fun send(data: DataObject) {
+        socket.sendText(data.toString())
+    }
+
+    fun send(data: JsonNode) {
+        socket.sendText(variables.jackson.writeValueAsString(data))
+    }
+
     override fun onThreadCreated(websocket: WebSocket, threadType: ThreadType, thread: Thread) {
         thread.name = "DuncteBotWS-$threadType"
     }
 
     fun shutdown() {
-        //
+        socket.sendClose()
     }
 }
