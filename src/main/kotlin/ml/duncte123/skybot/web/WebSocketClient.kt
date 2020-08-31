@@ -28,11 +28,17 @@ import net.dv8tion.jda.internal.utils.IOUtil
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.SocketTimeoutException
+import java.util.concurrent.Executors
 
 class WebSocketClient(
     private val variables: Variables, private val shardManager: ShardManager
 ): WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
+    private val executor = Executors.newSingleThreadExecutor {
+        val t = Thread(it, "DB-SendThread")
+        t.isDaemon = true
+        return@newSingleThreadExecutor t
+    }
 
     private val config = variables.config
 
@@ -85,13 +91,22 @@ class WebSocketClient(
         }
     }
 
-    // TODO: SEND ON OWN THREAD
     fun send(data: DataObject) {
-        socket.sendText(data.toString())
+        send(data.toString())
     }
 
     fun send(data: JsonNode) {
-        socket.sendText(variables.jackson.writeValueAsString(data))
+        send(variables.jackson.writeValueAsString(data))
+    }
+
+    private fun send(string: String) {
+        executor.submit {
+            try {
+                socket.sendText(string)
+            } catch (e: Exception) {
+                log.error("Error while sending WS message", e)
+            }
+        }
     }
 
     override fun onThreadCreated(websocket: WebSocket, threadType: ThreadType, thread: Thread) {

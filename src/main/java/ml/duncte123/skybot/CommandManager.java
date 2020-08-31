@@ -487,7 +487,6 @@ public class CommandManager {
             }
             catch (Throwable ex) {
                 Sentry.capture(ex);
-                ex.printStackTrace();
                 sendMsg(MessageConfig.Builder.fromEvent(event)
                     .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
                     .build());
