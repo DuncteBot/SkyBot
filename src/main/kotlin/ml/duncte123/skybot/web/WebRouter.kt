@@ -34,9 +34,11 @@ import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.controllers.DataController
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
-import ml.duncte123.skybot.web.controllers.api.*
+import ml.duncte123.skybot.web.controllers.api.CustomCommands
+import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
+import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
+import ml.duncte123.skybot.web.controllers.api.MainApi
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
 import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
@@ -192,14 +194,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
             post("/checkUserAndGuild") { request, response ->
                 return@post FindUserAndGuild.get(request, response, shardManager, mapper)
-            }
-
-            get("/commands.json") { _, _ ->
-                return@get CommandTransformers.toJson(variables.commandManager, mapper)
-            }
-
-            post("/update-data") { request, _ ->
-                return@post DataController.updateData(request, mapper, shardManager, variables)
             }
         }
     }

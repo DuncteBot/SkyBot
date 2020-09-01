@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.JDA;
@@ -25,6 +26,7 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.utils.data.DataObject;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
@@ -67,6 +69,10 @@ public class ReadyShutdownListener extends MessageListener {
 
             // Load the patrons here so that they are loaded once
             GuildUtils.loadAllPatrons(variables.getDatabaseAdapter());
+
+            SkyBot.getInstance().getWebsocketClient().send(
+                DataObject.empty().put("t", "NOTHING")
+            );
         }
     }
 

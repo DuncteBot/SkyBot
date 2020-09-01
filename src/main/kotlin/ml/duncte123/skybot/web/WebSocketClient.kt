@@ -21,7 +21,8 @@ package ml.duncte123.skybot.web
 import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.config.DunctebotConfig
+import ml.duncte123.skybot.web.handlers.DataUpdateHandler
+import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.data.DataObject
 import net.dv8tion.jda.internal.utils.IOUtil
@@ -43,8 +44,11 @@ class WebSocketClient(
     private val config = variables.config
 
     private val socket: WebSocket
+    private val handlersMap = mutableMapOf<String, SocketHandler>()
 
     init {
+        setupHandlers()
+
         val factory = WebSocketFactory()
             .setConnectionTimeout(10000)
             .setServerName(IOUtil.getHost(config.websocket.url))
@@ -72,9 +76,21 @@ class WebSocketClient(
     }
 
     override fun onTextMessage(websocket: WebSocket, data: ByteArray) {
-        val json = variables.jackson.readTree(data)
+        val raw = variables.jackson.readTree(data)
 
-        println(json)
+        if (!raw.has("t")) {
+            return
+        }
+
+        val type = raw["t"].asText()
+        val handler = handlersMap[type]
+
+        if (handler == null) {
+            log.error("Unknown event or missing handler for type $type")
+            return
+        }
+
+        handler.handle(raw)
     }
 
     override fun onError(websocket: WebSocket, cause: WebSocketException) {
@@ -115,5 +131,9 @@ class WebSocketClient(
 
     fun shutdown() {
         socket.sendClose()
+    }
+
+    private fun setupHandlers() {
+        handlersMap["DATA_UPDATE"] = DataUpdateHandler(variables, this)
     }
 }
