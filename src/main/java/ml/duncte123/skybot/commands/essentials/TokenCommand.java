@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.DuncteApis;
@@ -49,6 +48,7 @@ public class TokenCommand extends Command {
         "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
 
     public TokenCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.UTILS;
         this.name = "token";
         this.help = "Deconstructs a token to get as much information as possible from it";
@@ -58,11 +58,6 @@ public class TokenCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
 
         final Matcher matcher = TOKEN_REGEX.matcher(args.get(0));
 
@@ -75,7 +70,7 @@ public class TokenCommand extends Command {
         final JsonNode json = apis.decodeToken(args.get(0));
 
         if (json.get("success").asBoolean()) {
-            handleSuccess(args.get(0), (ObjectNode) json.get("data"), ctx);
+            handleSuccess(args.get(0), json.get("data"), ctx);
 
             return;
         }
@@ -110,7 +105,7 @@ public class TokenCommand extends Command {
         }
     }
 
-    private void handleSuccess(String arg, ObjectNode data, CommandContext ctx) {
+    private void handleSuccess(String arg, JsonNode data, CommandContext ctx) {
         final String id = data.get("id").asText();
         final OffsetDateTime time = toTimeStamp(data.get("timestamp").asLong());
 
