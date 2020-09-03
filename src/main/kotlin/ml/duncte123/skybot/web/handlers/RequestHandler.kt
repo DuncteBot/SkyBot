@@ -32,7 +32,7 @@ class RequestHandler(private val variables: Variables, private val shardManager:
             .put("identifier", data["identifier"].asText())
 
         if (data.has("partial_guilds") && data["partial_guilds"].isArray) {
-            //
+            responseData.put("partial_guilds", fetchGuilds(data["partial_guilds"]))
         }
 
         client.send(
@@ -42,7 +42,7 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         )
     }
 
-    fun fetchGuilds(guildIds: JsonNode) {
+    fun fetchGuilds(guildIds: JsonNode): DataArray {
         val guilds = DataArray.empty()
 
         guildIds.forEach {
@@ -53,10 +53,12 @@ class RequestHandler(private val variables: Variables, private val shardManager:
 
             if (guildById != null) {
                 guildData.put("member_count", guildById.memberCount)
+                    .put("name", guildById.name)
             }
 
             guilds.add(guildData)
         }
 
+        return guilds
     }
 }

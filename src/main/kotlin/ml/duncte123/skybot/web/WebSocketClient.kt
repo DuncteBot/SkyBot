@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.web.handlers.DataUpdateHandler
+import ml.duncte123.skybot.web.handlers.RequestHandler
 import ml.duncte123.skybot.websocket.ReconnectTask
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -58,6 +59,7 @@ class WebSocketClient(
     lateinit var socket: WebSocket
     private val handlersMap = mutableMapOf<String, SocketHandler>()
 
+    var mayReconnect = true
     var lastReconnectAttempt = 0L
     var reconnectsAttempted = 0
     val reconnectInterval: Int
@@ -79,9 +81,31 @@ class WebSocketClient(
         log.info("Connected to dashboard WebSocket")
     }
 
-    override fun onDisconnected(websocket: WebSocket, serverCloseFrame: WebSocketFrame, clientCloseFrame: WebSocketFrame, closedByServer: Boolean) {
-        // Reconnect?
-        println("disconnected")
+    override fun onDisconnected(websocket: WebSocket, serverCloseFrame: WebSocketFrame?, clientCloseFrame: WebSocketFrame?, closedByServer: Boolean) {
+        if (closedByServer && serverCloseFrame != null) {
+            val reason = serverCloseFrame.closeReason ?: "<no reason given>"
+            val code = serverCloseFrame.closeCode
+
+            // TODO: keep trying to reconnect?
+            if (code == 1000) {
+                log.info("Connection to {} closed normally with reason {} (closed by server = true)", websocket.uri, reason)
+            } else {
+                log.info("Connection to {} closed abnormally with reason {}:{} (closed by server = true)", websocket.uri, code, reason)
+            }
+
+            return
+        } else if (clientCloseFrame != null) {
+            val code = clientCloseFrame.closeCode
+            val reason = clientCloseFrame.closeReason ?: "<no reason given>"
+
+            // 1000 is normal
+            if (code == 1000) {
+                reconnectThread.shutdown()
+                mayReconnect = false
+            }
+
+            log.info("Connection to {} closed by client with code {} and reason {} (closed by server = false)", websocket.uri, code, reason)
+        }
     }
 
     override fun onTextMessage(websocket: WebSocket, text: String) {
@@ -153,6 +177,7 @@ class WebSocketClient(
 
     private fun setupHandlers() {
         handlersMap["DATA_UPDATE"] = DataUpdateHandler(variables, this)
+        handlersMap["FETCH_DATA"] = RequestHandler(variables, shardManager, this)
     }
 
     fun attemptReconnect() {

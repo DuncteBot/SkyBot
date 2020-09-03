@@ -34,9 +34,7 @@ import ml.duncte123.skybot.objects.web.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.controllers.OneGuildRegister
 import ml.duncte123.skybot.web.controllers.api.CustomCommands
-import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
@@ -87,14 +85,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         }
 
         defaultResponseTransformer(responseTransformer)
-
-        getWithDefaultData("/register-server", WebVariables()
-            .put("title", "Register your server for patron perks")
-            .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.vm")
-
-        post("/register-server") { request, _ ->
-            return@post OneGuildRegister.post(request, shardManager, variables, mapper)
-        }
 
         path("/server/$GUILD_ID") {
             before("/*") { request, response ->
@@ -190,10 +180,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 delete("") { request, response ->
                     return@delete CustomCommands.delete(request, response, shardManager, variables)
                 }
-            }
-
-            post("/checkUserAndGuild") { request, response ->
-                return@post FindUserAndGuild.get(request, response, shardManager, mapper)
             }
         }
     }

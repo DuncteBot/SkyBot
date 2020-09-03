@@ -39,7 +39,8 @@ public class ReconnectTask implements Runnable {
 
             if (!socket.isOpen() &&
                 socket.getState() != WebSocketState.CONNECTING &&
-                System.currentTimeMillis() - client.getLastReconnectAttempt() > client.getReconnectInterval()) {
+                System.currentTimeMillis() - client.getLastReconnectAttempt() > client.getReconnectInterval() &&
+                client.getMayReconnect()) {
                 client.attemptReconnect();
             }
         } catch (Exception e) {
