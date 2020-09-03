@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.AllPatronsData
 import ml.duncte123.skybot.objects.api.Ban
@@ -33,12 +35,17 @@ import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
+import net.dv8tion.jda.api.entities.Role
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
 
     override fun handleInternally(data: JsonNode) {
         GlobalScope.launch(context = Dispatchers.IO) {
+            if (data.has("new_one_guild")) {
+                handleNewOneGuild(data["new_one_guild"])
+            }
+
             if (data.has("patrons")) {
                 handlePatrons(data["patrons"])
             }
@@ -54,6 +61,29 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             // Uses complete, must be handled last
             if (data.has("reminders")) {
                 handleReminders(data["reminders"])
+            }
+        }
+    }
+
+    private fun handleNewOneGuild(data: JsonNode) {
+        val userId = data["user_id"].asLong()
+        val guildId = data["guild_id"].asLong()
+
+        if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
+            return
+        }
+
+        variables.databaseAdapter.addOneGuildPatrons(userId, guildId) { _, _ ->
+            val instance = SkyBot.getInstance()
+            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@addOneGuildPatrons
+            val newPatron = dbGuild.getMemberById(userId) ?: return@addOneGuildPatrons
+
+            val hasRole = newPatron.roles
+                .map(Role::getIdLong)
+                .any { it == Settings.ONE_GUILD_PATRONS_ROLE }
+
+            if (hasRole) {
+                CommandUtils.oneGuildPatrons.put(userId, guildId)
             }
         }
     }

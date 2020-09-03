@@ -31,7 +31,7 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         val responseData = DataObject.empty()
             .put("identifier", data["identifier"].asText())
 
-        if (data.has("guilds") && data["guilds"].isArray) {
+        if (data.has("partial_guilds") && data["partial_guilds"].isArray) {
             //
         }
 
@@ -45,6 +45,18 @@ class RequestHandler(private val variables: Variables, private val shardManager:
     fun fetchGuilds(guildIds: JsonNode) {
         val guilds = DataArray.empty()
 
+        guildIds.forEach {
+            val guildById = shardManager.getGuildById(it.asLong())
+            val guildData = DataObject.empty()
+                .put("id", it.asText())
+                .put("member_count", -1)
+
+            if (guildById != null) {
+                guildData.put("member_count", guildById.memberCount)
+            }
+
+            guilds.add(guildData)
+        }
 
     }
 }

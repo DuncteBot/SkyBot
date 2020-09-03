@@ -22,14 +22,17 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.web.handlers.DataUpdateHandler
+import ml.duncte123.skybot.websocket.ReconnectTask
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.data.DataObject
 import net.dv8tion.jda.internal.utils.IOUtil
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class WebSocketClient(
     private val variables: Variables, private val shardManager: ShardManager
@@ -41,25 +44,35 @@ class WebSocketClient(
         return@newSingleThreadExecutor t
     }
 
+    private val reconnectThread = Executors.newSingleThreadScheduledExecutor {
+        val t = Thread(it, "DB-ReconnectThread")
+        t.isDaemon = true
+        return@newSingleThreadScheduledExecutor t
+    }
+
     private val config = variables.config
 
-    private val socket: WebSocket
+    private val factory = WebSocketFactory()
+        .setConnectionTimeout(10000)
+        .setServerName(IOUtil.getHost(config.websocket.url))
+    lateinit var socket: WebSocket
     private val handlersMap = mutableMapOf<String, SocketHandler>()
+
+    var lastReconnectAttempt = 0L
+    var reconnectsAttempted = 0
+    val reconnectInterval: Int
+        get() = reconnectsAttempted * 2000 - 2000
 
     init {
         setupHandlers()
+        connect()
 
-        val factory = WebSocketFactory()
-            .setConnectionTimeout(10000)
-            .setServerName(IOUtil.getHost(config.websocket.url))
-
-        socket = factory.createSocket(config.websocket.url)
-
-        socket.setDirectTextMessage(true)
-            .addHeader("Accept-Encoding", "gzip")
-            .addHeader("Authorization", variables.apis.apiKey)
-            .addListener(this)
-            .connect()
+        reconnectThread.scheduleWithFixedDelay(
+            ReconnectTask(this),
+            0L,
+            500L,
+            TimeUnit.MILLISECONDS
+        )
     }
 
     override fun onConnected(websocket: WebSocket, headers: MutableMap<String, MutableList<String>>) {
@@ -101,6 +114,9 @@ class WebSocketClient(
             is IOException -> {
                 log.debug("Encountered I/O error", cause)
             }
+            is ConnectException -> {
+                log.warn("Failed to connect to {}, retrying in {} seconds", websocket.uri, reconnectInterval/1000)
+            }
             else -> {
                 log.error("There was an error in the WebSocket connection", cause)
             }
@@ -131,9 +147,32 @@ class WebSocketClient(
 
     fun shutdown() {
         socket.sendClose()
+        executor.shutdown()
+        reconnectThread.shutdown()
     }
 
     private fun setupHandlers() {
         handlersMap["DATA_UPDATE"] = DataUpdateHandler(variables, this)
+    }
+
+    fun attemptReconnect() {
+        lastReconnectAttempt = System.currentTimeMillis()
+        reconnectsAttempted++
+        connect()
+    }
+
+    private fun connect() {
+        socket = factory.createSocket(config.websocket.url)
+
+        socket.setDirectTextMessage(true)
+            .addHeader("Accept-Encoding", "gzip")
+            .addHeader("Authorization", variables.apis.apiKey)
+            .addListener(this)
+
+        try {
+            socket.connect()
+        } catch (e: Exception) {
+            log.error("Failed to connect to WS, retrying in ${reconnectInterval/1000} seconds", e)
+        }
     }
 }
