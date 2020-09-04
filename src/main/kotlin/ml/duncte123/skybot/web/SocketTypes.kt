@@ -20,4 +20,7 @@ package ml.duncte123.skybot.web
 
 object SocketTypes {
     const val ROLES_PUT_HASH = "ROLES_PUT_HASH"
+    const val DATA_UPDATE = "DATA_UPDATE"
+    const val FETCH_DATA = "FETCH_DATA"
+    const val GUILD_SETTINGS = "GUILD_SETTINGS"
 }

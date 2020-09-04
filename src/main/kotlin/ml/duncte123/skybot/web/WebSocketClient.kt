@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.web.handlers.DataUpdateHandler
+import ml.duncte123.skybot.web.handlers.GuildSettingsHandler
 import ml.duncte123.skybot.web.handlers.RequestHandler
 import ml.duncte123.skybot.websocket.ReconnectTask
 import ml.duncte123.skybot.websocket.SocketHandler
@@ -176,8 +177,9 @@ class WebSocketClient(
     }
 
     private fun setupHandlers() {
-        handlersMap["DATA_UPDATE"] = DataUpdateHandler(variables, this)
-        handlersMap["FETCH_DATA"] = RequestHandler(variables, shardManager, this)
+        handlersMap[SocketTypes.DATA_UPDATE] = DataUpdateHandler(variables, this)
+        handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(variables, shardManager, this)
+        handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(this)
     }
 
     fun attemptReconnect() {

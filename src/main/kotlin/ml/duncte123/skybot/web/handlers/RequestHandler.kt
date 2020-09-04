@@ -20,6 +20,7 @@ package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.databind.JsonNode
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.web.SocketTypes
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -37,7 +38,7 @@ class RequestHandler(private val variables: Variables, private val shardManager:
 
         client.send(
             DataObject.empty()
-                .put("t", "FETCH_DATA")
+                .put("t", SocketTypes.FETCH_DATA)
                 .put("d", responseData)
         )
     }
