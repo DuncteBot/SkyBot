@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 class WebSocketClient(
     private val variables: Variables, private val shardManager: ShardManager
-): WebSocketAdapter(), WebSocketListener {
+) : WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
     private val executor = Executors.newSingleThreadExecutor {
         val t = Thread(it, "DB-SendThread")
@@ -140,7 +140,7 @@ class WebSocketClient(
                 log.debug("Encountered I/O error", cause)
             }
             is ConnectException -> {
-                log.warn("Failed to connect to {}, retrying in {} seconds", websocket.uri, reconnectInterval/1000)
+                log.warn("Failed to connect to {}, retrying in {} seconds", websocket.uri, reconnectInterval / 1000)
             }
             else -> {
                 log.error("There was an error in the WebSocket connection", cause)
@@ -179,7 +179,7 @@ class WebSocketClient(
     private fun setupHandlers() {
         handlersMap[SocketTypes.DATA_UPDATE] = DataUpdateHandler(variables, this)
         handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(variables, shardManager, this)
-        handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(this)
+        handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(variables, this)
     }
 
     fun attemptReconnect() {
@@ -199,7 +199,7 @@ class WebSocketClient(
         try {
             socket.connect()
         } catch (e: Exception) {
-            log.error("Failed to connect to WS, retrying in ${reconnectInterval/1000} seconds", e)
+            log.error("Failed to connect to WS, retrying in ${reconnectInterval / 1000} seconds", e)
         }
     }
 }
