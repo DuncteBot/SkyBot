@@ -258,7 +258,7 @@ class UserinfoCommand : Command() {
     private fun UserFlag.toEmote(): String? {
         return when (this) {
             UserFlag.STAFF -> "<:staff:738364360413675530>"
-            UserFlag.PARTNER -> "<:partner:738364264242348043>"
+            UserFlag.PARTNER -> "<:partner_new:752099308878299157>"
 
             UserFlag.HYPESQUAD -> "<:hypesquad_events:738370746732249128>"
             UserFlag.HYPESQUAD_BRAVERY -> "<:bravery:738364042585833593>"
