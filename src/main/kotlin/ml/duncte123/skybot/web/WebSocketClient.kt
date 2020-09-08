@@ -171,7 +171,8 @@ class WebSocketClient(
     }
 
     fun shutdown() {
-        socket.sendClose()
+        mayReconnect = false
+        socket.sendClose(WebSocketCloseCode.NORMAL)
         executor.shutdown()
         reconnectThread.shutdown()
     }
