@@ -49,7 +49,7 @@ import static ml.duncte123.skybot.SkyBot.getInstance;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    public static final int QUEUE_SIZE = 50;
+    public static final int MAX_QUEUE_SIZE = 50;
     public final Queue<AudioTrack> queue;
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
@@ -78,9 +78,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }, DEBOUNCE_INTERVAL);
     }
 
+    public boolean canQueue() {
+        return MAX_QUEUE_SIZE < this.queue.size();
+    }
+
     public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
-        if (queue.size() >= QUEUE_SIZE && !isPatron) {
-            throw new LimitReachedException("The queue is full", QUEUE_SIZE);
+        if (queue.size() + 1 >= MAX_QUEUE_SIZE && !isPatron) {
+            throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 
         if (player.getPlayingTrack() != null) {
