@@ -210,9 +210,7 @@ public class AirUtils {
     }
 
     public static int colorToInt(String hex) {
-        final String hexValue = "0x" + hex.replaceFirst("#", "");
-
-        return Integer.decode(hexValue);
+        return Integer.parseInt(hex.substring(1), 16);
     }
 
     public static User getMentionedUser(CommandContext ctx) {
