@@ -180,7 +180,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
             List<PlaylistTrack> playlistTracks = new ArrayList<>(Arrays.asList(spotifyPlaylist.getTracks().getItems()));
 
-            if (playlistTracks.size() == 0) {
+            if (playlistTracks.isEmpty()) {
                 return null;
             }
 
