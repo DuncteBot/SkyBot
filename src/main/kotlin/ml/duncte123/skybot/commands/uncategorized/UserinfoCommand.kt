@@ -27,6 +27,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.getStaticAvatarUrl
 import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
+import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.FinderUtils
@@ -257,23 +258,23 @@ class UserinfoCommand : Command() {
 
     private fun UserFlag.toEmote(): String? {
         return when (this) {
-            UserFlag.STAFF -> "<:staff:738364360413675530>"
-            UserFlag.PARTNER -> "<:partner_new:752099308878299157>"
+            UserFlag.STAFF -> DISCORD_STAFF
+            UserFlag.PARTNER -> DISCORD_PARTNER
 
-            UserFlag.HYPESQUAD -> "<:hypesquad_events:738370746732249128>"
-            UserFlag.HYPESQUAD_BRAVERY -> "<:bravery:738364042585833593>"
-            UserFlag.HYPESQUAD_BRILLIANCE -> "<:brilliance:738364094767431722>"
-            UserFlag.HYPESQUAD_BALANCE -> "<:balance:738363963577729024>"
+            UserFlag.HYPESQUAD -> DISCORD_HYPESQUAD
+            UserFlag.HYPESQUAD_BRAVERY -> DISCORD_HYPESQUAD_BRAVERY
+            UserFlag.HYPESQUAD_BRILLIANCE -> DISCORD_HYPESQUAD_BRILLIANCE
+            UserFlag.HYPESQUAD_BALANCE -> DISCORD_HYPESQUAD_BALANCE
 
-            UserFlag.BUG_HUNTER_LEVEL_1 -> "<:bughunter_1:738364610536538213>"
-            UserFlag.BUG_HUNTER_LEVEL_2 -> "<:bughunter_2:738370659528212573>"
+            UserFlag.BUG_HUNTER_LEVEL_1 -> DISCORD_BUG_HUNTER_1
+            UserFlag.BUG_HUNTER_LEVEL_2 -> DISCORD_BUG_HUNTER_2
 
-            UserFlag.EARLY_SUPPORTER -> "<:early_supporter:738364464734404688>"
+            UserFlag.EARLY_SUPPORTER -> DISCORD_EARLY_SUPPORTER
             // No emotes / not needed
 //            UserFlag.TEAM_USER -> ""
 //            UserFlag.SYSTEM -> ""
 //            UserFlag.VERIFIED_BOT -> ""
-            UserFlag.VERIFIED_DEVELOPER -> "<:verified_developer:738370070480420865>"
+            UserFlag.VERIFIED_DEVELOPER -> DISCORD_VERIFIED_DEVELOPER
             else -> null
         }
     }

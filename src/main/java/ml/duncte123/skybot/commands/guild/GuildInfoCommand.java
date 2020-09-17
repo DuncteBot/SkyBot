@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.extensions.PrettyTimeKt;
+import ml.duncte123.skybot.objects.Emotes;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -33,6 +34,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 
 import javax.annotation.Nonnull;
+
+import java.util.Set;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -95,13 +98,15 @@ public class GuildInfoCommand extends Command {
 
     private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
         final Guild g = ctx.getJDAGuild();
-        final double[] ratio = GuildUtils.getBotRatio(g);
+//        final double[] ratio = GuildUtils.getBotRatio(g);
         final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
         final GuildSettings settings = ctx.getGuildSettings();
         final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), g);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
+        } else if (g.getDescription() != null && !"".equals(g.getDescription())) {
+            eb.addField("Server Description", g.getDescription() + "\n\u200B", false);
         }
 
         String owner = "Unknown";
@@ -110,17 +115,30 @@ public class GuildInfoCommand extends Command {
             owner = g.getOwner().getEffectiveName();
         }
 
+        String emoteList = "";
+        final Set<String> features = g.getFeatures();
+
+        // can only have one of them
+        if (features.contains("VERIFIED")) {
+            emoteList = Emotes.DISCORD_VERIFIED_SERVER;
+        }else if (features.contains("PARTNERED")) {
+            emoteList = Emotes.DISCORD_PARTNER_SERVER;
+        }
+
         eb.setThumbnail(g.getIconUrl())
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
-                "**Name:** " + g.getName() + "\n" +
+                "**Name:** " + g.getName() + ' ' + emoteList + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
                 "**Region:** " + g.getRegion().getName() + "\n" +
                 "**Created at:** " + String.format("%s (%s)", times.getFirst(), times.getSecond()) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)
             .addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
+                "**(Possible) Nitro users:** _Disabled due to missing data_\n" +
+                "**Bot to user ratio:**  _Disabled due to missing data_", false)
+            /*.addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
                 "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
-                "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
+                "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false)*/;
 
         sendEmbed(ctx, eb);
     }
