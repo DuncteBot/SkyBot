@@ -97,26 +97,26 @@ public class GuildInfoCommand extends Command {
     }
 
     private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
-        final Guild g = ctx.getJDAGuild();
-//        final double[] ratio = GuildUtils.getBotRatio(g);
+        final Guild guild = ctx.getJDAGuild();
+        final double[] ratio = GuildUtils.getBotRatio(guild);
         final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
         final GuildSettings settings = ctx.getGuildSettings();
-        final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), g);
+        final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), guild);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
-        } else if (g.getDescription() != null && !"".equals(g.getDescription())) {
-            eb.addField("Server Description", g.getDescription() + "\n\u200B", false);
+        } else if (guild.getDescription() != null && !"".equals(guild.getDescription())) {
+            eb.addField("Server Description", guild.getDescription() + "\n\u200B", false);
         }
 
         String owner = "Unknown";
 
-        if (g.getOwner() != null) {
-            owner = g.getOwner().getEffectiveName();
+        if (guild.getOwner() != null) {
+            owner = guild.getOwner().getEffectiveName();
         }
 
         String emoteList = "";
-        final Set<String> features = g.getFeatures();
+        final Set<String> features = guild.getFeatures();
 
         // can only have one of them
         if (features.contains("VERIFIED")) {
@@ -125,20 +125,17 @@ public class GuildInfoCommand extends Command {
             emoteList = Emotes.DISCORD_PARTNER_SERVER;
         }
 
-        eb.setThumbnail(g.getIconUrl())
+        eb.setThumbnail(guild.getIconUrl())
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
-                "**Name:** " + g.getName() + ' ' + emoteList + "\n" +
+                "**Name:** " + guild.getName() + ' ' + emoteList + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                "**Region:** " + g.getRegion().getName() + "\n" +
+                "**Region:** " + guild.getRegion().getName() + "\n" +
                 "**Created at:** " + String.format("%s (%s)", times.getFirst(), times.getSecond()) + "\n" +
-                "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                "**Verification level:** " + GuildUtils.verificationLvlToName(guild.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)
-            .addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
-                "**(Possible) Nitro users:** _Disabled due to missing data_\n" +
-                "**Bot to user ratio:**  _Disabled due to missing data_", false)
-            /*.addField("Member Stats", "**Total members:** " + g.getMemberCount() + "\n" +
-                "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
-                "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false)*/;
+            .addField("Member Stats", "**Total members:** " + guild.getMemberCount() + "\n" +
+                "**(Possible) Nitro users:** " + GuildUtils.getNitroUserCountCache(guild) + "\n" +
+                "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
         sendEmbed(ctx, eb);
     }

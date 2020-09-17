@@ -21,15 +21,19 @@ package ml.duncte123.skybot.listeners;
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.objects.GuildMemberInfo;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.web.controllers.GuildStuffController;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
@@ -58,6 +62,13 @@ public class GuildMemberListener extends BaseListener {
             this.onGuildMemberRoleRemove((GuildMemberRoleRemoveEvent) event);
         } else if (event instanceof GuildMemberRoleAddEvent) {
             this.onGuildMemberRoleAdd((GuildMemberRoleAddEvent) event);
+        } else if (event instanceof GuildLeaveEvent) {
+            final Guild guild = ((GuildLeaveEvent) event).getGuild();
+            final long guildId = guild.getIdLong();
+
+            GuildUtils.guildMemberCountCache.invalidate(guildId);
+            GuildStuffController.INSTANCE.getGuildHashes().invalidate(guildId);
+            variables.getGuildSettingsCache().invalidate(guildId);
         }
     }
 
@@ -65,6 +76,24 @@ public class GuildMemberListener extends BaseListener {
         final Guild guild = event.getGuild();
         if (event.getMember().equals(guild.getSelfMember())) {
             return;
+        }
+
+        final GuildMemberInfo guildCounts = GuildUtils.guildMemberCountCache.getIfPresent(guild.getIdLong());
+
+        if (guildCounts != null) {
+            final User user = event.getUser();
+
+            if (user.isBot()) {
+                guildCounts.bots += 1;
+            } else {
+                guildCounts.users += 1;
+
+                final String avatarId = user.getAvatarId();
+
+                if (avatarId != null && avatarId.startsWith("a_")) {
+                    guildCounts.nitroUsers += 1;
+                }
+            }
         }
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
@@ -98,6 +127,22 @@ public class GuildMemberListener extends BaseListener {
         // when this event is fired
         if (user.equals(selfUser)) {
             return;
+        }
+
+        final GuildMemberInfo guildCounts = GuildUtils.guildMemberCountCache.getIfPresent(guild.getIdLong());
+
+        if (guildCounts != null) {
+            if (user.isBot()) {
+                guildCounts.bots -= 1;
+            } else {
+                guildCounts.users -= 1;
+
+                final String avatarId = user.getAvatarId();
+
+                if (avatarId != null && avatarId.startsWith("a_")) {
+                    guildCounts.nitroUsers -= 1;
+                }
+            }
         }
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
