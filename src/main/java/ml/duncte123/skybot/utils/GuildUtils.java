@@ -30,12 +30,10 @@ import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -181,14 +179,14 @@ public class GuildUtils {
         }
     }
 
-    public static long getMemberJoinPosition(Member member) {
+    /*public static long getMemberJoinPosition(Member member) {
         //noinspection ConstantConditions
         return member.getGuild().getMemberCache().applyStream(
             (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
                 .takeWhile((it) -> !it.equals(member))
                 .count() + 1
         );
-    }
+    }*/
 
     public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading patrons");

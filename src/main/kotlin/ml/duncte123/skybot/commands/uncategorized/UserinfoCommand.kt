@@ -19,7 +19,8 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
@@ -31,11 +32,9 @@ import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.FinderUtils
-import ml.duncte123.skybot.utils.GuildUtils
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.User.UserFlag
@@ -43,8 +42,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
-import java.util.stream.Collectors
 
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -143,7 +140,7 @@ class UserinfoCommand : Command() {
         sendEmbed(ctx, embed)
     }
 
-    private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
+    /*private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
         val joins = guild.memberCache.applyStream {
             it.sorted(Comparator.comparing(Member::getTimeJoined)).collect(Collectors.toList())
         }!!
@@ -178,12 +175,11 @@ class UserinfoCommand : Command() {
             append(" \\> ")
             append(usrName)
         }
-    }
+    }*/
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
         val prettyTime = ctx.variables.prettyTime
         val user = member.user
-        val guild = ctx.guild
 
         val userTimes = prettyTime.parseTimes(user)
         val memberTimes = prettyTime.parseTimes(member)
@@ -203,6 +199,11 @@ class UserinfoCommand : Command() {
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
+            /*
+            * used to be below Joined Server
+                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
+                        |**Join Order:** ${generateJoinOrder(guild, member)}
+            * */
             .setDescription("""User info for ${member.asMention} ${user.badgeLine} $boostEmote
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
@@ -211,8 +212,6 @@ class UserinfoCommand : Command() {
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${user.isNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
-                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
-                        |**Join Order:** ${generateJoinOrder(guild, member)}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
