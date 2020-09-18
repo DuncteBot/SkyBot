@@ -35,6 +35,7 @@ import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.audio.BigChungusPlaylist;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -48,6 +49,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -176,14 +178,17 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final List<String> videoIDs = new ArrayList<>();
 
             final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
-            final PlaylistTrack[] playlistTracks = spotifyPlaylist.getTracks().getItems();
+            List<PlaylistTrack> playlistTracks = new ArrayList<>(Arrays.asList(spotifyPlaylist.getTracks().getItems()));
 
-            if (playlistTracks.length == 0) {
+            if (playlistTracks.isEmpty()) {
                 return null;
             }
 
-            if (playlistTracks.length > TrackScheduler.QUEUE_SIZE && !isPatron) {
-                throw new LimitReachedException("The playlist is too big", TrackScheduler.QUEUE_SIZE);
+            final int originalSize = playlistTracks.size();
+
+            if (originalSize > TrackScheduler.MAX_QUEUE_SIZE && !isPatron) {
+                // yes this is correct, last param is exclusive so it ranges from 0-49
+                playlistTracks = playlistTracks.subList(0, TrackScheduler.MAX_QUEUE_SIZE);
             }
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
@@ -207,7 +212,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
             final List<AudioTrack> finalPlaylist = getTrackListFromVideoIds(videoIDs, spotifyPlaylist.getImages());
 
-            return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
+            return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false, originalSize);
         }
         catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);

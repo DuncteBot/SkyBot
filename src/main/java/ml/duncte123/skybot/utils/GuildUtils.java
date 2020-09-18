@@ -18,25 +18,36 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.*;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import io.sentry.Sentry;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import net.dv8tion.jda.api.entities.*;
+import ml.duncte123.skybot.objects.GuildMemberInfo;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.api.utils.cache.MemberCacheView;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
-
-    private final static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
+    public static final Cache<Long, GuildMemberInfo> guildMemberCountCache = Caffeine.newBuilder()
+        .expireAfterAccess(5, TimeUnit.HOURS)
+        .build();
+    private static final Logger logger = LoggerFactory.getLogger(GuildUtils.class);
 
     /**
      * Returns an array with the member counts of the guild
@@ -44,22 +55,36 @@ public class GuildUtils {
      * 1 = the total bots
      * 2 = the total members
      *
-     * @param g
-     *         The {@link Guild Guild} to count the users in
+     * @param guild
+     *     The {@link Guild Guild} to count the users in
      *
      * @return an array with the member counts of the guild
      * [0] = users
      * [1] = bots
      * [2] = total
      */
-    public static long[] getBotAndUserCount(Guild g) {
-        final MemberCacheView memberCache = g.getMemberCache();
-        final long totalCount = memberCache.size();
-        //noinspection ConstantConditions
-        final long botCount = memberCache.applyStream((s) -> s.filter(it -> it.getUser().isBot()).count());
-        final long userCount = totalCount - botCount;
+    public static long[] getBotAndUserCount(Guild guild) {
+        if (!guildMemberCountCache.asMap().containsKey(guild.getIdLong())) {
+            try {
+                guildMemberCountCache.put(guild.getIdLong(), GuildMemberInfo.init(guild));
+            }
+            catch (ExecutionException | InterruptedException e) {
+                Sentry.capture(e);
+                // backup if we fail to fetch
+                guildMemberCountCache.put(guild.getIdLong(), new GuildMemberInfo());
+            }
+        }
 
-        return new long[]{userCount, botCount, totalCount};
+        final GuildMemberInfo guildCount = guildMemberCountCache.getIfPresent(guild.getIdLong());
+
+        // This should never happen
+        if (guildCount == null) {
+            return new long[]{0L, 0L, 0L};
+        }
+
+        final long totalCount = guild.getMemberCount();
+
+        return new long[]{guildCount.users, guildCount.bots, totalCount};
     }
 
     /**
@@ -68,7 +93,7 @@ public class GuildUtils {
      * 1 = bot percentage
      *
      * @param g
-     *         the {@link Guild} that we want to check
+     *     the {@link Guild} that we want to check
      *
      * @return the percentage of users and the percentage of bots in a nice compact array
      * [0] = users percentage
@@ -101,14 +126,24 @@ public class GuildUtils {
         };
     }
 
-    public static long countAnimatedAvatars(Guild g) {
-        //noinspection ConstantConditions
-        return g.getMemberCache().applyStream(
-            (s) -> s.map(Member::getUser)
-                .map(User::getAvatarId)
-                .filter(Objects::nonNull)
-                .filter(it -> it.startsWith("a_")).count()
-        );
+    public static long getNitroUserCountCache(Guild guild) {
+        final GuildMemberInfo guildCount = guildMemberCountCache.getIfPresent(guild.getIdLong());
+
+        // This should never happen
+        if (guildCount == null) {
+            return 0L;
+        }
+
+        return guildCount.nitroUsers;
+    }
+
+    public static long countAnimatedAvatars(List<Member> members) {
+        return members.stream()
+            .map(Member::getUser)
+            .map(User::getAvatarId)
+            .filter(Objects::nonNull)
+            .filter(it -> it.startsWith("a_"))
+            .count();
     }
 
     public static TextChannel getPublicChannel(Guild guild) {
@@ -144,14 +179,14 @@ public class GuildUtils {
         }
     }
 
-    public static long getMemberJoinPosition(Member member) {
+    /*public static long getMemberJoinPosition(Member member) {
         //noinspection ConstantConditions
         return member.getGuild().getMemberCache().applyStream(
             (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
                 .takeWhile((it) -> !it.equals(member))
                 .count() + 1
         );
-    }
+    }*/
 
     public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
         logger.info("(Re)loading patrons");

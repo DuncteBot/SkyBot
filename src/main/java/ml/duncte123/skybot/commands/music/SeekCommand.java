@@ -79,8 +79,8 @@ public class SeekCommand extends MusicCommand {
         }
 
         if (matcher.matches()) {
-            final long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
-            final long seconds = Integer.parseInt(matcher.group(2)) * 1000;
+            final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
+            final long seconds = Long.parseLong(matcher.group(2)) * 1000;
 
             final long finalTime = minutes + seconds;
 

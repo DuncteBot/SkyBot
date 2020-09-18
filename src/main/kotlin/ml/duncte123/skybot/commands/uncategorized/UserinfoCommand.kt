@@ -19,7 +19,8 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
@@ -27,14 +28,13 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.getStaticAvatarUrl
 import ml.duncte123.skybot.extensions.parseTimes
 import ml.duncte123.skybot.extensions.toEmoji
+import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.FinderUtils
-import ml.duncte123.skybot.utils.GuildUtils
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Activity
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.User.UserFlag
@@ -42,8 +42,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
-import java.util.stream.Collectors
 
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -142,7 +140,7 @@ class UserinfoCommand : Command() {
         sendEmbed(ctx, embed)
     }
 
-    private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
+    /*private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
         val joins = guild.memberCache.applyStream {
             it.sorted(Comparator.comparing(Member::getTimeJoined)).collect(Collectors.toList())
         }!!
@@ -177,12 +175,11 @@ class UserinfoCommand : Command() {
             append(" \\> ")
             append(usrName)
         }
-    }
+    }*/
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
         val prettyTime = ctx.variables.prettyTime
         val user = member.user
-        val guild = ctx.guild
 
         val userTimes = prettyTime.parseTimes(user)
         val memberTimes = prettyTime.parseTimes(member)
@@ -202,6 +199,11 @@ class UserinfoCommand : Command() {
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
+            /*
+            * used to be below Joined Server
+                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
+                        |**Join Order:** ${generateJoinOrder(guild, member)}
+            * */
             .setDescription("""User info for ${member.asMention} ${user.badgeLine} $boostEmote
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
@@ -210,8 +212,6 @@ class UserinfoCommand : Command() {
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${user.isNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
-                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
-                        |**Join Order:** ${generateJoinOrder(guild, member)}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
@@ -257,23 +257,23 @@ class UserinfoCommand : Command() {
 
     private fun UserFlag.toEmote(): String? {
         return when (this) {
-            UserFlag.STAFF -> "<:staff:738364360413675530>"
-            UserFlag.PARTNER -> "<:partner:738364264242348043>"
+            UserFlag.STAFF -> DISCORD_STAFF
+            UserFlag.PARTNER -> DISCORD_PARTNER
 
-            UserFlag.HYPESQUAD -> "<:hypesquad_events:738370746732249128>"
-            UserFlag.HYPESQUAD_BRAVERY -> "<:bravery:738364042585833593>"
-            UserFlag.HYPESQUAD_BRILLIANCE -> "<:brilliance:738364094767431722>"
-            UserFlag.HYPESQUAD_BALANCE -> "<:balance:738363963577729024>"
+            UserFlag.HYPESQUAD -> DISCORD_HYPESQUAD
+            UserFlag.HYPESQUAD_BRAVERY -> DISCORD_HYPESQUAD_BRAVERY
+            UserFlag.HYPESQUAD_BRILLIANCE -> DISCORD_HYPESQUAD_BRILLIANCE
+            UserFlag.HYPESQUAD_BALANCE -> DISCORD_HYPESQUAD_BALANCE
 
-            UserFlag.BUG_HUNTER_LEVEL_1 -> "<:bughunter_1:738364610536538213>"
-            UserFlag.BUG_HUNTER_LEVEL_2 -> "<:bughunter_2:738370659528212573>"
+            UserFlag.BUG_HUNTER_LEVEL_1 -> DISCORD_BUG_HUNTER_1
+            UserFlag.BUG_HUNTER_LEVEL_2 -> DISCORD_BUG_HUNTER_2
 
-            UserFlag.EARLY_SUPPORTER -> "<:early_supporter:738364464734404688>"
+            UserFlag.EARLY_SUPPORTER -> DISCORD_EARLY_SUPPORTER
             // No emotes / not needed
 //            UserFlag.TEAM_USER -> ""
 //            UserFlag.SYSTEM -> ""
 //            UserFlag.VERIFIED_BOT -> ""
-            UserFlag.VERIFIED_DEVELOPER -> "<:verified_developer:738370070480420865>"
+            UserFlag.VERIFIED_DEVELOPER -> DISCORD_VERIFIED_DEVELOPER
             else -> null
         }
     }

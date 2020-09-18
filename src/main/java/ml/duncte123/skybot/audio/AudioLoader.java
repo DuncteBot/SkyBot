@@ -72,8 +72,15 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         track.setUserData(new TrackUserData(this.requester));
 
+        final TrackScheduler scheduler = this.mng.getScheduler();
+
+        if (!scheduler.canQueue()) {
+            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached", TrackScheduler.MAX_QUEUE_SIZE));
+            return;
+        }
+
         try {
-            this.mng.getScheduler().queue(track, this.isPatron);
+            scheduler.queue(track, this.isPatron);
 
             if (this.announce) {
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
@@ -111,7 +118,15 @@ public class AudioLoader implements AudioLoadResultHandler {
             }
 
             if (this.announce) {
-                final String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
+                final String sizeMsg = playlist instanceof BigChungusPlaylist ?
+                    playlist.getTracks().size() + "/" + ((BigChungusPlaylist) playlist).getOriginalSize() :
+                    String.valueOf(playlist.getTracks().size());
+                final String msg = String.format(
+                    "Adding **%s** tracks to the queue from playlist %s",
+                    sizeMsg,
+                    playlist.getName()
+                );
+
                 sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, msg));
             }
         }

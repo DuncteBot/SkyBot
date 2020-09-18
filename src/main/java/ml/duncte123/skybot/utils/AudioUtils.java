@@ -90,6 +90,7 @@ public class AudioUtils {
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
                                     final CommandContext ctx, final boolean announce) {
         final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
+//        final boolean isPatron = false;
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources

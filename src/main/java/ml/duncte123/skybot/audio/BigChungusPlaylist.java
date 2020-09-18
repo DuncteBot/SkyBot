@@ -15,27 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.command.CommandContext;
+package ml.duncte123.skybot.audio;
 
-import javax.annotation.Nonnull;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetRateLimitsCommand extends SettingsBase {
+import java.util.List;
 
-    public SetRateLimitsCommand() {
-        this.name = "setratelimits";
-        this.help = "Sets our cooldown in minutes for un-muting your spammer of choice.\n";
-        this.extraInfo = "Example: `{prefix}setratelimits 20|45|60|120|240|2400`";
-        this.usage = "<1|2|3|4|5|6/default>";
+public class BigChungusPlaylist extends BasicAudioPlaylist {
+    private final int originalSize;
+
+    public BigChungusPlaylist(String name, List<AudioTrack> tracks, AudioTrack selectedTrack, boolean isSearchResult, int originalSize) {
+        super(name, tracks, selectedTrack, isSearchResult);
+
+        this.originalSize = originalSize;
     }
 
-    @Override
-    public void execute(@Nonnull CommandContext ctx) {
-        final String inp = ctx.getArgs().isEmpty() ? null : ctx.getArgsRaw();
-
-        this.showNewHelp(ctx, "rateLimits", inp);
+    public int getOriginalSize() {
+        return originalSize;
     }
 }
