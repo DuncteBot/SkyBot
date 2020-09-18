@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.handlers
 import com.fasterxml.jackson.databind.JsonNode
 import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 
@@ -28,6 +29,19 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
     override fun handleInternally(data: JsonNode) {
         if (data.has("remove")) {
             removeGuildSettings(data["remove"])
+        }
+
+        if (data.has("update")) {
+            updateGuildSettings(data["update"])
+        }
+    }
+
+    private fun updateGuildSettings(guildSettings: JsonNode) {
+        guildSettings.forEach {
+            // TODO: use model
+            val setting = variables.jackson.readValue(it.traverse(), GuildSettings::class.java)
+
+            variables.guildSettingsCache.put(setting.guildId, setting)
         }
     }
 

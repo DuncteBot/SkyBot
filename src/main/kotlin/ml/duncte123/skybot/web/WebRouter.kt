@@ -28,8 +28,6 @@ import ml.duncte123.skybot.objects.web.ModelAndView
 import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
-import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
-import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
@@ -77,18 +75,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
         defaultResponseTransformer(responseTransformer)
 
         path("/server/$GUILD_ID") {
-            before("/*") { request, response ->
-                return@before Dashboard.beforeServer(request, response, shardManager)
-            }
-
-            get("/") { request, _ ->
-                return@get Dashboard.serverSelection(request, shardManager)
-            }
-
-            post("/basic") { request, response ->
-                return@post BasicSettings.save(request, response, shardManager, variables)
-            }
-
             post("/moderation") { request, response ->
                 return@post ModerationSettings.save(request, response, shardManager, variables)
             }
