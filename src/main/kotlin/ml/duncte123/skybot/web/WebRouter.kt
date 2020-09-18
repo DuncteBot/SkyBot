@@ -20,20 +20,11 @@ package ml.duncte123.skybot.web
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
-import gnu.trove.map.hash.TLongLongHashMap
-import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.web.ContentType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.ProfanityFilterType
-import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.objects.web.ModelAndView
-import ml.duncte123.skybot.objects.web.WebVariables
-import ml.duncte123.skybot.utils.AirUtils.colorToHex
-import ml.duncte123.skybot.utils.CommandUtils
-import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
@@ -42,7 +33,6 @@ import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Spark.*
 
@@ -95,34 +85,13 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                 return@get Dashboard.serverSelection(request, shardManager)
             }
 
-            // Basic settings
-            getWithDefaultData("/basic", WebVariables().put("title", "Dashboard"),
-                "dashboard/basicSettings.vm", true)
-
             post("/basic") { request, response ->
                 return@post BasicSettings.save(request, response, shardManager, variables)
             }
 
-            // Moderation settings
-            getWithDefaultData("/moderation", WebVariables()
-                .put("filterValues", ProfanityFilterType.values())
-                .put("warnActionTypes", WarnAction.Type.values())
-                .put("title", "Dashboard")
-                .put("loggingTypes", GuildSettings.LOGGING_TYPES)
-                .put("patronMaxWarnActions", WarnAction.PATRON_MAX_ACTIONS),
-                "dashboard/moderationSettings.vm", true)
-
             post("/moderation") { request, response ->
                 return@post ModerationSettings.save(request, response, shardManager, variables)
             }
-
-            // Custom command settings
-            getWithDefaultData("/customcommands", WebVariables().put("title", "Dashboard"),
-                "dashboard/customCommandSettings.vm", true)
-
-            // Message settings
-            getWithDefaultData("/messages", WebVariables().put("title", "Dashboard"),
-                "dashboard/welcomeLeaveDesc.vm", true)
 
             post("/messages") { request, response ->
                 return@post MessageSettings.save(request, response, shardManager, variables)
@@ -181,52 +150,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
                     return@delete CustomCommands.delete(request, response, shardManager, variables)
                 }
             }
-        }
-    }
-
-    private fun getWithDefaultData(path: String, map: WebVariables, viewName: String, withGuildData: Boolean = false) {
-        get(path) { request, _ ->
-            if (withGuildData) {
-                val guild = request.getGuild(shardManager)
-
-                if (guild != null) {
-                    val guildId = guild.idLong
-
-                    val tcs = guild.textChannelCache.filter {
-                        it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
-                    }.toList()
-
-                    val goodRoles = guild.roleCache.filter {
-                        guild.selfMember.canInteract(it) && it.name != "@everyone" && it.name != "@here"
-                    }.filter { !it.isManaged }.toList()
-
-                    val colorRaw = EmbedUtils.getColorOrDefault(guildId)
-                    val currVcAutoRole = variables.vcAutoRoleCache.get(guildId)
-                        ?: variables.vcAutoRoleCache.put(guildId, TLongLongHashMap())
-
-                    map.put("goodChannels", tcs)
-                    map.put("goodRoles", goodRoles)
-                    map.put("voiceChannels", guild.voiceChannelCache)
-                    map.put("currentVcAutoRole", currVcAutoRole)
-                    map.put("settings", GuildSettingsUtils.getGuild(guildId, variables))
-                    map.put("guild", guild)
-                    map.put("guildColor", colorToHex(colorRaw))
-
-                    map.put("guild_patron", CommandUtils.isGuildPatron(guild))
-
-                    val session = request.session()
-                    val message: String? = session.attribute(FLASH_MESSAGE)
-
-                    if (!message.isNullOrEmpty()) {
-                        session.attribute(FLASH_MESSAGE, null)
-                        map.put("message", message)
-                    } else {
-                        map.put("message", false)
-                    }
-                }
-            }
-
-            map.toModelAndView(viewName)
         }
     }
 

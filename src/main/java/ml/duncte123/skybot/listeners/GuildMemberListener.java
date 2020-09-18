@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.web.controllers.GuildStuffController;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -67,7 +66,6 @@ public class GuildMemberListener extends BaseListener {
             final long guildId = guild.getIdLong();
 
             GuildUtils.guildMemberCountCache.invalidate(guildId);
-            GuildStuffController.INSTANCE.getGuildHashes().invalidate(guildId);
             variables.getGuildSettingsCache().invalidate(guildId);
         }
     }

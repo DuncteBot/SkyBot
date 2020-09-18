@@ -20,6 +20,8 @@ package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.databind.JsonNode
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.utils.CommandUtils
+import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.SocketTypes
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
@@ -36,6 +38,10 @@ class RequestHandler(private val variables: Variables, private val shardManager:
             responseData.put("partial_guilds", fetchGuilds(data["partial_guilds"]))
         }
 
+        if (data.has("guild_patron_status") && data["guild_patron_status"].isArray) {
+            responseData.put("guild_patron_status", mapGuildPatronStatus(data["guild_patron_status"]))
+        }
+
         client.send(
             DataObject.empty()
                 .put("t", SocketTypes.FETCH_DATA)
@@ -43,7 +49,7 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         )
     }
 
-    fun fetchGuilds(guildIds: JsonNode): DataArray {
+    private fun fetchGuilds(guildIds: JsonNode): DataArray {
         val guilds = DataArray.empty()
 
         guildIds.forEach {
@@ -61,5 +67,23 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         }
 
         return guilds
+    }
+
+    private fun mapGuildPatronStatus(guildIds: JsonNode): DataObject {
+        val ret = DataObject.empty()
+
+        guildIds.forEach {
+            val guild = shardManager.getGuildById(it.asLong())
+
+            if (guild == null) {
+                ret.put(it.asText(), false)
+
+                return@forEach
+            }
+
+            ret.put(it.asText(), CommandUtils.isGuildPatron(guild))
+        }
+
+        return ret
     }
 }
