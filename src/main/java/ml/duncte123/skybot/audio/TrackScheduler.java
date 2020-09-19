@@ -79,7 +79,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     public boolean canQueue() {
-        return MAX_QUEUE_SIZE < this.queue.size();
+        return this.queue.size() < MAX_QUEUE_SIZE;
     }
 
     public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
