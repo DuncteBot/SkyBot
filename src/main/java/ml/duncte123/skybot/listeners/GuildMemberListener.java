@@ -24,7 +24,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
@@ -94,7 +94,7 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+        final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
@@ -143,7 +143,7 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+        final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         // If the leave message is enabled and we have a welcome channel
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
@@ -250,7 +250,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final Guild guild = event.getGuild();
-        final GuildSettings s = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+        final GuildSetting s = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
         final Parser parser = CommandUtils.PARSER_SUPPLIER.get();
 

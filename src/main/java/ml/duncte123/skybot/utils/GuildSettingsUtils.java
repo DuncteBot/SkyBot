@@ -27,7 +27,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class GuildSettingsUtils {
         loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
-    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSettings> guildSettings) {
+    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSetting> guildSettings) {
         logger.info("Loading Guild settings.");
 
         databaseAdapter.getGuildSettings(
@@ -118,8 +118,8 @@ public class GuildSettingsUtils {
     }
 
     @Nonnull
-    public static GuildSettings getGuild(long guildId, Variables variables) {
-        final GuildSettings setting = variables.getGuildSettingsCache().get(guildId);
+    public static GuildSetting getGuild(long guildId, Variables variables) {
+        final GuildSetting setting = variables.getGuildSettingsCache().get(guildId);
 
         if (setting == null) {
             return registerNewGuild(guildId, variables);
@@ -128,7 +128,7 @@ public class GuildSettingsUtils {
         return setting;
     }
 
-    public static void updateGuildSettings(long guildId, GuildSettings settings, Variables variables) {
+    public static void updateGuildSettings(long guildId, GuildSetting settings, Variables variables) {
         if (variables.getGuildSettingsCache().get(settings.getGuildId()) == null) {
             registerNewGuild(guildId, variables, settings);
             return;
@@ -137,13 +137,13 @@ public class GuildSettingsUtils {
         variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
     }
 
-    public static GuildSettings registerNewGuild(long guildId, Variables variables) {
-        return registerNewGuild(guildId, variables, new GuildSettings(guildId));
+    public static GuildSetting registerNewGuild(long guildId, Variables variables) {
+        return registerNewGuild(guildId, variables, new GuildSetting(guildId));
     }
 
-    private static GuildSettings registerNewGuild(long guildId, Variables variables, GuildSettings newGuildSettings) {
-        final LoadingCache<Long, GuildSettings> guildSettingsCache = variables.getGuildSettingsCache();
-        final GuildSettings settingForGuild = guildSettingsCache.get(guildId);
+    private static GuildSetting registerNewGuild(long guildId, Variables variables, GuildSetting newGuildSettings) {
+        final LoadingCache<Long, GuildSetting> guildSettingsCache = variables.getGuildSettingsCache();
+        final GuildSetting settingForGuild = guildSettingsCache.get(guildId);
 
         if (settingForGuild != null) {
             return settingForGuild;

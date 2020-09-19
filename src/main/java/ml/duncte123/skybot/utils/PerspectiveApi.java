@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.dunctebot.models.settings.ProfanityFilterType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +28,6 @@ import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
-import ml.duncte123.skybot.objects.guild.ProfanityFilterType;
 import net.dv8tion.jda.api.exceptions.HttpException;
 
 import java.util.Objects;

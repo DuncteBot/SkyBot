@@ -26,7 +26,7 @@ import ml.duncte123.skybot.extensions.PrettyTimeKt;
 import ml.duncte123.skybot.objects.Emotes;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -100,7 +100,7 @@ public class GuildInfoCommand extends Command {
         final Guild guild = ctx.getJDAGuild();
         final double[] ratio = GuildUtils.getBotRatio(guild);
         final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
-        final GuildSettings settings = ctx.getGuildSettings();
+        final GuildSetting settings = ctx.getGuildSettings();
         final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), guild);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {

@@ -30,8 +30,8 @@ import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -104,7 +104,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return res["data"]
     }
 
-    fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
+    fun updateGuildSettings(guildSettings: GuildSetting): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
 
@@ -120,7 +120,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
+    fun registerNewGuildSettings(guildSettings: GuildSetting): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = postJSON("guildsettings", json)
         val success = response["success"].asBoolean()

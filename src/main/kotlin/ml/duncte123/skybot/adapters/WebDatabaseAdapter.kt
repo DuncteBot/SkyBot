@@ -30,8 +30,8 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.Instant
 
@@ -69,16 +69,16 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
+    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
         runOnThread {
             val array = apis.getGuildSettings()
-            val settings: List<GuildSettings> = jackson.readValue(array.traverse(), object : TypeReference<List<GuildSettings>>() {})
+            val settings: List<GuildSetting> = jackson.readValue(array.traverse(), object : TypeReference<List<GuildSetting>>() {})
 
             callback(settings)
         }
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
         runOnThread {
             val item = apis.getGuildSetting(guildId)
 
@@ -87,13 +87,13 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 return@runOnThread
             }
 
-            val setting = jackson.readValue(item.traverse(), GuildSettings::class.java)
+            val setting = jackson.readValue(item.traverse(), GuildSetting::class.java)
 
             callback(setting)
         }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             callback(
                 apis.updateGuildSettings(guildSettings)
@@ -107,7 +107,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             callback(
                 apis.registerNewGuildSettings(guildSettings)

@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.web.handlers
 
+import com.dunctebot.models.settings.GuildSetting
 import com.fasterxml.jackson.databind.JsonNode
 import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 
@@ -38,8 +38,7 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
 
     private fun updateGuildSettings(guildSettings: JsonNode) {
         guildSettings.forEach {
-            // TODO: use model
-            val setting = variables.jackson.readValue(it.traverse(), GuildSettings::class.java)
+            val setting = variables.jackson.readValue(it.traverse(), GuildSetting::class.java)
 
             variables.guildSettingsCache.put(setting.guildId, setting)
         }

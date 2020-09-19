@@ -29,8 +29,8 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
@@ -92,10 +92,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
+    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
         runOnThread {
 
-            val settings = arrayListOf<GuildSettings>()
+            val settings = arrayListOf<GuildSetting>()
             val smt = connManager.connection.createStatement()
 
             // language=SQLite
@@ -151,7 +151,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
         runOnThread {
             // language=SQLite
             val res = connManager.connection.createStatement().executeQuery("SELECT * FROM guildSettings WHERE guildId = '$guildId'")
@@ -174,7 +174,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             // language=SQLite
             connManager.connection.prepareStatement("""UPDATE guildSettings SET 
@@ -240,7 +240,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         callback.invoke(true)
     }
 
-    override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             val guildId = guildSettings.guildId
             val connection = connManager.connection
@@ -1021,11 +1021,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
-    private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {
+    private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
         val blackList = getBlackListsForGuild(guildId)
         val warnActions = getWarnActionsForGuild(guildId)
 
-        return GuildSettings(guildId)
+        return GuildSetting(guildId)
             .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
             .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
             .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))

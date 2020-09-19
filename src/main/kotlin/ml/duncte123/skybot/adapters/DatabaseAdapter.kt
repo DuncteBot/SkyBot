@@ -28,8 +28,8 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -74,15 +74,15 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     /////////////////
     // Guild settings
 
-    abstract fun getGuildSettings(callback: (List<GuildSettings>) -> Unit)
+    abstract fun getGuildSettings(callback: (List<GuildSetting>) -> Unit)
 
-    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit)
+    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit)
 
     abstract fun deleteGuildSetting(guildId: Long)
 
-    abstract fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
+    abstract fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit)
 
-    abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
+    abstract fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit)
 
     abstract fun addWordToBlacklist(guildId: Long, word: String)
 

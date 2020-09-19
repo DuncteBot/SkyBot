@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -87,7 +87,7 @@ public class CustomCommandCommand extends Command {
 
     private void listCustomCommands(String arg, CommandContext ctx, CommandManager manager) {
         if (arg.equalsIgnoreCase("list")) {
-            final GuildSettings s = ctx.getGuildSettings();
+            final GuildSetting s = ctx.getGuildSettings();
             final StringBuilder sb = new StringBuilder();
 
             manager.getCustomCommands().stream()

@@ -20,7 +20,7 @@ package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebRouter

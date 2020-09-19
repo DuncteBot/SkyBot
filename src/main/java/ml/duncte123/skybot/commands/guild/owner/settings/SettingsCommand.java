@@ -28,7 +28,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -136,7 +136,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="Settings overview" defaultstate="collapsed">
     private void showSettingsOverview(CommandContext ctx) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
         final TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
         final Role autoRole = guild.getRoleById(settings.getAutoroleRole());
@@ -173,7 +173,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="autoRoleSetting" defaultstate="collapsed">
     private void autoRoleSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -204,7 +204,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="muteRoleSetting" defaultstate="collapsed">
     private void muteRoleSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -267,7 +267,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="descriptionSetting" defaultstate="collapsed">
     private void descriptionSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -304,7 +304,7 @@ public class SettingsCommand extends Command {
         }
 
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         final String newJoinMessage = StringKt.stripFlags(
             ctx.getArgsRaw(false),
@@ -327,7 +327,7 @@ public class SettingsCommand extends Command {
         }
 
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         final String newLeaveMessage = StringKt.stripFlags(
             ctx.getArgsRaw(false),
@@ -345,7 +345,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="logChannelSetting" defaultstate="collapsed">
     private void logChannelSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -377,7 +377,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="prefixSetting" defaultstate="collapsed">
     private void prefixSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -407,7 +407,7 @@ public class SettingsCommand extends Command {
         }
 
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final String newRateLimit = this.getSetValue(ctx, "");
 
         if ("default".equals(newRateLimit) || "reset".equals(newRateLimit)) {
@@ -434,7 +434,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="welcomeChannelSetting" defaultstate="collapsed">
     private void welcomeChannelSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
             sendMsg(ctx, String.format(
@@ -460,7 +460,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="announceTracksSetting" defaultstate="collapsed">
     private void announceTracksSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
 
         guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
@@ -472,7 +472,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="autoDehoistSetting" defaultstate="collapsed">
     private void autoDehoistSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
 
         guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
@@ -484,7 +484,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
     private void filterInvitesSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean shouldFilterInvites = !settings.isFilterInvites();
 
         guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
@@ -496,7 +496,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
     private void joinMessageStateSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isEnableJoinMessage();
 
         guild.setSettings(settings.setEnableJoinMessage(isEnabled));
@@ -508,7 +508,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="kickModeSetting" defaultstate="collapsed">
     private void kickModeSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean kickState = !settings.getKickState();
 
         guild.setSettings(settings.setKickState(kickState));
@@ -520,7 +520,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="spamFilterSetting" defaultstate="collapsed">
     private void spamFilterSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final long muteRoleId = settings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
@@ -551,7 +551,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="swearFilterSetting" defaultstate="collapsed">
     private void swearFilterSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isEnableSwearFilter();
 
         guild.setSettings(settings.setEnableSwearFilter(isEnabled));

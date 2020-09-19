@@ -32,7 +32,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
@@ -82,7 +82,7 @@ public abstract class MessageListener extends BaseListener {
 
         this.handlerThread.submit(() -> {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
-            final GuildSettings settings = guild.getSettings();
+            final GuildSetting settings = guild.getSettings();
 
             if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
                 !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
@@ -167,7 +167,7 @@ public abstract class MessageListener extends BaseListener {
     private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
         final User selfUser = event.getJDA().getSelfUser();
         final String selfRegex = "<@!?" + selfUser.getId() + '>';
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+        final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
 
         if (!commandManager.isCommand(customPrefix, rw) && doAutoModChecks(event, settings, rw)) {
@@ -308,7 +308,7 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /// <editor-fold desc="auto moderation" defaultstate="collapsed">
-    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSetting settings, String rw) {
         if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
             final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
             if (matcher.find()) {
@@ -333,7 +333,7 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private boolean checkSwearFilter(Message messageToCheck, GenericGuildMessageEvent event, DunctebotGuild guild) {
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
             final float score = PerspectiveApi.checkSwearFilter(
@@ -417,7 +417,7 @@ public abstract class MessageListener extends BaseListener {
         return false;
     }
 
-    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings, DunctebotGuild g) {
+    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSetting settings, DunctebotGuild g) {
         if (settings.isEnableSpamFilter()) {
             final long[] rates = settings.getRatelimits();
 
@@ -430,7 +430,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSetting settings, String rw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {

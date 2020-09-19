@@ -22,7 +22,7 @@ import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -66,7 +66,7 @@ public class TempMuteCommand extends ModBaseCommand {
     public void execute(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-        final GuildSettings settings = ctx.getGuildSettings();
+        final GuildSetting settings = ctx.getGuildSettings();
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {

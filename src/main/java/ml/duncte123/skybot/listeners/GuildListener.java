@@ -25,7 +25,7 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -179,7 +179,7 @@ public class GuildListener extends BaseListener {
         }
 
         final DunctebotGuild dbg = new DunctebotGuild(guild, variables);
-        final GuildSettings settings = dbg.getSettings();
+        final GuildSetting settings = dbg.getSettings();
 
         if (settings.getLogChannel() < 1) {
             return;

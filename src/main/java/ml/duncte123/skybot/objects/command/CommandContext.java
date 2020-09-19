@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
@@ -161,7 +161,7 @@ public class CommandContext implements ICommandContext {
         return this.parseRawArgs(this.event.getMessage().getContentDisplay());
     }
 
-    public GuildSettings getGuildSettings() {
+    public GuildSetting getGuildSettings() {
         return this.duncteBotGuild.getSettings();
     }
 
