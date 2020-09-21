@@ -28,8 +28,6 @@ import ml.duncte123.skybot.objects.web.ModelAndView
 import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
-import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
-import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.renderes.VelocityRenderer
 import net.dv8tion.jda.api.sharding.ShardManager
 import spark.Spark.*
@@ -74,24 +72,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
         defaultResponseTransformer(responseTransformer)
 
-        path("/server/$GUILD_ID") {
-            post("/moderation") { request, response ->
-                return@post ModerationSettings.save(request, response, shardManager, variables)
-            }
-
-            post("/messages") { request, response ->
-                return@post MessageSettings.save(request, response, shardManager, variables)
-            }
-
-            /*get("/music") { request, _ ->
-                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
-                    ?: return@get """{"message": "No guild? WOT"}"""
-                val mng = variables.audioUtils.getMusicManager(guild)
-
-                EarthUtils.gMMtoJSON(mng, variables.jackson)
-            }*/
-        }
-
         // Api routes
         path("/api") {
             before("/*") { _, response ->
@@ -105,14 +85,6 @@ class WebRouter(private val shardManager: ShardManager, private val variables: V
 
             options("/*") { _, _ ->
                 // Allow OPTIONS requests
-            }
-
-            get("/getServerCount") { _, response ->
-                return@get MainApi.serverCount(response, shardManager, mapper)
-            }
-
-            get("/getUserGuilds") { request, response ->
-                return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager, mapper)
             }
 
             path("/customcommands/$GUILD_ID") {

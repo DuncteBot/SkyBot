@@ -42,6 +42,10 @@ class RequestHandler(private val variables: Variables, private val shardManager:
             responseData.put("guild_patron_status", mapGuildPatronStatus(data["guild_patron_status"]))
         }
 
+        if (data.has("shard_guild_count")) {
+            responseData.put("shard_guild_count", getShardAndGuildCount())
+        }
+
         client.send(
             DataObject.empty()
                 .put("t", SocketTypes.FETCH_DATA)
@@ -85,5 +89,11 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         }
 
         return ret
+    }
+
+    private fun getShardAndGuildCount(): DataObject {
+        return DataObject.empty()
+            .put("shards", shardManager.shardsTotal)
+            .put("guilds", shardManager.guildCache.size())
     }
 }
