@@ -180,7 +180,7 @@ class WebSocketClient(
 
     private fun setupHandlers() {
         handlersMap[SocketTypes.DATA_UPDATE] = DataUpdateHandler(variables, this)
-        handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(variables, shardManager, this)
+        handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(shardManager, this)
         handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(variables, this)
         handlersMap[SocketTypes.CUSTOM_COMMANDS] = CustomCommandHandler(variables, this)
     }

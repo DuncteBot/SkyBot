@@ -19,9 +19,7 @@
 package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.databind.JsonNode
-import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.CommandUtils
-import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.SocketTypes
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
@@ -29,7 +27,7 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.data.DataArray
 import net.dv8tion.jda.api.utils.data.DataObject
 
-class RequestHandler(private val variables: Variables, private val shardManager: ShardManager, client: WebSocketClient) : SocketHandler(client) {
+class RequestHandler(private val shardManager: ShardManager, client: WebSocketClient) : SocketHandler(client) {
     override fun handleInternally(data: JsonNode) {
         val responseData = DataObject.empty()
             .put("identifier", data["identifier"].asText())
@@ -40,10 +38,6 @@ class RequestHandler(private val variables: Variables, private val shardManager:
 
         if (data.has("guild_patron_status") && data["guild_patron_status"].isArray) {
             responseData.put("guild_patron_status", mapGuildPatronStatus(data["guild_patron_status"]))
-        }
-
-        if (data.has("shard_guild_count")) {
-            responseData.put("shard_guild_count", getShardAndGuildCount())
         }
 
         client.send(
@@ -89,11 +83,5 @@ class RequestHandler(private val variables: Variables, private val shardManager:
         }
 
         return ret
-    }
-
-    private fun getShardAndGuildCount(): DataObject {
-        return DataObject.empty()
-            .put("shards", shardManager.shardsTotal)
-            .put("guilds", shardManager.guildCache.size())
     }
 }
