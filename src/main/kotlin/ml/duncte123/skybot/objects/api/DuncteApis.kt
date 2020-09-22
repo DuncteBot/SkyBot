@@ -33,6 +33,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.objects.guild.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
@@ -623,6 +624,13 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
     fun getOrlyImage(): String {
         return executeDefaultGetRequest("orly", false)["data"].asText()
+    }
+
+    fun sendServerCountToLists(shardManager: ShardManager) {
+        mapper.createObjectNode()
+            .put("bot_id", shardManager.shardCache.first().selfUser.id)
+            .put("shard_count", shardManager.shardCache.size())
+            .put("server_count", shardManager.guildCache.size())
     }
 
     private fun buildValidationErrorString(error: ObjectNode): String {

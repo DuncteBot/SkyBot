@@ -68,6 +68,15 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.HOURS
             );
 
+            // auto poster for guild info (post every day)
+            //noinspection ConstantConditions
+            systemPool.scheduleAtFixedRate(
+                () -> variables.getApis().sendServerCountToLists(jda.getShardManager()),
+                1,
+                1,
+                TimeUnit.DAYS
+            );
+
             if (!variables.useApi()) {
                 this.startSQLiteTimers();
             }
