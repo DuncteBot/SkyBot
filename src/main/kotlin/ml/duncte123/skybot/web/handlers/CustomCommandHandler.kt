@@ -45,7 +45,7 @@ class CustomCommandHandler(variables: Variables, client: WebSocketClient) : Sock
 
     private fun removeCustomCommands(commands: JsonNode) {
         commands.forEach {
-            manager.removeCustomCommand(it["invoke"].asText(), it["guild_id"].asLong())
+            manager.removeCustomCommand(it["invoke"].asText(), it["guild_id"].asLong(), false)
         }
     }
 
@@ -53,7 +53,7 @@ class CustomCommandHandler(variables: Variables, client: WebSocketClient) : Sock
         val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
 
         commands.forEach {
-            manager.editCustomCommand(it)
+            manager.addCustomCommand(it, false, true)
         }
     }
 
@@ -61,7 +61,7 @@ class CustomCommandHandler(variables: Variables, client: WebSocketClient) : Sock
         val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
 
         commands.forEach {
-            manager.registerCustomCommand(it)
+            manager.addCustomCommand(it, false, false)
         }
     }
 }

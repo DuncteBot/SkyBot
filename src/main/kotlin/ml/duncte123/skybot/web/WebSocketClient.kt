@@ -201,6 +201,8 @@ class WebSocketClient(
 
         try {
             socket.connect()
+            // reset reconnects after successful connect
+            reconnectsAttempted = 0
         } catch (e: Exception) {
             log.error("Failed to connect to WS, retrying in ${reconnectInterval / 1000} seconds", e)
         }
