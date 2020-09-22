@@ -47,15 +47,16 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
-        val player = mng.player
+        val player = ctx.audioUtils.getMusicManager(ctx.guild).player
+        val playingTrack = player.playingTrack
 
-        if (player.playingTrack == null) {
+        if (playingTrack == null) {
             sendMsg(ctx, "The player is not currently playing anything!")
             return
         }
 
-        handleSearch(player.playingTrack.info.title.trim(), ctx)
+        // just search for the title, the author might be a weird youtube channel
+        handleSearch(playingTrack.info.title.trim(), ctx)
     }
 
     private fun handleSearch(search: String, ctx: CommandContext) {
@@ -74,10 +75,10 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    private fun searchForSong(t: String?, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
+    private fun searchForSong(search: String, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
             .header("Authorization", "Bearer ${config.apis.ksoft}")
-            .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}")
+            .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
             .build(),
             WebParserUtils::toJSONObject
         ).async {
