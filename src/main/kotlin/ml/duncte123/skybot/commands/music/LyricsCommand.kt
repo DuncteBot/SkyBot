@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
-import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -33,12 +32,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-// TODO: switch to musixmatch
 class LyricsCommand : MusicCommand() {
-
-    private var authToken = ""
-    private val apiBase = "https://api.genius.com"
-
     init {
         this.name = "lyrics"
         this.help = "Search for song lyrics or show the ones for the currently playing song"
@@ -65,56 +59,46 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun handleSearch(search: String, ctx: CommandContext) {
-        searchForSong(search, ctx.config.genius) {
-            if (it.isNullOrBlank()) {
+        searchForSong(search, ctx.config) {
+            if (it == null) {
                 sendMsg(ctx, "There where no lyrics found for `$search`")
-            } else {
-                val url = "https://genius.com$it"
-                WebUtils.ins.scrapeWebPage(url).async { doc ->
-                    val text = doc.select("div.lyrics").first().child(0).wholeText()
-                        .replace("<br>", "\n")
-
-                    sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
-                        .setTitle("Lyrics for $search", url)
-                        .setDescription(StringUtils.abbreviate(text, 1900))
-                        .appendDescription("\n\n Full lyrics on [genius.com]($url)")
-                        .setFooter("Powered by genius.com"))
-                }
+                return@searchForSong
             }
+
+            sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
+                .setTitle("Lyrics for $search", it.url)
+                .setThumbnail(it.art)
+                .setDescription(StringUtils.abbreviate(it.lyrics, 1900))
+                .appendDescription("\n\n Full lyrics on [ksoft.si](${it.url})")
+                .setFooter("Powered by ksoft.si"))
         }
     }
 
-    private fun getAuthToken(config: DunctebotConfig.Genius): String {
-        if (authToken.isBlank()) {
-            val formData = FormRequestBody()
-            formData.append("client_id", config.client_id)
-            formData.append("client_secret", config.client_secret)
-            formData.append("grant_type", "client_credentials")
-
-            val json = WebUtils.ins.postRequest("$apiBase/oauth/token", formData)
-                .build(WebParserUtils::toJSONObject, WebParserUtils::handleError)
-                .execute()
-
-            this.authToken = json["access_token"].asText("")
-        }
-
-        return "Bearer $authToken"
-    }
-
-    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .header("Authorization", getAuthToken(config))
-            .url("$apiBase/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}").build(),
+            .header("Authorization", "Bearer ${config.apis.ksoft}")
+            .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(t, StandardCharsets.UTF_8)}")
+            .build(),
             WebParserUtils::toJSONObject
         ).async {
-            val hits = it["response"]["hits"]
-            if (hits.isEmpty) {
-                callback.invoke(null)
-            } else {
-                callback.invoke(
-                    hits[0]["result"]["path"].asText()
-                )
+            val results = it["data"]
+
+            if (results.isEmpty) {
+                callback(null)
+                return@async
             }
+
+            val firstResult = results[0]
+
+            callback(
+                LyricInfo(
+                    firstResult["album_art"].asText(),
+                    firstResult["url"].asText(),
+                    firstResult["lyrics"].asText()
+                )
+            )
         }
     }
+
+    private data class LyricInfo(val art: String, val url: String, val lyrics: String)
 }
