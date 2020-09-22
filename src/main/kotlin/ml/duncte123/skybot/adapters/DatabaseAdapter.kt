@@ -95,8 +95,6 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     /////////////////
     // Embed settings
 
-    abstract fun loadEmbedSettings(callback: (TLongIntMap) -> Unit)
-
     abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int)
 
     ///////////////

@@ -25,6 +25,7 @@ import gnu.trove.map.hash.TLongLongHashMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import com.dunctebot.models.settings.GuildSetting;
@@ -35,7 +36,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Authors(authors = {
@@ -48,7 +48,6 @@ public class GuildSettingsUtils {
 
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
-        loadEmbedColors(variables.getDatabaseAdapter());
         loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
@@ -59,31 +58,16 @@ public class GuildSettingsUtils {
             (storedSettings) -> {
 
                 storedSettings.forEach(
-                    (setting) -> guildSettings.put(setting.getGuildId(), setting)
+                    (setting) -> {
+                        guildSettings.put(setting.getGuildId(), setting);
+
+                        if (setting.getEmbedColor() != Settings.DEFAULT_COLOUR) {
+                            EmbedUtils.addColor(setting.getGuildId(), setting.getEmbedColor());
+                        }
+                    }
                 );
 
                 logger.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
-
-                return null;
-            }
-        );
-    }
-
-    private static void loadEmbedColors(DatabaseAdapter databaseAdapter) {
-        logger.info("Loading embed colors.");
-
-        databaseAdapter.loadEmbedSettings(
-            (settings) -> {
-                final AtomicInteger loaded = new AtomicInteger();
-
-                settings.forEachEntry((key, value) -> {
-                    EmbedUtils.addColor(key, value);
-                    loaded.incrementAndGet();
-
-                    return true;
-                });
-
-                logger.info("Loaded embed colors for " + loaded.get() + " guilds.");
 
                 return null;
             }

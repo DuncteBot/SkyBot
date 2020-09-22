@@ -21,9 +21,7 @@ package ml.duncte123.skybot.adapters
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
-import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
@@ -136,18 +134,6 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun clearBlacklist(guildId: Long) {
         runOnThread {
             apis.clearBlacklist(guildId)
-        }
-    }
-
-    override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
-        runOnThread {
-            val map = TLongIntHashMap()
-
-            apis.loadEmbedSettings().forEach {
-                map.put(it["guild_id"].asLong(), it["embed_color"].asInt())
-            }
-
-            callback(map)
         }
     }
 

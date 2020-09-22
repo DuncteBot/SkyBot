@@ -18,9 +18,7 @@
 
 package ml.duncte123.skybot.adapters
 
-import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
-import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
@@ -268,21 +266,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
 
             callback.invoke(true)
-        }
-    }
-
-    override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
-        runOnThread {
-            val map = TLongIntHashMap()
-            val smt = connManager.connection.createStatement()
-
-            val res = smt.executeQuery("SELECT * FROM embedSettings")
-
-            while (res.next()) {
-                map.put(res.getLong("guild_id"), res.getInt("embed_color"))
-            }
-
-            callback.invoke(map)
         }
     }
 
@@ -1013,8 +996,19 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
         }
 
-
         return list
+    }
+
+    private fun getEmbedColorForGuild(guildId: Long): Int {
+        connManager.connection.createStatement().use { smt ->
+            smt.executeQuery("SELECT * FROM embedSettings WHERE guild_id = $guildId").use { res ->
+                if (res.next()) {
+                    return res.getInt("embed_color")
+                }
+            }
+        }
+
+        return Settings.DEFAULT_COLOUR
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
@@ -1024,6 +1018,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
         val blackList = getBlackListsForGuild(guildId)
         val warnActions = getWarnActionsForGuild(guildId)
+        val embedColor = getEmbedColorForGuild(guildId)
 
         return GuildSetting(guildId)
             .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
@@ -1054,5 +1049,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
             .setBlacklistedWords(blackList)
             .setWarnActions(warnActions)
+            .setEmbedColor(embedColor)
     }
 }
