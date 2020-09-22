@@ -41,6 +41,13 @@ public class CustomCommandImpl implements CustomCommand {
         this.autoresponse = autoresponse;
     }
 
+    // for better keys from an api
+    @JsonCreator
+    public CustomCommandImpl(@JsonProperty("invoke") String invoke, @JsonProperty("message") String message,
+                             @JsonProperty("guild_id") String guildId, @JsonProperty("autoresponse") boolean autoresponse) {
+        this(invoke, message, Long.parseLong(guildId), autoresponse);
+    }
+
     @Override
     public String getMessage() {
         return message;

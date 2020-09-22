@@ -23,4 +23,5 @@ object SocketTypes {
     const val DATA_UPDATE = "DATA_UPDATE"
     const val FETCH_DATA = "FETCH_DATA"
     const val GUILD_SETTINGS = "GUILD_SETTINGS"
+    const val CUSTOM_COMMANDS = "CUSTOM_COMMANDS"
 }
