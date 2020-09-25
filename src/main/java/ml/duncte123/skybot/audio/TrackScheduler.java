@@ -236,6 +236,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             return;
         }
 
+        if (finalCause.getMessage().contains("age-restricted")) {
+            this.messageDebouncer.accept("Cannot play `" + track.getInfo().title + "` because it is age-restricted");
+            return;
+        }
+
         this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
             track.getIdentifier()
             + "`, please contact the devs if this happens a lot.\n" +
