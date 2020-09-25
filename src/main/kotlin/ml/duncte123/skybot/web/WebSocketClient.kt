@@ -195,6 +195,7 @@ class WebSocketClient(
         socket = factory.createSocket(config.websocket.url)
 
         socket.setDirectTextMessage(true)
+            .addHeader("X-DuncteBot", "bot")
             .addHeader("Accept-Encoding", "gzip")
             .addHeader("Authorization", variables.apis.apiKey)
             .addListener(this)
