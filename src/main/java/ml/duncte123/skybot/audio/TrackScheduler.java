@@ -236,7 +236,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             return;
         }
 
-        this.messageDebouncer.accept("Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+        this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
+            track.getIdentifier()
+            + "`, please contact the devs if this happens a lot.\n" +
             "Details: " + finalCause);
 
         // old shit
