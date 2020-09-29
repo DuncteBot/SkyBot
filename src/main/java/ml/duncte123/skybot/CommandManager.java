@@ -182,7 +182,6 @@ public class CommandManager {
         this.addCommand(new FlipCommand());
         this.addCommand(new ForceDisconnectCommand());
         this.addCommand(new ForceSkip());
-        this.addCommand(new GenderBendCommand());
         this.addCommand(new GuildInfoCommand());
         this.addCommand(new GuildJoinsCommand());
         this.addCommand(new HackbanCommand());
