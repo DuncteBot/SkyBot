@@ -327,8 +327,18 @@ public class CommandManager {
         loadCustomCommands();
     }
 
-    public Collection<ICommand> getCommands() {
+    // Why is this called getCommandsList?
+    // Because groovy eval won't allow me to access the commands property otherwise
+    // Thanks groovy <3
+    public Collection<ICommand> getCommandsList() {
         return this.commands.values();
+    }
+
+    public List<ICommand> getCommands(CommandCategory category) {
+        return this.commands.values()
+            .stream()
+            .filter((c) -> c.getCategory().equals(category))
+            .collect(Collectors.toList());
     }
 
     LongLongPair getCommandCount() {
@@ -369,10 +379,6 @@ public class CommandManager {
 
 
         return false;
-    }
-
-    public List<ICommand> getCommands(CommandCategory category) {
-        return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
     @Nullable

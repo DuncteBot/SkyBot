@@ -77,6 +77,6 @@ object CommandTransformers {
     }
 
     private fun CommandManager.getCommandsList(): List<Command> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
+        return this.commandsList.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 }
