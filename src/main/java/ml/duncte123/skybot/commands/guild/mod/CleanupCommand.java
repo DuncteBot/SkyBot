@@ -130,6 +130,7 @@ public class CleanupCommand extends ModBaseCommand {
                 }
                 if (total < 1 || total > 1000) {
                     sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+                        .setChannel(ctx.getChannel())
                         .setMessage("Error: count must be minimal 2 and maximal 1000\n" +
                             "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`")
                         .build());

@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 object CommandTransformers {
 
     fun toJson(commandManager: CommandManager, mapper: ObjectMapper): Any {
-        val commands = commandManager.getCommandsList().sortedBy { it.name }
+        val commands = commandManager.getFilteredCommands().sortedBy { it.name }
         val output = mapper.createArrayNode()
 
         for (command in commands) {
@@ -76,7 +76,7 @@ object CommandTransformers {
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
     }
 
-    private fun CommandManager.getCommandsList(): List<Command> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
+    private fun CommandManager.getFilteredCommands(): List<Command> {
+        return this.commandsList.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 }
