@@ -632,7 +632,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
             .put("shard_count", shardManager.shardCache.size())
             .put("server_count", shardManager.guildCache.size())
 
-        val response = postJSON("validate-token", json)
+        val response = postJSON("guild-count", json)
 
         if (!response["success"].asBoolean()) {
             logger.error("Failed to update guild count\n" +
