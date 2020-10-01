@@ -101,7 +101,7 @@ dependencies {
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.33")
     // build override for age-restricted videos
-    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "bbe23cd")
+    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "21f70dd")
     implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "c3056d4")
 //    implementation(project(":Lavalink-Client"))
 
