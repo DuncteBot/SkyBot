@@ -25,7 +25,6 @@ public class DunctebotConfig {
 
     public Discord discord;
     public Apis apis;
-    public Genius genius;
     public Lavalink lavalink;
     public Sentry sentry;
     public Websocket websocket;
@@ -42,6 +41,7 @@ public class DunctebotConfig {
         public Cache youtubeCache;
         public String googl;
         public String weebSh;
+        public String ksoft;
         public Spotify spotify;
         public String blargbot;
         public String wolframalpha;
@@ -67,11 +67,6 @@ public class DunctebotConfig {
             public String pass;
             public String region;
         }
-    }
-
-    public static class Genius {
-        public String client_secret;
-        public String client_id;
     }
 
     public static class Sentry {

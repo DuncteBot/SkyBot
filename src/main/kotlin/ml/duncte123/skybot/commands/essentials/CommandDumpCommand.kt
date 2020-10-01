@@ -46,7 +46,7 @@ class CommandDumpCommand : Command() {
     }
 
     private fun parseCommandsToJson(commandManager: CommandManager, mapper: JsonMapper): ArrayNode {
-        val commands = commandManager.getCommandsList().sortedBy { it.name }
+        val commands = commandManager.getFilteredCommands().sortedBy { it.name }
         val output = mapper.createArrayNode()
 
         for (command in commands) {
@@ -95,7 +95,7 @@ class CommandDumpCommand : Command() {
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
     }
 
-    private fun CommandManager.getCommandsList(): List<Command> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
+    private fun CommandManager.getFilteredCommands(): List<Command> {
+        return this.commandsList.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 }
