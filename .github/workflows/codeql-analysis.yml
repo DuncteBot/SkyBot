@@ -13,7 +13,8 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    fail-fast: false
+    strategy:
+        fail-fast: false
     matrix:
         language: [ 'java', 'kotlin' ]
 
