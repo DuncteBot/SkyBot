@@ -132,7 +132,13 @@ class WarnCommand : ModBaseCommand() {
         val guild = ctx.guild
 
         if (!CommandUtils.isGuildPatron(guild)) {
-            return guild.settings.warnActions.firstOrNull()
+            val action = guild.settings.warnActions.firstOrNull()
+
+            return if (action != null && threshold >= action.threshold) {
+                action
+            } else {
+                null
+            }
         }
 
         return guild.settings
