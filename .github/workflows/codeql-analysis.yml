@@ -16,7 +16,8 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-            language: [ 'java', 'kotlin' ]
+#            language: [ 'java', 'kotlin' ]
+            language: [ 'java' ]
 
     steps:
     - name: Setup Java JDK
