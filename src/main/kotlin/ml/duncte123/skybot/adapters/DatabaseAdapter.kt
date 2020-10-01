@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot.adapters
 
-import gnu.trove.map.TLongIntMap
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
 import kotlinx.coroutines.GlobalScope
@@ -28,8 +29,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import com.dunctebot.models.settings.GuildSetting
-import com.dunctebot.models.settings.WarnAction
 import java.time.Instant
 import java.util.concurrent.Executors
 
