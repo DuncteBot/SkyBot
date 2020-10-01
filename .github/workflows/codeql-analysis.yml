@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         fail-fast: false
-    matrix:
-        language: [ 'java', 'kotlin' ]
+        matrix:
+            language: [ 'java', 'kotlin' ]
 
     steps:
     - name: Setup Java JDK
