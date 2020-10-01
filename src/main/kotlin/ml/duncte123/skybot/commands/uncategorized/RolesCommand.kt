@@ -20,10 +20,11 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.web.controllers.GuildStuffController
-import net.dv8tion.jda.api.entities.Guild
+import ml.duncte123.skybot.web.SocketTypes
+import net.dv8tion.jda.api.utils.data.DataObject
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -36,16 +37,26 @@ class RolesCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val domain = if (Settings.IS_LOCAL) "http://localhost:2000" else "https://dashboard.dunctebot.com"
-        val guild = ctx.jdaGuild
-        val hash = generateHash(guild)
+        val guildId = ctx.jdaGuild.id
+        val hash = generateHash(guildId)
 
-        GuildStuffController.guildHashes.put(hash, guild.idLong)
+        sendHash(guildId, hash)
         sendMsg(ctx, "Check out the roles on this server here: $domain/roles/$hash\nThis link is valid for 2 hours")
     }
 
-    private fun generateHash(guild: Guild): String {
+    private fun sendHash(guildId: String, hash: String) {
+        SkyBot.getInstance().websocketClient.send(
+            DataObject.empty()
+                .put("t", SocketTypes.ROLES_PUT_HASH)
+                .put("d", DataObject.empty()
+                    .put("guild_id", guildId)
+                    .put("hash", hash))
+        )
+    }
+
+    private fun generateHash(guildId: String): String {
         val md = MessageDigest.getInstance("MD5")
-        val content = guild.id + System.currentTimeMillis()
+        val content = guildId + System.currentTimeMillis()
         val digest = md.digest(content.toByteArray())
 
         return BigInteger(1, digest).toString(16).padStart(32, '0')

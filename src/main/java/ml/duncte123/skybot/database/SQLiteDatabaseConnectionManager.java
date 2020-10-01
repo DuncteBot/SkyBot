@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.database;
 
+import com.dunctebot.models.settings.WarnAction;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.Patron;
-import ml.duncte123.skybot.objects.guild.WarnAction;
 import org.sqlite.JDBC;
 
 import java.io.File;

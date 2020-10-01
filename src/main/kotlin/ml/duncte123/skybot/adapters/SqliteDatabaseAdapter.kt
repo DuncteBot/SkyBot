@@ -18,9 +18,7 @@
 
 package ml.duncte123.skybot.adapters
 
-import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
-import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
@@ -29,8 +27,8 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
@@ -92,10 +90,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
+    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
         runOnThread {
 
-            val settings = arrayListOf<GuildSettings>()
+            val settings = arrayListOf<GuildSetting>()
             val smt = connManager.connection.createStatement()
 
             // language=SQLite
@@ -151,7 +149,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings?) -> Unit) {
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
         runOnThread {
             // language=SQLite
             val res = connManager.connection.createStatement().executeQuery("SELECT * FROM guildSettings WHERE guildId = '$guildId'")
@@ -174,7 +172,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             // language=SQLite
             connManager.connection.prepareStatement("""UPDATE guildSettings SET 
@@ -240,7 +238,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         callback.invoke(true)
     }
 
-    override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             val guildId = guildSettings.guildId
             val connection = connManager.connection
@@ -268,21 +266,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
 
             callback.invoke(true)
-        }
-    }
-
-    override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
-        runOnThread {
-            val map = TLongIntHashMap()
-            val smt = connManager.connection.createStatement()
-
-            val res = smt.executeQuery("SELECT * FROM embedSettings")
-
-            while (res.next()) {
-                map.put(res.getLong("guild_id"), res.getInt("embed_color"))
-            }
-
-            callback.invoke(map)
         }
     }
 
@@ -1013,19 +996,31 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
         }
 
-
         return list
+    }
+
+    private fun getEmbedColorForGuild(guildId: Long): Int {
+        connManager.connection.createStatement().use { smt ->
+            smt.executeQuery("SELECT * FROM embedSettings WHERE guild_id = $guildId").use { res ->
+                if (res.next()) {
+                    return res.getInt("embed_color")
+                }
+            }
+        }
+
+        return Settings.DEFAULT_COLOUR
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
     private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
-    private fun ResultSet.toGuildSettings(guildId: Long): GuildSettings {
+    private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
         val blackList = getBlackListsForGuild(guildId)
         val warnActions = getWarnActionsForGuild(guildId)
+        val embedColor = getEmbedColorForGuild(guildId)
 
-        return GuildSettings(guildId)
+        return GuildSetting(guildId)
             .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
             .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
             .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))
@@ -1054,5 +1049,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
             .setBlacklistedWords(blackList)
             .setWarnActions(warnActions)
+            .setEmbedColor(embedColor)
     }
 }

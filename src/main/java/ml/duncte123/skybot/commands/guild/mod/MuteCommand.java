@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -65,7 +65,7 @@ public class MuteCommand extends ModBaseCommand {
             return;
         }
 
-        final GuildSettings settings = ctx.getGuildSettings();
+        final GuildSetting settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");

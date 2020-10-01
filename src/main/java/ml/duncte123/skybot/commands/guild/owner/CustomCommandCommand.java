@@ -27,11 +27,12 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
@@ -40,11 +41,12 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+// TODO: trash this command, it is a clutter and hell to maintain
 public class CustomCommandCommand extends Command {
-
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "remove", "raw");
 
     public CustomCommandCommand() {
+        this.requiresArgs = true;
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "customcommand";
         this.aliases = new String[]{
@@ -65,8 +67,8 @@ public class CustomCommandCommand extends Command {
         final List<String> args = ctx.getArgsWithQuotes();
         final CommandManager manager = ctx.getCommandManager();
 
-        if (args.isEmpty()) {
-            sendMsg(ctx, "Insufficient arguments use `" + ctx.getPrefix() + "help customcommand`");
+        if (args.size() > 1 && !ctx.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            sendMsg(ctx, "You need the \"Administrator\" permission to modify commands");
             return;
         }
 
@@ -87,7 +89,7 @@ public class CustomCommandCommand extends Command {
 
     private void listCustomCommands(String arg, CommandContext ctx, CommandManager manager) {
         if (arg.equalsIgnoreCase("list")) {
-            final GuildSettings s = ctx.getGuildSettings();
+            final GuildSetting s = ctx.getGuildSettings();
             final StringBuilder sb = new StringBuilder();
 
             manager.getCustomCommands().stream()
@@ -119,11 +121,6 @@ public class CustomCommandCommand extends Command {
             sendMsg(ctx, "Raw data for `" + commandName + "`:```pascal\n" + escaped + "\n```");
         } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
 
-            if (!isAdmin(ctx)) {
-                sendMsg(ctx, "You need the \"Administrator\" permission to add or remove commands");
-                return;
-            }
-
             if (!commandExists(commandName, guildId, manager)) {
                 sendMsg(ctx, "No command was found for this name");
                 return;
@@ -142,16 +139,11 @@ public class CustomCommandCommand extends Command {
     }
 
     private void addOrEditCustomCommand(List<String> args, CommandContext ctx, CommandManager manager, String prefix) {
-
         if (args.size() < 3 && !systemInvokes.contains(args.get(0))) {
             sendMsg(ctx, "Invalid arguments use `" + prefix + "help customcommand`");
             return;
         }
 
-        if (!isAdmin(ctx)) {
-            sendMsg(ctx, "You need the \"Administrator\" permission to add or remove commands");
-            return;
-        }
         //new command
         final String commandName = args.get(1);
 
@@ -212,37 +204,26 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean isAdmin(CommandContext ctx) {
-        return ctx.getMember().hasPermission(ctx.getChannel(), Permission.ADMINISTRATOR);
-    }
-
     private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return registerCustomCommand(name, action, guildId, false, manager);
+        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, false));
     }
 
-    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
-        return editCustomCommand(customCommand, newMessage, false, manager);
-    }
+    private boolean editCustomCommand(@Nullable CustomCommand customCommand, String newMessage, CommandManager manager) {
+        if (customCommand == null) {
+            return false;
+        }
 
-    public static boolean commandExists(String name, long guild, CommandManager manager) {
-        return manager.getCustomCommand(name, guild) != null;
-    }
-
-    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId,
-                                                                          boolean autoresponse, CommandManager manager) {
-        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
-    }
-
-    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage,
-                                            boolean autoresponse, CommandManager manager) {
         final CustomCommand cmd = new CustomCommandImpl(
             customCommand.getName(),
             newMessage,
             customCommand.getGuildId(),
-            autoresponse
+            false
         );
 
         return manager.editCustomCommand(cmd);
+    }
+
+    private boolean commandExists(String name, long guild, CommandManager manager) {
+        return manager.getCustomCommand(name, guild) != null;
     }
 }

@@ -22,7 +22,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.objects.guild.GuildSettings
+import com.dunctebot.models.settings.GuildSetting
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import net.dv8tion.jda.api.sharding.ShardManager
 import java.util.concurrent.CompletableFuture
@@ -42,7 +42,7 @@ class ClearLeftGuildsCommand : Command() {
         sendMsg(ctx, "Checking settings, please wait")
 
         val adapter = ctx.variables.databaseAdapter
-        val future = CompletableFuture<List<GuildSettings>>()
+        val future = CompletableFuture<List<GuildSetting>>()
 
         adapter.getGuildSettings {
             future.complete(it)

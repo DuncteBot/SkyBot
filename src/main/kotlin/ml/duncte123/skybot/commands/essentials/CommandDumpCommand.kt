@@ -16,17 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.controllers.api
+package ml.duncte123.skybot.commands.essentials
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 
-object CommandTransformers {
+class CommandDumpCommand : Command() {
+    init {
+        this.category = CommandCategory.UNLISTED
+        this.name = "commandsdump"
+    }
 
-    fun toJson(commandManager: CommandManager, mapper: ObjectMapper): Any {
+    override fun execute(ctx: CommandContext) {
+        if (!isDev(ctx.author)) {
+            return
+        }
+
+        val jackson = ctx.variables.jackson
+        val jsonList = parseCommandsToJson(ctx.commandManager, jackson)
+        val data = jackson.writeValueAsBytes(jsonList)
+
+        ctx.channel.sendFile(data, "commands.json").queue()
+    }
+
+    private fun parseCommandsToJson(commandManager: CommandManager, mapper: JsonMapper): ArrayNode {
         val commands = commandManager.getFilteredCommands().sortedBy { it.name }
         val output = mapper.createArrayNode()
 

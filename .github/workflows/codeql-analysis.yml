@@ -13,6 +13,11 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+        matrix:
+#            language: [ 'java', 'kotlin' ]
+            language: [ 'java' ]
 
     steps:
     - name: Setup Java JDK
@@ -34,6 +39,8 @@ jobs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
       # Override language selection by uncommenting this and choosing your languages
       # with:
       #   languages: go, javascript, csharp, python, cpp, java

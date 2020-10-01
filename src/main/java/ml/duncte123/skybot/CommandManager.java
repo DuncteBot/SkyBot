@@ -154,6 +154,7 @@ public class CommandManager {
         this.addCommand(new CleanupCommand());
         this.addCommand(new ClearLeftGuildsCommand());
         this.addCommand(new ClintCommand());
+        this.addCommand(new CommandDumpCommand());
         this.addCommand(new CoffeeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new ColorCommand());
@@ -492,7 +493,6 @@ public class CommandManager {
             }
             catch (Throwable ex) {
                 Sentry.capture(ex);
-                ex.printStackTrace();
                 sendMsg(MessageConfig.Builder.fromEvent(event)
                     .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
                     .build());
@@ -583,7 +583,7 @@ public class CommandManager {
         return addCustomCommand(c, true, false);
     }
 
-    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new IllegalArgumentException("Name can't have spaces!");
         }
@@ -636,10 +636,19 @@ public class CommandManager {
     }
 
     public boolean removeCustomCommand(String name, long guildId) {
+        return this.removeCustomCommand(name, guildId, true);
+    }
+
+    public boolean removeCustomCommand(String name, long guildId, boolean updateDB) {
         final CustomCommand cmd = getCustomCommand(name, guildId);
 
         if (cmd == null) {
             return false;
+        }
+
+        if (!updateDB) {
+            this.customCommands.remove(cmd);
+            return true;
         }
 
         try {

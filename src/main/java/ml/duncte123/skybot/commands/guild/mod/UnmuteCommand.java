@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -60,7 +60,7 @@ public class UnmuteCommand extends ModBaseCommand {
         final List<Member> mentioned = ctx.getMentionedArg(0);
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
-        final GuildSettings settings = ctx.getGuildSettings();
+        final GuildSetting settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty()) {
             this.sendUsageInstructions(ctx);

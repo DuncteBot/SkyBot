@@ -78,6 +78,8 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.0.8")
+
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
 
@@ -124,12 +126,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.9")
 
-    //Spark
-    implementation(group = "com.sparkjava", name = "spark-core", version = "2.9.1")
-    implementation(group = "org.apache.velocity", name = "velocity-engine-core", version = "2.2")
-
-    // Oauth
-    implementation(group = "com.jagrosh", name = "jda-utilities-oauth2", version = "3.0.4")
+    implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")

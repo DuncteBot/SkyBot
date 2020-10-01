@@ -27,21 +27,14 @@ public class DunctebotConfig {
     public Apis apis;
     public Lavalink lavalink;
     public Sentry sentry;
+    public Websocket websocket;
     public boolean use_database;
 
     public static class Discord {
         public long[] constantSuperUserIds;
         public String prefix;
-        public Oauth oauth;
         public int totalShards;
-        public boolean local;
         public String token;
-
-        public static class Oauth {
-            public long clientId;
-            public String redirUrl;
-            public String clientSecret;
-        }
     }
 
     public static class Apis {
@@ -49,7 +42,6 @@ public class DunctebotConfig {
         public String googl;
         public String weebSh;
         public String ksoft;
-        public Chapta chapta;
         public Spotify spotify;
         public String blargbot;
         public String wolframalpha;
@@ -58,11 +50,6 @@ public class DunctebotConfig {
         public static class Cache {
             public String endpoint;
             public String token;
-        }
-
-        public static class Chapta {
-            public String sitekey;
-            public String secret;
         }
 
         public static class Spotify {
@@ -85,5 +72,10 @@ public class DunctebotConfig {
     public static class Sentry {
         public boolean enabled;
         public String dsn;
+    }
+
+    public static class Websocket {
+        public String url;
+        public boolean enable;
     }
 }

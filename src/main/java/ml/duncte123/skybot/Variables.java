@@ -20,7 +20,7 @@ package ml.duncte123.skybot;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
@@ -36,7 +36,7 @@ import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.notfab.caching.client.CacheClient;
@@ -51,7 +51,7 @@ import java.util.concurrent.*;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = new JsonMapper();
     private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
@@ -64,10 +64,10 @@ public final class Variables {
     private final DunctebotConfig config;
     private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
-    private final LoadingCache<Long, GuildSettings> guildSettingsCache = Caffeine.newBuilder()
+    private final LoadingCache<Long, GuildSetting> guildSettingsCache = Caffeine.newBuilder()
         .expireAfterAccess(1, TimeUnit.HOURS)
         .build((guildId) -> {
-            final CompletableFuture<GuildSettings> future = new CompletableFuture<>();
+            final CompletableFuture<GuildSetting> future = new CompletableFuture<>();
             getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
                 future.complete(setting);
                 return null;
@@ -142,7 +142,7 @@ public final class Variables {
         return config;
     }
 
-    public LoadingCache<Long, GuildSettings> getGuildSettingsCache() {
+    public LoadingCache<Long, GuildSetting> getGuildSettingsCache() {
         return guildSettingsCache;
     }
 
@@ -179,7 +179,7 @@ public final class Variables {
         return this.alexflipnote;
     }
 
-    public ObjectMapper getJackson() {
+    public JsonMapper getJackson() {
         return this.mapper;
     }
 

@@ -27,7 +27,7 @@ import ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*

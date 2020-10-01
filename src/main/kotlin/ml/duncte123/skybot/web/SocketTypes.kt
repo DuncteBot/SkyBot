@@ -16,18 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.web;
+package ml.duncte123.skybot.web
 
-import java.util.Map;
-
-public class ModelAndView extends spark.ModelAndView {
-    public ModelAndView(Map<String, Object> model, String viewName) {
-        super(model, viewName);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getModel() {
-        return (Map<String, Object>) super.getModel();
-    }
+object SocketTypes {
+    const val ROLES_PUT_HASH = "ROLES_PUT_HASH"
+    const val DATA_UPDATE = "DATA_UPDATE"
+    const val FETCH_DATA = "FETCH_DATA"
+    const val GUILD_SETTINGS = "GUILD_SETTINGS"
+    const val CUSTOM_COMMANDS = "CUSTOM_COMMANDS"
 }

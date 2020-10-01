@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.user.ConsoleUser;
 import ml.duncte123.skybot.objects.user.FakeUser;
 import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import com.dunctebot.models.settings.GuildSetting;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -105,7 +105,7 @@ public class ModerationUtils {
     }
 
     private static boolean isLogEnabled(String type, DunctebotGuild guild) {
-        final GuildSettings settings = guild.getSettings();
+        final GuildSetting settings = guild.getSettings();
 
         switch (type) {
             case "ban":
@@ -277,7 +277,7 @@ public class ModerationUtils {
 
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
         final Member self = guild.getSelfMember();
-        final GuildSettings guildSettings = guild.getSettings();
+        final GuildSetting guildSettings = guild.getSettings();
         final long muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId <= 0) {

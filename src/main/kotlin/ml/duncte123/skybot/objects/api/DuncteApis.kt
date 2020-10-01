@@ -30,8 +30,8 @@ import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.objects.guild.WarnAction
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
@@ -41,7 +41,7 @@ import java.time.Instant
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
+class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -105,7 +105,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         return res["data"]
     }
 
-    fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
+    fun updateGuildSettings(guildSettings: GuildSetting): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
 
@@ -121,7 +121,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
-    fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
+    fun registerNewGuildSettings(guildSettings: GuildSetting): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = postJSON("guildsettings", json)
         val success = response["success"].asBoolean()
@@ -770,7 +770,7 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
 
     companion object {
 //        const val API_HOST = "http://localhost:8081"
-//        const val API_HOST = "http://duncte123-apis-lumen.test/"
-        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://duncte123-apis-lumen.test/"
+//        const val API_HOST = "https://apis.duncte123.me"
     }
 }

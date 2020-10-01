@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
@@ -34,7 +35,8 @@ public class CustomCommandImpl implements CustomCommand {
 
     @JsonCreator
     public CustomCommandImpl(@JsonProperty("invoke") String invoke, @JsonProperty("message") String message,
-                             @JsonProperty("guildId") long guildId, @JsonProperty("autoresponse") boolean autoresponse) {
+                             @JsonProperty("guildId") @JsonAlias({"guildId", "guild_id"}) long guildId,
+                             @JsonProperty("autoresponse") boolean autoresponse) {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
