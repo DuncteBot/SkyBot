@@ -627,10 +627,17 @@ class DuncteApis(private val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     fun sendServerCountToLists(shardManager: ShardManager) {
-        mapper.createObjectNode()
+        val json = mapper.createObjectNode()
             .put("bot_id", shardManager.shardCache.first().selfUser.id)
             .put("shard_count", shardManager.shardCache.size())
             .put("server_count", shardManager.guildCache.size())
+
+        val response = postJSON("validate-token", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error("Failed to update guild count\n" +
+                "Response: {}", response["error"].toString())
+        }
     }
 
     private fun buildValidationErrorString(error: ObjectNode): String {
