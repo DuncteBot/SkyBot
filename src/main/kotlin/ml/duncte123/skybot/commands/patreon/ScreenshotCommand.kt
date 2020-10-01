@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.CommandUtils
 import net.dv8tion.jda.api.Permission
 
 class ScreenshotCommand : Command() {
@@ -40,6 +41,10 @@ class ScreenshotCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
+        if (!CommandUtils.isUserOrGuildPatron(ctx.event)) {
+            return
+        }
+
         val url = ctx.argsRaw
 
         if (!AirUtils.isURL(url)) {
