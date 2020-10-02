@@ -24,12 +24,21 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import ml.duncte123.skybot.audio.SupportsPatron;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class AppleMusicAudioSourceManager implements AudioSourceManager {
+public class AppleMusicAudioSourceManager implements AudioSourceManager, SupportsPatron {
+    // https://developer.apple.com/documentation/applemusicapi/
+
+    // playlist: https://music.apple.com/nl/playlist/lofi-rap/pl.u-4JomXd3CXxPgX2g?l=en
+    // album: https://music.apple.com/nl/album/sparkle-mountain-single/1525954043
+    // Artist: https://music.apple.com/nl/artist/andrew-huang/130057628?l=en
+    // songs seem to have the i parameter for that
+    // Song: https://music.apple.com/nl/album/nintendo-before-school/1445190129?i=1445190410&l=en
+
     @Override
     public String getSourceName() {
         return "apple_music";
@@ -37,19 +46,25 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
+        return loadItem(reference, false);
+    }
+
+    @Override
+    public AudioItem loadItem(AudioReference reference, boolean isPatron) {
         return null;
     }
 
     @Override
     public boolean isTrackEncodable(AudioTrack track) {
-        return false;
+        return true;
     }
 
     @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-
+    public void encodeTrack(AudioTrack track, DataOutput output) {
+        // No encoding needed
     }
 
+    // TODO
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
         return null;
@@ -57,6 +72,6 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager {
 
     @Override
     public void shutdown() {
-
+        // TODO
     }
 }

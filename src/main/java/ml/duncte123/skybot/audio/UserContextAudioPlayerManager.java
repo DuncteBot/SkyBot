@@ -132,8 +132,8 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
             final AudioItem item;
 
-            if (sourceManager instanceof SpotifyAudioSourceManager) {
-                item = ((SpotifyAudioSourceManager) sourceManager).loadItem(reference, isPatron);
+            if (sourceManager instanceof SupportsPatron) {
+                item = ((SupportsPatron) sourceManager).loadItem(reference, isPatron);
             } else {
                 item = sourceManager.loadItem(this, reference);
             }

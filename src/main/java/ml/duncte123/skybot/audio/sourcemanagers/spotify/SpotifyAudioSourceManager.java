@@ -36,6 +36,7 @@ import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.BigChungusPlaylist;
+import ml.duncte123.skybot.audio.SupportsPatron;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -61,7 +62,7 @@ import java.util.regex.Pattern;
 import static ml.duncte123.skybot.utils.YoutubeUtils.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SpotifyAudioSourceManager implements AudioSourceManager {
+public class SpotifyAudioSourceManager implements AudioSourceManager, SupportsPatron {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
@@ -119,6 +120,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return loadItem(reference, false);
     }
 
+    @Override
     public AudioItem loadItem(AudioReference reference, boolean isPatron) {
 
         AudioItem item = getSpotifyAlbum(reference);
