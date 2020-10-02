@@ -26,9 +26,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.audio.SupportsPatron;
 
+import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AppleMusicAudioSourceManager implements AudioSourceManager, SupportsPatron {
     // https://developer.apple.com/documentation/applemusicapi/
@@ -47,6 +50,11 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
     private static final String ARTIST_PART = "\\/artist\\/[a-zA-Z0-9-]+\\/([0-9]+)";
     private static final String PLAYLIST_PART = "\\/playlist\\/[a-zA-Z0-9-]+\\/([a-zA-Z0-9.-]+)";
 
+    private static final Pattern SONG_ID_REGEX = Pattern.compile(SONG_ID_PART);
+    private static final Pattern ALBUM_REGEX = Pattern.compile("^(" + BASE_URL + ALBUM_PART + ")" + REST_REGEX +"$");
+    private static final Pattern ARTIST_REGEX = Pattern.compile("^(" + BASE_URL + ARTIST_PART + ")" + REST_REGEX +"$");
+    private static final Pattern PLAYLIST_REGEX = Pattern.compile("^(" + BASE_URL + PLAYLIST_PART + ")" + REST_REGEX +"$");
+
     @Override
     public String getSourceName() {
         return "apple_music";
@@ -59,7 +67,11 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
 
     @Override
     public AudioItem loadItem(AudioReference reference, boolean isPatron) {
-        return null;
+        AudioItem item = getAppleAlbum(reference, isPatron);
+
+        // todo: playlists and artists
+
+        return item;
     }
 
     @Override
@@ -81,5 +93,35 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
     @Override
     public void shutdown() {
         // TODO
+    }
+
+    @Nullable
+    private AudioItem getAppleAlbum(AudioReference reference, boolean isPatron) {
+        final String identifier = reference.identifier;
+        final Matcher matcher = ALBUM_REGEX.matcher(identifier);
+
+        if (!matcher.matches()) {
+            return null;
+        }
+
+        final String storeFront = matcher.group(1);
+        final Matcher trackIdMatcher = SONG_ID_REGEX.matcher(identifier);
+
+        if (trackIdMatcher.find()) {
+            final String songId = trackIdMatcher.group(trackIdMatcher.groupCount());
+
+            return getAppleSong(storeFront, songId);
+        }
+
+        final String albumId = matcher.group(matcher.groupCount());
+
+        return null;
+    }
+
+    @Nullable
+    private AudioItem getAppleSong(String storeFront, String songId) {
+        //
+
+        return null;
     }
 }
