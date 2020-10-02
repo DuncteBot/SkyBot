@@ -155,6 +155,9 @@ dependencies {
     // okhttp
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
 
+    // commands loading
+    implementation(group = "org.reflections", name = "reflections", version = "0.9.12")
+
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
     }

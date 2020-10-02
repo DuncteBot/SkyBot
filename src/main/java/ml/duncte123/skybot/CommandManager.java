@@ -55,6 +55,7 @@ import ml.duncte123.skybot.commands.patreon.ScreenshotCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.weeb.*;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -67,12 +68,17 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -131,200 +137,45 @@ public class CommandManager {
 
     public CommandManager(Variables variables) {
         this.variables = variables;
-
-        /// <editor-fold desc="Command Loading" defaultstate="collapsed">
-        this.addCommand(new AchievementCommand());
-        this.addCommand(new AdviceCommand());
-        this.addCommand(new AlpacaCommand());
-        this.addCommand(new AnnounceCommand());
-        this.addCommand(new AutoRoleCommand());
-        this.addCommand(new AvatarCommand());
-        this.addCommand(new B1nzyCommand());
-        this.addCommand(new BanCommand());
-        this.addCommand(new BaseBoostCommand());
-        this.addCommand(new BirbCommand());
-        this.addCommand(new BlackAndWhiteCommand());
-        this.addCommand(new BlackListCommand());
-        this.addCommand(new BlurCommand());
-        this.addCommand(new BotinfoCommand());
-        this.addCommand(new CaptchaCommand());
-        this.addCommand(new CarsAndHentaiCommand());
-        this.addCommand(new ChangeLogCommand());
-        this.addCommand(new ChatCommand());
-        this.addCommand(new CleanupCommand());
-        this.addCommand(new ClearLeftGuildsCommand());
-        this.addCommand(new ClintCommand());
-        this.addCommand(new CoffeeCommand());
-        this.addCommand(new CoinCommand());
-        this.addCommand(new ColorCommand());
-        this.addCommand(new CookieCommand());
-        this.addCommand(new CrashCommand());
-        this.addCommand(new CSShumorCommand());
-        this.addCommand(new CustomCommandCommand());
-        this.addCommand(new DanceCommand());
-        this.addCommand(new DeepfryCommand());
-        this.addCommand(new DeHoistCommand());
-        this.addCommand(new DeletCommand());
-        this.addCommand(new DeleteCommand());
-        this.addCommand(new DialogCommand());
-        this.addCommand(new DidYouMeanCommand());
-        this.addCommand(new DiscordMemesCommand());
-        this.addCommand(new DogCommand());
-        this.addCommand(new DonateCommand());
-        this.addCommand(new DrakeCommand());
-        this.addCommand(new EightBallCommand());
-        this.addCommand(new EmoteCommand());
-        this.addCommand(new EvalCommand());
-        this.addCommand(new EveryoneCommand());
-        this.addCommand(new FactsCommand());
-        this.addCommand(new FakeWordCommand());
-        this.addCommand(new FlagCommand());
-        this.addCommand(new FlipCommand());
-        this.addCommand(new ForceDisconnectCommand());
-        this.addCommand(new ForceSkip());
-        this.addCommand(new GenderBendCommand());
-        this.addCommand(new GuildInfoCommand());
-        this.addCommand(new GuildJoinsCommand());
-        this.addCommand(new HackbanCommand());
-        this.addCommand(new HelpCommand());
-        this.addCommand(new HentaiCommand());
-        this.addCommand(new HugCommand());
-        this.addCommand(new ImageCommand());
-        this.addCommand(new InstaCommand());
-        this.addCommand(new InvertCommand());
-        this.addCommand(new InviteCommand());
-        this.addCommand(new IssueCommand());
-        this.addCommand(new ItsFreeRealEstateCommand());
-        this.addCommand(new IWantToDieCommand());
-        this.addCommand(new JoinCommand());
-        this.addCommand(new JokeCommand());
-        this.addCommand(new JokeoverheadCommand());
-        this.addCommand(new KickCommand());
-        this.addCommand(new KickMeCommand());
-        this.addCommand(new KittyCommand());
-        this.addCommand(new KpopCommand());
-        this.addCommand(new LeaveCommand());
-        this.addCommand(new LewdCommand());
-        this.addCommand(new LewdKitsuneCommand());
-        this.addCommand(new LewdNekoCommand());
-        this.addCommand(new LickCommand());
-        this.addCommand(new LinusCommand());
-        this.addCommand(new ListCommand());
-        this.addCommand(new LlamaCommand());
-        this.addCommand(new LoadCommand());
-        this.addCommand(new LoadingBarCommand());
-        this.addCommand(new LockEmoteCommand());
-        this.addCommand(new LoveCommand());
-        this.addCommand(new LyricsCommand());
-        this.addCommand(new MeguminCommand());
-        this.addCommand(new MemeCommand());
-        this.addCommand(new MinehCommand());
-        this.addCommand(new MuteCommand());
-        this.addCommand(new MuteRoleCommand());
-        this.addCommand(new NowPlayingCommand());
-        this.addCommand(new OldestCommand());
-        this.addCommand(new OrlyCommand());
-        this.addCommand(new OwoCommand());
-        this.addCommand(new PatCommand());
-        // TODO: remove, some day, can't do any harm really
-        this.addCommand(new PatreonCheckCommand());
-        this.addCommand(new PauseCommand());
-        this.addCommand(new PcCheckCommand());
-        this.addCommand(new PingCommand());
-        this.addCommand(new PixelateCommand());
-        this.addCommand(new PlayCommand());
-        this.addCommand(new PlayRawCommand());
-        this.addCommand(new PPlayCommand());
-        this.addCommand(new PronounsCheckCommand());
-        this.addCommand(new PunchCommand());
-        this.addCommand(new PurgeChannelCommand());
-        this.addCommand(new PurgeUserCommand());
-        this.addCommand(new QuoteCommand());
-        this.addCommand(new RadioCommand());
-        this.addCommand(new ReaddCommand());
-        this.addCommand(new RemindersCommand());
-        this.addCommand(new RemindmeCommand());
-        this.addCommand(new RepeatCommand());
-        this.addCommand(new RestartCommand());
-        this.addCommand(new RestartShardCommand());
-        this.addCommand(new ReverseCommand());
-        this.addCommand(new RoleInfoCommand());
-        this.addCommand(new RolesCommand());
-        this.addCommand(new SaltyCommand());
-        this.addCommand(new SaturateCommand());
-        this.addCommand(new SaveCommand());
-        this.addCommand(new ScreenfetchCommand());
-        this.addCommand(new ScreenshotCommand());
-        this.addCommand(new ScrollCommand());
-        this.addCommand(new SealCommand());
-        this.addCommand(new SearchCommand());
-        this.addCommand(new SeekCommand());
-        this.addCommand(new SetColorCommand());
-        this.addCommand(new SetDescriptionCommand());
-        this.addCommand(new SetJoinMessageCommand());
-        this.addCommand(new SetLeaveMessageCommand());
-        this.addCommand(new SetLogChannelCommand());
-        this.addCommand(new SetPrefixCommand());
-        this.addCommand(new SetPronounsCommand());
-        this.addCommand(new SetRateLimitsCommand());
-        this.addCommand(new SettingsCommand());
-        this.addCommand(new SetWelcomeChannelCommand());
-        this.addCommand(new ShardInfoCommand());
-        this.addCommand(new ShitCommand());
-        this.addCommand(new ShootCommand());
-        this.addCommand(new ShortenCommand());
-        this.addCommand(new ShrugCommand());
-        this.addCommand(new ShuffleCommand());
-        this.addCommand(new SkipCommand());
-        this.addCommand(new SlowModeCommand());
-        this.addCommand(new SoftbanCommand());
-        this.addCommand(new SpamCommand());
-        this.addCommand(new StatsCommand());
-        this.addCommand(new StopCommand());
-        this.addCommand(new SuggestCommand());
-        this.addCommand(new TagCommand(variables));
-        this.addCommand(new TempBanCommand());
-        this.addCommand(new TempMuteCommand());
-        this.addCommand(new TestFlagCommand());
-        this.addCommand(new TestTagCommand());
-        this.addCommand(new TextToBricksCommand());
-        this.addCommand(new TheSearchCommand());
-        this.addCommand(new ToggleAnnounceTracksCommand());
-        this.addCommand(new ToggleAutoDehoistCommand());
-        this.addCommand(new ToggleFilterInvitesCommand());
-        this.addCommand(new ToggleJoinMessageCommand());
-        this.addCommand(new ToggleKickModeCommand());
-        this.addCommand(new ToggleSpamFilterCommand());
-        this.addCommand(new ToggleSwearFilterCommand());
-        this.addCommand(new TokenCommand());
-        this.addCommand(new TranslateCommand());
-        this.addCommand(new TrashCommand());
-        this.addCommand(new TriggerCommand());
-        this.addCommand(new UnbanCommand());
-        this.addCommand(new UnlockEmoteCommand());
-        this.addCommand(new UnmuteCommand());
-        this.addCommand(new UnshortenCommand());
-        this.addCommand(new UnwarnCommand());
-        this.addCommand(new UpdateCommand());
-        this.addCommand(new UptimeCommand());
-        this.addCommand(new UrbanCommand());
-        this.addCommand(new UserinfoCommand());
-        this.addCommand(new VcAutoRoleCommand());
-        this.addCommand(new VoiceKickCommand());
-        this.addCommand(new VolumeCommand());
-        this.addCommand(new VoteCommand());
-        this.addCommand(new WamCommand());
-        this.addCommand(new WarnCommand());
-        this.addCommand(new WarningsCommand());
-        this.addCommand(new WebsiteCommand());
-        this.addCommand(new WeebCommand());
-        this.addCommand(new WolframAlphaCommand());
-        this.addCommand(new XkcdCommand());
-        this.addCommand(new YesNoCommand());
-        this.addCommand(new YodaSpeakCommand());
-        this.addCommand(new YoungestCommand());
-        /// </editor-fold>
-
+        Reflections reflections=new Reflections("ml.duncte123.skybot.commands",new SubTypesScanner());//scan commands package for commands
+        Map<Class<?>,Object> possibleParams=new HashMap<>();//parameters that could be passed to the constructor, detected by type
+        possibleParams.put(Variables.class,variables);
+        for (Class<? extends Command> commandClass : reflections.getSubTypesOf(Command.class)) {//iterate over all subclasses of Command in that package
+            try {
+                if (!Modifier.isAbstract(commandClass.getModifiers())) {//skip if abstract
+                    Constructor<?>[] constructors = commandClass.getConstructors();
+                    Command instance=null;
+                    for (int i = 0; instance==null&&i < constructors.length; i++) {//iterate through constructors until a matching one is found
+                        Class<?>[] parameterTypes = constructors[i].getParameterTypes();
+                        Object[] params=new Object[parameterTypes.length];
+                        for (int j = 0; params!=null&&j < parameterTypes.length; j++) {//iterate over constructor parameters
+                            Class<?> param=parameterTypes[j];
+                            if(possibleParams.containsKey(param)){//constructor parameter can be passed
+                                params[j]=possibleParams.get(param);//add to arguments
+                            }else{//constructor cannot be passed
+                                params=null;//go on with the next constructor
+                            }
+                        }
+                        if(params!=null){//valid constructor found
+                            instance=(Command)constructors[i].newInstance(params);//create instance using this constructor
+                        }
+                    }
+                    if(instance==null){//command not instantiated
+                        if(LOGGER.isWarnEnabled()){
+                            LOGGER.warn("No matching constructor found for command class {}.",commandClass.getSimpleName());
+                        }
+                    }else{
+                        this.addCommand(instance);
+                    }
+                }
+            }
+            catch (InstantiationException|IllegalAccessException|InvocationTargetException e) {
+                e.printStackTrace();
+                if (LOGGER.isErrorEnabled()){
+                    LOGGER.error("An exception occurred trying to create and register an instance of the command {}.",commandClass.getSimpleName(), e);
+                }
+            }
+        }
         loadCustomCommands();
     }
 
