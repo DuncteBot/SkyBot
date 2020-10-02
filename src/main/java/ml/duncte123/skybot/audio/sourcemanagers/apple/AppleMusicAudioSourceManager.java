@@ -39,6 +39,14 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
     // songs seem to have the i parameter for that
     // Song: https://music.apple.com/nl/album/nintendo-before-school/1445190129?i=1445190410&l=en
 
+    private static final String BASE_URL = "https:\\/\\/music\\.apple\\.com\\/([a-zA-Z0-9-]{2,})\\/";
+    private static final String REST_REGEX = "(?:.*)";
+
+    private static final String ALBUM_PART = "\\/album\\/[a-zA-Z0-9-]+\\/([0-9]+)";
+    private static final String SONG_ID_PART = "(?:\\?|&)i=([a-zA-Z0-9.-]+)";
+    private static final String ARTIST_PART = "\\/artist\\/[a-zA-Z0-9-]+\\/([0-9]+)";
+    private static final String PLAYLIST_PART = "\\/playlist\\/[a-zA-Z0-9-]+\\/([a-zA-Z0-9.-]+)";
+
     @Override
     public String getSourceName() {
         return "apple_music";
