@@ -26,10 +26,12 @@ import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
+    private val acceptedAudioExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
 
     init {
         this.withAutoJoin = true
@@ -46,6 +48,10 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         val scheduler = mng.scheduler
 
         if (ctx.args.isEmpty()) {
+            if (ctx.message.attachments.isNotEmpty() && playUploadedFile(ctx, mng)) {
+                return
+            }
+
             when {
                 player.isPaused -> {
                     player.isPaused = false
@@ -88,6 +94,27 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         handlePlay(toPlay, ctx, mng)
     }
 
+    private fun playUploadedFile(ctx: CommandContext, mng: GuildMusicManager): Boolean {
+        val file = ctx.message.attachments.firstOrNull { it.fileExtension in acceptedAudioExtensions }
+
+        if (file == null) {
+            sendMsg(ctx, "Cannot play that file, please attach an audio file instead")
+            return false
+        }
+
+        // returning true here to prevent going to the pause toggle
+        if (!CommandUtils.isUserOrGuildPatron(ctx.event, false)) {
+            sendMsg(ctx, "Sorry but this feature is only available to patrons")
+            return true
+        }
+
+        val url = file.url
+
+        handlePlay(url, ctx, mng)
+
+        return true
+    }
+
     private fun searchCache(search: String, ctx: CommandContext): String? {
         val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
 
@@ -98,7 +125,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return res[0].id.videoId
     }
 
-    private fun handlePlay(toPlay: String, ctx: CommandContext, mng: GuildMusicManager?) {
+    private fun handlePlay(toPlay: String, ctx: CommandContext, mng: GuildMusicManager) {
         if (toPlay.length > 1024) {
             MessageUtils.sendError(ctx.message)
             sendMsg(ctx, "Input cannot be longer than 1024 characters.")
