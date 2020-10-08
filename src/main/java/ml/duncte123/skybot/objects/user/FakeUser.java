@@ -37,9 +37,9 @@ public class FakeUser implements User {
 
     private final String name;
     private final long idLong;
-    private final short discrm;
+    private final int discrm;
 
-    public FakeUser(String name, long idLong, short discrm) {
+    public FakeUser(String name, long idLong, int discrm) {
         this.name = name;
         this.idLong = idLong;
         this.discrm = discrm;

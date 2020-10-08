@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
 import static ml.duncte123.skybot.utils.YoutubeUtils.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
+@SuppressWarnings("PMD.NullAssignment")
 public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 

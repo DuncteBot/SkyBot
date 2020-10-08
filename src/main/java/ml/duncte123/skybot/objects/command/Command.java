@@ -56,7 +56,6 @@ public abstract class Command implements ICommand {
         });
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
-    @SuppressWarnings("PMD.LongVariable")
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
@@ -154,7 +153,7 @@ public abstract class Command implements ICommand {
 
     @Nonnull
     @Override
-    public final String help(@Nonnull String invoke, @Nonnull String prefix) {
+    public final String getHelp(@Nonnull String invoke, @Nonnull String prefix) {
         return this.help.replace("{prefix}", prefix).trim();
     }
 

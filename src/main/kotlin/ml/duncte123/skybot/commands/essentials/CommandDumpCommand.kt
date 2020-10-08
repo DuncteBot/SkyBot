@@ -64,18 +64,18 @@ class CommandDumpCommand : Command() {
     }
 
     private fun Command.parseHelp(): String {
-        val ownHelp = this.help(this.name, Settings.PREFIX).mdToHtml()
+        val ownHelp = this.getHelp(this.name, Settings.PREFIX).mdToHtml()
         var s = "$ownHelp<br />Usage: ${this.getUsageInstructions(Settings.PREFIX, this.name).mdToHtml()}"
 
         if (this.aliases.isNotEmpty()) {
-            val aliasHelp = help(this.aliases[0], Settings.PREFIX).mdToHtml()
+            val aliasHelp = getHelp(this.aliases[0], Settings.PREFIX).mdToHtml()
 
             s += if (aliasHelp == ownHelp) {
                 "<br />Aliases: " + Settings.PREFIX + this.aliases.joinToString(", " + Settings.PREFIX)
             } else {
                 buildString {
                     this@parseHelp.aliases.forEach {
-                        append("<br />${Settings.PREFIX}$it => ${help(it, Settings.PREFIX).mdToHtml()}")
+                        append("<br />${Settings.PREFIX}$it => ${getHelp(it, Settings.PREFIX).mdToHtml()}")
                         append("<br />Usage: ${getUsageInstructions(Settings.PREFIX, it).mdToHtml()}")
                     }
                 }

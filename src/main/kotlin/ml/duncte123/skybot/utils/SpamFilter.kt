@@ -102,11 +102,11 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                     true
                 } else {
                     return msg.embeds.map {
-                        it.description.isNullOrBlank()
-                            && it.footer?.text.isNullOrBlank()
-                            && it.title.isNullOrBlank()
-                            && it.thumbnail?.url.isNullOrBlank()
-                            && it.image?.url.isNullOrBlank()
+                        it.description.isNullOrBlank() &&
+                            it.footer?.text.isNullOrBlank() &&
+                            it.title.isNullOrBlank() &&
+                            it.thumbnail?.url.isNullOrBlank() &&
+                            it.image?.url.isNullOrBlank()
                     }.count { it } < 1
                 }
             }
@@ -180,5 +180,4 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
         rates = newRates.toArray()
         return this
     }
-
 }

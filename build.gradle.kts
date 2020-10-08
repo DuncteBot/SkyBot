@@ -58,7 +58,7 @@ repositories {
     jcenter()
 
     maven {
-        url = uri("http://repo.jenkins-ci.org/releases/")
+        url = uri("https://repo.jenkins-ci.org/releases/")
     }
 
     maven {
@@ -293,7 +293,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.27.0"
+    toolVersion = "6.28.0"
     rulePriority = 5
 //    ruleSets = listOf("category/java/errorprone.xml", "category/java/bestpractices.xml")
     ruleSets = listOf()

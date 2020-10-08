@@ -78,8 +78,8 @@ public class HelpCommand extends Command {
     @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
         try {
-            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> name.toLowerCase()
-                .equals(it.getSearch())).collect(Collectors.toList());
+            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> name
+                .equalsIgnoreCase(it.getSearch())).collect(Collectors.toList());
 
             if (!categoryList.isEmpty()) {
                 return true;
@@ -127,7 +127,7 @@ public class HelpCommand extends Command {
         final EmbedBuilder builder = EmbedUtils
             .getDefaultEmbed()
             .setTitle("Command help for " + cmd.getName() + " (<required argument> [optional argument])", url)
-            .setDescription(cmd.help(invoke, prefix) +
+            .setDescription(cmd.getHelp(invoke, prefix) +
                 "\nUsage: " + cmd.getUsageInstructions(prefix, invoke));
 
         final String extra = cmd.getExtraInfo(prefix);

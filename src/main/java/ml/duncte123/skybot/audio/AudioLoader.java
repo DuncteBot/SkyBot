@@ -77,7 +77,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         try {
-            scheduler.queue(track, this.isPatron);
+            scheduler.addToQueue(track, this.isPatron);
 
             if (this.announce) {
                 final AudioTrackInfo info = track.getInfo();
@@ -114,7 +114,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
 
             for (final AudioTrack track : tracks) {
-                trackScheduler.queue(track, this.isPatron);
+                trackScheduler.addToQueue(track, this.isPatron);
             }
 
             if (this.announce) {

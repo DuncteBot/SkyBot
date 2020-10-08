@@ -80,7 +80,7 @@ public class BotinfoCommand extends Command {
                 "\n\u200B", true)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
-                "**JDA version:** " + JDAInfo.VERSION + "" +
+                "**JDA version:** " + JDAInfo.VERSION +
                 "\n**LavaPlayer version:** " + this.lavaplayerVersion + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +

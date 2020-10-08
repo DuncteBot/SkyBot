@@ -83,7 +83,7 @@ public class CommandUtils {
                 if (word.length() > 2) {
                     final String fWord = word;
                     final List<Flag> flags = Arrays.stream(map)
-                        .filter((f) -> f.getWord() != null && f.getWord().equals(fWord.substring(2).toLowerCase()))
+                        .filter((f) -> f.getWord() != null && f.getWord().equalsIgnoreCase(fWord.substring(2)))
                         .collect(Collectors.toList());
 
                     if (flags.isEmpty()) {
@@ -103,7 +103,7 @@ public class CommandUtils {
                     currentFlag = "";
                     pushFlag = false;
                 }
-            } else if (word.startsWith("-")) {
+            } else if (word.charAt(0) == '-') {
                 if (word.length() > 1) {
                     final String tempFlag = word.substring(1);
 

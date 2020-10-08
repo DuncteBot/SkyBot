@@ -83,28 +83,33 @@ public class WolframAlphaCommand extends Command {
                 builder.append(parseString(sp.getTitle()));
                 //loop over the contents
                 for (final Visitable variable : sp.getContents()) {
-                    String output = "";
                     if (variable instanceof WAImage) {
                         final WAImage image = (WAImage) variable;
-                        output += "[Image by text](" + shortenUrl(image.getURL(), googleKey, mapper).execute() + ")";
+                        builder.append("[Image by text](")
+                            .append(shortenUrl(image.getURL(), googleKey, mapper).execute())
+                            .append(')');
                     } else if (variable instanceof WAInfo) {
                         final WAInfo info = (WAInfo) variable;
-                        output += parseString(info.getText());
+                        builder.append(parseString(info.getText()));
                         //System.out.println(i.getText());
                         //Ramid when?
                         // TODO: Display more...
                     } else if (variable instanceof WALink) {
                         final WALink link = (WALink) variable;
-                        output += "[" + parseString(link.getText()) + "](" + shortenUrl(link.getURL(), googleKey, mapper).execute() + ")";
+                        builder.append('[')
+                            .append(parseString(link.getText()))
+                            .append("](")
+                            .append(shortenUrl(link.getURL(), googleKey, mapper).execute())
+                            .append(')');
                     } else if (variable instanceof WAPlainText) {
                         final WAPlainText plainText = (WAPlainText) variable;
-                        output += parseString(plainText.getText());
+                        builder.append(parseString(plainText.getText()));
                     } else if (variable instanceof WASound) {
                         final WASound sound = (WASound) variable;
-                        output += shortenUrl(sound.getURL(), googleKey, mapper).execute();
+                        builder.append(shortenUrl(sound.getURL(), googleKey, mapper).execute());
                     }
 
-                    builder.append(output).append("\n\n");
+                    builder.append("\n\n");
                 }
 
                 embeds.append(parseString(builder.toString().trim())).append("\n\n");

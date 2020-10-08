@@ -61,7 +61,7 @@ public class CustomCommandImpl implements CustomCommand {
 
     @Nonnull
     @Override
-    public String help(@Nonnull String invoke, @Nonnull String prefix) {
+    public String getHelp(@Nonnull String invoke, @Nonnull String prefix) {
         return "null";
     }
 

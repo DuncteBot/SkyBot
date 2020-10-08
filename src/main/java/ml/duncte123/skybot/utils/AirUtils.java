@@ -112,9 +112,9 @@ public class AirUtils {
         final StringBuilder builder = new StringBuilder();
 
         //Get the years, months and days
-        builder.append(formatTimeWord("Year", years, true));
-        builder.append(formatTimeWord("Month", months, true));
-        builder.append(formatTimeWord("Day", days, false));
+        builder.append(formatTimeWord("Year", years, true))
+            .append(formatTimeWord("Month", months, true))
+            .append(formatTimeWord("Day", days, false));
 
         //If we want the time added we pass in true
         if (withTime) {
@@ -122,10 +122,10 @@ public class AirUtils {
             final int minutes = longToInt(time / 60000L % 60);
             final int seconds = longToInt(time / 1000L % 60);
 
-            builder.append(", ");
-            builder.append(formatTimeWord("Hour", hours, true));
-            builder.append(formatTimeWord("Minute", minutes, true));
-            builder.append(formatTimeWord("Second", seconds, false));
+            builder.append(", ")
+                .append(formatTimeWord("Hour", hours, true))
+                .append(formatTimeWord("Minute", minutes, true))
+                .append(formatTimeWord("Second", seconds, false));
         }
 
         final String uptimeString = builder.toString();

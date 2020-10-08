@@ -49,7 +49,6 @@ public class SQLiteDatabaseConnectionManager {
         }
         catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
-            con = null;
         }
     }
 

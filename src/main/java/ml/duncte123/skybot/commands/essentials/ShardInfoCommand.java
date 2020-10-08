@@ -204,13 +204,15 @@ public class ShardInfoCommand extends Command {
             formatLine.append(" %-").append(width).append("s ║");
         }
         formatLine.append("\n");
-        builder.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
 
-        builder.append(String.format(formatLine.toString(), headers.toArray()));
-        builder.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+        builder.append(appendSeparatorLine("╔", "╦", "╗", padding, widths))
+            .append(String.format(formatLine.toString(), headers.toArray()))
+            .append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+
         for (final List<String> row : table) {
             builder.append(String.format(formatLine.toString(), row.toArray()));
         }
+
         builder.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
 
         final ShardCacheView shardCache = shardManager.getShardCache();
@@ -227,9 +229,10 @@ public class ShardInfoCommand extends Command {
             avgPing,
             guilds,
             statsString
-        ));
-        builder.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
-        builder.append("```");
+        ))
+            .append(appendSeparatorLine("╚", "╩", "╝", padding, widths))
+            .append("```");
+
         return builder.toString();
     }
 

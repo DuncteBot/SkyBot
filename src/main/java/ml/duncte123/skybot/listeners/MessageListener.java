@@ -242,7 +242,7 @@ public abstract class MessageListener extends BaseListener {
         return input.equalsIgnoreCase(
             raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(customPrefix), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0]
         );
     }
 
@@ -287,7 +287,7 @@ public abstract class MessageListener extends BaseListener {
         for (final String item : blocked) {
             String string = item;
 
-            if (string.startsWith("!")) {
+            if (string.charAt(0) == '!') {
                 string = string.split("!")[1];
 
                 if (isCategory(string.toUpperCase()) && !hasCorrectCategory(raw, string, customPrefix)) {

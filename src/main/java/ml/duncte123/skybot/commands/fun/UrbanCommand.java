@@ -64,8 +64,8 @@ public class UrbanCommand extends Command {
                 .appendDescription(item.get("definition").asText())
                 .appendDescription("\n\n")
                 .addField("Example", item.get("example").asText(), false)
-                .addField("Upvotes:", item.get("thumbs_up").asInt() + "", true)
-                .addField("Downvotes:", item.get("thumbs_down").asInt() + "", true)
+                .addField("Upvotes:", String.valueOf(item.get("thumbs_up").asInt()), true)
+                .addField("Downvotes:", String.valueOf(item.get("thumbs_down").asInt()), true)
                 .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
             sendEmbed(ctx, builder);
         });
