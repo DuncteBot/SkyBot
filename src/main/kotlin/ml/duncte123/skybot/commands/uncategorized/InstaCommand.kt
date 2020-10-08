@@ -66,6 +66,5 @@ class InstaCommand : Command() {
             .setImage(img["url"].asText())
 
         MessageUtils.sendEmbed(ctx, embed)
-
     }
 }

@@ -94,8 +94,11 @@ class SkipCommand : MusicCommand() {
         mng.scheduler.specialSkipCase()
 
         if (player.playingTrack == null) {
-            sendMsg(ctx, "Successfully skipped the track.\n" +
-                "Queue is now empty.")
+            sendMsg(
+                ctx,
+                "Successfully skipped the track.\n" +
+                    "Queue is now empty."
+            )
         }
     }
 }

@@ -83,8 +83,6 @@ class PatreonCheckCommand : Command() {
         return method.invoke(null, user, null, false) as Boolean
     }
 
-
-
     private fun getIsGuildPremium(guild: Guild): Boolean {
         val klass = CommandUtils::class.java
         val method = klass.getDeclaredMethod("shouldGuildBeConsideredPremium", Guild::class.java)

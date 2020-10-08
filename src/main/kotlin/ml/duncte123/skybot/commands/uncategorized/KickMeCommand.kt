@@ -48,25 +48,35 @@ class KickMeCommand : Command() {
         if (args.isEmpty() || args[0] != "YESIMSURE") {
             MessageUtils.sendMsg(ctx, warningMsg)
         } else if (args.isNotEmpty() && args[0] == "YESIMSURE") {
-            //Check for perms
+            // Check for perms
             if (event.guild.selfMember.canInteract(ctx.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
                 MessageUtils.sendSuccess(event.message)
-                //Kick the user
-                MessageUtils.sendMsg(MessageConfig.Builder.fromCtx(ctx)
-                    .setMessage("Your kick will commence in 20 seconds")
-                    .setSuccessAction {
-                        it.guild.kick(ctx.member)
-                            .reason("${event.author.asTag} ran the kickme command and got kicked")
-                            .queueAfter(20L, TimeUnit.SECONDS) {
-                                ModerationUtils.modLog(event.jda.selfUser,
-                                    event.author, "kicked", "Used the kickme command", ctx.guild)
-                            }
-                    }
-                    .build())
+                // Kick the user
+                MessageUtils.sendMsg(
+                    MessageConfig.Builder.fromCtx(ctx)
+                        .setMessage("Your kick will commence in 20 seconds")
+                        .setSuccessAction {
+                            it.guild.kick(ctx.member)
+                                .reason("${event.author.asTag} ran the kickme command and got kicked")
+                                .queueAfter(20L, TimeUnit.SECONDS) {
+                                    ModerationUtils.modLog(
+                                        event.jda.selfUser,
+                                        event.author,
+                                        "kicked",
+                                        "Used the kickme command",
+                                        ctx.guild
+                                    )
+                                }
+                        }
+                        .build()
+                )
             } else {
-                MessageUtils.sendMsg(ctx, """I'm missing the permission to kick you.
+                MessageUtils.sendMsg(
+                    ctx,
+                    """I'm missing the permission to kick you.
                             |You got lucky this time ${ctx.member.asMention}.
-                        """.trimMargin())
+                        """.trimMargin()
+                )
             }
         } else {
             MessageUtils.sendMsg(ctx, warningMsg)

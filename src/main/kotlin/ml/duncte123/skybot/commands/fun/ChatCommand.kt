@@ -58,21 +58,23 @@ class ChatCommand : Command() {
         this.help = "Have a chat with DuncteBot"
         this.usage = "<message>"
 
-        SERVICE.scheduleAtFixedRate({
-            val temp = TLongObjectHashMap(sessions)
-            val now = Date()
-            var cleared = 0
-            for (it in temp.keys()) {
-                val duration = now.time - sessions.get(it).time.time
-                if (duration >= MAX_DURATION) {
-                    sessions.remove(it)
-                    cleared++
+        SERVICE.scheduleAtFixedRate(
+            {
+                val temp = TLongObjectHashMap(sessions)
+                val now = Date()
+                var cleared = 0
+                for (it in temp.keys()) {
+                    val duration = now.time - sessions.get(it).time.time
+                    if (duration >= MAX_DURATION) {
+                        sessions.remove(it)
+                        cleared++
+                    }
                 }
-            }
-            LOGGER.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
-        }, 1L, 1L, TimeUnit.HOURS)
+                LOGGER.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
+            },
+            1L, 1L, TimeUnit.HOURS
+        )
     }
-
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
@@ -81,8 +83,11 @@ class ChatCommand : Command() {
         }
 
         if (event.message.contentRaw.contains("prefix")) {
-            sendMsg(ctx, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                .replace("{PREFIX}", ctx.prefix))
+            sendMsg(
+                ctx,
+                "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
+                    .replace("{PREFIX}", ctx.prefix)
+            )
             return
         }
 
@@ -98,14 +103,14 @@ class ChatCommand : Command() {
 
         if (!sessions.containsKey(event.author.idLong)) {
             sessions.put(event.author.idLong, ChatSession(event.author.idLong))
-            //sessions[event.author.id]?.session =
+            // sessions[event.author.id]?.session =
         }
 
         val session = sessions[event.author.idLong] ?: return
 
         LOGGER.debug("Message: \"$message\"")
 
-        //Set the current date in the object
+        // Set the current date in the object
         session.time = Date()
 
         session.think(message) {
@@ -113,13 +118,13 @@ class ChatCommand : Command() {
             sendMsg(ctx, "${event.author.asMention}, $response")
             LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
-
     }
 
     private fun parseATags(response: String): String {
         var response1 = response
         for (element in Jsoup.parse(response1).getElementsByTag("a")) {
-            response1 = response1.replace(oldValue = element.toString(),
+            response1 = response1.replace(
+                oldValue = element.toString(),
                 newValue = "${element.text()}(<${element.attr("href")}>)"
             )
         }
@@ -157,20 +162,22 @@ class ChatSession(userId: Long) {
     var time = Date()
 
     fun think(text: String, response: (String) -> Unit) {
-        body.append("input",text)
+        body.append("input", text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
             .build({ it.body()!!.string() }, WebParserUtils::handleError)
             .async {
-            try {
-                response.invoke(xPathSearch(it, "//result/that/text()"))
-            } catch (e: Exception) {
-                response.invoke("""An Error occurred, please report this message my developers
+                try {
+                    response.invoke(xPathSearch(it, "//result/that/text()"))
+                } catch (e: Exception) {
+                    response.invoke(
+                        """An Error occurred, please report this message my developers
                     |```
                     |${e.message}
                     |```
-                """.trimMargin())
+                """.trimMargin()
+                    )
+                }
             }
-        }
     }
 
     @Suppress("SameParameterValue")

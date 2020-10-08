@@ -53,7 +53,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
 
         if (args.size == 1) {
-
             if (!vcAutoRoleCache.containsKey(guild.idLong)) {
                 sendMsg(ctx, "No vc autorole has been set for this server")
                 return
@@ -77,7 +76,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
 
         if (args.size > 1) {
-
             if (args[0] == "add") {
                 addVcAutoRole(ctx)
                 return
@@ -87,11 +85,9 @@ class VcAutoRoleCommand : ModBaseCommand() {
                 removeVcAutoRole(ctx)
                 return
             }
-
         }
 
         sendMsg(ctx, "Unknown operation, check `${ctx.prefix}$name`")
-
     }
 
     private fun removeVcAutoRole(ctx: CommandContext) {
@@ -105,9 +101,11 @@ class VcAutoRoleCommand : ModBaseCommand() {
         if (foundVoiceChannels.isEmpty()) {
             sendMsg(
                 ctx,
-                String.format("I could not find any voice channels for `%s`%n" +
-                    "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[1])
+                String.format(
+                    "I could not find any voice channels for `%s`%n" +
+                        "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
+                    args[1]
+                )
             )
 
             return
@@ -135,9 +133,11 @@ class VcAutoRoleCommand : ModBaseCommand() {
         if (foundRoles.isEmpty()) {
             sendMsg(
                 ctx,
-                String.format("I could not find any role for `%s`%n" +
-                    "TIP: If your role name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[2])
+                String.format(
+                    "I could not find any role for `%s`%n" +
+                        "TIP: If your role name has spaces \"Surround it with quotes\" to give it as one argument",
+                    args[2]
+                )
             )
 
             return
@@ -161,17 +161,22 @@ class VcAutoRoleCommand : ModBaseCommand() {
             ctx.databaseAdapter.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
             ids.forEach { cache.put(it, targetRole) }
 
-            sendMsg(ctx, "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
-                "(excluding ones that are created after the command was ran)")
+            sendMsg(
+                ctx,
+                "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
+                    "(excluding ones that are created after the command was ran)"
+            )
         } else {
             val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
 
             if (foundVoiceChannels.isEmpty()) {
                 sendMsg(
                     ctx,
-                    String.format("I could not find any voice channels for `%s`%n" +
-                        "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                    args[1])
+                    String.format(
+                        "I could not find any voice channels for `%s`%n" +
+                            "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
+                        args[1]
+                    )
                 )
 
                 return

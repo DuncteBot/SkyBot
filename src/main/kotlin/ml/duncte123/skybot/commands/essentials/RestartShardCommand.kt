@@ -49,7 +49,6 @@ class RestartShardCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-
         val event = ctx.event
 
         if (!isDev(event.author)) {

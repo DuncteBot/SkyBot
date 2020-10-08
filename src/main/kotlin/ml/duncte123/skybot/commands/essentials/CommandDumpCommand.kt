@@ -85,7 +85,7 @@ class CommandDumpCommand : Command() {
         return s
     }
 
-    private fun String.mdToHtml() :String {
+    private fun String.mdToHtml(): String {
         return this.replace("&".toRegex(), "&amp;")
             .replace("<".toRegex(), "&lt;")
             .replace(">".toRegex(), "&gt;")

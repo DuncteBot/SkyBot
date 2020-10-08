@@ -49,4 +49,3 @@ class RadioStream(var name: String, val url: String, val website: String) {
         return "RadioStream(name='$name', url='$url', website=$website)"
     }
 }
-

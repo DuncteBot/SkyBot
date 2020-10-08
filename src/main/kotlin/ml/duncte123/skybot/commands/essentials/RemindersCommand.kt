@@ -124,9 +124,11 @@ class RemindersCommand : Command() {
             return
         }
 
-        sendMsg(ctx, "To prevent accidental deleting of reminders, you will need to confirm that you want to delete this reminder.\n" +
-            "To confirm that you want to delete the reminder please run the following command" +
-            "`${ctx.prefix}reminders delete ${reminder.id} --just-flipping-do-it`"
+        sendMsg(
+            ctx,
+            "To prevent accidental deleting of reminders, you will need to confirm that you want to delete this reminder.\n" +
+                "To confirm that you want to delete the reminder please run the following command" +
+                "`${ctx.prefix}reminders delete ${reminder.id} --just-flipping-do-it`"
         )
     }
 }

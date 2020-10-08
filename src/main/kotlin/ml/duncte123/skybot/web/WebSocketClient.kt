@@ -38,7 +38,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class WebSocketClient(
-    private val variables: Variables, private val shardManager: ShardManager
+    private val variables: Variables,
+    private val shardManager: ShardManager
 ) : WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
     private val executor = Executors.newSingleThreadExecutor {

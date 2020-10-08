@@ -40,7 +40,6 @@ class SearchCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-
         val event = ctx.event
 
         if (ctx.args.isEmpty()) {

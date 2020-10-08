@@ -51,8 +51,11 @@ class PPlayCommand : MusicCommand() {
             return
         }
 
-        sendMsg(ctx, "Loading playlist.......\n" +
-            "This may take a while depending on the size.")
+        sendMsg(
+            ctx,
+            "Loading playlist.......\n" +
+                "This may take a while depending on the size."
+        )
 
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }

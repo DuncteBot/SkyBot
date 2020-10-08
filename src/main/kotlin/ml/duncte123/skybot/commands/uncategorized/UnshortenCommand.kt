@@ -64,7 +64,8 @@ class UnshortenCommand : Command() {
 
         val data = json["data"]
 
-        val embed = EmbedUtils.embedMessage("""Short url:
+        val embed = EmbedUtils.embedMessage(
+            """Short url:
                             |```
                             |${data["short_url"].asText()}
                             |```
@@ -72,7 +73,8 @@ class UnshortenCommand : Command() {
                             |```
                             |${data["long_url"].asText()}
                             |```
-                        """.trimMargin())
+                        """.trimMargin()
+        )
 
         sendEmbed(ctx, embed)
     }

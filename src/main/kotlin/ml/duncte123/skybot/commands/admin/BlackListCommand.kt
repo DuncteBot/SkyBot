@@ -127,12 +127,14 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         val msgId = AtomicLong() // Bad ideas with duncte123 episode 5
-        sendMsg(MessageConfig.Builder.fromCtx(ctx)
-            .setMessage("Importing....")
-            .setSuccessAction {
-                msgId.set(it.idLong)
-            }
-            .build())
+        sendMsg(
+            MessageConfig.Builder.fromCtx(ctx)
+                .setMessage("Importing....")
+                .setSuccessAction {
+                    msgId.set(it.idLong)
+                }
+                .build()
+        )
 
         val jackson = ctx.variables.jackson
         val current = ctx.guildSettings.blacklistedWords

@@ -49,11 +49,14 @@ class KpopCommand : Command() {
             return
         }
 
-        sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
-            .setDescription("Here is a kpop member from the group ${member.band}")
-            .addField("Name of the member", member.name, false)
-            .setImage(member.image)
-            .setFooter("Query id: ${member.id}"))
+        sendEmbed(
+            ctx,
+            EmbedUtils.getDefaultEmbed()
+                .setDescription("Here is a kpop member from the group ${member.band}")
+                .addField("Name of the member", member.name, false)
+                .setImage(member.image)
+                .setFooter("Query id: ${member.id}")
+        )
     }
 
     private fun DuncteApis.getRandomKpopMember(search: String): KpopObject? {

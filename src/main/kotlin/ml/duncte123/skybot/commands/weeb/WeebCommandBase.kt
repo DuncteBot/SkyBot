@@ -57,20 +57,34 @@ abstract class WeebCommandBase : Command() {
             val imageUrl = it.url
 
             if (args.isEmpty()) {
-                sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                    " ${ctx.member!!.asMention} $thing", imageUrl))
+                sendEmbed(
+                    ctx,
+                    getWeebEmbedImageAndDesc(
+                        " ${ctx.member!!.asMention} $thing",
+                        imageUrl
+                    )
+                )
                 return@async
             }
 
             if (ctx.message.mentionedMembers.isNotEmpty()) {
-                sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                    "${ctx.message.mentionedMembers[0].asMention} $thing"
-                    , imageUrl))
+                sendEmbed(
+                    ctx,
+                    getWeebEmbedImageAndDesc(
+                        "${ctx.message.mentionedMembers[0].asMention} $thing",
+                        imageUrl
+                    )
+                )
                 return@async
             }
 
-            sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                "${args.joinToString(" ")} $thing", imageUrl))
+            sendEmbed(
+                ctx,
+                getWeebEmbedImageAndDesc(
+                    "${args.joinToString(" ")} $thing",
+                    imageUrl
+                )
+            )
         }
     }
 
@@ -80,19 +94,32 @@ abstract class WeebCommandBase : Command() {
         ctx.weebApi.getRandomImage(ImageConfig.Builder().setType(type).build()).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
-                sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                    "<@210363111729790977> $thing ${ctx.member!!.asMention}", imageUrl))
+                sendEmbed(
+                    ctx,
+                    getWeebEmbedImageAndDesc(
+                        "<@210363111729790977> $thing ${ctx.member!!.asMention}",
+                        imageUrl
+                    )
+                )
                 return@async
             }
             if (ctx.message.mentionedMembers.isNotEmpty()) {
-                sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                    "${ctx.member!!.asMention} $thing ${ctx.message.mentionedMembers[0].asMention}"
-                    , imageUrl))
+                sendEmbed(
+                    ctx,
+                    getWeebEmbedImageAndDesc(
+                        "${ctx.member!!.asMention} $thing ${ctx.message.mentionedMembers[0].asMention}",
+                        imageUrl
+                    )
+                )
                 return@async
             }
-            sendEmbed(ctx, getWeebEmbedImageAndDesc(
-                "${ctx.member!!.asMention} $thing ${args.joinToString(" ")}", imageUrl))
+            sendEmbed(
+                ctx,
+                getWeebEmbedImageAndDesc(
+                    "${ctx.member!!.asMention} $thing ${args.joinToString(" ")}",
+                    imageUrl
+                )
+            )
         }
-
     }
 }

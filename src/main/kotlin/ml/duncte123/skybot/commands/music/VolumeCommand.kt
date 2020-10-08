@@ -61,6 +61,5 @@ class VolumeCommand : MusicCommand() {
         } catch (e: NumberFormatException) {
             sendMsg(ctx, "**${args[0]}** is not a valid integer. (5 - 1000)")
         }
-
     }
 }

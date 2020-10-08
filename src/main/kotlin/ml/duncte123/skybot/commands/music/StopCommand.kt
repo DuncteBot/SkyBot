@@ -56,7 +56,10 @@ class StopCommand : MusicCommand() {
             return
         }
 
-        sendMsg(ctx, "Only the person that started this track " +
-            "or people with the `Manage Server` permission can stop this track")
+        sendMsg(
+            ctx,
+            "Only the person that started this track " +
+                "or people with the `Manage Server` permission can stop this track"
+        )
     }
 }

@@ -36,7 +36,6 @@ class SaveCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-
         val event = ctx.event
 
         event.channel.sendMessage("${event.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")

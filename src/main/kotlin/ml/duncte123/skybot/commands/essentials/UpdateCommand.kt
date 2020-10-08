@@ -44,8 +44,9 @@ class UpdateCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (!isDev(ctx.author)
-            && Settings.OWNER_ID != ctx.author.idLong) {
+        if (!isDev(ctx.author) &&
+            Settings.OWNER_ID != ctx.author.idLong
+        ) {
             sendMsg(ctx, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(ctx.message)
             return
@@ -58,19 +59,22 @@ class UpdateCommand : Command() {
             return
         }
 
-        sendMsg(MessageConfig.Builder()
-            .setChannel(ctx.channel)
-            .setMessage("✅ Updating")
-            .setSuccessAction {
-                val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
+        sendMsg(
+            MessageConfig.Builder()
+                .setChannel(ctx.channel)
+                .setMessage("✅ Updating")
+                .setSuccessAction {
+                    val listener = ctx.jda.eventManager.registeredListeners.find { it.javaClass == ReadyShutdownListener::class.java } as ReadyShutdownListener
 
-                listener.killAllShards(ctx.shardManager!!, false)
+                    listener.killAllShards(ctx.shardManager!!, false)
 
-                // Wait for 2 seconds to allow everything to shut down
-                sleep(2000)
+                    // Wait for 2 seconds to allow everything to shut down
+                    sleep(2000)
 
-                // Magic code. Tell the updater to update
-                exitProcess(0x54) }
-            .build())
+                    // Magic code. Tell the updater to update
+                    exitProcess(0x54)
+                }
+                .build()
+        )
     }
 }

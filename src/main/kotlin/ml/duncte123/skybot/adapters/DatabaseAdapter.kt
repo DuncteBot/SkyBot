@@ -40,7 +40,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
         t
     }.asCoroutineDispatcher()
 
-    //////////////////
+    // ////////////////
     // Custom commands
 
     abstract fun getCustomCommands(callback: (List<CustomCommand>) -> Unit)
@@ -70,7 +70,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?)
 
-    /////////////////
+    // ///////////////
     // Guild settings
 
     abstract fun getGuildSettings(callback: (List<GuildSetting>) -> Unit)
@@ -91,12 +91,12 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun clearBlacklist(guildId: Long)
 
-    /////////////////
+    // ///////////////
     // Embed settings
 
     abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int)
 
-    ///////////////
+    // /////////////
     // Patron stuff
 
     abstract fun loadAllPatrons(callback: (AllPatronsData) -> Unit)
@@ -115,7 +115,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
 
-    /////////////
+    // ///////////
     // Moderation
 
     abstract fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long)
@@ -137,7 +137,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun purgeMutes(ids: List<Int>)
 
-    ///////////////
+    // /////////////
     // VC auto role
 
     abstract fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit)
@@ -150,7 +150,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun removeVcAutoRoleForGuild(guildId: Long)
 
-    ///////
+    // /////
     // Tags
 
     abstract fun loadTags(callback: (List<Tag>) -> Unit)

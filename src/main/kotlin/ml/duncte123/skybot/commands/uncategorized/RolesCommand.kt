@@ -48,9 +48,12 @@ class RolesCommand : Command() {
         SkyBot.getInstance().websocketClient.send(
             DataObject.empty()
                 .put("t", SocketTypes.ROLES_PUT_HASH)
-                .put("d", DataObject.empty()
-                    .put("guild_id", guildId)
-                    .put("hash", hash))
+                .put(
+                    "d",
+                    DataObject.empty()
+                        .put("guild_id", guildId)
+                        .put("hash", hash)
+                )
         )
     }
 

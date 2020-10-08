@@ -55,10 +55,10 @@ class FlipCommand : Command() {
 
         var normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'"
         var split = "ɐqɔpǝɟbɥıظʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡/\\,"
-        //maj
+        // maj
         normal += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         split += "∀qϽᗡƎℲƃHIſʞ˥WNOԀὉᴚS⊥∩ΛMXʎZ"
-        //number
+        // number
         normal += "0123456789"
         split += "0ƖᄅƐㄣϛ9ㄥ86"
 

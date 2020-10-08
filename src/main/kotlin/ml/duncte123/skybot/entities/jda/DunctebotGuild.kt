@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.entities.jda
 
+import com.dunctebot.models.settings.GuildSetting
 import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import com.dunctebot.models.settings.GuildSetting
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.api.entities.Guild

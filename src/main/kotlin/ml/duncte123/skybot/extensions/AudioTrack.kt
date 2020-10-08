@@ -51,15 +51,19 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
     }
 
     if (this.info.isStream) {
-        return embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+        return embedMessage(
+            """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
             |**Requester:** $requester
-        """.trimMargin())
+        """.trimMargin()
+        )
             .setThumbnail(this.getImageUrl())
     }
 
-    return embedMessage("""**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+    return embedMessage(
+        """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
             |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
-        """.trimMargin())
+        """.trimMargin()
+    )
         .setThumbnail(this.getImageUrl())
 }
 
@@ -67,7 +71,6 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
  * @param onlyStatic If we only should return thumbnails that do not require an http request
  */
 fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
-
     if (this.info is AudioTrackInfoWithImage) {
         return (this.info as AudioTrackInfoWithImage).image
     }
@@ -90,7 +93,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         return "https://thumbs.mixer.com/channel/$id.small.jpg?r=${System.currentTimeMillis()}"
     }
 
-    if(this is GetyarnAudioTrack) {
+    if (this is GetyarnAudioTrack) {
         // Gif url https://y.yarn.co/{id}_text.gif
         return "https://y.yarn.co/${this.identifier}_screenshot.jpg"
     }

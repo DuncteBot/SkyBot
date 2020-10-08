@@ -263,8 +263,8 @@ object EarthUtils {
             val posts = it["data"]["children"].filter { filter ->
                 ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
             }.filter { filter ->
-                filter["data"]["selftext"].asText().length <= 550
-                    && filter["data"]["title"].asText().length <= 256
+                filter["data"]["selftext"].asText().length <= 550 &&
+                    filter["data"]["title"].asText().length <= 256
             }
 
             if (posts.isEmpty()) {

@@ -43,10 +43,12 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
-@Authors(authors = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken")
-])
+@Authors(
+    authors = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken")
+    ]
+)
 class UserinfoCommand : Command() {
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
 
@@ -69,11 +71,14 @@ class UserinfoCommand : Command() {
                 return
             }
 
-            ctx.jda.retrieveUserById(args[0]).queue({
-                renderUserEmbed(ctx, it, ctx.guild, ctx.variables.prettyTime)
-            }, {
-                sendMsg(ctx, "Could not get user info: ${it.message}")
-            })
+            ctx.jda.retrieveUserById(args[0]).queue(
+                {
+                    renderUserEmbed(ctx, it, ctx.guild, ctx.variables.prettyTime)
+                },
+                {
+                    sendMsg(ctx, "Could not get user info: ${it.message}")
+                }
+            )
 
             return
         }
@@ -125,7 +130,8 @@ class UserinfoCommand : Command() {
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(guild.color)
             .setThumbnail(user.getStaticAvatarUrl())
-            .setDescription("""User info for ${user.asMention} ${user.badgeLine}
+            .setDescription(
+                """User info for ${user.asMention} ${user.badgeLine}
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
@@ -135,7 +141,8 @@ class UserinfoCommand : Command() {
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
-                    """.trimMargin())
+                    """.trimMargin()
+            )
 
         sendEmbed(ctx, embed)
     }
@@ -204,7 +211,8 @@ class UserinfoCommand : Command() {
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
                         |**Join Order:** ${generateJoinOrder(guild, member)}
             * */
-            .setDescription("""User info for ${member.asMention} ${user.badgeLine} $boostEmote
+            .setDescription(
+                """User info for ${member.asMention} ${user.badgeLine} $boostEmote
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
@@ -216,17 +224,21 @@ class UserinfoCommand : Command() {
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
-                    """.trimMargin())
+                    """.trimMargin()
+            )
 
         // If we don't have permission to send files or our weebSh key is null
-        if (!ctx.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
-            || ctx.config.apis.weebSh == null) {
+        if (!ctx.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) ||
+            ctx.config.apis.weebSh == null
+        ) {
             sendEmbed(ctx, embed, true)
             return
         }
 
-        ctx.weebApi.generateDiscordStatus(toWeebshStatus(member),
-            user.getStaticAvatarUrl() + "?size=256").async {
+        ctx.weebApi.generateDiscordStatus(
+            toWeebshStatus(member),
+            user.getStaticAvatarUrl() + "?size=256"
+        ).async {
             event.channel.sendFile(it, "stat.png")
                 .embed(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
@@ -234,7 +246,6 @@ class UserinfoCommand : Command() {
                 }
         }
     }
-
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.activities.isNotEmpty() && member.activities.any { it.type == Activity.ActivityType.STREAMING }) {
@@ -311,5 +322,4 @@ class UserinfoCommand : Command() {
             .replace(">", "\\?")
             .replace("~", "\\~")
     }
-
 }

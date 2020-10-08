@@ -76,6 +76,5 @@ class JoinCommand : MusicCommand() {
         } catch (other: Exception) {
             sendErrorWithMessage(ctx.message, "Could not join channel: ${other.message}")
         }
-
     }
 }
