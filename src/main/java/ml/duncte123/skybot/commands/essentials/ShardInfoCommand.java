@@ -198,7 +198,7 @@ public class ShardInfoCommand extends Command {
             widths[0] = 7;
         }
 
-        builder.append("```").append("prolog").append("\n");
+        builder.append("```prolog\n");
         final StringBuilder formatLine = new StringBuilder("║");
         for (final int width : widths) {
             formatLine.append(" %-").append(width).append("s ║");
