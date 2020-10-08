@@ -152,7 +152,7 @@ class UserinfoCommand : Command() {
             index = 0
         }
 
-        appendln()
+        appendLine()
 
         if (joins[index] == member) {
             append("[${joins[index].effectiveName.escapeMarkDown()}](https://patreon.com/DuncteBot)")

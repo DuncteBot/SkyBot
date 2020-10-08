@@ -74,7 +74,7 @@ class EmoteCommand : Command() {
 
     private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {
         val message = buildString {
-            appendln("Emoji/char info for $emote:")
+            appendLine("Emoji/char info for $emote:")
 
             emote.codePoints().forEach {
                 val chars = Character.toChars(it)
@@ -92,7 +92,7 @@ class EmoteCommand : Command() {
                     append("[`$extraHex`]")
                 }
 
-                appendln(" _${it.getName()}_")
+                appendLine(" _${it.getName()}_")
             }
         }
 

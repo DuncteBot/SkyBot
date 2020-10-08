@@ -54,7 +54,6 @@ public class LoveCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
         final List<String> args = ctx.getArgs();
 
         String name1 = ctx.getMember().getEffectiveName();
@@ -79,6 +78,7 @@ public class LoveCommand extends Command {
 
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed()
             .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
+            .setColor(EmbedUtils.getColorOrDefault(ctx.getGuild().getIdLong()))
             // The idea is cool, but it looks stupid
             /*.setDescription(
                 String.format(
@@ -93,8 +93,7 @@ public class LoveCommand extends Command {
 
         final TextChannel channel = ctx.getChannel();
 
-        if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES,
-            Permission.MESSAGE_EMBED_LINKS) && channel.canTalk()) {
+        if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS)) {
             ctx.getWeebApi().generateLoveship(
                 UserKt.getStaticAvatarUrl(target1.getUser()),
                 UserKt.getStaticAvatarUrl(target2.getUser())
@@ -107,7 +106,7 @@ public class LoveCommand extends Command {
                     .queue();
             });
         } else {
-            sendEmbed(ctx, embed);
+            sendEmbed(ctx, embed, true);
         }
     }
 }

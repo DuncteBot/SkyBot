@@ -51,18 +51,18 @@ class ListCommand : MusicCommand() {
                 val queueLength = queue.map { it.duration }.sum()
                 val maxTracks = 10
                 val queueText = buildString {
-                    appendln("Current Queue: Entries: ${queue.size}")
+                    appendLine("Current Queue: Entries: ${queue.size}")
 
                     for ((index, track) in queue.withIndex()) {
                         if (index == maxTracks) {
                             break
                         }
 
-                        appendln(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 40))
+                        appendLine(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 40))
                     }
 
-                    appendln("Total Queue Time Length: ${getTimestamp(queueLength)}")
-                    appendln("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
+                    appendLine("Total Queue Time Length: ${getTimestamp(queueLength)}")
+                    appendLine("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
                 sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, queueText))
