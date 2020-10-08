@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
-import net.dv8tion.jda.api.entities.Message;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -50,8 +49,6 @@ public class UnlockEmoteCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final Message message = ctx.getMessage();
-
         if (ctx.getArgs().isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
@@ -66,13 +63,16 @@ public class UnlockEmoteCommand extends Command {
 
         final Emote emote = foundEmotes.get(0);
 
-        if (cannotInteractWithEmote(ctx, emote)) return;
+        if (cannotInteractWithEmote(ctx, emote)) {
+            return;
+        }
+
         emote.getManager().setRoles(Collections.emptySet()).queue();
-        sendSuccess(message);
+        sendSuccess(ctx.getMessage());
         sendMsg(ctx, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
-    static boolean cannotInteractWithEmote(CommandContext ctx, Emote emote) {
+    /* package */ static boolean cannotInteractWithEmote(CommandContext ctx, Emote emote) {
         if (emote == null) {
             sendMsg(ctx, "I cannot access that emote");
 

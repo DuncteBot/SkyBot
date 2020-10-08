@@ -38,7 +38,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
@@ -46,9 +46,9 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 })
 public abstract class Command implements ICommand {
     public Flag[] flags = new Flag[0];
-    protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
-    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(3,
+    protected static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(3,
         (r) -> {
             final Thread thread = new Thread(r, "Command-Thread");
             thread.setDaemon(true);
@@ -56,6 +56,7 @@ public abstract class Command implements ICommand {
         });
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
+    @SuppressWarnings("PMD.LongVariable")
     protected boolean displayAliasesInHelp = false;
     protected CommandCategory category = CommandCategory.MAIN;
     protected String name = "null";
@@ -163,6 +164,7 @@ public abstract class Command implements ICommand {
     }
 
     @Nonnull
+    @Override
     public CommandCategory getCategory() {
         return this.category;
     }

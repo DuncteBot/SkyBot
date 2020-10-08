@@ -25,20 +25,20 @@ import java.util.List;
 
 public class YoutubePlaylistMetadata {
 
-    private final String id;
+    private final String listId;
     private final String title;
     private final String nextPageKey;
     private final List<AudioTrackInfo> tracks;
 
-    public YoutubePlaylistMetadata(String id, String title, @Nullable String nextPageKey, List<AudioTrackInfo> tracks) {
-        this.id = id;
+    public YoutubePlaylistMetadata(String listId, String title, @Nullable String nextPageKey, List<AudioTrackInfo> tracks) {
+        this.listId = listId;
         this.title = title;
         this.nextPageKey = nextPageKey;
         this.tracks = tracks;
     }
 
     public String getId() {
-        return id;
+        return listId;
     }
 
     public String getTitle() {
@@ -57,7 +57,7 @@ public class YoutubePlaylistMetadata {
     @Override
     public String toString() {
         return "YoutubePlaylistMetadata{" +
-            "id='" + id + '\'' +
+            "id='" + listId + '\'' +
             ", title='" + title + '\'' +
             '}';
     }

@@ -64,22 +64,22 @@ public class ChangeLogCommand extends Command {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
             final String body = json.get("body").asText();
             final String version = json.get("tag_name").asText();
-            final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
+            final EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
                 .setTitle("Changelog for DuncteBot v" + version, json.get("html_url").asText());
 
             for (final String item : body.split("\n")) {
                 final String hash = item.substring(0, 7);
                 final String text = item.substring(8);
 
-                eb.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
+                builder.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
             }
 
             // fallback if with url is too long
-            if (eb.getDescriptionBuilder().length() > MessageEmbed.TEXT_MAX_LENGTH) {
-                eb.setDescription(body);
+            if (builder.getDescriptionBuilder().length() > MessageEmbed.TEXT_MAX_LENGTH) {
+                builder.setDescription(body);
             }
 
-            final EmbedBuilder embed = eb.setFooter("Released on", null)
+            final EmbedBuilder embed = builder.setFooter("Released on", null)
                 .setTimestamp(Instant.ofEpochMilli(parseTimeStamp(json.get("published_at").asText())));
 
             embedJson = embed.build()

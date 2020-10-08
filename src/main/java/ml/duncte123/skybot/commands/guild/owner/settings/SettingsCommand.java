@@ -138,7 +138,7 @@ public class SettingsCommand extends Command {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSetting settings = guild.getSettings();
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
-        final TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
+        final TextChannel welcomeChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
         final Role autoRole = guild.getRoleById(settings.getAutoroleRole());
         final Role muteRole = guild.getRoleById(settings.getMuteRoleId());
 
@@ -162,7 +162,7 @@ public class SettingsCommand extends Command {
 
             "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
             "**Modlog Channel:** " + (logChan == null ? "Not set" : logChan.getAsMention()) + "\n" +
-            "**Welcome/Leave channel:** " + (welcomeLeaveChannel == null ? "Not set" : welcomeLeaveChannel.getAsMention()) + "\n" +
+            "**Welcome/Leave channel:** " + (welcomeChannel == null ? "Not set" : welcomeChannel.getAsMention()) + "\n" +
             "**Embed color code:** " + guild.getHexColor()
         );
 
@@ -461,11 +461,11 @@ public class SettingsCommand extends Command {
     private void announceTracksSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSetting settings = guild.getSettings();
-        final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
+        final boolean shouldAnnounce = !settings.isAnnounceTracks();
 
-        guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
+        guild.setSettings(settings.setAnnounceTracks(shouldAnnounce));
         sendMsg(ctx, "Announcing the next track has been toggled **"
-            + (shouldAnnounceTracks ? "on" : "off") + "**");
+            + (shouldAnnounce ? "on" : "off") + "**");
     }
     /// </editor-fold>
 
@@ -485,11 +485,11 @@ public class SettingsCommand extends Command {
     private void filterInvitesSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSetting settings = guild.getSettings();
-        final boolean shouldFilterInvites = !settings.isFilterInvites();
+        final boolean shouldFilter = !settings.isFilterInvites();
 
-        guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
+        guild.setSettings(settings.setFilterInvites(shouldFilter));
         sendMsg(ctx, "Filtering discord invites has been toggled **"
-            + (shouldFilterInvites ? "on" : "off") + "**");
+            + (shouldFilter ? "on" : "off") + "**");
     }
     /// </editor-fold>
 

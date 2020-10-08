@@ -44,7 +44,9 @@ import java.util.stream.Collectors;
 })
 public class GuildSettingsUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
+
+    private GuildSettingsUtils() {}
 
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
@@ -52,7 +54,7 @@ public class GuildSettingsUtils {
     }
 
     private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSetting> guildSettings) {
-        logger.info("Loading Guild settings.");
+        LOGGER.info("Loading Guild settings.");
 
         databaseAdapter.getGuildSettings(
             (storedSettings) -> {
@@ -67,7 +69,7 @@ public class GuildSettingsUtils {
                     }
                 );
 
-                logger.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
+                LOGGER.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
 
                 return null;
             }
@@ -75,7 +77,7 @@ public class GuildSettingsUtils {
     }
 
     private static void loadVcAutoRoles(DatabaseAdapter adapter, TLongObjectMap<TLongLongMap> vcAutoRoleCache) {
-        logger.info("Loading vc auto roles.");
+        LOGGER.info("Loading vc auto roles.");
 
         adapter.getVcAutoRoles((items) -> {
 
@@ -95,7 +97,7 @@ public class GuildSettingsUtils {
                 }
             );
 
-            logger.info("Loaded " + items.size() + " vc auto roles.");
+            LOGGER.info("Loaded " + items.size() + " vc auto roles.");
 
             return null;
         });
@@ -126,8 +128,8 @@ public class GuildSettingsUtils {
     }
 
     private static GuildSetting registerNewGuild(long guildId, Variables variables, GuildSetting newGuildSettings) {
-        final LoadingCache<Long, GuildSetting> guildSettingsCache = variables.getGuildSettingsCache();
-        final GuildSetting settingForGuild = guildSettingsCache.get(guildId);
+        final LoadingCache<Long, GuildSetting> cache = variables.getGuildSettingsCache();
+        final GuildSetting settingForGuild = cache.get(guildId);
 
         if (settingForGuild != null) {
             return settingForGuild;
@@ -143,56 +145,67 @@ public class GuildSettingsUtils {
         variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
     }
 
-    public static String replaceNewLines(String entery) {
-        if (entery == null || entery.isEmpty())
+    public static String replaceNewLines(String entry) {
+        if (entry == null || entry.isEmpty()) {
             return null;
-        return entery.replaceAll("\\\\n", "\n");
+        }
+
+        return entry.replaceAll("\\\\n", "\n");
     }
 
-    private static String fixNewLines(String entery) {
-        if (entery == null || entery.isEmpty())
+    private static String fixNewLines(String entry) {
+        if (entry == null || entry.isEmpty()) {
             return null;
-        return entery.replaceAll("\n", "\\\\n");
+        }
+
+        return entry.replaceAll("\n", "\\\\n");
     }
 
-    public static String replaceUnicode(String entery) {
-        if (entery == null || entery.isEmpty())
+    public static String replaceUnicode(String entry) {
+        if (entry == null || entry.isEmpty()) {
             return null;
-        return entery.replaceAll("\\P{Print}", "");
+        }
+
+        return entry.replaceAll("\\P{Print}", "");
     }
 
     /*private static String replaceUnicodeAndLines(String s) {
         return replaceUnicode(replaceNewLines(s));
     }*/
 
-    public static String fixUnicodeAndLines(String s) {
-        return replaceUnicode(fixNewLines(replaceNewLines(s)));
+    public static String fixUnicodeAndLines(String string) {
+        return replaceUnicode(fixNewLines(replaceNewLines(string)));
     }
 
-    public static String convertJ2S(long[] in) {
-        return Arrays.stream(in).mapToObj(String::valueOf).collect(Collectors.joining("|", "", ""));
+    public static String convertJ2S(long[] input) {
+        return Arrays.stream(input)
+            .mapToObj(String::valueOf)
+            .collect(Collectors.joining("|", "", ""));
     }
 
-    private static long[] convertS2J(String in) {
-        if (in.isEmpty())
+    private static long[] convertS2J(String input) {
+        if (input.isEmpty()) {
             return new long[]{20, 45, 60, 120, 240, 2400};
-        return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
+        }
+
+        return Arrays.stream(input.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 
     public static long[] ratelimmitChecks(String fromDb) {
-        if (fromDb == null || fromDb.isEmpty())
+        if (fromDb == null || fromDb.isEmpty()) {
             return new long[]{20, 45, 60, 120, 240, 2400};
+        }
 
         return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
     }
 
-    public static long toLong(@Nullable String s) {
-        if (s == null) {
+    public static long toLong(@Nullable String string) {
+        if (string == null) {
             return 0L;
         }
 
         try {
-            return Long.parseUnsignedLong(s);
+            return Long.parseUnsignedLong(string);
         }
         catch (NumberFormatException ignored) {
             return 0L;

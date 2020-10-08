@@ -59,14 +59,14 @@ public class AudioUtils {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final YoutubeAudioSourceManagerOverride youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(
+        final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(
             variables.getYoutubeCache(),
             config.googl
         );
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
 
-        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(sourceManager);
 
         setCustomSourcesOn(playerManager, false);
         setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
@@ -114,7 +114,7 @@ public class AudioUtils {
             musicManagers.put(guildId, mng);
         }
 
-        if (!LavalinkManager.ins.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
+        if (!LavalinkManager.INS.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
             guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         }
 

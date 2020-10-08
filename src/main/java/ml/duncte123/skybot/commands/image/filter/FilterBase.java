@@ -30,7 +30,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class FilterBase extends NoPatronImageCommand {
 
-    FilterBase() {
+    /* package */ FilterBase() {
         this.name = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
         this.help = "Overlays a " + this.name + " filter over the provided image";
         this.usage = "[image url]";
@@ -70,7 +70,7 @@ public abstract class FilterBase extends NoPatronImageCommand {
         }
     }
 
-    String getFilterName() {
+    /* package */ String getFilterName() {
         return this.name;
     }
 }

@@ -45,7 +45,7 @@ public class KittyCommand extends Command {
     public void execute(@Nonnull CommandContext ctx) {
         final String apiKey = ctx.getConfig().apis.thecatapi;
         final String url = "https://api.thecatapi.com/api/images/get?" +
-            (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1";
+            (apiKey.isEmpty() ? "" : "api_key=" + apiKey + "&") + "format=xml&results_per_page=1";
 
         WebUtils.ins.scrapeWebPage(url).async((doc) -> {
             final String fullUrl = doc.selectFirst("url").text();

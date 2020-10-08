@@ -34,23 +34,25 @@ import static ml.duncte123.skybot.utils.ModerationUtils.handleUnmute;
 
 @SuppressWarnings("unused")
 public class SQLiteTimers {
-    private static final Logger logger = LoggerFactory.getLogger(SQLiteTimers.class);
-    private static final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteTimers.class);
+    private static final ScheduledExecutorService SYSPOOL = Executors.newScheduledThreadPool(4,
         (r) -> {
             final Thread thread = new Thread(r, "Sql-timer-thread");
             thread.setDaemon(true);
             return thread;
         });
 
+    private SQLiteTimers() {}
+
     public static void startUnbanTimer(Variables variables) {
-        logger.info("Starting the unban + unmute timer! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
+        LOGGER.info("Starting the unban + unmute timer! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
         //Register the timer for the auto unbans
-        systemPool.scheduleAtFixedRate(() -> checkUnbansAndUnmutes(variables), 0, 2, TimeUnit.MINUTES);
+        SYSPOOL.scheduleAtFixedRate(() -> checkUnbansAndUnmutes(variables), 0, 2, TimeUnit.MINUTES);
     }
 
     public static void startReminderTimer(Variables variables) {
-        logger.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
-        systemPool.scheduleAtFixedRate(
+        LOGGER.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
+        SYSPOOL.scheduleAtFixedRate(
             () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
                 AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
                 return null;

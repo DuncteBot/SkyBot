@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.command;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@SuppressWarnings("PMD.ShortClassName")
 public class Flag {
     private final Character flag;
     private final String word;

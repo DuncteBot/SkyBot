@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.durationparser.Duration;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -30,7 +30,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -64,26 +63,24 @@ public class TempMuteCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final GuildSetting settings = ctx.getGuildSettings();
         final List<Member> mentioned = ctx.getMentionedArg(0);
+        final List<String> args = ctx.getArgs();
 
         if (mentioned.isEmpty()) {
             sendMsg(ctx, "I could not find any members with name " + args.get(0));
             return;
         }
 
+        final GuildSetting settings = ctx.getGuildSettings();
+
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "spamrole <Role>` to set it");
             return;
         }
 
-        final User author = event.getAuthor();
         final Member mod = ctx.getMember();
         final Member toMute = mentioned.get(0);
-        final User mutee = toMute.getUser();
-        final Guild guild = event.getGuild();
+        final Guild guild = ctx.getGuild();
         final Role role = guild.getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
@@ -106,6 +103,8 @@ public class TempMuteCommand extends ModBaseCommand {
 
         final String fReason = reason;
         final String finalDate = AirUtils.getDatabaseDateFormat(duration);
+        final User mutee = toMute.getUser();
+        final User author = ctx.getAuthor();
 
         ctx.getDatabaseAdapter().createMute(
             author.getIdLong(),
@@ -139,12 +138,12 @@ public class TempMuteCommand extends ModBaseCommand {
             .reason("Muted by " + author.getAsTag() + ": " + fReason)
             .queue(success -> {
                     ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());
-                    sendSuccess(event.getMessage());
+                    sendSuccess(ctx.getMessage());
                 }
             );
     }
 
-    static boolean canNotProceed(@Nonnull CommandContext ctx, Member mod, Member toMute, Role role, Member self) {
+    /* package */ static boolean canNotProceed(@Nonnull CommandContext ctx, Member mod, Member toMute, Role role, Member self) {
         if (role == null) {
             sendMsg(ctx, "The current mute role does not exist on this server, please contact your server administrator about this.");
 

@@ -65,17 +65,17 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public abstract class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    private static final String PROFANITY_FILTER_DISABLE_FLAG = "--no-filter";
-    final SpamFilter spamFilter = new SpamFilter(variables);
-    final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
+    private static final String PROFANITY_DISABLE = "--no-filter";
+    /* package */ final SpamFilter spamFilter = new SpamFilter(variables);
+    /* package */ final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
         (r) -> new Thread(r, "Bot-Service-Thread"));
 
-    MessageListener(Variables variables) {
+    /* package */ MessageListener(Variables variables) {
         super(variables);
     }
 
-    void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
-        if (topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
+    /* package */ void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             return;
         }
 
@@ -95,7 +95,7 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    /* package */ void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -120,10 +120,10 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        final String rw = event.getMessage().getContentRaw().trim();
+        final String raw = event.getMessage().getContentRaw().trim();
 
-        if (rw.equals(Settings.PREFIX + "shutdown") && isDev(event.getAuthor().getIdLong())) {
-            logger.info("Initialising shutdown!!!");
+        if (raw.equals(Settings.PREFIX + "shutdown") && isDev(event.getAuthor().getIdLong())) {
+            LOGGER.info("Initialising shutdown!!!");
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
@@ -138,7 +138,7 @@ public abstract class MessageListener extends BaseListener {
         this.handlerThread.submit(() -> {
             try {
                 setJDAContext(event.getJDA());
-                handleMessageEventChecked(rw, guild, event);
+                handleMessageEventChecked(raw, guild, event);
             }
             catch (Exception e) {
                 Sentry.capture(e);
@@ -163,17 +163,18 @@ public abstract class MessageListener extends BaseListener {
         return false;
     }
 
-    private void handleMessageEventChecked(String rw, Guild guild, GuildMessageReceivedEvent event) {
-        final User selfUser = event.getJDA().getSelfUser();
-        final String selfRegex = "<@!?" + selfUser.getId() + '>';
+    private void handleMessageEventChecked(String raw, Guild guild, GuildMessageReceivedEvent event) {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
 
-        if (!commandManager.isCommand(customPrefix, rw) && doAutoModChecks(event, settings, rw)) {
+        if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
             return;
         }
 
-        if (rw.matches(selfRegex)) {
+        final User selfUser = event.getJDA().getSelfUser();
+        final String selfRegex = "<@!?" + selfUser.getId() + '>';
+
+        if (raw.matches(selfRegex)) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(event.getChannel())
@@ -186,18 +187,18 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+        final String[] split = raw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
         if (!autoResponses.isEmpty() && invokeAutoResponse(autoResponses, split, event)) {
             return;
         }
 
-        if (doesNotStartWithPrefix(event, rw, customPrefix) || !canRunCommands(rw, customPrefix, event)) {
+        if (doesNotStartWithPrefix(event, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
             return;
         }
 
-        if (rw.matches(selfRegex + "(.*)")) {
+        if (raw.matches(selfRegex + "(.*)")) {
             //Handle the chat command
             Objects.requireNonNull(commandManager.getCommand("chat")).executeCommand(new CommandContext(
                 "chat",
@@ -211,10 +212,8 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String rw, String customPrefix) {
-        final String rwLower = rw.toLowerCase();
-        final String selfUser = event.getJDA().getSelfUser().getAsMention();
-        final String selfMember = event.getGuild().getSelfMember().getAsMention();
+    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String raw, String customPrefix) {
+        final String rwLower = raw.toLowerCase();
 
         if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return false;
@@ -228,26 +227,29 @@ public abstract class MessageListener extends BaseListener {
             return false;
         }
 
+        final String selfMember = event.getGuild().getSelfMember().getAsMention();
+
         if (rwLower.startsWith(selfMember)) {
             return false;
         }
 
+        final String selfUser = event.getJDA().getSelfUser().getAsMention();
+
         return !rwLower.startsWith(selfUser);
     }
 
-    private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String rw, @Nonnull String s) {
-        return s.equalsIgnoreCase(
-            rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
+    private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String raw, @Nonnull String input) {
+        return input.equalsIgnoreCase(
+            raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(customPrefix), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
         );
     }
 
-    //                                    raw,    category?
-    private boolean hasCorrectCategory(@Nonnull String rw, @Nonnull String categoryName, @Nonnull String customPrefix) {
+    private boolean hasCorrectCategory(@Nonnull String raw, @Nonnull String categoryName, @Nonnull String customPrefix) {
 
         final ICommand command = commandManager.getCommand(
-            rw.replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
+            raw.replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
@@ -268,7 +270,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean canRunCommands(String rw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
+    private boolean canRunCommands(String raw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
 
         final String topic = event.getChannel().getTopic();
 
@@ -282,22 +284,24 @@ public abstract class MessageListener extends BaseListener {
 
         final String[] blocked = topic.split("-");
 
-        for (String s : blocked) {
-            if (s.startsWith("!")) {
-                s = s.split("!")[1];
+        for (final String item : blocked) {
+            String string = item;
 
-                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s, customPrefix)) {
+            if (string.startsWith("!")) {
+                string = string.split("!")[1];
+
+                if (isCategory(string.toUpperCase()) && !hasCorrectCategory(raw, string, customPrefix)) {
                     return false;
                 }
 
-                return !shouldBlockCommand(customPrefix, rw, s);
+                return !shouldBlockCommand(customPrefix, raw, string);
             }
 
-            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s, customPrefix)) {
+            if (isCategory(string.toUpperCase()) && hasCorrectCategory(raw, string, customPrefix)) {
                 return false;
             }
 
-            if (shouldBlockCommand(customPrefix, rw, s)) {
+            if (shouldBlockCommand(customPrefix, raw, string)) {
                 return false;
             }
 
@@ -307,9 +311,9 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /// <editor-fold desc="auto moderation" defaultstate="collapsed">
-    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSetting settings, String rw) {
+    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSetting settings, String raw) {
         if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-            final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
+            final Matcher matcher = Message.INVITE_PATTERN.matcher(raw);
             if (matcher.find()) {
                 //Get the invite Id from the message
                 final String inviteID = matcher.group(matcher.groupCount());
@@ -334,7 +338,7 @@ public abstract class MessageListener extends BaseListener {
     private boolean checkSwearFilter(Message messageToCheck, GenericGuildMessageEvent event, DunctebotGuild guild) {
         final GuildSetting settings = guild.getSettings();
 
-        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_FILTER_DISABLE_FLAG)) {
+        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             final float score = PerspectiveApi.checkSwearFilter(
                 messageToCheck.getContentRaw(),
                 event.getChannel().getId(),
@@ -383,10 +387,10 @@ public abstract class MessageListener extends BaseListener {
             return false;
         }
 
-        final String rw = messageToCheck.getContentRaw().toLowerCase();
+        final String raw = messageToCheck.getContentRaw().toLowerCase();
 
         for (final String foundWord : blacklist) {
-            if (Pattern.compile("\\b" + foundWord + "\\b").matcher(rw).find()) {
+            if (Pattern.compile("\\b" + foundWord + "\\b").matcher(raw).find()) {
                 messageToCheck.delete()
                     .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
 
@@ -416,7 +420,7 @@ public abstract class MessageListener extends BaseListener {
         return false;
     }
 
-    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSetting settings, DunctebotGuild g) {
+    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSetting settings, DunctebotGuild guild) {
         if (settings.isEnableSpamFilter()) {
             final long[] rates = settings.getRatelimits();
 
@@ -424,17 +428,17 @@ public abstract class MessageListener extends BaseListener {
 
             if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                 modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                    settings.getKickState() ? "kicked" : "muted", "spam", g);
+                    settings.getKickState() ? "kicked" : "muted", "spam", guild);
             }
         }
     }
 
-    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSetting settings, String rw) {
+    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSetting settings, String raw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
 
-            checkMessageForInvites(guild, event, settings, rw);
+            checkMessageForInvites(guild, event, settings, raw);
 
             final Message messageToCheck = event.getMessage();
             final DunctebotGuild dbG = new DunctebotGuild(event.getGuild(), variables);

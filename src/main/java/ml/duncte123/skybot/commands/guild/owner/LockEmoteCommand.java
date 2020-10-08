@@ -56,13 +56,12 @@ public class LockEmoteCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final Message message = ctx.getMessage();
-
         if (ctx.getArgs().isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
         }
 
+        final Message message = ctx.getMessage();
         final List<Emote> mentionedEmotes = message.getEmotes();
         final List<Role> mentionedRoles = new ArrayList<>(message.getMentionedRoles());
 
@@ -80,7 +79,9 @@ public class LockEmoteCommand extends Command {
 
         final Emote emote = mentionedEmotes.get(0);
 
-        if (cannotInteractWithEmote(ctx, emote)) return;
+        if (cannotInteractWithEmote(ctx, emote)) {
+            return;
+        }
 
         emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
         sendSuccess(message);

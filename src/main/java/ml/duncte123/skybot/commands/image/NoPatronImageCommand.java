@@ -38,7 +38,7 @@ public abstract class NoPatronImageCommand extends ImageCommandBase {
             return null;
         }
 
-        if (split[0].trim().equals("") || split[1].trim().equals("")) {
+        if ("".equals(split[0].trim()) || "".equals(split[1].trim())) {
             sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return null;
         }

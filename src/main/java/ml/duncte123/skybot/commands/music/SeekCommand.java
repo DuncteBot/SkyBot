@@ -62,9 +62,6 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
-        final String arg0 = args.get(0);
-        final String seekTime = arg0.replaceFirst("-", "");
-        final Matcher matcher = TIME_REGEX.matcher(seekTime);
         final IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
         final AudioTrack currentTrack = player.getPlayingTrack();
 
@@ -77,6 +74,10 @@ public class SeekCommand extends MusicCommand {
             sendMsg(ctx, "This track is not seekable");
             return;
         }
+
+        final String arg0 = args.get(0);
+        final String seekTime = arg0.replaceFirst("-", "");
+        final Matcher matcher = TIME_REGEX.matcher(seekTime);
 
         if (matcher.matches()) {
             final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
@@ -96,7 +97,6 @@ public class SeekCommand extends MusicCommand {
 
         // To hopefully prevent race conditions
         final Supplier<Long> trackDuration = () -> player.getPlayingTrack().getDuration();
-        final Supplier<Long> trackPosition = () -> player.getPlayingTrack().getPosition();
 
         int seconds = Integer.parseInt(seekTime) * 1000;
 
@@ -116,6 +116,7 @@ public class SeekCommand extends MusicCommand {
             seconds = ~seconds;
         }
 
+        final Supplier<Long> trackPosition = () -> player.getPlayingTrack().getPosition();
         final long currentPosition = trackPosition.get();
         final long newPosition = currentPosition + seconds;
 

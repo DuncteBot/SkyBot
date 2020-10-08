@@ -73,6 +73,8 @@ import static me.duncte123.botcommons.web.WebParserUtils.toJSONObject;
 })
 public class AirUtils {
 
+    private AirUtils() {}
+
     public static boolean isURL(String url) {
         return url.matches("^https?:\\/\\/[-a-zA-Z0-9+&@#\\/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#\\/%=~_|]");
     }
@@ -175,7 +177,7 @@ public class AirUtils {
             return;
         }
 
-        final LavalinkManager lavalinkManager = LavalinkManager.ins;
+        final LavalinkManager lavalinkManager = LavalinkManager.INS;
 
         mng.stopAndClear();
 
@@ -184,12 +186,14 @@ public class AirUtils {
         }
     }
 
-    public static TextChannel getLogChannel(long channel, Guild g) {
-        return getLogChannel(Long.toString(channel), g);
+    public static TextChannel getLogChannel(long channel, Guild guild) {
+        return getLogChannel(Long.toString(channel), guild);
     }
 
     private static TextChannel getLogChannel(String channelId, Guild guild) {
-        if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
+        if (channelId == null || channelId.isEmpty()) {
+            return GuildUtils.getPublicChannel(guild);
+        }
 
         final List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
 
@@ -202,11 +206,11 @@ public class AirUtils {
 
     @Nonnull
     public static String colorToHex(int hex) {
-        final int r = (hex & 0xFF0000) >> 16;
-        final int g = (hex & 0xFF00) >> 8;
-        final int b = (hex & 0xFF);
+        final int red = (hex & 0xFF0000) >> 16;
+        final int green = (hex & 0xFF00) >> 8;
+        final int blue = hex & 0xFF;
 
-        return String.format("#%02x%02x%02x", r, g, b);
+        return String.format("#%02x%02x%02x", red, green, blue);
     }
 
     public static int colorToInt(String hex) {
@@ -303,9 +307,6 @@ public class AirUtils {
                     )
                     .complete();
                 toPurge.add(reminder.getId());
-            }
-            catch (NullPointerException ignored) {
-                // this should never happen, shard 0 is always there
             }
             catch (ErrorResponseException errorResponseEx) {
                 final ErrorResponse errorResponse = errorResponseEx.getErrorResponse();

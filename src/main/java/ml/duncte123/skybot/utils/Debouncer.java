@@ -23,12 +23,12 @@ import java.util.function.Consumer;
 
 public class Debouncer<T> implements Consumer<T> {
 
-    private final Consumer<T> c;
+    private final Consumer<T> consumer;
     private final AtomicLong lastCalled = new AtomicLong(0);
-    private long interval;
+    private final long interval;
 
-    public Debouncer(Consumer<T> c, long interval) {
-        this.c = c;
+    public Debouncer(Consumer<T> consumer, long interval) {
+        this.consumer = consumer;
         this.interval = interval;
     }
 
@@ -36,7 +36,7 @@ public class Debouncer<T> implements Consumer<T> {
     public void accept(T arg) {
         if (lastCalled.get() + interval < System.currentTimeMillis()) {
             lastCalled.set(System.currentTimeMillis());
-            c.accept(arg);
+            consumer.accept(arg);
         }
     }
 }

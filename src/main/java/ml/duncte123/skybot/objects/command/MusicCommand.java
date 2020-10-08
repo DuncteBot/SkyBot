@@ -43,15 +43,15 @@ public abstract class MusicCommand extends Command {
     @SinceSkybot(version = "3.54.2")
     protected boolean withAutoJoin = false;
 
-    public static final Function<String, String> generateCooldownKey = (guildId) -> "musicCommand|" + guildId;
-    public static final int musicCooldown = 12;
+    public static final Function<String, String> KEY_GEN = (guildId) -> "musicCommand|" + guildId;
+    public static final int MUSIC_COOLDOWN = 12;
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
         // Has to be set in the individual commands
 //        this.cooldown = musicCooldown;
         this.cooldownScope = CooldownScope.GUILD;
-        this.cooldownKey = (cmdName, ctx) -> generateCooldownKey.apply(ctx.getGuild().getId());
+        this.cooldownKey = (cmdName, ctx) -> KEY_GEN.apply(ctx.getGuild().getId());
         // Patrons have no cooldown
         this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx.getEvent(), false);
     }
@@ -65,6 +65,7 @@ public abstract class MusicCommand extends Command {
         }
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     public void run(@Nonnull CommandContext ctx) {
         // Cannot be abstract due to the join command
     }
@@ -134,6 +135,6 @@ public abstract class MusicCommand extends Command {
     }
 
     protected static LavalinkManager getLavalinkManager() {
-        return LavalinkManager.ins;
+        return LavalinkManager.INS;
     }
 }

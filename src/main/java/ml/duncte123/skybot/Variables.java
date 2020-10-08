@@ -81,7 +81,7 @@ public final class Variables {
         });
 
 
-    Variables() {
+    /* package */ Variables() {
         this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);

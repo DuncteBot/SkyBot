@@ -35,21 +35,21 @@ public class GuildMusicManager {
     public final IPlayer player;
     private final TrackScheduler scheduler;
     private final AtomicLong lastChannel = new AtomicLong(-1);
-    private final Supplier<Boolean> isAnnounceTracksSupplier;
+    private final Supplier<Boolean> announceTracksSupplier;
 
     public GuildMusicManager(long guildId, Variables variables) {
-        this.player = LavalinkManager.ins.createPlayer(guildId);
+        this.player = LavalinkManager.INS.createPlayer(guildId);
         this.scheduler = new TrackScheduler(this.player, this);
         this.player.addListener(this.getScheduler());
-        this.isAnnounceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
+        this.announceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
     }
 
     public AudioPlayerSenderHandler getSendHandler() {
         return new AudioPlayerSenderHandler(this.player);
     }
 
-    boolean isAnnounceTracks() {
-        return this.isAnnounceTracksSupplier.get();
+    /* package */ boolean isAnnounceTracks() {
+        return this.announceTracksSupplier.get();
     }
 
     // Has to be public because of kotlin
@@ -78,7 +78,7 @@ public class GuildMusicManager {
     }
 
     @Nullable
-    TextChannel getLatestChannel() {
+    /* package */ TextChannel getLatestChannel() {
         final long last = this.getLastChannel();
 
         if (last == -1 || last == 0) {

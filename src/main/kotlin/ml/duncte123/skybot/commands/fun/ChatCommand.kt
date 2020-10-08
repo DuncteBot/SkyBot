@@ -58,7 +58,7 @@ class ChatCommand : Command() {
         this.help = "Have a chat with DuncteBot"
         this.usage = "<message>"
 
-        commandService.scheduleAtFixedRate({
+        SERVICE.scheduleAtFixedRate({
             val temp = TLongObjectHashMap(sessions)
             val now = Date()
             var cleared = 0
@@ -69,7 +69,7 @@ class ChatCommand : Command() {
                     cleared++
                 }
             }
-            logger.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
+            LOGGER.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
         }, 1L, 1L, TimeUnit.HOURS)
     }
 
@@ -103,7 +103,7 @@ class ChatCommand : Command() {
 
         val session = sessions[event.author.idLong] ?: return
 
-        logger.debug("Message: \"$message\"")
+        LOGGER.debug("Message: \"$message\"")
 
         //Set the current date in the object
         session.time = Date()
@@ -111,7 +111,7 @@ class ChatCommand : Command() {
         session.think(message) {
             val response = parseATags(it)
             sendMsg(ctx, "${event.author.asMention}, $response")
-            logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+            LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 
     }

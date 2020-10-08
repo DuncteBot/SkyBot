@@ -42,7 +42,7 @@ import java.util.Base64;
  */
 public final class LavalinkManager {
 
-    public static final LavalinkManager ins = new LavalinkManager();
+    public static final LavalinkManager INS = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
     private AudioUtils audioUtils = null;
@@ -50,16 +50,18 @@ public final class LavalinkManager {
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig c, AudioUtils a) {
-        this.config = c;
-        this.audioUtils = a;
-        if (!isEnabled()) return;
+    public void start(DunctebotConfig config, AudioUtils audioUtils) {
+        this.config = config;
+        this.audioUtils = audioUtils;
+        if (!isEnabled()) {
+            return;
+        }
 
-        final String userId = getIdFromToken(config.discord.token);
+        final String userId = getIdFromToken(this.config.discord.token);
 
         lavalink = new JdaLavalink(
             userId,
-            config.discord.totalShards,
+            this.config.discord.totalShards,
             shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
 
@@ -97,10 +99,10 @@ public final class LavalinkManager {
         }
     }
 
-    public boolean isConnected(Guild g) {
+    public boolean isConnected(Guild guild) {
         return isEnabled() ?
-            lavalink.getLink(g).getState() == Link.State.CONNECTED :
-            g.getAudioManager().isConnected();
+            lavalink.getLink(guild).getState() == Link.State.CONNECTED :
+            guild.getAudioManager().isConnected();
     }
 
     public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {

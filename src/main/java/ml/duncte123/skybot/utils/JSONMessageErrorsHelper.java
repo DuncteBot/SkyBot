@@ -38,13 +38,13 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class JSONMessageErrorsHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
 
-    /////
-    private static Logger logger = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
+    private JSONMessageErrorsHelper() {}
 
     public static void sendErrorJSON(Message message, Throwable error, final boolean print, ObjectMapper mapper) {
         if (print) {
-            logger.error(error.getLocalizedMessage(), error);
+            LOGGER.error(error.getLocalizedMessage(), error);
         }
 
         //Makes no difference if we use sendError or check here both perm types

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects;
 
+@SuppressWarnings({"PMD.LongVariable", "PMD.ClassNamingConventions"})
 public class Emotes {
     public static final String DISCORD_STAFF = "<:staff:738364360413675530>";
     public static final String DISCORD_PARTNER = "<:partner_new:752099308878299157>";

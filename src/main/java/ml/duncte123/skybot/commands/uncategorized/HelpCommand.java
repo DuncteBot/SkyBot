@@ -182,7 +182,7 @@ public class HelpCommand extends Command {
 
     private boolean isKotlin(Class<? extends Command> klass) {
         return Arrays.stream(klass.getDeclaredAnnotations())
-            .anyMatch((c) -> c.annotationType().getName().equals("kotlin.Metadata"));
+            .anyMatch((c) -> "kotlin.Metadata".equals(c.annotationType().getName()));
     }
 
     private CommandCategory getCategory(String search) {

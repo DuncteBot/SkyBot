@@ -31,7 +31,7 @@ class LeaveCommand : MusicCommand() {
         this.name = "leave"
         this.aliases = arrayOf("disconnect", "exit", "fuckoff")
         this.help = "Makes the bot leave the current voice channel"
-        this.cooldown = musicCooldown
+        this.cooldown = MUSIC_COOLDOWN
     }
 
     override fun run(ctx: CommandContext) {

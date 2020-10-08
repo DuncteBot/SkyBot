@@ -69,7 +69,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         val userId = data["user_id"].asLong()
         val guildId = data["guild_id"].asLong()
 
-        if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
+        if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
             return
         }
 
@@ -83,7 +83,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
                 .any { it == Settings.ONE_GUILD_PATRONS_ROLE }
 
             if (hasRole) {
-                CommandUtils.oneGuildPatrons.put(userId, guildId)
+                CommandUtils.ONEGUILD_PATRONS.put(userId, guildId)
             }
         }
     }

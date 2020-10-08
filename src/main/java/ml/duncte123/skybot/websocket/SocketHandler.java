@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 public abstract class SocketHandler {
-    protected static final Logger log = LoggerFactory.getLogger(SocketHandler.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(SocketHandler.class);
 
     protected final WebSocketClient client;
 

@@ -88,10 +88,10 @@ import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
-    private static final TObjectLongMap<String> cooldowns = MapUtils.newObjectLongMap();
+    private static final TObjectLongMap<String> COOLDOWNS = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-    private static final ScheduledExecutorService cooldownThread = Executors.newSingleThreadScheduledExecutor((r) -> {
+    private static final ScheduledExecutorService COOLDOWN_THREAD = Executors.newSingleThreadScheduledExecutor((r) -> {
         final Thread thread = new Thread(r, "Command-cooldown-thread");
         thread.setDaemon(true);
         return thread;
@@ -107,16 +107,16 @@ public class CommandManager {
     private final Variables variables;
 
     static {
-        cooldownThread.scheduleWithFixedDelay(() -> {
+        COOLDOWN_THREAD.scheduleWithFixedDelay(() -> {
                 try {
                     // Loop over all cooldowns with a 5 minute interval
                     // This makes sure that we don't have any useless cooldowns in the system hogging up memory
-                    cooldowns.forEachEntry((key, val) -> {
+                    COOLDOWNS.forEachEntry((key, val) -> {
                         final long remaining = calcTimeRemaining(val);
 
                         // Remove the value from the cooldowns if it is less or equal to 0
                         if (remaining <= 0) {
-                            cooldowns.remove(key);
+                            COOLDOWNS.remove(key);
                         }
 
                         // Return true to indicate that we are allowed to continue the loop
@@ -342,7 +342,7 @@ public class CommandManager {
             .collect(Collectors.toList());
     }
 
-    LongLongPair getCommandCount() {
+    /* package */ LongLongPair getCommandCount() {
         return new LongLongPair(this.commands.size(), this.aliases.size());
     }
 
@@ -412,9 +412,9 @@ public class CommandManager {
 
         if (split.length > 1) {
             final String raw = split[1];
-            final Matcher m = COMMAND_PATTERN.matcher(raw);
-            while (m.find()) {
-                args.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
+            final Matcher matcher = COMMAND_PATTERN.matcher(raw);
+            while (matcher.find()) {
+                args.add(matcher.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
             }
         }
 
@@ -422,23 +422,23 @@ public class CommandManager {
     }
 
     public void setCooldown(String key, int seconds) {
-        cooldowns.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
+        COOLDOWNS.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
     }
 
     public long getRemainingCooldown(String key) {
         // If we don't have a cooldown for the command return 0
-        if (!cooldowns.containsKey(key)) {
+        if (!COOLDOWNS.containsKey(key)) {
             return 0;
         }
 
         // get the time that the cooldown started
-        final long startTime = cooldowns.get(key);
+        final long startTime = COOLDOWNS.get(key);
         // The time that is left until the cooldown is over
         final long timeLeft = calcTimeRemaining(startTime);
 
         // If the time is up we will return 0 and remove the keys from the cooldowns map
         if (timeLeft <= 0) {
-            cooldowns.remove(key);
+            COOLDOWNS.remove(key);
             return 0;
         }
 
@@ -485,10 +485,10 @@ public class CommandManager {
             channel.sendTyping().queue(null, (t) -> {});
 
             try {
-                if (!cmd.isCustom()) {
-                    runNormalCommand(cmd, invoke, args, event);
-                } else {
+                if (cmd.isCustom()) {
                     runCustomCommand(cmd, invoke, args, event);
+                } else {
+                    runNormalCommand(cmd, invoke, args, event);
                 }
             }
             catch (Throwable ex) {
@@ -519,18 +519,18 @@ public class CommandManager {
     }
 
     private void runCustomCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        final CustomCommand cc = (CustomCommand) cmd;
+        final CustomCommand cusomCommand = (CustomCommand) cmd;
 
-        if (cc.getGuildId() != event.getGuild().getIdLong()) {
+        if (cusomCommand.getGuildId() != event.getGuild().getIdLong()) {
             return;
         }
 
         try {
-            MDC.put("command.custom.message", cc.getMessage());
+            MDC.put("command.custom.message", cusomCommand.getMessage());
 
             final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
 
-            final String message = parser.parse(cc.getMessage());
+            final String message = parser.parse(cusomCommand.getMessage());
             final MessageConfig.Builder messageBuilder = MessageConfig.Builder.fromEvent(event);
             final DataObject object = parser.get("embed");
             boolean hasContent = false;
@@ -575,12 +575,12 @@ public class CommandManager {
         );
     }
 
-    public boolean editCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true, true).getFirst();
+    public boolean editCustomCommand(CustomCommand cmd) {
+        return addCustomCommand(cmd, true, true).getFirst();
     }
 
-    public Triple<Boolean, Boolean, Boolean> registerCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true, false);
+    public Triple<Boolean, Boolean, Boolean> registerCustomCommand(CustomCommand cmd) {
+        return addCustomCommand(cmd, true, false);
     }
 
     public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {

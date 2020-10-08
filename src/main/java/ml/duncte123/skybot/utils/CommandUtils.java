@@ -57,15 +57,17 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandUtils {
-    public static final TLongSet patrons = MapUtils.newLongSet();
-    public static final TLongSet guildPatrons = MapUtils.newLongSet();
+    public static final TLongSet PATRONS = MapUtils.newLongSet();
+    public static final TLongSet GUILD_PATRONS = MapUtils.newLongSet();
     // Key: user_id Value: guild_id
-    public static final TLongLongMap oneGuildPatrons = MapUtils.newLongLongMap();
-    public static final TLongSet tagPatrons = MapUtils.newLongSet();
+    public static final TLongLongMap ONEGUILD_PATRONS = MapUtils.newLongLongMap();
+    public static final TLongSet TAG_PATRONS = MapUtils.newLongSet();
 
     public static final Supplier<Parser> PARSER_SUPPLIER = () -> JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
         .build();
+
+    private CommandUtils() {}
 
     @Nonnull
     public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
@@ -116,10 +118,10 @@ public class CommandUtils {
             }
 
             if (pushFlag) {
-                if (!currentFlag.isBlank()) {
-                    output.get(currentFlag).add(word);
-                } else {
+                if (currentFlag.isBlank()) {
                     output.get("undefined").add(word);
+                } else {
+                    output.get(currentFlag).add(word);
                 }
             }
         }
@@ -145,25 +147,25 @@ public class CommandUtils {
         return parsed;
     }
 
-    private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc) {
+    private static boolean isPatron(@Nonnull User user, @Nullable TextChannel channel) {
         // Developers have access to paton features
-        if (isDev(u) || patrons.contains(u.getIdLong())) {
+        if (isDev(user) || PATRONS.contains(user.getIdLong())) {
             return true;
         }
 
         //noinspection ConstantConditions
-        final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Guild supportGuild = user.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         // If the guild is not in cache (cuz discord) ignore the rest of the checks
         if (supportGuild == null) {
             return false;
         }
 
-        final Member m = supportGuild.getMember(u);
+        final Member member = supportGuild.getMember(user);
 
         // If the member is not in our guild we tell them to join it
-        if (m == null) {
-            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+        if (member == null) {
+            sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot).\n" +
                 "You will also need to join our discord server [here](https://dunctebot.link/server)"), false);
@@ -171,57 +173,57 @@ public class CommandUtils {
         }
 
         // If the member is not a patron tell them to become one
-        if (!m.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
-            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+        if (!member.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
+            sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."), false);
             return false;
         }
 
-        patrons.add(u.getIdLong());
+        PATRONS.add(user.getIdLong());
 
         return true;
     }
 
-    public static boolean isUserTagPatron(@Nonnull User u) {
-        return tagPatrons.contains(u.getIdLong()) || isDev(u);
+    public static boolean isUserTagPatron(@Nonnull User user) {
+        return TAG_PATRONS.contains(user.getIdLong()) || isDev(user);
     }
 
-    private static boolean isPatron(@Nonnull User u, @Nullable TextChannel tc, boolean reply) {
-        final TextChannel textChannel = reply ? tc : null;
-        return isPatron(u, textChannel) || isUserTagPatron(u);
+    private static boolean isPatron(@Nonnull User user, @Nullable TextChannel channel, boolean reply) {
+        final TextChannel textChannel = reply ? channel : null;
+        return isPatron(user, textChannel) || isUserTagPatron(user);
     }
 
-    public static boolean isGuildPatron(@Nonnull Guild g) {
-        return oneGuildPatrons.containsValue(g.getIdLong()) || shouldGuildBeConsideredPremium(g);
+    public static boolean isGuildPatron(@Nonnull Guild guild) {
+        return ONEGUILD_PATRONS.containsValue(guild.getIdLong()) || shouldGuildBeConsideredPremium(guild);
     }
 
     // FIXME: Do new patron checks for guilds
-    private static boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
+    private static boolean isGuildPatron(@Nonnull User user, @Nonnull Guild guild) {
         // Check if the guild is a patron either via user-being admin or as a one-guild patron
-        if (oneGuildPatrons.containsValue(g.getIdLong()) || shouldGuildBeConsideredPremium(g)) {
+        if (ONEGUILD_PATRONS.containsValue(guild.getIdLong()) || shouldGuildBeConsideredPremium(guild)) {
             return true;
         }
 
         //noinspection ConstantConditions
-        final Guild supportGuild = u.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
+        final Guild supportGuild = user.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
 
         if (supportGuild == null) {
             return false;
         }
 
-        final Member m = supportGuild.getMember(u);
+        final Member member = supportGuild.getMember(user);
 
-        if (m == null) {
+        if (member == null) {
             return false;
         }
 
-        if (!m.getRoles().contains(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))) {
+        if (!member.getRoles().contains(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))) {
             return false;
         }
 
         // We're adding the user here to make the checks easier
-        guildPatrons.add(u.getIdLong());
+        GUILD_PATRONS.add(user.getIdLong());
 
         return true;
     }
@@ -231,12 +233,12 @@ public class CommandUtils {
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
-    public static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent e) {
-        return isUserOrGuildPatron(e, true);
+    public static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event) {
+        return isUserOrGuildPatron(event, true);
     }
 
-    public static boolean isDev(@Nonnull User u) {
-        return isDev(u.getIdLong());
+    public static boolean isDev(@Nonnull User user) {
+        return isDev(user.getIdLong());
     }
 
     public static boolean isDev(long userId) {
@@ -249,13 +251,13 @@ public class CommandUtils {
         return false;
     }
 
-    private static boolean shouldGuildBeConsideredPremium(@Nonnull Guild g) {
+    private static boolean shouldGuildBeConsideredPremium(@Nonnull Guild guild) {
         final AtomicBoolean foundPatron = new AtomicBoolean(false);
 
-        guildPatrons.forEach((userId) -> {
+        GUILD_PATRONS.forEach((userId) -> {
             // Check if we have the member in the guild and if they are an admin
-            final Member m = g.getMemberById(userId);
-            final boolean userInGuild = m != null && m.hasPermission(Permission.ADMINISTRATOR);
+            final Member member = guild.getMemberById(userId);
+            final boolean userInGuild = member != null && member.hasPermission(Permission.ADMINISTRATOR);
 
             // Only set if we found a patron
             if (userInGuild) {
@@ -273,19 +275,19 @@ public class CommandUtils {
         Checks.notNull(data, "data");
 
         data.getPatrons().forEach(
-            (patron) -> patrons.add(patron.getUserId())
+            (patron) -> PATRONS.add(patron.getUserId())
         );
 
         data.getTagPatrons().forEach(
-            (patron) -> tagPatrons.add(patron.getUserId())
+            (patron) -> TAG_PATRONS.add(patron.getUserId())
         );
 
         data.getOneGuildPatrons().forEach(
-            (patron) -> oneGuildPatrons.put(patron.getUserId(), patron.getGuildId())
+            (patron) -> ONEGUILD_PATRONS.put(patron.getUserId(), patron.getGuildId())
         );
 
         data.getGuildPatrons().forEach(
-            (patron) -> guildPatrons.add(patron.getUserId())
+            (patron) -> GUILD_PATRONS.add(patron.getUserId())
         );
     }
 
@@ -293,19 +295,19 @@ public class CommandUtils {
         Checks.notNull(data, "data");
 
         data.getPatrons().forEach(
-            (patron) -> patrons.remove(patron.getUserId())
+            (patron) -> PATRONS.remove(patron.getUserId())
         );
 
         data.getTagPatrons().forEach(
-            (patron) -> tagPatrons.remove(patron.getUserId())
+            (patron) -> TAG_PATRONS.remove(patron.getUserId())
         );
 
         data.getOneGuildPatrons().forEach(
-            (patron) -> oneGuildPatrons.remove(patron.getUserId())
+            (patron) -> ONEGUILD_PATRONS.remove(patron.getUserId())
         );
 
         data.getGuildPatrons().forEach(
-            (patron) -> guildPatrons.remove(patron.getUserId())
+            (patron) -> GUILD_PATRONS.remove(patron.getUserId())
         );
     }
 }

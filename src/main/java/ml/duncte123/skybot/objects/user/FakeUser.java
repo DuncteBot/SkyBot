@@ -36,12 +36,12 @@ import java.util.List;
 public class FakeUser implements User {
 
     private final String name;
-    private final long id;
+    private final long idLong;
     private final short discrm;
 
-    public FakeUser(String name, long id, short discrm) {
+    public FakeUser(String name, long idLong, short discrm) {
         this.name = name;
-        this.id = id;
+        this.idLong = idLong;
         this.discrm = discrm;
     }
 
@@ -60,7 +60,7 @@ public class FakeUser implements User {
     @Nonnull
     @Override
     public String getId() {
-        return String.valueOf(this.id);
+        return String.valueOf(this.idLong);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class FakeUser implements User {
 
     @Override
     public long getIdLong() {
-        return this.id;
+        return this.idLong;
     }
 
     @Nonnull
@@ -159,12 +159,14 @@ public class FakeUser implements User {
         final boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
 
         String out;
-        if (!alt) {
-            out = getAsMention();
-        } else if (upper) {
-            out = getAsTag().toUpperCase();
+        if (alt) {
+            if (upper) {
+                out = getAsTag().toUpperCase();
+            } else {
+                out = getAsTag();
+            }
         } else {
-            out = getAsTag();
+            out = getAsMention();
         }
 
         MiscUtil.appendTo(formatter, width, precision, leftJustified, out);

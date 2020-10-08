@@ -43,6 +43,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.LoginException;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -79,13 +80,13 @@ public final class SkyBot {
         final long userId = member.getIdLong();
 
         return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
-            patrons.contains(userId) ||
-            tagPatrons.contains(userId) ||
-            oneGuildPatrons.containsKey(userId) ||
-            guildPatrons.contains(userId);
+            PATRONS.contains(userId) ||
+            TAG_PATRONS.contains(userId) ||
+            ONEGUILD_PATRONS.containsKey(userId) ||
+            GUILD_PATRONS.contains(userId);
     };
 
-    private SkyBot() throws Exception {
+    private SkyBot() throws LoginException {
         this.configureDefaults();
 
         // Load in our container
@@ -113,7 +114,7 @@ public final class SkyBot {
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
-        LavalinkManager.ins.start(config, variables.getAudioUtils());
+        LavalinkManager.INS.start(config, variables.getAudioUtils());
 
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
@@ -145,8 +146,8 @@ public final class SkyBot {
         this.startGameTimer();
 
         // If lavalink is enabled we will hook it into jda
-        if (LavalinkManager.ins.isEnabled()) {
-            builder.setVoiceDispatchInterceptor(LavalinkManager.ins.getLavalink().getVoiceInterceptor());
+        if (LavalinkManager.INS.isEnabled()) {
+            builder.setVoiceDispatchInterceptor(LavalinkManager.INS.getLavalink().getVoiceInterceptor());
         }
 
         this.shardManager = builder.build();
@@ -200,7 +201,7 @@ public final class SkyBot {
         return client;
     }
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws LoginException {
         instance = new SkyBot();
     }
 

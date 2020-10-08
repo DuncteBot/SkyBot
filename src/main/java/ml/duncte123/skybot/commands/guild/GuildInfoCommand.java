@@ -46,7 +46,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 public class GuildInfoCommand extends Command {
 
     //https://stackoverflow.com/a/1915107/4453592
-    private static final String INVITE_STRING_TEMPLATE = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
+    private static final String INVITE_TEMPLATE = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
 
     public GuildInfoCommand() {
         this.name = "guildinfo";
@@ -62,20 +62,20 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final Guild g = ctx.getJDAGuild();
+        final Guild guild = ctx.getJDAGuild();
 
             // If the guild has the VANITY_URL feature enabled or the vanityCode is not null the guild has a vanity url
             // We do this check before fetching the invites so that we can display the vanity url if they have one
-            if (g.getFeatures().contains("VANITY_URL") || g.getVanityCode() != null) {
-                sendGuildInfoEmbed(ctx, String.format(INVITE_STRING_TEMPLATE, g.getVanityCode()));
+            if (guild.getFeatures().contains("VANITY_URL") || guild.getVanityCode() != null) {
+                sendGuildInfoEmbed(ctx, String.format(INVITE_TEMPLATE, guild.getVanityCode()));
                 return;
             }
 
             // Check if the selfuser has the manage server permissions
             // We can only fetch the invites when we have those permissions
-            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+            if (guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 // Fetch the invites for the guild
-                g.retrieveInvites().queue((invites) -> {
+                guild.retrieveInvites().queue((invites) -> {
 
                     // If there are no invites we will put give an empty string
                     if (invites.isEmpty()) {
@@ -85,7 +85,7 @@ public class GuildInfoCommand extends Command {
 
                     // Get the first invite and format that with the code
                     final Invite invite = invites.get(0);
-                    sendGuildInfoEmbed(ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
+                    sendGuildInfoEmbed(ctx, String.format(INVITE_TEMPLATE, invite.getCode()));
                 });
 
                 return;
@@ -96,17 +96,18 @@ public class GuildInfoCommand extends Command {
             sendGuildInfoEmbed(ctx, "");
     }
 
+    @SuppressWarnings("PMD.ConfusingTernary")
     private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
         final Guild guild = ctx.getJDAGuild();
         final double[] ratio = GuildUtils.getBotRatio(guild);
-        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
+        final EmbedBuilder builder = EmbedUtils.getDefaultEmbed();
         final GuildSetting settings = ctx.getGuildSettings();
         final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), guild);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
-            eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
+            builder.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
         } else if (guild.getDescription() != null && !"".equals(guild.getDescription())) {
-            eb.addField("Server Description", guild.getDescription() + "\n\u200B", false);
+            builder.addField("Server Description", guild.getDescription() + "\n\u200B", false);
         }
 
         String owner = "Unknown";
@@ -125,7 +126,7 @@ public class GuildInfoCommand extends Command {
             emoteList = Emotes.DISCORD_PARTNER_SERVER;
         }
 
-        eb.setThumbnail(guild.getIconUrl())
+        builder.setThumbnail(guild.getIconUrl())
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
                 "**Name:** " + guild.getName() + ' ' + emoteList + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
@@ -137,7 +138,7 @@ public class GuildInfoCommand extends Command {
                 "**(Possible) Nitro users:** " + GuildUtils.getNitroUserCountCache(guild) + "\n" +
                 "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
-        sendEmbed(ctx, eb);
+        sendEmbed(ctx, builder);
     }
 
 }

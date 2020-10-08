@@ -61,15 +61,15 @@ public class WolframAlphaCommand extends Command {
     }
 
     private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey, ObjectMapper mapper) {
-        final Member m = event.getMember();
-        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed();
-        eb.setAuthor(m.getEffectiveName(), "https://patreon.com/DuncteBot", m.getUser().getAvatarUrl());
+        final Member member = event.getMember();
+        final EmbedBuilder embed = EmbedUtils.getDefaultEmbed();
+        embed.setAuthor(member.getEffectiveName(), "https://patreon.com/DuncteBot", member.getUser().getAvatarUrl());
 
-        eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
+        embed.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
 
         if (result.getPods().length == 0) {
-            return eb.setDescription("Wolfram|Alpha returned no results").build();
+            return embed.setDescription("Wolfram|Alpha returned no results").build();
         }
 
         for (final WAPod pod : result.getPods()) {
@@ -78,42 +78,42 @@ public class WolframAlphaCommand extends Command {
             //Loop over the subpods
             for (final WASubpod sp : pod.getSubpods()) {
                 //yet another stringbuilder
-                final StringBuilder e = new StringBuilder();
+                final StringBuilder builder = new StringBuilder();
                 //append the title
-                e.append(parseString(sp.getTitle()));
+                builder.append(parseString(sp.getTitle()));
                 //loop over the contents
-                for (final Visitable v : sp.getContents()) {
-                    String d = "";
-                    if (v instanceof WAImage) {
-                        final WAImage i = (WAImage) v;
-                        d += "[Image by text](" + shortenUrl(i.getURL(), googleKey, mapper).execute() + ")";
-                    } else if (v instanceof WAInfo) {
-                        final WAInfo i = (WAInfo) v;
-                        d += parseString(i.getText());
-                        System.out.println(i.getText());
+                for (final Visitable variable : sp.getContents()) {
+                    String output = "";
+                    if (variable instanceof WAImage) {
+                        final WAImage image = (WAImage) variable;
+                        output += "[Image by text](" + shortenUrl(image.getURL(), googleKey, mapper).execute() + ")";
+                    } else if (variable instanceof WAInfo) {
+                        final WAInfo info = (WAInfo) variable;
+                        output += parseString(info.getText());
+                        //System.out.println(i.getText());
                         //Ramid when?
                         // TODO: Display more...
-                    } else if (v instanceof WALink) {
-                        final WALink l = (WALink) v;
-                        d += "[" + parseString(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey, mapper).execute() + ")";
-                    } else if (v instanceof WAPlainText) {
-                        final WAPlainText pt = (WAPlainText) v;
-                        d += parseString(pt.getText());
-                    } else if (v instanceof WASound) {
-                        final WASound sound = (WASound) v;
-                        d += shortenUrl(sound.getURL(), googleKey, mapper).execute();
+                    } else if (variable instanceof WALink) {
+                        final WALink link = (WALink) variable;
+                        output += "[" + parseString(link.getText()) + "](" + shortenUrl(link.getURL(), googleKey, mapper).execute() + ")";
+                    } else if (variable instanceof WAPlainText) {
+                        final WAPlainText plainText = (WAPlainText) variable;
+                        output += parseString(plainText.getText());
+                    } else if (variable instanceof WASound) {
+                        final WASound sound = (WASound) variable;
+                        output += shortenUrl(sound.getURL(), googleKey, mapper).execute();
                     }
 
-                    e.append(d).append("\n\n");
+                    builder.append(output).append("\n\n");
                 }
 
-                embeds.append(parseString(e.toString().trim())).append("\n\n");
+                embeds.append(parseString(builder.toString().trim())).append("\n\n");
             }
 
-            eb.addField(name, parseString(embeds.toString().trim()), false);
+            embed.addField(name, parseString(embeds.toString().trim()), false);
         }
 
-        return eb.build();
+        return embed.build();
     }
 
     @Override
@@ -172,6 +172,7 @@ public class WolframAlphaCommand extends Command {
         fromRef.editMessage(message).override(true).queue();
     }
 
+    @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     private WAEngine getWolframEngine(final String appId) {
 
         if (waEngine != null) {
@@ -196,15 +197,15 @@ public class WolframAlphaCommand extends Command {
         return engine;
     }
 
-    private static String parseString(final String s) {
-        if (s == null) {
+    private static String parseString(final String input) {
+        if (input == null) {
             return "null";
         }
 
-        if (s.length() <= 2000 - 6) {
-            return s;
+        if (input.length() <= 2000 - 6) {
+            return input;
         }
 
-        return s.substring(2000 - 6 - 1) + '\u2026';
+        return input.substring(2000 - 6 - 1) + '\u2026';
     }
 }

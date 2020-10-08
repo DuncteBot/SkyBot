@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.image.filter;
 public class SaturateCommand extends FilterBase {
 
     @Override
-    String getFilterName() {
+    /* package */ String getFilterName() {
         return "darken";
     }
 }

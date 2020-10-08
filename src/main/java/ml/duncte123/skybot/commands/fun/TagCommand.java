@@ -63,8 +63,7 @@ public class TagCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        if (ctx.getInvoke().equalsIgnoreCase("tags")) {
+        if ("tags".equalsIgnoreCase(ctx.getInvoke())) {
             sendTagsList(ctx);
 
             return;
@@ -81,13 +80,13 @@ public class TagCommand extends Command {
         final String subCmd = args.get(0);
 
         if (args.size() == 1) {
-            if (subCmd.equalsIgnoreCase("help") || subCmd.equalsIgnoreCase("?")) {
+            if ("help".equalsIgnoreCase(subCmd) || "?".equalsIgnoreCase(subCmd)) {
                 sendTagHelp(ctx);
 
                 return;
             }
 
-            if (subCmd.equalsIgnoreCase("list")) {
+            if ("list".equalsIgnoreCase(subCmd)) {
                 sendTagsList(ctx);
 
                 return;
@@ -98,7 +97,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        if (subCmd.equalsIgnoreCase("create") || subCmd.equalsIgnoreCase("new")) {
+        if ("create".equalsIgnoreCase(subCmd) || "new".equalsIgnoreCase(subCmd)) {
             createTag(ctx);
 
             return;
@@ -116,19 +115,19 @@ public class TagCommand extends Command {
     private boolean handleTwoArgs(CommandContext ctx, String subCmd) {
         final String tagName = ctx.getArgs().get(1);
 
-        if (subCmd.equalsIgnoreCase("author") || subCmd.equalsIgnoreCase("owner") || subCmd.equalsIgnoreCase("who")) {
+        if ("author".equalsIgnoreCase(subCmd) || "owner".equalsIgnoreCase(subCmd) || "who".equalsIgnoreCase(subCmd)) {
             sendTagOwner(ctx, tagName);
 
             return true;
         }
 
-        if (subCmd.equalsIgnoreCase("delete") || subCmd.equalsIgnoreCase("remove")) {
+        if ("delete".equalsIgnoreCase(subCmd) || "remove".equalsIgnoreCase(subCmd)) {
             removeTag(ctx, tagName);
 
             return true;
         }
 
-        if (subCmd.equalsIgnoreCase("raw")) {
+        if ("raw".equalsIgnoreCase(subCmd)) {
             sendTagRaw(ctx, tagName);
 
             return true;
@@ -295,9 +294,9 @@ public class TagCommand extends Command {
     }
 
     private boolean isTagPatron(Member member) {
-        final User u = member.getUser();
+        final User user = member.getUser();
 
-        if (isUserTagPatron(u)) {
+        if (isUserTagPatron(user)) {
             return true;
         }
 
@@ -311,7 +310,7 @@ public class TagCommand extends Command {
             .anyMatch((it) -> it == Settings.TAG_PATRONS_ROLE);
 
         if (hasRole) {
-            tagPatrons.add(u.getIdLong());
+            TAG_PATRONS.add(user.getIdLong());
         }
 
         return hasRole;

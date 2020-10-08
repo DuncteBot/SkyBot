@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public abstract class BaseListener implements EventListener {
-    protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseListener.class);
     protected final ExecutorService handlerThread = Executors.newCachedThreadPool((r) -> {
         final Thread thread = new Thread(r, "Listener-handle-thread");
         thread.setDaemon(true);
@@ -58,11 +58,11 @@ public abstract class BaseListener implements EventListener {
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .build();*/
 
-    BaseListener(Variables variables) {
+    /* package */ BaseListener(Variables variables) {
         this.variables = variables;
     }
 
-    boolean isBotfarm(Guild guild) {
+    /* package */ boolean isBotfarm(Guild guild) {
         // TODO: Fix this check
         return false;
 

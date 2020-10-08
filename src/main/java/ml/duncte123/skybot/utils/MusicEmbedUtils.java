@@ -24,6 +24,8 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MusicEmbedUtils {
 
+    private MusicEmbedUtils() {}
+
     public static String playerEmbed(GuildMusicManager mng) {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
             generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())

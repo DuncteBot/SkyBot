@@ -81,7 +81,7 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
      * Don't cache tracks that are already retrieved from the cache
      */
     public static class DoNotCache extends YoutubeAudioTrack {
-        DoNotCache(AudioTrack track) {
+        /* default */ DoNotCache(AudioTrack track) {
             super(track.getInfo(), (YoutubeAudioSourceManager) track.getSourceManager());
         }
     }

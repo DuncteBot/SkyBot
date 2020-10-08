@@ -96,11 +96,11 @@ public class GuildJoinsCommand extends Command {
             graphics2D.drawString(ctx.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 60);
             graphics2D.drawString(now.format(DateTimeFormatter.RFC_1123_DATE_TIME), 20, 90);
 
-            try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                ImageIO.write(bufferedImage, "png", outputStream);
+            try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                ImageIO.write(bufferedImage, "png", stream);
 
                 ctx.getChannel()
-                    .sendFile(outputStream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
+                    .sendFile(stream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
                     .appendFormat("Here is the join graph for _%s_", ctx.getGuild().getName())
                     .queue();
             }

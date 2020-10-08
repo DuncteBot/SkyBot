@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
+@SuppressWarnings({"PMD.FieldNamingConventions", "PMD.ClassNamingConventions"})
 public class Settings {
     public static String PREFIX = "db!";
     public static boolean USE_JSON = false;
