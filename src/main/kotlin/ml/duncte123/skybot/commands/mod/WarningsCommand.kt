@@ -60,7 +60,7 @@ class WarningsCommand : ModBaseCommand() {
                     val modName = mod?.asTag ?: "Unknown#0000"
                     val reason = if (it.reason.isNotBlank()) it.reason else "None"
 
-                    appendln("`[${it.rawDate}]` Reason: _${reason}_ by $modName")
+                    appendLine("`[${it.rawDate}]` Reason: _${reason}_ by $modName")
                 }
             }
 

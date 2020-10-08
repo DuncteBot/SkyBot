@@ -46,22 +46,22 @@ class DialogCommand : Command() {
             , 25, null, true).split("\n")
 
         val string = buildString {
-            appendln("```")
-            appendln("╔═══════════════════════════╗ ")
-            appendln("║ Alert                     ║")
-            appendln("╠═══════════════════════════╣")
+            appendLine("```")
+            appendLine("╔═══════════════════════════╗ ")
+            appendLine("║ Alert                     ║")
+            appendLine("╠═══════════════════════════╣")
 
             lines.stream()
                 .map { it.trim() }
                 .map { String.format("%-25s", it) }
                 .map { "║ $it ║" }
-                .forEach { appendln(it) }
+                .forEach { appendLine(it) }
 
-            appendln("║  ┌─────────┐  ┌────────┐  ║")
-            appendln("║  │   Yes   │  │   No   │  ║")
-            appendln("║  └─────────┘  └────────┘  ║")
-            appendln("╚═══════════════════════════╝")
-            appendln("```")
+            appendLine("║  ┌─────────┐  ┌────────┐  ║")
+            appendLine("║  │   Yes   │  │   No   │  ║")
+            appendLine("║  └─────────┘  └────────┘  ║")
+            appendLine("╚═══════════════════════════╝")
+            appendLine("```")
         }
 
         MessageUtils.sendMsg(ctx, string)
