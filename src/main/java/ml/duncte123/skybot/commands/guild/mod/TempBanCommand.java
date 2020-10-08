@@ -95,7 +95,7 @@ public class TempBanCommand extends ModBaseCommand {
         final User toBan = toBanMember.getUser();
 
         ctx.getGuild().ban(toBan.getId(), 1, fReason).queue(
-            (__) -> {
+            (ignored) -> {
                 if (duration.getSeconds() > 0) {
                     ctx.getDatabaseAdapter().createBan(
                         ctx.getAuthor().getIdLong(),
@@ -108,7 +108,7 @@ public class TempBanCommand extends ModBaseCommand {
 
                     modLog(ctx.getAuthor(), toBan, "banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
-                    logger.error("Perm ban code in temp ban ran {}", args);
+                    LOGGER.error("Perm ban code in temp ban ran {}", args);
                     modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
                 }
             }

@@ -55,10 +55,10 @@ public class HackbanCommand extends ModBaseCommand {
         final List<String> messages = new ArrayList<>();
 
         for (final String arg0 : args) {
-            String id = "";
+            String userId = "";
 
             if (arg0.matches("<@\\d{17,20}>")) {
-                id = arg0.substring(2, args.get(0).length() - 1);
+                userId = arg0.substring(2, args.get(0).length() - 1);
             } else if (arg0.matches(".{2,32}#\\d{4}")) {
 
                 final Optional<User> opt = ctx.getShardManager().getUserCache()
@@ -67,24 +67,24 @@ public class HackbanCommand extends ModBaseCommand {
                     .findFirst();
 
                 if (opt.isPresent()) {
-                    id = opt.get().getId();
+                    userId = opt.get().getId();
                 }
 
             } else if (arg0.matches("\\d{17,20}")) {
-                id = arg0;
+                userId = arg0;
             } else {
                 sendMsg(ctx, "id `" + arg0 + "` does not match anything valid or is not a known user");
                 continue;
             }
 
-            if (id.isBlank()) {
+            if (userId.isBlank()) {
                 sendMsg(ctx, "Found empty id, aborting");
 
                 return;
             }
 
             try {
-                final String finalId = id;
+                final String finalId = userId;
                 final String reason = String.format("Hackban by %#s", ctx.getAuthor());
                 event.getGuild().ban(finalId, 0, reason)
                     .reason(reason)
@@ -98,7 +98,7 @@ public class HackbanCommand extends ModBaseCommand {
                 messages.add(finalId);
             }
             catch (HierarchyException e) {
-              sendMsg(ctx, String.format("Could not ban id `%s`", id));
+              sendMsg(ctx, String.format("Could not ban id `%s`", userId));
             } catch (Exception e) {
                 Sentry.capture(e);
                 sendMsg(ctx, "ERROR: " + e.getMessage());

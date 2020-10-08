@@ -47,8 +47,11 @@ class IssueCommand : Command() {
 
         when (ctx.args.size) {
             0 -> {
-                sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve the issue faster.
-                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin())
+                sendErrorWithMessage(
+                    event.message,
+                    """Well you forgot to add formatted data we require so we can resolve the issue faster.
+                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin()
+                )
             }
             else -> {
                 try {
@@ -71,20 +74,27 @@ class IssueCommand : Command() {
                     val embed = EmbedUtils.getDefaultEmbed()
                         .setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
                         .setFooter(null, null)
-                        .setDescription("""
+                        .setDescription(
+                            """
                             |Description: ${issue.description}
                             |Detailed report: ${issue.detailedReport}
-                            """.trimMargin())
+                            """.trimMargin()
+                        )
                         .addField("Invite:", invite, false)
                         .addField("List of recent run commands:", cmds, false)
 
-                    sendMsg(MessageConfig.Builder()
-                        .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!)
-                        .setEmbed(embed)
-                        .build())
+                    sendMsg(
+                        MessageConfig.Builder()
+                            .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!)
+                            .setEmbed(embed)
+                            .build()
+                    )
 
-                    sendMsg(ctx, "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
-                        "https://dunctebot.link/server")
+                    sendMsg(
+                        ctx,
+                        "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
+                            "https://dunctebot.link/server"
+                    )
                 } catch (ex: Exception) {
                     Sentry.capture(ex)
 

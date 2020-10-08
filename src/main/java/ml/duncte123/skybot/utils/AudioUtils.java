@@ -59,14 +59,14 @@ public class AudioUtils {
         playerManager = new UserContextAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final YoutubeAudioSourceManagerOverride youtubeAudioSourceManager = new YoutubeAudioSourceManagerOverride(
+        final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(
             variables.getYoutubeCache(),
             config.googl
         );
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
 
-        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(sourceManager);
 
         setCustomSourcesOn(playerManager, false);
         setCustomSourcesOn(LavalinkUtil.getPlayerManager(), true);
@@ -94,7 +94,7 @@ public class AudioUtils {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
-        if (trackUrlRaw.startsWith("<") && trackUrlRaw.endsWith(">")) {
+        if (trackUrlRaw.charAt(0) == '<' && trackUrlRaw.endsWith(">")) {
             trackUrl = trackUrlRaw.substring(1, trackUrlRaw.length() - 1);
         } else {
             trackUrl = trackUrlRaw;
@@ -105,29 +105,33 @@ public class AudioUtils {
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
     }
 
-    public synchronized GuildMusicManager getMusicManager(Guild guild) {
-        final long guildId = guild.getIdLong();
-        GuildMusicManager mng = musicManagers.get(guildId);
+    public GuildMusicManager getMusicManager(Guild guild) {
+        synchronized(this) {
+            final long guildId = guild.getIdLong();
+            GuildMusicManager mng = musicManagers.get(guildId);
 
-        if (mng == null) {
-            mng = new GuildMusicManager(guildId, variables);
-            musicManagers.put(guildId, mng);
+            if (mng == null) {
+                mng = new GuildMusicManager(guildId, variables);
+                musicManagers.put(guildId, mng);
+            }
+
+            if (!LavalinkManager.INS.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
+                guild.getAudioManager().setSendingHandler(mng.getSendHandler());
+            }
+
+            return mng;
         }
-
-        if (!LavalinkManager.ins.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
-            guild.getAudioManager().setSendingHandler(mng.getSendHandler());
-        }
-
-        return mng;
     }
 
-    public synchronized void removeMusicManager(Guild guild) {
-        final long guildId = guild.getIdLong();
-        final GuildMusicManager mng = musicManagers.get(guildId);
+    public void removeMusicManager(Guild guild) {
+        synchronized(this) {
+            final long guildId = guild.getIdLong();
+            final GuildMusicManager mng = musicManagers.get(guildId);
 
-        if (mng != null) {
-            mng.stopAndClear();
-            musicManagers.remove(guildId);
+            if (mng != null) {
+                mng.stopAndClear();
+                musicManagers.remove(guildId);
+            }
         }
     }
 

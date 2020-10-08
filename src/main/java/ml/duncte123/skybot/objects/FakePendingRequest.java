@@ -56,7 +56,7 @@ public class FakePendingRequest<T> extends PendingRequest<T> {
 
     @Override
     public void async(@Nullable Consumer<T> onSuccess, @Nullable Consumer<RequestException> onError) {
-        final Consumer<T> finalOnSuccess = Objects.requireNonNullElseGet(onSuccess, () -> (__) -> {});
+        final Consumer<T> finalOnSuccess = Objects.requireNonNullElseGet(onSuccess, () -> (ignored) -> {});
 
         // this should work fine
         //noinspection ConstantConditions

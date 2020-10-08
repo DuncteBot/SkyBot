@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -56,33 +55,34 @@ public class UnmuteCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<Member> mentioned = ctx.getMentionedArg(0);
-        final Member mod = ctx.getMember();
-        final Member self = ctx.getSelfMember();
-        final GuildSetting settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty()) {
             this.sendUsageInstructions(ctx);
             return;
         }
 
-        final Member toMute = mentioned.get(0);
+        final GuildSetting settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(ctx, "No mute/spamrole is set, use `" + ctx.getPrefix() + "muterole <Role>` to set it");
             return;
         }
-        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final Role role = ctx.getGuild().getRoleById(settings.getMuteRoleId());
 
         if (role == null) {
             sendMsg(ctx, "The current mute role does not exist on this server, please contact your server administrator about this.");
             return;
         }
 
+        final Member toMute = mentioned.get(0);
+        final Member mod = ctx.getMember();
+
         if (!canInteract(mod, toMute, "unmute", ctx.getChannel())) {
             return;
         }
+
+        final Member self = ctx.getSelfMember();
 
         if (!self.canInteract(role)) {
             sendMsg(ctx, "I cannot unmute this member, is the mute role above mine?");
@@ -98,10 +98,10 @@ public class UnmuteCommand extends ModBaseCommand {
 
         final String fReason = reason;
 
-        event.getGuild().removeRoleFromMember(toMute, role)
-            .reason("Unmute by " + event.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", fReason, ctx.getGuild());
-                sendSuccess(event.getMessage());
+        ctx.getGuild().removeRoleFromMember(toMute, role)
+            .reason("Unmute by " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
+                ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "unmuted", fReason, ctx.getGuild());
+                sendSuccess(ctx.getMessage());
             }
         );
     }

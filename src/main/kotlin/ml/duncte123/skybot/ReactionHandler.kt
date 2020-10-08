@@ -42,7 +42,7 @@ class ReactionHandler : EventListener {
 
     private fun TextChannel.editMsg(id: Long, msg: String) = this.editMessageById(id, msg).override(true).queue(null, {})
 
-    private fun handleUserInput (ctx: CommandContext, resSet: List<SearchResult>) {
+    private fun handleUserInput(ctx: CommandContext, resSet: List<SearchResult>) {
         if (!ctx.reactionEventIsSet() && !ctx.replyIsSet()) {
             sendErrorWithMessage(ctx.message, "Internal error!")
             return
@@ -98,13 +98,16 @@ class ReactionHandler : EventListener {
         requirementsCache.add(cacheElement)
         consumerCache[pair.first] = pair.second
 
-        executor.schedule({
-            if (requirementsCache.contains(cacheElement)) {
-                requirementsCache.remove(cacheElement)
-                consumerCache.remove(userId)
-                ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
-            }
-        }, timeoutInMillis, TimeUnit.MILLISECONDS)
+        executor.schedule(
+            {
+                if (requirementsCache.contains(cacheElement)) {
+                    requirementsCache.remove(cacheElement)
+                    consumerCache.remove(userId)
+                    ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
+                }
+            },
+            timeoutInMillis, TimeUnit.MILLISECONDS
+        )
     }
 
     override fun onEvent(event: GenericEvent) {

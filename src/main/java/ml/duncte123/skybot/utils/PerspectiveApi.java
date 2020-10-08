@@ -34,6 +34,8 @@ import java.util.Objects;
 
 public class PerspectiveApi {
 
+    private PerspectiveApi() {}
+
     public static float checkSwearFilter(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) {
         if (text.isEmpty()) {
             return 0f;
@@ -71,11 +73,11 @@ public class PerspectiveApi {
         final ObjectNode commentNode = mapper.createObjectNode()
             .put("text", text);
 
-        final ObjectNode requestedAttributesNode = mapper.createObjectNode();
-        requestedAttributesNode.set(filterType.getType(), mapper.createObjectNode());
+        final ObjectNode requestedAttrs = mapper.createObjectNode();
+        requestedAttrs.set(filterType.getType(), mapper.createObjectNode());
 
         mainNode.set("comment", commentNode);
-        mainNode.set("requestedAttributes", requestedAttributesNode);
+        mainNode.set("requestedAttributes", requestedAttrs);
         mainNode.put("sessionId", channelId);
 
         try {

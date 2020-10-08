@@ -24,11 +24,13 @@ import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-@Authors(authors = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken"),
-    Author(nickname = "ramidzkh", author = "Ramid Khan")
-])
+@Authors(
+    authors = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken"),
+        Author(nickname = "ramidzkh", author = "Ramid Khan")
+    ]
+)
 class WebsiteCommand : Command() {
 
     init {

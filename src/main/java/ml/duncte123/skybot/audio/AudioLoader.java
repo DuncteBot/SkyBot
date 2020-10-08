@@ -67,9 +67,6 @@ public class AudioLoader implements AudioLoadResultHandler {
     public void trackLoaded(AudioTrack track) {
         addToIndex(track);
 
-        final AudioTrackInfo info = track.getInfo();
-        final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
-
         track.setUserData(new TrackUserData(this.requester));
 
         final TrackScheduler scheduler = this.mng.getScheduler();
@@ -80,10 +77,13 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         try {
-            scheduler.queue(track, this.isPatron);
+            scheduler.addToQueue(track, this.isPatron);
 
             if (this.announce) {
+                final AudioTrackInfo info = track.getInfo();
+                final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
+
                 sendEmbed(this.ctx,
                     embedField(AudioUtils.EMBED_TITLE, msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
@@ -114,7 +114,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
 
             for (final AudioTrack track : tracks) {
-                trackScheduler.queue(track, this.isPatron);
+                trackScheduler.addToQueue(track, this.isPatron);
             }
 
             if (this.announce) {
@@ -149,8 +149,8 @@ public class AudioLoader implements AudioLoadResultHandler {
     public void loadFailed(FriendlyException exception) {
 
         if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
-            final LimitReachedException ex = (LimitReachedException) exception.getCause();
-            sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", ex.getMessage(), ex.getSize()));
+            final LimitReachedException cause = (LimitReachedException) exception.getCause();
+            sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize()));
 
             return;
         }

@@ -32,7 +32,7 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     private final MutableAudioFrame frame;
     private final ByteBuffer buffer;
 
-    AudioPlayerSenderHandler(IPlayer audioPlayer) {
+    /* package */ AudioPlayerSenderHandler(IPlayer audioPlayer) {
         this.audioPlayer = (LavaplayerPlayerWrapper) audioPlayer;
         this.buffer = ByteBuffer.allocate(1024);
         this.frame = new MutableAudioFrame();

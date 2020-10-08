@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 
@@ -62,8 +61,6 @@ public class KickCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {
@@ -80,30 +77,30 @@ public class KickCommand extends ModBaseCommand {
         try {
 
             final User toKick = toKickMember.getUser();
-            if (toKick.equals(event.getAuthor()) || !event.getMember().canInteract(toKickMember)) {
+            if (toKick.equals(ctx.getAuthor()) || !ctx.getMember().canInteract(toKickMember)) {
                 sendMsg(ctx, "You are not permitted to perform this action.");
                 return;
             }
 
-            final AuditableRestAction<Void> kickAction = event.getGuild()
+            final AuditableRestAction<Void> kickAction = ctx.getGuild()
 
                 .kick(toKickMember)
-                .reason("Kicked by " + event.getAuthor().getAsTag());
+                .reason("Kicked by " + ctx.getAuthor().getAsTag());
 
             String reason = null;
             final var flags = ctx.getParsedFlags(this);
 
             if (flags.containsKey("r")) {
                 reason = String.join(" ", flags.get("r"));
-                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + ": " + reason);
+                kickAction.reason("Kicked by " + ctx.getAuthor().getAsTag() + ": " + reason);
             }
 
             final String finalReason = reason;
 
             kickAction.queue(
-                (__) -> {
-                    ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", finalReason, ctx.getGuild());
-                    MessageUtils.sendSuccess(event.getMessage());
+                (ignored) -> {
+                    ModerationUtils.modLog(ctx.getAuthor(), toKick, "kicked", finalReason, ctx.getGuild());
+                    MessageUtils.sendSuccess(ctx.getMessage());
                 }
             );
         }

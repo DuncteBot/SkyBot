@@ -60,8 +60,8 @@ public class DrakeCommand extends NoPatronImageCommand {
 
         final String invoke = ctx.getInvoke();
 
-        if (invoke.equalsIgnoreCase("ddrake") || invoke.equalsIgnoreCase("dddrake")) {
-            final boolean shouldDab = invoke.equalsIgnoreCase("dddrake");
+        if ("ddrake".equalsIgnoreCase(invoke) || "dddrake".equalsIgnoreCase(invoke)) {
+            final boolean shouldDab = "dddrake".equalsIgnoreCase(invoke);
             final Pair<byte[], JsonNode> dannyDrake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
 
             handleBasicImage(ctx.getEvent(), dannyDrake);

@@ -48,9 +48,11 @@ object EarthUtils {
     @JvmStatic
     fun sendYoungestOldesetEmbed(ctx: CommandContext, oldest: Boolean) {
         val user = findOldestOrYoungestUser(ctx.jdaGuild, oldest)
-        val embed = EmbedUtils.embedMessage("""The ${if (oldest) "oldest" else "youngest"} member in this server is:
+        val embed = EmbedUtils.embedMessage(
+            """The ${if (oldest) "oldest" else "youngest"} member in this server is:
             |${user.asTag} - ${user.asMention}
-        """.trimMargin())
+        """.trimMargin()
+        )
             .setFooter("Account created")
             .setTimestamp(user.timeCreated)
 
@@ -157,7 +159,8 @@ object EarthUtils {
         val json = mapper.createObjectNode().put("time", OffsetDateTime.now().toString())
 
         audioUtils.musicManagers.forEachEntry { key, value ->
-            json.set<ObjectNode>(key.toString(),
+            json.set<ObjectNode>(
+                key.toString(),
                 mapper.createObjectNode()
                     .put("guildId", key)
                     .set("manager", gMMtoJSON(value, mapper))
@@ -260,14 +263,18 @@ object EarthUtils {
             val posts = it["data"]["children"].filter { filter ->
                 ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
             }.filter { filter ->
-                filter["data"]["selftext"].asText().length <= 550
-                    && filter["data"]["title"].asText().length <= 256
+                filter["data"]["selftext"].asText().length <= 550 &&
+                    filter["data"]["title"].asText().length <= 256
             }
 
             if (posts.isEmpty()) {
                 sendError(ctx.message)
-                sendMsg(ctx, """Whoops I could not find any posts.
-                    |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)""".trimMargin())
+                sendMsg(
+                    ctx,
+                    """Whoops I could not find any posts.
+                    |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)"""
+                        .trimMargin()
+                )
                 return@async
             }
 
@@ -310,6 +317,5 @@ object EarthUtils {
 
             sendEmbed(ctx, embed)
         }
-
     }
 }

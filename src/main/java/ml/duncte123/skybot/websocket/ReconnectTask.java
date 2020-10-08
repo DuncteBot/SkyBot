@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReconnectTask implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(ReconnectTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReconnectTask.class);
     private final WebSocketClient client;
 
     public ReconnectTask(WebSocketClient client) {
@@ -44,7 +44,7 @@ public class ReconnectTask implements Runnable {
                 client.attemptReconnect();
             }
         } catch (Exception e) {
-            logger.error("Caught exception in reconnect thread", e);
+            LOGGER.error("Caught exception in reconnect thread", e);
         }
     }
 }

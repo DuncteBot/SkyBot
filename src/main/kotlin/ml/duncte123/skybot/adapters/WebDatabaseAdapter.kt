@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.adapters
 
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -28,8 +30,6 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import com.dunctebot.models.settings.GuildSetting
-import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.Instant
 
@@ -153,13 +153,13 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             apis.loadAllPatrons()
                 .map { jackson.readValue(it.traverse(), Patron::class.java) }
                 .forEach { patron ->
-                when (patron.type) {
-                    Patron.Type.NORMAL -> patrons.add(patron)
-                    Patron.Type.TAG -> tagPatrons.add(patron)
-                    Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
-                    Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                    when (patron.type) {
+                        Patron.Type.NORMAL -> patrons.add(patron)
+                        Patron.Type.TAG -> tagPatrons.add(patron)
+                        Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                        Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                    }
                 }
-            }
 
             callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
         }
@@ -253,13 +253,15 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
                 return@runOnThread
             }
 
-            callback(Warning(
-                json["id"].asInt(),
-                json["warn_date"].asText(),
-                json["mod_id"].asText(),
-                json["reason"].asText(),
-                json["guild_id"].asText()
-            ))
+            callback(
+                Warning(
+                    json["id"].asInt(),
+                    json["warn_date"].asText(),
+                    json["mod_id"].asText(),
+                    json["reason"].asText(),
+                    json["guild_id"].asText()
+                )
+            )
         }
     }
 
@@ -270,13 +272,15 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
             val regex = "\\s+".toRegex()
             data.forEach { json ->
-                items.add(Warning(
-                    json["id"].asInt(),
-                    json["warn_date"].asText().split(regex)[0],
-                    json["mod_id"].asText(),
-                    json["reason"].asText(),
-                    json["guild_id"].asText()
-                ))
+                items.add(
+                    Warning(
+                        json["id"].asInt(),
+                        json["warn_date"].asText().split(regex)[0],
+                        json["mod_id"].asText(),
+                        json["reason"].asText(),
+                        json["guild_id"].asText()
+                    )
+                )
             }
 
             callback(items)
@@ -313,11 +317,13 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             val converted = arrayListOf<VcAutoRole>()
 
             for (item in storedData) {
-                converted.add(VcAutoRole(
-                    item["guild_id"].asLong(),
-                    item["voice_channel_id"].asLong(),
-                    item["role_id"].asLong()
-                ))
+                converted.add(
+                    VcAutoRole(
+                        item["guild_id"].asLong(),
+                        item["voice_channel_id"].asLong(),
+                        item["role_id"].asLong()
+                    )
+                )
             }
 
             callback(converted)

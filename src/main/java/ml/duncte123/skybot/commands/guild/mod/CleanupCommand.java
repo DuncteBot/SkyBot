@@ -85,10 +85,10 @@ public class CleanupCommand extends ModBaseCommand {
     public void execute(@Nonnull CommandContext ctx) {
         final long channelId = ctx.getChannel().getIdLong();
         final List<String> args = ctx.getArgs();
-        final boolean isRunningInChannel = this.futureMap.containsKey(channelId);
+        final boolean isRunning = this.futureMap.containsKey(channelId);
 
         if (!args.isEmpty() && "cancel".equals(args.get(0))) {
-            if (isRunningInChannel) {
+            if (isRunning) {
                 this.futureMap.get(channelId).cancel(true);
             } else {
                 sendMsg(ctx, "There is no purge running in this channel");
@@ -97,7 +97,7 @@ public class CleanupCommand extends ModBaseCommand {
             return;
         }
 
-        if (isRunningInChannel) {
+        if (isRunning) {
             sendMsg(ctx,
                 "This channel is already being cleaned, you can cancel the current purge by running `" +
                     ctx.getPrefix() + ctx.getInvoke() + " cancel`"
@@ -106,16 +106,12 @@ public class CleanupCommand extends ModBaseCommand {
             return;
         }
 
-        int total = 5;
-
         if (args.size() > 3) {
             sendErrorWithMessage(ctx.getMessage(), "Usage: " + this.getUsageInstructions(ctx.getPrefix(), ctx.getInvoke()));
             return;
         }
 
-        final var flags = ctx.getParsedFlags(this);
-        final boolean keepPinned = flags.containsKey("keep-pinned");
-        final boolean clearBots = flags.containsKey("bots-only");
+        int total = 5;
 
         // if size == 0 then this will just be skipped
         for (final String arg : args) {
@@ -140,6 +136,9 @@ public class CleanupCommand extends ModBaseCommand {
         }
 
         final TextChannel channel = ctx.getChannel();
+        final var flags = ctx.getParsedFlags(this);
+        final boolean keepPinned = flags.containsKey("keep-pinned");
+        final boolean clearBots = flags.containsKey("bots-only");
         // Start of the annotation
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();

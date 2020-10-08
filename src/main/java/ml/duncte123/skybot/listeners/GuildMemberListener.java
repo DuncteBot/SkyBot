@@ -65,7 +65,7 @@ public class GuildMemberListener extends BaseListener {
             final Guild guild = ((GuildLeaveEvent) event).getGuild();
             final long guildId = guild.getIdLong();
 
-            GuildUtils.guildMemberCountCache.invalidate(guildId);
+            GuildUtils.GUILD_MEMBER_COUNTS.invalidate(guildId);
             variables.getGuildSettingsCache().invalidate(guildId);
         }
     }
@@ -76,7 +76,7 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        final GuildMemberInfo guildCounts = GuildUtils.guildMemberCountCache.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         if (guildCounts != null) {
             final User user = event.getUser();
@@ -97,27 +97,26 @@ public class GuildMemberListener extends BaseListener {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
-            final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
+            final long channelId = settings.getWelcomeLeaveChannel();
 
-            final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
+            final TextChannel channel = guild.getTextChannelById(channelId);
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() && !"".equals(msg.trim()) && welcomeLeaveChannel != null) {
-                sendMsg(welcomeLeaveChannel, msg);
+            if (!msg.isEmpty() && !"".equals(msg.trim()) && channel != null) {
+                sendMsg(channel, msg);
             }
         }
 
         if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            final Role r = guild.getRoleById(settings.getAutoroleRole());
+            final Role role = guild.getRoleById(settings.getAutoroleRole());
 
-            if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
-                guild.addRoleToMember(event.getMember(), r).queue(null, it -> {});
+            if (role != null && !guild.getPublicRole().equals(role) && guild.getSelfMember().canInteract(role)) {
+                guild.addRoleToMember(event.getMember(), role).queue(null, it -> {});
             }
         }
     }
 
     private void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        final Guild guild = event.getGuild();
         final User user = event.getUser();
         final SelfUser selfUser = event.getJDA().getSelfUser();
 
@@ -127,7 +126,8 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        final GuildMemberInfo guildCounts = GuildUtils.guildMemberCountCache.getIfPresent(guild.getIdLong());
+        final Guild guild = event.getGuild();
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         if (guildCounts != null) {
             if (user.isBot()) {
@@ -147,14 +147,14 @@ public class GuildMemberListener extends BaseListener {
 
         // If the leave message is enabled and we have a welcome channel
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
-            final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
+            final long channelId = settings.getWelcomeLeaveChannel();
 
-            final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
+            final TextChannel channel = guild.getTextChannelById(channelId);
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
             // If we have a message and the text channel is not null
-            if (!msg.isEmpty() && !"".equals(msg.trim()) && welcomeLeaveChannel != null) {
-                sendMsg(welcomeLeaveChannel, msg);
+            if (!msg.isEmpty() && !"".equals(msg.trim()) && channel != null) {
+                sendMsg(channel, msg);
             }
         }
 
@@ -195,14 +195,14 @@ public class GuildMemberListener extends BaseListener {
             .forEach((roleId) -> {
                 // All guild patron
                 if (roleId == Settings.GUILD_PATRONS_ROLE) {
-                    CommandUtils.guildPatrons.add(userId);
+                    CommandUtils.GUILD_PATRONS.add(userId);
                     typeToSet.set(Patron.Type.ALL_GUILD);
                     return;
                 }
 
                 // One guild patron
                 if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
-                    CommandUtils.patrons.remove(userId);
+                    CommandUtils.PATRONS.remove(userId);
                     handleNewOneGuildPatron(userId);
                     // We assume that the patron already did the steps to register
                     return;
@@ -210,15 +210,15 @@ public class GuildMemberListener extends BaseListener {
 
                 // Tag patron
                 if (roleId == Settings.TAG_PATRONS_ROLE) {
-                    CommandUtils.patrons.remove(userId);
-                    CommandUtils.tagPatrons.add(userId);
+                    CommandUtils.PATRONS.remove(userId);
+                    CommandUtils.TAG_PATRONS.add(userId);
                     typeToSet.set(Patron.Type.TAG);
                     return;
                 }
 
                 // Normal patron
                 if (roleId == Settings.PATRONS_ROLE) {
-                    CommandUtils.patrons.add(userId);
+                    CommandUtils.PATRONS.add(userId);
                     typeToSet.set(Patron.Type.NORMAL);
                 }
             });
@@ -250,13 +250,13 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final Guild guild = event.getGuild();
-        final GuildSetting s = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
-        final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
+        final GuildSetting setting = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+        final long welcomeChannel = setting.getWelcomeLeaveChannel();
         final Parser parser = CommandUtils.PARSER_SUPPLIER.get();
 
         final String message = parser.put("user", user)
             .put("guild", event.getGuild())
-            .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
+            .put("channel", event.getGuild().getTextChannelById(welcomeChannel))
             .put("args", "")
             .parse(rawMessage);
 
@@ -267,7 +267,7 @@ public class GuildMemberListener extends BaseListener {
 
     private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
-        final boolean hadNormalRank = CommandUtils.patrons.remove(userId);
+        final boolean hadNormalRank = CommandUtils.PATRONS.remove(userId);
 
         // If the main patron role is removed we can just remove the patron from the database
         if (hadNormalRank) {
@@ -275,7 +275,7 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        final boolean hadTag = CommandUtils.tagPatrons.remove(userId);
+        final boolean hadTag = CommandUtils.TAG_PATRONS.remove(userId);
         Patron.Type newType = null;
 
         if (hadTag) {
@@ -284,14 +284,14 @@ public class GuildMemberListener extends BaseListener {
 
         boolean hadOneGuild = false;
 
-        if (CommandUtils.oneGuildPatrons.containsKey(userId)) {
+        if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
             // Remove the user from the one guild patrons
-            CommandUtils.oneGuildPatrons.remove(userId);
+            CommandUtils.ONEGUILD_PATRONS.remove(userId);
 
             hadOneGuild = true;
         }
 
-        final boolean hadGuildPatron = CommandUtils.guildPatrons.remove(userId);
+        final boolean hadGuildPatron = CommandUtils.GUILD_PATRONS.remove(userId);
 
         if (hadOneGuild || hadGuildPatron) {
             newType = Patron.Type.TAG;
@@ -316,7 +316,7 @@ public class GuildMemberListener extends BaseListener {
             (results) -> {
                 results.forEachEntry(
                     (a, guildId) -> {
-                        CommandUtils.oneGuildPatrons.put(userId, guildId);
+                        CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
 
                         return true;
                     }

@@ -54,8 +54,11 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@SuppressWarnings("PMD") // TODO: have a good look at this
 public class ModerationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
+
+    private ModerationUtils() {}
 
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
 
@@ -74,8 +77,8 @@ public class ModerationUtils {
         return true;
     }
 
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
-        if (!isLogEnabled(punishment, g)) {
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild guild) {
+        if (!isLogEnabled(punishment, guild)) {
             return;
         }
 
@@ -91,7 +94,7 @@ public class ModerationUtils {
             mod,
             length,
             reason == null || reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
-        ), g);
+        ), guild);
     }
 
     public static void modLog(String message, DunctebotGuild guild) {
@@ -135,18 +138,18 @@ public class ModerationUtils {
         }
     }
 
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild g) {
-        modLog(mod, punishedUser, punishment, reason, "", g);
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild guild) {
+        modLog(mod, punishedUser, punishment, reason, "", guild);
     }
 
-    public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild g) {
-        modLog(mod, unbannedUser, punishment, "", g);
+    public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild guild) {
+        modLog(mod, unbannedUser, punishment, "", guild);
     }
 
-    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) throws ExecutionException, InterruptedException {
+    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
         final CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        adapter.getWarningCountForUser(u.getIdLong(), g.getIdLong(), (it) -> {
+        adapter.getWarningCountForUser(user.getIdLong(), guild.getIdLong(), (it) -> {
             future.complete(it);
 
             return null;
@@ -271,12 +274,11 @@ public class ModerationUtils {
         }
     }
 
-    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
-        muteUser(guild, member, channel, cause, minutesUntilUnMute, false);
+    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minuteDuration) {
+        muteUser(guild, member, channel, cause, minuteDuration, false);
     }
 
-    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
-        final Member self = guild.getSelfMember();
+    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minuteDuration, boolean sendMessages) {
         final GuildSetting guildSettings = guild.getSettings();
         final long muteRoleId = guildSettings.getMuteRoleId();
 
@@ -299,6 +301,8 @@ public class ModerationUtils {
             return;
         }
 
+        final Member self = guild.getSelfMember();
+
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
             if (sendMessages) {
                 sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
@@ -312,11 +316,11 @@ public class ModerationUtils {
             }
             return;
         }
-        final String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
+        final String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minuteDuration);
         guild.addRoleToMember(member, muteRole).reason(reason).queue(
             (success) ->
                 guild.removeRoleFromMember(member, muteRole).reason("Scheduled un-mute")
-                    .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
+                    .queueAfter(minuteDuration, TimeUnit.MINUTES)
             ,
             (failure) -> {
                 final long chan = guildSettings.getLogChannel();

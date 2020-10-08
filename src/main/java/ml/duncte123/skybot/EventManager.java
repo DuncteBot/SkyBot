@@ -46,11 +46,11 @@ public class EventManager implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock = false;
-    private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
     private final List<EventListener> listeners = new ArrayList<>();
 
-    EventManager(Variables variables) {
+    /* package */ EventManager(Variables variables) {
         final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
         final GuildListener guildListener = new GuildListener(variables);
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
@@ -64,8 +64,8 @@ public class EventManager implements IEventManager {
         this.listeners.add(reactionHandler);
         this.listeners.add(shardWatcher);
 
-        if (LavalinkManager.ins.isEnabled()) {
-            this.listeners.add(LavalinkManager.ins.getLavalink());
+        if (LavalinkManager.INS.isEnabled()) {
+            this.listeners.add(LavalinkManager.INS.getLavalink());
         }
     }
 
@@ -86,7 +86,7 @@ public class EventManager implements IEventManager {
         if (shouldFakeBlock) {
             //noinspection ConstantConditions
             if (shardInfo == null) {
-                logger.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
+                LOGGER.warn(TextColor.RED + "Shard booting up (Event {})." + TextColor.RESET, event.getClass().getSimpleName());
                 return;
             }
 
@@ -102,11 +102,11 @@ public class EventManager implements IEventManager {
             catch (Throwable thr) {
                 Sentry.capture(thr);
 
-                logger.error("Error while handling event {}({}); {}",
+                LOGGER.error("Error while handling event {}({}); {}",
                     event.getClass().getName(),
                     listener.getClass().getSimpleName(),
                     thr.getLocalizedMessage());
-                logger.error("", thr);
+                LOGGER.error("", thr);
             }
         }
     }

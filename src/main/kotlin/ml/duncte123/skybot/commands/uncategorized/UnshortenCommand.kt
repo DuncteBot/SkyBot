@@ -53,18 +53,19 @@ class UnshortenCommand : Command() {
 
         val json = ctx.apis.executeDefaultGetRequest(builder.build(), false)
 
-        logger.debug("Unshorten: $json")
+        LOGGER.debug("Unshorten: $json")
 
         if (!json["success"].asBoolean()) {
             val error = json["error"]
-            logger.error("Failed to unshorten $error")
+            LOGGER.error("Failed to unshorten $error")
             sendMsg(ctx, "Could not unshorten url: " + error["message"].asText())
             return
         }
 
         val data = json["data"]
 
-        val embed = EmbedUtils.embedMessage("""Short url:
+        val embed = EmbedUtils.embedMessage(
+            """Short url:
                             |```
                             |${data["short_url"].asText()}
                             |```
@@ -72,7 +73,8 @@ class UnshortenCommand : Command() {
                             |```
                             |${data["long_url"].asText()}
                             |```
-                        """.trimMargin())
+                        """.trimMargin()
+        )
 
         sendEmbed(ctx, embed)
     }

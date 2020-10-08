@@ -37,7 +37,6 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.BigChungusPlaylist;
 import ml.duncte123.skybot.audio.TrackScheduler;
-import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -61,9 +60,9 @@ import java.util.regex.Pattern;
 import static ml.duncte123.skybot.utils.YoutubeUtils.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
+@SuppressWarnings("PMD.NullAssignment")
 public class SpotifyAudioSourceManager implements AudioSourceManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
     private static final String PROTOCOL_REGEX = "?:spotify:(track:)|(?:http://|https://)[a-z]+\\.";
     private static final String DOMAIN_REGEX = "spotify\\.com/";
@@ -93,7 +92,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         final String youtubeApiKey = config.googl;
 
         if (clientId == null || clientSecret == null || youtubeApiKey == null) {
-            logger.error("Could not load Spotify keys");
+            LOGGER.error("Could not load Spotify keys");
             this.spotifyApi = null;
             this.service = null;
             this.youtubeAudioSourceManager = null;
@@ -174,10 +173,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
         final String playListId = res.group(res.groupCount());
 
-        try {
-            final List<String> videoIDs = new ArrayList<>();
-
-            final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
+        try {final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
             List<PlaylistTrack> playlistTracks = new ArrayList<>(Arrays.asList(spotifyPlaylist.getTracks().getItems()));
 
             if (playlistTracks.isEmpty()) {
@@ -190,6 +186,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 // yes this is correct, last param is exclusive so it ranges from 0-49
                 playlistTracks = playlistTracks.subList(0, TrackScheduler.MAX_QUEUE_SIZE);
             }
+
+            final List<String> videoIDs = new ArrayList<>();
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
                 if (playlistTrack.getIsLocal()) {
@@ -217,13 +215,17 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
         }
-        catch (LimitReachedException e) {
+        catch (IOException | ParseException | SpotifyWebApiException e) {
+            //logger.error("Something went wrong!", e);
+            throw ExceptionTools.wrapUnfriendlyExceptions(e.getMessage(), Severity.FAULT, e);
+        }
+        /*catch (LimitReachedException e) {
             throw e;
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
             throw ExceptionTools.wrapUnfriendlyExceptions(e.getMessage(), Severity.FAULT, e);
-        }
+        }*/
 
     }
 
@@ -243,13 +245,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 return null;
             }
 
-            final Video v = getVideoById(videoId, this.config.googl);
+            final Video video = getVideoById(videoId, this.config.googl);
 
-            if (v == null) {
+            if (video == null) {
                 return null;
             }
 
-            return audioTrackFromVideo(v, track.getAlbum().getImages());
+            return audioTrackFromVideo(video, track.getAlbum().getImages());
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
@@ -288,12 +290,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             // Set access token for further "spotifyApi" object usage
             this.spotifyApi.setAccessToken(clientCredentials.getAccessToken());
 
-            logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
-            logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
+            LOGGER.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
+            LOGGER.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
         }
         catch (IOException | SpotifyWebApiException | ParseException e) {
-            e.printStackTrace();
-            logger.error("Error while fetching Spotify token", e);
+            LOGGER.error("Error while fetching Spotify token", e);
 
             // Retry after 10 seconds
             this.service.schedule(this::updateAccessToken, 10L, TimeUnit.SECONDS);
@@ -316,7 +317,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws Exception {
+    private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws IOException {
         final String videoIdsJoined = String.join(",", videoIds);
         final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
         final List<AudioTrack> playList = new ArrayList<>();
@@ -337,15 +338,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return null;
     }
 
-    private AudioTrack audioTrackFromVideo(Video v, Image[] images) {
+    private AudioTrack audioTrackFromVideo(Video video, Image[] images) {
         return new SpotifyAudioTrack(new AudioTrackInfoWithImage(
-            v.getSnippet().getTitle(),
-            v.getSnippet().getChannelTitle(),
-            toLongDuration(v.getContentDetails().getDuration()),
-            v.getId(),
+            video.getSnippet().getTitle(),
+            video.getSnippet().getChannelTitle(),
+            toLongDuration(video.getContentDetails().getDuration()),
+            video.getId(),
             false,
-            "https://youtube.com/watch?v=" + v.getId(),
-            imageUrlOrThumbnail(images, v)
+            "https://youtube.com/watch?v=" + video.getId(),
+            imageUrlOrThumbnail(images, video)
         ), this.youtubeAudioSourceManager);
     }
 

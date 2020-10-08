@@ -49,8 +49,11 @@ class TrashCommand : NoPatronImageCommand() {
         // If the mentioned user is the bot we will send a link to the suggestions page
         // Maybe there is some sort of issue with the bot that needs to be fixed
         if (trashUser == ctx.selfUser) {
-            sendMsg(ctx, """It's sad to hear that I'm trash.
-                            |Try suggesting a fix for any issues that you're facing on this page <https://dunctebot.com/suggest>""".trimMargin())
+            sendMsg(
+                ctx,
+                """It's sad to hear that I'm trash.
+                            |Try suggesting a fix for any issues that you're facing on this page <https://dunctebot.com/suggest>""".trimMargin()
+            )
             return
         }
 

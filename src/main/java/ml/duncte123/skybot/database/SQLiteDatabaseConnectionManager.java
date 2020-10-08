@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
+@SuppressWarnings("PMD.ExcessiveMethodLength")
 public class SQLiteDatabaseConnectionManager {
     private final String url;
     private Connection con;
@@ -48,7 +49,6 @@ public class SQLiteDatabaseConnectionManager {
         }
         catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
-            con = null;
         }
     }
 
@@ -222,8 +222,8 @@ public class SQLiteDatabaseConnectionManager {
         }
     }
 
-    private static String toListString(Enum<?>[] e) {
-        return Arrays.stream(e)
+    private static String toListString(Enum<?>[] enums) {
+        return Arrays.stream(enums)
             .map(Enum::name)
             .collect(Collectors.joining("', '"));
     }

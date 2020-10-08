@@ -21,13 +21,14 @@ package ml.duncte123.skybot.objects.command;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@SuppressWarnings("PMD.ShortClassName")
 public class Flag {
-    private final Character flag;
+    private final Character shortFlag;
     private final String word;
     private final String desc;
 
     public Flag(Character flag, String word, String desc) {
-        this.flag = flag;
+        this.shortFlag = flag;
         this.word = word;
         this.desc = desc;
     }
@@ -42,7 +43,7 @@ public class Flag {
 
     @Nullable
     public Character getFlag() {
-        return flag;
+        return shortFlag;
     }
 
     @Nullable

@@ -49,7 +49,7 @@ public class YodaSpeakCommand extends Command {
                 .append("sentence", ctx.getArgsDisplay());
             final JsonNode response = ctx.getApis().executeDefaultGetRequest(builder.build(), false);
 
-            logger.debug("Yoda response: " + response);
+            LOGGER.debug("Yoda response: " + response);
 
             if (!response.get("success").asBoolean()) {
                 sendMsg(ctx, "Could not connect to yoda service, try again in a few hours");

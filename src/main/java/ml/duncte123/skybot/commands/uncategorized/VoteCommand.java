@@ -49,7 +49,7 @@ public class VoteCommand extends Command {
         ));
     }
 
-    private String link(String in) {
-        return '[' + in + "](" + in + ")\n";
+    private String link(String input) {
+        return '[' + input + "](" + input + ")\n";
     }
 }

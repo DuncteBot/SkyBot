@@ -41,11 +41,13 @@ import java.util.concurrent.TimeoutException
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
-@Authors(authors = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken"),
-    Author(nickname = "ramidzkh", author = "Ramid Khan")
-])
+@Authors(
+    authors = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken"),
+        Author(nickname = "ramidzkh", author = "Ramid Khan")
+    ]
+)
 class EvalCommand : Command() {
     private val engine: GroovyShell
     private val importString: String
@@ -133,9 +135,12 @@ class EvalCommand : Command() {
         engine.setVariable("variables", ctx.variables)
 
         @SinceSkybot("3.58.0")
-        GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
-            return@launch eval(ctx, script, 60000L)
-        })
+        GlobalScope.launch(
+            Dispatchers.Default, start = CoroutineStart.ATOMIC,
+            block = {
+                return@launch eval(ctx, script, 60000L)
+            }
+        )
     }
 
     @SinceSkybot("3.58.0")
@@ -154,8 +159,10 @@ class EvalCommand : Command() {
             }
         }
 
-        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${ctx.author})" +
-            "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}")
+        LOGGER.info(
+            "${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${ctx.author})" +
+                "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}"
+        )
     }
 
     private fun parseEvalResponse(out: Any?, ctx: CommandContext) {
@@ -204,7 +211,6 @@ class EvalCommand : Command() {
                     .appendCodeBlock(out.toString(), "")
                     .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
                     .forEach { sendMsg(ctx, it.contentRaw) }
-
             }
         }
     }
@@ -223,9 +229,12 @@ class EvalCommand : Command() {
         body.append("lang", lang)
 
         val loc = WebUtils.ins.postRequest("$base/paste/new", body)
-            .build({
-                return@build it.request().url().url().path
-            }, WebParserUtils::handleError).execute()
+            .build(
+                {
+                    return@build it.request().url().url().path
+                },
+                WebParserUtils::handleError
+            ).execute()
 
         return base + loc
     }

@@ -46,18 +46,24 @@ class WeebCommand : WeebCommandBase() {
         }
 
         if (weebTags.isEmpty()) {
-            weebTags.addAll(ctx.weebApi.getTypes(TypesConfig.Builder()
-                .setHiddenMode(HiddenMode.DEFAULT)
-                .build()).execute().types)
+            weebTags.addAll(
+                ctx.weebApi.getTypes(
+                    TypesConfig.Builder()
+                        .setHiddenMode(HiddenMode.DEFAULT)
+                        .build()
+                ).execute().types
+            )
         }
 
         if (args[0] == "categories") {
-            sendMsg(MessageConfig.Builder.fromCtx(ctx)
-                .configureMessageBuilder {
-                    it.append("Here is a list of all the valid categories")
-                    .appendCodeBlock(weebTags.joinToString(), "LDIF")
-                }
-                .build())
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .configureMessageBuilder {
+                        it.append("Here is a list of all the valid categories")
+                            .appendCodeBlock(weebTags.joinToString(), "LDIF")
+                    }
+                    .build()
+            )
             return
         }
 

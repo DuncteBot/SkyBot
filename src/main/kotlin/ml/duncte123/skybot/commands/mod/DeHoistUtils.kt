@@ -76,7 +76,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
 
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         if (shouldChangeName(event.member)) {
-            //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
+            // the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.modifyNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
@@ -84,7 +84,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
 
     override fun onGuildMemberUpdateNickname(event: GuildMemberUpdateNicknameEvent) {
         if (shouldChangeName(event.member)) {
-            //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
+            // the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.modifyNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
@@ -97,8 +97,10 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
     private fun shouldChangeName(member: Member): Boolean {
         val memberName = member.effectiveName
         val matcher = regex.matches(memberName)
-        return (!memberName.startsWith(dehoistChar) && matcher &&
-            member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
-            GuildSettingsUtils.getGuild(member.guild.idLong, this.variables).isAutoDeHoist)
+        return (
+            !memberName.startsWith(dehoistChar) && matcher &&
+                member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
+                GuildSettingsUtils.getGuild(member.guild.idLong, this.variables).isAutoDeHoist
+            )
     }
 }

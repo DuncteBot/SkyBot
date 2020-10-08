@@ -46,15 +46,16 @@ class XkcdCommand : Command() {
         when (args[0]) {
             "latest" -> sendComic(getLatest(), ctx)
             "random" -> sendComic(getInfo(getRandom()), ctx)
-            else -> try {
-                val comicId = args[0].toInt()
+            else ->
+                try {
+                    val comicId = args[0].toInt()
 
-                sendComic(getInfo(comicId), ctx)
-            } catch (ignored: NumberFormatException) {
-                sendMsg(ctx, "The provided comic id is not a number")
-            } catch (other: Exception) {
-                sendMsg(ctx, "That comic could not be found")
-            }
+                    sendComic(getInfo(comicId), ctx)
+                } catch (ignored: NumberFormatException) {
+                    sendMsg(ctx, "The provided comic id is not a number")
+                } catch (other: Exception) {
+                    sendMsg(ctx, "That comic could not be found")
+                }
         }
     }
 

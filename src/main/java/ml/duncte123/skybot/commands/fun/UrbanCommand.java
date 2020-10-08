@@ -57,17 +57,17 @@ public class UrbanCommand extends Command {
             final JsonNode item = json.get("list").get(0);
             final String permaLink = item.get("permalink").asText();
 
-            final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
+            final EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
 //                    .setTitle("term", webUrl)
                 .setAuthor("Author: " + item.get("author").asText())
                 .setDescription("_TOP DEFINITION:_\n\n")
                 .appendDescription(item.get("definition").asText())
                 .appendDescription("\n\n")
                 .addField("Example", item.get("example").asText(), false)
-                .addField("Upvotes:", item.get("thumbs_up").asInt() + "", true)
-                .addField("Downvotes:", item.get("thumbs_down").asInt() + "", true)
+                .addField("Upvotes:", String.valueOf(item.get("thumbs_up").asInt()), true)
+                .addField("Downvotes:", String.valueOf(item.get("thumbs_down").asInt()), true)
                 .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
-            sendEmbed(ctx, eb);
+            sendEmbed(ctx, builder);
         });
 
     }

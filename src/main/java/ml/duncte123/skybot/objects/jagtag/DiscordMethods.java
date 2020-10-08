@@ -41,78 +41,80 @@ import java.util.stream.Collectors;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
+@SuppressWarnings({"PMD.PreserveStackTrace", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength"})
 public class DiscordMethods {
+    private DiscordMethods() {}
 
     public static Collection<Method> getMethods() {
         return List.of(
             new Method("user", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getName();
+                return user.getName();
             },
                 (env, in) -> getMemberFromInput(env, in).getUser().getName()
             ),
 
             new Method("usertag", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getAsTag();
+                return user.getAsTag();
             },
                 (env, in) -> getMemberFromInput(env, in).getUser().getAsTag()
             ),
 
             new Method("nick", (env) -> {
-                final User u = env.get("user");
-                final Guild g = env.get("guild");
+                final User user = env.get("user");
+                final Guild guild = env.get("guild");
 
-                if (g.getMember(u) == null) {
-                    return u.getAsTag();
+                if (guild.getMember(user) == null) {
+                    return user.getAsTag();
                 }
 
-                return g.getMember(u).getEffectiveName();
+                return guild.getMember(user).getEffectiveName();
             },
                 (env, in) -> getMemberFromInput(env, in).getEffectiveName()
             ),
 
             new Method("discrim", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getDiscriminator();
+                return user.getDiscriminator();
             },
                 (env, in) -> getMemberFromInput(env, in).getUser().getDiscriminator()
             ),
 
             new Method("avatar", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getEffectiveAvatarUrl() + "?size=2048";
+                return user.getEffectiveAvatarUrl() + "?size=2048";
             },
                 (env, in) -> getMemberFromInput(env, in).getUser().getEffectiveAvatarUrl() + "?size=2048"
             ),
 
             new Method("creation", (env, in) -> {
-                long id;
+                long idLong;
 
                 try {
-                    id = Long.parseUnsignedLong(in[0]);
+                    idLong = Long.parseUnsignedLong(in[0]);
                 }
                 catch (NumberFormatException ignored) {
                     throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]));
                 }
 
-                return TimeUtil.getTimeCreated(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);
+                return TimeUtil.getTimeCreated(idLong).format(DateTimeFormatter.RFC_1123_DATE_TIME);
             }),
 
             new Method("userid", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getId();
+                return user.getId();
             }),
 
             new Method("atuser", (env) -> {
-                final User u = env.get("user");
+                final User user = env.get("user");
 
-                return u.getAsMention();
+                return user.getAsMention();
             }),
 
             new Method("server", (env) -> {
@@ -140,15 +142,15 @@ public class DiscordMethods {
             }),
 
             new Method("channel", (env) -> {
-                final TextChannel tc = env.get("channel");
+                final TextChannel channel = env.get("channel");
 
-                if (tc == null) {
+                if (channel == null) {
                     return "";
                 }
 
-                return tc.getAsMention();
+                return channel.getAsMention();
             }, (env, in) -> {
-                if (in[0].equals("")) {
+                if ("".equals(in[0])) {
                     return "";
                 }
 
@@ -156,15 +158,15 @@ public class DiscordMethods {
             }),
 
             new Method("channelid", (env) -> {
-                final TextChannel tc = env.get("channel");
+                final TextChannel channel = env.get("channel");
 
-                if (tc == null) {
+                if (channel == null) {
                     return "";
                 }
 
-                return tc.getId();
+                return channel.getId();
             }, (env, in) -> {
-                if (in[0].equals("")) {
+                if ("".equals(in[0])) {
                     return "";
                 }
 
@@ -258,37 +260,37 @@ public class DiscordMethods {
     }
 
     @Nonnull
-    private static TextChannel getFirstTextChannel(Environment env, String[] in) throws ParseException {
-        final Guild g = env.get("guild");
+    private static TextChannel getFirstTextChannel(Environment env, String[] input) throws ParseException {
+        final Guild guild = env.get("guild");
         List<TextChannel> channels = null;
 
-        if (g != null) {
-            channels = FinderUtil.findTextChannels(in[0], g);
+        if (guild != null) {
+            channels = FinderUtil.findTextChannels(input[0], guild);
         }
 
         if (channels == null || channels.isEmpty()) {
-            throw new ParseException(String.format("Your input `%s` returned no channels", in[0]));
+            throw new ParseException(String.format("Your input `%s` returned no channels", input[0]));
         }
 
         return channels.get(0);
     }
 
     @Nonnull
-    private static Member getMemberFromInput(Environment env, String[] in) throws ParseException {
+    private static Member getMemberFromInput(Environment env, String[] input) throws ParseException {
 
-        if (in[0].equals("")) {
+        if ("".equals(input[0])) {
             throw new ParseException("Input for member cannot be empty");
         }
 
         List<Member> members = null;
-        final Guild g = env.get("guild");
+        final Guild guild = env.get("guild");
 
-        if (g != null) {
-            members = FinderUtil.findMembers(in[0], g);
+        if (guild != null) {
+            members = FinderUtil.findMembers(input[0], guild);
         }
 
         if (members == null || members.isEmpty()) {
-            throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
+            throw new ParseException(String.format("Your input `%s` returned no members", input[0]));
         }
 
 

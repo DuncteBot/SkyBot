@@ -96,7 +96,7 @@ public class ShardInfoCommand extends Command {
 
             final int shardId = shard.getShardInfo().getShardId();
 
-            embedBuilder.addField(String.format("Shard #%s%s", shardId, (shardId == currentShard ? " (current)" : "")),
+            embedBuilder.addField(String.format("Shard #%s%s", shardId, shardId == currentShard ? " (current)" : ""),
                 valueBuilder.toString(), true);
         }
 
@@ -168,7 +168,7 @@ public class ShardInfoCommand extends Command {
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
      */
     private String makeAsciiTable(List<String> headers, List<List<String>> table, ShardManager shardManager) {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         final int padding = 1;
         final int[] widths = new int[headers.size()];
 
@@ -198,39 +198,42 @@ public class ShardInfoCommand extends Command {
             widths[0] = 7;
         }
 
-        sb.append("```").append("prolog").append("\n");
+        builder.append("```prolog\n");
         final StringBuilder formatLine = new StringBuilder("║");
         for (final int width : widths) {
             formatLine.append(" %-").append(width).append("s ║");
         }
         formatLine.append("\n");
-        sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
 
-        sb.append(String.format(formatLine.toString(), headers.toArray()));
-        sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+        builder.append(appendSeparatorLine("╔", "╦", "╗", padding, widths))
+            .append(String.format(formatLine.toString(), headers.toArray()))
+            .append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+
         for (final List<String> row : table) {
-            sb.append(String.format(formatLine.toString(), row.toArray()));
+            builder.append(String.format(formatLine.toString(), row.toArray()));
         }
-        sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+
+        builder.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
 
         final ShardCacheView shardCache = shardManager.getShardCache();
 
-        final long l = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
-        final String connectedShards = String.valueOf(l);
+        final long shards = shardCache.applyStream((s) -> s.filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final String connectedShards = String.valueOf(shards);
         final String avgPing = new DecimalFormat("###").format(shardManager.getAverageGatewayPing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
 
-        sb.append(String.format(
+        builder.append(String.format(
             formatLine.toString(),
             "Sum/Avg",
             connectedShards,
             avgPing,
             guilds,
             statsString
-        ));
-        sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
-        sb.append("```");
-        return sb.toString();
+        ))
+            .append(appendSeparatorLine("╚", "╩", "╝", padding, widths))
+            .append("```");
+
+        return builder.toString();
     }
 
     @SuppressWarnings("SameParameterValue")

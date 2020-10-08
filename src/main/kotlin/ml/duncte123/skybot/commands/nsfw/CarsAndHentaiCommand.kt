@@ -37,7 +37,8 @@ class CarsAndHentaiCommand : Command() {
         WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, "Cars and hentai")).async { jsonRaw ->
             val jsonArray = jsonRaw["items"]
             val randomItem = jsonArray[ctx.random.nextInt(jsonArray.size())]
-            sendEmbed(ctx,
+            sendEmbed(
+                ctx,
                 EmbedUtils.getDefaultEmbed()
                     .setTitle(
                         randomItem["title"].asText(),

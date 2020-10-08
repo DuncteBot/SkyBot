@@ -54,6 +54,8 @@ public class YoutubeUtils {
         }
     }
 
+    private YoutubeUtils() {}
+
     @Nullable
     public static Video getVideoById(String videoID, String apiKey) throws IOException {
         final List<Video> items = getVideosByIdBase(videoID, apiKey)

@@ -66,20 +66,24 @@ class LyricsCommand : MusicCommand() {
                 return@searchForSong
             }
 
-            sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
-                .setTitle("Lyrics for $search", it.url)
-                .setThumbnail(it.art)
-                .setDescription(StringUtils.abbreviate(it.lyrics, 1900))
-                .appendDescription("\n\n Full lyrics on [ksoft.si](${it.url})")
-                .setFooter("Powered by ksoft.si"))
+            sendEmbed(
+                ctx,
+                EmbedUtils.getDefaultEmbed()
+                    .setTitle("Lyrics for $search", it.url)
+                    .setThumbnail(it.art)
+                    .setDescription(StringUtils.abbreviate(it.lyrics, 1900))
+                    .appendDescription("\n\n Full lyrics on [ksoft.si](${it.url})")
+                    .setFooter("Powered by ksoft.si")
+            )
         }
     }
 
     private fun searchForSong(search: String, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
-        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .header("Authorization", "Bearer ${config.apis.ksoft}")
-            .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
-            .build(),
+        WebUtils.ins.prepareRaw(
+            WebUtils.defaultRequest()
+                .header("Authorization", "Bearer ${config.apis.ksoft}")
+                .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
+                .build(),
             WebParserUtils::toJSONObject
         ).async {
             val results = it["data"]

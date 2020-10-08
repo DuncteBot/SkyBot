@@ -47,10 +47,13 @@ class RepeatCommand : MusicCommand() {
                 }
 
                 "status" -> {
-                    sendMsg(ctx, """Current repeat status:
+                    sendMsg(
+                        ctx,
+                        """Current repeat status:
                         |Repeating: **${scheduler.isRepeating.toEmoji()}**
                         |Repeating queue: **${scheduler.isRepeatingPlaylists.toEmoji()}**
-                    """.trimMargin())
+                    """.trimMargin()
+                    )
 
                     return
                 }
@@ -67,7 +70,10 @@ class RepeatCommand : MusicCommand() {
             scheduler.isRepeating = !scheduler.isRepeating
         }
 
-        sendMsg(ctx, "Player is now set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
-            "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
+        sendMsg(
+            ctx,
+            "Player is now set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
+                "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**"
+        )
     }
 }

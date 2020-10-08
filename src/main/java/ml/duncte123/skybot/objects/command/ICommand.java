@@ -36,7 +36,7 @@ public interface ICommand {
     }
 
     @Nonnull
-    String help(@Nonnull String invoke, @Nonnull String prefix);
+    String getHelp(@Nonnull String invoke, @Nonnull String prefix);
 
     @Nonnull
     CommandCategory getCategory();

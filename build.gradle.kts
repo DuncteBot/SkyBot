@@ -37,8 +37,10 @@ plugins {
     application
 
     kotlin("jvm") version "1.4.10"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
+    id("org.jmailen.kotlinter") version "3.2.0"
+    pmd
 }
 
 val numberVersion = "3.98.0"
@@ -56,7 +58,7 @@ repositories {
     jcenter()
 
     maven {
-        url = uri("http://repo.jenkins-ci.org/releases/")
+        url = uri("https://repo.jenkins-ci.org/releases/")
     }
 
     maven {
@@ -279,6 +281,27 @@ shadowJar.apply {
 tasks.withType<Wrapper> {
     gradleVersion = "6.1.1"
     distributionType = DistributionType.ALL
+}
+
+kotlinter {
+    ignoreFailures = false
+    indentSize = 4
+    reporters = arrayOf("checkstyle", "plain")
+    experimentalRules = true
+    disabledRules = arrayOf("no-wildcard-imports", "experimental:indent", "experimental:argument-list-wrapping")
+}
+
+pmd {
+    isConsoleOutput = true
+    toolVersion = "6.28.0"
+    rulePriority = 5
+    ruleSets = listOf()
+    ruleSetFiles(File("linters/pmd.xml"))
+}
+
+task<Task>("lintAll") {
+    dependsOn(tasks.lintKotlin)
+    dependsOn(tasks.pmdMain)
 }
 
 githubRelease {

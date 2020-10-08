@@ -51,7 +51,8 @@ class ImageCommand : Command() {
             WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonArray = it["items"]
                 val randomItem = jsonArray[ctx.random.nextInt(jsonArray.size())]
-                sendEmbed(ctx,
+                sendEmbed(
+                    ctx,
                     EmbedUtils.getDefaultEmbed()
                         .setTitle(
                             randomItem["title"].asText(),

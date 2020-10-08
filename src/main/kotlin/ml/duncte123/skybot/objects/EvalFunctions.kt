@@ -34,10 +34,12 @@ import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.sharding.ShardManager
 
 @Suppress("unused")
-@Authors(authors = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken")
-])
+@Authors(
+    authors = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken")
+    ]
+)
 object EvalFunctions {
     @JvmStatic
     fun isEven(number: Int): Boolean {
@@ -82,10 +84,12 @@ object EvalFunctions {
     @JvmStatic
     fun pinnedMessageCheck(channel: TextChannel) {
         channel.retrievePinnedMessages().queue {
-            MessageUtils.sendMsg(MessageConfig.Builder()
-                .setChannel(channel)
-                .setMessage("${it.size}/50 messages pinned in this channel")
-                .build())
+            MessageUtils.sendMsg(
+                MessageConfig.Builder()
+                    .setChannel(channel)
+                    .setMessage("${it.size}/50 messages pinned in this channel")
+                    .build()
+            )
         }
     }
 

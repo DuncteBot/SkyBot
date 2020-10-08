@@ -54,5 +54,4 @@ class SpamCache : TLongObjectHashMap<TLongList>() {
         }
         return this
     }
-
 }

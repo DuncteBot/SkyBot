@@ -46,7 +46,7 @@ class PatreonCheckCommand : Command() {
             |${isUserTagPatron(user).a("tag_patron")}
             |${getIsGuildPatronStatus(user, guild).a("guild_patron")}
             |${getIsGuildPremium(guild).a("guild_premium")}
-            |${oneGuildPatrons.containsValue(guild.idLong).a("guild_one_guild")}
+            |${ONEGUILD_PATRONS.containsValue(guild.idLong).a("guild_one_guild")}
             |${isUserOrGuildPatron(ctx.event, false).a("isUserOrGuildPatron (should be true if any is true)")}
             |```
         """.trimMargin()
@@ -82,8 +82,6 @@ class PatreonCheckCommand : Command() {
 
         return method.invoke(null, user, null, false) as Boolean
     }
-
-
 
     private fun getIsGuildPremium(guild: Guild): Boolean {
         val klass = CommandUtils::class.java

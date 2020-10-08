@@ -31,9 +31,11 @@ class MeguminCommand : WeebCommandBase() {
 
     override fun execute(ctx: CommandContext) {
         val quote = ctx.apis.getMeguminQuote()
-        val img = ctx.weebApi.getRandomImage(ImageConfig.Builder()
-            .setType("megumin")
-            .build())
+        val img = ctx.weebApi.getRandomImage(
+            ImageConfig.Builder()
+                .setType("megumin")
+                .build()
+        )
 
         sendEmbed(ctx, getWeebEmbedImageAndDesc(quote, img.execute().url))
     }

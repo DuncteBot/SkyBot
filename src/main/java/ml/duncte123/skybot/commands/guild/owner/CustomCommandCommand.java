@@ -65,12 +65,13 @@ public class CustomCommandCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgsWithQuotes();
-        final CommandManager manager = ctx.getCommandManager();
 
         if (args.size() > 1 && !ctx.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             sendMsg(ctx, "You need the \"Administrator\" permission to modify commands");
             return;
         }
+
+        final CommandManager manager = ctx.getCommandManager();
 
         switch (args.size()) {
             case 1:
@@ -88,18 +89,18 @@ public class CustomCommandCommand extends Command {
     }
 
     private void listCustomCommands(String arg, CommandContext ctx, CommandManager manager) {
-        if (arg.equalsIgnoreCase("list")) {
-            final GuildSetting s = ctx.getGuildSettings();
-            final StringBuilder sb = new StringBuilder();
+        if ("list".equalsIgnoreCase(arg)) {
+            final GuildSetting setting = ctx.getGuildSettings();
+            final StringBuilder builder = new StringBuilder();
 
             manager.getCustomCommands().stream()
                 .filter(c -> c.getGuildId() == ctx.getGuild().getIdLong())
-                .forEach(cmd -> sb.append(s.getCustomPrefix())
+                .forEach(cmd -> builder.append(setting.getCustomPrefix())
                     .append(cmd.getName())
                     .append("\n")
                 );
 
-            sendMsg(ctx, "Custom Commands for this server\n```ldif\n"+ sb.toString() + "\n```");
+            sendMsg(ctx, "Custom Commands for this server\n```ldif\n"+ builder.toString() + "\n```");
         } else {
             sendMsg(ctx, "Insufficient arguments use `" + ctx.getPrefix() + "help customcommand`");
         }
@@ -110,7 +111,7 @@ public class CustomCommandCommand extends Command {
         final long guildId = ctx.getGuild().getIdLong();
 
         //Check for deleting
-        if (args.get(0).equalsIgnoreCase("raw")) {
+        if ("raw".equalsIgnoreCase(args.get(0))) {
             if (!commandExists(commandName, guildId, manager)) {
                 sendMsg(ctx, "No command was found for this name");
                 return;
@@ -119,7 +120,7 @@ public class CustomCommandCommand extends Command {
             final CustomCommand cmd = manager.getCustomCommand(commandName, guildId);
             final String escaped = cmd.getMessage().replaceAll("`", "");
             sendMsg(ctx, "Raw data for `" + commandName + "`:```pascal\n" + escaped + "\n```");
-        } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
+        } else if ("delete".equalsIgnoreCase(args.get(0)) || "remove".equalsIgnoreCase(args.get(0))) {
 
             if (!commandExists(commandName, guildId, manager)) {
                 sendMsg(ctx, "No command was found for this name");
@@ -193,7 +194,7 @@ public class CustomCommandCommand extends Command {
     }
 
     private void editCustomCommand(List<String> args, CommandContext ctx, CommandManager manager, String commandName, String commandAction, long guildId) {
-        if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
+        if (!"edit".equalsIgnoreCase(args.get(0)) && !"change".equalsIgnoreCase(args.get(0))) {
             sendMsg(ctx, "A command already exists for this server.");
 
             return;

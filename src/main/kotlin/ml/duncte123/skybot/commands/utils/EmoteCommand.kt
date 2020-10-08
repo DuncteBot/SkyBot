@@ -65,11 +65,14 @@ class EmoteCommand : Command() {
         val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
 
-        sendMsg(ctx, """**Emote:** $name
+        sendMsg(
+            ctx,
+            """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
             |**Url:** $url
-        """.trimMargin())
+        """.trimMargin()
+        )
     }
 
     private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {

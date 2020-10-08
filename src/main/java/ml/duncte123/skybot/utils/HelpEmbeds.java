@@ -32,7 +32,7 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 
-@SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal"})
+@SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal", "PMD"})
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
     /// <editor-fold desc="Command storage" defaultstate="collapsed">

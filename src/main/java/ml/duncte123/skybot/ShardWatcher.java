@@ -42,7 +42,7 @@ public class ShardWatcher implements EventListener {
     private final TIntLongMap shardMap;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
 
-    ShardWatcher() {
+    /* package */ ShardWatcher() {
         this.shardMap = new TIntLongHashMap(
             DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR,
             -1, -1

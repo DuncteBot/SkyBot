@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects;
 
+@SuppressWarnings("PMD")
 public class Tag {
     public String name;
     public String content;

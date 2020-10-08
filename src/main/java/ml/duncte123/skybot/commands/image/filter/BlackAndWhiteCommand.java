@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.image.filter;
 public class BlackAndWhiteCommand extends FilterBase {
 
     @Override
-    String getFilterName() {
+    /* package */ String getFilterName() {
         return "b&w";
     }
 }

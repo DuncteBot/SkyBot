@@ -76,7 +76,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        logger.info("{}Joining guild {}, ID: {} on shard {}{}",
+        LOGGER.info("{}Joining guild {}, ID: {} on shard {}{}",
             TextColor.GREEN,
             guild.getName(),
             guild.getId(),
@@ -92,7 +92,7 @@ public class GuildListener extends BaseListener {
 
         variables.getAudioUtils().removeMusicManager(guild);
 
-        logger.info("{}Leaving guild: {} ({}).{}",
+        LOGGER.info("{}Leaving guild: {} ({}).{}",
             TextColor.RED,
             guild.getName(),
             guild.getId(),
@@ -102,7 +102,7 @@ public class GuildListener extends BaseListener {
 
     private void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         final Guild guild = event.getGuild();
-        final LavalinkManager manager = LavalinkManager.ins;
+        final LavalinkManager manager = LavalinkManager.INS;
 
         handleVcAutoRole(guild, event.getMember(), event.getChannelLeft(), true);
 
@@ -114,13 +114,13 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        final VoiceChannel vc = manager.getConnectedChannel(guild);
+        final VoiceChannel channel = manager.getConnectedChannel(guild);
 
-        if (vc == null) {
+        if (channel == null) {
             return;
         }
 
-        if (!event.getChannelLeft().equals(vc)) {
+        if (!event.getChannelLeft().equals(channel)) {
             return;
         }
 
@@ -142,7 +142,7 @@ public class GuildListener extends BaseListener {
 
     private void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         final Guild guild = event.getGuild();
-        final LavalinkManager manager = LavalinkManager.ins;
+        final LavalinkManager manager = LavalinkManager.INS;
 
         if (!manager.isConnected(guild)) {
             return;
@@ -221,9 +221,7 @@ public class GuildListener extends BaseListener {
     }
 
     private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
-        final Member self = guild.getSelfMember();
         final long guildId = guild.getIdLong();
-
         final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
         if (!vcAutoRoleCache.containsKey(guildId)) {
@@ -233,6 +231,7 @@ public class GuildListener extends BaseListener {
         final TLongLongMap vcToRolePair = vcAutoRoleCache.get(guildId);
 
         if (vcToRolePair.get(channel.getIdLong()) > 0) {
+            final Member self = guild.getSelfMember();
             final Role role = guild.getRoleById(vcToRolePair.get(channel.getIdLong()));
 
             if (role != null && self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
@@ -259,26 +258,26 @@ public class GuildListener extends BaseListener {
                 TimeUnit.SECONDS.sleep(timeout);
 
                 // Make sure to get the vc from JDA because the guild might now update
-                final VoiceChannel vc = guild.getJDA().getVoiceChannelById(voiceChannel.getIdLong());
+                final VoiceChannel channel = guild.getJDA().getVoiceChannelById(voiceChannel.getIdLong());
 
-                if (vc == null) {
+                if (channel == null) {
                     return;
                 }
 
-                if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
+                if (channel.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
                     return;
                 }
 
                 variables.getAudioUtils().removeMusicManager(guild);
 
                 // Generate the cooldown keys and set the cooldown
-                final String cooldownKey = MusicCommand.generateCooldownKey.apply(guild.getId());
-                final int musicCooldown = MusicCommand.musicCooldown;
+                final String cooldownKey = MusicCommand.KEY_GEN.apply(guild.getId());
+                final int musicCooldown = MusicCommand.MUSIC_COOLDOWN;
 
                 variables.getCommandManager().setCooldown(cooldownKey, musicCooldown);
 
-                if (LavalinkManager.ins.isConnected(guild)) {
-                    LavalinkManager.ins.closeConnection(guild);
+                if (LavalinkManager.INS.isConnected(guild)) {
+                    LavalinkManager.INS.closeConnection(guild);
                 }
             }
             catch (Exception e) {

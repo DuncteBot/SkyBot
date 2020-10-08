@@ -44,10 +44,12 @@ import java.util.concurrent.TimeUnit;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
-    public static final Cache<Long, GuildMemberInfo> guildMemberCountCache = Caffeine.newBuilder()
+    public static final Cache<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.HOURS)
         .build();
-    private static final Logger logger = LoggerFactory.getLogger(GuildUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
+
+    private GuildUtils() {}
 
     /**
      * Returns an array with the member counts of the guild
@@ -64,18 +66,18 @@ public class GuildUtils {
      * [2] = total
      */
     public static long[] getBotAndUserCount(Guild guild) {
-        if (!guildMemberCountCache.asMap().containsKey(guild.getIdLong())) {
+        if (!GUILD_MEMBER_COUNTS.asMap().containsKey(guild.getIdLong())) {
             try {
-                guildMemberCountCache.put(guild.getIdLong(), GuildMemberInfo.init(guild));
+                GUILD_MEMBER_COUNTS.put(guild.getIdLong(), GuildMemberInfo.init(guild));
             }
             catch (ExecutionException | InterruptedException e) {
                 Sentry.capture(e);
                 // backup if we fail to fetch
-                guildMemberCountCache.put(guild.getIdLong(), new GuildMemberInfo());
+                GUILD_MEMBER_COUNTS.put(guild.getIdLong(), new GuildMemberInfo());
             }
         }
 
-        final GuildMemberInfo guildCount = guildMemberCountCache.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {
@@ -92,16 +94,16 @@ public class GuildUtils {
      * 0 = users percentage
      * 1 = bot percentage
      *
-     * @param g
+     * @param guild
      *     the {@link Guild} that we want to check
      *
      * @return the percentage of users and the percentage of bots in a nice compact array
      * [0] = users percentage
      * [1] = bot percentage
      */
-    public static double[] getBotRatio(Guild g) {
+    public static double[] getBotRatio(Guild guild) {
 
-        final long[] counts = getBotAndUserCount(g);
+        final long[] counts = getBotAndUserCount(guild);
         final double totalCount = counts[2];
         final double userCount = counts[0];
         final double botCount = counts[1];
@@ -112,8 +114,8 @@ public class GuildUtils {
         //percent in bots
         final double botCountP = (botCount / totalCount) * 100;
 
-        logger.debug("In the guild {}({} Members), {}% are users, {}% are bots",
-            g.getName(),
+        LOGGER.debug("In the guild {}({} Members), {}% are users, {}% are bots",
+            guild.getName(),
             totalCount,
             userCountP,
             botCountP
@@ -127,7 +129,7 @@ public class GuildUtils {
     }
 
     public static long getNitroUserCountCache(Guild guild) {
-        final GuildMemberInfo guildCount = guildMemberCountCache.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {
@@ -189,36 +191,36 @@ public class GuildUtils {
     }*/
 
     public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
-        logger.info("(Re)loading patrons");
+        LOGGER.info("(Re)loading patrons");
 
         adapter.loadAllPatrons((data) -> {
             data.getPatrons().forEach(
-                (patron) -> CommandUtils.patrons.add(patron.getUserId())
+                (patron) -> CommandUtils.PATRONS.add(patron.getUserId())
             );
 
-            logger.info("Loaded {} normal patrons", CommandUtils.patrons.size());
+            LOGGER.info("Loaded {} normal patrons", CommandUtils.PATRONS.size());
 
             data.getTagPatrons().forEach(
-                (patron) -> CommandUtils.tagPatrons.add(patron.getUserId())
+                (patron) -> CommandUtils.TAG_PATRONS.add(patron.getUserId())
             );
 
-            logger.info("Loaded {} tag patrons", CommandUtils.tagPatrons.size());
+            LOGGER.info("Loaded {} tag patrons", CommandUtils.TAG_PATRONS.size());
 
             data.getOneGuildPatrons().forEach((patron) -> {
                 final long userId = patron.getUserId();
                 // The guild id is never null here, and if it is something is terribly wrong
                 @SuppressWarnings("ConstantConditions") final long guildId = patron.getGuildId();
 
-                CommandUtils.oneGuildPatrons.put(userId, guildId);
+                CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
             });
 
-            logger.info("Loaded {} one guild patrons", CommandUtils.oneGuildPatrons.size());
+            LOGGER.info("Loaded {} one guild patrons", CommandUtils.ONEGUILD_PATRONS.size());
 
             data.getGuildPatrons().forEach(
-                (patron) -> CommandUtils.guildPatrons.add(patron.getUserId())
+                (patron) -> CommandUtils.GUILD_PATRONS.add(patron.getUserId())
             );
 
-            logger.info("Loaded {} guild patrons", CommandUtils.guildPatrons.size());
+            LOGGER.info("Loaded {} guild patrons", CommandUtils.GUILD_PATRONS.size());
 
             return null;
         });

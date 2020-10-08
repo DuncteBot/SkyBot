@@ -44,10 +44,13 @@ class ShortenCommand : Command() {
             return
         }
 
-        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async({
-            sendMsg(ctx, "Here is your shortened url: <$it>")
-        }, {
-            sendMsg(ctx, "Something went wrong, please make sure that your url to shorten is valid")
-        })
+        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async(
+            {
+                sendMsg(ctx, "Here is your shortened url: <$it>")
+            },
+            {
+                sendMsg(ctx, "Something went wrong, please make sure that your url to shorten is valid")
+            }
+        )
     }
 }

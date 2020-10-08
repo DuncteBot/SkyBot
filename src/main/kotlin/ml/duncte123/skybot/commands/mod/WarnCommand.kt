@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.mod
 
+import com.dunctebot.models.settings.WarnAction
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -27,7 +28,6 @@ import ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
-import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*
@@ -111,7 +111,7 @@ class WarnCommand : ModBaseCommand() {
         // Yes we can warn bots (cuz why not) but we cannot dm them
         if (!targetUser.isBot) {
             targetUser.openPrivateChannel()
-                .flatMap {  it.sendMessage(dmMessage) }
+                .flatMap { it.sendMessage(dmMessage) }
                 .queue(null, ignore(CANNOT_SEND_TO_USER))
         }
 
@@ -154,7 +154,8 @@ class WarnCommand : ModBaseCommand() {
         val targetUser = target.user
 
         if ((action.type == WarnAction.Type.MUTE || action.type == WarnAction.Type.TEMP_MUTE) &&
-            !muteRoleCheck(guild)) {
+            !muteRoleCheck(guild)
+        ) {
             modLog("[warn actions] Failed to apply automatic mute `${targetUser.asTag}` as there is no mute role set in the settings of this server", guild)
             return
         }

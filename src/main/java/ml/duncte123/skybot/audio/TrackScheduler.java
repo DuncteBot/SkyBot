@@ -52,14 +52,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public static final int MAX_QUEUE_SIZE = 50;
     public final Queue<AudioTrack> queue;
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
-    private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
-    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    /* package */ TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
@@ -73,7 +73,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             sendMsg(new MessageConfig.Builder()
                 .setChannel(latestChannel)
                 .setMessage(msg)
-                .setFailureAction((__) -> {})
+                .setFailureAction((ignored) -> {})
                 .build());
         }, DEBOUNCE_INTERVAL);
     }
@@ -82,15 +82,15 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         return this.queue.size() < MAX_QUEUE_SIZE;
     }
 
-    public void queue(AudioTrack track, boolean isPatron) throws LimitReachedException {
+    public void addToQueue(AudioTrack track, boolean isPatron) throws LimitReachedException {
         if (queue.size() + 1 >= MAX_QUEUE_SIZE && !isPatron) {
             throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 
-        if (player.getPlayingTrack() != null) {
-            queue.offer(track);
-        } else {
+        if (player.getPlayingTrack() == null) {
             player.playTrack(track);
+        } else {
+            queue.offer(track);
         }
     }
 
@@ -150,27 +150,27 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
-        logger.debug("track ended");
+        LOGGER.debug("track ended");
 
         if (!endReason.mayStartNext) {
             return;
         }
 
-        // Get if the track was from a skip event
-        final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
-
-        logger.debug("can start");
+        LOGGER.debug("can start");
 
         if (!repeating) {
-            logger.debug("starting next track");
+            LOGGER.debug("starting next track");
             skipTrack();
             return;
         }
 
-        logger.debug("repeating");
+        LOGGER.debug("repeating");
+
+        // Get if the track was from a skip event
+        final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
 
         if (repeatPlayList) {
-            logger.debug("a playlist.....");
+            LOGGER.debug("a playlist.....");
             skipTrack();
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();

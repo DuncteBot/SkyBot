@@ -65,7 +65,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         try {
-            manager.scheduler.queue(track, isUserTagPatron(ctx.author))
+            manager.scheduler.addToQueue(track, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
             sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
         } catch (e: LimitReachedException) {

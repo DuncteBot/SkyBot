@@ -27,6 +27,8 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 
 public class MapUtils {
+    private MapUtils() {}
+
     public static TLongSet newLongSet() {
         return new TSynchronizedLongSet(new TLongHashSet(), new Object());
     }

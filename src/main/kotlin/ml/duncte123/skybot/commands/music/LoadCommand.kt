@@ -77,16 +77,23 @@ class LoadCommand : MusicCommand() {
                 array.filter(Objects::nonNull)
                     .forEach { obj ->
                         // This probably announces it to the channel
-                        ctx.audioUtils.loadAndPlay(musicManager,
+                        ctx.audioUtils.loadAndPlay(
+                            musicManager,
                             (obj as JsonNode).asText(),
                             ctx,
-                            shouldAnnounce).get()
+                            shouldAnnounce
+                        ).get()
 
                         shouldAnnounce = false
                     }
 
-                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE,
-                    "Added ${array.size()} requested tracks."))
+                sendEmbed(
+                    ctx,
+                    EmbedUtils.embedField(
+                        AudioUtils.EMBED_TITLE,
+                        "Added ${array.size()} requested tracks."
+                    )
+                )
             } catch (exception: Exception) {
                 sendError(ctx.message)
                 sendMsg(ctx, "Invalid JSON file!")

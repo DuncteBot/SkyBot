@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.adapters
 
+import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
@@ -27,8 +29,6 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
-import com.dunctebot.models.settings.GuildSetting
-import com.dunctebot.models.settings.WarnAction
 import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
@@ -49,12 +49,14 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val res = connManager.connection.createStatement().executeQuery("SELECT * FROM customCommands")
 
             while (res.next()) {
-                customCommands.add(CustomCommandImpl(
-                    res.getString("invoke"),
-                    res.getString("message"),
-                    res.getLong("guildId"),
-                    res.getBoolean("autoresponse")
-                ))
+                customCommands.add(
+                    CustomCommandImpl(
+                        res.getString("invoke"),
+                        res.getString("message"),
+                        res.getLong("guildId"),
+                        res.getBoolean("autoresponse")
+                    )
+                )
             }
             callback.invoke(customCommands)
         }
@@ -92,7 +94,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
         runOnThread {
-
             val settings = arrayListOf<GuildSetting>()
             val smt = connManager.connection.createStatement()
 
@@ -130,7 +131,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         runOnThread {
             // language=SQLite
             connManager.connection.prepareStatement("DELETE FROM blacklists WHERE guild_id = ? AND word = ?").use {
-
                 it.setString(1, guildId.toString())
                 it.setString(2, word)
 
@@ -175,7 +175,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             // language=SQLite
-            connManager.connection.prepareStatement("""UPDATE guildSettings SET 
+            connManager.connection.prepareStatement(
+                """UPDATE guildSettings SET 
                 enableJoinMessage= ? ,
                 enableSwearFilter= ? ,
                 customWelcomeMessage= ? ,
@@ -254,9 +255,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
             if (rows == 0) {
                 // language=SQLite
-                val smt = connection.prepareStatement("""INSERT INTO guildSettings
+                val smt = connection.prepareStatement(
+                    """INSERT INTO guildSettings
                     (guildId, customWelcomeMessage, prefix, customLeaveMessage, ratelimits)
-                    VALUES('$guildId' , ? , ? , ? , ?)""".trimMargin())
+                    VALUES('$guildId' , ? , ? , ? , ?)""".trimMargin()
+                )
 
                 smt.setString(1, guildSettings.customJoinMessage)
                 smt.setString(2, Settings.PREFIX)
@@ -430,14 +433,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit ) {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {
         runOnThread {
             connManager.connection.prepareStatement(
                 // language=SQLite
                 """
                     INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date)
                     VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )
-                """.trimIndent()).use {
+                """.trimIndent()
+            ).use {
                 it.setString(1, modId.toString())
                 it.setString(2, userId.toString())
                 it.setString(3, reason)
@@ -456,9 +460,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             var oldMute: Mute? = null
 
             // language=SQLite
-            val res1 = connManager.connection.prepareStatement("""
+            val res1 = connManager.connection.prepareStatement(
+                """
                 SELECT id FROM mutes WHERE guild_id = ? AND user_id = ?
-            """.trimIndent())
+                """.trimIndent()
+            )
                 .use {
                     it.setString(1, guildId.toString())
                     it.setString(2, userId.toString())
@@ -480,10 +486,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
             connManager.connection
                 // language=SQLite
-                .prepareStatement("""
+                .prepareStatement(
+                    """
                     INSERT INTO mutes(guild_id, mod_id, user_id, user_tag, unmute_date)
                     VALUES(? , ? , ? , ? , ?)
-                """.trimIndent())
+                    """.trimIndent()
+                )
                 .use {
                     it.setString(1, guildId.toString())
                     it.setString(2, modId.toString())
@@ -559,13 +567,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val result = smt.executeQuery()
 
             while (result.next()) {
-                warnings.add(Warning(
-                    result.getInt("id"),
-                    result.getString("warn_date"),
-                    result.getString("mod_id"),
-                    result.getString("reason"),
-                    result.getString("guild_id")
-                ))
+                warnings.add(
+                    Warning(
+                        result.getInt("id"),
+                        result.getString("warn_date"),
+                        result.getString("mod_id"),
+                        result.getString("reason"),
+                        result.getString("guild_id")
+                    )
+                )
             }
 
             callback.invoke(warnings)
@@ -619,13 +629,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             muteSmt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP")
                 .use {
                     while (it.next()) {
-                        mutes.add(Mute(
-                            it.getInt("id"),
-                            it.getString("mod_id"),
-                            it.getString("user_id"),
-                            it.getString("user_tag"),
-                            it.getString("guild_id")
-                        ))
+                        mutes.add(
+                            Mute(
+                                it.getInt("id"),
+                                it.getString("mod_id"),
+                                it.getString("user_id"),
+                                it.getString("user_tag"),
+                                it.getString("guild_id")
+                            )
+                        )
                     }
                     it.close()
                 }
@@ -633,14 +645,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             banSmt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP")
                 .use {
                     while (it.next()) {
-                        bans.add(Ban(
-                            it.getInt("id"),
-                            it.getString("modUserId"),
-                            it.getString("userId"),
-                            it.getString("Username"),
-                            it.getString("discriminator"),
-                            it.getString("guildId")
-                        ))
+                        bans.add(
+                            Ban(
+                                it.getInt("id"),
+                                it.getString("modUserId"),
+                                it.getString("userId"),
+                                it.getString("Username"),
+                                it.getString("discriminator"),
+                                it.getString("guildId")
+                            )
+                        )
                     }
                     it.close()
                 }
@@ -666,11 +680,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val result = connManager.connection.createStatement().executeQuery("SELECT * FROM `vcAutoRoles`")
 
             while (result.next()) {
-                items.add(VcAutoRole(
-                    result.getLong("guild_id"),
-                    result.getLong("voice_channel_id"),
-                    result.getLong("role_id")
-                ))
+                items.add(
+                    VcAutoRole(
+                        result.getLong("guild_id"),
+                        result.getLong("voice_channel_id"),
+                        result.getLong("role_id")
+                    )
+                )
             }
 
             callback.invoke(items)
@@ -805,17 +821,20 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
-        runOnThread({
-            val smt = connManager.connection.createStatement()
+        runOnThread(
+            {
+                val smt = connManager.connection.createStatement()
 
-            // language=SQLite
-            smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
-            smt.closeOnCompletion()
+                // language=SQLite
+                smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
+                smt.closeOnCompletion()
 
-            callback.invoke(true)
-        }, {
-            callback.invoke(false)
-        })
+                callback.invoke(true)
+            },
+            {
+                callback.invoke(false)
+            }
+        )
     }
 
     override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
@@ -824,20 +843,22 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setInt(1, reminderId)
                 it.setLong(2, userId)
 
-                it.executeQuery().use results@ { result ->
+                it.executeQuery().use results@{ result ->
                     if (!result.next()) {
                         callback(null)
                         return@results
                     }
 
-                    callback(Reminder(
-                        result.getInt("id"),
-                        result.getLong("user_id"),
-                        result.getString("reminder"),
-                        result.getDate("remind_create_date").asInstant(),
-                        result.getDate("remind_date").asInstant(),
-                        result.getLong("channel_id")
-                    ))
+                    callback(
+                        Reminder(
+                            result.getInt("id"),
+                            result.getLong("user_id"),
+                            result.getString("reminder"),
+                            result.getDate("remind_create_date").asInstant(),
+                            result.getDate("remind_date").asInstant(),
+                            result.getLong("channel_id")
+                        )
+                    )
                 }
 
                 it.closeOnCompletion()
@@ -854,14 +875,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
                 it.executeQuery().use { result ->
                     while (result.next()) {
-                        reminders.add(Reminder(
-                            result.getInt("id"),
-                            result.getLong("user_id"),
-                            result.getString("reminder"),
-                            result.getDate("remind_create_date").asInstant(),
-                            result.getDate("remind_date").asInstant(),
-                            result.getLong("channel_id")
-                        ))
+                        reminders.add(
+                            Reminder(
+                                result.getInt("id"),
+                                result.getLong("user_id"),
+                                result.getString("reminder"),
+                                result.getDate("remind_create_date").asInstant(),
+                                result.getDate("remind_date").asInstant(),
+                                result.getLong("channel_id")
+                            )
+                        )
                     }
 
                     it.closeOnCompletion()
@@ -889,21 +912,24 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val reminders = ArrayList<Reminder>()
             val smt = connManager.connection.prepareStatement(
                 // language=SQLite
-                "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000, 'unixepoch'))")
+                "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000, 'unixepoch'))"
+            )
 
             smt.closeOnCompletion()
 
             val result = smt.executeQuery()
 
             while (result.next()) {
-                reminders.add(Reminder(
-                    result.getInt("id"),
-                    result.getLong("user_id"),
-                    result.getString("reminder"),
-                    result.getDate("remind_create_date").asInstant(),
-                    result.getDate("remind_date").asInstant(),
-                    result.getLong("channel_id")
-                ))
+                reminders.add(
+                    Reminder(
+                        result.getInt("id"),
+                        result.getLong("user_id"),
+                        result.getString("reminder"),
+                        result.getDate("remind_create_date").asInstant(),
+                        result.getDate("remind_date").asInstant(),
+                        result.getLong("channel_id")
+                    )
+                )
             }
 
             if (reminders.isNotEmpty()) {
@@ -986,12 +1012,14 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             smt.setString(1, guildId.toString())
 
             smt.executeQuery().use { res ->
-                while(res.next()) {
-                    list.add(WarnAction(
-                        WarnAction.Type.valueOf(res.getString("type")),
-                        res.getInt("threshold"),
-                        res.getInt("duration")
-                    ))
+                while (res.next()) {
+                    list.add(
+                        WarnAction(
+                            WarnAction.Type.valueOf(res.getString("type")),
+                            res.getInt("threshold"),
+                            res.getInt("duration")
+                        )
+                    )
                 }
             }
         }

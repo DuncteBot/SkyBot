@@ -47,10 +47,10 @@ public class ForceDisconnectCommand extends MusicCommand {
             return;
         }
 
-        final Guild g = ctx.getGuild();
+        final Guild guild = ctx.getGuild();
 
-        ctx.getAudioUtils().removeMusicManager(g);
-        getLavalinkManager().closeConnection(g);
+        ctx.getAudioUtils().removeMusicManager(guild);
+        getLavalinkManager().closeConnection(guild);
 
         sendMsg(ctx, "Successfully sent the disconnect signal to the server");
 

@@ -30,7 +30,8 @@ class ShrugCommand : WeebCommandBase() {
     }
 
     override fun execute(ctx: CommandContext) {
-        sendEmbed(ctx,
+        sendEmbed(
+            ctx,
             getWeebEmbedImageAndDesc(
                 "${ctx.member!!.asMention} shrugs",
                 ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("shrug").build()).execute().url

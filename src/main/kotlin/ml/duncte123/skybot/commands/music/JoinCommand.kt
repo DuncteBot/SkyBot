@@ -32,7 +32,7 @@ class JoinCommand : MusicCommand() {
         this.name = "join"
         this.aliases = arrayOf("summon", "connect")
         this.help = "Makes the bot join the voice channel that you are in."
-        this.cooldown = musicCooldown
+        this.cooldown = MUSIC_COOLDOWN
     }
 
     override fun execute(ctx: CommandContext) {
@@ -76,6 +76,5 @@ class JoinCommand : MusicCommand() {
         } catch (other: Exception) {
             sendErrorWithMessage(ctx.message, "Could not join channel: ${other.message}")
         }
-
     }
 }

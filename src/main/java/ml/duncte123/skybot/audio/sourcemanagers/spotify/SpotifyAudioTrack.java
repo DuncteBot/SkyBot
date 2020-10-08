@@ -27,7 +27,7 @@ import ml.duncte123.skybot.Author;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SpotifyAudioTrack extends YoutubeAudioTrack {
 
-    SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+    /* default */ SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
         super(trackInfo, sourceManager);
     }
 }

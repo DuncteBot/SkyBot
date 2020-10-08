@@ -63,7 +63,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    boolean passes(GuildMessageReceivedEvent event) {
+    /* package */ boolean passes(GuildMessageReceivedEvent event) {
         return passes(event, true);
     }
 
@@ -178,9 +178,9 @@ public abstract class ImageCommandBase extends Command {
     }
 
     @Nullable
-    private String tryGetUrl(CommandContext ctx, String s) {
+    private String tryGetUrl(CommandContext ctx, String url) {
         try {
-            return new URL(s).toString();
+            return new URL(url).toString();
         }
         catch (MalformedURLException ignored) {
             sendMsg(ctx, "That does not look like a valid url");

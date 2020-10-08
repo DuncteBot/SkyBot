@@ -61,8 +61,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
                 player.playingTrack != null -> sendMsg(ctx, "Player is already playing!")
 
-                scheduler.queue.isEmpty() -> sendMsg(ctx, "The current audio queue is empty! Add something to the queue first!\n" +
-                    "For example `${ctx.prefix}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
+                scheduler.queue.isEmpty() -> sendMsg(
+                    ctx,
+                    "The current audio queue is empty! Add something to the queue first!\n" +
+                        "For example `${ctx.prefix}play https://www.youtube.com/watch?v=KKOBXrRzZwA`"
+                )
             }
 
             return
@@ -88,7 +91,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
                 sendMsg(ctx, "No tracks where found")
                 return
             }
-            toPlay = "https://www.youtube.com/watch?v=${vidId}"
+            toPlay = "https://www.youtube.com/watch?v=$vidId"
         }
 
         handlePlay(toPlay, ctx, mng)
@@ -119,7 +122,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     private fun searchCache(search: String, ctx: CommandContext): String? {
         val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
 
-        if(res.isEmpty()) {
+        if (res.isEmpty()) {
             return null
         }
 

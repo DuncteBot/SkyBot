@@ -39,7 +39,7 @@ import static ml.duncte123.skybot.utils.YoutubeUtils.getPlaylistPageById;
 
 public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
     private final String apiKey;
-    private volatile int playlistPageCount = 6;
+    private int playlistPageCount = 6;
 
     public YoutubeApiPlaylistLoader(String apiKey) {
         this.apiKey = apiKey;

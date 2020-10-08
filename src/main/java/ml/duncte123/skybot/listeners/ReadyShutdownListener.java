@@ -52,11 +52,11 @@ public class ReadyShutdownListener extends MessageListener {
 
     private void onReady(ReadyEvent event) {
         final JDA jda = event.getJDA();
-        logger.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
+        LOGGER.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
         if (!arePoolsRunning.get()) {
-            logger.info("Starting spam-cache-cleaner!");
+            LOGGER.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
 
             // auto poster for guild info (post every day)

@@ -169,6 +169,7 @@ public class CommandContext implements ICommandContext {
         return this.getGuildSettings().getCustomPrefix();
     }
 
+    @Override
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
     }
@@ -190,8 +191,8 @@ public class CommandContext implements ICommandContext {
         return this;
     }
 
-    public CommandContext applySentId(long id) {
-        this.replyId = id;
+    public CommandContext applySentId(long idLong) {
+        this.replyId = idLong;
         return this;
     }
 
@@ -224,12 +225,12 @@ public class CommandContext implements ICommandContext {
 
     // --------------- Private methods --------------- //
 
-    private String parseRawArgs(String in) {
-        return parseRawArgs(in, true);
+    private String parseRawArgs(String input) {
+        return parseRawArgs(input, true);
     }
 
-    private String parseRawArgs(String in, boolean fixlines) {
-        final String prefixRemoved = in.replaceFirst(
+    private String parseRawArgs(String input, boolean fixlines) {
+        final String prefixRemoved = input.replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
                 Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(this.getGuildSettings().getCustomPrefix()),

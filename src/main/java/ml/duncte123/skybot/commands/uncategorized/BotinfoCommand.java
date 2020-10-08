@@ -65,12 +65,12 @@ public class BotinfoCommand extends Command {
             return;
         }
 
-        final User u = ctx.getJDA().getSelfUser();
+        final User user = ctx.getJDA().getSelfUser();
         final String duncte = " <@191231307290771456> (duncte123#1245)";
 
-        final EmbedBuilder eb = EmbedUtils.getDefaultEmbed()
+        final EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
             .setDescription("Here is some information about me \uD83D\uDE09")
-            .setThumbnail(u.getEffectiveAvatarUrl())
+            .setThumbnail(user.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                 duncte + ".\n" +
                 "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
@@ -80,12 +80,12 @@ public class BotinfoCommand extends Command {
                 "\n\u200B", true)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
-                "**JDA version:** " + JDAInfo.VERSION + "" +
+                "**JDA version:** " + JDAInfo.VERSION +
                 "\n**LavaPlayer version:** " + this.lavaplayerVersion + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](https://www.patreon.com/DuncteBot).", false);
 
-        sendEmbed(ctx, eb);
+        sendEmbed(ctx, builder);
     }
 }

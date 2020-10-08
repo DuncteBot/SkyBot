@@ -17,10 +17,12 @@
  */
 
 @file:JvmName("SkyBotAnnotationsKt")
-@file:Authors(authors = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken")
-])
+@file:Authors(
+    authors = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken")
+    ]
+)
 
 package ml.duncte123.skybot
 
@@ -61,14 +63,16 @@ annotation class DocumentationNeeded(vararg val specificPart: String = ["everyth
 @Retention(SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-//annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
+// annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
 annotation class Author(val author: String, val nickname: String)
 
 @Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
 @Retention(SOURCE)
 @SinceSkybot("3.79.0")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-annotation class Authors(vararg val authors: Author = [
-    Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    Author(nickname = "duncte123", author = "Duncan Sterken")
-])
+annotation class Authors(
+    vararg val authors: Author = [
+        Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        Author(nickname = "duncte123", author = "Duncan Sterken")
+    ]
+)

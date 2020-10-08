@@ -31,7 +31,7 @@ class YoungestCommand : Command() {
         this.help = "Shows the youngest member in the server"
         this.cooldown = 10
         this.cooldownScope = CooldownScope.GUILD
-        this.cooldownKey = {_, _ -> "youngest|oldest"}
+        this.cooldownKey = { _, _ -> "youngest|oldest" }
     }
 
     override fun execute(ctx: CommandContext) {

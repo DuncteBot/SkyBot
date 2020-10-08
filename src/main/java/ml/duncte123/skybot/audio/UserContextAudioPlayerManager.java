@@ -49,7 +49,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
     private static final int MAXIMUM_LOAD_REDIRECTS = 5;
 
-    private static final Logger log = LoggerFactory.getLogger(UserContextAudioPlayerManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserContextAudioPlayerManager.class);
 
     // Executors
     private final Supplier<OrderedExecutor> orderedInfoExecutor = () -> getField("orderedInfoExecutor");
@@ -66,9 +66,9 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
         }
     }
 
-    private Future<Void> handleLoadRejected(String identifier, AudioLoadResultHandler resultHandler, RejectedExecutionException e) {
-        final FriendlyException exception = new FriendlyException("Cannot queue loading a track, queue is full.", SUSPICIOUS, e);
-        ExceptionTools.log(log, exception, "queueing item " + identifier);
+    private Future<Void> handleLoadRejected(String identifier, AudioLoadResultHandler resultHandler, RejectedExecutionException except) {
+        final FriendlyException exception = new FriendlyException("Cannot queue loading a track, queue is full.", SUSPICIOUS, except);
+        ExceptionTools.log(LOG, exception, "queueing item " + identifier);
 
         resultHandler.loadFailed(exception);
 
@@ -81,12 +81,12 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
             try {
                 if (!checkSourcesForItem(new AudioReference(identifier, null), resultHandler, reported, isPatron)) {
-                    log.debug("No matches for track with identifier {}.", identifier);
+                    LOG.debug("No matches for track with identifier {}.", identifier);
                     resultHandler.noMatches();
                 }
             } catch (Throwable throwable) {
                 if (reported[0]) {
-                    log.warn("Load result handler for {} threw an exception", identifier, throwable);
+                    LOG.warn("Load result handler for {} threw an exception", identifier, throwable);
                 } else {
                     dispatchItemLoadFailure(identifier, resultHandler, throwable);
                 }
@@ -102,7 +102,7 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
         final FriendlyException exception = ExceptionTools.wrapUnfriendlyExceptions("Something went wrong when looking up the track", FAULT, throwable);
 
         if (!(throwable instanceof LimitReachedException)) {
-            ExceptionTools.log(log, exception, "loading item " + identifier);
+            ExceptionTools.log(LOG, exception, "loading item " + identifier);
         }
 
         resultHandler.loadFailed(exception);
@@ -140,11 +140,11 @@ public class UserContextAudioPlayerManager extends DefaultAudioPlayerManager {
 
             if (item != null) {
                 if (item instanceof AudioTrack) {
-                    log.debug("Loaded a track with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
+                    LOG.debug("Loaded a track with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
                     reported[0] = true;
                     resultHandler.trackLoaded((AudioTrack) item);
                 } else if (item instanceof AudioPlaylist) {
-                    log.debug("Loaded a playlist with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
+                    LOG.debug("Loaded a playlist with identifier {} using {}.", reference.identifier, sourceManager.getClass().getSimpleName());
                     reported[0] = true;
                     resultHandler.playlistLoaded((AudioPlaylist) item);
                 }

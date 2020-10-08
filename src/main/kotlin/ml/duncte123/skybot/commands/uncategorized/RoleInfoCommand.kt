@@ -50,9 +50,12 @@ class RoleInfoCommand : Command() {
 
         // If there are no roles found we need to send an error message with a small hint
         if (roles.isEmpty()) {
-            sendMsg(ctx, """No roles found, make sure that you have a role or are typing the name of a role on this server
+            sendMsg(
+                ctx,
+                """No roles found, make sure that you have a role or are typing the name of a role on this server
                 |Hint: you cna use `${ctx.prefix}roles` to get a list of the roles in this server
-            """.trimMargin())
+            """.trimMargin()
+            )
 
             return
         }
@@ -68,7 +71,8 @@ class RoleInfoCommand : Command() {
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(role.colorRaw)
-            .setDescription("""__Role info for ${role.asMention}__
+            .setDescription(
+                """__Role info for ${role.asMention}__
                 |
                 |**Color:** ${colorToHex(role.colorRaw)}
                 |**Id:** ${role.id}
@@ -80,7 +84,8 @@ class RoleInfoCommand : Command() {
                 |**Hoisted:** ${role.isHoisted.toEmoji()}
                 |**Mentionable:** ${role.isMentionable.toEmoji()}
                 |**Permissions:** $perms
-            """.trimMargin())
+            """.trimMargin()
+            )
 
         sendEmbed(ctx, embed, true)
     }

@@ -43,7 +43,6 @@ class StatsCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-
         val shardManager = ctx.shardManager
         val connectedVC = shardManager.shardCache.map { shard ->
             shard.voiceChannelCache.filter { vc ->
@@ -72,30 +71,38 @@ class StatsCommand : Command() {
         val threadBean = ManagementFactory.getThreadMXBean()
 
         val embed = EmbedUtils.getDefaultEmbed()
-            .addField("Discord/bot Stats",
+            .addField(
+                "Discord/bot Stats",
                 """**Guilds:** ${shardManager.guildCache.size()}
                     |**Users (unique):** ${shardManager.userCache.size()}
                     |**Text channels:** ${shardManager.textChannelCache.size()}
                     |**Voice channels:** ${shardManager.voiceChannelCache.size()}
                     |**Playing music count:** $connectedVC
                     |**Uptime:** ${AirUtils.getUptime(uptimeLong)} $uptimeTime
-                """.trimMargin(), false)
+                """.trimMargin(),
+                false
+            )
 
-            .addField("Server stats",
+            .addField(
+                "Server stats",
                 """**CPU cores:** $cores
                     |**CPU usage:** $serverCpuUsage
                     |**Ram:** ${serverMemUsage}MB / ${serverMem}MB ($serverMemPercent%)
                     |**System uptime:** $serverUptimeString
                     |**Operating System:** $os
-                """.trimMargin(), false)
+                """.trimMargin(),
+                false
+            )
 
-            .addField("JVM stats",
+            .addField(
+                "JVM stats",
                 """**CPU usage:** $jvmCpuUsage
                     |**Threads:** ${threadBean.threadCount} / ${threadBean.peakThreadCount}
                             |**Ram:** ${jvmMemUsage}MB / ${jvmMemTotal}MB ($jvmMemPercent%)
-                        """.trimMargin(), false)
+                        """.trimMargin(),
+                false
+            )
 
         sendEmbed(ctx, embed)
-
     }
 }
