@@ -31,7 +31,7 @@ import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
-    private val acceptedAudioExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
+    private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
 
     init {
         this.withAutoJoin = true
@@ -95,7 +95,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     }
 
     private fun playUploadedFile(ctx: CommandContext, mng: GuildMusicManager): Boolean {
-        val file = ctx.message.attachments.firstOrNull { it.fileExtension in acceptedAudioExtensions }
+        val file = ctx.message.attachments
+            .firstOrNull { it.fileExtension?.toLowerCase() in acceptedExtensions }
 
         if (file == null) {
             sendMsg(ctx, "Cannot play that file, please attach an audio file instead")
