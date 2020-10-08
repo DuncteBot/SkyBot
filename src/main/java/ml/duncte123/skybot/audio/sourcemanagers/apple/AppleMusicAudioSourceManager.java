@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.audio.sourcemanagers.apple;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
@@ -25,7 +26,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.audio.SupportsPatron;
+import okhttp3.Request;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// yikes, this costs €99/year
 public class AppleMusicAudioSourceManager implements AudioSourceManager, SupportsPatron {
     // https://developer.apple.com/documentation/applemusicapi/
 
@@ -42,11 +46,11 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
     // songs seem to have the i parameter for that
     // Song: https://music.apple.com/nl/album/nintendo-before-school/1445190129?i=1445190410&l=en
 
-    private static final String BASE_URL = "https:\\/\\/music\\.apple\\.com\\/([a-zA-Z0-9-]{2,})\\/";
+    private static final String BASE_URL = "https:\\/\\/(?:music|itunes)\\.apple\\.com\\/([a-zA-Z0-9-]{2,})\\/";
     private static final String REST_REGEX = "(?:.*)";
 
     private static final String ALBUM_PART = "\\/album\\/[a-zA-Z0-9-]+\\/([0-9]+)";
-    private static final String SONG_ID_PART = "(?:\\?|&)i=([a-zA-Z0-9.-]+)";
+    private static final String SONG_ID_PART = "[?&]i=([a-zA-Z0-9.-]+)";
     private static final String ARTIST_PART = "\\/artist\\/[a-zA-Z0-9-]+\\/([0-9]+)";
     private static final String PLAYLIST_PART = "\\/playlist\\/[a-zA-Z0-9-]+\\/([a-zA-Z0-9.-]+)";
 
@@ -119,9 +123,24 @@ public class AppleMusicAudioSourceManager implements AudioSourceManager, Support
     }
 
     @Nullable
-    private AudioItem getAppleSong(String storeFront, String songId) {
-        //
+    private AudioItem getAppleSong(@Nonnull String storeFront, @Nonnull String songId) {
+        final String path = String.format("catalog/%s/songs/%s", storeFront, songId);
 
         return null;
+    }
+
+    @Nullable
+    private JsonNode fetchData(@Nonnull String path) throws IOException {
+        final String url = "https://api.music.apple.com/v1/" + path;
+
+        return null;
+    }
+
+    private Request.Builder getBaseRequest(@Nonnull String url) {
+        return new Request.Builder()
+            .get()
+            .url(url)
+            .header("Authorization", "Bearer [developer token]")
+            ;
     }
 }
