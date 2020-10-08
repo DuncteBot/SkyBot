@@ -288,14 +288,13 @@ kotlinter {
     indentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = true
-    disabledRules = arrayOf("no-wildcard-imports", "experimental:indent")
+    disabledRules = arrayOf("no-wildcard-imports", "experimental:indent", "experimental:argument-list-wrapping")
 }
 
 pmd {
     isConsoleOutput = true
     toolVersion = "6.28.0"
     rulePriority = 5
-//    ruleSets = listOf("category/java/errorprone.xml", "category/java/bestpractices.xml")
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))
 }
