@@ -41,8 +41,8 @@ class PatreonCheckCommand : Command() {
 
         val message = """Patreon access checks:```diff
             |${true.a("default")}
-            |${getIsPatronStatus(user).a("patron")}
-            |${getIsFullPatronStatus(user).a("patron_full")}
+            |${getIsPatronStatus(user).a("patron_rank_1")}
+            |${getIsFullPatronStatus(user).a("patron_rank_1_or_up")}
             |${isUserTagPatron(user).a("tag_patron")}
             |${getIsGuildPatronStatus(user, guild).a("guild_patron")}
             |${getIsGuildPremium(guild).a("guild_premium")}
