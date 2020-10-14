@@ -23,7 +23,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <!-- Rules are listed here: https://pmd.github.io/pmd-6.23.0/pmd_rules_java.html -->
+    <!-- Rules are listed here: https://pmd.github.io/pmd-6.28.0/pmd_rules_java.html -->
     <description>
         My custom rules
     </description>
