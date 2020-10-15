@@ -43,11 +43,6 @@ public class AnnounceCommand extends ModBaseCommand {
         this.requiredArgCount = 2;
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "announce";
-        this.aliases = new String[]{
-            "announce1",
-            "announce2",
-            "announce3",
-        };
         this.help = "Sends an announcement in the specified channel";
         this.usage = "<#channel> <message> [--noembed] [--thumbnail]";
         this.userPermissions = new Permission[]{
@@ -67,21 +62,10 @@ public class AnnounceCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!ctx.getInvoke().equalsIgnoreCase(this.name)) {
-            sendMsg(ctx, "The usage of this command changed, please check `" + ctx.getPrefix() + "help " + this.name + "`\n" +
-                "The aliases announce1, announce2 and announce3 will be removed in the future");
-            return;
-        }
-
-        if (ctx.getMessage().getMentionedChannels().isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<TextChannel> mentioned = ctx.getMessage().getMentionedChannels();
 
         if (mentioned.isEmpty()) {
-            sendMsg(ctx, "You did not specify a channel");
+            sendMsg(ctx, "You did not specify a channel, usage: " + this.getUsageInstructions(ctx));
 
             return;
         }
