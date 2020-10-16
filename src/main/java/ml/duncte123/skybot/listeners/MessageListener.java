@@ -287,7 +287,7 @@ public abstract class MessageListener extends BaseListener {
         for (final String item : blocked) {
             String string = item;
 
-            if (string.charAt(0) == '!') {
+            if (!string.isEmpty() && string.charAt(0) == '!') {
                 string = string.split("!")[1];
 
                 if (isCategory(string.toUpperCase()) && !hasCorrectCategory(raw, string, customPrefix)) {
