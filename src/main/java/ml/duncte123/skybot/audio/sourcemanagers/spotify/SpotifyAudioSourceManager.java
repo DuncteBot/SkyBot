@@ -47,9 +47,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -141,7 +139,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
 
         try {
-            final List<String> videoIDs = new ArrayList<>();
+//            final List<String> videoIDs = new ArrayList<>();
+            final TreeSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
             final Future<Album> albumFuture = this.spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
             final Album album = albumFuture.get();
 
@@ -174,7 +173,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         final String playListId = res.group(res.groupCount());
 
         try {final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
-            List<PlaylistTrack> playlistTracks = new ArrayList<>(Arrays.asList(spotifyPlaylist.getTracks().getItems()));
+            List<PlaylistTrack> playlistTracks = List.of(spotifyPlaylist.getTracks().getItems());
 
             if (playlistTracks.isEmpty()) {
                 return null;
@@ -187,7 +186,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 playlistTracks = playlistTracks.subList(0, TrackScheduler.MAX_QUEUE_SIZE);
             }
 
-            final List<String> videoIDs = new ArrayList<>();
+//            final List<String> videoIDs = new ArrayList<>();
+            final TreeSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
                 if (playlistTrack.getIsLocal()) {
@@ -317,12 +317,34 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws IOException {
-        final String videoIdsJoined = String.join(",", videoIds);
-        final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
+    private List<AudioTrack> getTrackListFromVideoIds(TreeSet<String> videoIds, Image[] images) throws IOException {
         final List<AudioTrack> playList = new ArrayList<>();
 
-        videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+        // the old way (only works for 50 trakcks, thanks youtube)
+        // final String videoIdsJoined = String.join(",", videoIds);
+        // final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
+        // videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+
+        // prevent creation of all the other lists here
+        if (videoIds.isEmpty()) {
+            return playList;
+        }
+
+        // 50 is the limit from youtube (this is not documented tho)
+        final List<String> searchBatch = new ArrayList<>(50);
+
+        while (!videoIds.isEmpty()) {
+            searchBatch.clear();
+
+            for (int i = 0; i < 50 && !videoIds.isEmpty(); i++) {
+                searchBatch.add(videoIds.pollLast());
+            }
+
+            final String videoIdsJoined = String.join(",", searchBatch);
+            final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
+
+            videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+        }
 
         return playList;
     }
