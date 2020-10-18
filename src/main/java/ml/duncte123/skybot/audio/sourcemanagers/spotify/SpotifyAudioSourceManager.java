@@ -140,7 +140,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
         try {
 //            final List<String> videoIDs = new ArrayList<>();
-            final TreeSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
+            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
             final Future<Album> albumFuture = this.spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
             final Album album = albumFuture.get();
 
@@ -187,7 +187,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             }
 
 //            final List<String> videoIDs = new ArrayList<>();
-            final TreeSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
+            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
                 if (playlistTrack.getIsLocal()) {
@@ -317,7 +317,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> getTrackListFromVideoIds(TreeSet<String> videoIds, Image[] images) throws IOException {
+    private List<AudioTrack> getTrackListFromVideoIds(NavigableSet<String> videoIds, Image[] images) throws IOException {
         final List<AudioTrack> playList = new ArrayList<>();
 
         // the old way (only works for 50 trakcks, thanks youtube)
