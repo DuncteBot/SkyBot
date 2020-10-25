@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -154,8 +155,8 @@ public class SettingsCommand extends Command {
             "**MuteRole:** " + (settings.getMuteRoleId() <= 0 || muteRole == null
             ? "Not Set" : muteRole.getAsMention()) + "\n" +
 
-            "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-            "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
+            "**Join message:** " + StringUtils.abbreviate(settings.getCustomJoinMessage(), 50) + "\n" +
+            "**Leave message:** " + StringUtils.abbreviate(settings.getCustomLeaveMessage(), 50) + "\n" +
 
             "**AutoRole:** " + (settings.getAutoroleRole() <= 0 || autoRole == null
             ? "Not Set" : autoRole.getAsMention()) + "\n" +
@@ -499,9 +500,11 @@ public class SettingsCommand extends Command {
         final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isEnableJoinMessage();
 
-        guild.setSettings(settings.setEnableJoinMessage(isEnabled));
+        guild.setSettings(
+            settings.setEnableJoinMessage(isEnabled).setEnableLeaveMessage(isEnabled)
+        );
         sendMsg(ctx, "The join and leave messages have been toggled **"
-            + (isEnabled ? "on" : "off") + "**");
+            + (isEnabled ? "on" : "off") + "** (Tip: you can toggle them individually on the dashboard)");
     }
     /// </editor-fold>
 
