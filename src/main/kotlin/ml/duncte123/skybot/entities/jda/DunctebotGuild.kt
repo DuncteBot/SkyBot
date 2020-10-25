@@ -34,10 +34,7 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
 
     var color: Int
         get() = EmbedUtils.getColorOrDefault(this.idLong)
-        set(color) {
-            EmbedUtils.addColor(this.idLong, color)
-            GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
-        }
+        set(color) = GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
 
     val hexColor = AirUtils.colorToHex(color)
 
