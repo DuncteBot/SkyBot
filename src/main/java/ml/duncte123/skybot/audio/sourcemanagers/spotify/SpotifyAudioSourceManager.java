@@ -47,7 +47,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -139,8 +141,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         }
 
         try {
-//            final List<String> videoIDs = new ArrayList<>();
-            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
+            final List<String> videoIDs = new ArrayList<>();
+//            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
             final Future<Album> albumFuture = this.spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
             final Album album = albumFuture.get();
 
@@ -186,8 +188,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 playlistTracks = playlistTracks.subList(0, TrackScheduler.MAX_QUEUE_SIZE);
             }
 
-//            final List<String> videoIDs = new ArrayList<>();
-            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
+            final List<String> videoIDs = new ArrayList<>();
+//            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
                 if (playlistTrack.getIsLocal()) {
@@ -317,7 +319,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
-    private List<AudioTrack> getTrackListFromVideoIds(NavigableSet<String> videoIds, Image[] images) throws IOException {
+    private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws IOException {
         final List<AudioTrack> playList = new ArrayList<>();
 
         // the old way (only works for 50 trakcks, thanks youtube)
@@ -330,7 +332,25 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             return playList;
         }
 
-        // 50 is the limit from youtube (this is not documented tho)
+        int startIndex = 0;
+
+        while (startIndex < videoIds.size()) {
+            final int toIndex = Math.min(startIndex + 50, videoIds.size());
+
+            System.out.println("Start " + startIndex);
+            System.out.println("To " + toIndex);
+            System.out.println("=======================");
+
+            final String videoIdsJoined = joinRange(startIndex, toIndex, videoIds);
+            final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
+
+            videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+
+            startIndex = toIndex;
+        }
+
+
+        /*// 50 is the limit from youtube (this is not documented tho)
         final List<String> searchBatch = new ArrayList<>(50);
 
         while (!videoIds.isEmpty()) {
@@ -344,9 +364,19 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
 
             videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
-        }
+        }*/
 
         return playList;
+    }
+
+    private String joinRange(int from, int to, List<String> elements) {
+        final StringJoiner joiner = new StringJoiner(",");
+
+        for (int i = from; i < to; i++) {
+            joiner.add(elements.get(i));
+        }
+
+        return joiner.toString();
     }
 
     @Nullable
