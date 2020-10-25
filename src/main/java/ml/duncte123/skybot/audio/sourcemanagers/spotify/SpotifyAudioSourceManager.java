@@ -341,10 +341,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         return playList;
     }
 
-    private String joinRange(int from, int to, List<String> elements) {
+    private String joinRange(int start, int end, List<String> elements) {
         final StringJoiner joiner = new StringJoiner(",");
 
-        for (int i = from; i < to; i++) {
+        for (int i = start; i < end; i++) {
             joiner.add(elements.get(i));
         }
 
