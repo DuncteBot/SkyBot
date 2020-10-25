@@ -142,7 +142,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
         try {
             final List<String> videoIDs = new ArrayList<>();
-//            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
             final Future<Album> albumFuture = this.spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
             final Album album = albumFuture.get();
 
@@ -189,7 +188,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             }
 
             final List<String> videoIDs = new ArrayList<>();
-//            final NavigableSet<String> videoIDs = new TreeSet<>(Comparator.reverseOrder());
 
             for (final PlaylistTrack playlistTrack : playlistTracks) {
                 if (playlistTrack.getIsLocal()) {
@@ -322,11 +320,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws IOException {
         final List<AudioTrack> playList = new ArrayList<>();
 
-        // the old way (only works for 50 trakcks, thanks youtube)
-        // final String videoIdsJoined = String.join(",", videoIds);
-        // final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
-        // videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
-
         // prevent creation of all the other lists here
         if (videoIds.isEmpty()) {
             return playList;
@@ -337,10 +330,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         while (startIndex < videoIds.size()) {
             final int toIndex = Math.min(startIndex + 50, videoIds.size());
 
-            System.out.println("Start " + startIndex);
-            System.out.println("To " + toIndex);
-            System.out.println("=======================");
-
             final String videoIdsJoined = joinRange(startIndex, toIndex, videoIds);
             final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
 
@@ -348,23 +337,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
             startIndex = toIndex;
         }
-
-
-        /*// 50 is the limit from youtube (this is not documented tho)
-        final List<String> searchBatch = new ArrayList<>(50);
-
-        while (!videoIds.isEmpty()) {
-            searchBatch.clear();
-
-            for (int i = 0; i < 50 && !videoIds.isEmpty(); i++) {
-                searchBatch.add(videoIds.pollLast());
-            }
-
-            final String videoIdsJoined = String.join(",", searchBatch);
-            final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
-
-            videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
-        }*/
 
         return playList;
     }
