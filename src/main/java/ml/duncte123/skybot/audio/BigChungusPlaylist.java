@@ -35,4 +35,8 @@ public class BigChungusPlaylist extends BasicAudioPlaylist {
     public int getOriginalSize() {
         return originalSize;
     }
+
+    public boolean isBig() {
+        return originalSize > getTracks().size();
+    }
 }

@@ -48,8 +48,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -174,7 +174,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         final String playListId = res.group(res.groupCount());
 
         try {final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
-            List<PlaylistTrack> playlistTracks = new ArrayList<>(Arrays.asList(spotifyPlaylist.getTracks().getItems()));
+            List<PlaylistTrack> playlistTracks = List.of(spotifyPlaylist.getTracks().getItems());
 
             if (playlistTracks.isEmpty()) {
                 return null;
@@ -318,13 +318,37 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private List<AudioTrack> getTrackListFromVideoIds(List<String> videoIds, Image[] images) throws IOException {
-        final String videoIdsJoined = String.join(",", videoIds);
-        final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
         final List<AudioTrack> playList = new ArrayList<>();
 
-        videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+        // prevent creation of all the other lists here
+        if (videoIds.isEmpty()) {
+            return playList;
+        }
+
+        int startIndex = 0;
+
+        while (startIndex < videoIds.size()) {
+            final int toIndex = Math.min(startIndex + 50, videoIds.size());
+
+            final String videoIdsJoined = joinRange(startIndex, toIndex, videoIds);
+            final List<Video> videosByIds = getVideosByIds(videoIdsJoined, this.config.googl);
+
+            videosByIds.forEach((video) -> playList.add(audioTrackFromVideo(video, images)));
+
+            startIndex = toIndex;
+        }
 
         return playList;
+    }
+
+    private String joinRange(int start, int end, List<String> elements) {
+        final StringJoiner joiner = new StringJoiner(",");
+
+        for (int i = start; i < end; i++) {
+            joiner.add(elements.get(i));
+        }
+
+        return joiner.toString();
     }
 
     @Nullable

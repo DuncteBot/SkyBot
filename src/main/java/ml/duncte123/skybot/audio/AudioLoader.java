@@ -118,9 +118,14 @@ public class AudioLoader implements AudioLoadResultHandler {
             }
 
             if (this.announce) {
-                final String sizeMsg = playlist instanceof BigChungusPlaylist ?
-                    playlist.getTracks().size() + "/" + ((BigChungusPlaylist) playlist).getOriginalSize() :
-                    String.valueOf(playlist.getTracks().size());
+                final String sizeMsg;
+
+                if (playlist instanceof BigChungusPlaylist && ((BigChungusPlaylist) playlist).isBig()) {
+                    sizeMsg = playlist.getTracks().size() + "/" + ((BigChungusPlaylist) playlist).getOriginalSize();
+                } else {
+                    sizeMsg = String.valueOf(playlist.getTracks().size());
+                }
+
                 final String msg = String.format(
                     "Adding **%s** tracks to the queue from playlist %s",
                     sizeMsg,
