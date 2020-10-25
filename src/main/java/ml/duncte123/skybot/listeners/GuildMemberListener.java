@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
@@ -40,10 +41,13 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 
 import javax.annotation.Nonnull;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class GuildMemberListener extends BaseListener {
 
@@ -72,8 +76,40 @@ public class GuildMemberListener extends BaseListener {
 
     private void onGuildMemberJoin(GuildMemberJoinEvent event) {
         final Guild guild = event.getGuild();
-        if (event.getMember().equals(guild.getSelfMember())) {
+        final Member member = event.getMember();
+        final Member selfMember = guild.getSelfMember();
+
+        if (member.equals(selfMember)) {
             return;
+        }
+
+        final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+
+        if (settings.isYoungAccountBanEnabled()) {
+            final User user = event.getUser();
+            final OffsetDateTime timeCreated = user.getTimeCreated();
+
+            final long daysBetween = Duration.between(timeCreated, OffsetDateTime.now()).toDays();
+            final int threshold = settings.getYoungAccountThreshold();
+
+            if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
+                final String reason = "Account is newer than " + threshold + " days";
+
+                guild.ban(member, 0, reason)
+                    .reason(reason)
+                    .queue();
+
+                modLog(
+                    selfMember.getUser(),
+                    member.getUser(),
+                    "banned",
+                    reason,
+                    new DunctebotGuild(guild, this.variables)
+                );
+
+                // returning here to prevent any welcome messages from being send
+                return;
+            }
         }
 
         final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
@@ -94,8 +130,6 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
-
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long channelId = settings.getWelcomeLeaveChannel();
 
@@ -107,11 +141,11 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+        if (settings.isAutoroleEnabled() && selfMember.hasPermission(Permission.MANAGE_ROLES)) {
             final Role role = guild.getRoleById(settings.getAutoroleRole());
 
-            if (role != null && !guild.getPublicRole().equals(role) && guild.getSelfMember().canInteract(role)) {
-                guild.addRoleToMember(event.getMember(), role).queue(null, it -> {});
+            if (role != null && !guild.getPublicRole().equals(role) && selfMember.canInteract(role)) {
+                guild.addRoleToMember(member, role).queue(null, it -> {});
             }
         }
     }
@@ -146,7 +180,7 @@ public class GuildMemberListener extends BaseListener {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
         // If the leave message is enabled and we have a welcome channel
-        if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
+        if (settings.isEnableLeaveMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long channelId = settings.getWelcomeLeaveChannel();
 
             final TextChannel channel = guild.getTextChannelById(channelId);
