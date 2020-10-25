@@ -18,17 +18,15 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.dunctebot.models.settings.GuildSetting;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
-import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import com.dunctebot.models.settings.GuildSetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,13 +58,7 @@ public class GuildSettingsUtils {
             (storedSettings) -> {
 
                 storedSettings.forEach(
-                    (setting) -> {
-                        guildSettings.put(setting.getGuildId(), setting);
-
-                        if (setting.getEmbedColor() != Settings.DEFAULT_COLOUR) {
-                            EmbedUtils.addColor(setting.getGuildId(), setting.getEmbedColor());
-                        }
-                    }
+                    (setting) -> guildSettings.put(setting.getGuildId(), setting)
                 );
 
                 LOGGER.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
@@ -142,6 +134,7 @@ public class GuildSettingsUtils {
     }
 
     public static void updateEmbedColor(long guildId, int color, Variables variables) {
+        getGuild(guildId, variables).setEmbedColor(color);
         variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
     }
 

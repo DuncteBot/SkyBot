@@ -20,7 +20,6 @@ package ml.duncte123.skybot.web.handlers
 
 import com.dunctebot.models.settings.GuildSetting
 import com.fasterxml.jackson.databind.JsonNode
-import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
@@ -50,7 +49,6 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
 
             variables.guildSettingsCache.invalidate(longId)
             variables.vcAutoRoleCache.remove(longId)
-            EmbedUtils.removeColor(longId)
         }
     }
 }
