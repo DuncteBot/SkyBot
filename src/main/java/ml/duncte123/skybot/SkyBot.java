@@ -87,10 +87,11 @@ public final class SkyBot {
     };
 
     private SkyBot() throws LoginException {
-        this.configureDefaults();
-
         // Load in our container
         final Variables variables = new Variables();
+
+        this.configureDefaults(variables);
+
         final DunctebotConfig config = variables.getConfig();
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
@@ -159,7 +160,7 @@ public final class SkyBot {
         }
     }
 
-    private void configureDefaults() {
+    private void configureDefaults(Variables variables) {
         // Set our animated emotes as default reactions
         MessageUtils.setErrorReaction("a:_no:577795484060483584");
         MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
@@ -172,6 +173,9 @@ public final class SkyBot {
                 .setColor(Settings.DEFAULT_COLOUR)
 //                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
 //                .setTimestamp(Instant.now())
+        );
+        EmbedUtils.setEmbedColorSupplier(
+            (guildId) -> GuildSettingsUtils.getGuild(guildId, variables).getEmbedColor()
         );
 
         MessageAction.setDefaultMentions(List.of(
