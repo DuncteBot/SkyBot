@@ -69,7 +69,7 @@ public class ChangeLogCommand extends Command {
 
             for (final String item : body.split("\n")) {
                 final String hash = item.substring(0, 7);
-                final String text = item.substring(8);
+                final String text = item.substring(8).trim();
 
                 builder.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
             }
