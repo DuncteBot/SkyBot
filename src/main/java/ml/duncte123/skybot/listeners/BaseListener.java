@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 
 public abstract class BaseListener implements EventListener {
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseListener.class);
+    // TODO: use a scheduler instead
     protected final ExecutorService handlerThread = Executors.newCachedThreadPool((r) -> {
         final Thread thread = new Thread(r, "Listener-handle-thread");
         thread.setDaemon(true);

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
+import io.sentry.Sentry;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -281,7 +282,7 @@ public class GuildListener extends BaseListener {
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                Sentry.capture(e);
             }
         });
     }
