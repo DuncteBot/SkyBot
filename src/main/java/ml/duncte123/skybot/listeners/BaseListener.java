@@ -45,11 +45,7 @@ public abstract class BaseListener implements EventListener {
             112319935652298752L, // Carbon
             439866052684283905L, // Discord Boats
             387812458661937152L, // Botlist.space
-            483344253963993113L, // AutomaCord
             454933217666007052L, // Divine Discord Bot List
-            446682534135201793L, // Discords best bots
-            477792727577395210L, // discordbotlist.xyz
-            475571221946171393L, // bots.discordlist.app
             568567800910839811L, // discordextremelist.xyz
         }
     );*/
@@ -63,6 +59,12 @@ public abstract class BaseListener implements EventListener {
         this.variables = variables;
     }
 
+    /**
+     * Checks if a guild is a bot-farm, we will ignore botfarms
+     *
+     * @param guild the guild to check
+     * @return true if we consider this guild a botfarm
+     */
     /* package */ boolean isBotfarm(Guild guild) {
         // TODO: Fix this check
         return false;
@@ -86,14 +88,14 @@ public abstract class BaseListener implements EventListener {
         final long totalMembers = guild.getMemberCount();
 
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
-        logger.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));
-        logger.debug("botToUserRatio[1] <= maxBotPercentage " + (botToUserRatio[1] <= maxBotPercentage));
+        LOGGER.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));
+        LOGGER.debug("botToUserRatio[1] <= maxBotPercentage " + (botToUserRatio[1] <= maxBotPercentage));
 
         if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > minTotalMembers)) {
             return false;
         }
 
-        logger.debug("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
+        LOGGER.debug("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
             TextColor.RED,
             guild,
             botToUserRatio[1],

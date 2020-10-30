@@ -38,6 +38,8 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
+import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -67,6 +69,10 @@ public class GuildListener extends BaseListener {
             this.onGuildBan((GuildBanEvent) event);
         } else if (event instanceof GuildUnbanEvent) {
             this.onGuildUnban((GuildUnbanEvent) event);
+        } else if (event instanceof GuildInviteCreateEvent) {
+            this.onGuildInviteCreate((GuildInviteCreateEvent) event);
+        } else if (event instanceof GuildInviteDeleteEvent) {
+            this.onGuildInviteDelete((GuildInviteDeleteEvent) event);
         }
     }
 
@@ -172,6 +178,14 @@ public class GuildListener extends BaseListener {
 
     private void onGuildBan(GuildBanEvent event) {
         modLogBanUnban(ActionType.BAN, event.getUser(), event.getGuild());
+    }
+
+    private void onGuildInviteCreate(GuildInviteCreateEvent event) {
+        //
+    }
+
+    private void onGuildInviteDelete(GuildInviteDeleteEvent event) {
+        //
     }
 
     private void modLogBanUnban(ActionType type, User user, Guild guild) {
