@@ -24,6 +24,7 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
+import ml.duncte123.skybot.listeners.InviteTrackingListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -48,6 +49,7 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
+    private final InviteTrackingListener inviteTracking;
     private final List<EventListener> listeners = new ArrayList<>();
 
     /* package */ EventManager(Variables variables) {
@@ -56,6 +58,7 @@ public class EventManager implements IEventManager {
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
         final ShardWatcher shardWatcher = new ShardWatcher();
+        this.inviteTracking = new InviteTrackingListener(variables);
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
@@ -63,6 +66,7 @@ public class EventManager implements IEventManager {
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
         this.listeners.add(shardWatcher);
+        this.listeners.add(inviteTracking);
 
         if (LavalinkManager.INS.isEnabled()) {
             this.listeners.add(LavalinkManager.INS.getLavalink());
@@ -119,5 +123,9 @@ public class EventManager implements IEventManager {
 
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
+    }
+
+    public InviteTrackingListener getInviteTracking() {
+        return this.inviteTracking;
     }
 }

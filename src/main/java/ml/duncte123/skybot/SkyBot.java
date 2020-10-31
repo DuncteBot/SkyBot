@@ -121,6 +121,7 @@ public final class SkyBot {
         // Build our shard manager
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
             GatewayIntent.GUILD_MEMBERS,
+            GatewayIntent.GUILD_INVITES,
             GatewayIntent.GUILD_BANS,
             GatewayIntent.GUILD_EMOJIS,
             GatewayIntent.GUILD_VOICE_STATES,
