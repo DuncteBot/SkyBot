@@ -1,5 +1,3 @@
-[codacy]: https://api.codacy.com/project/badge/Grade/3ac632a5366a47e6a3a534303b4eb5f8
-[codacyLink]: https://www.codacy.com/app/DuncteBot/SkyBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DuncteBot/SkyBot&amp;utm_campaign=Badge_Grade
 [circle]: https://circleci.com/gh/DuncteBot/SkyBot/tree/master.svg?style=shield
 [circleLink]: https://circleci.com/gh/DuncteBot/SkyBot/tree/master
 [dbl]: https://discordbots.org/api/widget/status/210363111729790977.png
@@ -10,7 +8,7 @@
 [patronLink]: https://patreon.com/DuncteBot
 [patronImage]: https://img.shields.io/badge/Donate-Patreon-orange.svg
 
-[![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Patreon][patronImage]][patronLink] [![Support Guild][discord]][discordLink]
+[![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Patreon][patronImage]][patronLink] [![Support Guild][discord]][discordLink]
 
 # SkyBot 
 SkyBot is an LGBT-friendly multipurpose discord bot with features such as music and moderation.
