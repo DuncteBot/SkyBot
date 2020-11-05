@@ -49,7 +49,7 @@ public class EventManager implements IEventManager {
     public static boolean shouldFakeBlock = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final InviteTrackingListener inviteTracking;
+    private final InviteTrackingListener inviteTracker;
     private final List<EventListener> listeners = new ArrayList<>();
 
     /* package */ EventManager(Variables variables) {
@@ -58,7 +58,7 @@ public class EventManager implements IEventManager {
         final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables); // Extends the message listener
         final DeHoistListener deHoistListener = new DeHoistListener(variables);
         final ShardWatcher shardWatcher = new ShardWatcher();
-        this.inviteTracking = new InviteTrackingListener(variables);
+        this.inviteTracker = new InviteTrackingListener(variables);
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
@@ -66,7 +66,7 @@ public class EventManager implements IEventManager {
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
         this.listeners.add(shardWatcher);
-        this.listeners.add(inviteTracking);
+        this.listeners.add(inviteTracker);
 
         if (LavalinkManager.INS.isEnabled()) {
             this.listeners.add(LavalinkManager.INS.getLavalink());
@@ -125,7 +125,7 @@ public class EventManager implements IEventManager {
         return this.reactionHandler;
     }
 
-    public InviteTrackingListener getInviteTracking() {
-        return this.inviteTracking;
+    public InviteTrackingListener getInviteTracker() {
+        return this.inviteTracker;
     }
 }

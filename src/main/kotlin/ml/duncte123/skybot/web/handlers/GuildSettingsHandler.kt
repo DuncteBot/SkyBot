@@ -20,11 +20,15 @@ package ml.duncte123.skybot.web.handlers
 
 import com.dunctebot.models.settings.GuildSetting
 import com.fasterxml.jackson.databind.JsonNode
+import ml.duncte123.skybot.EventManager
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.isUnavailable
+import ml.duncte123.skybot.listeners.InviteTrackingListener
+import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
+import net.dv8tion.jda.api.entities.Guild
 
 class GuildSettingsHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     override fun handleInternally(data: JsonNode) {
@@ -39,16 +43,27 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
 
     private fun updateGuildSettings(guildSettings: JsonNode) {
         val shardManager = SkyBot.getInstance().shardManager
+        val settings = variables.guildSettingsCache
 
         guildSettings.forEach {
             val setting = variables.jackson.readValue(it.traverse(), GuildSetting::class.java)
+            val guild = shardManager.getGuildById(setting.guildId)
 
-            if (shardManager.getGuildById(setting.guildId) != null && !shardManager.isUnavailable(setting.guildId)) {
-                variables.guildSettingsCache.put(setting.guildId, setting)
+            if (guild != null && !shardManager.isUnavailable(setting.guildId)) {
+                val current = settings.getIfPresent(setting.guildId)
+                val tracker = guild.globalInviteTracker
 
-                // TODO
-                //  - Check if invite caching is enabled
-                //  - Init caching if it is enabled
+                settings.put(setting.guildId, setting)
+
+                if (current?.isInviteLoggingEnabled == false && setting.isInviteLoggingEnabled) {
+                    // setting was turned on
+                    if (CommandUtils.isGuildPatron(guild)) {
+                        tracker.attemptInviteCaching(guild)
+                    }
+                } else if (current?.isInviteLoggingEnabled == true && !setting.isInviteLoggingEnabled) {
+                    // setting was turned off
+                    tracker.clearInvites(setting.guildId)
+                }
             }
         }
     }
@@ -61,4 +76,7 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
             variables.vcAutoRoleCache.remove(longId)
         }
     }
+
+    private val Guild.globalInviteTracker: InviteTrackingListener
+        get() = (this.jda.eventManager as EventManager).inviteTracker
 }

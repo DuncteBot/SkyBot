@@ -155,10 +155,14 @@ public class InviteTrackingListener extends BaseListener {
     private void onGuildLeave(final GuildLeaveEvent event) {
         final long guildId = event.getGuild().getIdLong();
 
+        clearInvites(guildId);
+    }
+
+    public void clearInvites(long guildId) {
         inviteCache.entrySet().removeIf(entry -> entry.getValue().getGuildId() == guildId);
     }
 
-    private void attemptInviteCaching(final Guild guild) {
+    public void attemptInviteCaching(Guild guild) {
         final Member selfMember = guild.getSelfMember();
 
         if (!selfMember.hasPermission(Permission.MANAGE_SERVER)) {
