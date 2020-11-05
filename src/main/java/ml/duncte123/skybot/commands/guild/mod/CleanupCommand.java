@@ -111,6 +111,27 @@ public class CleanupCommand extends ModBaseCommand {
             return;
         }
 
+        final int total = getTotal(args, ctx);
+
+        // if the total is -1 it means that the user got notified for someting being wrong
+        if (total == -1) {
+            return;
+        }
+
+        final TextChannel channel = ctx.getChannel();
+        final var flags = ctx.getParsedFlags(this);
+        final boolean keepPinned = flags.containsKey("keep-pinned");
+        final boolean clearBots = flags.containsKey("bots-only");
+        // Start of the annotation
+        channel.getIterableHistory()
+            .takeAsync(total)
+            .thenApplyAsync((msgs) -> handleMessages(msgs, keepPinned, clearBots, ctx))
+            .exceptionally((thr) -> handleException(thr, ctx))
+            .whenCompleteAsync((count, thr) -> handleComplete(count, ctx));
+        // End of the annotation
+    }
+
+    private int getTotal(List<String> args, CommandContext ctx) {
         int total = 5;
 
         // if size == 0 then this will just be skipped
@@ -122,7 +143,8 @@ public class CleanupCommand extends ModBaseCommand {
                 catch (NumberFormatException e) {
                     sendError(ctx.getMessage());
                     sendMsg(ctx, "Error: Amount to clear is not a valid number");
-                    return;
+
+                    return -1;
                 }
                 if (total < 1 || total > 1000) {
                     sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
@@ -130,96 +152,103 @@ public class CleanupCommand extends ModBaseCommand {
                         .setMessage("Error: count must be minimal 2 and maximal 1000\n" +
                             "To clear an entire channel it's better to use `" + ctx.getPrefix() + "purgechannel`")
                         .build());
-                    return;
+
+                    return -1;
                 }
             }
         }
 
+        return total;
+    }
+
+    private int handleMessages(List<Message> msgs, boolean keepPinned, boolean clearBots, CommandContext ctx) {
         final TextChannel channel = ctx.getChannel();
-        final var flags = ctx.getParsedFlags(this);
-        final boolean keepPinned = flags.containsKey("keep-pinned");
-        final boolean clearBots = flags.containsKey("bots-only");
-        // Start of the annotation
-        channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
-            Stream<Message> msgStream = msgs.stream();
+        Stream<Message> msgStream = msgs.stream();
 
-            if (keepPinned) {
-                msgStream = msgStream.filter((msg) -> !msg.isPinned());
-            }
-            if (clearBots) {
-                msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
-            }
+        if (keepPinned) {
+            msgStream = msgStream.filter((msg) -> !msg.isPinned());
+        }
+        if (clearBots) {
+            msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
+        }
 
-            final List<Message> msgList = msgStream
-                //TODO: Still needed?
-//                .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
-                .collect(Collectors.toList());
+        final List<Message> msgList = msgStream
+            // TODO: Still needed?
+            // .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
+            .collect(Collectors.toList());
 
-            final CompletableFuture<Message> hack = new CompletableFuture<>();
-            sendMsg(MessageConfig.Builder.fromCtx(ctx)
-                .setMessage("Deleting messages, please wait this might take a long time (this message will be deleted once complete)")
-                .setSuccessAction(hack::complete)
-                .build());
+        final CompletableFuture<Message> hack = new CompletableFuture<>();
+        sendMsg(MessageConfig.Builder.fromCtx(ctx)
+            .setMessage("Deleting messages, please wait this might take a long time (this message will be deleted once complete)")
+            .setSuccessAction(hack::complete)
+            .build());
 
-            try {
-                final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
-                    .stream()
-                    .map(this::hackTimeout)
-                    .toArray(CompletableFuture[]::new);
+        try {
+            final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
+                .stream()
+                .map(this::hackTimeout)
+                .toArray(CompletableFuture[]::new);
 
-                final CompletableFuture<Void> futureStore = CompletableFuture.allOf(futures);
+            final CompletableFuture<Void> futureStore = CompletableFuture.allOf(futures);
 
-                futureMap.put(channel.getIdLong(), futureStore);
+            this.futureMap.put(channel.getIdLong(), futureStore);
 
-                futureStore.get();
-            }
-            catch (ErrorResponseException e) {
-                if (e.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
-                    modLog(String.format("Failed to delete messages in %s, channel was deleted during progress", channel), ctx.getGuild());
-                    return -100;
-                }
-
-                Sentry.capture(e);
-            }
-            catch (CancellationException e) {
-                sendSuccess(ctx.getMessage());
-                sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
-                    .setChannel(ctx.getChannel())
-                    .setMessage("Cancelled successfully.")
-                    .build());
-            }
-            catch (InterruptedException | ExecutionException e) {
-                Sentry.capture(e);
-            }
-            finally {
-                removeMessage(channel, hack);
-                futureMap.remove(channel.getIdLong());
+            futureStore.get();
+        }
+        catch (ErrorResponseException e) {
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                modLog(String.format("Failed to delete messages in %s, channel was deleted during progress", channel), ctx.getGuild());
+                return -100;
             }
 
-            return msgList.size();
-        }).exceptionally((thr) -> {
-            String cause = "";
-
-            if (thr.getCause() != null) {
-                cause = " caused by: " + thr.getCause().getMessage();
-            }
-
-            sendMsg(ctx, "ERROR: " + thr.getMessage() + cause);
-
-            return -100;
-        }).whenCompleteAsync((count, thr) -> {
-            if (count == -100) {
-                return;
-            }
-
+            Sentry.capture(e);
+        }
+        catch (CancellationException e) {
+            sendSuccess(ctx.getMessage());
             sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
                 .setChannel(ctx.getChannel())
-                .setMessageFormat("Removed %d messages! (this message will auto delete in 5 seconds)", count)
+                .setMessage("Cancelled successfully.")
                 .build());
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Sentry.capture(e);
+        }
+        finally {
+            removeMessage(channel, hack);
+            this.futureMap.remove(channel.getIdLong());
+        }
 
-            modLog(String.format("%d messages removed in %s by %s", count, channel, ctx.getAuthor().getAsTag()), ctx.getGuild());
-        });
-        // End of the annotation
+        return msgList.size();
+    }
+
+    private int handleException(Throwable thr, CommandContext ctx) {
+        String cause = "";
+
+        if (thr.getCause() != null) {
+            cause = " caused by: " + thr.getCause().getMessage();
+        }
+
+        sendMsg(ctx, "ERROR: " + thr.getMessage() + cause);
+
+        return -100;
+    }
+
+    private void handleComplete(int count, CommandContext ctx) {
+        if (count == -100) {
+            return;
+        }
+
+        sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
+            .setChannel(ctx.getChannel())
+            .setMessageFormat("Removed %d messages! (this message will auto delete in 5 seconds)", count)
+            .build());
+
+        modLog(String.format(
+            "%d messages removed in %s by %#s",
+            count,
+            ctx.getChannel(),
+            ctx.getAuthor()
+        ), ctx.getGuild());
     }
 
     /**

@@ -85,50 +85,11 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
-        if (settings.isYoungAccountBanEnabled()) {
-            final User user = event.getUser();
-            final OffsetDateTime timeCreated = user.getTimeCreated();
-
-            final long daysBetween = Duration.between(timeCreated, OffsetDateTime.now()).toDays();
-            final int threshold = settings.getYoungAccountThreshold();
-
-            if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
-                final String reason = "Account is newer than " + threshold + " days";
-
-                guild.ban(member, 0, reason)
-                    .reason(reason)
-                    .queue();
-
-                modLog(
-                    selfMember.getUser(),
-                    member.getUser(),
-                    "banned",
-                    reason,
-                    new DunctebotGuild(guild, this.variables)
-                );
-
-                // returning here to prevent any welcome messages from being send
-                return;
-            }
+        if (settings.isYoungAccountBanEnabled() && bannedAccount(event, guild, member, selfMember, settings)) {
+            return;
         }
 
-        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
-
-        if (guildCounts != null) {
-            final User user = event.getUser();
-
-            if (user.isBot()) {
-                guildCounts.bots += 1;
-            } else {
-                guildCounts.users += 1;
-
-                final String avatarId = user.getAvatarId();
-
-                if (avatarId != null && avatarId.startsWith("a_")) {
-                    guildCounts.nitroUsers += 1;
-                }
-            }
-        }
+        updateGuildCount(event, guild);
 
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long channelId = settings.getWelcomeLeaveChannel();
@@ -148,6 +109,55 @@ public class GuildMemberListener extends BaseListener {
                 guild.addRoleToMember(member, role).queue(null, it -> {});
             }
         }
+    }
+
+    private void updateGuildCount(GuildMemberJoinEvent event, Guild guild) {
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+
+        if (guildCounts != null) {
+            final User user = event.getUser();
+
+            if (user.isBot()) {
+                guildCounts.bots += 1;
+            } else {
+                guildCounts.users += 1;
+
+                final String avatarId = user.getAvatarId();
+
+                if (avatarId != null && avatarId.startsWith("a_")) {
+                    guildCounts.nitroUsers += 1;
+                }
+            }
+        }
+    }
+
+    private boolean bannedAccount(GuildMemberJoinEvent event, Guild guild, Member member, Member selfMember, GuildSetting settings) {
+        final User user = event.getUser();
+        final OffsetDateTime timeCreated = user.getTimeCreated();
+
+        final long daysBetween = Duration.between(timeCreated, OffsetDateTime.now()).toDays();
+        final int threshold = settings.getYoungAccountThreshold();
+
+        if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
+            final String reason = "Account is newer than " + threshold + " days";
+
+            guild.ban(member, 0, reason)
+                .reason(reason)
+                .queue();
+
+            modLog(
+                selfMember.getUser(),
+                member.getUser(),
+                "banned",
+                reason,
+                new DunctebotGuild(guild, this.variables)
+            );
+
+            // returning true here to prevent any welcome messages from being send
+            return true;
+        }
+
+        return false;
     }
 
     private void onGuildMemberRemove(GuildMemberRemoveEvent event) {

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.dunctebot.models.settings.GuildSetting;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
@@ -26,7 +27,6 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -38,8 +38,6 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
-import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
-import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -69,10 +67,6 @@ public class GuildListener extends BaseListener {
             this.onGuildBan((GuildBanEvent) event);
         } else if (event instanceof GuildUnbanEvent) {
             this.onGuildUnban((GuildUnbanEvent) event);
-        } else if (event instanceof GuildInviteCreateEvent) {
-            this.onGuildInviteCreate((GuildInviteCreateEvent) event);
-        } else if (event instanceof GuildInviteDeleteEvent) {
-            this.onGuildInviteDelete((GuildInviteDeleteEvent) event);
         }
     }
 
@@ -178,14 +172,6 @@ public class GuildListener extends BaseListener {
 
     private void onGuildBan(GuildBanEvent event) {
         modLogBanUnban(ActionType.BAN, event.getUser(), event.getGuild());
-    }
-
-    private void onGuildInviteCreate(GuildInviteCreateEvent event) {
-        //
-    }
-
-    private void onGuildInviteDelete(GuildInviteDeleteEvent event) {
-        //
     }
 
     private void modLogBanUnban(ActionType type, User user, Guild guild) {

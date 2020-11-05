@@ -58,6 +58,7 @@ public class InviteTrackingListener extends BaseListener {
         CommandUtils.ONEGUILD_PATRONS.put(191231307290771456L, 191245668617158656L);
     }
 
+    @Override
     public void onEvent(@NotNull GenericEvent event) {
         if (!(event instanceof GenericGuildEvent)) {
             return;
@@ -128,14 +129,15 @@ public class InviteTrackingListener extends BaseListener {
 
                 cachedInvite.incrementUses();
 
-                final String pattern = "User %s used invite with url %s, created by %s to join.";
+                /*final String pattern = "User %s used invite with url %s, created by %s to join.";
                 final String tag = user.getAsTag();
                 final String url = invite.getUrl();
                 @SuppressWarnings("ConstantConditions") final String inviterTag = invite.getInviter().getAsTag();
                 final String toLog = String.format(pattern, tag, url, inviterTag);
 
-                System.out.println(toLog);
-                break;
+                System.out.println(toLog);*/
+                // TODO: shut PMD up about this break statement
+                // break;
             }
         });
     }
