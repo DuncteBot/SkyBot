@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 //  - Add row in database for invite logging switch
 //  - Add switch to dashboard
 //  - Make sure setting is only for patron guilds
-//  - Attempt caching invites when guild has become premium
+//  - Attempt caching invites when guild has become premium or when the switch is flipped
 
 public class InviteTrackingListener extends BaseListener {
     private final Map<String, InviteData> inviteCache = new ConcurrentHashMap<>();
@@ -63,6 +63,16 @@ public class InviteTrackingListener extends BaseListener {
             return;
         }
 
+        // events that we always want to handle no mater what (has to do with cleanup)
+        // return in both cases so the code stops here
+        if (event instanceof GuildInviteDeleteEvent) {
+            this.onGuildInviteDelete((GuildInviteDeleteEvent) event);
+            return;
+        } else if (event instanceof GuildLeaveEvent) {
+            this.onGuildLeave((GuildLeaveEvent) event);
+            return;
+        }
+
         final Guild guild = ((GenericGuildEvent) event).getGuild();
 
         if (!isInviteLoggingEnabled(guild)) {
@@ -71,8 +81,6 @@ public class InviteTrackingListener extends BaseListener {
 
         if (event instanceof GuildInviteCreateEvent) {
             this.onGuildInviteCreate((GuildInviteCreateEvent) event);
-        } else if (event instanceof GuildInviteDeleteEvent) {
-            this.onGuildInviteDelete((GuildInviteDeleteEvent) event);
         } else if (event instanceof GuildMemberJoinEvent) {
             this.onGuildMemberJoin((GuildMemberJoinEvent) event);
         } else if (event instanceof GuildReadyEvent) {
@@ -80,8 +88,6 @@ public class InviteTrackingListener extends BaseListener {
         } else if (event instanceof GuildJoinEvent) {
             // probably not needed, doubt that any guilds will be patreon guilds on join
             this.onGuildJoin((GuildJoinEvent) event);
-        } else if (event instanceof GuildLeaveEvent) {
-            this.onGuildLeave((GuildLeaveEvent) event);
         }
     }
 

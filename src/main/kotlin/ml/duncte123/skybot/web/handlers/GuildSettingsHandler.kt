@@ -20,7 +20,9 @@ package ml.duncte123.skybot.web.handlers
 
 import com.dunctebot.models.settings.GuildSetting
 import com.fasterxml.jackson.databind.JsonNode
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.extensions.isUnavailable
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 
@@ -36,10 +38,18 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
     }
 
     private fun updateGuildSettings(guildSettings: JsonNode) {
+        val shardManager = SkyBot.getInstance().shardManager
+
         guildSettings.forEach {
             val setting = variables.jackson.readValue(it.traverse(), GuildSetting::class.java)
 
-            variables.guildSettingsCache.put(setting.guildId, setting)
+            if (shardManager.getGuildById(setting.guildId) != null && !shardManager.isUnavailable(setting.guildId)) {
+                variables.guildSettingsCache.put(setting.guildId, setting)
+
+                // TODO
+                //  - Check if invite caching is enabled
+                //  - Init caching if it is enabled
+            }
         }
     }
 
