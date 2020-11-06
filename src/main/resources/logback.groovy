@@ -58,6 +58,16 @@ appender("Sentry", SentryAppender) {
 
 root(INFO, ["STDOUT", "Sentry"])
 
+//appender("FILE", FileAppender) {
+//    file = "./lavaplayer.log"
+//    append = true
+//    encoder(PatternLayoutEncoder) {
+//        pattern = "%level %logger - %msg%n"
+//    }
+//}
+//
+//root(DEBUG, ["STDOUT", "FILE"])
+
 //logger('net.dv8tion.jda.internal.requests.WebSocketClient', TRACE)
 //logger('net.notfab.caching.client.CacheClient', TRACE)
 //logger('net.dv8tion.jda.internal.requests.RateLimiter', TRACE)

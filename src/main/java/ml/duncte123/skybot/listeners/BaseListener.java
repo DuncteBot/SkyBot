@@ -18,7 +18,13 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.slf4j.Logger;
@@ -26,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BaseListener implements EventListener {
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseListener.class);
@@ -37,7 +44,7 @@ public abstract class BaseListener implements EventListener {
     });
     protected final Variables variables;
     // A list of servers that list bots
-    /*private static final TLongList botLists = new TLongArrayList(
+    private static final TLongList botLists = new TLongArrayList(
         new long[]{
             110373943822540800L, // Dbots
             264445053596991498L, // Dbl
@@ -48,12 +55,12 @@ public abstract class BaseListener implements EventListener {
             454933217666007052L, // Divine Discord Bot List
             568567800910839811L, // discordextremelist.xyz
         }
-    );*/
+    );
 
     // Keeps track of the guilds that we are leaving as botfarms so that we don't have to check every time
-    /*private static final Cache<Long, Character> botfarmCache = Caffeine.newBuilder()
+    private static final Cache<Long, Character> botfarmCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
-        .build();*/
+        .build();
 
     /* package */ BaseListener(Variables variables) {
         this.variables = variables;
@@ -67,9 +74,9 @@ public abstract class BaseListener implements EventListener {
      */
     /* package */ boolean isBotfarm(Guild guild) {
         // TODO: Fix this check
-        return false;
+//        return false;
 
-        /*if (botLists.contains(guild.getIdLong())) {
+        if (botLists.contains(guild.getIdLong())) {
             return false;
         }
 
@@ -89,7 +96,7 @@ public abstract class BaseListener implements EventListener {
 
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
         LOGGER.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));
-        LOGGER.debug("botToUserRatio[1] <= maxBotPercentage " + (botToUserRatio[1] <= maxBotPercentage));
+        LOGGER.debug("botToUserRatio[1] >= maxBotPercentage " + (botToUserRatio[1] >= maxBotPercentage));
 
         if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > minTotalMembers)) {
             return false;
@@ -106,7 +113,7 @@ public abstract class BaseListener implements EventListener {
 
         botfarmCache.put(guild.getIdLong(), 'a');
 
-        return true;*/
+        return true;
     }
 
 }
