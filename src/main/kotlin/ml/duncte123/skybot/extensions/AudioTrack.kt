@@ -20,7 +20,6 @@ package ml.duncte123.skybot.extensions
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
 import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
@@ -75,10 +74,6 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         return (this.info as AudioTrackInfoWithImage).image
     }
 
-    /*if (this is SpotifyAudioTrack && this.info is AudioTrackInfoWithImage) {
-        return (this.info as AudioTrackInfoWithImage).image
-    }*/
-
     if (this is YoutubeAudioTrack) {
         return YoutubeUtils.getThumbnail(this.identifier)
     }
@@ -87,11 +82,11 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         return "https://static-cdn.jtvnw.net/previews-ttv/live_user_${this.info.author}-320x180.jpg?r=${System.currentTimeMillis()}"
     }
 
-    if (this is BeamAudioTrack) {
-        val id = this.identifier.split("|")[0]
+    /*if (this is BeamAudioTrack) {
+        val id = this.identifier.substring(0, this.identifier.indexOf('|'))
 
         return "https://thumbs.mixer.com/channel/$id.small.jpg?r=${System.currentTimeMillis()}"
-    }
+    }*/
 
     if (this is GetyarnAudioTrack) {
         // Gif url https://y.yarn.co/{id}_text.gif
@@ -102,8 +97,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
     if (!onlyStatic) {
         if (this is VimeoAudioTrack) {
             return try {
-                val split = this.identifier.split("/")
-                val id = split[split.size - 1]
+                val id = this.identifier.substring(this.identifier.lastIndexOf('/') + 1)
                 val url = "https://vimeo.com/api/v2/video/$id.json"
                 val json = WebUtils.ins.getJSONArray(url).execute()[0]
 

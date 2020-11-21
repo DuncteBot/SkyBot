@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.guild.mod;
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
@@ -31,6 +31,7 @@ import net.dv8tion.jda.internal.requests.RestActionImpl;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -42,27 +43,42 @@ public class HackbanCommand extends ModBaseCommand {
         this.requiresArgs = true;
         this.name = "hackban";
         this.help = "Ban a user before they can join your server.";
-        this.usage = "<userId...>";
+        this.usage = "<userId...> [-r reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
+        };
+        this.flags = new Flag[]{
+            new Flag(
+                'r',
+                "reason",
+                "Sets the reason for this hackban (default: `Hackban by user#discrim`)"
+            )
         };
     }
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-        final List<String> messages = new ArrayList<>();
+        final Map<String, List<String>> parsedFlags = ctx.getParsedFlags(this);
+        final List<String> args = parsedFlags.get("undefined");
+        final List<String> userids = new ArrayList<>();
 
-        for (final String arg0 : args) {
+        final String reason;
+
+        if (parsedFlags.containsKey("r")) {
+            reason = String.join(" ", parsedFlags.get("r"));
+        } else {
+            reason = String.format("Hackban by %#s", ctx.getAuthor());
+        }
+
+        for (final String arg : args) {
             String userId = "";
 
-            if (arg0.matches("<@\\d{17,20}>")) {
-                userId = arg0.substring(2, args.get(0).length() - 1);
-            } else if (arg0.matches(".{2,32}#\\d{4}")) {
+            if (arg.matches("<@\\d{17,20}>")) {
+                userId = arg.substring(2, args.get(0).length() - 1);
+            } else if (arg.matches(".{2,32}#\\d{4}")) {
 
                 final Optional<User> opt = ctx.getShardManager().getUserCache()
-                    .getElementsByName(arg0.substring(0, arg0.length() - 5), false)
+                    .getElementsByName(arg.substring(0, arg.length() - 5), false)
                     .stream()
                     .findFirst();
 
@@ -70,10 +86,10 @@ public class HackbanCommand extends ModBaseCommand {
                     userId = opt.get().getId();
                 }
 
-            } else if (arg0.matches("\\d{17,20}")) {
-                userId = arg0;
+            } else if (arg.matches("\\d{17,20}")) {
+                userId = arg;
             } else {
-                sendMsg(ctx, "id `" + arg0 + "` does not match anything valid or is not a known user");
+                sendMsg(ctx, "id `" + arg + "` does not match anything valid or is not a known user");
                 continue;
             }
 
@@ -85,8 +101,8 @@ public class HackbanCommand extends ModBaseCommand {
 
             try {
                 final String finalId = userId;
-                final String reason = String.format("Hackban by %#s", ctx.getAuthor());
-                event.getGuild().ban(finalId, 0, reason)
+
+                ctx.getGuild().ban(finalId, 0, reason)
                     .reason(reason)
                     .queue(null, (thr) -> {
                         if (thr instanceof ErrorResponseException) {
@@ -95,7 +111,7 @@ public class HackbanCommand extends ModBaseCommand {
                             RestActionImpl.getDefaultFailure().accept(thr);
                         }
                 });
-                messages.add(finalId);
+                userids.add(finalId);
             }
             catch (HierarchyException e) {
               sendMsg(ctx, String.format("Could not ban id `%s`", userId));
@@ -106,6 +122,18 @@ public class HackbanCommand extends ModBaseCommand {
             }
         }
 
-        sendMsg(ctx, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
+        if (userids.isEmpty()) {
+            sendMsg(ctx, "Could not ban any of the user ids provided");
+            return;
+        }
+
+        sendMsg(
+            ctx,
+            String.format(
+                "Users with ids `%s` are now banned with reason `%s`",
+                String.join("`, `", userids),
+                reason
+            )
+        );
     }
 }

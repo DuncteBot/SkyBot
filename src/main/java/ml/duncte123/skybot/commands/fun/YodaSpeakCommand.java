@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
@@ -58,7 +59,11 @@ public class YodaSpeakCommand extends Command {
 
             final String yoda = ctx.getRandom().nextInt(2) == 1 ? "<:yoda:578198258351079438> " : "<:BABY_YODA:670269491736870972> ";
 
-            sendMsg(ctx, yoda + response.get("data").asText());
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .replyTo(ctx.getMessage())
+                    .setMessage(yoda + response.get("data").asText())
+            );
         }
         catch (Exception e) {
             Sentry.capture(e);
