@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.invites.InviteData;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -40,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 // TODO:
 //  - Make entry in guild settings for invite logging
@@ -135,15 +138,19 @@ public class InviteTrackingListener extends BaseListener {
 
                 cachedInvite.incrementUses();
 
-                /*final String pattern = "User %s used invite with url %s, created by %s to join.";
+                final String pattern = "User **%s** used invite with url %s, created by **%s** to join.";
                 final String tag = user.getAsTag();
                 final String url = invite.getUrl();
                 @SuppressWarnings("ConstantConditions") final String inviterTag = invite.getInviter().getAsTag();
                 final String toLog = String.format(pattern, tag, url, inviterTag);
 
-                System.out.println(toLog);*/
-                // TODO: shut PMD up about this break statement
-                // break;
+                modLog(
+                    toLog,
+                    new DunctebotGuild(guild, variables)
+                );
+
+                // break out of the loop to prevent looping over other invites
+                break;
             }
         });
     }
