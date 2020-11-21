@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import gnu.trove.map.hash.TLongObjectHashMap
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
@@ -82,11 +83,11 @@ class ChatCommand : Command() {
             //
         }
 
-        if (event.message.contentRaw.contains("prefix")) {
+        if (ctx.message.contentRaw.toLowerCase().contains("prefix")) {
             sendMsg(
-                ctx,
-                "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                    .replace("{PREFIX}", ctx.prefix)
+                MessageConfig.Builder.fromCtx(ctx)
+                    .replyTo(ctx.message)
+                    .setMessage(responses.random().replace("{PREFIX}", ctx.prefix))
             )
             return
         }
@@ -115,7 +116,13 @@ class ChatCommand : Command() {
 
         session.think(message) {
             val response = parseATags(it)
-            sendMsg(ctx, "${event.author.asMention}, $response")
+
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .replyTo(ctx.message)
+                    .setMessage(response)
+            )
+
             LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
     }

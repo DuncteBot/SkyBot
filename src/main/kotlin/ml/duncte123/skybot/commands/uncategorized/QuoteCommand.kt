@@ -23,6 +23,8 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.time.Month
+import java.time.OffsetDateTime
 
 class QuoteCommand : Command() {
 
@@ -32,8 +34,18 @@ class QuoteCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        WebUtils.ins.getText("http://inspirobot.me/api?generate=true").async {
+        WebUtils.ins.getText("http://inspirobot.me/api?${getQ()}").async {
             sendEmbed(ctx, EmbedUtils.embedImage(it))
+        }
+    }
+
+    private fun getQ() = buildString {
+        append("generate=true")
+
+        val date = OffsetDateTime.now()
+
+        if (date.month == Month.DECEMBER && date.dayOfMonth >= 25) {
+            append("&season=xmas")
         }
     }
 }

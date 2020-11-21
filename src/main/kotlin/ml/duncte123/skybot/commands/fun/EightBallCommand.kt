@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -48,6 +49,7 @@ class EightBallCommand : Command() {
     )
 
     init {
+        this.requiresArgs = true
         this.category = CommandCategory.FUN
         this.name = "8ball"
         this.help = "Ask a question to magic the 8ball"
@@ -55,12 +57,10 @@ class EightBallCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.argsWithQuotes.isEmpty()) {
-            this.sendUsageInstructions(ctx)
-
-            return
-        }
-
-        sendMsg(ctx, "\uD83C\uDFB1 " + eightBallResponses[ctx.random.nextInt(eightBallResponses.size)])
+        sendMsg(
+            MessageConfig.Builder.fromCtx(ctx)
+                .replyTo(ctx.message)
+                .setMessage("\uD83C\uDFB1 ${eightBallResponses.random()}")
+        )
     }
 }

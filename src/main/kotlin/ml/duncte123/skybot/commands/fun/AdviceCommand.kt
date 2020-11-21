@@ -19,8 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.github.natanbc.reliqua.request.RequestException
-import me.duncte123.botcommons.messaging.EmbedUtils.embedMessageWithTitle
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
@@ -51,9 +50,17 @@ class AdviceCommand : Command() {
 
             val advice = json["slip"]["advice"].asText()
 
-            sendEmbed(ctx, embedMessageWithTitle("Here's some advice", advice))
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .replyTo(ctx.message)
+                    .setMessage(advice)
+            )
         } catch (ex: RequestException) {
-            sendMsg(ctx, "An SSL error has occurred and a secure connection to the server cannot be made. - William Shakespeare")
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .replyTo(ctx.message)
+                    .setMessage("An SSL error has occurred and a secure connection to the server cannot be made. - William Shakespeare")
+            )
         }
     }
 }

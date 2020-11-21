@@ -184,6 +184,7 @@ public final class SkyBot {
             // Message.MentionType.CHANNEL,
             // Message.MentionType.EMOTE
         ));
+        MessageAction.setDefaultMentionRepliedUser(false);
         // Set some defaults for rest-actions
         RestAction.setPassContext(true);
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));

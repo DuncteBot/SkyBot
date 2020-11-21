@@ -106,7 +106,7 @@ public abstract class ImageCommandBase extends Command {
         final TextChannel channel = event.getChannel();
 
         if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
-            channel.sendFile(image, getFileName()).queue();
+            channel.sendFile(image, getFileName()).reference(event.getMessage()).queue();
         } else {
             sendMsg(channel, "I need permission to upload files in order for this command to work.");
         }
