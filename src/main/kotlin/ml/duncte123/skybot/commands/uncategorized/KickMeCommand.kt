@@ -64,6 +64,7 @@ class KickMeCommand : Command() {
                                         event.author,
                                         "kicked",
                                         "Used the kickme command",
+                                        null,
                                         ctx.guild
                                     )
                                 }

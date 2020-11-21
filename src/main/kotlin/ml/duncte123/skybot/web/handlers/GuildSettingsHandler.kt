@@ -49,21 +49,25 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
             val setting = variables.jackson.readValue(it.traverse(), GuildSetting::class.java)
             val guild = shardManager.getGuildById(setting.guildId)
 
-            if (guild != null && !shardManager.isUnavailable(setting.guildId)) {
-                val current = settings.getIfPresent(setting.guildId)
-                val tracker = guild.globalInviteTracker
+            // only update the setting if we have the guild in cache
+            if (guild != null) {
+                // if the guild is there we attempt cache the invites
+                if (!shardManager.isUnavailable(setting.guildId)) {
+                    val oldSetting = settings.getIfPresent(setting.guildId)
+                    val tracker = guild.globalInviteTracker
+
+                    // setting was turned on
+                    if (oldSetting?.isInviteLoggingEnabled == false && setting.isInviteLoggingEnabled) {
+                        if (CommandUtils.isGuildPatron(guild)) {
+                            tracker.attemptInviteCaching(guild)
+                        }
+                        // setting was turned off
+                    } else if (oldSetting?.isInviteLoggingEnabled == true && !setting.isInviteLoggingEnabled) {
+                        tracker.clearInvites(setting.guildId)
+                    }
+                }
 
                 settings.put(setting.guildId, setting)
-
-                if (current?.isInviteLoggingEnabled == false && setting.isInviteLoggingEnabled) {
-                    // setting was turned on
-                    if (CommandUtils.isGuildPatron(guild)) {
-                        tracker.attemptInviteCaching(guild)
-                    }
-                } else if (current?.isInviteLoggingEnabled == true && !setting.isInviteLoggingEnabled) {
-                    // setting was turned off
-                    tracker.clearInvites(setting.guildId)
-                }
             }
         }
     }

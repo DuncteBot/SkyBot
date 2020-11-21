@@ -114,6 +114,12 @@ public class InviteTrackingListener extends BaseListener {
             return;
         }
 
+        if (inviteCache.isEmpty()) {
+            // we can't check for invites if they are empty, we'll cache the invites for future use
+            attemptInviteCaching(guild);
+            return;
+        }
+
         guild.retrieveInvites().queue((invites) -> {
             for (final Invite invite : invites) {
                 final String code = invite.getCode();
@@ -165,6 +171,10 @@ public class InviteTrackingListener extends BaseListener {
     }
 
     public void attemptInviteCaching(Guild guild) {
+        if (!isInviteLoggingEnabled(guild)) {
+            return;
+        }
+
         final Member selfMember = guild.getSelfMember();
 
         if (!selfMember.hasPermission(Permission.MANAGE_SERVER)) {

@@ -212,6 +212,7 @@ public class GuildListener extends BaseListener {
                             user,
                             type == ActionType.BAN ? "banned" : "unbanned",
                             action.getReason(),
+                            null,
                             dbg
                         );
 

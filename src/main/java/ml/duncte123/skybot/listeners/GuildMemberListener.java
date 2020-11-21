@@ -150,6 +150,7 @@ public class GuildMemberListener extends BaseListener {
                 member.getUser(),
                 "banned",
                 reason,
+                null,
                 new DunctebotGuild(guild, this.variables)
             );
 

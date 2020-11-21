@@ -106,7 +106,7 @@ class WarnCommand : ModBaseCommand() {
             reason
         ) { future.complete(null) }
 
-        modLog(modUser, targetUser, "warned", reason, guild)
+        modLog(modUser, targetUser, "warned", reason, null, guild)
 
         // Yes we can warn bots (cuz why not) but we cannot dm them
         if (!targetUser.isBot) {
@@ -164,7 +164,7 @@ class WarnCommand : ModBaseCommand() {
         when (action.type) {
             WarnAction.Type.MUTE -> {
                 applyMuteRole(target, guild)
-                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "muted", "Reached $warnings warnings", null, guild)
             }
             WarnAction.Type.TEMP_MUTE -> {
                 applyMuteRole(target, guild)
@@ -183,7 +183,7 @@ class WarnCommand : ModBaseCommand() {
             }
             WarnAction.Type.KICK -> {
                 ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
-                modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", null, guild)
             }
             WarnAction.Type.TEMP_BAN -> {
                 val (finalUnbanDate, dur) = "${action.duration}d".toDuration()
@@ -202,7 +202,7 @@ class WarnCommand : ModBaseCommand() {
             }
             WarnAction.Type.BAN -> {
                 ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
-                modLog(modUser, targetUser, "banned", "Reached $warnings warnings", guild)
+                modLog(modUser, targetUser, "banned", "Reached $warnings warnings", null, guild)
             }
         }
     }

@@ -44,7 +44,7 @@ public abstract class BaseListener implements EventListener {
     });
     protected final Variables variables;
     // A list of servers that list bots
-    private static final TLongList botLists = new TLongArrayList(
+    private static final TLongList BOT_LISTS = new TLongArrayList(
         new long[]{
             110373943822540800L, // Dbots
             264445053596991498L, // Dbl
@@ -58,7 +58,7 @@ public abstract class BaseListener implements EventListener {
     );
 
     // Keeps track of the guilds that we are leaving as botfarms so that we don't have to check every time
-    private static final Cache<Long, Character> botfarmCache = Caffeine.newBuilder()
+    private static final Cache<Long, Character> BOT_FARM_CACHE = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .build();
 
@@ -76,11 +76,11 @@ public abstract class BaseListener implements EventListener {
         // TODO: Fix this check
 //        return false;
 
-        if (botLists.contains(guild.getIdLong())) {
+        if (BOT_LISTS.contains(guild.getIdLong())) {
             return false;
         }
 
-        if (botfarmCache.asMap().containsKey(guild.getIdLong())) {
+        if (BOT_FARM_CACHE.asMap().containsKey(guild.getIdLong())) {
             return true;
         }
 
@@ -91,7 +91,6 @@ public abstract class BaseListener implements EventListener {
         final double maxBotPercentage = 70;
 
         final double[] botToUserRatio = GuildUtils.getBotRatio(guild);
-        final long[] counts = GuildUtils.getBotAndUserCount(guild);
         final long totalMembers = guild.getMemberCount();
 
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
@@ -102,7 +101,9 @@ public abstract class BaseListener implements EventListener {
             return false;
         }
 
-        LOGGER.debug("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
+        final long[] counts = GuildUtils.getBotAndUserCount(guild);
+
+        LOGGER.info("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
             TextColor.RED,
             guild,
             botToUserRatio[1],
@@ -111,7 +112,7 @@ public abstract class BaseListener implements EventListener {
             TextColor.RESET
         );
 
-        botfarmCache.put(guild.getIdLong(), 'a');
+        BOT_FARM_CACHE.put(guild.getIdLong(), 'a');
 
         return true;
     }

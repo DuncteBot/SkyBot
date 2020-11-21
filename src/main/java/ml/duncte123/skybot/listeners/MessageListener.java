@@ -428,7 +428,7 @@ public abstract class MessageListener extends BaseListener {
 
             if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                 modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                    settings.getKickState() ? "kicked" : "muted", "spam", guild);
+                    settings.getKickState() ? "kicked" : "muted", "spam", null, guild);
             }
         }
     }

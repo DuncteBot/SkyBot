@@ -82,7 +82,7 @@ public class UnbanCommand extends ModBaseCommand {
                         .queue();
 
                     sendMsg(ctx, "User " + userFormatted + " unbanned.");
-                    modLog(mod, ban.getUser(), "unbanned", ctx.getGuild());
+                    modLog(mod, ban.getUser(), "unbanned", null, null, ctx.getGuild());
                     return;
                 }
             }

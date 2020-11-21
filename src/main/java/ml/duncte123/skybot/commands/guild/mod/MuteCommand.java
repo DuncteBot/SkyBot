@@ -90,7 +90,7 @@ public class MuteCommand extends ModBaseCommand {
 
         ctx.getGuild().addRoleToMember(toMute, role)
             .reason("Muted by " + ctx.getAuthor().getAsTag() + ": " + reason).queue(success -> {
-                ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+                ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", null, null, ctx.getGuild());
                 sendSuccess(ctx.getMessage());
             }
         );

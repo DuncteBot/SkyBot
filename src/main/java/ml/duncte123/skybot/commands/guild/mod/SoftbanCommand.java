@@ -98,7 +98,7 @@ public class SoftbanCommand extends ModBaseCommand {
             ctx.getGuild().ban(toBanMember, 1, fReason)
                 .reason("Kicked by: " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(
                 nothing -> {
-                    ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, ctx.getGuild());
+                    ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, null, ctx.getGuild());
                     MessageUtils.sendSuccess(ctx.getMessage());
                     ctx.getGuild().unban(toBan.getId())
                         .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag()).queue();

@@ -109,7 +109,7 @@ public class TempBanCommand extends ModBaseCommand {
                     modLog(ctx.getAuthor(), toBan, "banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     LOGGER.error("Perm ban code in temp ban ran {}", args);
-                    modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                    modLog(ctx.getAuthor(), toBan, "banned", fReason, null, ctx.getGuild());
                 }
             }
         );

@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -77,7 +78,8 @@ public class ModerationUtils {
         return true;
     }
 
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild guild) {
+    public static void modLog(@Nonnull User mod, @Nonnull User punishedUser, @Nonnull String punishment,
+                              @Nullable String reason, @Nullable String time, DunctebotGuild guild) {
         if (!isLogEnabled(punishment, guild)) {
             return;
         }
@@ -88,12 +90,18 @@ public class ModerationUtils {
             length = " lasting **" + time + "**";
         }
 
+        String reasonLine = "";
+
+        if (reason != null && !reason.isEmpty()) {
+            reasonLine = " with reason _\"" + reason + "\"_";
+        }
+
         modLog(String.format("User **%#s** got **%s** by **%#s**%s%s",
             punishedUser,
             punishment,
             mod,
             length,
-            reason == null || reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+            reasonLine
         ), guild);
     }
 
@@ -136,14 +144,6 @@ public class ModerationUtils {
             default:
                 return true;
         }
-    }
-
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild guild) {
-        modLog(mod, punishedUser, punishment, reason, "", guild);
-    }
-
-    public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild guild) {
-        modLog(mod, unbannedUser, punishment, "", guild);
     }
 
     public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
@@ -212,7 +212,7 @@ public class ModerationUtils {
 
             guild.removeRoleFromMember(target, muteRole).reason("Mute expired").queue();
 
-            modLog(new ConsoleUser(), targetUser, "unmuted", dbGuild);
+            modLog(new ConsoleUser(), targetUser, "unmuted", null, null, dbGuild);
         }
 
         LOG.debug("Checking done, unmuted {} users.", mutes.size());
@@ -259,7 +259,7 @@ public class ModerationUtils {
             );
 
             // Send the unban to the log channel
-            modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild, variables));
+            modLog(new ConsoleUser(), fakeUser, "unbanned", null, null, new DunctebotGuild(guild, variables));
         }
 
         LOG.debug("Checking done, unbanned {} users.", bans.size());
