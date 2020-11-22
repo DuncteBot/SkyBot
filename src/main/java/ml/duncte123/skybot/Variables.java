@@ -113,7 +113,7 @@ public final class Variables {
         }));
 
         this.audioUtils = new AudioUtils(this.config.apis, this);
-        this.alexflipnote = new Alexflipnote(this.mapper);
+        this.alexflipnote = new Alexflipnote(this.mapper, this.config.apis.alexflipnote);
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
             .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
             .setToken(this.config.apis.weebSh)

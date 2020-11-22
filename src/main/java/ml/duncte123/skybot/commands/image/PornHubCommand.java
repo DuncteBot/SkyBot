@@ -18,19 +18,40 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public abstract class NoPatronImageCommand extends ImageCommandBase {
+public class PornHubCommand extends ImageCommandBase {
 
-    @Nonnull
+    public PornHubCommand() {
+        this.name = "pornhub";
+        this.help = "Generates a pornhub logo";
+        this.usage = "<text1>|<text2>";
+    }
+
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
+    public void execute(@NotNull CommandContext ctx) {
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (!passes(event)) {
+            return;
+        }
+
+        final String[] split = splitString(ctx);
+
+        if (split == null) {
+            return;
+        }
+
+        if (split[0].length() > 200 || split[1].length() > 200) {
+            sendMsg(ctx, "Please limit your input to 200 characters to either side of the bar");
+
+            return;
+        }
+
+        ctx.getAlexFlipnote().getPornhub(split[0], split[1]).async((image) -> handleBasicImage(event, image));
     }
 }

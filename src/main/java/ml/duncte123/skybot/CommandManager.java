@@ -234,6 +234,7 @@ public class CommandManager {
         this.addCommand(new PixelateCommand());
         this.addCommand(new PlayCommand());
         this.addCommand(new PlayRawCommand());
+        this.addCommand(new PornHubCommand());
         this.addCommand(new PPlayCommand());
         this.addCommand(new PronounsCheckCommand());
         this.addCommand(new PunchCommand());
