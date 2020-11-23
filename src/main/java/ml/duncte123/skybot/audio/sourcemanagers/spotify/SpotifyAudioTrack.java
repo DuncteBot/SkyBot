@@ -51,13 +51,13 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
             try {
                 final List<SearchResult> results = searchYoutubeIdOnly(info.title + " " + info.author, this.apiKey, 1L);
 
-                if (!results.isEmpty()) {
-                    this.youtubeId = results.get(0).getId().getVideoId();
-                    // HACK: set the identifier on the trackInfo object
-                    this.setIdentifier(this.youtubeId);
-                } else {
+                if (results.isEmpty()) {
                     throw new FriendlyException("Failed to read info for " + info.uri, Severity.SUSPICIOUS, null);
                 }
+
+                this.youtubeId = results.get(0).getId().getVideoId();
+                // HACK: set the identifier on the trackInfo object
+                this.setIdentifier(this.youtubeId);
             } catch (IOException e) {
                throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);
             }
@@ -66,7 +66,7 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
         return this.youtubeId;
     }
 
-    private void setIdentifier(String id) {
+    private void setIdentifier(String videoId) {
         final Class<AudioTrackInfo> infoCls = AudioTrackInfo.class;
 
         try {
@@ -74,7 +74,7 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
 
             identifier.setAccessible(true);
 
-            identifier.set(this.trackInfo, id);
+            identifier.set(this.trackInfo, videoId);
         }
         catch (NoSuchFieldException | IllegalAccessException e) {
             throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);

@@ -19,12 +19,8 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class NoPatronImageCommand extends ImageCommandBase {
 
