@@ -36,7 +36,7 @@ class RadioCommand : MusicCommand() {
         this.withAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
-        this.help = "Adds a radio http stream to your queue and goes to it"
+        this.help = "Stops all currently playing music and starts a radio station"
         this.usage = "<(full)list/station name>"
 
         loadStations()

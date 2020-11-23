@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly;
@@ -52,6 +53,8 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
 
                 if (!results.isEmpty()) {
                     this.youtubeId = results.get(0).getId().getVideoId();
+                    // HACK: set the identifier on the trackInfo object
+                    this.setIdentifier(this.youtubeId);
                 } else {
                     throw new FriendlyException("Failed to read info for " + info.uri, Severity.SUSPICIOUS, null);
                 }
@@ -61,6 +64,21 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
         }
 
         return this.youtubeId;
+    }
+
+    private void setIdentifier(String id) {
+        final Class<AudioTrackInfo> infoCls = AudioTrackInfo.class;
+
+        try {
+            final Field identifier = infoCls.getDeclaredField("identifier");
+
+            identifier.setAccessible(true);
+
+            identifier.set(this.trackInfo, id);
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);
+        }
     }
 
     @Override
