@@ -39,6 +39,7 @@ public class DunctebotConfig {
     }
 
     public static class Apis {
+        public String alexflipnote;
         public Cache youtubeCache;
         public String googl;
         public String weebSh;

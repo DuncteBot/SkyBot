@@ -19,32 +19,10 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class NoPatronImageCommand extends ImageCommandBase {
-
-    @Nullable
-    protected String[] splitString(CommandContext ctx) {
-
-        final String[] split = ctx.getArgsDisplay().split("\\|", 2);
-
-        if (split.length < 2) {
-            sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
-            return null;
-        }
-
-        if ("".equals(split[0].trim()) || "".equals(split[1].trim())) {
-            sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
-            return null;
-        }
-
-        return split;
-    }
 
     @Nonnull
     @Override

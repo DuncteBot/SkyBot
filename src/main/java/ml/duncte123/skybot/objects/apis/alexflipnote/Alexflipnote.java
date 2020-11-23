@@ -35,9 +35,11 @@ import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 public class Alexflipnote {
 
     private final ObjectMapper mapper;
+    private final String apiKey;
 
-    public Alexflipnote(ObjectMapper mapper) {
+    public Alexflipnote(ObjectMapper mapper, String apiKey) {
         this.mapper = mapper;
+        this.apiKey = apiKey;
     }
 
     public PendingRequest<FlipnoteColourObj> getColour(String color) {
@@ -115,9 +117,18 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getPornhub(String text1, String text2) {
+        final QueryBuilder builder = new QueryBuilder().append("text", text1).append("text2", text2);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("pornhub" + builder.build()),
+            IOHelper::read
+        );
+    }
+
     private Request makeRequest(String path) {
         return defaultRequest()
             .url("https://api.alexflipnote.dev/" + path)
+            .addHeader("Authorization", this.apiKey)
             .get()
             .build();
     }

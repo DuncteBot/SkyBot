@@ -22,10 +22,12 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
@@ -88,7 +90,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
 
         if (player.getPlayingTrack() == null) {
-            player.playTrack(track);
+            this.play(track);
         } else {
             queue.offer(track);
         }
@@ -124,7 +126,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             player.stopTrack();
             sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
         } else {
-            player.playTrack(nextTrack);
+            this.play(nextTrack);
         }
     }
 
@@ -181,7 +183,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         final AudioTrack clone = lastTrack.makeClone();
         clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
-        this.player.playTrack(clone);
+        this.play(clone);
     }
 
     public boolean isRepeating() {
@@ -225,9 +227,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         final Throwable rootCause = ExceptionUtils.getRootCause(exception);
         final Throwable finalCause = rootCause == null ? exception : rootCause;
+        final AudioTrackInfo info = track.getInfo();
 
         if (finalCause == null || finalCause.getMessage() == null) {
-            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + track.getIdentifier() +
+            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + info.identifier +
                 "`\nPlease contact the developers asap with the identifier in the message above");
             return;
         }
@@ -237,12 +240,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
 
         if (finalCause.getMessage().contains("age-restricted")) {
-            this.messageDebouncer.accept("Cannot play `" + track.getInfo().title + "` because it is age-restricted");
+            this.messageDebouncer.accept("Cannot play `" + info.title + "` because it is age-restricted");
             return;
         }
 
         this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
-            track.getIdentifier()
+            info.identifier
             + "`, please contact the devs if this happens a lot.\n" +
             "Details: " + finalCause);
 
@@ -267,5 +270,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             }
 
         }*/
+    }
+
+    public void play(AudioTrack track) {
+        // load the youtube identifier before we play the track
+        if (track instanceof SpotifyAudioTrack) {
+            track.getIdentifier();
+        }
+
+        this.player.playTrack(track);
     }
 }
