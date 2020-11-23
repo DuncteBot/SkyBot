@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.TriConsumer;
@@ -88,7 +89,8 @@ public class SettingsCommand extends Command {
             "\u2022 `joinMessageState`: Toggles the join and leave messages on or off, this item has no set value\n" +
             "\u2022 `kickMode`: Toggles the kick mode for spammers between muting and kicking, this item has no set value\n" +
             "\u2022 `spamFilter`: Toggles the spam filter on or off, this item has no set value\n" +
-            "\u2022 `swearFilter`: Toggles the swear filter on or off, this item has no set value";
+            "\u2022 `swearFilter`: Toggles the swear filter on or off, this item has no set value\n" +
+            "\u2022 `inviteLogging`: Toggles the logging of invite usage on or off, this item has no set value";
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
@@ -494,7 +496,7 @@ public class SettingsCommand extends Command {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
+    /// <editor-fold desc="joinMessageStateSetting" defaultstate="collapsed">
     private void joinMessageStateSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSetting settings = guild.getSettings();
@@ -565,7 +567,26 @@ public class SettingsCommand extends Command {
     }
     /// </editor-fold>
 
-    /// <editor-fold desc="helpers" defaultstate="uncollapsed">
+    /// <editor-fold desc="inviteLoggingSetting" defaultstate="collapsed">
+    private void inviteLoggingSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSetting settings = guild.getSettings();
+        final boolean isEnabled = !settings.isInviteLoggingEnabled();
+
+        guild.setSettings(settings.setInviteLoggingEnabled(isEnabled));
+        sendMsg(ctx, "The logging of invites has been toggled **" +
+            (isEnabled ? "on" : "off") + "**");
+
+        if (isEnabled) {
+            // attempt caching
+            ((EventManager) ctx.getJDA().getEventManager())
+                .getInviteTracker()
+                .attemptInviteCaching(ctx.getJDAGuild());
+        }
+    }
+    /// </editor-fold>
+
+    /// <editor-fold desc="helpers" defaultstate="collapsed">
     private void loadSettingsMap() {
         this.settingsMap.put("autoRole", this::autoRoleSetting);
         this.settingsMap.put("muteRole", this::muteRoleSetting);
@@ -584,6 +605,7 @@ public class SettingsCommand extends Command {
         this.settingsMap.put("kickMode", this::kickModeSetting);
         this.settingsMap.put("spamFilter", this::spamFilterSetting);
         this.settingsMap.put("swearFilter", this::swearFilterSetting);
+        this.settingsMap.put("inviteLogging", this::inviteLoggingSetting);
     }
 
     @Nullable

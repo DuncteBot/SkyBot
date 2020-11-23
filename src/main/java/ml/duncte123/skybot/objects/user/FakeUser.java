@@ -119,6 +119,7 @@ public class FakeUser implements User {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isFake() {
         return true;

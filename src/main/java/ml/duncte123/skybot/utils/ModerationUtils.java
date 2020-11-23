@@ -55,7 +55,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
-@SuppressWarnings("PMD") // TODO: have a good look at this
+//@SuppressWarnings("PMD") // TODO: have a good look at this
 public class ModerationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
 

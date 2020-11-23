@@ -72,6 +72,7 @@ public class GuildUtils {
             }
             catch (ExecutionException | InterruptedException e) {
                 Sentry.capture(e);
+                LOGGER.error("Failed to fetch member counts", e);
                 // backup if we fail to fetch
                 GUILD_MEMBER_COUNTS.put(guild.getIdLong(), new GuildMemberInfo());
             }

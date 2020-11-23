@@ -50,7 +50,6 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 //  - Add switch to dashboard
 //  - Make sure setting is only for patron guilds
 //  - Attempt caching invites when guild has become premium or when the switch is flipped
-
 public class InviteTrackingListener extends BaseListener {
     private final Map<String, InviteData> inviteCache = new ConcurrentHashMap<>();
 
@@ -124,7 +123,15 @@ public class InviteTrackingListener extends BaseListener {
         }
 
         guild.retrieveInvites().queue((invites) -> {
+            boolean inviteFound = false;
+
             for (final Invite invite : invites) {
+                // break out of the loop to prevent looping over other invites
+                if (inviteFound) {
+                    System.out.println("Breaking");
+                    break;
+                }
+
                 final String code = invite.getCode();
                 final InviteData cachedInvite = inviteCache.get(code);
 
@@ -136,9 +143,11 @@ public class InviteTrackingListener extends BaseListener {
                     continue;
                 }
 
+                inviteFound = true;
+
                 cachedInvite.incrementUses();
 
-                final String pattern = "User **%s** used invite with url %s, created by **%s** to join.";
+                final String pattern = "User **%s** used invite with url <%s>, created by **%s** to join.";
                 final String tag = user.getAsTag();
                 final String url = invite.getUrl();
                 @SuppressWarnings("ConstantConditions") final String inviterTag = invite.getInviter().getAsTag();
@@ -148,9 +157,6 @@ public class InviteTrackingListener extends BaseListener {
                     toLog,
                     new DunctebotGuild(guild, variables)
                 );
-
-                // break out of the loop to prevent looping over other invites
-                break;
             }
         });
     }

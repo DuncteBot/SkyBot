@@ -202,7 +202,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 logWarn = ? ,
                 profanity_type = ? ,
                 aiSensitivity = ?,
-                allow_all_to_stop = ?
+                allow_all_to_stop = ?,
+                invite_logging = ?
                 WHERE guildId='${guildSettings.guildId}'
                 """.trimMargin()
             ).use {
@@ -232,6 +233,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setString(24, guildSettings.filterType.type)
                 it.setFloat(25, guildSettings.aiSensitivity)
                 it.setBoolean(26, guildSettings.isAllowAllToStop)
+                it.setBoolean(27, guildSettings.isInviteLoggingEnabled)
                 it.executeUpdate()
             }
         }
@@ -1075,6 +1077,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setFilterType(this.getString("profanity_type"))
             .setAiSensitivity(this.getFloat("aiSensitivity"))
             .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
+            .setInviteLoggingEnabled(this.getBoolean("invite_logging"))
             .setBlacklistedWords(blackList)
             .setWarnActions(warnActions)
             .setEmbedColor(embedColor)
