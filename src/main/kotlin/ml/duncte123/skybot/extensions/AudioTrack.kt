@@ -75,7 +75,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
     }
 
     if (this is YoutubeAudioTrack) {
-        return YoutubeUtils.getThumbnail(this.identifier)
+        return YoutubeUtils.getThumbnail(this.info.identifier)
     }
 
     if (this is TwitchStreamAudioTrack) {
@@ -90,14 +90,15 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
     if (this is GetyarnAudioTrack) {
         // Gif url https://y.yarn.co/{id}_text.gif
-        return "https://y.yarn.co/${this.identifier}_screenshot.jpg"
+        return "https://y.yarn.co/${this.info.identifier}_screenshot.jpg"
     }
 
     // The following make a REST request for the thumbnail
     if (!onlyStatic) {
         if (this is VimeoAudioTrack) {
             return try {
-                val id = this.identifier.substring(this.identifier.lastIndexOf('/') + 1)
+                val info = this.info
+                val id = info.identifier.substring(info.identifier.lastIndexOf('/') + 1)
                 val url = "https://vimeo.com/api/v2/video/$id.json"
                 val json = WebUtils.ins.getJSONArray(url).execute()[0]
 
