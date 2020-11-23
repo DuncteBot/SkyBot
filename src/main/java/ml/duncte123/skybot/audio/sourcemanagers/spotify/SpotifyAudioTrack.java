@@ -18,16 +18,53 @@
 
 package ml.duncte123.skybot.audio.sourcemanagers.spotify;
 
-
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import ml.duncte123.skybot.Author;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
+import java.io.IOException;
+import java.util.List;
+
+import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly;
+
 public class SpotifyAudioTrack extends YoutubeAudioTrack {
+    private final String apiKey;
+    private final SpotifyAudioSourceManager sourceManager;
 
-    /* default */ SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
-        super(trackInfo, sourceManager);
+    private String youtubeId;
+
+    /* default */ SpotifyAudioTrack(AudioTrackInfo trackInfo, String apiKey, SpotifyAudioSourceManager sourceManager) {
+        super(trackInfo, sourceManager.youtubeAudioSourceManager);
+        this.apiKey = apiKey;
+        this.sourceManager = sourceManager;
+    }
+
+    // custom override to load the youtube id
+    @Override
+    public String getIdentifier() {
+        if (this.youtubeId == null) {
+            final AudioTrackInfo info = this.trackInfo;
+            try {
+                final List<SearchResult> results = searchYoutubeIdOnly(info.title + " " + info.author, this.apiKey, 1L);
+
+                if (!results.isEmpty()) {
+                    this.youtubeId = results.get(0).getId().getVideoId();
+                } else {
+                    throw new FriendlyException("Failed to read info for " + info.uri, Severity.SUSPICIOUS, null);
+                }
+            } catch (IOException e) {
+               throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);
+            }
+        }
+
+        return this.youtubeId;
+    }
+
+    @Override
+    protected AudioTrack makeShallowClone() {
+        return new SpotifyAudioTrack(trackInfo, this.apiKey, sourceManager);
     }
 }

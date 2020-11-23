@@ -99,7 +99,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
         }
 
         return tracks.stream()
-            .filter((track) -> selectedVideoId.equals(track.getIdentifier()))
+            .filter((track) -> selectedVideoId.equals(track.getInfo().identifier))
             .findFirst()
             .orElse(null);
     }
