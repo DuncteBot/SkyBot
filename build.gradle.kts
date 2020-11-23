@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_219") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_221") {
         exclude(module = "opus-java")
     }
 
@@ -108,7 +108,7 @@ dependencies {
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.13")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.6")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")

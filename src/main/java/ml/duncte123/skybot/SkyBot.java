@@ -45,10 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntFunction;
 
 import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
@@ -65,14 +62,6 @@ public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
-    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor((r) -> {
-        final Thread thread = new Thread(r, "Game-Update-Thread");
-        thread.setDaemon(true);
-        return thread;
-    });
-    private final IntFunction<? extends Activity> activityProvider = (shardId) -> Activity.playing(
-        Settings.PREFIX + "help | Shard " + (shardId + 1)
-    );
     private WebSocketClient client;
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
@@ -128,7 +117,9 @@ public final class SkyBot {
         )
             .setToken(token)
             .setShardsTotal(totalShards)
-            .setActivityProvider(this.activityProvider)
+            .setActivityProvider((shardId) -> Activity.playing(
+                Settings.PREFIX + "help | Shard " + (shardId + 1)
+            ))
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
@@ -143,8 +134,6 @@ public final class SkyBot {
             // (is it worth it to enable it for one command?)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             .setGatewayEncoding(GatewayEncoding.ETF);
-
-        this.startGameTimer();
 
         // If lavalink is enabled we will hook it into jda
         if (LavalinkManager.INS.isEnabled()) {
@@ -194,12 +183,6 @@ public final class SkyBot {
 
     public ShardManager getShardManager() {
         return shardManager;
-    }
-
-    private void startGameTimer() {
-        this.gameScheduler.scheduleAtFixedRate(
-            () -> this.shardManager.setActivityProvider(this.activityProvider),
-            1, 1, TimeUnit.DAYS);
     }
 
     public WebSocketClient getWebsocketClient() {
