@@ -52,7 +52,7 @@ fun Instant.humanizeDuration(textWidth: TextWidth = TextWidth.WIDE): String {
     return OffsetDateTime.ofInstant(this, ZoneId.systemDefault()).humanize(textWidth)
 }
 
-private fun OffsetDateTime.humanize(textWidth: TextWidth = TextWidth.WIDE): String {
+fun OffsetDateTime.humanize(textWidth: TextWidth = TextWidth.WIDE): String {
     val start = PlainTimestamp.from(this.toLocalDateTime())
     val end = PlainTimestamp.from(LocalDateTime.now())
     // duration is between the offset date time we get and now
