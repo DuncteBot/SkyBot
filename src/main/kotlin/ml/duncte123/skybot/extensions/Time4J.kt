@@ -59,5 +59,5 @@ fun OffsetDateTime.humanize(textWidth: TextWidth = TextWidth.WIDE): String {
     val duration = Duration.`in`(YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS).between(start, end)
 
     // PrettyTime.of uses an internal cache so we don't need to worry about that
-    return PrettyTime.of(Locale.ENGLISH).print(duration, textWidth)
+    return PrettyTime.of(Locale.ENGLISH).print(duration, textWidth) + " ago"
 }
