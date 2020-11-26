@@ -61,4 +61,3 @@ fun OffsetDateTime.humanize(textWidth: TextWidth = TextWidth.WIDE): String {
     // PrettyTime.of uses an internal cache so we don't need to worry about that
     return PrettyTime.of(Locale.ENGLISH).print(duration, textWidth)
 }
-
