@@ -107,10 +107,6 @@ public class EventManager implements IEventManager {
                     listener.getClass().getSimpleName(),
                     thr.getLocalizedMessage());
                 LOGGER.error("", thr);
-
-                if (thr instanceof Error) {
-                    throw (Error) thr;
-                }
             }
         }
     }
