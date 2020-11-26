@@ -38,12 +38,15 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.time4j.PrettyTime;
+import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -89,11 +92,13 @@ public class GuildMemberListener extends BaseListener {
             final User user = event.getUser();
             final OffsetDateTime timeCreated = user.getTimeCreated();
 
-            final long daysBetween = Duration.between(timeCreated, OffsetDateTime.now()).toDays();
+            final Duration between = Duration.between(timeCreated, OffsetDateTime.now());
+            final long daysBetween = between.toDays();
             final int threshold = settings.getYoungAccountThreshold();
 
             if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
-                final String reason = "Account is newer than " + threshold + " days";
+                final String humanTime = PrettyTime.of(Locale.ENGLISH).print(between, TextWidth.WIDE);
+                final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
 
                 guild.ban(member, 0, reason)
                     .reason(reason)

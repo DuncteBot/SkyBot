@@ -22,7 +22,7 @@ import kotlin.Pair;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.extensions.PrettyTimeKt;
+import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.Emotes;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -102,7 +102,7 @@ public class GuildInfoCommand extends Command {
         final double[] ratio = GuildUtils.getBotRatio(guild);
         final EmbedBuilder builder = EmbedUtils.getDefaultEmbed();
         final GuildSetting settings = ctx.getGuildSettings();
-        final Pair<String, String> times = PrettyTimeKt.parseTimes(ctx.getVariables().getPrettyTime(), guild);
+        final Pair<String, String> times = Time4JKt.parseTimeCreated(guild);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             builder.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);

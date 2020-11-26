@@ -38,6 +38,7 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
+import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -51,10 +52,9 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.JDAImpl;
-import org.ocpsoft.prettytime.PrettyTime;
+import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -268,7 +268,7 @@ public class AirUtils {
         return Instant.now().plusMillis(duration.getMilis());
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter, PrettyTime prettyTime) {
+    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
@@ -277,7 +277,7 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                prettyTime.format(Date.from(reminder.getCreate_date())),
+                Time4JKt.humanizeDuration(reminder.getCreate_date(), TextWidth.ABBREVIATED),
                 reminder.getReminder().trim()
             );
 
@@ -387,21 +387,6 @@ public class AirUtils {
 
             // Return a fake pending request to make sure that things don't break
             return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
-        }
-    }
-
-    // TODO: is this the best way?
-    @Nullable
-    public static Member getMemberSyc(@Nonnull Guild guild, @Nonnull User user) {
-        try {
-            return guild.retrieveMember(user).complete();
-        } catch (final ErrorResponseException e) {
-            // Unknown member will be returned when the member is not in the guild
-            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MEMBER) {
-                return null;
-            }
-
-            throw e;
         }
     }
 }

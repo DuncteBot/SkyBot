@@ -25,9 +25,7 @@ import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
-import ml.duncte123.skybot.extensions.getStaticAvatarUrl
-import ml.duncte123.skybot.extensions.parseTimes
-import ml.duncte123.skybot.extensions.toEmoji
+import ml.duncte123.skybot.extensions.*
 import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -39,7 +37,6 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.User.UserFlag
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
@@ -73,7 +70,7 @@ class UserinfoCommand : Command() {
 
             ctx.jda.retrieveUserById(args[0]).queue(
                 {
-                    renderUserEmbed(ctx, it, ctx.guild, ctx.variables.prettyTime)
+                    renderUserEmbed(ctx, it, ctx.guild)
                 },
                 {
                     sendMsg(ctx, "Could not get user info: ${it.message}")
@@ -112,7 +109,7 @@ class UserinfoCommand : Command() {
 
         // if we have a user but not a member
         if (u != null && m == null) {
-            renderUserEmbed(ctx, u, ctx.guild, ctx.variables.prettyTime)
+            renderUserEmbed(ctx, u, ctx.guild)
             return
         }
 
@@ -124,8 +121,8 @@ class UserinfoCommand : Command() {
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(ctx: CommandContext, user: User, guild: DunctebotGuild, prettyTime: PrettyTime) {
-        val times = prettyTime.parseTimes(user)
+    private fun renderUserEmbed(ctx: CommandContext, user: User, guild: DunctebotGuild) {
+        val times = user.parseTimeCreated()
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(guild.color)
@@ -185,18 +182,17 @@ class UserinfoCommand : Command() {
     }*/
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
-        val prettyTime = ctx.variables.prettyTime
         val user = member.user
 
-        val userTimes = prettyTime.parseTimes(user)
-        val memberTimes = prettyTime.parseTimes(member)
+        val userTimes = user.parseTimeCreated()
+        val memberTimes = member.parseTimeJoined()
         var boostEmote = ""
 
         val boostingSinceMsg = if (member.timeBoosted == null) {
             ""
         } else {
             val boostTime = member.timeBoosted!!
-            val boostTimes = prettyTime.parseTimes(boostTime)
+            val boostTimes = boostTime.parseTimes()
 
             boostEmote = boostTime.toBoostEmote()
 
