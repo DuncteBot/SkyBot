@@ -54,7 +54,7 @@ public class SQLiteTimers {
         LOGGER.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
         SYSPOOL.scheduleAtFixedRate(
             () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
-                AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter(), variables.getPrettyTime());
+                AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter());
                 return null;
             }), 2, 2, TimeUnit.MINUTES);
     }

@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.extensions.parseTimes
+import ml.duncte123.skybot.extensions.parseTimeCreated
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -67,7 +67,7 @@ class RoleInfoCommand : Command() {
         val role = roles[0]
         val perms = role.permissions.joinToString { it.getName() }
         val memberCount = ctx.jdaGuild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
-        val times = ctx.variables.prettyTime.parseTimes(role)
+        val times = role.parseTimeCreated()
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(role.colorRaw)

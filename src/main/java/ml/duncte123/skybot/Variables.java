@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import com.dunctebot.models.settings.GuildSetting;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -36,11 +37,9 @@ import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.notfab.caching.client.CacheClient;
-import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -52,7 +51,6 @@ import java.util.concurrent.*;
 public final class Variables {
 
     private final JsonMapper mapper = new JsonMapper();
-    private final PrettyTime prettyTime = new PrettyTime();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
     private final CommandManager commandManager;
@@ -209,9 +207,5 @@ public final class Variables {
         }
 
         return this.databaseAdapter;
-    }
-
-    public PrettyTime getPrettyTime() {
-        return prettyTime;
     }
 }

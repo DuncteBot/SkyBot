@@ -22,6 +22,7 @@ import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
@@ -38,6 +39,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
 
@@ -135,11 +137,13 @@ public class GuildMemberListener extends BaseListener {
         final User user = event.getUser();
         final OffsetDateTime timeCreated = user.getTimeCreated();
 
-        final long daysBetween = Duration.between(timeCreated, OffsetDateTime.now()).toDays();
+        final Duration between = Duration.between(timeCreated, OffsetDateTime.now());
+        final long daysBetween = between.toDays();
         final int threshold = settings.getYoungAccountThreshold();
 
         if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
-            final String reason = "Account is newer than " + threshold + " days";
+            final String humanTime = Time4JKt.humanize(timeCreated, TextWidth.ABBREVIATED);
+            final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
 
             guild.ban(member, 0, reason)
                 .reason(reason)

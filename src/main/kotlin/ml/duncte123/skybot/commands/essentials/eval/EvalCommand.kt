@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials.eval
 
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.*
+import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
 import me.duncte123.botcommons.web.WebParserUtils
@@ -34,7 +35,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.requests.RestAction
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
@@ -64,8 +64,11 @@ class EvalCommand : Command() {
         val packageImports = listOf(
             "java.io",
             "java.lang",
+            "java.math",
+            "java.time",
             "java.util",
             "java.util.concurrent",
+            "java.util.stream",
             "net.dv8tion.jda.api",
             "net.dv8tion.jda.api.entities",
             "net.dv8tion.jda.api.entities.impl",
@@ -74,7 +77,6 @@ class EvalCommand : Command() {
             "net.dv8tion.jda.api.utils",
             "ml.duncte123.skybot.utils",
             "ml.duncte123.skybot.entities",
-            "ml.duncte123.skybot.entities.delegate",
             "ml.duncte123.skybot",
             "ml.duncte123.skybot.objects.command"
         )
@@ -129,7 +131,6 @@ class EvalCommand : Command() {
         engine.setVariable("shardManager", ctx.jda.shardManager)
         engine.setVariable("event", ctx.event)
 
-        engine.setVariable("skraa", script)
         engine.setVariable("args", ctx.args)
         engine.setVariable("ctx", ctx)
         engine.setVariable("variables", ctx.variables)
@@ -138,25 +139,23 @@ class EvalCommand : Command() {
         GlobalScope.launch(
             Dispatchers.Default, start = CoroutineStart.ATOMIC,
             block = {
-                return@launch eval(ctx, script, 60000L)
+                return@launch eval(ctx, script)
             }
         )
     }
 
     @SinceSkybot("3.58.0")
-    private suspend fun eval(ctx: CommandContext, script: String, millis: Long) {
+    private suspend fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
-            withTimeoutOrNull(millis) {
-                val out = try {
-                    engine.setVariable("scope", this)
-
+            val out = withTimeoutOrNull(60000L /* = 60 seconds */) {
+                try {
                     engine.evaluate(script)
                 } catch (ex: Throwable) {
                     ex
                 }
-
-                parseEvalResponse(out, ctx)
             }
+
+            parseEvalResponse(out, ctx)
         }
 
         LOGGER.info(
@@ -192,7 +191,7 @@ class EvalCommand : Command() {
                     sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)
                 } else {
                     sendMsg(ctx, "ERROR: $out")
-//                        out.printStackTrace()
+                    LOGGER.error("Eval error", out)
                 }
             }
 
@@ -202,15 +201,14 @@ class EvalCommand : Command() {
             }
 
             else -> {
-                if (out.toString().isEmpty() || out.toString().isBlank()) {
+                val toString = out.toString()
+
+                if (toString.isEmpty() || toString.isBlank()) {
                     sendSuccess(ctx.message)
                     return
                 }
 
-                MessageBuilder()
-                    .appendCodeBlock(out.toString(), "")
-                    .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                    .forEach { sendMsg(ctx, it.contentRaw) }
+                sendMsg(ctx, "```\n${StringUtils.abbreviate(toString, 1900)}```")
             }
         }
     }

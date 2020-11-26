@@ -119,7 +119,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
 
         // Uses complete, must be handled last
         if (parsedReminders.isNotEmpty()) {
-            AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter, variables.prettyTime)
+            AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
         }
     }
 }
