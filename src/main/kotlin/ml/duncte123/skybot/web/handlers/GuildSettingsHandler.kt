@@ -51,9 +51,13 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
 
             // only update the setting if we have the guild in cache
             if (guild != null) {
+                //
+                val oldSetting = settings.getIfPresent(setting.guildId)
+
+                settings.put(setting.guildId, setting)
+
                 // if the guild is there we attempt cache the invites
                 if (!shardManager.isUnavailable(setting.guildId)) {
-                    val oldSetting = settings.getIfPresent(setting.guildId)
                     val tracker = guild.globalInviteTracker
 
                     // setting was turned on
@@ -66,8 +70,6 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
                         tracker.clearInvites(setting.guildId)
                     }
                 }
-
-                settings.put(setting.guildId, setting)
             }
         }
     }
