@@ -128,7 +128,6 @@ public class InviteTrackingListener extends BaseListener {
             for (final Invite invite : invites) {
                 // break out of the loop to prevent looping over other invites
                 if (inviteFound) {
-                    System.out.println("Breaking");
                     break;
                 }
 

@@ -104,7 +104,7 @@ public abstract class MessageListener extends BaseListener {
 
         // This happens?
         if (event.getMember() == null && !event.isWebhookMessage()) {
-            Exception ex = new Exception(String.format(
+            final Exception weirdEx = new Exception(String.format(
                 "Got null member for no webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s)",
                 event.getMember(),
                 event.getMessage(),
@@ -112,8 +112,8 @@ public abstract class MessageListener extends BaseListener {
                 event.getAuthor().isBot()
             ));
 
-            LOGGER.error("Error with message listener", ex);
-            Sentry.capture(ex);
+            LOGGER.error("Error with message listener", weirdEx);
+            Sentry.capture(weirdEx);
         }
 
         if (event.getAuthor().isBot() ||
