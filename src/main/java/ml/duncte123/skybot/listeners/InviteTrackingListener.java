@@ -45,11 +45,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 // TODO:
-//  - Make entry in guild settings for invite logging
-//  - Add row in database for invite logging switch
 //  - Add switch to dashboard
 //  - Make sure setting is only for patron guilds
-//  - Attempt caching invites when guild has become premium or when the switch is flipped
 public class InviteTrackingListener extends BaseListener {
     private final Map<String, InviteData> inviteCache = new ConcurrentHashMap<>();
 
