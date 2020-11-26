@@ -97,12 +97,6 @@ class UserinfoCommand : Command() {
 
                 if (users.isNotEmpty()) {
                     u = users[0]
-                    // TODO: Only add if I see some broken shit
-                    /*m = getMemberSyc(ctx.jdaGuild, u)
-
-                    if (m == null) {
-                        logger.warn("Unknown member for user ${u.asTag}(${u.id}) in users.isNotEmpty() {}DELETE METHOD IF THIS HAPPENS TOO OFTEN{}", TextColor.RED, TextColor.RESET)
-                    }*/
                 }
             }
         }
