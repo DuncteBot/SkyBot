@@ -62,8 +62,6 @@
         <exclude name="DataClass"/>
         <exclude name="ExcessiveImports"/>
         <exclude name="TooManyMethods"/>
-        <!-- TODO: fix these issues -->
-        <!--<exclude name="NPathComplexity"/>-->
         <exclude name="NcssCount"/>
         <exclude name="ExcessiveMethodLength"/>
     </rule>
