@@ -101,4 +101,36 @@ data class AllPatronsData @JsonCreator constructor(
     @JsonProperty("tag_patrons") val tagPatrons: List<Patron>,
     @JsonProperty("one_guild_patrons") val oneGuildPatrons: List<Patron>,
     @JsonProperty("guild_patrons") val guildPatrons: List<Patron>
-)
+) {
+    companion object {
+        @JvmStatic
+        fun fromSinglePatron(patron: Patron): AllPatronsData {
+            return when (patron.type) {
+                Patron.Type.NORMAL -> AllPatronsData(
+                    listOf(patron),
+                    listOf(),
+                    listOf(),
+                    listOf()
+                )
+                Patron.Type.TAG -> AllPatronsData(
+                    listOf(),
+                    listOf(patron),
+                    listOf(),
+                    listOf()
+                )
+                Patron.Type.ONE_GUILD -> AllPatronsData(
+                    listOf(),
+                    listOf(),
+                    listOf(patron),
+                    listOf()
+                )
+                Patron.Type.ALL_GUILD -> AllPatronsData(
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(patron)
+                )
+            }
+        }
+    }
+}

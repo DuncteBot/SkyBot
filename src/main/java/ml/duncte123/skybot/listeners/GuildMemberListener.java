@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.listeners;
 
 import com.jagrosh.jagtag.Parser;
+import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -30,6 +31,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -45,7 +47,6 @@ import javax.annotation.Nonnull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -208,7 +209,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(user.getIdLong());
+            handlePatronRemoval(user.getIdLong(), event.getJDA());
         }
     }
 
@@ -226,7 +227,7 @@ public class GuildMemberListener extends BaseListener {
             );
 
         if (patronRemoved) {
-            handlePatronRemoval(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA());
         }
     }
 
@@ -314,7 +315,7 @@ public class GuildMemberListener extends BaseListener {
         return message;
     }
 
-    private void handlePatronRemoval(long userId) {
+    private void handlePatronRemoval(long userId, JDA jda) {
         // Remove the user from the patrons list
         final boolean hadNormalRank = CommandUtils.PATRONS.remove(userId);
 
@@ -332,10 +333,14 @@ public class GuildMemberListener extends BaseListener {
         }
 
         boolean hadOneGuild = false;
+        final InviteTrackingListener tracker = ((EventManager) jda.getEventManager()).getInviteTracker();
 
         if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
             // Remove the user from the one guild patrons
-            CommandUtils.ONEGUILD_PATRONS.remove(userId);
+            final long guildId = CommandUtils.ONEGUILD_PATRONS.remove(userId);
+
+            // invalidate the invite cache for this guild
+            tracker.clearInvites(guildId);
 
             hadOneGuild = true;
         }
@@ -344,6 +349,10 @@ public class GuildMemberListener extends BaseListener {
 
         if (hadOneGuild || hadGuildPatron) {
             newType = Patron.Type.TAG;
+
+            // clear the invite cache for all guilds of this user since they aren't a patreon anymore
+            CommandUtils.getPatronGuildIds(userId, jda.getShardManager())
+                .forEach(tracker::clearInvites);
         }
 
         // Remove when null?
@@ -351,12 +360,7 @@ public class GuildMemberListener extends BaseListener {
             final Patron patron = new Patron(newType, userId, null);
 
             variables.getDatabaseAdapter().createOrUpdatePatron(patron);
-            CommandUtils.addPatronsFromData(new AllPatronsData(
-                List.of(patron),
-                List.of(),
-                List.of(),
-                List.of()
-            ));
+            CommandUtils.addPatronsFromData(AllPatronsData.fromSinglePatron(patron));
         }
     }
 

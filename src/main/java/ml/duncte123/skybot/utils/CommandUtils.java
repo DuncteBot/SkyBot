@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
@@ -269,6 +270,29 @@ public class CommandUtils {
         });
 
         return foundPatron.get();
+    }
+
+    public static List<Long> getPatronGuildIds(long userId, ShardManager shardManager) {
+        if (ONEGUILD_PATRONS.containsKey(userId)) {
+            return List.of(ONEGUILD_PATRONS.get(userId));
+        }
+
+        final List<Long> guildIds = new ArrayList<>();
+
+        shardManager.getGuildCache().acceptStream((stream) ->
+            stream.filter(
+                (guild) -> {
+                    final Member member = guild.getMemberById(userId);
+
+                   return member != null && member.hasPermission(Permission.ADMINISTRATOR);
+                }
+            )
+            .forEach(
+                (guild) -> guildIds.add(guild.getIdLong())
+            )
+        );
+
+        return guildIds;
     }
 
     public static void addPatronsFromData(@Nonnull AllPatronsData data) {

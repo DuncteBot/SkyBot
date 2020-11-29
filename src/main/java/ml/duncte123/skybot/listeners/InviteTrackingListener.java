@@ -44,17 +44,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
-// TODO:
-//  - Add switch to dashboard
-//  - Make sure setting is only for patron guilds
 public class InviteTrackingListener extends BaseListener {
     private final Map<String, InviteData> inviteCache = new ConcurrentHashMap<>();
 
     public InviteTrackingListener(Variables variables) {
         super(variables);
-
-        // Duncte123, dunctebot HQ
-        CommandUtils.ONEGUILD_PATRONS.put(191231307290771456L, 191245668617158656L);
     }
 
     @Override
