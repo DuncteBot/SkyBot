@@ -347,12 +347,15 @@ public class GuildMemberListener extends BaseListener {
 
         final boolean hadGuildPatron = CommandUtils.GUILD_PATRONS.remove(userId);
 
-        if (hadOneGuild || hadGuildPatron) {
-            newType = Patron.Type.TAG;
-
+        if (hadGuildPatron) {
             // clear the invite cache for all guilds of this user since they aren't a patreon anymore
+            // this has to be it's own check or it will do a possibly useless/wrong check for removing logging access
             CommandUtils.getPatronGuildIds(userId, jda.getShardManager())
                 .forEach(tracker::clearInvites);
+        }
+
+        if (hadOneGuild || hadGuildPatron) {
+            newType = Patron.Type.TAG;
         }
 
         // Remove when null?
