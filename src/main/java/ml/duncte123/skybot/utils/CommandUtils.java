@@ -68,7 +68,8 @@ public class CommandUtils {
         .addMethods(DiscordMethods.getMethods())
         .build();
 
-    private CommandUtils() {}
+    private CommandUtils() {
+    }
 
     @Nonnull
     public static Map<String, List<String>> parseInput(Flag[] map, @Nonnull List<String> words) {
@@ -284,7 +285,7 @@ public class CommandUtils {
                 (guild) -> {
                     final Member member = guild.getMemberById(userId);
 
-                   return member != null && member.hasPermission(Permission.ADMINISTRATOR);
+                    return member != null && member.hasPermission(Permission.ADMINISTRATOR);
                 }
             )
             .forEach(
