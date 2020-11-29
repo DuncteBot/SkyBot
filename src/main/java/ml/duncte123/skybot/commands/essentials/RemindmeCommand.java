@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,7 +105,13 @@ public class RemindmeCommand extends Command {
         }
 
         final String reminder = String.join(" ", flags.get("undefined"));
-        final Instant expireDate = AirUtils.getDatabaseDate(duration);
+
+        if (reminder.length() > 255) {
+            sendMsg(ctx, "The maximum message length is 255 characters");
+            return;
+        }
+
+        final OffsetDateTime expireDate = AirUtils.getDatabaseDate(duration);
 
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
@@ -119,16 +125,17 @@ public class RemindmeCommand extends Command {
         }
     }
 
-    private void createReminder(CommandContext ctx, Instant expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
-        final boolean isChannel = flags.containsKey("c");
-        final long channelId = isChannel ? ctx.getChannel().getIdLong() : -1L;
-        final String where = isChannel ? " here" : "";
+    private void createReminder(CommandContext ctx, OffsetDateTime expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
+        final boolean inChannel = flags.containsKey("c");
+        final String where = inChannel ? " here" : "";
 
         ctx.getDatabaseAdapter().createReminder(
             ctx.getAuthor().getIdLong(),
             reminder,
             expireDate,
-            channelId,
+            ctx.getChannel().getIdLong(),
+            ctx.getMessage().getIdLong(),
+            inChannel,
             (success, id) -> {
                 if (success) {
                     sendMsg(
@@ -141,7 +148,6 @@ public class RemindmeCommand extends Command {
                             id
                         )
                     );
-//                    sendMsg(ctx, "Got it, I'll remind you" + where + "in _" + duration + "_ about \"" + reminder + "\"");
                 } else {
                     sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
                 }

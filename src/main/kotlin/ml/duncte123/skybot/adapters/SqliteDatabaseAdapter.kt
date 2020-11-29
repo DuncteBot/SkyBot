@@ -35,6 +35,8 @@ import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.temporal.TemporalAccessor
 import java.util.*
 
@@ -791,7 +793,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit) {
+    override fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: OffsetDateTime,
+        channelId: Long,
+        messageId: Long,
+        inChannel: Boolean,
+        callback: (Boolean, Int) -> Unit
+    ) {
         runOnThread {
             val sql = if (channelId > 0) {
                 // language=SQLite
@@ -858,7 +868,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                             result.getString("reminder"),
                             result.getDate("remind_create_date").asInstant(),
                             result.getDate("remind_date").asInstant(),
-                            result.getLong("channel_id")
+                            result.getLong("channel_id"),
+                            result.getLong("message_id"),
+                            result.getBoolean("in_channel")
                         )
                     )
                 }
@@ -884,7 +896,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                                 result.getString("reminder"),
                                 result.getDate("remind_create_date").asInstant(),
                                 result.getDate("remind_date").asInstant(),
-                                result.getLong("channel_id")
+                                result.getLong("channel_id"),
+                                result.getLong("message_id"),
+                                result.getBoolean("in_channel")
                             )
                         )
                     }
@@ -929,7 +943,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         result.getString("reminder"),
                         result.getDate("remind_create_date").asInstant(),
                         result.getDate("remind_date").asInstant(),
-                        result.getLong("channel_id")
+                        result.getLong("channel_id"),
+                        result.getLong("message_id"),
+                        result.getBoolean("in_channel")
                     )
                 )
             }
@@ -1042,7 +1058,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
-    private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
+    private fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
