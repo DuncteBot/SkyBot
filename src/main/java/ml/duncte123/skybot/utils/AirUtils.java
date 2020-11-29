@@ -28,6 +28,7 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
@@ -283,10 +284,9 @@ public class AirUtils {
         for (final Reminder reminder : reminders) {
             // The reminder message template
             final String message = String.format(
-                "%s you asked me to remind you about \"%s\"\n%s",
+                "%s you asked me to remind you about \"%s\"",
                 Time4JKt.humanize(reminder.getCreate_date(), TextWidth.ABBREVIATED),
-                reminder.getReminder().trim(),
-                reminder.getJumpUrl()
+                reminder.getReminder().trim()
             );
 
             final long channelId = reminder.getChannel_id();
@@ -295,24 +295,29 @@ public class AirUtils {
             if (channelId > 0) {
                 final TextChannel channel = shardManager.getTextChannelById(channelId);
 
-                // If we don't have a channel we can't send it there
-                // TODO: DM the user instead?
-                // TODO: add message reference
+                // If we don't have any channel information we will continue at the end
+                // skipping the continue statement makes sure that we roll into the dm part of this
                 if (channel != null) {
                     // Add the reminder to the list of the reminders to purge
                     toPurge.add(reminder.getId());
-                    sendMsg(channel, String.format("<@%s>, %s", reminder.getUser_id(), message));
-                }
+                    sendMsg(
+                        new MessageConfig.Builder()
+                            .setChannel(channel)
+                            .setMessage(String.format("<@%s>, %s", reminder.getUser_id(), message))
+                            .replyTo(reminder.getMessage_id())
+                            .build()
+                    );
 
-                // go to the next one and don't run the user code
-                continue;
+                    // go to the next one and don't run the user code
+                    continue;
+                }
             }
 
             try {
                 Objects.requireNonNull(shardManager.getShardById(0))
                     .openPrivateChannelById(reminder.getUser_id())
                     .flatMap(
-                        (c) -> c.sendMessage(message)
+                        (c) -> c.sendMessage(message + "\n" + reminder.getJumpUrl())
                     )
                     .complete();
                 toPurge.add(reminder.getId());
