@@ -62,10 +62,14 @@
         <exclude name="DataClass"/>
         <exclude name="ExcessiveImports"/>
         <exclude name="TooManyMethods"/>
-        <!-- TODO: fix these issues -->
-        <exclude name="NPathComplexity"/>
         <exclude name="NcssCount"/>
         <exclude name="ExcessiveMethodLength"/>
+    </rule>
+
+    <rule ref="category/java/design.xml/NPathComplexity">
+        <properties>
+            <property name="reportLevel" value="550" />
+        </properties>
     </rule>
 
     <rule ref="category/java/errorprone.xml/AssignmentInOperand">
@@ -76,12 +80,6 @@
             <property name="allowIncrementDecrement" value="false" />
         </properties>
     </rule>
-
-    <!--<rule ref="category/java/design.xml/NPathComplexity">
-        <properties>
-            <property name="reportLevel" value="400" />
-        </properties>
-    </rule>-->
 
     <!--<rule ref="category/java/documentation.xml">
         <exclude name="AtLeastOneConstructor"/>

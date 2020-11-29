@@ -99,7 +99,7 @@ public class BanCommand extends ModBaseCommand {
             .reason(String.format("Ban by %#s: %s", ctx.getAuthor(), fReason))
             .queue(
             (m) -> {
-                modLog(ctx.getAuthor(), toBan, "banned", fReason, ctx.getGuild());
+                modLog(ctx.getAuthor(), toBan, "banned", fReason, null, ctx.getGuild());
                 sendSuccess(ctx.getMessage());
             }
         );

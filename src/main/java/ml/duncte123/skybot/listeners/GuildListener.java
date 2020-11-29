@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.dunctebot.models.settings.GuildSetting;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
@@ -26,7 +27,6 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
@@ -212,6 +212,7 @@ public class GuildListener extends BaseListener {
                             user,
                             type == ActionType.BAN ? "banned" : "unbanned",
                             action.getReason(),
+                            null,
                             dbg
                         );
 

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.listeners;
 
 import com.jagrosh.jagtag.Parser;
+import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -30,6 +31,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -45,7 +47,6 @@ import javax.annotation.Nonnull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -87,52 +88,11 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
-        if (settings.isYoungAccountBanEnabled()) {
-            final User user = event.getUser();
-            final OffsetDateTime timeCreated = user.getTimeCreated();
-
-            final Duration between = Duration.between(timeCreated, OffsetDateTime.now());
-            final long daysBetween = between.toDays();
-            final int threshold = settings.getYoungAccountThreshold();
-
-            if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
-                final String humanTime = Time4JKt.humanize(timeCreated, TextWidth.ABBREVIATED);
-                final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
-
-                guild.ban(member, 0, reason)
-                    .reason(reason)
-                    .queue();
-
-                modLog(
-                    selfMember.getUser(),
-                    member.getUser(),
-                    "banned",
-                    reason,
-                    new DunctebotGuild(guild, this.variables)
-                );
-
-                // returning here to prevent any welcome messages from being send
-                return;
-            }
+        if (settings.isYoungAccountBanEnabled() && bannedAccount(event, guild, member, selfMember, settings)) {
+            return;
         }
 
-        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
-
-        if (guildCounts != null) {
-            final User user = event.getUser();
-
-            if (user.isBot()) {
-                guildCounts.bots += 1;
-            } else {
-                guildCounts.users += 1;
-
-                final String avatarId = user.getAvatarId();
-
-                if (avatarId != null && avatarId.startsWith("a_")) {
-                    guildCounts.nitroUsers += 1;
-                }
-            }
-        }
+        updateGuildCount(event, guild);
 
         if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long channelId = settings.getWelcomeLeaveChannel();
@@ -152,6 +112,58 @@ public class GuildMemberListener extends BaseListener {
                 guild.addRoleToMember(member, role).queue(null, it -> {});
             }
         }
+    }
+
+    private void updateGuildCount(GuildMemberJoinEvent event, Guild guild) {
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+
+        if (guildCounts != null) {
+            final User user = event.getUser();
+
+            if (user.isBot()) {
+                guildCounts.bots += 1;
+            } else {
+                guildCounts.users += 1;
+
+                final String avatarId = user.getAvatarId();
+
+                if (avatarId != null && avatarId.startsWith("a_")) {
+                    guildCounts.nitroUsers += 1;
+                }
+            }
+        }
+    }
+
+    private boolean bannedAccount(GuildMemberJoinEvent event, Guild guild, Member member, Member selfMember, GuildSetting settings) {
+        final User user = event.getUser();
+        final OffsetDateTime timeCreated = user.getTimeCreated();
+
+        final Duration between = Duration.between(timeCreated, OffsetDateTime.now());
+        final long daysBetween = between.toDays();
+        final int threshold = settings.getYoungAccountThreshold();
+
+        if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
+            final String humanTime = Time4JKt.humanize(timeCreated, TextWidth.ABBREVIATED);
+            final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
+
+            guild.ban(member, 0, reason)
+                .reason(reason)
+                .queue();
+
+            modLog(
+                selfMember.getUser(),
+                member.getUser(),
+                "banned",
+                reason,
+                null,
+                new DunctebotGuild(guild, this.variables)
+            );
+
+            // returning true here to prevent any welcome messages from being send
+            return true;
+        }
+
+        return false;
     }
 
     private void onGuildMemberRemove(GuildMemberRemoveEvent event) {
@@ -197,7 +209,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         if (guild.getIdLong() == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(user.getIdLong());
+            handlePatronRemoval(user.getIdLong(), event.getJDA());
         }
     }
 
@@ -215,7 +227,7 @@ public class GuildMemberListener extends BaseListener {
             );
 
         if (patronRemoved) {
-            handlePatronRemoval(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA());
         }
     }
 
@@ -303,7 +315,7 @@ public class GuildMemberListener extends BaseListener {
         return message;
     }
 
-    private void handlePatronRemoval(long userId) {
+    private void handlePatronRemoval(long userId, JDA jda) {
         // Remove the user from the patrons list
         final boolean hadNormalRank = CommandUtils.PATRONS.remove(userId);
 
@@ -321,15 +333,26 @@ public class GuildMemberListener extends BaseListener {
         }
 
         boolean hadOneGuild = false;
+        final InviteTrackingListener tracker = ((EventManager) jda.getEventManager()).getInviteTracker();
 
         if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
             // Remove the user from the one guild patrons
-            CommandUtils.ONEGUILD_PATRONS.remove(userId);
+            final long guildId = CommandUtils.ONEGUILD_PATRONS.remove(userId);
+
+            // invalidate the invite cache for this guild
+            tracker.clearInvites(guildId);
 
             hadOneGuild = true;
         }
 
         final boolean hadGuildPatron = CommandUtils.GUILD_PATRONS.remove(userId);
+
+        if (hadGuildPatron) {
+            // clear the invite cache for all guilds of this user since they aren't a patreon anymore
+            // this has to be it's own check or it will do a possibly useless/wrong check for removing logging access
+            CommandUtils.getPatronGuildIds(userId, jda.getShardManager())
+                .forEach(tracker::clearInvites);
+        }
 
         if (hadOneGuild || hadGuildPatron) {
             newType = Patron.Type.TAG;
@@ -340,12 +363,7 @@ public class GuildMemberListener extends BaseListener {
             final Patron patron = new Patron(newType, userId, null);
 
             variables.getDatabaseAdapter().createOrUpdatePatron(patron);
-            CommandUtils.addPatronsFromData(new AllPatronsData(
-                List.of(patron),
-                List.of(),
-                List.of(),
-                List.of()
-            ));
+            CommandUtils.addPatronsFromData(AllPatronsData.fromSinglePatron(patron));
         }
     }
 

@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.internal.utils.Helpers;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -80,13 +81,7 @@ public class SeekCommand extends MusicCommand {
         final Matcher matcher = TIME_REGEX.matcher(seekTime);
 
         if (matcher.matches()) {
-            final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
-            final long seconds = Long.parseLong(matcher.group(2)) * 1000;
-
-            final long finalTime = minutes + seconds;
-
-            player.seekTo(finalTime);
-            sendNowPlaying(ctx);
+            handleTimeSkip(ctx, player, matcher);
             return;
         }
 
@@ -100,18 +95,12 @@ public class SeekCommand extends MusicCommand {
 
         int seconds = Integer.parseInt(seekTime) * 1000;
 
-        // FIXME: Odd looking code
         if (seconds >= trackDuration.get()) {
-            if (arg0.charAt(0) == '-') {
-                sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
-                return;
-            }
-
-            // No need to announce as we just skip to the end
-            player.seekTo(trackDuration.get());
+            handleOverSkip(ctx, player, arg0, trackDuration);
             return;
         }
 
+        // ~ is the NOT operator (inverts all the bits)
         if (arg0.charAt(0) == '-') {
             seconds = ~seconds;
         }
@@ -131,6 +120,26 @@ public class SeekCommand extends MusicCommand {
             sendNowPlaying(ctx);
         }
 
+    }
+
+    private void handleOverSkip(@NotNull CommandContext ctx, IPlayer player, String arg0, Supplier<Long> trackDuration) {
+        if (arg0.charAt(0) == '-') {
+            sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
+            return;
+        }
+
+        // No need to announce as we just skip to the end
+        player.seekTo(trackDuration.get());
+    }
+
+    private void handleTimeSkip(@NotNull CommandContext ctx, IPlayer player, Matcher matcher) {
+        final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
+        final long seconds = Long.parseLong(matcher.group(2)) * 1000;
+
+        final long finalTime = minutes + seconds;
+
+        player.seekTo(finalTime);
+        sendNowPlaying(ctx);
     }
 
     private void sendNowPlaying(CommandContext ctx) {

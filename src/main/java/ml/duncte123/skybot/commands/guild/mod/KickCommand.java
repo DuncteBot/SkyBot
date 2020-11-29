@@ -99,7 +99,7 @@ public class KickCommand extends ModBaseCommand {
 
             kickAction.queue(
                 (ignored) -> {
-                    ModerationUtils.modLog(ctx.getAuthor(), toKick, "kicked", finalReason, ctx.getGuild());
+                    ModerationUtils.modLog(ctx.getAuthor(), toKick, "kicked", finalReason, null, ctx.getGuild());
                     MessageUtils.sendSuccess(ctx.getMessage());
                 }
             );

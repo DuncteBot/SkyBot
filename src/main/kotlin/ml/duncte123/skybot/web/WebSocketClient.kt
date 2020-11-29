@@ -84,16 +84,30 @@ class WebSocketClient(
         log.info("Connected to dashboard WebSocket")
     }
 
-    override fun onDisconnected(websocket: WebSocket, serverCloseFrame: WebSocketFrame?, clientCloseFrame: WebSocketFrame?, closedByServer: Boolean) {
+    override fun onDisconnected(
+        websocket: WebSocket,
+        serverCloseFrame: WebSocketFrame?,
+        clientCloseFrame: WebSocketFrame?,
+        closedByServer: Boolean
+    ) {
         if (closedByServer && serverCloseFrame != null) {
             val reason = serverCloseFrame.closeReason ?: "<no reason given>"
             val code = serverCloseFrame.closeCode
 
             // TODO: keep trying to reconnect?
             if (code == 1000) {
-                log.info("Connection to {} closed normally with reason {} (closed by server = true)", websocket.uri, reason)
+                log.info(
+                    "Connection to {} closed normally with reason {} (closed by server = true)",
+                    websocket.uri,
+                    reason
+                )
             } else {
-                log.info("Connection to {} closed abnormally with reason {}:{} (closed by server = true)", websocket.uri, code, reason)
+                log.info(
+                    "Connection to {} closed abnormally with reason {}:{} (closed by server = true)",
+                    websocket.uri,
+                    code,
+                    reason
+                )
             }
 
             return
@@ -107,7 +121,12 @@ class WebSocketClient(
                 mayReconnect = false
             }
 
-            log.info("Connection to {} closed by client with code {} and reason {} (closed by server = false)", websocket.uri, code, reason)
+            log.info(
+                "Connection to {} closed by client with code {} and reason {} (closed by server = false)",
+                websocket.uri,
+                code,
+                reason
+            )
         }
     }
 
