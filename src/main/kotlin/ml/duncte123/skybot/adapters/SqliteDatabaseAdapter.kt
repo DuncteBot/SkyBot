@@ -804,7 +804,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         callback: (Boolean, Int) -> Unit
     ) {
         runOnThread {
-
             val smt = connManager.connection.prepareStatement(
                 // language=SQLite
                 """
