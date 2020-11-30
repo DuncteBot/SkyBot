@@ -256,13 +256,11 @@ public class AirUtils {
 
     public static OffsetDateTime fromDatabaseFormat(String date) {
         try {
-//            return Instant.parse(date).plus(2, ChronoUnit.HOURS);
             return OffsetDateTime.parse(date);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-//            return Instant.now();
             return OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
@@ -272,7 +270,6 @@ public class AirUtils {
     }
 
     public static OffsetDateTime getDatabaseDate(Duration duration) {
-//        return Instant.now().plusMillis(duration.getMilis());
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
