@@ -23,7 +23,6 @@ package ml.duncte123.skybot.objects.api
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 
@@ -67,6 +66,7 @@ data class Reminder(
     val reminder_date: OffsetDateTime,
     val channel_id: Long,
     val message_id: Long,
+    val guild_id: Long,
     val in_channel: Boolean
 ) {
     @JsonCreator
@@ -78,24 +78,18 @@ data class Reminder(
         @JsonProperty("remind_date") reminder_date: String,
         @JsonProperty("channel_id") channel_id: Long,
         @JsonProperty("message_id") message_id: Long,
+        @JsonProperty("guild_id") guild_id: Long,
         @JsonProperty("in_channel") in_channel: Boolean
     ) :
         this(
             id, user_id, reminder, AirUtils.fromDatabaseFormat(create_date),
-            AirUtils.fromDatabaseFormat(reminder_date), channel_id, message_id, in_channel
+            AirUtils.fromDatabaseFormat(reminder_date), channel_id, message_id, guild_id, in_channel
         )
 
     val reminderDateDate: String = AirUtils.makeDatePretty(reminder_date)
     val reminderCreateDateDate: String = AirUtils.makeDatePretty(create_date)
 
-    val jumpUrl: String
-        get() {
-            // HACK: very hacky
-            val guildId = SkyBot.getInstance().shardManager
-                .getTextChannelById(channel_id)?.guild?.idLong ?: "(failed to create jump url: missing guild info)"
-
-            return "https://discord.com/channels/$guildId/$channel_id/$message_id"
-        }
+    val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
     override fun toString(): String {
         return "$id) `$reminder` on $reminderDateDate"

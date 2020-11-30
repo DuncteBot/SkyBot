@@ -57,7 +57,12 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return parseTripleResponse(response)
     }
 
-    fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean): Triple<Boolean, Boolean, Boolean> {
+    fun updateCustomCommand(
+        guildId: Long,
+        invoke: String,
+        message: String,
+        autoresponse: Boolean
+    ): Triple<Boolean, Boolean, Boolean> {
         val json = mapper.createObjectNode().put("message", message).put("autoresponse", autoresponse)
         val response = patchJSON("customcommands/$guildId/$invoke", json)
 
@@ -195,10 +200,6 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
                 response["error"].toString()
             )
         }
-    }
-
-    fun loadEmbedSettings(): ArrayNode {
-        return paginateData("embedsettings")
     }
 
     fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
@@ -609,10 +610,19 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return true to ""
     }
 
-    fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long, messageId: Long, inChannel: Boolean): Pair<Boolean, Int> {
+    fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: String,
+        channelId: Long,
+        messageId: Long,
+        guildId: Long,
+        inChannel: Boolean
+    ): Pair<Boolean, Int> {
         val obj = mapper.createObjectNode()
             .put("user_id", userId.toString())
             .put("channel_id", channelId.toString())
+            .put("guild_id", guildId.toString())
             .put("message_id", messageId.toString())
             .put("in_channel", inChannel)
             .put("reminder", reminder)

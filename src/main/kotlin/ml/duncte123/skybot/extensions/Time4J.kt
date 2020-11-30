@@ -26,7 +26,9 @@ import net.time4j.Duration
 import net.time4j.PlainTimestamp
 import net.time4j.PrettyTime
 import net.time4j.format.TextWidth
-import java.time.*
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -43,10 +45,6 @@ fun OffsetDateTime.parseTimes(textWidth: TextWidth = TextWidth.WIDE): Pair<Strin
     val createTimeHuman: String = this.humanize(textWidth)
 
     return createTimeFormat to createTimeHuman
-}
-
-fun Instant.humanizeDuration(textWidth: TextWidth = TextWidth.WIDE): String {
-    return OffsetDateTime.ofInstant(this, ZoneOffset.UTC).humanize(textWidth)
 }
 
 fun OffsetDateTime.humanize(textWidth: TextWidth = TextWidth.WIDE): String {

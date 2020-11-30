@@ -389,12 +389,13 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         expireDate: OffsetDateTime,
         channelId: Long,
         messageId: Long,
+        guildId: Long,
         inChannel: Boolean,
         callback: (Boolean, Int) -> Unit
     ) {
         runOnThread {
             val date = AirUtils.getDatabaseDateFormat(expireDate)
-            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId, messageId, inChannel)
+            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId, messageId, guildId, inChannel)
 
             callback(res, reminderId)
         }

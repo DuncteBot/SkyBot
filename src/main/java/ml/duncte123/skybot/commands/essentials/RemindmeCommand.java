@@ -135,6 +135,7 @@ public class RemindmeCommand extends Command {
             expireDate,
             ctx.getChannel().getIdLong(),
             ctx.getMessage().getIdLong(),
+            ctx.getJDAGuild().getIdLong(),
             inChannel,
             (success, id) -> {
                 if (success) {

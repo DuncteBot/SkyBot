@@ -192,6 +192,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
         expireDate: OffsetDateTime,
         channelId: Long,
         messageId: Long,
+        guildId: Long,
         inChannel: Boolean,
         callback: (Boolean, Int) -> Unit
     )
