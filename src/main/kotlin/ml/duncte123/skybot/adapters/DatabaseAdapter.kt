@@ -29,7 +29,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -64,9 +64,20 @@ abstract class DatabaseAdapter(threads: Int = 2) {
      *             2. True when the guild already has a command with this invoke
      *             3. True when the guild reached the custom command limit
      */
-    abstract fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
+    abstract fun createCustomCommand(
+        guildId: Long,
+        invoke: String,
+        message: String,
+        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
+    )
 
-    abstract fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
+    abstract fun updateCustomCommand(
+        guildId: Long,
+        invoke: String,
+        message: String,
+        autoresponse: Boolean,
+        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
+    )
 
     abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?)
 
@@ -118,12 +129,26 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     // ///////////
     // Moderation
 
-    abstract fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long)
+    abstract fun createBan(
+        modId: Long,
+        userName: String,
+        userDiscriminator: String,
+        userId: Long,
+        unbanDate: String,
+        guildId: Long
+    )
 
     abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit = {})
 
     // callback is option since we don't always need it
-    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit = {})
+    abstract fun createMute(
+        modId: Long,
+        userId: Long,
+        userTag: String,
+        unmuteDate: String,
+        guildId: Long,
+        callback: (Mute?) -> Unit = {}
+    )
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
 
@@ -161,7 +186,16 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     // Reminders
 
-    abstract fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit)
+    abstract fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: OffsetDateTime,
+        channelId: Long,
+        messageId: Long,
+        guildId: Long,
+        inChannel: Boolean,
+        callback: (Boolean, Int) -> Unit
+    )
 
     fun removeReminder(reminder: Reminder, callback: (Boolean) -> Unit) {
         removeReminder(reminder.id, reminder.user_id, callback)

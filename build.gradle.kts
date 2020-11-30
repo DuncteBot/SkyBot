@@ -17,8 +17,8 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.99.0"
+val numberVersion = "3.100.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -286,7 +286,11 @@ kotlinter {
     indentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = true
-    disabledRules = arrayOf("no-wildcard-imports", "experimental:indent", "experimental:argument-list-wrapping")
+    disabledRules = arrayOf(
+        "no-wildcard-imports", "experimental:indent",
+        "experimental:argument-list-wrapping",
+        "experimental:spacing-between-declarations-with-annotations"
+    )
 }
 
 pmd {

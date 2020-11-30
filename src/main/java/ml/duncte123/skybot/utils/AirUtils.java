@@ -28,6 +28,7 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.StringUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
@@ -55,12 +56,16 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -245,27 +250,27 @@ public class AirUtils {
         return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
-    public static String getDatabaseDateFormat(Instant date) {
+    public static String getDatabaseDateFormat(OffsetDateTime date) {
         return date.truncatedTo(ChronoUnit.MILLIS).toString();
     }
 
-    public static Instant fromDatabaseFormat(String date) {
+    public static OffsetDateTime fromDatabaseFormat(String date) {
         try {
-            return Instant.parse(date).plus(2, ChronoUnit.HOURS);
+            return OffsetDateTime.parse(date);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return new Date().toInstant();
+            return OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
 
-    public static String makeDatePretty(Instant accessor) {
-        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("UTC")).format(accessor);
+    public static String makeDatePretty(TemporalAccessor accessor) {
+        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(accessor);
     }
 
-    public static Instant getDatabaseDate(Duration duration) {
-        return Instant.now().plusMillis(duration.getMilis());
+    public static OffsetDateTime getDatabaseDate(Duration duration) {
+        return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
@@ -277,33 +282,38 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                Time4JKt.humanizeDuration(reminder.getCreate_date(), TextWidth.ABBREVIATED),
+                Time4JKt.humanize(reminder.getCreate_date(), TextWidth.ABBREVIATED),
                 reminder.getReminder().trim()
             );
 
-            final long channelId = reminder.getChannel_id();
-
             // If we have a channel send the message to that
-            if (channelId > 0) {
+            if (reminder.getIn_channel()) {
+                final long channelId = reminder.getChannel_id();
                 final TextChannel channel = shardManager.getTextChannelById(channelId);
 
-                // If we don't have a channel we can't send it there
-                // TODO: DM the user instead?
+                // If we don't have any channel information we will continue at the end
+                // skipping the continue statement makes sure that we roll into the dm part of this
                 if (channel != null) {
                     // Add the reminder to the list of the reminders to purge
                     toPurge.add(reminder.getId());
-                    sendMsg(channel, String.format("<@%s>, %s", reminder.getUser_id(), message));
-                }
+                    sendMsg(
+                        new MessageConfig.Builder()
+                            .setChannel(channel)
+                            .setMessage(String.format("<@%s>, %s", reminder.getUser_id(), message))
+                            .replyTo(reminder.getMessage_id())
+                            .build()
+                    );
 
-                // go to the next one and don't run the user code
-                continue;
+                    // go to the next one and don't run the user code if a channel was found
+                    continue;
+                }
             }
 
             try {
                 Objects.requireNonNull(shardManager.getShardById(0))
                     .openPrivateChannelById(reminder.getUser_id())
                     .flatMap(
-                        (c) -> c.sendMessage(message)
+                        (c) -> c.sendMessage(message + "\n" + reminder.getJumpUrl())
                     )
                     .complete();
                 toPurge.add(reminder.getId());
@@ -326,7 +336,7 @@ public class AirUtils {
         }
 
         // get a date that is 2 days in the future
-        final Instant plusTwoDays = Instant.now().plus(2L, ChronoUnit.DAYS);
+        final OffsetDateTime plusTwoDays = OffsetDateTime.now(ZoneOffset.UTC).plus(2L, ChronoUnit.DAYS);
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()

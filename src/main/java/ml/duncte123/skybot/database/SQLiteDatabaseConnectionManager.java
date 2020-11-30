@@ -184,7 +184,11 @@ public class SQLiteDatabaseConnectionManager {
                     "reminder TEXT NOT NULL," +
                     "remind_create_date DATETIME NOT NULL," +
                     "remind_date DATETIME NOT NULL," +
-                    "channel_id VARCHAR(255) DEFAULT NULL);"
+                    "channel_id VARCHAR(255) NOT NULL," +
+                    "message_id VARCHAR(255) NOT NULL," +
+                    "guild_id VARCHAR(255) NOT NULL," +
+                    "in_channel TINYINT(1) DEFAULT 0" +
+                    ");"
             );
 
             connection.createStatement().execute(

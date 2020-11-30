@@ -24,15 +24,20 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.AirUtils
-import java.time.Instant
+import java.time.OffsetDateTime
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
 // data class WarnObject(val userId: String, val warnings: List<Warning>)
-data class Warning(val id: Int, val rawDate: String, /*val date: Date, val expiryDate: Date,*/ val modId: String, val reason: String, val guildId: String)
+data class Warning(
+    val id: Int,
+    val rawDate: String, /*val date: Date, val expiryDate: Date,*/
+    val modId: String,
+    val reason: String,
+    val guildId: String
+)
 
 data class Ban
-
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
     @JsonProperty("modUserId") val modId: String,
@@ -43,7 +48,6 @@ data class Ban
 )
 
 data class Mute
-
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
     @JsonProperty("mod_id") val modId: String,
@@ -58,9 +62,12 @@ data class Reminder(
     val id: Int,
     val user_id: Long,
     val reminder: String,
-    val create_date: Instant,
-    val reminder_date: Instant,
-    val channel_id: Long
+    val create_date: OffsetDateTime,
+    val reminder_date: OffsetDateTime,
+    val channel_id: Long,
+    val message_id: Long,
+    val guild_id: Long,
+    val in_channel: Boolean
 ) {
     @JsonCreator
     constructor(
@@ -69,12 +76,20 @@ data class Reminder(
         @JsonProperty("reminder") reminder: String,
         @JsonProperty("remind_create_date") create_date: String,
         @JsonProperty("remind_date") reminder_date: String,
-        @JsonProperty("channel_id") channel_id: Long
+        @JsonProperty("channel_id") channel_id: Long,
+        @JsonProperty("message_id") message_id: Long,
+        @JsonProperty("guild_id") guild_id: Long,
+        @JsonProperty("in_channel") in_channel: Boolean
     ) :
-        this(id, user_id, reminder, AirUtils.fromDatabaseFormat(create_date), AirUtils.fromDatabaseFormat(reminder_date), channel_id)
+        this(
+            id, user_id, reminder, AirUtils.fromDatabaseFormat(create_date),
+            AirUtils.fromDatabaseFormat(reminder_date), channel_id, message_id, guild_id, in_channel
+        )
 
     val reminderDateDate: String = AirUtils.makeDatePretty(reminder_date)
     val reminderCreateDateDate: String = AirUtils.makeDatePretty(create_date)
+
+    val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
     override fun toString(): String {
         return "$id) `$reminder` on $reminderDateDate"
@@ -82,7 +97,6 @@ data class Reminder(
 }
 
 data class Patron
-
 @JsonCreator constructor(
     @JsonProperty("type") val type: Type,
     @JsonProperty("user_id") val userId: Long,

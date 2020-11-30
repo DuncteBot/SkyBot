@@ -35,6 +35,8 @@ import java.io.File
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.temporal.TemporalAccessor
 import java.util.*
 
@@ -791,26 +793,33 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit) {
+    override fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: OffsetDateTime,
+        channelId: Long,
+        messageId: Long,
+        guildId: Long,
+        inChannel: Boolean,
+        callback: (Boolean, Int) -> Unit
+    ) {
         runOnThread {
-            val sql = if (channelId > 0) {
+            val smt = connManager.connection.prepareStatement(
                 // language=SQLite
-                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date, channel_id) VALUES (? , ? , ? , ? , ?)"
-            } else {
-                // language=SQLite
-                "INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date) VALUES (? , ? , ?, ?)"
-            }
-
-            val smt = connManager.connection.prepareStatement(sql)
+                """
+                    INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date, channel_id, message_id, message_id, guild_id, in_channel) 
+                    VALUES (? , ? , ? , ? , ?, ? , ? , ? , ?)
+                """.trimIndent()
+            )
 
             smt.setString(1, userId.toString())
             smt.setString(2, reminder)
             smt.setDate(3, expireDate.toSQL())
             smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
-
-            if (channelId > 0) {
-                smt.setString(5, channelId.toString())
-            }
+            smt.setString(5, channelId.toString())
+            smt.setString(6, messageId.toString())
+            smt.setString(7, guildId.toString())
+            smt.setBoolean(8, inChannel)
 
             try {
                 smt.execute()
@@ -851,16 +860,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         return@results
                     }
 
-                    callback(
-                        Reminder(
-                            result.getInt("id"),
-                            result.getLong("user_id"),
-                            result.getString("reminder"),
-                            result.getDate("remind_create_date").asInstant(),
-                            result.getDate("remind_date").asInstant(),
-                            result.getLong("channel_id")
-                        )
-                    )
+                    callback(result.toReminder())
                 }
 
                 it.closeOnCompletion()
@@ -877,16 +877,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
                 it.executeQuery().use { result ->
                     while (result.next()) {
-                        reminders.add(
-                            Reminder(
-                                result.getInt("id"),
-                                result.getLong("user_id"),
-                                result.getString("reminder"),
-                                result.getDate("remind_create_date").asInstant(),
-                                result.getDate("remind_date").asInstant(),
-                                result.getLong("channel_id")
-                            )
-                        )
+                        reminders.add(result.toReminder())
                     }
 
                     it.closeOnCompletion()
@@ -922,16 +913,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val result = smt.executeQuery()
 
             while (result.next()) {
-                reminders.add(
-                    Reminder(
-                        result.getInt("id"),
-                        result.getLong("user_id"),
-                        result.getString("reminder"),
-                        result.getDate("remind_create_date").asInstant(),
-                        result.getDate("remind_date").asInstant(),
-                        result.getLong("channel_id")
-                    )
-                )
+                reminders.add(result.toReminder())
             }
 
             if (reminders.isNotEmpty()) {
@@ -1042,8 +1024,22 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     private fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
-    private fun java.sql.Date.asInstant() = Instant.ofEpochMilli(this.time)
+    private fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
+
+    private fun ResultSet.toReminder(): Reminder {
+        return Reminder(
+            this.getInt("id"),
+            this.getLong("user_id"),
+            this.getString("reminder"),
+            this.getDate("remind_create_date").asInstant(),
+            this.getDate("remind_date").asInstant(),
+            this.getLong("channel_id"),
+            this.getLong("message_id"),
+            this.getLong("guild_id"),
+            this.getBoolean("in_channel")
+        )
+    }
 
     private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
         val blackList = getBlackListsForGuild(guildId)

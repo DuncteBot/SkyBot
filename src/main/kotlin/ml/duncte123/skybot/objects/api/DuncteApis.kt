@@ -37,7 +37,8 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -56,7 +57,12 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return parseTripleResponse(response)
     }
 
-    fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean): Triple<Boolean, Boolean, Boolean> {
+    fun updateCustomCommand(
+        guildId: Long,
+        invoke: String,
+        message: String,
+        autoresponse: Boolean
+    ): Triple<Boolean, Boolean, Boolean> {
         val json = mapper.createObjectNode().put("message", message).put("autoresponse", autoresponse)
         val response = patchJSON("customcommands/$guildId/$invoke", json)
 
@@ -194,10 +200,6 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
                 response["error"].toString()
             )
         }
-    }
-
-    fun loadEmbedSettings(): ArrayNode {
-        return paginateData("embedsettings")
     }
 
     fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
@@ -608,16 +610,24 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return true to ""
     }
 
-    fun createReminder(userId: Long, reminder: String, expireDate: String, channelId: Long): Pair<Boolean, Int> {
+    fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: String,
+        channelId: Long,
+        messageId: Long,
+        guildId: Long,
+        inChannel: Boolean
+    ): Pair<Boolean, Int> {
         val obj = mapper.createObjectNode()
             .put("user_id", userId.toString())
+            .put("channel_id", channelId.toString())
+            .put("guild_id", guildId.toString())
+            .put("message_id", messageId.toString())
+            .put("in_channel", inChannel)
             .put("reminder", reminder)
             .put("remind_date", expireDate)
-            .put("remind_create_date", AirUtils.getDatabaseDateFormat(Instant.now()))
-
-        if (channelId > 0) {
-            obj.put("channel_id", channelId.toString())
-        }
+            .put("remind_create_date", AirUtils.getDatabaseDateFormat(OffsetDateTime.now(ZoneOffset.UTC)))
 
         val response = postJSON("reminders", obj)
 

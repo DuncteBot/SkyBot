@@ -103,12 +103,13 @@ class RemindersCommand : Command() {
     }
 
     private fun showReminder(reminder: Reminder, ctx: CommandContext) {
-        val remindChannel = if (reminder.channel_id > 0) "<#${reminder.channel_id}>" else "Direct Messages"
+        val remindChannel = if (reminder.in_channel) "<#${reminder.channel_id}>" else "Direct Messages"
         val reminderInfo = """**Id:** ${reminder.id}
             |**Message:** ${reminder.reminder}
             |**Remind in:** $remindChannel
             |**Created:** ${reminder.reminderCreateDateDate}
             |**Remind on:** ${reminder.reminderDateDate}
+            |** Message link:** ${reminder.jumpUrl}
         """.trimMargin()
 
         sendEmbed(ctx, EmbedUtils.embedMessage(reminderInfo))

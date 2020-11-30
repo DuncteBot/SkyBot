@@ -31,7 +31,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.utils.AirUtils
-import java.time.Instant
+import java.time.OffsetDateTime
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: ObjectMapper) : DatabaseAdapter() {
@@ -383,10 +383,19 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun createReminder(userId: Long, reminder: String, expireDate: Instant, channelId: Long, callback: (Boolean, Int) -> Unit) {
+    override fun createReminder(
+        userId: Long,
+        reminder: String,
+        expireDate: OffsetDateTime,
+        channelId: Long,
+        messageId: Long,
+        guildId: Long,
+        inChannel: Boolean,
+        callback: (Boolean, Int) -> Unit
+    ) {
         runOnThread {
             val date = AirUtils.getDatabaseDateFormat(expireDate)
-            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId)
+            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId, messageId, guildId, inChannel)
 
             callback(res, reminderId)
         }
