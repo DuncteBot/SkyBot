@@ -26,7 +26,6 @@ import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import lavalink.client.LavalinkUtil;
 import ml.duncte123.skybot.Author;
@@ -113,10 +112,6 @@ public class AudioUtils {
             if (mng == null) {
                 mng = new GuildMusicManager(guildId, variables);
                 musicManagers.put(guildId, mng);
-            }
-
-            if (!LavalinkManager.INS.isEnabled() && guild.getAudioManager().getSendingHandler() == null) {
-                guild.getAudioManager().setSendingHandler(mng.getSendHandler());
             }
 
             return mng;

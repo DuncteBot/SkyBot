@@ -24,6 +24,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavalinkPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Author;
@@ -55,13 +56,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public final Queue<AudioTrack> queue;
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
-    private final IPlayer player;
+    private final LavalinkPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
-    /* package */ TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    /* package */ TrackScheduler(LavalinkPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;

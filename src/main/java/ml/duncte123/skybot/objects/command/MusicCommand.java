@@ -84,7 +84,7 @@ public abstract class MusicCommand extends Command {
         return audioUtils.getMusicManager(guild);
     }
 
-    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, boolean reply, String prefix) {
+    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
 
         if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
@@ -95,19 +95,15 @@ public abstract class MusicCommand extends Command {
         final Guild guild = ctx.getGuild();
 
         if (!lavalinkManager.isConnected(guild)) {
-            if (reply) {
-                sendMsg(ctx, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
-                    "Want to have the bot automatically join your channel? Consider becoming a patron.");
-            }
+            sendMsg(ctx, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
+                "Want to have the bot automatically join your channel? Consider becoming a patron.");
 
             return false;
         }
 
         if (lavalinkManager.getConnectedChannel(guild) != null &&
             !lavalinkManager.getConnectedChannel(guild).getMembers().contains(ctx.getMember())) {
-            if (reply) {
-                sendMsg(ctx, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
-            }
+            sendMsg(ctx, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
 
             return false;
         }
@@ -115,10 +111,6 @@ public abstract class MusicCommand extends Command {
         getMusicManager(guild, audioUtils).setLastChannel(ctx.getChannel().getIdLong());
 
         return true;
-    }
-
-    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
-        return channelChecks(ctx, audioUtils, true, prefix);
     }
 
     private boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {

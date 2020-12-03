@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -63,7 +63,7 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
-        final IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
+        final LavalinkPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
         final AudioTrack currentTrack = player.getPlayingTrack();
 
         if (currentTrack == null) {
@@ -122,7 +122,7 @@ public class SeekCommand extends MusicCommand {
 
     }
 
-    private void handleOverSkip(@NotNull CommandContext ctx, IPlayer player, String arg0, Supplier<Long> trackDuration) {
+    private void handleOverSkip(@NotNull CommandContext ctx, LavalinkPlayer player, String arg0, Supplier<Long> trackDuration) {
         if (arg0.charAt(0) == '-') {
             sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
             return;
@@ -132,7 +132,7 @@ public class SeekCommand extends MusicCommand {
         player.seekTo(trackDuration.get());
     }
 
-    private void handleTimeSkip(@NotNull CommandContext ctx, IPlayer player, Matcher matcher) {
+    private void handleTimeSkip(@NotNull CommandContext ctx, LavalinkPlayer player, Matcher matcher) {
         final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
         final long seconds = Long.parseLong(matcher.group(2)) * 1000;
 

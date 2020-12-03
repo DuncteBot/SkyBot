@@ -30,7 +30,7 @@ public class MusicEmbedUtils {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
             generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
             + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
-            + getVolumeIcon(mng.player.getVolume());
+            + getVolumeIcon(mng.player.getFilters().getVolume());
     }
 
     private static String generateProgressBar(double percent) {
@@ -45,16 +45,24 @@ public class MusicEmbedUtils {
         return str.toString();
     }
 
-    private static String getVolumeIcon(int volume) {
-        if (volume == 0) {
+    private static String getVolumeIcon(float volume) {
+        if (volume == 0.0) {
             return "\uD83D\uDD07";
         }
-        if (volume < 33) {
+
+        if (volume < 0.33) {
             return "\uD83D\uDD08";
         }
-        if (volume < 67) {
+
+        if (volume < 0.67) {
             return "\uD83D\uDD09";
         }
+
+        if (volume > 1) {
+            // explosion ear
+            return "\uD83D\uDCA5\uD83D\uDC42";
+        }
+
         return "\uD83D\uDD0A";
     }
 

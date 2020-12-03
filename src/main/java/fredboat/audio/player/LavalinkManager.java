@@ -21,11 +21,9 @@ package fredboat.audio.player;
 import lavalink.client.io.LavalinkRegion;
 import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLavalink;
-import lavalink.client.player.IPlayer;
-import lavalink.client.player.LavaplayerPlayerWrapper;
+import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -45,14 +43,13 @@ public final class LavalinkManager {
     public static final LavalinkManager INS = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
-    private AudioUtils audioUtils = null;
 
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig config, AudioUtils audioUtils) {
+    public void start(DunctebotConfig config) {
         this.config = config;
-        this.audioUtils = audioUtils;
+
         if (!isEnabled()) {
             return;
         }
@@ -65,6 +62,8 @@ public final class LavalinkManager {
             shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
 
+        lavalink.setClientName("DuncteBot");
+
         loadNodes();
     }
 
@@ -72,37 +71,41 @@ public final class LavalinkManager {
         return config.lavalink.enable;
     }
 
-    public IPlayer createPlayer(long guildId) {
-        return isEnabled()
-            ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
-            : new LavaplayerPlayerWrapper(audioUtils.getPlayerManager().createPlayer());
+    public LavalinkPlayer createPlayer(long guildId) {
+        if (!isEnabled()) {
+            throw new IllegalStateException("Using lavaplayer is no longer supported");
+        }
+
+        return lavalink.getLink(String.valueOf(guildId)).getPlayer();
     }
 
     public void openConnection(VoiceChannel channel) {
+        if (!isEnabled()) {
+            throw new IllegalStateException("Using lavaplayer is no longer supported");
+        }
+
         final AudioManager audioManager = channel.getGuild().getAudioManager();
 
         // Turn on the deafen icon for the bot
         audioManager.setSelfDeafened(true);
 
-        if (isEnabled()) {
-            lavalink.getLink(channel.getGuild()).connect(channel);
-        } else {
-            audioManager.openAudioConnection(channel);
-        }
+        lavalink.getLink(channel.getGuild()).connect(channel);
     }
 
     public void closeConnection(Guild guild) {
-        if (isEnabled()) {
-            lavalink.getLink(guild).disconnect();
-        } else {
-            guild.getAudioManager().closeAudioConnection();
+        if (!isEnabled()) {
+            throw new IllegalStateException("Using lavaplayer is no longer supported");
         }
+
+        lavalink.getLink(guild).destroy();
     }
 
     public boolean isConnected(Guild guild) {
-        return isEnabled() ?
-            lavalink.getLink(guild).getState() == Link.State.CONNECTED :
-            guild.getAudioManager().isConnected();
+        if (!isEnabled()) {
+            throw new IllegalStateException("Using lavaplayer is no longer supported");
+        }
+
+        return lavalink.getLink(guild).getState() == Link.State.CONNECTED;
     }
 
     public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {

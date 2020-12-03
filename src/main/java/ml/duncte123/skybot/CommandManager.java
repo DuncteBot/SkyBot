@@ -141,7 +141,7 @@ public class CommandManager {
         this.addCommand(new AvatarCommand());
         this.addCommand(new B1nzyCommand());
         this.addCommand(new BanCommand());
-        this.addCommand(new BaseBoostCommand());
+        this.addCommand(new BassBoostCommand());
         this.addCommand(new BirbCommand());
         this.addCommand(new BlackAndWhiteCommand());
         this.addCommand(new BlackListCommand());

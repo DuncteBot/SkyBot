@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
-import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
-    public final IPlayer player;
+    public final LavalinkPlayer player;
     private final TrackScheduler scheduler;
     private final AtomicLong lastChannel = new AtomicLong(-1);
     private final Supplier<Boolean> announceTracksSupplier;
@@ -42,10 +42,6 @@ public class GuildMusicManager {
         this.scheduler = new TrackScheduler(this.player, this);
         this.player.addListener(this.scheduler);
         this.announceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
-    }
-
-    public AudioPlayerSenderHandler getSendHandler() {
-        return new AudioPlayerSenderHandler(this.player);
     }
 
     /* package */ boolean isAnnounceTracks() {

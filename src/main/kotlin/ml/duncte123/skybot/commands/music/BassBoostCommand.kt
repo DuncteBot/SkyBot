@@ -18,13 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import lavalink.client.player.LavalinkPlayer
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 
-class BaseBoostCommand : MusicCommand() {
+class BassBoostCommand : MusicCommand() {
 
     init {
         this.name = "bassboost"
@@ -53,14 +52,14 @@ class BaseBoostCommand : MusicCommand() {
         }
 
         val gain = when (args[0]) {
-            "high" -> 0.25
-            "med" -> 0.15
-            "low" -> 0.05
-            "off", "none" -> 0.0
+            "high" -> 0.25f
+            "med" -> 0.15f
+            "low" -> 0.05f
+            "off", "none" -> 0.0f
 
             else -> {
                 sendMsg(ctx, "Unknown bassboost preset ${args[0]}, please choose from high/med/low/off")
-                -1.0
+                -1.0f
             }
         }
 
@@ -72,22 +71,14 @@ class BaseBoostCommand : MusicCommand() {
         setLavalinkEQ(gain, ctx)
     }
 
-    private fun setLavalinkEQ(gain: Double, ctx: CommandContext) {
-        val node = (getMusicManager(ctx.guild, ctx.audioUtils).player as LavalinkPlayer).link.getNode(false) ?: return
-        val jackson = ctx.variables.jackson
-
-        val json = jackson.createObjectNode()
-        val array = json.putArray("bands")
-        json.put("op", "equalizer")
-        json.put("guildId", ctx.guild.id)
+    private fun setLavalinkEQ(gain: Float, ctx: CommandContext) {
+        val player = getMusicManager(ctx.guild, ctx.audioUtils).player
+        val filters = player.filters
 
         for (i in 0..2) {
-            val band = jackson.createObjectNode()
-                .put("band", i)
-                .put("gain", gain)
-            array.add(band)
+            filters.setBand(i, gain)
         }
 
-        node.send(jackson.writeValueAsString(json))
+        filters.commit()
     }
 }
