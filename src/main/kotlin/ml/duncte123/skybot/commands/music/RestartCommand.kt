@@ -33,7 +33,7 @@ class RestartCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val player = getMusicManager(event.guild, ctx.audioUtils).player
+        val player = ctx.audioUtils.getMusicManager(event.guild).player
 
         if (player.playingTrack == null) {
             sendError(event.message)

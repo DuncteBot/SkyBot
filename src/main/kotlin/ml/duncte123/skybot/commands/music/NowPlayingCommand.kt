@@ -36,7 +36,7 @@ class NowPlayingCommand : MusicCommand() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
+        val mng = ctx.audioUtils.getMusicManager(event.guild)
         val player = mng.player
 
         sendEmbed(

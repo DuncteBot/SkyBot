@@ -35,12 +35,12 @@ public class IWantToDieCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
         final Pair<byte[], JsonNode> iWantToDie = ctx.getApis().getIWantToDie(parseTextArgsForImage(ctx));
 
-        handleBasicImage(ctx.getEvent(), iWantToDie);
+        handleBasicImage(ctx, iWantToDie);
     }
 }

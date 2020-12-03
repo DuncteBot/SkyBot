@@ -68,8 +68,6 @@ class LoadCommand : MusicCommand() {
                 }
 
                 val array = node as ArrayNode
-
-                val musicManager = getMusicManager(ctx.guild, ctx.audioUtils)
                 var shouldAnnounce = true
 
                 sendMsg(ctx, "Loading ${array.size()} tracks, please wait...")
@@ -78,9 +76,8 @@ class LoadCommand : MusicCommand() {
                     .forEach { obj ->
                         // This probably announces it to the channel
                         ctx.audioUtils.loadAndPlay(
-                            musicManager,
-                            (obj as JsonNode).asText(),
                             ctx,
+                            (obj as JsonNode).asText(),
                             shouldAnnounce
                         ).get()
 

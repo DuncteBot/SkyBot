@@ -32,7 +32,7 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
@@ -43,7 +43,7 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
         }
 
         ctx.getAlexFlipnote().getDidYouMean(split[0], split[1])
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+            .async((image) -> handleBasicImage(ctx, image));
 
     }
 }

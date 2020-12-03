@@ -37,16 +37,14 @@ class VolumeCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val args = ctx.args
-
-        if (!isUserOrGuildPatron(event)) {
+        if (!isUserOrGuildPatron(ctx)) {
             return
         }
 
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
         val player = mng.player
         val filters = player.filters
+        val args = ctx.args
 
         if (args.isEmpty()) {
             sendMsg(ctx, "The current volume is **${floor(filters.volume * 100)}**")

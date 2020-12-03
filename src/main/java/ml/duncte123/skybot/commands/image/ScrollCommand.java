@@ -32,11 +32,11 @@ public class ScrollCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent())) {
+        if (!passes(ctx)) {
             return;
         }
 
         ctx.getAlexFlipnote().getScroll(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+            .async((image) -> handleBasicImage(ctx, image));
     }
 }

@@ -38,23 +38,23 @@ class ReaddCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val manager = getMusicManager(event.guild, ctx.audioUtils)
-        val t = manager.player.playingTrack
+        val manager = ctx.audioUtils.getMusicManager(event.guild)
+        val track = manager.player.playingTrack
 
-        if (t == null) {
+        if (track == null) {
             sendError(event.message)
             sendMsg(ctx, "No tracks in queue")
             return
         }
 
-        val track = t.makeClone()
-        track.userData = t.getUserData(TrackUserData::class.java).copy()
+        val clone = track.makeClone()
+        clone.userData = track.getUserData(TrackUserData::class.java).copy()
 
         // This is from AudioUtils.java but in Kotlin
-        var title = track.info.title
-        if (track.info.isStream) {
+        var title = clone.info.title
+        if (clone.info.isStream) {
             val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
-                .radioStreams.stream().filter { s -> s.url == track.info.uri }.findFirst()
+                .radioStreams.stream().filter { s -> s.url == clone.info.uri }.findFirst()
             if (stream.isPresent) {
                 title = stream.get().name
             }
@@ -65,7 +65,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         try {
-            manager.scheduler.addToQueue(track, isUserTagPatron(ctx.author))
+            manager.scheduler.addToQueue(clone, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
             sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
         } catch (e: LimitReachedException) {

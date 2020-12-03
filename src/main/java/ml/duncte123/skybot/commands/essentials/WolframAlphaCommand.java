@@ -123,7 +123,7 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!isUserOrGuildPatron(ctx.getEvent())) {
+        if (!isUserOrGuildPatron(ctx)) {
             return;
         }
 

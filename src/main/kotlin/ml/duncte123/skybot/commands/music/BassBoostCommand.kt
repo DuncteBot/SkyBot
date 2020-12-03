@@ -33,7 +33,7 @@ class BassBoostCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        if (!isUserOrGuildPatron(ctx.event)) {
+        if (!isUserOrGuildPatron(ctx)) {
             return
         }
 
@@ -72,7 +72,7 @@ class BassBoostCommand : MusicCommand() {
     }
 
     private fun setLavalinkEQ(gain: Float, ctx: CommandContext) {
-        val player = getMusicManager(ctx.guild, ctx.audioUtils).player
+        val player = ctx.audioUtils.getMusicManager(ctx.guild).player
         val filters = player.filters
 
         for (i in 0..2) {

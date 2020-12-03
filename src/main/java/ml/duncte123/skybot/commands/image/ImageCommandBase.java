@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,34 +53,38 @@ public abstract class ImageCommandBase extends Command {
         this.requiresArgs = true;
     }
 
-    private boolean canSendFile(GuildMessageReceivedEvent event) {
-        if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+    private boolean canSendFile(CommandContext ctx) {
+        final TextChannel channel = ctx.getChannel();
+
+        if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            sendMsg(event.getChannel(), "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(channel, "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }
 
-    /* package */ boolean passes(GuildMessageReceivedEvent event) {
-        return passes(event, true);
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    /* package */ boolean passes(CommandContext ctx) {
+        return passes(ctx, true);
     }
 
-    protected boolean passes(GuildMessageReceivedEvent event, boolean patron) {
-        return passesNoArgs(event, patron);
+    protected boolean passes(CommandContext ctx, boolean patron) {
+        return passesNoArgs(ctx, patron);
     }
 
-    protected boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
-        return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
+    protected boolean passesNoArgs(CommandContext ctx, boolean patron) {
+        return canSendFile(ctx) && (!patron || isUserOrGuildPatron(ctx));
     }
 
     private String getFileName() {
         return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
-    public void handleBasicImage(GuildMessageReceivedEvent event, Pair<byte[], JsonNode> data) {
-        final TextChannel channel = event.getChannel();
-        final var image = data.getFirst();
+    public void handleBasicImage(CommandContext ctx, Pair<byte[], JsonNode> data) {
+        final TextChannel channel = ctx.getChannel();
+        final byte[] image = data.getFirst();
 
         if (image == null) {
             final JsonNode json = data.getSecond();
@@ -98,15 +101,15 @@ public abstract class ImageCommandBase extends Command {
             return;
         }
 
-        handleBasicImage(event, image);
+        handleBasicImage(ctx, image);
     }
 
 
-    public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
-        final TextChannel channel = event.getChannel();
+    public void handleBasicImage(CommandContext ctx, byte[] image) {
+        final TextChannel channel = ctx.getChannel();
 
-        if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
-            channel.sendFile(image, getFileName()).reference(event.getMessage()).queue();
+        if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
+            channel.sendFile(image, getFileName()).reference(ctx.getMessage()).queue();
         } else {
             sendMsg(channel, "I need permission to upload files in order for this command to work.");
         }

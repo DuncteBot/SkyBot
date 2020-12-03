@@ -33,8 +33,7 @@ class ShuffleCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
-        val scheduler = mng.scheduler
+        val scheduler = ctx.audioUtils.getMusicManager(event.guild).scheduler
 
         if (scheduler.queue.isEmpty()) {
             MessageUtils.sendMsg(ctx, "There are no songs to shuffle")

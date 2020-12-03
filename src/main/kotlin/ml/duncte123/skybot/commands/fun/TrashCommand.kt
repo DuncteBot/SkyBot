@@ -68,7 +68,7 @@ class TrashCommand : NoPatronImageCommand() {
 
         // Generate and send the image to discord
         ctx.alexFlipnote.getTrash(face, trash).async {
-            handleBasicImage(ctx.event, it)
+            handleBasicImage(ctx, it)
         }
     }
 }

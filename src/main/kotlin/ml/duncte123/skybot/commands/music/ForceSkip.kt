@@ -42,14 +42,16 @@ class ForceSkip : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val args = ctx.args
-        val mng = getMusicManager(ctx.guild, ctx.audioUtils)
-        val scheduler = mng.scheduler
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val player = mng.player
 
-        if (mng.player.playingTrack == null) {
+        if (player.playingTrack == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
+
+        val args = ctx.args
+        val scheduler = mng.scheduler
 
         val count = if (args.isNotEmpty()) {
             if (!args[0].matches("\\d{1,10}".toRegex())) {
@@ -61,15 +63,15 @@ class ForceSkip : MusicCommand() {
             1
         }
 
-        val trackData = mng.player.playingTrack.getUserData(TrackUserData::class.java)
+        val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        mng.scheduler.skipTracks(count)
+        scheduler.skipTracks(count)
 
         // Return the console user if the requester is null
         val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
 
-        val track: AudioTrack? = mng.player.playingTrack
+        val track: AudioTrack? = player.playingTrack
 
         if (track == null) {
             sendMsg(

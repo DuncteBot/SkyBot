@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.image;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -46,19 +45,17 @@ public class ShitCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!passes(event, false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
         final String text = parseTextArgsForImage(ctx);
 
         if (ctx.getParsedFlags(this).containsKey("p")) {
-            ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
+            ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(ctx, image));
             return;
         }
 
-        ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(ctx, image));
     }
 }

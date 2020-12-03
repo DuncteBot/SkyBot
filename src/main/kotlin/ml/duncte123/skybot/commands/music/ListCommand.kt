@@ -40,7 +40,7 @@ class ListCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
-        val mng = getMusicManager(event.guild, ctx.audioUtils)
+        val mng = ctx.audioUtils.getMusicManager(event.guild)
         val scheduler = mng.scheduler
         val queue: Queue<AudioTrack> = scheduler.queue
 

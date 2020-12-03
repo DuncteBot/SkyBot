@@ -41,7 +41,7 @@ class ScreenshotCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (!CommandUtils.isUserOrGuildPatron(ctx.event)) {
+        if (!CommandUtils.isUserOrGuildPatron(ctx)) {
             return
         }
 

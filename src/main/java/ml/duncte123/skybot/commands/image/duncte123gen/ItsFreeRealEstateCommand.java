@@ -35,12 +35,12 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
         final Pair<byte[], JsonNode> freeRealEstate = ctx.getApis().getFreeRealEstate(parseTextArgsForImage(ctx));
 
-        handleBasicImage(ctx.getEvent(), freeRealEstate);
+        handleBasicImage(ctx, freeRealEstate);
     }
 }

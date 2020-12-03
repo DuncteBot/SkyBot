@@ -35,9 +35,6 @@ class PPlayCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val guild = ctx.guild
-        val mng = getMusicManager(guild, ctx.audioUtils)
-
         if (ctx.args.isEmpty()) {
             sendMsg(ctx, "To few arguments, use `${ctx.prefix}$name <media link>`")
             return
@@ -57,6 +54,6 @@ class PPlayCommand : MusicCommand() {
                 "This may take a while depending on the size."
         )
 
-        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
+        ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
     }
 }
