@@ -64,17 +64,12 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     /* package */ boolean passes(CommandContext ctx) {
         return passes(ctx, true);
     }
 
     protected boolean passes(CommandContext ctx, boolean patron) {
-        return passesNoArgs(ctx, patron);
-    }
-
-    protected boolean passesNoArgs(CommandContext ctx, boolean patron) {
         return canSendFile(ctx) && (!patron || isUserOrGuildPatron(ctx));
     }
 

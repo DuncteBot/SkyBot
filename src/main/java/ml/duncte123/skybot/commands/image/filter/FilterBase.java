@@ -37,7 +37,7 @@ public abstract class FilterBase extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passesNoArgs(ctx, false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
