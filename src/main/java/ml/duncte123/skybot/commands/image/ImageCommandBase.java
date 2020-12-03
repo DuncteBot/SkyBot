@@ -120,9 +120,11 @@ public abstract class ImageCommandBase extends Command {
         final List<String> args = ctx.getArgs();
         String url = null;
 
-        if (!ctx.getMessage().getAttachments().isEmpty()) {
+        // I hate this so much
+        // But I won't change one pmd rule just for the sake of using !isEmpty here
+        if (ctx.getMessage().getAttachments().size() > 0) {
             url = tryGetAttachment(ctx);
-        } else if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
+        } else if (ctx.getMessage().getMentionedUsers().size() > 0) {
             url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
         } else if (!args.isEmpty()) {
             if (AirUtils.isURL(args.get(0))) {
