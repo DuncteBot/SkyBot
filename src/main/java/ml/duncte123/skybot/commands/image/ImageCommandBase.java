@@ -99,7 +99,6 @@ public abstract class ImageCommandBase extends Command {
         handleBasicImage(ctx, image);
     }
 
-
     public void handleBasicImage(CommandContext ctx, byte[] image) {
         final TextChannel channel = ctx.getChannel();
 
@@ -123,25 +122,17 @@ public abstract class ImageCommandBase extends Command {
 
         if (!ctx.getMessage().getAttachments().isEmpty()) {
             url = tryGetAttachment(ctx);
-        }
-
-        if (url == null && args.isEmpty()) {
-            url = getAvatarUrl(ctx.getAuthor());
-        }
-
-        if (url == null && AirUtils.isURL(args.get(0))) {
-            url = tryGetUrl(ctx, args.get(0));
-        }
-
-        if (url == null && !ctx.getMessage().getMentionedUsers().isEmpty()) {
+        } else if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
             url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
-        }
+        } else if (!args.isEmpty()) {
+            if (AirUtils.isURL(args.get(0))) {
+                url = tryGetUrl(ctx, args.get(0));
+            } else {
+                final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
-        if (url  == null) {
-            final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
-
-            if (!textMentions.isEmpty()) {
-                url = getAvatarUrl(textMentions.get(0).getUser());
+                if (!textMentions.isEmpty()) {
+                    url =  getAvatarUrl(textMentions.get(0).getUser());
+                }
             }
         }
 
@@ -155,10 +146,10 @@ public abstract class ImageCommandBase extends Command {
     @Nullable
     private String tryGetAttachment(CommandContext ctx) {
         final Attachment attachment = ctx.getMessage().getAttachments().get(0);
-
         final File file = new File(attachment.getFileName());
 
         String mimetype = null;
+
         try {
             mimetype = Files.probeContentType(file.toPath());
         }
@@ -186,17 +177,18 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
+    @Nonnull
     private String getAvatarUrl(User user) {
         return UserKt.getStaticAvatarUrl(user) + "?size=512";
     }
 
+    @Nonnull
     public String parseTextArgsForImage(CommandContext ctx) {
         return StringKt.stripFlags(ctx.getArgsDisplay(), this);
     }
 
     @Nullable
     protected String[] splitString(CommandContext ctx) {
-
         final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {
