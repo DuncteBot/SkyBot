@@ -47,7 +47,7 @@ class JoinCommand : MusicCommand() {
 
         val vc = voiceState.channel!!
         val guild = event.guild
-        val mng = getMusicManager(guild, ctx.audioUtils)
+        val mng = ctx.audioUtils.getMusicManager(guild)
 
         mng.lastChannel = event.channel.idLong
 

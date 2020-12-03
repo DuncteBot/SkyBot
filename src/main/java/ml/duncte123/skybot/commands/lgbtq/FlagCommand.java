@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -49,9 +48,7 @@ public class FlagCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!passes(event, false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
@@ -84,7 +81,7 @@ public class FlagCommand extends ImageCommandBase {
         final String imageUrl = UserKt.getStaticAvatarUrl(user) + "?size=512";
         final Pair<byte[], JsonNode> image = ctx.getApis().getFlag(flag, imageUrl);
 
-        handleBasicImage(event, image);
+        handleBasicImage(ctx, image);
 
     }
 

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import kotlin.Pair;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -38,9 +37,7 @@ public abstract class FilterBase extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!passesNoArgs(event, false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
@@ -66,7 +63,7 @@ public abstract class FilterBase extends NoPatronImageCommand {
                 return;
             }
 
-            handleBasicImage(event, filter);
+            handleBasicImage(ctx, filter);
         }
     }
 

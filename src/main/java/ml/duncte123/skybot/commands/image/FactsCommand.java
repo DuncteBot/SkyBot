@@ -32,11 +32,11 @@ public class FactsCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
         ctx.getAlexFlipnote().getFacts(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+            .async((image) -> handleBasicImage(ctx, image));
     }
 }

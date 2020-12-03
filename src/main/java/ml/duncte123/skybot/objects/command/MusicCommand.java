@@ -22,11 +22,9 @@ import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SinceSkybot;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -34,6 +32,7 @@ import java.util.function.Function;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
+@SuppressWarnings("ConstantConditions")
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -53,7 +52,7 @@ public abstract class MusicCommand extends Command {
         this.cooldownScope = CooldownScope.GUILD;
         this.cooldownKey = (cmdName, ctx) -> KEY_GEN.apply(ctx.getGuild().getId());
         // Patrons have no cooldown
-        this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx.getEvent(), false);
+        this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx, false);
     }
 
     @Override
@@ -71,7 +70,7 @@ public abstract class MusicCommand extends Command {
     }
 
     private void runWithAutoJoin(@Nonnull CommandContext ctx) {
-        if (isAbleToJoinChannel(ctx.getEvent())) {
+        if (isAbleToJoinChannel(ctx)) {
             ctx.getCommandManager().getCommand("join").executeCommand(ctx);
         } else if (!channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
             return;
@@ -80,12 +79,7 @@ public abstract class MusicCommand extends Command {
         run(ctx);
     }
 
-    protected GuildMusicManager getMusicManager(Guild guild, AudioUtils audioUtils) {
-        return audioUtils.getMusicManager(guild);
-    }
-
     private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
-
         if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
             return false;
@@ -108,19 +102,19 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        getMusicManager(guild, audioUtils).setLastChannel(ctx.getChannel().getIdLong());
+        audioUtils.getMusicManager(guild).setLastChannel(ctx.getChannel().getIdLong());
 
         return true;
     }
 
-    private boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {
-        if (isUserOrGuildPatron(event, false)) {
+    private boolean isAbleToJoinChannel(CommandContext ctx) {
+        if (isUserOrGuildPatron(ctx, false)) {
             //If the member is not connected
-            if (!event.getMember().getVoiceState().inVoiceChannel()) {
+            if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
                 return false;
             }
 
-            return !getLavalinkManager().isConnected(event.getGuild());
+            return !getLavalinkManager().isConnected(ctx.getGuild());
         }
 
         return false;

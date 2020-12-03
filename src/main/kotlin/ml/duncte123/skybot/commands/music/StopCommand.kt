@@ -35,7 +35,7 @@ class StopCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val guild = ctx.jdaGuild
-        val mng = getMusicManager(guild, ctx.audioUtils)
+        val mng = ctx.audioUtils.getMusicManager(guild)
         val player = mng.player
         val track = player.playingTrack
 

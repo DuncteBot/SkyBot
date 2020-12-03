@@ -38,20 +38,21 @@ class SkipCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val mng = getMusicManager(ctx.guild, ctx.audioUtils)
-        val author = ctx.author
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val player = mng.player
 
-        if (mng.player.playingTrack == null) {
+        if (player.playingTrack == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
 
-        if (!mng.player.playingTrack.isSeekable) {
+        if (!player.playingTrack.isSeekable) {
             sendMsg(ctx, "This track is not seekable")
             return
         }
 
-        val trackData = mng.player.playingTrack.getUserData(TrackUserData::class.java)
+        val author = ctx.author
+        val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
 
         if (trackData.requester == author.idLong) {
             doSkip(ctx, mng)

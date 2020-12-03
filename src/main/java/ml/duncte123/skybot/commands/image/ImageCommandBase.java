@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,34 +53,33 @@ public abstract class ImageCommandBase extends Command {
         this.requiresArgs = true;
     }
 
-    private boolean canSendFile(GuildMessageReceivedEvent event) {
-        if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+    private boolean canSendFile(CommandContext ctx) {
+        final TextChannel channel = ctx.getChannel();
+
+        if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            sendMsg(event.getChannel(), "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(channel, "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }
 
-    /* package */ boolean passes(GuildMessageReceivedEvent event) {
-        return passes(event, true);
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    /* package */ boolean passes(CommandContext ctx) {
+        return passes(ctx, true);
     }
 
-    protected boolean passes(GuildMessageReceivedEvent event, boolean patron) {
-        return passesNoArgs(event, patron);
-    }
-
-    protected boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
-        return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
+    protected boolean passes(CommandContext ctx, boolean patron) {
+        return canSendFile(ctx) && (!patron || isUserOrGuildPatron(ctx));
     }
 
     private String getFileName() {
         return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
-    public void handleBasicImage(GuildMessageReceivedEvent event, Pair<byte[], JsonNode> data) {
-        final TextChannel channel = event.getChannel();
-        final var image = data.getFirst();
+    public void handleBasicImage(CommandContext ctx, Pair<byte[], JsonNode> data) {
+        final TextChannel channel = ctx.getChannel();
+        final byte[] image = data.getFirst();
 
         if (image == null) {
             final JsonNode json = data.getSecond();
@@ -98,15 +96,14 @@ public abstract class ImageCommandBase extends Command {
             return;
         }
 
-        handleBasicImage(event, image);
+        handleBasicImage(ctx, image);
     }
 
+    public void handleBasicImage(CommandContext ctx, byte[] image) {
+        final TextChannel channel = ctx.getChannel();
 
-    public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
-        final TextChannel channel = event.getChannel();
-
-        if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
-            channel.sendFile(image, getFileName()).reference(event.getMessage()).queue();
+        if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
+            channel.sendFile(image, getFileName()).reference(ctx.getMessage()).queue();
         } else {
             sendMsg(channel, "I need permission to upload files in order for this command to work.");
         }
@@ -123,27 +120,21 @@ public abstract class ImageCommandBase extends Command {
         final List<String> args = ctx.getArgs();
         String url = null;
 
-        if (!ctx.getMessage().getAttachments().isEmpty()) {
+        // I hate this so much
+        // But I won't change one pmd rule just for the sake of using !isEmpty here
+        if (ctx.getMessage().getAttachments().size() > 0) {
             url = tryGetAttachment(ctx);
-        }
-
-        if (url == null && args.isEmpty()) {
-            url = getAvatarUrl(ctx.getAuthor());
-        }
-
-        if (url == null && AirUtils.isURL(args.get(0))) {
-            url = tryGetUrl(ctx, args.get(0));
-        }
-
-        if (url == null && !ctx.getMessage().getMentionedUsers().isEmpty()) {
+        } else if (ctx.getMessage().getMentionedUsers().size() > 0) {
             url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
-        }
+        } else if (!args.isEmpty()) {
+            if (AirUtils.isURL(args.get(0))) {
+                url = tryGetUrl(ctx, args.get(0));
+            } else {
+                final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
-        if (url  == null) {
-            final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
-
-            if (!textMentions.isEmpty()) {
-                url = getAvatarUrl(textMentions.get(0).getUser());
+                if (!textMentions.isEmpty()) {
+                    url =  getAvatarUrl(textMentions.get(0).getUser());
+                }
             }
         }
 
@@ -157,10 +148,10 @@ public abstract class ImageCommandBase extends Command {
     @Nullable
     private String tryGetAttachment(CommandContext ctx) {
         final Attachment attachment = ctx.getMessage().getAttachments().get(0);
-
         final File file = new File(attachment.getFileName());
 
         String mimetype = null;
+
         try {
             mimetype = Files.probeContentType(file.toPath());
         }
@@ -188,17 +179,18 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
+    @Nonnull
     private String getAvatarUrl(User user) {
         return UserKt.getStaticAvatarUrl(user) + "?size=512";
     }
 
+    @Nonnull
     public String parseTextArgsForImage(CommandContext ctx) {
         return StringKt.stripFlags(ctx.getArgsDisplay(), this);
     }
 
     @Nullable
     protected String[] splitString(CommandContext ctx) {
-
         final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {

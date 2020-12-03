@@ -47,7 +47,7 @@ class PatreonCheckCommand : Command() {
             |${getIsGuildPatronStatus(user, guild).a("guild_patron")}
             |${getIsGuildPremium(guild).a("guild_premium")}
             |${ONEGUILD_PATRONS.containsValue(guild.idLong).a("guild_one_guild")}
-            |${isUserOrGuildPatron(ctx.event, false).a("isUserOrGuildPatron (should be true if any is true)")}
+            |${isUserOrGuildPatron(ctx, false).a("isUserOrGuildPatron (should be true if any is true)")}
             |```
         """.trimMargin()
 

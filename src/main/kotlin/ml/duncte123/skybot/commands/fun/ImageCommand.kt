@@ -38,9 +38,7 @@ class ImageCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-
-        if (isUserOrGuildPatron(event)) {
+        if (isUserOrGuildPatron(ctx)) {
             if (ctx.args.isEmpty()) {
                 this.sendUsageInstructions(ctx)
                 return

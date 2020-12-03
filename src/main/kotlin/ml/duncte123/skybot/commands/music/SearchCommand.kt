@@ -40,18 +40,17 @@ class SearchCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-
         if (ctx.args.isEmpty()) {
             this.sendUsageInstructions(ctx)
             return
         }
 
         val handler = ctx.reactionHandler
-        val isPatron = isUserOrGuildPatron(event, false)
+        val isPatron = isUserOrGuildPatron(ctx, false)
+        val author = ctx.author
 
         val timeout = when {
-            isDev(event.author) || isPatron -> 60L
+            isDev(author) || isPatron -> 60L
             else -> 15L
         }
 
@@ -79,7 +78,7 @@ class SearchCommand : MusicCommand() {
                 .setChannel(ctx.channel)
                 .setEmbed(EmbedUtils.embedMessage(string))
                 .setSuccessAction {
-                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
+                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, author.idLong, ctx, res)
                 }
                 .build()
         )

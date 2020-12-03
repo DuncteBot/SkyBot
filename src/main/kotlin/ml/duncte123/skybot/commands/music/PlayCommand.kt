@@ -22,7 +22,6 @@ import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
@@ -41,16 +40,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val guild = event.guild
-        val mng = getMusicManager(guild, ctx.audioUtils)
-        val player = mng.player
-        val scheduler = mng.scheduler
-
         if (ctx.args.isEmpty()) {
-            if (ctx.message.attachments.isNotEmpty() && playUploadedFile(ctx, mng)) {
+            if (ctx.message.attachments.isNotEmpty() && playUploadedFile(ctx)) {
                 return
             }
+
+            val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+            val player = mng.player
+            val scheduler = mng.scheduler
 
             when {
                 player.isPaused -> {
@@ -79,7 +76,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (skipParsing) {
-            handlePlay(toPlay, ctx, mng)
+            handlePlay(toPlay, ctx)
             return
         }
 
@@ -87,17 +84,17 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             val vidId = searchCache(toPlay, ctx)
 
             if (vidId == null) {
-                MessageUtils.sendError(event.message)
+                MessageUtils.sendError(ctx.message)
                 sendMsg(ctx, "No tracks where found")
                 return
             }
             toPlay = "https://www.youtube.com/watch?v=$vidId"
         }
 
-        handlePlay(toPlay, ctx, mng)
+        handlePlay(toPlay, ctx)
     }
 
-    private fun playUploadedFile(ctx: CommandContext, mng: GuildMusicManager): Boolean {
+    private fun playUploadedFile(ctx: CommandContext): Boolean {
         val file = ctx.message.attachments
             .firstOrNull { it.fileExtension?.toLowerCase() in acceptedExtensions }
 
@@ -107,14 +104,12 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         // returning true here to prevent going to the pause toggle
-        if (!CommandUtils.isUserOrGuildPatron(ctx.event, false)) {
+        if (!CommandUtils.isUserOrGuildPatron(ctx, false)) {
             sendMsg(ctx, "Sorry but this feature is only available to patrons")
             return true
         }
 
-        val url = file.url
-
-        handlePlay(url, ctx, mng)
+        handlePlay(file.url, ctx)
 
         return true
     }
@@ -129,13 +124,13 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return res[0].id.videoId
     }
 
-    private fun handlePlay(toPlay: String, ctx: CommandContext, mng: GuildMusicManager) {
+    private fun handlePlay(toPlay: String, ctx: CommandContext) {
         if (toPlay.length > 1024) {
             MessageUtils.sendError(ctx.message)
             sendMsg(ctx, "Input cannot be longer than 1024 characters.")
             return
         }
 
-        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
+        ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
     }
 }

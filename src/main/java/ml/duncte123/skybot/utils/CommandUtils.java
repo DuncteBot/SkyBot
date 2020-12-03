@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.utils.Checks;
 
@@ -100,11 +99,11 @@ public class CommandUtils {
                     }
 
                     output.put(currentFlag, new ArrayList<>());
-                    pushFlag = false;
                 } else {
                     currentFlag = "";
-                    pushFlag = false;
                 }
+
+                pushFlag = false;
             } else if (word.charAt(0) == '-') {
                 if (word.length() > 1) {
                     final String tempFlag = word.substring(1);
@@ -230,13 +229,13 @@ public class CommandUtils {
         return true;
     }
 
-    public static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event, boolean reply) {
-        final boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
-        return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
+    public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx, boolean reply) {
+        final boolean isGuild = isGuildPatron(ctx.getAuthor(), ctx.getGuild());
+        return isGuild || isPatron(ctx.getAuthor(), ctx.getChannel(), reply);
     }
 
-    public static boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event) {
-        return isUserOrGuildPatron(event, true);
+    public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx) {
+        return isUserOrGuildPatron(ctx, true);
     }
 
     public static boolean isDev(@Nonnull User user) {

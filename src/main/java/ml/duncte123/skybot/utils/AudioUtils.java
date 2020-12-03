@@ -82,12 +82,8 @@ public class AudioUtils {
         return playerManager;
     }
 
-    public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw, final CommandContext ctx) {
-        loadAndPlay(mng, trackUrlRaw, ctx, true);
-    }
-
-    public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
-                                    final CommandContext ctx, final boolean announce) {
+    public Future<Void> loadAndPlay(final CommandContext ctx, final String trackUrlRaw,
+                                    final boolean announce) {
         final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
 //        final boolean isPatron = false;
         final String trackUrl;
@@ -99,6 +95,7 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
+        final GuildMusicManager mng = getMusicManager(ctx.getJDAGuild());
         final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, isPatron);
 
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);

@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -36,17 +35,14 @@ public class LinusCommand extends ImageCommandBase {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-
-        final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!passes(event)) {
+        if (!passes(ctx)) {
             return;
         }
 
         final String url = getImageFromCommand(ctx);
 
         if (url != null) {
-            ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+            ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(ctx, image));
         }
     }
 }

@@ -42,7 +42,7 @@ public class DrakeCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
@@ -64,12 +64,12 @@ public class DrakeCommand extends NoPatronImageCommand {
             final boolean shouldDab = "dddrake".equalsIgnoreCase(invoke);
             final Pair<byte[], JsonNode> dannyDrake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
 
-            handleBasicImage(ctx.getEvent(), dannyDrake);
+            handleBasicImage(ctx, dannyDrake);
 
             return;
         }
 
         final Pair<byte[], JsonNode> drakeMeme = ctx.getApis().getDrakeMeme(split[0], split[1]);
-        handleBasicImage(ctx.getEvent(), drakeMeme);
+        handleBasicImage(ctx, drakeMeme);
     }
 }

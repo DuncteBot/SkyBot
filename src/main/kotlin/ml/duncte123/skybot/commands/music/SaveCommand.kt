@@ -36,19 +36,17 @@ class SaveCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-
-        event.channel.sendMessage("${event.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")
+        ctx.channel.sendMessage("${ctx.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")
             .addFile(
-                toByteArray(event.guild, ctx.audioUtils, ctx.variables.jackson),
+                toByteArray(ctx.guild, ctx.audioUtils, ctx.variables.jackson),
                 "playlist-${getDatabaseDateFormat(OffsetDateTime.now())}.json"
             )
             .queue()
     }
 
-    private fun toByteArray(guild: Guild?, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {
+    private fun toByteArray(guild: Guild, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {
         val array = mapper.createArrayNode()
-        val manager = getMusicManager(guild, audioUtils)
+        val manager = audioUtils.getMusicManager(guild)
 
         val urls = manager.scheduler.queue
             .map { it.info.uri }

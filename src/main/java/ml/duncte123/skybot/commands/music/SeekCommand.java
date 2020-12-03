@@ -41,6 +41,7 @@ public class SeekCommand extends MusicCommand {
     private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2}):(\\d{2})");
 
     public SeekCommand() {
+        this.requiresArgs = true;
         this.name = "seek";
         this.aliases = new String[]{
             "jump",
@@ -56,14 +57,7 @@ public class SeekCommand extends MusicCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-        final List<String> args = ctx.getArgs();
-
-        if (args.isEmpty()) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
-        final LavalinkPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
+        final LavalinkPlayer player = ctx.getAudioUtils().getMusicManager(ctx.getGuild()).player;
         final AudioTrack currentTrack = player.getPlayingTrack();
 
         if (currentTrack == null) {
@@ -76,6 +70,7 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
+        final List<String> args = ctx.getArgs();
         final String arg0 = args.get(0);
         final String seekTime = arg0.replaceFirst("-", "");
         final Matcher matcher = TIME_REGEX.matcher(seekTime);

@@ -32,13 +32,13 @@ public class SaltyCommand extends NoPatronImageCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!passesNoArgs(ctx.getEvent(), false)) {
+        if (!passes(ctx, false)) {
             return;
         }
 
         final String url = getImageFromCommand(ctx);
         if (url != null) {
-            ctx.getAlexFlipnote().getSalty(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
+            ctx.getAlexFlipnote().getSalty(url).async((image) -> handleBasicImage(ctx, image));
         }
     }
 }

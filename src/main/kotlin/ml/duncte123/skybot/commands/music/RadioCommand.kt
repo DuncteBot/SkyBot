@@ -33,6 +33,7 @@ class RadioCommand : MusicCommand() {
     var radioStreams = arrayListOf<RadioStream>()
 
     init {
+        this.requiresArgs = true
         this.withAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
@@ -43,24 +44,12 @@ class RadioCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val args = ctx.args
-
-        if (args.isEmpty()) {
-            sendMsg(ctx, "Insufficient args, usage: `${ctx.prefix}$name <(full)list/station name>`")
-            return
-        }
-
-        val mng = getMusicManager(ctx.jdaGuild, ctx.audioUtils)
-        val scheduler = mng.scheduler
-
         when (ctx.args[0]) {
             "list" -> {
                 sendRadioSender(ctx)
-                return
             }
             "fulllist" -> {
                 sendMsg(ctx, "The full list of radio streams can be found on <https://dunctebot.com/radiostreams>")
-                return
             }
             else -> {
                 val search = ctx.argsRaw.toLowerCase()
@@ -73,10 +62,15 @@ class RadioCommand : MusicCommand() {
                     return
                 }
 
-                mng.player.stopTrack()
-                mng.player.isPaused = false
-                scheduler.queue.clear()
-                ctx.audioUtils.loadAndPlay(mng, radio.url, ctx)
+                val audioUtils = ctx.audioUtils
+                val mng = audioUtils.getMusicManager(ctx.jdaGuild)
+                val player = mng.player
+
+                player.stopTrack()
+                player.isPaused = false
+                mng.scheduler.queue.clear()
+
+                audioUtils.loadAndPlay(ctx, radio.url, true)
             }
         }
     }
@@ -106,10 +100,6 @@ class RadioCommand : MusicCommand() {
         val json = WebUtils.ins
             .getJSONArray("https://raw.githubusercontent.com/DuncteBot/dunctebot.github.io/development/resources/radio_streams.json")
             .execute()
-
-//        val streams = this.javaClass.getResource("/radio_streams.json").readText()
-//        val json = DataArray.fromJson(streams)
-
         // Clear before adding more (in case of reloading)
         radioStreams.clear()
 
