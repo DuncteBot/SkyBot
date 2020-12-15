@@ -33,11 +33,11 @@ jobs:
 
             - run:
                   name: "Get dependencies"
-                  command: ./gradlew dependencies
+                  command: ./gradlew --no-daemon dependencies
 
             - run:
                 name: "Build bot"
-                command: ./gradlew build
+                command: ./gradlew --no-daemon build
 
             - save_cache:
                   paths:
@@ -92,7 +92,7 @@ jobs:
 
             - run:
                 name: "Upload to github if on master"
-                command: ./gradlew githubRelease;
+                command: ./gradlew --no-daemon githubRelease;
 
 
 workflows:

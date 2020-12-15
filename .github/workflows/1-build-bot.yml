@@ -21,6 +21,6 @@ jobs:
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
             - name: Lint code
-              run: ./gradlew lintAll
+              run: ./gradlew --no-daemon lintAll
             - name: Build with Gradle
-              run: ./gradlew build
+              run: ./gradlew --no-daemon build
