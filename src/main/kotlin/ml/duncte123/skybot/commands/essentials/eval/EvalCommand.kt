@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
+import com.github.natanbc.reliqua.request.PendingRequest
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.StringUtils
@@ -36,6 +37,8 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
 import javax.script.ScriptException
@@ -160,7 +163,7 @@ class EvalCommand : Command() {
 
         LOGGER.info(
             "${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${ctx.author})" +
-                "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}"
+                "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy").execute()})${TextColor.RESET}"
         )
     }
 
@@ -190,8 +193,11 @@ class EvalCommand : Command() {
                 if (Settings.USE_JSON) {
                     sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)
                 } else {
+                    // respond instantly
                     sendMsg(ctx, "ERROR: $out")
-                    LOGGER.error("Eval error", out)
+                    // send the trace when uploaded
+                    makeHastePost(out.getString()).async {
+                        sendMsg(ctx, "Stacktrace:
                 }
             }
 
@@ -213,12 +219,17 @@ class EvalCommand : Command() {
         }
     }
 
-    @Suppress("SameParameterValue")
-    private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
-        if (Settings.IS_LOCAL) {
-            return "RUNNING_LOCAL"
-        }
+    private fun Throwable.getString(): String {
+        val writer = StringWriter()
+        val out = PrintWriter(writer)
 
+        this.printStackTrace(out)
+
+        return writer.toString()
+    }
+
+    @Suppress("SameParameterValue")
+    private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): PendingRequest<String> {
         val base = "https://paste.menudocs.org"
         val body = FormRequestBody()
 
@@ -226,14 +237,12 @@ class EvalCommand : Command() {
         body.append("expire", expiration)
         body.append("lang", lang)
 
-        val loc = WebUtils.ins.postRequest("$base/paste/new", body)
+        return WebUtils.ins.postRequest("$base/paste/new", body)
             .build(
                 {
-                    return@build it.request().url().url().path
+                    return@build base + it.request().url().url().path
                 },
                 WebParserUtils::handleError
-            ).execute()
-
-        return base + loc
+            )
     }
 }
