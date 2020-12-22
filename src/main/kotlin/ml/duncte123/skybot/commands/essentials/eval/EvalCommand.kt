@@ -197,7 +197,8 @@ class EvalCommand : Command() {
                     sendMsg(ctx, "ERROR: $out")
                     // send the trace when uploaded
                     makeHastePost(out.getString()).async {
-                        sendMsg(ctx, "Stacktrace:
+                        sendMsg(ctx, "Stacktrace: <$it>")
+                    }
                 }
             }
 
