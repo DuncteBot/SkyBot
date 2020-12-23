@@ -39,9 +39,6 @@ import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeoutException
-import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
 @Authors(
@@ -170,24 +167,6 @@ class EvalCommand : Command() {
     private fun parseEvalResponse(out: Any?, ctx: CommandContext) {
         when (out) {
             null -> sendSuccess(ctx.message)
-
-            is ArrayIndexOutOfBoundsException -> {
-                sendSuccess(ctx.message)
-            }
-
-            is ExecutionException, is ScriptException -> {
-                out as Exception
-                sendErrorWithMessage(ctx.message, "ERROR: " + out.cause.toString())
-            }
-
-            is TimeoutException, is InterruptedException, is IllegalStateException -> {
-                out as Exception
-                sendErrorWithMessage(ctx.message, "ERROR: $out")
-            }
-
-            is IllegalArgumentException -> {
-                sendErrorWithMessage(ctx.message, "ERROR: $out")
-            }
 
             is Throwable -> {
                 if (Settings.USE_JSON) {
