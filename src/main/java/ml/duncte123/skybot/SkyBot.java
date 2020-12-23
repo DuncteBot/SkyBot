@@ -95,7 +95,7 @@ public final class SkyBot {
         }
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings(variables);
+        GuildSettingsUtils.loadVcAutoRoles(variables);
 
         //Set the token to a string
         final String token = config.discord.token;

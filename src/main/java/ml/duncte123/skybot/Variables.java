@@ -51,7 +51,6 @@ import java.util.concurrent.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
-
     private final JsonMapper mapper = new JsonMapper();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
@@ -64,6 +63,7 @@ public final class Variables {
     private final DunctebotConfig config;
     private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final Map<Long, GuildSetting> guildSettingsCache = ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(1, TimeUnit.HOURS)

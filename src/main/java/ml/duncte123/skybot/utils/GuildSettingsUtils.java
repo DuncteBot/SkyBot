@@ -41,34 +41,14 @@ import java.util.stream.Collectors;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildSettingsUtils {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     private GuildSettingsUtils() {}
 
-    public static void loadAllSettings(Variables variables) {
-//        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
-        loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
-    }
+    public static void loadVcAutoRoles(Variables variables) {
+        final DatabaseAdapter adapter = variables.getDatabaseAdapter();
+        final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
-    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, Map<Long, GuildSetting> guildSettings) {
-        LOGGER.info("Loading Guild settings.");
-
-        databaseAdapter.getGuildSettings(
-            (storedSettings) -> {
-
-                storedSettings.forEach(
-                    (setting) -> guildSettings.put(setting.getGuildId(), setting)
-                );
-
-                LOGGER.info("Loaded settings for " + guildSettings.size() + " guilds.");
-
-                return null;
-            }
-        );
-    }
-
-    private static void loadVcAutoRoles(DatabaseAdapter adapter, TLongObjectMap<TLongLongMap> vcAutoRoleCache) {
         LOGGER.info("Loading vc auto roles.");
 
         adapter.getVcAutoRoles((items) -> {
