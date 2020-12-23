@@ -72,8 +72,8 @@ public class GuildMemberListener extends BaseListener {
             final Guild guild = ((GuildLeaveEvent) event).getGuild();
             final long guildId = guild.getIdLong();
 
-            GuildUtils.GUILD_MEMBER_COUNTS.invalidate(guildId);
-            variables.getGuildSettingsCache().invalidate(guildId);
+            GuildUtils.GUILD_MEMBER_COUNTS.remove(guildId);
+            variables.getGuildSettingsCache().remove(guildId);
         }
     }
 
@@ -115,7 +115,7 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void updateGuildCount(GuildMemberJoinEvent event, Guild guild) {
-        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         if (guildCounts != null) {
             final User user = event.getUser();
@@ -177,7 +177,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         final Guild guild = event.getGuild();
-        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCounts = GuildUtils.GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         if (guildCounts != null) {
             if (user.isBot()) {

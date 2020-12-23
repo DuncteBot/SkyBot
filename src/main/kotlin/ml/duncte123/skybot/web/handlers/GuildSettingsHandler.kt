@@ -52,9 +52,13 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
             // only update the setting if we have the guild in cache
             if (guild != null) {
                 // fetch the old setting before updating it
-                val oldSetting = settings.getIfPresent(setting.guildId)
+                val oldSetting = if (settings.containsKey(setting.guildId)) {
+                    settings[setting.guildId]
+                } else {
+                    null
+                }
 
-                settings.put(setting.guildId, setting)
+                settings[setting.guildId] = setting
 
                 // if the guild is there we attempt cache the invites
                 if (!shardManager.isUnavailable(setting.guildId)) {
@@ -78,7 +82,7 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
         guildsIds.forEach {
             val longId = it.asLong()
 
-            variables.guildSettingsCache.invalidate(longId)
+            variables.guildSettingsCache.remove(longId)
             variables.vcAutoRoleCache.remove(longId)
         }
     }

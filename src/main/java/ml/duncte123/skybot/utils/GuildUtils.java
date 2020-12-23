@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -30,11 +28,14 @@ import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -44,8 +45,9 @@ import java.util.concurrent.TimeUnit;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
-    public static final Cache<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = Caffeine.newBuilder()
-        .expireAfterAccess(5, TimeUnit.HOURS)
+    public static final Map<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.ACCESSED)
+        .expiration(5, TimeUnit.HOURS)
         .build();
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
 
@@ -66,7 +68,7 @@ public class GuildUtils {
      * [2] = total
      */
     public static long[] getBotAndUserCount(Guild guild) {
-        if (!GUILD_MEMBER_COUNTS.asMap().containsKey(guild.getIdLong())) {
+        if (!GUILD_MEMBER_COUNTS.containsKey(guild.getIdLong())) {
             try {
                 GUILD_MEMBER_COUNTS.put(guild.getIdLong(), GuildMemberInfo.init(guild));
             }
@@ -78,7 +80,7 @@ public class GuildUtils {
             }
         }
 
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {
@@ -130,7 +132,7 @@ public class GuildUtils {
     }
 
     public static long getNitroUserCountCache(Guild guild) {
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {

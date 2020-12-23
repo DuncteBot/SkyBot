@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import com.dunctebot.models.settings.GuildSetting;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,11 +47,11 @@ public class GuildSettingsUtils {
     private GuildSettingsUtils() {}
 
     public static void loadAllSettings(Variables variables) {
-        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
+//        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
         loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
-    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSetting> guildSettings) {
+    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, Map<Long, GuildSetting> guildSettings) {
         LOGGER.info("Loading Guild settings.");
 
         databaseAdapter.getGuildSettings(
@@ -61,7 +61,7 @@ public class GuildSettingsUtils {
                     (setting) -> guildSettings.put(setting.getGuildId(), setting)
                 );
 
-                LOGGER.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
+                LOGGER.info("Loaded settings for " + guildSettings.size() + " guilds.");
 
                 return null;
             }
@@ -120,7 +120,7 @@ public class GuildSettingsUtils {
     }
 
     private static GuildSetting registerNewGuild(long guildId, Variables variables, GuildSetting newGuildSettings) {
-        final LoadingCache<Long, GuildSetting> cache = variables.getGuildSettingsCache();
+        final Map<Long, GuildSetting> cache = variables.getGuildSettingsCache();
         final GuildSetting settingForGuild = cache.get(guildId);
 
         if (settingForGuild != null) {
