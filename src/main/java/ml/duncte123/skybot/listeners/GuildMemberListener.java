@@ -72,8 +72,8 @@ public class GuildMemberListener extends BaseListener {
             final Guild guild = ((GuildLeaveEvent) event).getGuild();
             final long guildId = guild.getIdLong();
 
-            GuildUtils.GUILD_MEMBER_COUNTS.invalidate(guildId);
-            variables.getGuildSettingsCache().invalidate(guildId);
+            GuildUtils.GUILD_MEMBER_COUNTS.remove(guildId);
+            variables.getGuildSettingsCache().remove(guildId);
         }
     }
 

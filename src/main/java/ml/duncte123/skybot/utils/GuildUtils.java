@@ -18,18 +18,19 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +45,10 @@ import java.util.concurrent.TimeUnit;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
-    public static final Cache<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = Caffeine.newBuilder()
-        .expireAfterAccess(5, TimeUnit.HOURS)
-        .build();
+    public static final DBMap<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = new DBMap<>(ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.ACCESSED)
+        .expiration(1, TimeUnit.HOURS)
+        .build());
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
 
     private GuildUtils() {}
@@ -66,7 +68,7 @@ public class GuildUtils {
      * [2] = total
      */
     public static long[] getBotAndUserCount(Guild guild) {
-        if (!GUILD_MEMBER_COUNTS.asMap().containsKey(guild.getIdLong())) {
+        if (!GUILD_MEMBER_COUNTS.containsKey(guild.getIdLong())) {
             try {
                 GUILD_MEMBER_COUNTS.put(guild.getIdLong(), GuildMemberInfo.init(guild));
             }

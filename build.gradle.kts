@@ -145,8 +145,8 @@ dependencies {
     // Oshi
     implementation(group = "com.github.oshi", name = "oshi-core", version = "5.2.5")
 
-    // caffeine
-    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.5")
+    // ExpiringMap
+    implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
 
     // okhttp
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")

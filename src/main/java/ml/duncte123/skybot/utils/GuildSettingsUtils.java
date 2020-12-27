@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import com.dunctebot.models.settings.GuildSetting;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,34 +41,14 @@ import java.util.stream.Collectors;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildSettingsUtils {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     private GuildSettingsUtils() {}
 
-    public static void loadAllSettings(Variables variables) {
-        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettingsCache());
-        loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
-    }
+    public static void loadVcAutoRoles(Variables variables) {
+        final DatabaseAdapter adapter = variables.getDatabaseAdapter();
+        final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
-    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, LoadingCache<Long, GuildSetting> guildSettings) {
-        LOGGER.info("Loading Guild settings.");
-
-        databaseAdapter.getGuildSettings(
-            (storedSettings) -> {
-
-                storedSettings.forEach(
-                    (setting) -> guildSettings.put(setting.getGuildId(), setting)
-                );
-
-                LOGGER.info("Loaded settings for " + guildSettings.estimatedSize() + " guilds.");
-
-                return null;
-            }
-        );
-    }
-
-    private static void loadVcAutoRoles(DatabaseAdapter adapter, TLongObjectMap<TLongLongMap> vcAutoRoleCache) {
         LOGGER.info("Loading vc auto roles.");
 
         adapter.getVcAutoRoles((items) -> {
@@ -120,7 +100,7 @@ public class GuildSettingsUtils {
     }
 
     private static GuildSetting registerNewGuild(long guildId, Variables variables, GuildSetting newGuildSettings) {
-        final LoadingCache<Long, GuildSetting> cache = variables.getGuildSettingsCache();
+        final Map<Long, GuildSetting> cache = variables.getGuildSettingsCache();
         final GuildSetting settingForGuild = cache.get(guildId);
 
         if (settingForGuild != null) {
