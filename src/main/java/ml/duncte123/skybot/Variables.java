@@ -31,6 +31,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
+import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -46,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.concurrent.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -64,7 +64,7 @@ public final class Variables {
     private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    private final Map<Long, GuildSetting> guildSettingsCache = ExpiringMap.builder()
+    private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(1, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
@@ -80,7 +80,7 @@ public final class Variables {
                 return null;
             }
         })
-        .build();
+        .build());
 
 
     /* package */ Variables() {
@@ -144,7 +144,7 @@ public final class Variables {
         return config;
     }
 
-    public Map<Long, GuildSetting> getGuildSettingsCache() {
+    public DBMap<Long, GuildSetting> getGuildSettingsCache() {
         return guildSettingsCache;
     }
 

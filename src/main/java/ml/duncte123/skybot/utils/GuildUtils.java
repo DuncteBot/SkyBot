@@ -22,6 +22,7 @@ import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -45,10 +45,10 @@ import java.util.concurrent.TimeUnit;
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
-    public static final Map<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = ExpiringMap.builder()
+    public static final DBMap<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(1, TimeUnit.HOURS)
-        .build();
+        .build());
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
 
     private GuildUtils() {}
@@ -80,7 +80,7 @@ public class GuildUtils {
             }
         }
 
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {
@@ -132,7 +132,7 @@ public class GuildUtils {
     }
 
     public static long getNitroUserCountCache(Guild guild) {
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {

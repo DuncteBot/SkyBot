@@ -52,11 +52,7 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
             // only update the setting if we have the guild in cache
             if (guild != null) {
                 // fetch the old setting before updating it
-                val oldSetting = if (settings.containsKey(setting.guildId)) {
-                    settings[setting.guildId]
-                } else {
-                    null
-                }
+                val oldSetting = settings.getIfPresent(setting.guildId)
 
                 settings[setting.guildId] = setting
 
