@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class GuildUtils {
     public static final Map<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
-        .expiration(5, TimeUnit.HOURS)
+        .expiration(1, TimeUnit.HOURS)
         .build();
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
 
