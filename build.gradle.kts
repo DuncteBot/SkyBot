@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_221") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_224") {
         exclude(module = "opus-java")
     }
 
@@ -103,8 +103,8 @@ dependencies {
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.63")
-    implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "9412a58")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.65")
+    implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "478fbea")
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
