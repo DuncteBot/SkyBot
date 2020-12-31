@@ -22,8 +22,6 @@ import com.dunctebot.models.settings.GuildSetting;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
@@ -33,12 +31,16 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
+import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MapUtils;
+import net.jodah.expiringmap.EntryLoader;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.caching.client.CacheClient;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,6 @@ import java.util.concurrent.*;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
-
     private final JsonMapper mapper = new JsonMapper();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
@@ -62,9 +63,11 @@ public final class Variables {
     private final DunctebotConfig config;
     private final CacheClient youtubeCache;
     private DatabaseAdapter databaseAdapter;
-    private final LoadingCache<Long, GuildSetting> guildSettingsCache = Caffeine.newBuilder()
-        .expireAfterAccess(1, TimeUnit.HOURS)
-        .build((guildId) -> {
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.ACCESSED)
+        .expiration(1, TimeUnit.HOURS)
+        .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
             final CompletableFuture<GuildSetting> future = new CompletableFuture<>();
             getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
                 future.complete(setting);
@@ -72,11 +75,12 @@ public final class Variables {
             });
 
             try {
-                return future.get(40L, TimeUnit.SECONDS);
-            } catch (ExecutionException | TimeoutException e) {
+                return future.get(20L, TimeUnit.SECONDS);
+            } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 return null;
             }
-        });
+        })
+        .build());
 
 
     /* package */ Variables() {
@@ -140,7 +144,7 @@ public final class Variables {
         return config;
     }
 
-    public LoadingCache<Long, GuildSetting> getGuildSettingsCache() {
+    public DBMap<Long, GuildSetting> getGuildSettingsCache() {
         return guildSettingsCache;
     }
 

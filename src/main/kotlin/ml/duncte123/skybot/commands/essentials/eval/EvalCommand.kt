@@ -173,24 +173,6 @@ class EvalCommand : Command() {
         when (out) {
             null -> sendSuccess(ctx.message)
 
-            /*is ArrayIndexOutOfBoundsException -> {
-                sendSuccess(ctx.message)
-            }
-
-            is ExecutionException, is ScriptException -> {
-                out as Exception
-                sendErrorWithMessage(ctx.message, "ERROR: " + out.cause.toString())
-            }
-
-            is TimeoutException, is InterruptedException, is IllegalStateException -> {
-                out as Exception
-                sendErrorWithMessage(ctx.message, "ERROR: $out")
-            }
-
-            is IllegalArgumentException -> {
-                sendErrorWithMessage(ctx.message, "ERROR: $out")
-            }*/
-
             is Throwable -> {
                 if (Settings.USE_JSON) {
                     sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)

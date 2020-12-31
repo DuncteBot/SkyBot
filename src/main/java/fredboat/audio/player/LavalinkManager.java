@@ -62,8 +62,6 @@ public final class LavalinkManager {
             shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
 
-        lavalink.setClientName("DuncteBot");
-
         loadNodes();
     }
 

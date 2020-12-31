@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.100.0"
+val numberVersion = "3.100.2"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -83,7 +83,7 @@ dependencies {
     implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.0.11")
 
     // loadingbar
-    implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
+    implementation(group = "me.duncte123", name = "loadingbar", version = "1.3.2_454301933")
 
     // Weeb api
 //    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_221") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_224") {
         exclude(module = "opus-java")
     }
 
@@ -103,8 +103,8 @@ dependencies {
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.63")
-    implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "9412a58")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.65")
+    implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "478fbea")
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
@@ -149,8 +149,8 @@ dependencies {
     // Oshi
     implementation(group = "com.github.oshi", name = "oshi-core", version = "5.2.5")
 
-    // caffeine
-    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.5")
+    // ExpiringMap
+    implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
 
     // okhttp
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")

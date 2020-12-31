@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.Permission;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -52,7 +52,7 @@ public class LoadingBarCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final double progress = LoadingBar.getPercentage();
-        final int year = Calendar.getInstance().get(Calendar.YEAR);
+        final int year = LocalDate.now().getYear();
 
         try {
             ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")
