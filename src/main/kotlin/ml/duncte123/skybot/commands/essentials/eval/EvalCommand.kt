@@ -60,6 +60,8 @@ class EvalCommand : Command() {
         this.help = "Evaluate groovy/java code on the bot"
         this.usage = "<java/groovy code>"
 
+        // TODO: KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory?
+        // might be better?
         engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
 
         val packageImports = listOf(
@@ -72,9 +74,10 @@ class EvalCommand : Command() {
             "java.util.stream",
             "net.dv8tion.jda.api",
             "net.dv8tion.jda.api.entities",
-            "net.dv8tion.jda.api.entities.impl",
+            "net.dv8tion.jda.api.sharding",
+            "net.dv8tion.jda.internal.entities",
             "net.dv8tion.jda.api.managers",
-            "net.dv8tion.jda.api.managers.impl",
+            "net.dv8tion.jda.internal.managers",
             "net.dv8tion.jda.api.utils",
             "ml.duncte123.skybot.utils",
             "ml.duncte123.skybot.entities",
@@ -119,7 +122,7 @@ class EvalCommand : Command() {
                 .replace("\n?```".toRegex(), "")
         }
 
-        val script = /*importString + */userIn
+        val script = importString + userIn
 
         engine.put("commandManager", ctx.commandManager)
         engine.put("message", ctx.message)
