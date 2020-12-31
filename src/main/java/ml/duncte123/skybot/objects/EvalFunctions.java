@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "PMD.ClassNamingConventions"})
 public final class EvalFunctions {
     private EvalFunctions() {}
 

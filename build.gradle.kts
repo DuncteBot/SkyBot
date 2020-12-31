@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.10"))
+        classpath(kotlin("gradle-plugin", version = "1.4.21"))
     }
 }
 
@@ -36,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
     id("org.jmailen.kotlinter") version "3.2.0"
@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_224") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_225") {
         exclude(module = "opus-java")
     }
 
@@ -103,12 +103,9 @@ dependencies {
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.65")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.66")
     implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "478fbea")
 //    implementation(project(":Lavalink-Client"))
-
-    //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.6")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
@@ -128,7 +125,7 @@ dependencies {
     implementation(kotlin("script-runtime"))
     implementation(kotlin("compiler-embeddable"))
     implementation(kotlin("scripting-compiler-embeddable"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.9")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
 
     implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
 
