@@ -6,7 +6,7 @@ name: Build
 on:
     push:
         branches:
-            - master
+            - master-a
 
 jobs:
     build:
