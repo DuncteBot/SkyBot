@@ -39,11 +39,7 @@ import net.dv8tion.jda.api.requests.RestAction
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeoutException
 import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
-import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
 @Authors(
@@ -86,11 +82,11 @@ class EvalCommand : Command() {
             "ml.duncte123.skybot.objects.command"
         )
 
-        val classImports = listOf(
-            "fredboat.audio.player.LavalinkManager"
-        )
+        val otherImports = listOf(
+            // Class imports
+            "fredboat.audio.player.LavalinkManager",
 
-        val staticImports = listOf(
+            // static imports
             "ml.duncte123.skybot.objects.EvalFunctions.*",
             "me.duncte123.botcommons.messaging.MessageUtils.*",
             "me.duncte123.botcommons.messaging.EmbedUtils.*",
@@ -98,8 +94,7 @@ class EvalCommand : Command() {
         )
 
         importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
-            classImports.joinToString(separator = "\nimport ", postfix = "\n") +
-            staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
+            otherImports.joinToString(separator = "\nimport ", postfix = "\n")
     }
 
     @ExperimentalCoroutinesApi
@@ -187,7 +182,12 @@ class EvalCommand : Command() {
             }
 
             is RestAction<*> -> {
-                out.queue()
+                out.queue({
+                    sendMsg(ctx, "Rest action success: $it")
+                }) {
+                    sendMsg(ctx, "Rest action error: $it")
+                }
+
                 sendSuccess(ctx.message)
             }
 
@@ -213,7 +213,6 @@ class EvalCommand : Command() {
         return writer.toString()
     }
 
-    @Suppress("SameParameterValue")
     private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): PendingRequest<String> {
         val base = "https://paste.menudocs.org"
         val body = FormRequestBody()
