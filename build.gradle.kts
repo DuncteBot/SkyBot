@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.100.0"
+val numberVersion = "3.100.1"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -83,7 +83,7 @@ dependencies {
     implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.0.11")
 
     // loadingbar
-    implementation(group = "me.duncte123", name = "loadingbar", version = "1.2.0_10")
+    implementation(group = "me.duncte123", name = "loadingbar", version = "1.3.2_454301933")
 
     // Weeb api
 //    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
