@@ -119,6 +119,10 @@ dependencies {
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")
 
+    //groovy
+    // TODO: convert logback to xml
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.6")
+
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("script-util"))

@@ -122,8 +122,6 @@ class EvalCommand : Command() {
                 .replace("\n?```".toRegex(), "")
         }
 
-        val script = importString + userIn
-
         engine.put("commandManager", ctx.commandManager)
         engine.put("message", ctx.message)
         engine.put("channel", ctx.message.textChannel)
@@ -137,6 +135,27 @@ class EvalCommand : Command() {
         engine.put("args", ctx.args)
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
+
+        // we have to manually insert all the bindings to use at runtime
+//        val script = "$importString\n$bindingsJoined\n//USER SCRIPT\n$userIn"
+        val script = """$importString
+            |// Bindings (temp fix)
+            |val args = bindings["args"] as java.util.ArrayList<*>
+            |val guild = bindings["guild"] as ml.duncte123.skybot.entities.jda.DunctebotGuild
+            |val variables = bindings["variables"] as ml.duncte123.skybot.Variables
+            |val shardManager = bindings["shardManager"] as net.dv8tion.jda.api.sharding.DefaultShardManager
+            |val author = bindings["author"] as net.dv8tion.jda.internal.entities.UserImpl
+            |val jda = bindings["jda"] as net.dv8tion.jda.internal.JDAImpl
+            |val ctx = bindings["ctx"] as ml.duncte123.skybot.objects.command.CommandContext
+            |val channel = bindings["channel"] as net.dv8tion.jda.internal.entities.TextChannelImpl
+            |val member = bindings["member"] as net.dv8tion.jda.internal.entities.MemberImpl
+            |val commandManager = bindings["commandManager"] as ml.duncte123.skybot.CommandManager
+            |val message = bindings["message"] as net.dv8tion.jda.internal.entities.ReceivedMessage
+            |val event = bindings["event"] as net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+            |
+            |// User input
+            |$userIn
+        """.trimMargin()
 
         @SinceSkybot("3.58.0")
         GlobalScope.launch(
