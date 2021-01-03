@@ -447,7 +447,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         TODO("Not yet implemented")
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas) -> Unit) {
+    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
         TODO("Not yet implemented")
     }
 

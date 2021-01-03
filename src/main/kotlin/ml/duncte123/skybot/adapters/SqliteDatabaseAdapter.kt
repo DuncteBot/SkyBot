@@ -205,7 +205,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 profanity_type = ? ,
                 aiSensitivity = ?,
                 allow_all_to_stop = ?,
-                invite_logging = ?
+                invite_logging = ?,
+                youngAccountBanEnabled = ?,
+                youngAccountThreshold = ?
                 WHERE guildId='${guildSettings.guildId}'
                 """.trimMargin()
             ).use {
@@ -236,6 +238,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setFloat(25, guildSettings.aiSensitivity)
                 it.setBoolean(26, guildSettings.isAllowAllToStop)
                 it.setBoolean(27, guildSettings.isInviteLoggingEnabled)
+                it.setBoolean(28, guildSettings.isYoungAccountBanEnabled)
+                it.setInt(29, guildSettings.youngAccountThreshold)
                 it.executeUpdate()
             }
         }
@@ -952,15 +956,52 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     }
 
     override fun createBanBypass(guildId: Long, userId: Long) {
-        TODO("Not yet implemented")
+        runOnThread {
+            //language=SQLite
+            connManager.connection.prepareStatement("INSERT INTO ban_bypasses(guild_id, user_id) VALUES( ? , ?)").use {
+                it.setLong(1, guildId)
+                it.setLong(2, userId)
+                it.execute()
+                it.closeOnCompletion()
+            }
+        }
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
+        runOnThread {
+            connManager.connection.prepareStatement(
+                //language=SQLite
+                "SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?"
+            ).use {
+                it.setLong(1, guildId)
+                it.setLong(2, userId)
+                it.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback(
+                            BanBypas(
+                                res.getLong("guild_id"),
+                                res.getLong("user_id")
+                            )
+                        )
+                    } else {
+                        callback(null)
+                    }
+                }
+                it.closeOnCompletion()
+            }
+        }
     }
 
     override fun deleteBanBypass(banBypass: BanBypas) {
-        TODO("Not yet implemented")
+        runOnThread {
+            //language=SQLite
+            connManager.connection.prepareStatement("DELETE FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use {
+                it.setLong(1, banBypass.guildId)
+                it.setLong(2, banBypass.userId)
+                it.execute()
+                it.closeOnCompletion()
+            }
+        }
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
@@ -1089,5 +1130,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setBlacklistedWords(blackList)
             .setWarnActions(warnActions)
             .setEmbedColor(embedColor)
+            .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
+            .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
     }
 }

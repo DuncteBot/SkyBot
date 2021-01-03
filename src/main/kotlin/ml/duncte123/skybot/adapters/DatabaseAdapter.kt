@@ -164,7 +164,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun createBanBypass(guildId: Long, userId: Long)
 
-    abstract fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas) -> Unit)
+    abstract fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit)
 
     abstract fun deleteBanBypass(banBypass: BanBypas)
 

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,12 +40,23 @@ public class AutoBanBypassCommand extends ModBaseCommand {
         try {
             checkId = MiscUtil.parseSnowflake(ctx.getArgs().get(0));
         } catch (NumberFormatException ignored) {
-            sendMsg(ctx, "Your input (" + ctx.getArgs().get(0) + ") is not a valid user id.");
+            sendMsg(ctx, "Your input (`" + ctx.getArgs().get(0) + "`) is not a valid user id.");
             return;
         }
 
-        ctx.getDatabaseAdapter()
-            .createBanBypass(ctx.getGuild().getIdLong(), checkId);
-        sendMsg(ctx, "Bypass created, please note that this bypass will expire after a year");
+        final DatabaseAdapter database = ctx.getDatabaseAdapter();
+        final long guildId = ctx.getGuild().getIdLong();
+
+        database.getBanBypass(guildId, checkId, (byPass) -> {
+            if (byPass == null) {
+                database.createBanBypass(guildId, checkId);
+                sendMsg(ctx, "Bypass created, please note that this bypass will expire after a week." +
+                    "\nPlease keep in mind that this has not unbanned any user meaning that you will have to unban the user yourself if they are banned");
+                return null;
+            }
+
+            sendMsg(ctx, "A bypass already exists for this user");
+            return null;
+        });
     }
 }

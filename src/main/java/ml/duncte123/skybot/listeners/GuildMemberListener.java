@@ -22,6 +22,7 @@ import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
@@ -47,6 +48,8 @@ import javax.annotation.Nonnull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -143,24 +146,55 @@ public class GuildMemberListener extends BaseListener {
         final int threshold = settings.getYoungAccountThreshold();
 
         if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
+            final CompletableFuture<Boolean> booleanFuture = new CompletableFuture<>();
+            final DatabaseAdapter database = variables.getDatabaseAdapter();
             final String humanTime = Time4JKt.humanize(timeCreated, TextWidth.ABBREVIATED);
-            final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
 
-            guild.ban(member, 0, reason)
-                .reason(reason)
-                .queue();
+            // we have to use futures since the callback runs on a different thread
+            database.getBanBypass(guild.getIdLong(), member.getIdLong(), (byPass) -> {
+                if (byPass != null) {
+                    // delete the bypass as it is used
+                    database.deleteBanBypass(byPass);
+                    // return false, we did not ban (does not block any welcome messages from displaying)
+                    booleanFuture.complete(false);
 
-            modLog(
-                selfMember.getUser(),
-                member.getUser(),
-                "banned",
-                reason,
-                null,
-                new DunctebotGuild(guild, this.variables)
-            );
+                    modLog(
+                        String.format("User **%#s** bypassed the auto ban with a manually set bypass (created %s)",
+                            member.getUser(),
+                            humanTime
+                        ),
+                        new DunctebotGuild(guild, this.variables)
+                    );
+                    return null;
+                }
 
-            // returning true here to prevent any welcome messages from being send
-            return true;
+                // return true, we did ban the user (prevents any welcome messages from displaying)
+                booleanFuture.complete(true);
+
+                final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
+
+                guild.ban(member, 0, reason)
+                    .reason(reason)
+                    .queue();
+
+                modLog(
+                    selfMember.getUser(),
+                    member.getUser(),
+                    "banned",
+                    reason,
+                    null,
+                    new DunctebotGuild(guild, this.variables)
+                );
+
+                return null;
+            });
+
+            try {
+                return booleanFuture.get();
+            }
+            catch (InterruptedException | ExecutionException ignored) { // should never happen
+                return false;
+            }
         }
 
         return false;
