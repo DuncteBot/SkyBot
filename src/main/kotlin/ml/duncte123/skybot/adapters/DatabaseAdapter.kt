@@ -140,7 +140,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit = {})
 
-    // callback is option since we don't always need it
+    // callback is optional since we don't always need it
     abstract fun createMute(
         modId: Long,
         userId: Long,
@@ -161,6 +161,12 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     abstract fun purgeBans(ids: List<Int>)
 
     abstract fun purgeMutes(ids: List<Int>)
+
+    abstract fun createBanBypass(guildId: Long, userId: Long)
+
+    abstract fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas) -> Unit)
+
+    abstract fun deleteBanBypass(banBypass: BanBypas)
 
     // /////////////
     // VC auto role

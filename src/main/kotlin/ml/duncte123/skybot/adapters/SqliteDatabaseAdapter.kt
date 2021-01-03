@@ -951,6 +951,18 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
+    override fun createBanBypass(guildId: Long, userId: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun deleteBanBypass(banBypass: BanBypas) {
+        TODO("Not yet implemented")
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val sqlQuerry = if (isEdit) {
             //language=SQLite

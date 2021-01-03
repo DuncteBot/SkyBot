@@ -137,6 +137,7 @@ public class CommandManager {
         this.addCommand(new AdviceCommand());
         this.addCommand(new AlpacaCommand());
         this.addCommand(new AnnounceCommand());
+        this.addCommand(new AutoBanBypassCommand());
         this.addCommand(new AutoRoleCommand());
         this.addCommand(new AvatarCommand());
         this.addCommand(new B1nzyCommand());

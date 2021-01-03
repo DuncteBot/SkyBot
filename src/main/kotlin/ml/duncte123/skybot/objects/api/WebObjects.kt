@@ -47,6 +47,12 @@ data class Ban
     @JsonProperty("guildId") val guildId: String
 )
 
+data class BanBypas
+@JsonCreator constructor(
+    @JsonProperty("guild_id") val guildId: Long,
+    @JsonProperty("user_id") val userId: Long
+)
+
 data class Mute
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
