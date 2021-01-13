@@ -33,7 +33,8 @@ import java.text.DecimalFormat
 import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class StatsCommand : Command() {
+class
+StatsCommand : Command() {
     private val oshi = SystemInfo().operatingSystem
 
     init {
@@ -56,9 +57,9 @@ class StatsCommand : Command() {
 
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val cores = platformMXBean.availableProcessors
-        val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
-        val serverMem = (platformMXBean.totalPhysicalMemorySize shr 20).toDouble()
-        val serverMemUsage = serverMem - (platformMXBean.freePhysicalMemorySize shr 20)
+        val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.cpuLoad)
+        val serverMem = (platformMXBean.totalMemorySize shr 20).toDouble()
+        val serverMemUsage = serverMem - (platformMXBean.freeMemorySize shr 20)
         val serverMemPercent = floor((serverMemUsage / serverMem) * 100.0)
 
         val memoryBean = ManagementFactory.getMemoryMXBean()

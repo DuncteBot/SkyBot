@@ -277,7 +277,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.1.1"
+    gradleVersion = "6.8"
     distributionType = DistributionType.ALL
 }
 
@@ -311,7 +311,6 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName(numberVersion)
-    releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
     prerelease(false)
     body(changelog())
