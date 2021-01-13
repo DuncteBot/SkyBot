@@ -24,7 +24,7 @@ Go to [`https://dunctebotlink/invite`][inviteLink] and follow the steps on the w
 
 
 # How to setup? / Self-hosting
-Self-hosting of this bot is not supported nor will there be any support provided to the people that try.
+While self-hosting is very much possible with Docker, please note that no support will be provided with self-hosting.
 The code of this bot was made public for people who want to see how the bot works or want to contribute to it.
 
 

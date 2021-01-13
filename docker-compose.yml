@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+    skybot:
+        container_name: skybot
+        build:
+            context: .
+        environment:
+            # Bot settings
+            - BOT_ADMINS=191231307290771456,311769499995209728
+            - BOT_PREFIX=db!
+            - BOT_TOTAL_SHARDS=1
+            - BOT_TOKEN=
+
+            # Api settings
+            - API_ALEXFLIPNOTE=
+            - API_YOUTUBECACHE_ENDPOINT=
+            - API_YOUTUBECACHE_TOKEN=
+            - API_GOOGLE=
+            - API_WEEBSH=
+            - API_KSOFT=
+            - API_SPOTIFY_CLIENT_ID=
+            - API_SPOTIFY_CLIENT_SECRET=
+            - API_BLARGBOT=
+            - API_WOLFRAMALPHA=
+            - API_THECATAPI=
+
+            # Lavalink settings
+            - LAVALINK_ENABLE=false
+            - LAVALINK_NODE_COUNT=1
+            - LAVALINK_NODE_0_HOST=
+            - LAVALINK_NODE_0_PASS=
+            - LAVALINK_NODE_0_REGION=
+
+            # Sentry settings
+            - SENTRY_ENABLED=false
+            - SENTRY_DSN=
+
+            # Websocket settings
+            - WEBSOCKET_URL=
+            - WEBSOCKET_ENABLE=false
+
+            # And finally
+            - USE_DATABASE=false
