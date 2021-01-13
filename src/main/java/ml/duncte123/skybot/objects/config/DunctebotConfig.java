@@ -174,6 +174,27 @@ public class DunctebotConfig {
             System.getenv("API_THECATAPI")
         );
 
+        final boolean lavalinkEnable = Boolean.parseBoolean(System.getenv("LAVALINK_ENABLE"));
+        final Lavalink lavalink;
+
+        // Skip lavalink settings if not enabled
+        if (lavalinkEnable) {
+            final int count = Integer.parseInt(System.getenv("LAVALINK_NODE_COUNT"));
+            final Lavalink.LavalinkNode[] nodes = new Lavalink.LavalinkNode[count];
+
+            for (int i = 0; i < count; i++) {
+                nodes[i] = new Lavalink.LavalinkNode(
+                    System.getenv("LAVALINK_NODE_"+i+"_HOST"),
+                    System.getenv("LAVALINK_NODE_"+i+"_PASS"),
+                    System.getenv("LAVALINK_NODE_"+i+"_REGION")
+                );
+            }
+
+            lavalink = new Lavalink(true, nodes);
+        } else {
+            lavalink = new Lavalink(false, null);
+        }
+
         return null;
     }
 }
