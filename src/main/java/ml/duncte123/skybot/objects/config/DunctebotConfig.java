@@ -195,6 +195,23 @@ public class DunctebotConfig {
             lavalink = new Lavalink(false, null);
         }
 
-        return null;
+        final Sentry sentry = new Sentry(
+            Boolean.parseBoolean(System.getenv("SENTRY_ENABLED")),
+            System.getenv("SENTRY_DSN")
+        );
+
+        final Websocket websocket = new Websocket(
+            System.getenv("WEBSOCKET_URL"),
+            Boolean.parseBoolean(System.getenv("WEBSOCKET_ENABLE"))
+        );
+
+        return new DunctebotConfig(
+            discord,
+            apis,
+            lavalink,
+            sentry,
+            websocket,
+            Boolean.parseBoolean(System.getenv("USE_DATABASE"))
+        );
     }
 }

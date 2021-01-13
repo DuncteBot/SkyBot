@@ -44,8 +44,6 @@ import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.caching.client.CacheClient;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
