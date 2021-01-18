@@ -106,7 +106,9 @@ public class SQLiteDatabaseConnectionManager {
                     "profanity_type VARCHAR(20) default 'SEVERE_TOXICITY'," +
                     "aiSensitivity FLOAT(3, 2) default 0.7," +
                     "allow_all_to_stop TINYINT(1) NOT NULL DEFAULT '1'," +
-                    "invite_logging TINYINT(1) NOT NULL DEFAULT '0'" +
+                    "invite_logging TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "youngAccountBanEnabled TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "youngAccountThreshold integer(100) NOT NULL DEFAULT -1" +
                     ");"
             );
 
@@ -219,6 +221,14 @@ public class SQLiteDatabaseConnectionManager {
                     "duration INTEGER DEFAULT 5," +
                     "threshold INTEGER DEFAULT 3," +
                     "type TEXT CHECK( type IN ('" + toListString(WarnAction.Type.values()) + "')) NOT NULL" +
+                    ");"
+            );
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS ban_bypasses(" +
+                    "guild_id VARCHAR(20) NOT NULL," +
+                    "user_id VARCHAR(20) NOT NULL," +
+                    "PRIMARY KEY (guild_id, user_id)" +
                     ");"
             );
         }

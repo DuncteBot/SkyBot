@@ -18,66 +18,249 @@
 
 package ml.duncte123.skybot.objects.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 @SuppressWarnings("PMD")
 public class DunctebotConfig {
+    public final Discord discord;
+    public final Apis apis;
+    public final Lavalink lavalink;
+    public final Sentry sentry;
+    public final Websocket websocket;
+    public final boolean use_database;
 
-    public Discord discord;
-    public Apis apis;
-    public Lavalink lavalink;
-    public Sentry sentry;
-    public Websocket websocket;
-    public boolean use_database;
+    @JsonCreator
+    public DunctebotConfig(
+        @JsonProperty("discord") Discord discord,
+        @JsonProperty("apis") Apis apis,
+        @JsonProperty("lavalink") Lavalink lavalink,
+        @JsonProperty("sentry") Sentry sentry,
+        @JsonProperty("websocket") Websocket websocket,
+        @JsonProperty("use_database") boolean use_database
+    ) {
+        this.discord = discord;
+        this.apis = apis;
+        this.lavalink = lavalink;
+        this.sentry = sentry;
+        this.websocket = websocket;
+        this.use_database = use_database;
+    }
 
     public static class Discord {
-        public long[] constantSuperUserIds;
-        public String prefix;
-        public int totalShards;
-        public String token;
+        public final long[] constantSuperUserIds;
+        public final String prefix;
+        public final int totalShards;
+        public final String token;
+
+        @JsonCreator
+        public Discord(
+            @JsonProperty("constantSuperUserIds")  long[] constantSuperUserIds,
+            @JsonProperty("prefix") String prefix,
+            @JsonProperty("totalShards") int totalShards,
+            @JsonProperty("token") String token
+        ) {
+            this.constantSuperUserIds = constantSuperUserIds;
+            this.prefix = prefix;
+            this.totalShards = totalShards;
+            this.token = token;
+        }
     }
 
     public static class Apis {
-        public String alexflipnote;
-        public Cache youtubeCache;
-        public String googl;
-        public String weebSh;
-        public String ksoft;
-        public Spotify spotify;
-        public String blargbot;
-        public String wolframalpha;
-        public String thecatapi;
+        public final String alexflipnote;
+        public final Cache youtubeCache;
+        public final String googl;
+        public final String weebSh;
+        public final String ksoft;
+        public final Spotify spotify;
+        public final String blargbot;
+        public final String wolframalpha;
+        public final String thecatapi;
+
+        @JsonCreator
+        public Apis(
+            @JsonProperty("alexflipnote") String alexflipnote,
+            @JsonProperty("youtubeCache") Cache youtubeCache,
+            @JsonProperty("googl") String googl,
+            @JsonProperty("weebSh") String weebSh,
+            @JsonProperty("ksoft") String ksoft,
+            @JsonProperty("spotify") Spotify spotify,
+            @JsonProperty("blargbot") String blargbot,
+            @JsonProperty("wolframalpha") String wolframalpha,
+            @JsonProperty("thecatapi") String thecatapi
+        ) {
+            this.alexflipnote = alexflipnote;
+            this.youtubeCache = youtubeCache;
+            this.googl = googl;
+            this.weebSh = weebSh;
+            this.ksoft = ksoft;
+            this.spotify = spotify;
+            this.blargbot = blargbot;
+            this.wolframalpha = wolframalpha;
+            this.thecatapi = thecatapi;
+        }
 
         public static class Cache {
-            public String endpoint;
-            public String token;
+            public final String endpoint;
+            public final String token;
+            
+            @JsonCreator
+            public Cache(
+                @JsonProperty("endpoint") String endpoint,
+                @JsonProperty("token") String token
+            ) {
+                this.endpoint = endpoint;
+                this.token = token;
+            }
         }
 
         public static class Spotify {
-            public String clientId;
-            public String clientSecret;
+            public final String clientId;
+            public final String clientSecret;
+
+            @JsonCreator
+            public Spotify(
+                @JsonProperty("clientId") String clientId,
+                @JsonProperty("clientSecret") String clientSecret
+            ) {
+                this.clientId = clientId;
+                this.clientSecret = clientSecret;
+            }
         }
     }
 
     public static class Lavalink {
-        public boolean enable;
-        public LavalinkNode[] nodes;
+        public final boolean enable;
+        public final LavalinkNode[] nodes;
+
+        @JsonCreator
+        public Lavalink(
+            @JsonProperty("enable") boolean enable,
+            @JsonProperty("nodes") LavalinkNode[] nodes
+        ) {
+            this.enable = enable;
+            this.nodes = nodes;
+        }
 
         public static class LavalinkNode {
-            public String wsurl;
-            public String pass;
-            public String region;
+            public final String wsurl;
+            public final String pass;
+            public final String region;
+
+            @JsonCreator
+            public LavalinkNode(
+                @JsonProperty("wsurl") String wsurl,
+                @JsonProperty("pass") String pass,
+                @JsonProperty("region") String region
+            ) {
+                this.wsurl = wsurl;
+                this.pass = pass;
+                this.region = region;
+            }
         }
     }
 
     public static class Sentry {
-        public boolean enabled;
-        public String dsn;
+        public final boolean enabled;
+        public final String dsn;
+
+        @JsonCreator
+        public Sentry(
+            @JsonProperty("enabled") boolean enabled,
+            @JsonProperty("dsn") String dsn
+        ) {
+            this.enabled = enabled;
+            this.dsn = dsn;
+        }
     }
 
     public static class Websocket {
-        public String url;
-        public boolean enable;
+        public final String url;
+        public final boolean enable;
+
+        @JsonCreator
+        public Websocket(@JsonProperty("url") String url, @JsonProperty("enable") boolean enable) {
+            this.url = url;
+            this.enable = enable;
+        }
+    }
+
+    @Nonnull
+    public static DunctebotConfig fromEnv() {
+        final long[] admins = Arrays.stream(System.getenv("BOT_ADMINS").split(","))
+            .mapToLong(Long::parseLong)
+            .toArray();
+        final Discord discord = new Discord(
+            admins,
+            System.getenv("BOT_PREFIX"),
+            Integer.parseInt(System.getenv("BOT_TOTAL_SHARDS")),
+            System.getenv("BOT_TOKEN")
+        );
+
+        final Apis.Cache youtubeCache = new Apis.Cache(
+            System.getenv("API_YOUTUBECACHE_ENDPOINT"),
+            System.getenv("API_YOUTUBECACHE_TOKEN")
+        );
+        final Apis.Spotify spotify = new Apis.Spotify(
+            System.getenv("API_SPOTIFY_CLIENT_ID"),
+            System.getenv("API_SPOTIFY_CLIENT_SECRET")
+        );
+        final Apis apis = new Apis(
+            System.getenv("API_ALEXFLIPNOTE"),
+            youtubeCache,
+            System.getenv("API_GOOGLE"),
+            System.getenv("API_WEEBSH"),
+            System.getenv("API_KSOFT"),
+            spotify,
+            System.getenv("API_BLARGBOT"),
+            System.getenv("API_WOLFRAMALPHA"),
+            System.getenv("API_THECATAPI")
+        );
+
+        final boolean lavalinkEnable = Boolean.parseBoolean(System.getenv("LAVALINK_ENABLE"));
+        final Lavalink lavalink;
+
+        // Skip lavalink settings if not enabled
+        if (lavalinkEnable) {
+            final int count = Integer.parseInt(System.getenv("LAVALINK_NODE_COUNT"));
+            final Lavalink.LavalinkNode[] nodes = new Lavalink.LavalinkNode[count];
+
+            for (int i = 0; i < count; i++) {
+                nodes[i] = new Lavalink.LavalinkNode(
+                    System.getenv("LAVALINK_NODE_"+i+"_HOST"),
+                    System.getenv("LAVALINK_NODE_"+i+"_PASS"),
+                    System.getenv("LAVALINK_NODE_"+i+"_REGION")
+                );
+            }
+
+            lavalink = new Lavalink(true, nodes);
+        } else {
+            lavalink = new Lavalink(false, null);
+        }
+
+        final Sentry sentry = new Sentry(
+            Boolean.parseBoolean(System.getenv("SENTRY_ENABLED")),
+            System.getenv("SENTRY_DSN")
+        );
+
+        final Websocket websocket = new Websocket(
+            System.getenv("WEBSOCKET_URL"),
+            Boolean.parseBoolean(System.getenv("WEBSOCKET_ENABLE"))
+        );
+
+        return new DunctebotConfig(
+            discord,
+            apis,
+            lavalink,
+            sentry,
+            websocket,
+            Boolean.parseBoolean(System.getenv("USE_DATABASE"))
+        );
     }
 }

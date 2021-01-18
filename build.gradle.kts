@@ -50,8 +50,8 @@ project.version = "${numberVersion}_${getGitHash()}"
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 repositories {
@@ -277,7 +277,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.1.1"
+    gradleVersion = "6.8"
     distributionType = DistributionType.ALL
 }
 
@@ -311,7 +311,6 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName(numberVersion)
-    releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
     prerelease(false)
     body(changelog())

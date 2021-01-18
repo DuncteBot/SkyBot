@@ -88,6 +88,9 @@ public final class Variables {
         this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
+        // future proofing
+//        this.config = DunctebotConfig.fromEnv();
+
         DunctebotConfig tmp = null;
         try {
             tmp = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);

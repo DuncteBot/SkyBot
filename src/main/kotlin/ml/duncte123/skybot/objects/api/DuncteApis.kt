@@ -741,6 +741,46 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
+    fun createBanBypass(guildId: Long, userId: Long) {
+        val json = mapper.createObjectNode()
+            .put("user_id", userId.toString())
+            .put("guild_id", guildId.toString())
+
+        val response = postJSON("bans/bypass", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to create ban bypass\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+        }
+    }
+
+    fun getBanBypass(guildId: Long, userId: Long): JsonNode {
+        val response = executeRequest(defaultRequest("bans/bypass/$guildId/$userId"))
+
+        if (!response["success"].asBoolean()) {
+            return NullNode.instance
+        }
+
+        return response["data"]
+    }
+
+    fun deleteBanBypass(guildId: Long, userId: Long): Boolean {
+        val response = executeRequest(defaultRequest("bans/bypass/$guildId/$userId").delete())
+
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to delete ban bypass\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+        }
+
+        return response["success"].asBoolean()
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error["errors"]
 
