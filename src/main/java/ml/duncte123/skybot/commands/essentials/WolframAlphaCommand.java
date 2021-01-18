@@ -35,7 +35,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,8 +60,8 @@ public class WolframAlphaCommand extends Command {
         this.usage = "<query>";
     }
 
-    private MessageEmbed generateEmbed(GuildMessageReceivedEvent event, WAQueryResult result, String googleKey, ObjectMapper mapper) {
-        final Member member = event.getMember();
+    private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, String googleKey, ObjectMapper mapper) {
+        final Member member = ctx.getMember();
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed();
         embed.setAuthor(member.getEffectiveName(), "https://patreon.com/DuncteBot", member.getUser().getAvatarUrl());
 
@@ -162,7 +161,7 @@ public class WolframAlphaCommand extends Command {
 
         editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
             .setEmbed(
-                generateEmbed(ctx.getEvent(), result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
+                generateEmbed(ctx, result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
             ).build());
     }
 
