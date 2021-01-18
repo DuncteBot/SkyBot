@@ -33,8 +33,7 @@ import java.text.DecimalFormat
 import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class
-StatsCommand : Command() {
+class StatsCommand : Command() {
     private val oshi = SystemInfo().operatingSystem
 
     init {
