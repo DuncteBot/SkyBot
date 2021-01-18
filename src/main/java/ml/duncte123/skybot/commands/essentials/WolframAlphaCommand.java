@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.essentials;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
+import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -207,10 +208,6 @@ public class WolframAlphaCommand extends Command {
             return "null";
         }
 
-        if (input.length() <= 2000 - 6) {
-            return input;
-        }
-
-        return input.substring(2000 - 6 - 1) + '\u2026';
+        return StringUtils.abbreviate(input, 1024);
     }
 }

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.objects.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ml.duncte123.skybot.Author;
 
 import javax.annotation.Nonnull;
@@ -33,7 +35,15 @@ public class DunctebotConfig {
     public final Websocket websocket;
     public final boolean use_database;
 
-    public DunctebotConfig(Discord discord, Apis apis, Lavalink lavalink, Sentry sentry, Websocket websocket, boolean use_database) {
+    @JsonCreator
+    public DunctebotConfig(
+        @JsonProperty("discord") Discord discord,
+        @JsonProperty("apis") Apis apis,
+        @JsonProperty("lavalink") Lavalink lavalink,
+        @JsonProperty("sentry") Sentry sentry,
+        @JsonProperty("websocket") Websocket websocket,
+        @JsonProperty("use_database") boolean use_database
+    ) {
         this.discord = discord;
         this.apis = apis;
         this.lavalink = lavalink;
@@ -48,7 +58,13 @@ public class DunctebotConfig {
         public final int totalShards;
         public final String token;
 
-        public Discord(long[] constantSuperUserIds, String prefix, int totalShards, String token) {
+        @JsonCreator
+        public Discord(
+            @JsonProperty("constantSuperUserIds")  long[] constantSuperUserIds,
+            @JsonProperty("prefix") String prefix,
+            @JsonProperty("totalShards") int totalShards,
+            @JsonProperty("token") String token
+        ) {
             this.constantSuperUserIds = constantSuperUserIds;
             this.prefix = prefix;
             this.totalShards = totalShards;
@@ -67,7 +83,18 @@ public class DunctebotConfig {
         public final String wolframalpha;
         public final String thecatapi;
 
-        public Apis(String alexflipnote, Cache youtubeCache, String googl, String weebSh, String ksoft, Spotify spotify, String blargbot, String wolframalpha, String thecatapi) {
+        @JsonCreator
+        public Apis(
+            @JsonProperty("alexflipnote") String alexflipnote,
+            @JsonProperty("youtubeCache") Cache youtubeCache,
+            @JsonProperty("googl") String googl,
+            @JsonProperty("weebSh") String weebSh,
+            @JsonProperty("ksoft") String ksoft,
+            @JsonProperty("spotify") Spotify spotify,
+            @JsonProperty("blargbot") String blargbot,
+            @JsonProperty("wolframalpha") String wolframalpha,
+            @JsonProperty("thecatapi") String thecatapi
+        ) {
             this.alexflipnote = alexflipnote;
             this.youtubeCache = youtubeCache;
             this.googl = googl;
@@ -82,8 +109,12 @@ public class DunctebotConfig {
         public static class Cache {
             public final String endpoint;
             public final String token;
-
-            public Cache(String endpoint, String token) {
+            
+            @JsonCreator
+            public Cache(
+                @JsonProperty("endpoint") String endpoint,
+                @JsonProperty("token") String token
+            ) {
                 this.endpoint = endpoint;
                 this.token = token;
             }
@@ -93,7 +124,11 @@ public class DunctebotConfig {
             public final String clientId;
             public final String clientSecret;
 
-            public Spotify(String clientId, String clientSecret) {
+            @JsonCreator
+            public Spotify(
+                @JsonProperty("clientId") String clientId,
+                @JsonProperty("clientSecret") String clientSecret
+            ) {
                 this.clientId = clientId;
                 this.clientSecret = clientSecret;
             }
@@ -104,7 +139,11 @@ public class DunctebotConfig {
         public final boolean enable;
         public final LavalinkNode[] nodes;
 
-        public Lavalink(boolean enable, LavalinkNode[] nodes) {
+        @JsonCreator
+        public Lavalink(
+            @JsonProperty("enable") boolean enable,
+            @JsonProperty("nodes") LavalinkNode[] nodes
+        ) {
             this.enable = enable;
             this.nodes = nodes;
         }
@@ -114,7 +153,12 @@ public class DunctebotConfig {
             public final String pass;
             public final String region;
 
-            public LavalinkNode(String wsurl, String pass, String region) {
+            @JsonCreator
+            public LavalinkNode(
+                @JsonProperty("wsurl") String wsurl,
+                @JsonProperty("pass") String pass,
+                @JsonProperty("region") String region
+            ) {
                 this.wsurl = wsurl;
                 this.pass = pass;
                 this.region = region;
@@ -126,7 +170,11 @@ public class DunctebotConfig {
         public final boolean enabled;
         public final String dsn;
 
-        public Sentry(boolean enabled, String dsn) {
+        @JsonCreator
+        public Sentry(
+            @JsonProperty("enabled") boolean enabled,
+            @JsonProperty("dsn") String dsn
+        ) {
             this.enabled = enabled;
             this.dsn = dsn;
         }
@@ -136,7 +184,8 @@ public class DunctebotConfig {
         public final String url;
         public final boolean enable;
 
-        public Websocket(String url, boolean enable) {
+        @JsonCreator
+        public Websocket(@JsonProperty("url") String url, @JsonProperty("enable") boolean enable) {
             this.url = url;
             this.enable = enable;
         }

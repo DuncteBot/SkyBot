@@ -50,8 +50,8 @@ public class AutoBanBypassCommand extends ModBaseCommand {
         database.getBanBypass(guildId, checkId, (byPass) -> {
             if (byPass == null) {
                 database.createBanBypass(guildId, checkId);
-                sendMsg(ctx, "Bypass created, please note that this bypass will expire after a week." +
-                    "\nPlease keep in mind that this has not unbanned any user meaning that you will have to unban the user yourself if they are banned");
+                sendMsg(ctx, "Single use bypass created, please note that this bypass will expire after a week if unused." +
+                    "\nPlease keep in mind that this has not unbanned any user, meaning that you will have to unban the user yourself if they are banned");
                 return null;
             }
 

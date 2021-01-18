@@ -390,10 +390,6 @@ public class CommandManager {
             .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
-    public List<CustomCommand> getCustomCommands(long guildId) {
-        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
-    }
-
     public List<CustomCommand> getAutoResponses(long guildId) {
         return this.customCommands.stream()
             .filter((c) -> c.getGuildId() == guildId)
@@ -495,6 +491,7 @@ public class CommandManager {
             }
             catch (Throwable ex) {
                 Sentry.capture(ex);
+                LOGGER.error("Error while parsing command", ex);
                 sendMsg(MessageConfig.Builder.fromEvent(event)
                     .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
                     .build());
