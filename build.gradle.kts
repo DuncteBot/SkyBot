@@ -296,7 +296,7 @@ kotlinter {
 pmd {
     isConsoleOutput = true
     toolVersion = "6.28.0"
-    rulePriority = 5
+    rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))
 }
@@ -311,8 +311,8 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName(numberVersion)
-    overwrite(true)
-    prerelease(false)
+    overwrite(false)
+    prerelease(true)
     body(changelog())
 }
 
