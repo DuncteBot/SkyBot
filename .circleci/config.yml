@@ -102,10 +102,10 @@ workflows:
             - build:
                   filters:
                       branches:
-                          only: master
+                          only: not-master
             - deploy:
                 requires:
                     - build
                 filters:
                     branches:
-                        only: master
+                        only: not-master

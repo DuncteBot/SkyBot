@@ -312,7 +312,7 @@ githubRelease {
     repo("SkyBot")
     tagName(numberVersion)
     overwrite(false)
-    prerelease(true)
+    prerelease(false)
     body(changelog())
 }
 
