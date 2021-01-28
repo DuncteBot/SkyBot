@@ -125,10 +125,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(kotlin("script-util"))
-    implementation(kotlin("script-runtime"))
-    implementation(kotlin("compiler-embeddable"))
-    implementation(kotlin("scripting-compiler-embeddable"))
+    implementation(kotlin("scripting-jsr223"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
 
     implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")

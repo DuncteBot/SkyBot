@@ -36,10 +36,10 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
-import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
 import java.io.PrintWriter
 import java.io.StringWriter
 import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
 @Authors(
@@ -50,54 +50,43 @@ import kotlin.system.measureTimeMillis
     ]
 )
 class EvalCommand : Command() {
-    private val engine: ScriptEngine
-    private val importString: String
+    // a little help from minn :)
+    private val engine: ScriptEngine by lazy {
+        ScriptEngineManager().getEngineByExtension("kts")!!.apply {
+            this.eval("""
+                import java.io.*
+                import java.lang.*
+                import java.math.*
+                import java.time.*
+                import java.util.*
+                import java.util.concurrent.*
+                import java.util.stream.*
+                import net.dv8tion.jda.api.*
+                import net.dv8tion.jda.api.entities.*
+                import net.dv8tion.jda.api.sharding.*
+                import net.dv8tion.jda.internal.entities.*
+                import net.dv8tion.jda.api.managers.*
+                import net.dv8tion.jda.internal.managers.*
+                import net.dv8tion.jda.api.utils.*
+                import ml.duncte123.skybot.utils.*
+                import ml.duncte123.skybot.entities.*
+                import ml.duncte123.skybot.*
+                import ml.duncte123.skybot.objects.command.*
+                import fredboat.audio.player.LavalinkManager
+                import ml.duncte123.skybot.objects.EvalFunctions.*
+                import me.duncte123.botcommons.messaging.MessageUtils.*
+                import me.duncte123.botcommons.messaging.EmbedUtils.*
+                import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*
+            """.trimIndent())
+        }
+    }
 
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "eval"
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
         this.help = "Evaluate groovy/java code on the bot"
-        this.usage = "<java/groovy code>"
-
-        // TODO: KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory?
-        // might be better?
-        engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
-
-        val packageImports = listOf(
-            "java.io",
-            "java.lang",
-            "java.math",
-            "java.time",
-            "java.util",
-            "java.util.concurrent",
-            "java.util.stream",
-            "net.dv8tion.jda.api",
-            "net.dv8tion.jda.api.entities",
-            "net.dv8tion.jda.api.sharding",
-            "net.dv8tion.jda.internal.entities",
-            "net.dv8tion.jda.api.managers",
-            "net.dv8tion.jda.internal.managers",
-            "net.dv8tion.jda.api.utils",
-            "ml.duncte123.skybot.utils",
-            "ml.duncte123.skybot.entities",
-            "ml.duncte123.skybot",
-            "ml.duncte123.skybot.objects.command"
-        )
-
-        val otherImports = listOf(
-            // Class imports
-            "fredboat.audio.player.LavalinkManager",
-
-            // static imports
-            "ml.duncte123.skybot.objects.EvalFunctions.*",
-            "me.duncte123.botcommons.messaging.MessageUtils.*",
-            "me.duncte123.botcommons.messaging.EmbedUtils.*",
-            "ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*"
-        )
-
-        importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
-            otherImports.joinToString(separator = "\nimport ", postfix = "\n")
+        this.usage = "<kotlin code>"
     }
 
     @ExperimentalCoroutinesApi
@@ -118,7 +107,7 @@ class EvalCommand : Command() {
 
         if (userIn.startsWith("```") && userIn.endsWith("```")) {
             userIn = userIn
-                .replace("```(.*)\n".toRegex(), "")
+                .replace("```(?:kt)?\n".toRegex(), "")
                 .replace("\n?```".toRegex(), "")
         }
 
@@ -136,34 +125,10 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        // we have to manually insert all the bindings to use at runtime
-//        val script = "$importString\n$bindingsJoined\n//USER SCRIPT\n$userIn"
-        val script = """$importString
-            |// Bindings (temp fix)
-            |val args = bindings["args"] as java.util.ArrayList<*>
-            |val guild = bindings["guild"] as ml.duncte123.skybot.entities.jda.DunctebotGuild
-            |val variables = bindings["variables"] as ml.duncte123.skybot.Variables
-            |val shardManager = bindings["shardManager"] as net.dv8tion.jda.api.sharding.DefaultShardManager
-            |val author = bindings["author"] as net.dv8tion.jda.internal.entities.UserImpl
-            |val jda = bindings["jda"] as net.dv8tion.jda.internal.JDAImpl
-            |val ctx = bindings["ctx"] as ml.duncte123.skybot.objects.command.CommandContext
-            |val channel = bindings["channel"] as net.dv8tion.jda.internal.entities.TextChannelImpl
-            |val member = bindings["member"] as net.dv8tion.jda.internal.entities.MemberImpl
-            |val commandManager = bindings["commandManager"] as ml.duncte123.skybot.CommandManager
-            |val message = bindings["message"] as net.dv8tion.jda.internal.entities.ReceivedMessage
-            |val event = bindings["event"] as net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
-            |
-            |// User input
-            |$userIn
-        """.trimMargin()
-
         @SinceSkybot("3.58.0")
-        GlobalScope.launch(
-            Dispatchers.Default, start = CoroutineStart.ATOMIC,
-            block = {
-                return@launch eval(ctx, script)
-            }
-        )
+        GlobalScope.launch {
+            return@launch eval(ctx, userIn)
+        }
     }
 
     @SinceSkybot("3.58.0")
