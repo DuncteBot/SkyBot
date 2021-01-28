@@ -53,7 +53,8 @@ class EvalCommand : Command() {
     // a little help from minn :)
     private val engine: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByExtension("kts")!!.apply {
-            this.eval("""
+            this.eval(
+                """
                 import java.io.*
                 import java.lang.*
                 import java.math.*
@@ -77,7 +78,8 @@ class EvalCommand : Command() {
                 import me.duncte123.botcommons.messaging.MessageUtils.*
                 import me.duncte123.botcommons.messaging.EmbedUtils.*
                 import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*
-            """.trimIndent())
+                """.trimIndent()
+            )
         }
     }
 
