@@ -53,4 +53,4 @@ jobs:
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com
                   repository: dunctebot/skybot/skybot
-                  tags: dev
+                  tags: latest
