@@ -41,11 +41,10 @@ class InstaCommand : Command() {
         }
 
         val username = args.joinToString(separator = "")
-
-        val it = ctx.apis.executeDefaultGetRequest("insta/$username", false)
+        val it = ctx.apis.executeDefaultGetRequest("insta/$username")
 
         if (!it["success"].asBoolean()) {
-            sendMsg(ctx, "No data found for this user")
+            sendMsg(ctx, "Failed to fetch data: ${it["error"]["message"].asText()}")
             return
         }
 

@@ -18,8 +18,8 @@
 #
 
 curl -sL https://sentry.io/get-cli/ | bash
-export SENTRY_RELEASE=$(./gradlew --no-daemon -q botVersion > tmp.txt && cat tmp.txt | grep "v:" | sed "s/v: //")
-sentry-cli releases new SENTRY_RELEASE
-sentry-cli releases set-commits --auto SENTRY_RELEASE
-sentry-cli releases deploys SENTRY_RELEASE new -e "production"
-sentry-cli releases finalize SENTRY_RELEASE
+SENTRY_RELEASE=$(./gradlew --no-daemon -q botVersion > tmp.txt && cat tmp.txt | grep "v:" | sed "s/v: //")
+sentry-cli releases new $SENTRY_RELEASE
+sentry-cli releases set-commits --auto $SENTRY_RELEASE
+sentry-cli releases deploys $SENTRY_RELEASE new -e "development"
+sentry-cli releases finalize $SENTRY_RELEASE

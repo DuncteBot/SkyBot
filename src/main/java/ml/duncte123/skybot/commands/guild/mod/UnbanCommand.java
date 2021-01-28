@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
@@ -57,12 +56,11 @@ public class UnbanCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final GuildMessageReceivedEvent event = ctx.getEvent();
         final var flags = ctx.getParsedFlags(this);
         final String argsJoined = String.join(" ", flags.get("undefined"));
         final User mod = ctx.getAuthor();
 
-        event.getGuild().retrieveBanList().queue((list) -> {
+        ctx.getJDAGuild().retrieveBanList().queue((list) -> {
             for (final Guild.Ban ban : list) {
                 final User bannedUser = ban.getUser();
                 final String userFormatted = bannedUser.getAsTag();
@@ -77,7 +75,7 @@ public class UnbanCommand extends ModBaseCommand {
                         reason = reason + ": " + String.join(" ", flags.get("r"));
                     }
 
-                    event.getGuild().unban(bannedUser)
+                    ctx.getJDAGuild().unban(bannedUser)
                         .reason(reason)
                         .queue();
 

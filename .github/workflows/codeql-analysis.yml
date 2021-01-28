@@ -23,7 +23,7 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v1.4.3
       with:
-        java-version: 13
+        java-version: 15
     - name: Checkout repository
       uses: actions/checkout@v2.3.4
       with:

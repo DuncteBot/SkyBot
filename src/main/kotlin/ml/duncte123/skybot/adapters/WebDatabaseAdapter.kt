@@ -442,4 +442,25 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
             apis.setWarnActions(guildId, actions)
         }
     }
+
+    override fun createBanBypass(guildId: Long, userId: Long) {
+        runOnThread {
+            apis.createBanBypass(guildId, userId)
+        }
+    }
+
+    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
+        runOnThread {
+            val bypassJson = apis.getBanBypass(guildId, userId)
+            val bypass: BanBypas? = jackson.readValue(bypassJson.traverse(), BanBypas::class.java)
+
+            callback(bypass)
+        }
+    }
+
+    override fun deleteBanBypass(banBypass: BanBypas) {
+        runOnThread {
+            apis.deleteBanBypass(banBypass.guildId, banBypass.userId)
+        }
+    }
 }

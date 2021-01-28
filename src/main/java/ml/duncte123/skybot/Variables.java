@@ -44,8 +44,6 @@ import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.caching.client.CacheClient;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
@@ -88,7 +86,10 @@ public final class Variables {
         this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
-        DunctebotConfig tmp = null;
+        // future proofing
+        this.config = DunctebotConfig.fromEnv();
+
+        /*DunctebotConfig tmp = null;
         try {
             tmp = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
@@ -99,7 +100,7 @@ public final class Variables {
         this.config = tmp;
         if (this.config == null) {
             System.exit(0);
-        }
+        }*/
 
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         this.commandManager = new CommandManager(this);
