@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.101.0"
+val numberVersion = "3.101.1"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_224") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_227") {
         exclude(module = "opus-java")
     }
 
@@ -327,8 +327,10 @@ fun getGitHash(): String {
 
         stdout.toString().trim()
     } catch (ignored: Throwable) {
-        // Probably ramidzkh"s problem
-        "DEV"
+        // Ugly hacks 101 :D
+        val hash = System.getenv("GIT_HASH") ?: "dev"
+
+        return hash.substring(0, Math.min(8, hash.length))
     }
 }
 

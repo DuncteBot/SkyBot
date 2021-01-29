@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.essentials.eval
 
 import com.github.natanbc.reliqua.request.PendingRequest
-import groovy.lang.GroovyShell
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
@@ -39,6 +38,8 @@ import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.PrintWriter
 import java.io.StringWriter
+import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
 @Authors(
@@ -49,7 +50,7 @@ import kotlin.system.measureTimeMillis
     ]
 )
 class EvalCommand : Command() {
-    private val engine: GroovyShell
+    private val engine: ScriptEngine by lazy { ScriptEngineManager().getEngineByName("groovy") }
     private val importString: String
 
     init {
@@ -58,8 +59,6 @@ class EvalCommand : Command() {
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
         this.help = "Evaluate groovy/java code on the bot"
         this.usage = "<java/groovy code>"
-
-        engine = GroovyShell()
 
         val packageImports = listOf(
             "java.io",
@@ -121,19 +120,19 @@ class EvalCommand : Command() {
 
         val script = importString + userIn
 
-        engine.setVariable("commandManager", ctx.commandManager)
-        engine.setVariable("message", ctx.message)
-        engine.setVariable("channel", ctx.message.textChannel)
-        engine.setVariable("guild", ctx.guild)
-        engine.setVariable("member", ctx.member)
-        engine.setVariable("author", ctx.author)
-        engine.setVariable("jda", ctx.jda)
-        engine.setVariable("shardManager", ctx.jda.shardManager)
-        engine.setVariable("event", ctx.event)
+        engine.put("commandManager", ctx.commandManager)
+        engine.put("message", ctx.message)
+        engine.put("channel", ctx.message.textChannel)
+        engine.put("guild", ctx.guild)
+        engine.put("member", ctx.member)
+        engine.put("author", ctx.author)
+        engine.put("jda", ctx.jda)
+        engine.put("shardManager", ctx.jda.shardManager)
+        engine.put("event", ctx.event)
 
-        engine.setVariable("args", ctx.args)
-        engine.setVariable("ctx", ctx)
-        engine.setVariable("variables", ctx.variables)
+        engine.put("args", ctx.args)
+        engine.put("ctx", ctx)
+        engine.put("variables", ctx.variables)
 
         @SinceSkybot("3.58.0")
         GlobalScope.launch(
@@ -149,7 +148,7 @@ class EvalCommand : Command() {
         val time = measureTimeMillis {
             val out = withTimeoutOrNull(60000L /* = 60 seconds */) {
                 try {
-                    engine.evaluate(script)
+                    engine.eval(script)
                 } catch (ex: Throwable) {
                     ex
                 }

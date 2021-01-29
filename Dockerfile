@@ -1,6 +1,13 @@
 FROM adoptopenjdk:15-jdk-hotspot AS builder
 
 WORKDIR /skybot
+
+# setup CI flag
+ARG is_ci
+ARG git_sha
+ENV CI=$is_ci
+ENV GIT_HASH=$git_sha
+
 COPY gradle ./gradle
 COPY gradlew build.gradle.kts settings.gradle.kts ./
 RUN ./gradlew --no-daemon dependencies

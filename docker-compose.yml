@@ -4,6 +4,9 @@ services:
         container_name: skybot
         build:
             context: .
+            args:
+                - is_ci=true
+                - git_sha=DEV
         environment:
             # Bot settings
             - BOT_ADMINS=191231307290771456,311769499995209728
