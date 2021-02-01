@@ -88,6 +88,8 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun deleteGuildSetting(guildId: Long)
 
+    abstract fun purgeGuildSettings(guildIds: List<Long>)
+
     abstract fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit)
 
     abstract fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit)

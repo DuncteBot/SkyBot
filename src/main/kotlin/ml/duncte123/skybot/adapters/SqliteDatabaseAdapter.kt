@@ -172,6 +172,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
+    override fun purgeGuildSettings(guildIds: List<Long>) {
+        runOnThread {
+            val idsString = guildIds.joinToString(separator = ", ")
+            connManager.connection.createStatement().use {
+                it.execute("DELETE FROM guildSettings WHERE guildId in ($idsString)")
+                it.closeOnCompletion()
+            }
+        }
+    }
+
     override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             // language=SQLite

@@ -103,6 +103,12 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
+    override fun purgeGuildSettings(guildIds: List<Long>) {
+        runOnThread {
+            apis.purgeGuildSettings(guildIds)
+        }
+    }
+
     override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
             callback(

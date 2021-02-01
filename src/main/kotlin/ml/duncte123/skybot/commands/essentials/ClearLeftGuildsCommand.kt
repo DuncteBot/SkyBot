@@ -60,8 +60,6 @@ class ClearLeftGuildsCommand : Command() {
 
         sendMsg(ctx, "Deleting ${settings.size} guild settings as we are not in those guilds anymore")
 
-        settings.forEach {
-            adapter.deleteGuildSetting(it.guildId)
-        }
+        adapter.purgeGuildSettings(settings.map { it.guildId })
     }
 }

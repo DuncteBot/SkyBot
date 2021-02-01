@@ -130,6 +130,23 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         }
     }
 
+    fun purgeGuildSettings(guildIds: List<Long>) {
+        val json = mapper.createObjectNode()
+        val arr = json.putArray("ids")
+
+        guildIds.forEach { arr.add(it) }
+
+        val response = deleteJSON("guildsettings/purge", json)
+
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to purge guild settings\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+        }
+    }
+
     fun registerNewGuildSettings(guildSettings: GuildSetting): Boolean {
         val json = guildSettings.toJson(mapper)
         val response = postJSON("guildsettings", json)
