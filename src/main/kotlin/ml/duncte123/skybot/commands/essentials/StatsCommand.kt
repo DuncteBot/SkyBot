@@ -69,10 +69,11 @@ class StatsCommand : Command() {
         val embed = EmbedUtils.getDefaultEmbed()
             .addField(
                 "Discord/bot Stats",
-                """**Guilds:** ${shardManager.guildCache.size()}
-                    |**Users (unique):** ${shardManager.userCache.size()}
-                    |**Text channels:** ${shardManager.textChannelCache.size()}
-                    |**Voice channels:** ${shardManager.voiceChannelCache.size()}
+                """**Guilds cache:** ${shardManager.guildCache.size()}
+                    |**User cache:** ${shardManager.userCache.size()}
+                    |**TextChannel cache:** ${shardManager.textChannelCache.size()}
+                    |**VoiceChannel cache:** ${shardManager.voiceChannelCache.size()}
+                    |**GuildSetting cache:** ${ctx.variables.guildSettingsCache.size}
                     |**Playing music count:** $connectedVC
                     |**Uptime:** ${AirUtils.getUptime(uptimeLong)}
                 """.trimMargin(),
