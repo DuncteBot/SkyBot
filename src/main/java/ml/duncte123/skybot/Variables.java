@@ -63,7 +63,7 @@ public final class Variables {
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
-        .expiration(1, TimeUnit.HOURS)
+        .expiration(12, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
             final CompletableFuture<GuildSetting> future = new CompletableFuture<>();
             getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
