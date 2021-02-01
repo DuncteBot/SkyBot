@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
@@ -40,7 +39,6 @@ import java.time.ZoneOffset
 import java.time.temporal.TemporalAccessor
 import java.util.*
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     private val connManager = SQLiteDatabaseConnectionManager(File("database.db"))
 

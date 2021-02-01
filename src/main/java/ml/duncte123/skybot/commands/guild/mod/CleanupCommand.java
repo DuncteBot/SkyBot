@@ -22,7 +22,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -47,7 +46,6 @@ import static me.duncte123.botcommons.messaging.MessageConfigDefaults.DELETE_MES
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class CleanupCommand extends ModBaseCommand {
     private final TLongObjectMap<CompletableFuture<Void>> futureMap = new TLongObjectHashMap<>();
 

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.botcommons.commands.ICommandContext;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
@@ -27,7 +28,6 @@ import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
@@ -43,12 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public class CommandContext implements ICommandContext {
-
     private final String invoke;
     private final List<String> args;
     private final GuildMessageReceivedEvent event;

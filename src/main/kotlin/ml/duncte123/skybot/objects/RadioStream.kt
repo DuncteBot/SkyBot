@@ -16,14 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-
 package ml.duncte123.skybot.objects
 
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SinceSkybot
-
-@SinceSkybot("3.52.2")
 class RadioStream(var name: String, val url: String, val website: String) {
 //    private fun hasWebsite() = !website.isNullOrBlank()
 

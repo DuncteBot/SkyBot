@@ -25,7 +25,6 @@ import com.google.api.services.youtube.model.*;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.YoutubePlaylistMetadata;
 
 import javax.annotation.Nullable;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YoutubeUtils {
 
     private static YouTube youtube;

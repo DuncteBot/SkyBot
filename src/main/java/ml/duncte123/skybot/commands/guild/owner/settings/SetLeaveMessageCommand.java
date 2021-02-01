@@ -18,14 +18,12 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetLeaveMessageCommand extends SettingsBase {
 
     public SetLeaveMessageCommand() {

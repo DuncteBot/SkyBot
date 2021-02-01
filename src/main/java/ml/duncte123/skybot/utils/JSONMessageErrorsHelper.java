@@ -21,8 +21,6 @@ package ml.duncte123.skybot.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,10 +31,6 @@ import org.slf4j.LoggerFactory;
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public class JSONMessageErrorsHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
 

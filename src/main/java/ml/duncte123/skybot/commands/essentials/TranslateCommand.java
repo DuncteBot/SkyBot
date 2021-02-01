@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Author(nickname = "sylmoss", author = "Sylvia Moss")
 public class TranslateCommand extends Command {
 
     public TranslateCommand() {

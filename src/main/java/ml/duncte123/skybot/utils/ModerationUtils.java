@@ -18,18 +18,16 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
-import ml.duncte123.skybot.objects.user.ConsoleUser;
-import ml.duncte123.skybot.objects.user.FakeUser;
 import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
-import com.dunctebot.models.settings.GuildSetting;
+import ml.duncte123.skybot.objects.user.ConsoleUser;
+import ml.duncte123.skybot.objects.user.FakeUser;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -51,10 +49,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 //@SuppressWarnings("PMD") // TODO: have a good look at this
 public class ModerationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
@@ -118,32 +112,14 @@ public class ModerationUtils {
     private static boolean isLogEnabled(String type, DunctebotGuild guild) {
         final GuildSetting settings = guild.getSettings();
 
-        switch (type) {
-            case "ban":
-            case "banned":
-            case "softban":
-                return settings.isBanLogging();
-
-            case "unban":
-            case "unbanned":
-                return settings.isUnbanLogging();
-
-            case "mute":
-            case "muted":
-            case "unmuted":
-                return settings.isMuteLogging();
-
-            case "kick":
-            case "kicked":
-                return settings.isKickLogging();
-
-            case "warn":
-            case "warned":
-                return settings.isWarnLogging();
-
-            default:
-                return true;
-        }
+        return switch (type) {
+            case "ban", "banned", "softban" -> settings.isBanLogging();
+            case "unban", "unbanned" -> settings.isUnbanLogging();
+            case "mute", "muted", "unmuted" -> settings.isMuteLogging();
+            case "kick", "kicked" -> settings.isKickLogging();
+            case "warn", "warned" -> settings.isWarnLogging();
+            default -> true;
+        };
     }
 
     public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {

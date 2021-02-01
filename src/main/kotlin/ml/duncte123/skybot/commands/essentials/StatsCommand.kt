@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.essentials
 import com.sun.management.OperatingSystemMXBean
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -32,7 +31,6 @@ import java.sql.Time
 import java.text.DecimalFormat
 import kotlin.math.floor
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
     private val oshi = SystemInfo().operatingSystem
 

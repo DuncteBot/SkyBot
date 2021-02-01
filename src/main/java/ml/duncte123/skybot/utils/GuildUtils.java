@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import io.sentry.Sentry;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
@@ -40,10 +38,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public class GuildUtils {
     public static final DBMap<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
@@ -170,18 +164,13 @@ public class GuildUtils {
             return "None";
         }
 
-        switch (lvl) {
-            case LOW:
-                return "Low";
-            case MEDIUM:
-                return "Medium";
-            case HIGH:
-                return "(╯°□°）╯︵ ┻━┻";
-            case VERY_HIGH:
-                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-            default:
-                return "None";
-        }
+        return switch (lvl) {
+            case LOW -> "Low";
+            case MEDIUM -> "Medium";
+            case HIGH -> "(╯°□°）╯︵ ┻━┻";
+            case VERY_HIGH -> "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+            default -> "None";
+        };
     }
 
     /*public static long getMemberJoinPosition(Member member) {

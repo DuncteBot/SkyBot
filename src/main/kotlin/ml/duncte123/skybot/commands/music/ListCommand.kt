@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.music
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
@@ -29,7 +28,6 @@ import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
 import org.apache.commons.lang3.StringUtils
 import java.util.*
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
 
     init {

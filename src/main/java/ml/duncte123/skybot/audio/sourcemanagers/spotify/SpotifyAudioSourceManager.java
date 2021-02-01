@@ -32,7 +32,6 @@ import com.wrapper.spotify.model_objects.IPlaylistItem;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.BigChungusPlaylist;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -52,8 +51,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-@SuppressWarnings("PMD.NullAssignment")
 public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 

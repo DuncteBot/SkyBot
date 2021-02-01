@@ -18,10 +18,8 @@
 
 package ml.duncte123.skybot.extensions
 
-import ml.duncte123.skybot.Author
 import java.util.*
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 fun Process.getString(): String {
     this.inputStream.use { s ->
         Scanner(s).use { scanner ->

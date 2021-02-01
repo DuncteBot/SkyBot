@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.weebJava.helpers.QueryBuilder;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -31,7 +30,6 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YodaSpeakCommand extends Command {
 
     public YodaSpeakCommand() {

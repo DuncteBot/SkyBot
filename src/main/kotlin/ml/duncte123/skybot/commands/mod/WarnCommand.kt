@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.WarnAction
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
@@ -38,7 +37,6 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 import java.util.concurrent.CompletableFuture
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : ModBaseCommand() {
 
     init {

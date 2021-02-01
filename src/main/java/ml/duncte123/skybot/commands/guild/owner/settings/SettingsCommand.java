@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
+import com.dunctebot.models.settings.GuildSetting;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.StringKt;
@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -55,7 +54,6 @@ import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
 @SuppressWarnings("PMD.UnusedFormalParameter")
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends Command {
     public static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 

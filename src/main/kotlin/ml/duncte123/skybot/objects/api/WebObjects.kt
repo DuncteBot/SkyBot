@@ -16,13 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "duncte123", author = "Duncan Sterken")
-
 package ml.duncte123.skybot.objects.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 

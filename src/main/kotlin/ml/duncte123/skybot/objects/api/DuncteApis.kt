@@ -29,7 +29,6 @@ import me.duncte123.botcommons.web.ContentType.JSON
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.utils.AirUtils
@@ -41,7 +40,6 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private val logger = LoggerFactory.getLogger(javaClass)

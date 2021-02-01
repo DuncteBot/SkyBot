@@ -24,14 +24,12 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
 import me.duncte123.weebJava.helpers.QueryBuilder;
-import ml.duncte123.skybot.Author;
 import okhttp3.Request;
 
 import java.util.Objects;
 
 import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Alexflipnote {
 
     private final ObjectMapper mapper;

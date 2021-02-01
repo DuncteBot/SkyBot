@@ -24,7 +24,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -40,7 +39,6 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatCommand : Command() {
 
     private val sessions = MapUtils.newLongObjectMap<ChatSession>()
@@ -157,7 +155,6 @@ class ChatCommand : Command() {
     }
 }
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatSession(userId: Long) {
     private val body = FormRequestBody()
 

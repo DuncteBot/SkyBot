@@ -25,14 +25,12 @@ import io.sentry.Sentry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(threads: Int = 2) {
     private val coroutineContext = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")

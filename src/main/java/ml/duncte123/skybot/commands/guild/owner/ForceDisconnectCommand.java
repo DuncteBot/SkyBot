@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.Permission;
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ForceDisconnectCommand extends MusicCommand {
 
     public ForceDisconnectCommand() {

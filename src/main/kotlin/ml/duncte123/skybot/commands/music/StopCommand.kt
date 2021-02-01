@@ -19,13 +19,11 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.Permission
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StopCommand : MusicCommand() {
 
     init {

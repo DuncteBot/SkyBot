@@ -19,11 +19,9 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SuggestCommand : Command() {
 
     init {

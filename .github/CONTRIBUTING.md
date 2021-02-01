@@ -21,7 +21,7 @@
 
 4. Configure upstream remote to keep your fork updated
     ```bash
-     $ git remote add upstream https://github.com/duncte123/SkyBot.git
+     $ git remote add upstream https://github.com/DuncteBot/SkyBot.git
     ```
 
 5. Create branch based on `upstream/master`
@@ -111,11 +111,11 @@ Based on the current `upstream/master` changes!
 ```diff
 +   @Nullable
 +   public static Response postRequest(String url, @Nonnull Map<String, Object> postFields) {
-+       if (url != null) {
-+           return null;
++       if (url == null) {
++           return postRequest(url, postFields, AcceptType.URLENCODED);
 +       }
 +
-+       return postRequest(url, postFields, AcceptType.URLENCODED);
++       return null;
 +   }
 ```
 The annotations should always be imported from `javax.annotation`

@@ -19,22 +19,20 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.commands.guild.owner.settings.SettingsCommand.COLOR_REGEX;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ColorCommand extends Command {
 
     public ColorCommand() {

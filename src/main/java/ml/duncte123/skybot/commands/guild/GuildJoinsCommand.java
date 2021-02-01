@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild;
 
 import io.sentry.Sentry;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.TaskKt;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.objects.command.Command;
@@ -42,7 +41,6 @@ import java.util.concurrent.ExecutionException;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildJoinsCommand extends Command {
 
     public GuildJoinsCommand() {

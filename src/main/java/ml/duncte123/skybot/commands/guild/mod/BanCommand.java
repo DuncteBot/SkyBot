@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.Permission;
@@ -34,7 +33,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class BanCommand extends ModBaseCommand {
 
     public BanCommand() {

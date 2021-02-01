@@ -18,11 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.Author;
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public enum CommandCategory {
-
     ANIMALS("animals"),
     MAIN("main"),
     FUN("fun"),

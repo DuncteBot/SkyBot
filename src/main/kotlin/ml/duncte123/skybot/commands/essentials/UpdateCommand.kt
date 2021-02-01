@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.listeners.ReadyShutdownListener
 import ml.duncte123.skybot.objects.command.Command
@@ -34,7 +33,7 @@ import java.lang.System.getProperty
 import java.lang.Thread.sleep
 import kotlin.system.exitProcess
 
-@Author(author = "Ramid Khan", nickname = "ramidzkh")
+// TODO: remove
 class UpdateCommand : Command() {
 
     init {

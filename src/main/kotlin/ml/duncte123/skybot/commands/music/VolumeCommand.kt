@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
@@ -27,7 +26,6 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class VolumeCommand : MusicCommand() {
 
     init {

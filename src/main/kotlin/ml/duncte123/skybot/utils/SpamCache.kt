@@ -21,9 +21,7 @@ package ml.duncte123.skybot.utils
 import gnu.trove.list.TLongList
 import gnu.trove.list.array.TLongArrayList
 import gnu.trove.map.hash.TLongObjectHashMap
-import ml.duncte123.skybot.Author
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SpamCache : TLongObjectHashMap<TLongList>() {
 
     @Throws(IllegalArgumentException::class)

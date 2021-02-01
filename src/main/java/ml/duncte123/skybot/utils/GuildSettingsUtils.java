@@ -22,8 +22,6 @@ import com.dunctebot.models.settings.GuildSetting;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import org.slf4j.Logger;
@@ -36,10 +34,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public class GuildSettingsUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
 

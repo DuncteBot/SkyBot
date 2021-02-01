@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,7 +29,6 @@ import javax.annotation.Nullable;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class SettingsBase extends Command {
 
     public SettingsBase() {

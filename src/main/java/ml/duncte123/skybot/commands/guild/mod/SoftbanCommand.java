@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.ModerationUtils;
@@ -34,7 +33,6 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {

@@ -28,9 +28,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import gnu.trove.map.TLongObjectMap;
 import lavalink.client.LavalinkUtil;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -43,8 +41,6 @@ import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.concurrent.Future;
 
-@SinceSkybot(version = "3.5.1")
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
     public static final String EMBED_TITLE = "AirPlayer";
     private final TLongObjectMap<GuildMusicManager> musicManagers;

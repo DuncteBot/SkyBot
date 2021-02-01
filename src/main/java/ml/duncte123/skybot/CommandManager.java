@@ -86,7 +86,6 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
     private static final TObjectLongMap<String> COOLDOWNS = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);

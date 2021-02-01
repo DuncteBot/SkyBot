@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.database;
 
 import com.dunctebot.models.settings.WarnAction;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.Patron;
 import org.sqlite.JDBC;
 
@@ -31,7 +30,6 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
 @SuppressWarnings("PMD.ExcessiveMethodLength")
 public class SQLiteDatabaseConnectionManager {
     private final String url;

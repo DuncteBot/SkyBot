@@ -19,11 +19,9 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.*
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class RestartCommand : MusicCommand() {
 
     init {

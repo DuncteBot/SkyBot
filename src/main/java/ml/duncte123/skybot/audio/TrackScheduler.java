@@ -26,7 +26,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.LavalinkPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
@@ -48,7 +47,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
     public static final int MAX_QUEUE_SIZE = 50;

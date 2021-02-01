@@ -18,10 +18,6 @@
 
 package ml.duncte123.skybot.commands.music
 
-import ml.duncte123.skybot.Author
-
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PlayRawCommand : PlayCommand(skipParsing = true) {
-
     override fun getName(): String = "playrw"
 }

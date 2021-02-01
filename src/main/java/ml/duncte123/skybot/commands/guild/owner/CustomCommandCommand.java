@@ -18,16 +18,14 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import com.dunctebot.models.settings.GuildSetting;
 import kotlin.Triple;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import com.dunctebot.models.settings.GuildSetting;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -37,10 +35,6 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 // TODO: trash this command, it is a clutter and hell to maintain
 public class CustomCommandCommand extends Command {
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "remove", "raw");
@@ -62,6 +56,8 @@ public class CustomCommandCommand extends Command {
             "\u2022 `{prefix}" + this.name + " delete <name>` => Deletes a custom command";
     }
 
+
+    @SuppressWarnings("PMD.SwitchStmtsShouldHaveDefault") // SIGH, it has a default
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgsWithQuotes();
@@ -74,17 +70,9 @@ public class CustomCommandCommand extends Command {
         final CommandManager manager = ctx.getCommandManager();
 
         switch (args.size()) {
-            case 1:
-                listCustomCommands(args.get(0), ctx, manager);
-                break;
-
-            case 2:
-                deleteOrShowCustomCommand(args, ctx, manager, ctx.getPrefix());
-                break;
-
-            default:
-                addOrEditCustomCommand(args, ctx, manager, ctx.getPrefix());
-                break;
+            case 1 -> listCustomCommands(args.get(0), ctx, manager);
+            case 2 -> deleteOrShowCustomCommand(args, ctx, manager, ctx.getPrefix());
+            default -> addOrEditCustomCommand(args, ctx, manager, ctx.getPrefix());
         }
     }
 
@@ -97,7 +85,7 @@ public class CustomCommandCommand extends Command {
                 .filter(c -> c.getGuildId() == ctx.getGuild().getIdLong())
                 .forEach(cmd -> builder.append(setting.getCustomPrefix())
                     .append(cmd.getName())
-                    .append("\n")
+                    .append('\n')
                 );
 
             sendMsg(ctx, "Custom Commands for this server\n```ldif\n"+ builder.toString() + "\n```");

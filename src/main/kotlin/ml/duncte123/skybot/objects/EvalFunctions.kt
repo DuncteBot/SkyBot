@@ -21,8 +21,6 @@ package ml.duncte123.skybot.objects
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Variables
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Member
@@ -34,12 +32,6 @@ import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.sharding.ShardManager
 
 @Suppress("unused")
-@Authors(
-    authors = [
-        Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        Author(nickname = "duncte123", author = "Duncan Sterken")
-    ]
-)
 object EvalFunctions {
     @JvmStatic
     fun isEven(number: Int): Boolean {

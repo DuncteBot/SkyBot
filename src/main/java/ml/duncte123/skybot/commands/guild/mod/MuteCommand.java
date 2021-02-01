@@ -18,10 +18,9 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.Author;
+import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -34,7 +33,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProceed;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends ModBaseCommand {
 
     public MuteCommand() {

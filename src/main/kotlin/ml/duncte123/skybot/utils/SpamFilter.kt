@@ -22,7 +22,6 @@ import gnu.trove.list.TLongList
 import gnu.trove.list.array.TLongArrayList
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.text.TextColor
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import net.dv8tion.jda.api.entities.Member
@@ -30,7 +29,6 @@ import net.dv8tion.jda.api.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
 
     private lateinit var rates: LongArray

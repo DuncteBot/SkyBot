@@ -20,7 +20,6 @@ package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.LavalinkPlayer;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -30,7 +29,6 @@ import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
     public final LavalinkPlayer player;
     private final TrackScheduler scheduler;

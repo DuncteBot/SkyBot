@@ -25,7 +25,6 @@ import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -42,7 +41,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class WolframAlphaCommand extends Command {
 
     private WAEngine waEngine = null;

@@ -20,13 +20,11 @@ package ml.duncte123.skybot.entities.jda
 
 import com.dunctebot.models.settings.GuildSetting
 import me.duncte123.botcommons.messaging.EmbedUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.api.entities.Guild
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
     var settings: GuildSetting
         get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)

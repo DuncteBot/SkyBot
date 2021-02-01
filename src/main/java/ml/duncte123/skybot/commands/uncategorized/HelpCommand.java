@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.*;
@@ -36,10 +34,6 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public class HelpCommand extends Command {
 
     public HelpCommand() {
@@ -47,6 +41,7 @@ public class HelpCommand extends Command {
         this.aliases = new String[]{
             "commandlist",
             "commands",
+            "cmds",
             "h",
         };
         this.help = "Sends you a list of all the commands";

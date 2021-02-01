@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -33,7 +32,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: ObjectMapper) : DatabaseAdapter() {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {

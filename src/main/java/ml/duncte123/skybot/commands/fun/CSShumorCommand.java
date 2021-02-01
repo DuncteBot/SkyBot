@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.fun;
 import gnu.trove.map.TLongIntMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -33,7 +32,6 @@ import javax.annotation.Nonnull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CSShumorCommand extends Command {
 
     private final TLongIntMap cssIndex = MapUtils.newLongIntMap();
@@ -57,7 +55,7 @@ public class CSShumorCommand extends Command {
         }
     }
 
-    @Author(nickname = "ramidzkh", author = "Ramid Khan") // Thanks for the regex bud
+    // Thanks for the regex ramidzkh
     private void sendCssJoke(CommandContext ctx) {
         WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
             final Element code = doc.selectFirst(".crayon-pre");

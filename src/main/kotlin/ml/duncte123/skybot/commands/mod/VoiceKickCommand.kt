@@ -20,12 +20,10 @@ package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class VoiceKickCommand : ModBaseCommand() {
 
     init {

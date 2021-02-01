@@ -21,11 +21,9 @@ package ml.duncte123.skybot.objects.command.custom;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ml.duncte123.skybot.Author;
 
 import javax.annotation.Nonnull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandImpl implements CustomCommand {
 
     private final String invoke;

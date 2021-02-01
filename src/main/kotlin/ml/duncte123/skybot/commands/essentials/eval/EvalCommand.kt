@@ -26,10 +26,7 @@ import me.duncte123.botcommons.text.TextColor
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -42,13 +39,6 @@ import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
-@Authors(
-    authors = [
-        Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        Author(nickname = "duncte123", author = "Duncan Sterken"),
-        Author(nickname = "ramidzkh", author = "Ramid Khan")
-    ]
-)
 class EvalCommand : Command() {
     private val engine: ScriptEngine by lazy { ScriptEngineManager().getEngineByName("groovy") }
     private val importString: String
@@ -134,7 +124,6 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        @SinceSkybot("3.58.0")
         GlobalScope.launch(
             Dispatchers.Default, start = CoroutineStart.ATOMIC,
             block = {
@@ -143,7 +132,6 @@ class EvalCommand : Command() {
         )
     }
 
-    @SinceSkybot("3.58.0")
     private suspend fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
             val out = withTimeoutOrNull(60000L /* = 60 seconds */) {

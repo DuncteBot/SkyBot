@@ -90,7 +90,7 @@
         <exclude name="CallSuperFirst"/>
         <exclude name="CallSuperLast"/>
         <exclude name="DoNotCallGarbageCollectionExplicitly"/>
-        <exclude name="DoNotCallSystemExit"/>
+        <exclude name="DoNotTerminateVM"/>
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="OverrideBothEqualsAndHashcode"/>
         <exclude name="BeanMembersShouldSerialize"/>

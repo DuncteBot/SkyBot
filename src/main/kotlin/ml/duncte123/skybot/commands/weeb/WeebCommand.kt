@@ -24,10 +24,8 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.configs.ImageConfig
 import me.duncte123.weebJava.configs.TypesConfig
 import me.duncte123.weebJava.types.HiddenMode
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommand : WeebCommandBase() {
     private val weebTags = ArrayList<String>()
 

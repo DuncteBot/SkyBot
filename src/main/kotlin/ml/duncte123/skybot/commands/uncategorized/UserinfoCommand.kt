@@ -22,8 +22,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.StatusType
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.*
 import ml.duncte123.skybot.objects.Emotes.*
@@ -40,12 +38,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
-@Authors(
-    authors = [
-        Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        Author(nickname = "duncte123", author = "Duncan Sterken")
-    ]
-)
 class UserinfoCommand : Command() {
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
 

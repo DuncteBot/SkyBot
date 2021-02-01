@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.music
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
@@ -27,7 +26,6 @@ import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.entities.Guild
 import java.time.OffsetDateTime
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
 
     init {

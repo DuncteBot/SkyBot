@@ -18,10 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class MusicEmbedUtils {
 
     private MusicEmbedUtils() {}
@@ -39,7 +37,7 @@ public class MusicEmbedUtils {
             if (i == (int) (percent * 8)) {
                 str.append("\uD83D\uDD18");
             } else {
-                str.append("▬");
+                str.append('▬');
             }
         }
         return str.toString();

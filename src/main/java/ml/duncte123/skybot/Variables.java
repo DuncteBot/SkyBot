@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
     private final JsonMapper mapper = new JsonMapper();
     private final String googleBaseUrl;
@@ -86,22 +85,7 @@ public final class Variables {
         this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
-        // future proofing
         this.config = DunctebotConfig.fromEnv();
-
-        /*DunctebotConfig tmp = null;
-        try {
-            tmp = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        this.config = tmp;
-        if (this.config == null) {
-            System.exit(0);
-        }*/
-
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
@@ -175,7 +159,7 @@ public final class Variables {
     }
 
     public boolean useApi() {
-        return this.config.use_database;
+        return this.config.useDatabase;
     }
 
     public Alexflipnote getAlexflipnote() {

@@ -21,14 +21,10 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-@SinceSkybot("3.52.2")
 class RadioCommand : MusicCommand() {
     var radioStreams = arrayListOf<RadioStream>()
 

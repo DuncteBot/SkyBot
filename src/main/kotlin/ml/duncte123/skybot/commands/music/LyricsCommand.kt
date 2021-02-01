@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
@@ -31,7 +30,6 @@ import org.apache.commons.lang3.StringUtils
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class LyricsCommand : MusicCommand() {
     init {
         this.name = "lyrics"

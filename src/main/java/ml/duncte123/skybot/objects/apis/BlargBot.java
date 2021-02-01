@@ -25,14 +25,12 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.ContentType;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
-import ml.duncte123.skybot.Author;
 import okhttp3.RequestBody;
 
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class BlargBot {
 
     private final String token;

@@ -21,8 +21,6 @@ package ml.duncte123.skybot.objects.command;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.CooldownScope;
 import net.dv8tion.jda.api.Permission;
@@ -39,11 +37,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken"),
-    @Author(nickname = "ramidzkh", author = "Ramid Khan")
-})
 public abstract class Command implements ICommand {
     public Flag[] flags = new Flag[0];
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);

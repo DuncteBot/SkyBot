@@ -38,11 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken"),
-    @Author(nickname = "ramidzkh", author = "Ramid Khan")
-})
 public class EventManager implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;

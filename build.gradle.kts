@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.10"))
+        classpath(kotlin("gradle-plugin", version = "1.4.21"))
     }
 }
 
@@ -36,10 +36,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.2.0"
+    id("org.jmailen.kotlinter") version "3.3.0"
     pmd
 }
 
@@ -124,7 +124,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.9")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
 
     implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
 
@@ -257,7 +257,9 @@ jar.apply {
 }
 
 application {
+    // TODO: shadowjar uses this
     mainClassName = "ml.duncte123.skybot.SkyBot"
+    mainClass.set("ml.duncte123.skybot.SkyBot")
 }
 
 shadowJar.apply {
@@ -289,13 +291,14 @@ kotlinter {
     disabledRules = arrayOf(
         "no-wildcard-imports", "experimental:indent",
         "experimental:argument-list-wrapping",
-        "experimental:spacing-between-declarations-with-annotations"
+        "experimental:spacing-between-declarations-with-annotations",
+        "experimental:spacing-between-declarations-with-comments"
     )
 }
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.28.0"
+    toolVersion = "6.31.0"
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))

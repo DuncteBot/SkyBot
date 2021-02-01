@@ -19,9 +19,6 @@
 package ml.duncte123.skybot.objects.command;
 
 import fredboat.audio.player.LavalinkManager;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
@@ -33,13 +30,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @SuppressWarnings("ConstantConditions")
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 public abstract class MusicCommand extends Command {
 
-    @SinceSkybot(version = "3.54.2")
     protected boolean withAutoJoin = false;
 
     public static final Function<String, String> KEY_GEN = (guildId) -> "musicCommand|" + guildId;

@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -41,10 +39,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
 @SuppressWarnings("ConstantConditions")
 public class ShardInfoCommand extends Command {
 
@@ -89,10 +83,10 @@ public class ShardInfoCommand extends Command {
             final StringBuilder valueBuilder = new StringBuilder();
             final LongLongPair channelStats = getConnectedVoiceChannels(shard);
 
-            valueBuilder.append("**Status:** ").append(getShardStatus(shard)).append('\n')
-                .append("**Ping:** ").append(shard.getGatewayPing()).append('\n')
-                .append("**Guilds:** ").append(shard.getGuildCache().size()).append('\n')
-                .append("**VCs:** ").append(channelStats.getFirst()).append(" / ").append(channelStats.getSecond());
+            valueBuilder.append("**Status:** ").append(getShardStatus(shard))
+                .append("\n**Ping:** ").append(shard.getGatewayPing())
+                .append("\n**Guilds:** ").append(shard.getGuildCache().size())
+                .append("\n**VCs:** ").append(channelStats.getFirst()).append(" / ").append(channelStats.getSecond());
 
             final int shardId = shard.getShardInfo().getShardId();
 
@@ -203,7 +197,7 @@ public class ShardInfoCommand extends Command {
         for (final int width : widths) {
             formatLine.append(" %-").append(width).append("s ║");
         }
-        formatLine.append("\n");
+        formatLine.append('\n');
 
         builder.append(appendSeparatorLine("╔", "╦", "╗", padding, widths))
             .append(String.format(formatLine.toString(), headers.toArray()))
@@ -248,7 +242,7 @@ public class ShardInfoCommand extends Command {
                 ret.append(middle).append("═".repeat(size + padding * 2));
             }
         }
-        return ret.append(right).append("\n").toString();
+        return ret.append(right).append('\n').toString();
     }
 
     private LongLongPair getConnectedVoiceChannels(ShardManager shardManager) {

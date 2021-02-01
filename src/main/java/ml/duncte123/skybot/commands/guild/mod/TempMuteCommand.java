@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.durationparser.Duration;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -39,7 +38,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TempMuteCommand extends ModBaseCommand {
 
     public TempMuteCommand() {

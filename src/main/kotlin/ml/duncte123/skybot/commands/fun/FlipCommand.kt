@@ -19,13 +19,11 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import kotlin.math.floor
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class FlipCommand : Command() {
 
     private val flips = arrayOf(

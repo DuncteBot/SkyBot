@@ -18,13 +18,11 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 
 import javax.annotation.Nonnull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ShitCommand extends NoPatronImageCommand {
 
     public ShitCommand() {

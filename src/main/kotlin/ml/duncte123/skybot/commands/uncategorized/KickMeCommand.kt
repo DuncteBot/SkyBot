@@ -20,14 +20,12 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.api.Permission
 import java.util.concurrent.TimeUnit
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class KickMeCommand : Command() {
 
     init {

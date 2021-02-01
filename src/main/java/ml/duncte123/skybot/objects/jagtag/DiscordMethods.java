@@ -22,8 +22,6 @@ import com.jagrosh.jagtag.Environment;
 import com.jagrosh.jagtag.Method;
 import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ParsingException;
@@ -37,11 +35,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken")
-})
-@SuppressWarnings({"PMD.PreserveStackTrace", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength"})
+@SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength"})
 public class DiscordMethods {
     private DiscordMethods() {}
 
@@ -98,8 +92,8 @@ public class DiscordMethods {
                 try {
                     idLong = Long.parseUnsignedLong(in[0]);
                 }
-                catch (NumberFormatException ignored) {
-                    throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]));
+                catch (NumberFormatException e) {
+                    throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]), e);
                 }
 
                 return TimeUtil.getTimeCreated(idLong).format(DateTimeFormatter.RFC_1123_DATE_TIME);
@@ -252,7 +246,7 @@ public class DiscordMethods {
                     env.put("embed", jsonObject);
                 }
                 catch (ParsingException e) {
-                    throw new ParseException("The embed input is not valid JSON");
+                    throw new ParseException("The embed input is not valid JSON", e);
                 }
                 return "";
             })

@@ -20,13 +20,11 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import java.util.concurrent.TimeUnit
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 class CoinCommand : Command() {
 
     private val imagesArr = arrayOf("heads.png", "tails.png")

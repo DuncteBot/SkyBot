@@ -20,14 +20,12 @@ package ml.duncte123.skybot.objects.command.custom;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 
 import javax.annotation.Nonnull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface CustomCommand extends ICommand {
 
     String getMessage();
@@ -50,7 +48,7 @@ public interface CustomCommand extends ICommand {
     @Nonnull
     @Override
     default CommandCategory getCategory() {
-        return null;
+        return CommandCategory.UNLISTED;
     }
 
     @Override

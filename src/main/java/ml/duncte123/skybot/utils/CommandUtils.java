@@ -23,7 +23,6 @@ import com.jagrosh.jagtag.Parser;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.set.TLongSet;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -55,7 +54,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
  * JavaScript
  * The original method is available at https://github.com/blargbot/blargbot/
  */
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandUtils {
     public static final TLongSet PATRONS = MapUtils.newLongSet();
     public static final TLongSet GUILD_PATRONS = MapUtils.newLongSet();

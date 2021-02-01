@@ -20,10 +20,8 @@ package ml.duncte123.skybot.commands.essentials
 
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.EventManager
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -34,8 +32,6 @@ import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.api.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 
-@SinceSkybot("3.50.X")
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RestartShardCommand : Command() {
 
     private val restartInSec = 5L

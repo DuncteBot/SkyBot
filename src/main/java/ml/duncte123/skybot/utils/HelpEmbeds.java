@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -33,7 +32,6 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal", "PMD"})
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
     /// <editor-fold desc="Command storage" defaultstate="collapsed">
     private static String MAIN_COMMANDS = "";

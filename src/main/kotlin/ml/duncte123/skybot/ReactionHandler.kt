@@ -30,7 +30,6 @@ import net.dv8tion.jda.api.hooks.EventListener
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ReactionHandler : EventListener {
     private val requirementsCache = arrayListOf<ReactionCacheElement>()
     private val consumerCache = hashMapOf<Long, Pair<CommandContext, List<SearchResult>>>()

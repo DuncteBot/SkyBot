@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -35,7 +34,6 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class AnnounceCommand extends ModBaseCommand {
 
     public AnnounceCommand() {

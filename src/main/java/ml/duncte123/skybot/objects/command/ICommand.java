@@ -18,11 +18,8 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.Author;
-
 import javax.annotation.Nonnull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface ICommand {
 
     void executeCommand(@Nonnull CommandContext ctx);

@@ -51,15 +51,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
-//Skybot version 1.0 and 2.0 were written in php
-@SinceSkybot(version = "3.0.0")
-@Authors(authors = {
-    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-    @Author(nickname = "duncte123", author = "Duncan Sterken"),
-    @Author(nickname = "ramidzkh", author = "Ramid Khan")
-})
 public final class SkyBot {
-
     private static SkyBot instance;
     private final ShardManager shardManager;
     private WebSocketClient client;

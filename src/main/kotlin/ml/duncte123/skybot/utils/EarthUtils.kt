@@ -30,8 +30,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.web.WebUtils
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.extensions.sync
@@ -42,8 +40,6 @@ import net.dv8tion.jda.api.entities.User
 import java.time.OffsetDateTime
 import java.util.concurrent.ThreadLocalRandom
 
-@SinceSkybot("3.51.5")
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 object EarthUtils {
     @JvmStatic
     fun sendYoungestOldesetEmbed(ctx: CommandContext, oldest: Boolean) {

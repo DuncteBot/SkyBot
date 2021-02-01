@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import kotlin.Pair;
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.command.Command;
@@ -46,7 +45,6 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
 public abstract class ImageCommandBase extends Command {
 
     public ImageCommandBase() {

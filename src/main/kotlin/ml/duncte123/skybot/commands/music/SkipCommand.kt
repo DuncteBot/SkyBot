@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.Settings.YES_STATIC
 import ml.duncte123.skybot.audio.GuildMusicManager
@@ -28,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import kotlin.math.ceil
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {
 
     init {
