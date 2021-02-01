@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import oshi.SystemInfo
 import java.lang.management.ManagementFactory
-import java.sql.Time
 import java.text.DecimalFormat
 import kotlin.math.floor
 
@@ -49,8 +48,7 @@ class StatsCommand : Command() {
         }.sum()
 
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
-        val uptimeTime = Time(uptimeLong - 3600000)
-        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime * 1000, true)
+        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime * 1000)
 
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val cores = platformMXBean.availableProcessors
@@ -76,7 +74,7 @@ class StatsCommand : Command() {
                     |**Text channels:** ${shardManager.textChannelCache.size()}
                     |**Voice channels:** ${shardManager.voiceChannelCache.size()}
                     |**Playing music count:** $connectedVC
-                    |**Uptime:** ${AirUtils.getUptime(uptimeLong)} $uptimeTime
+                    |**Uptime:** ${AirUtils.getUptime(uptimeLong)}
                 """.trimMargin(),
                 false
             )

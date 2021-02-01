@@ -32,6 +32,6 @@ class UptimeCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        sendMsg(ctx, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
+        sendMsg(ctx, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime))
     }
 }

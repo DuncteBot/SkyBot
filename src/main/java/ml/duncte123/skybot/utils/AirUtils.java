@@ -95,10 +95,6 @@ public class AirUtils {
     }
 
     public static String getUptime(long time) {
-        return getUptime(time, false);
-    }
-
-    public static String getUptime(long time, boolean withTime) {
         /*
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
          */
@@ -115,16 +111,14 @@ public class AirUtils {
             .append(formatTimeWord("Day", days, false));
 
         //If we want the time added we pass in true
-        if (withTime) {
-            final int hours = longToInt(time / 3600000L % 24);
-            final int minutes = longToInt(time / 60000L % 60);
-            final int seconds = longToInt(time / 1000L % 60);
+        final int hours = longToInt(time / 3600000L % 24);
+        final int minutes = longToInt(time / 60000L % 60);
+        final int seconds = longToInt(time / 1000L % 60);
 
-            builder.append(", ")
-                .append(formatTimeWord("Hour", hours, true))
-                .append(formatTimeWord("Minute", minutes, true))
-                .append(formatTimeWord("Second", seconds, false));
-        }
+        builder.append(", ")
+            .append(formatTimeWord("Hour", hours, true))
+            .append(formatTimeWord("Minute", minutes, true))
+            .append(formatTimeWord("Second", seconds, false));
 
         final String uptimeString = builder.toString();
 
