@@ -56,6 +56,13 @@ public class PurgeChannelCommand extends ModBaseCommand {
 
         final TextChannel toPurge = channels.get(0);
 
+
+        if (!ctx.getSelfMember().hasPermission(toPurge, Permission.MANAGE_CHANNEL)) {
+            sendMsg(ctx, "I am missing the `Manage Channel` permission in " + toPurge.getAsMention()
+                + " (are any permission overrides denying it?)");
+            return;
+        }
+
         if (toPurge.equals(ctx.getChannel())) {
             sendMsg(ctx, "For security reasons you can not use this command in the channel that you want to purge");
             return;

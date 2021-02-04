@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.101.1"
+val numberVersion = "3.101.2"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -184,7 +184,7 @@ build.apply {
 
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "15"
     }
 }
 
