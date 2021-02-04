@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2021  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,13 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web
+package ml.duncte123.skybot.web.tasks
 
-object SocketTypes {
-    const val ROLES_PUT_HASH = "ROLES_PUT_HASH"
-    const val DATA_UPDATE = "DATA_UPDATE"
-    const val FETCH_DATA = "FETCH_DATA"
-    const val GUILD_SETTINGS = "GUILD_SETTINGS"
-    const val CUSTOM_COMMANDS = "CUSTOM_COMMANDS"
-    const val PONG = "PONG"
+import ml.duncte123.skybot.web.WebSocketClient
+import net.dv8tion.jda.api.utils.data.DataObject
+
+class WSPingTask(private val client: WebSocketClient) : Runnable {
+    override fun run() {
+        client.send(
+            DataObject.empty().put("t", "PING")
+        )
+    }
 }

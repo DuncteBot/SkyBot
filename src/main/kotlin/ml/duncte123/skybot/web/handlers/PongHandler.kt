@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2021  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,13 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web
+package ml.duncte123.skybot.web.handlers
 
-object SocketTypes {
-    const val ROLES_PUT_HASH = "ROLES_PUT_HASH"
-    const val DATA_UPDATE = "DATA_UPDATE"
-    const val FETCH_DATA = "FETCH_DATA"
-    const val GUILD_SETTINGS = "GUILD_SETTINGS"
-    const val CUSTOM_COMMANDS = "CUSTOM_COMMANDS"
-    const val PONG = "PONG"
+import com.fasterxml.jackson.databind.JsonNode
+import ml.duncte123.skybot.web.WebSocketClient
+import ml.duncte123.skybot.websocket.SocketHandler
+
+class PongHandler(client: WebSocketClient) : SocketHandler(client) {
+    override fun handleInternally(data: JsonNode) {
+        LOG.info("Got pong event")
+    }
 }

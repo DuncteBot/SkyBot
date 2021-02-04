@@ -21,10 +21,8 @@ package ml.duncte123.skybot.web
 import com.fasterxml.jackson.databind.JsonNode
 import com.neovisionaries.ws.client.*
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.web.handlers.CustomCommandHandler
-import ml.duncte123.skybot.web.handlers.DataUpdateHandler
-import ml.duncte123.skybot.web.handlers.GuildSettingsHandler
-import ml.duncte123.skybot.web.handlers.RequestHandler
+import ml.duncte123.skybot.web.handlers.*
+import ml.duncte123.skybot.web.tasks.WSPingTask
 import ml.duncte123.skybot.websocket.ReconnectTask
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -72,6 +70,12 @@ class WebSocketClient(
         setupHandlers()
         connect()
 
+        reconnectThread.scheduleWithFixedDelay(
+            WSPingTask(this),
+            12L,
+            12L,
+            TimeUnit.HOURS
+        )
         reconnectThread.scheduleWithFixedDelay(
             ReconnectTask(this),
             0L,
@@ -203,6 +207,7 @@ class WebSocketClient(
         handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(shardManager, this)
         handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(variables, this)
         handlersMap[SocketTypes.CUSTOM_COMMANDS] = CustomCommandHandler(variables, this)
+        handlersMap[SocketTypes.PONG] = PongHandler(this)
     }
 
     fun attemptReconnect() {
