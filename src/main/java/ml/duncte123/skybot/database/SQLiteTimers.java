@@ -47,7 +47,7 @@ public class SQLiteTimers {
     public static void startUnbanTimer(Variables variables) {
         LOGGER.info("Starting the unban + unmute timer! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
         //Register the timer for the auto unbans
-        SYSPOOL.scheduleAtFixedRate(() -> checkUnbansAndUnmutes(variables), 0, 2, TimeUnit.MINUTES);
+        SYSPOOL.scheduleAtFixedRate(() -> checkUnbansAndUnmutes(variables), 1, 2, TimeUnit.MINUTES);
     }
 
     public static void startReminderTimer(Variables variables) {

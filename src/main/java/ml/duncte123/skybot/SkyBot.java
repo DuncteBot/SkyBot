@@ -60,6 +60,7 @@ public final class SkyBot {
         // Member needs to be cached for JDA to fire role update event
         final long userId = member.getIdLong();
 
+        // the guild check is required for JDA to catch role updates in the support guild
         return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
             PATRONS.contains(userId) ||
             TAG_PATRONS.contains(userId) ||

@@ -34,9 +34,6 @@ import javax.annotation.Nonnull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 public class BotinfoCommand extends Command {
-
-    private final String lavaplayerVersion;
-
     public BotinfoCommand() {
         this.name = "botinfo";
         this.aliases = new String[]{
@@ -45,10 +42,6 @@ public class BotinfoCommand extends Command {
             "bi",
         };
         this.help = "Displays some information about the bot";
-
-        // Calls readVersion() every time that we access the prop
-        // So we store the output ourselves for faster execution
-        this.lavaplayerVersion = PlayerLibrary.VERSION;
     }
 
     @Override
@@ -62,7 +55,6 @@ public class BotinfoCommand extends Command {
         final String duncte = " <@191231307290771456> (duncte123#1245)";
 
         final EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
-            .setDescription("Here is some information about me \uD83D\uDE09")
             .setThumbnail(user.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                 duncte + ".\n" +
@@ -74,7 +66,7 @@ public class BotinfoCommand extends Command {
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION +
-                "\n**LavaPlayer version:** " + this.lavaplayerVersion + "\n" +
+                "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](https://www.patreon.com/DuncteBot).", false);
