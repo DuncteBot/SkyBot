@@ -67,7 +67,7 @@ public class HelpCommand extends Command {
 
             return;
         }
-        sendHelp(ctx, HelpEmbeds.generateCommandEmbed(prefix));
+        sendHelp(ctx, HelpEmbeds.generateCommandEmbed(prefix, null));
     }
 
     @SuppressWarnings("ConstantConditions")

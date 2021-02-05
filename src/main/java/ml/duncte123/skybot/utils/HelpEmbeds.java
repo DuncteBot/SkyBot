@@ -24,6 +24,8 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,21 +62,15 @@ public class HelpEmbeds {
 
     private static final boolean INLINE = true;
 
-    public static EmbedBuilder generateCommandEmbed(String prefix, CommandCategory... categories) {
+    public static EmbedBuilder generateCommandEmbed(@Nonnull String prefix, @Nullable CommandCategory category) {
         final EmbedBuilder embed = getDefaultEmbed()
             .setTitle("Click here for the support server", "https://dunctebot.link/server")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 
-        if (categories == null || categories.length == 0) {
+        if (category == null) {
             addAllCategoriesToEmbed(embed);
         } else {
-            for (final CommandCategory category : categories) {
-                final MessageEmbed.Field generated = getFieldForCategory(category);
-
-                if (generated != null) {
-                    embed.addField(generated);
-                }
-            }
+            embed.addField(getFieldForCategory(category));
         }
 
         return embed.addField("Support",
