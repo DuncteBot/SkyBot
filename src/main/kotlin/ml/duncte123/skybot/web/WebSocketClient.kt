@@ -72,8 +72,8 @@ class WebSocketClient(
 
         reconnectThread.scheduleWithFixedDelay(
             WSPingTask(this),
-            12L,
-            12L,
+            1L,
+            5L,
             TimeUnit.HOURS
         )
         reconnectThread.scheduleWithFixedDelay(

@@ -118,7 +118,6 @@ class UserinfoCommand : Command() {
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
-                        |**Display Name:** ${user.name.escapeMarkDown()}
                         |**Account Created:** ${times.first} (${times.second})
                         |$nitroUserLink ${user.isNitro.toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
@@ -185,6 +184,9 @@ class UserinfoCommand : Command() {
             "\n**Boosting since:** ${boostTimes.first} (${boostTimes.second})"
         }
 
+        val userNitro = user.isNitro
+        val nitroBadge = if (userNitro) " $DISCORD_NITRO" else ""
+
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
@@ -194,15 +196,15 @@ class UserinfoCommand : Command() {
                         |**Join Order:** ${generateJoinOrder(guild, member)}
             * */
             .setDescription(
-                """User info for ${member.asMention} ${user.badgeLine} $boostEmote
+                """User info for ${member.asMention}$nitroBadge ${user.badgeLine} $boostEmote
                         |
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${member.effectiveName.escapeMarkDown()}
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
-                        |$nitroUserLink ${user.isNitro.toEmoji()}
+                        |$nitroUserLink ${userNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
-                        |**Bot Account:** ${user.isBot.toEmoji()}
+                        |**Bot Account:** ${userNitro.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
