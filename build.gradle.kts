@@ -55,7 +55,8 @@ java {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
+    jcenter() // Legacy :(
 
     maven {
         url = uri("https://repo.jenkins-ci.org/releases/")
@@ -80,7 +81,7 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.0.11")
+    implementation(group = "com.github.DuncteBot", name = "models", version = "0.0.15")
 
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.3.2_454301933")
