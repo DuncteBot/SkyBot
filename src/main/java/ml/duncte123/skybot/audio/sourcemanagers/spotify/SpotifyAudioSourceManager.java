@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.audio.sourcemanagers.spotify;
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
@@ -96,7 +96,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     @Override
-    public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
+    public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
         return loadItem(reference, false);
     }
 

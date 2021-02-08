@@ -569,9 +569,9 @@ public class SettingsCommand extends Command {
     private void inviteLoggingSetting(CommandContext ctx, String name, boolean setValue) {
         final DunctebotGuild guild = ctx.getGuild();
         final GuildSetting settings = guild.getSettings();
-        final boolean isEnabled = !settings.isInviteLoggingEnabled();
+        final boolean isEnabled = !settings.isFilterInvites();
 
-        guild.setSettings(settings.setInviteLoggingEnabled(isEnabled));
+        guild.setSettings(settings.setFilterInvites(isEnabled));
         sendMsg(ctx, "The logging of invites has been toggled **" +
             (isEnabled ? "on" : "off") + "**");
 

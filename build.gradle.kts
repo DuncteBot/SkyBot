@@ -102,10 +102,10 @@ dependencies {
         exclude(module = "opus-java")
     }*/
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.4.0")
+    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "1.5.0")
     // Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.67")
-    implementation(group = "com.github.dunctebot", name = "Lavalink-Client", version = "478fbea")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
 //    implementation(project(":Lavalink-Client"))
 
     //groovy

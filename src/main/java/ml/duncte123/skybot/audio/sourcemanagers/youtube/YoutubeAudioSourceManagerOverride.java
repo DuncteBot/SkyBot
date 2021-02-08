@@ -40,6 +40,7 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
             true,
             new DefaultYoutubeTrackDetailsLoader(),
             new YoutubeApiSearchProvider(ytApiKey, cacheClient),
+            new YoutubeSearchMusicProvider(),
             new YoutubeSignatureCipherManager(),
             new YoutubeApiPlaylistLoader(ytApiKey),
             new DefaultYoutubeLinkRouter(),

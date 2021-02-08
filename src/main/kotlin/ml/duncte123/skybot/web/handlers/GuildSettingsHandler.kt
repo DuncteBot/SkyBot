@@ -61,12 +61,12 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
                     val tracker = guild.globalInviteTracker
 
                     // setting was turned on
-                    if (oldSetting?.isInviteLoggingEnabled == false && setting.isInviteLoggingEnabled) {
+                    if (oldSetting?.isFilterInvites == false && setting.isFilterInvites) {
                         if (CommandUtils.isGuildPatron(guild)) {
                             tracker.attemptInviteCaching(guild)
                         }
                         // setting was turned off
-                    } else if (oldSetting?.isInviteLoggingEnabled == true && !setting.isInviteLoggingEnabled) {
+                    } else if (oldSetting?.isFilterInvites == true && !setting.isFilterInvites) {
                         tracker.clearInvites(setting.guildId)
                     }
                 }
