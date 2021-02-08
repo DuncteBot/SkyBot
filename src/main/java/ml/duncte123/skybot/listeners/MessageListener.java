@@ -175,8 +175,8 @@ public abstract class MessageListener extends BaseListener {
         }
 
         final User selfUser = event.getJDA().getSelfUser();
-        final long id = selfUser.getIdLong();
-        final String selfRegex = "<@!?" + id + '>';
+        final long selfId = selfUser.getIdLong();
+        final String selfRegex = "<@!?" + selfId + '>';
 
         if (raw.matches(selfRegex)) {
             sendMsg(
@@ -198,7 +198,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (doesNotStartWithPrefix(id, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
+        if (doesNotStartWithPrefix(selfId, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
             return;
         }
 
