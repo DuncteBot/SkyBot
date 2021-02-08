@@ -118,6 +118,7 @@ public class ModerationUtils {
             case "mute", "muted", "unmuted" -> settings.isMuteLogging();
             case "kick", "kicked" -> settings.isKickLogging();
             case "warn", "warned" -> settings.isWarnLogging();
+            case "welcome-leave" -> true; // TODO: find new publisher
             default -> true;
         };
     }
@@ -250,10 +251,6 @@ public class ModerationUtils {
         }
     }
 
-    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minuteDuration) {
-        muteUser(guild, member, channel, cause, minuteDuration, false);
-    }
-
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minuteDuration, boolean sendMessages) {
         final GuildSetting guildSettings = guild.getSettings();
         final long muteRoleId = guildSettings.getMuteRoleId();
@@ -313,10 +310,6 @@ public class ModerationUtils {
                     }
                 }
             });
-    }
-
-    public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {
-        kickUser(guild, member, channel, cause, false);
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause, boolean sendMessages) {

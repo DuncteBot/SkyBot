@@ -151,9 +151,9 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                 )
 
                 if (data.third) {
-                    ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
+                    ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam", false)
                 } else {
-                    ModerationUtils.muteUser(guild, author, msg.textChannel, "Spam", ratelimit)
+                    ModerationUtils.muteUser(guild, author, msg.textChannel, "Spam", ratelimit, false)
                 }
 
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())

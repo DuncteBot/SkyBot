@@ -175,7 +175,8 @@ public abstract class MessageListener extends BaseListener {
         }
 
         final User selfUser = event.getJDA().getSelfUser();
-        final String selfRegex = "<@!?" + selfUser.getId() + '>';
+        final long id = selfUser.getIdLong();
+        final String selfRegex = "<@!?" + id + '>';
 
         if (raw.matches(selfRegex)) {
             sendMsg(
@@ -197,7 +198,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (doesNotStartWithPrefix(event, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
+        if (doesNotStartWithPrefix(id, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
             return;
         }
 
@@ -215,7 +216,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doesNotStartWithPrefix(GuildMessageReceivedEvent event, String raw, String customPrefix) {
+    private boolean doesNotStartWithPrefix(long selfId, String raw, String customPrefix) {
         final String rwLower = raw.toLowerCase();
 
         if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
@@ -230,15 +231,7 @@ public abstract class MessageListener extends BaseListener {
             return false;
         }
 
-        final String selfMember = event.getGuild().getSelfMember().getAsMention();
-
-        if (rwLower.startsWith(selfMember)) {
-            return false;
-        }
-
-        final String selfUser = event.getJDA().getSelfUser().getAsMention();
-
-        return !rwLower.startsWith(selfUser);
+        return !raw.matches("^<@!?" + selfId + "?.*$");
     }
 
     private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String raw, @Nonnull String input) {
