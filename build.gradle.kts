@@ -91,7 +91,7 @@ dependencies {
     implementation(group = "com.github.duncte123", name = "weeb.java", version = "18ba8fc")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.0.122")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.1")
 
     // JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_227") {
@@ -141,7 +141,7 @@ dependencies {
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")
 
     // durationParser
-    implementation(group = "me.duncte123", name = "durationParser", version = "1.0.15")
+    implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
 
     // Oshi
     implementation(group = "com.github.oshi", name = "oshi-core", version = "5.2.5")
