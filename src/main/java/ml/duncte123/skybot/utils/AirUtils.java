@@ -32,7 +32,7 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
-import me.duncte123.durationparser.Duration;
+import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -233,7 +233,7 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
-    public static String getDatabaseDateFormat(Duration duration) {
+    public static String getDatabaseDateFormat(ParsedDuration duration) {
         return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
@@ -256,7 +256,7 @@ public class AirUtils {
         return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(accessor);
     }
 
-    public static OffsetDateTime getDatabaseDate(Duration duration) {
+    public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 

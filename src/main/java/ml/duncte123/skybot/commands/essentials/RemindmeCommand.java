@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
+import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -80,14 +80,14 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        final Optional<Duration> optionalDuration = getDuration(flags);
+        final Optional<ParsedDuration> optionalDuration = getDuration(flags);
 
         if (optionalDuration.isEmpty()) {
             sendMsg(ctx, "Incorrect duration format");
             return;
         }
 
-        final Duration duration = optionalDuration.get();
+        final ParsedDuration duration = optionalDuration.get();
 
         if (duration.getMilis() == 0) {
             sendMsg(ctx, "Your specified time is too short or the time syntax is invalid.");
@@ -116,7 +116,7 @@ public class RemindmeCommand extends Command {
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
 
-    private Optional<Duration> getDuration(Map<String, List<String>> flags) {
+    private Optional<ParsedDuration> getDuration(Map<String, List<String>> flags) {
         try {
             return DurationParser.parse(String.join("", flags.get("t")));
         }
@@ -125,7 +125,7 @@ public class RemindmeCommand extends Command {
         }
     }
 
-    private void createReminder(CommandContext ctx, OffsetDateTime expireDate, String reminder, Map<String, List<String>> flags, Duration duration) {
+    private void createReminder(CommandContext ctx, OffsetDateTime expireDate, String reminder, Map<String, List<String>> flags, ParsedDuration duration) {
         final boolean inChannel = flags.containsKey("c");
         final String where = inChannel ? " here" : "";
 

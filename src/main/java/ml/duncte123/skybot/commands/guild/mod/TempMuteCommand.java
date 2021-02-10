@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import com.dunctebot.models.settings.GuildSetting;
-import me.duncte123.durationparser.Duration;
+import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -93,7 +93,7 @@ public class TempMuteCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final Duration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
+        final ParsedDuration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
 
         if (duration == null) {
             return;

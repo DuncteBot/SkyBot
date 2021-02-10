@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import me.duncte123.durationparser.Duration;
 import me.duncte123.durationparser.DurationParser;
+import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -84,7 +84,7 @@ public class TempBanCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final Duration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
+        final ParsedDuration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
 
         if (duration == null) {
             return;
@@ -118,8 +118,8 @@ public class TempBanCommand extends ModBaseCommand {
     }
 
     @Nullable
-    public static Duration getDuration(String arg, String name, CommandContext ctx, String prefix) {
-        Optional<Duration> optionalDuration;
+    public static ParsedDuration getDuration(String arg, String name, CommandContext ctx, String prefix) {
+        Optional<ParsedDuration> optionalDuration;
 
         try {
             optionalDuration = DurationParser.parse(arg);
@@ -134,7 +134,7 @@ public class TempBanCommand extends ModBaseCommand {
             return null;
         }
 
-        final Duration duration = optionalDuration.get();
+        final ParsedDuration duration = optionalDuration.get();
 
         if (duration.getMilis() == 0) {
             sendMsg(ctx, "Your specified time is too short or the time syntax is invalid.");
