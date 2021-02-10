@@ -63,7 +63,7 @@ repositories {
     }
 
     maven {
-        url = uri("https://dl.bintray.com/duncte123/maven")
+        url = uri("https://duncte123.jfrog.io/artifactory/maven")
     }
 
     maven {
@@ -81,10 +81,10 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.github.DuncteBot", name = "models", version = "0.1.15")
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.16")
 
     // loadingbar
-    implementation(group = "me.duncte123", name = "loadingbar", version = "1.3.2_454301933")
+    implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
 
     // Weeb api
 //    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
@@ -102,7 +102,7 @@ dependencies {
         exclude(module = "opus-java")
     }*/
 
-    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "1.5.0")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.3")
     // Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.67")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
