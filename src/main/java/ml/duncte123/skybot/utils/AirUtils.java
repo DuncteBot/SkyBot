@@ -54,6 +54,7 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -178,13 +179,15 @@ public class AirUtils {
         }
     }
 
+    @Nullable
     public static TextChannel getLogChannel(long channel, Guild guild) {
         return getLogChannel(Long.toString(channel), guild);
     }
 
+    @Nullable
     private static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) {
-            return GuildUtils.getPublicChannel(guild);
+            return null;
         }
 
         final List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);

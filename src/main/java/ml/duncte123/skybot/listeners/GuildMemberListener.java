@@ -229,6 +229,10 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
 
+        if (settings.isMemberLogging()) {
+            final String message = "";
+        }
+
         // If the leave message is enabled and we have a welcome channel
         if (settings.isEnableLeaveMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long channelId = settings.getWelcomeLeaveChannel();
