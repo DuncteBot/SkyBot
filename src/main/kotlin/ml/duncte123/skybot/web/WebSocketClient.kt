@@ -55,7 +55,7 @@ class WebSocketClient(
     private val config = variables.config
 
     private val factory = WebSocketFactory()
-        .setConnectionTimeout(10000)
+        .setConnectionTimeout(5000)
         .setServerName(IOUtil.getHost(config.websocket.url))
     lateinit var socket: WebSocket
     private val handlersMap = mutableMapOf<String, SocketHandler>()
@@ -73,8 +73,8 @@ class WebSocketClient(
         reconnectThread.scheduleWithFixedDelay(
             WSPingTask(this),
             1L,
-            5L,
-            TimeUnit.HOURS
+            1L,
+            TimeUnit.MINUTES
         )
         reconnectThread.scheduleWithFixedDelay(
             ReconnectTask(this),
@@ -135,11 +135,7 @@ class WebSocketClient(
     }
 
     override fun onTextMessage(websocket: WebSocket, text: String) {
-        println("message: $text")
-    }
-
-    override fun onTextMessage(websocket: WebSocket, data: ByteArray) {
-        val raw = variables.jackson.readTree(data)
+        val raw = variables.jackson.readTree(text)
 
         if (!raw.has("t")) {
             return
@@ -219,7 +215,7 @@ class WebSocketClient(
     private fun connect() {
         socket = factory.createSocket(config.websocket.url)
 
-        socket.setDirectTextMessage(true)
+        socket.setDirectTextMessage(false)
             .addHeader("X-DuncteBot", "bot")
             .addHeader("Accept-Encoding", "gzip")
             .addHeader("Authorization", variables.apis.apiKey)

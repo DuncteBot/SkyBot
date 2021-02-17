@@ -183,6 +183,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 finalPlaylist.add(buildTrack(track));
             }
 
+            if (finalPlaylist.isEmpty()) {
+                throw new FriendlyException("This playlist does not contain playable tracks (podcasts cannot be played)", Severity.COMMON, null);
+            }
+
             return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false, originalSize);
         }
         catch (IllegalArgumentException ex) {
