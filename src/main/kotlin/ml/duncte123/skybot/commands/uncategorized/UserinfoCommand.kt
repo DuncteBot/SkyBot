@@ -144,7 +144,7 @@ class UserinfoCommand : Command() {
         appendLine()
 
         if (joins[index] == member) {
-            append("[${joins[index].effectiveName.escapeMarkDown()}](https://patreon.com/DuncteBot)")
+            append("[${joins[index].effectiveName.escapeMarkDown()}]($PATREON)")
         } else {
             append(joins[index].effectiveName.escapeMarkDown())
         }
@@ -158,7 +158,7 @@ class UserinfoCommand : Command() {
             var usrName = mbr.effectiveName.escapeMarkDown()
 
             if (mbr == member) {
-                usrName = "[$usrName](https://patreon.com/DuncteBot)"
+                usrName = "[$usrName]($PATREON)"
             }
 
             append(" \\> ")

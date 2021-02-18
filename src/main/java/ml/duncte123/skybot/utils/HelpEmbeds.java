@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
+import static ml.duncte123.skybot.Settings.PATREON;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal", "PMD"})
 public class HelpEmbeds {
@@ -64,7 +65,7 @@ public class HelpEmbeds {
 
     public static EmbedBuilder generateCommandEmbed(@Nonnull String prefix, @Nullable CommandCategory category) {
         final EmbedBuilder embed = getDefaultEmbed()
-            .setTitle("Click here for the support server", "https://dunctebot.link/server")
+            .setTitle("Click here for my discord server", "https://dunctebot.link/server")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
 
         if (category == null) {
@@ -75,7 +76,7 @@ public class HelpEmbeds {
 
         return embed.addField("Support",
             "Support server: [https://dunctebot.link/server](https://dunctebot.link/server)\n" +
-                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false);
+                "Support development of this bot: [" + PATREON + "](" + PATREON + ")", false);
     }
 
     /// <editor-fold desc="Reflection magic" defaultstate="collapsed">

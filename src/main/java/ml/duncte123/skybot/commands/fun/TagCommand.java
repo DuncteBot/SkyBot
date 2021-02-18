@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.Settings.PATREON;
 import static ml.duncte123.skybot.utils.CommandUtils.*;
 
 public class TagCommand extends Command {
@@ -252,7 +253,7 @@ public class TagCommand extends Command {
     private void createTag(CommandContext ctx) {
         if (!isTagPatron(ctx.getMember())) {
             sendMsg(ctx, "Unfortunately only our tag tier patrons are able to create tags.\n" +
-                "You can become one for $5/month over at <https://patreon.com/DuncteBot>");
+                "You can become one for $5/month over at <" + PATREON + '>');
 
             return;
         }

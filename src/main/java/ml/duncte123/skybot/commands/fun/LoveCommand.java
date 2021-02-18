@@ -35,6 +35,7 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.Settings.PATREON;
 
 public class LoveCommand extends Command {
 //    private static final String EMPTY_BAR = " ";
@@ -77,7 +78,7 @@ public class LoveCommand extends Command {
 //        final int intScore = response.get("score_int").asInt() / 10;
 
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed()
-            .setTitle(response.get("names").asText(), "https://patreon.com/DuncteBot")
+            .setTitle(response.get("names").asText(), PATREON)
             .setColor(EmbedUtils.getColorOrDefault(ctx.getGuild().getIdLong()))
             // The idea is cool, but it looks stupid
             /*.setDescription(

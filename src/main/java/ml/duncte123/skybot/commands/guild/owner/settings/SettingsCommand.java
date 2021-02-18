@@ -88,7 +88,8 @@ public class SettingsCommand extends Command {
             "\u2022 `kickMode`: Toggles the kick mode for spammers between muting and kicking, this item has no set value\n" +
             "\u2022 `spamFilter`: Toggles the spam filter on or off, this item has no set value\n" +
             "\u2022 `swearFilter`: Toggles the swear filter on or off, this item has no set value\n" +
-            "\u2022 `inviteLogging`: Toggles the logging of invite usage on or off, this item has no set value";
+            "\u2022 `inviteLogging`: Toggles the logging of invite usage on or off, this item has no set value\n" +
+            "\u2022 `memberLogging`: Toggles the logging of members joining and leaving on or off, this item has no set value\n";
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
         };
@@ -584,6 +585,26 @@ public class SettingsCommand extends Command {
     }
     /// </editor-fold>
 
+    /// <editor-fold desc="memberLoggingSetting" defaultstate="collapsed">
+    private void memberLoggingSetting(CommandContext ctx, String name, boolean setValue) {
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSetting settings = guild.getSettings();
+        final long logChannel = settings.getLogChannel();
+
+        if (logChannel < 1 || ctx.getGuild().getTextChannelById(logChannel) == null) {
+            sendMsg(ctx, "There currently is no log channel set, please set this first with `" +
+                ctx.getPrefix() + "settings logChannel --set #channel`");
+            return;
+        }
+
+        final boolean isEnabled = !settings.isMemberLogging();
+
+        guild.setSettings(settings.setMemberLogging(isEnabled));
+        sendMsg(ctx, "The logging of members joining and leaving has been toggled **" +
+            (isEnabled ? "on" : "off") + "**");
+    }
+    /// </editor-fold>
+
     /// <editor-fold desc="helpers" defaultstate="collapsed">
     private void loadSettingsMap() {
         this.settingsMap.put("autoRole", this::autoRoleSetting);
@@ -604,6 +625,7 @@ public class SettingsCommand extends Command {
         this.settingsMap.put("spamFilter", this::spamFilterSetting);
         this.settingsMap.put("swearFilter", this::swearFilterSetting);
         this.settingsMap.put("inviteLogging", this::inviteLoggingSetting);
+        this.settingsMap.put("memberLogging", this::memberLoggingSetting);
     }
 
     @Nullable

@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.objects.user.ConsoleUser;
 import ml.duncte123.skybot.objects.user.FakeUser;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -49,13 +50,20 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_BAN;
 
-//@SuppressWarnings("PMD") // TODO: have a good look at this
 public class ModerationUtils {
+    public static final int COLOUR_JOIN = 0x32a852;
+    public static final int COLOUR_LEAVE = 0xcf362b;
+
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
 
     private ModerationUtils() {}
 
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
+
+        if (mod.equals(target)) {
+            sendMsg(channel, "Why?");
+            return false;
+        }
 
         if (!mod.canInteract(target)) {
             sendMsg(channel, "You cannot " + action + " this member");
@@ -90,22 +98,36 @@ public class ModerationUtils {
             reasonLine = " with reason _\"" + reason + "\"_";
         }
 
-        modLog(String.format("User **%#s** got **%s** by **%#s**%s%s",
-            punishedUser,
-            punishment,
-            mod,
-            length,
-            reasonLine
-        ), guild);
+        final MessageConfig.Builder config = new MessageConfig.Builder()
+            .setMessage(String.format("User **%#s** got **%s** by **%#s**%s%s",
+                punishedUser,
+                punishment,
+                mod,
+                length,
+                reasonLine
+            ));
+
+        modLog(config, guild);
     }
 
     public static void modLog(String message, DunctebotGuild guild) {
-        final long chan = guild.getSettings().getLogChannel();
+        modLog(
+            new MessageConfig.Builder().setMessage(message),
+            guild
+        );
+    }
 
-        if (chan > 0) {
-            final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+    public static void modLog(MessageConfig.Builder message, DunctebotGuild guild) {
+        final long channel = guild.getSettings().getLogChannel();
 
-            sendMsg(logChannel, message);
+        if (channel > 0) {
+            final TextChannel logChannel = AirUtils.getLogChannel(channel, guild);
+
+            if (logChannel == null) {
+                return;
+            }
+
+            sendMsg(message.setChannel(logChannel).build());
         }
     }
 
@@ -118,7 +140,6 @@ public class ModerationUtils {
             case "mute", "muted", "unmuted" -> settings.isMuteLogging();
             case "kick", "kicked" -> settings.isKickLogging();
             case "warn", "warned" -> settings.isWarnLogging();
-            case "welcome-leave" -> true; // TODO: find new publisher
             default -> true;
         };
     }
@@ -299,6 +320,10 @@ public class ModerationUtils {
                 final long chan = guildSettings.getLogChannel();
                 if (chan > 0) {
                     final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+
+                    if (logChannel == null) {
+                        return;
+                    }
 
                     final String message = String.format("%#s bypassed the mute.", member.getUser());
 

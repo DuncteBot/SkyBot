@@ -31,6 +31,8 @@ public class Settings {
     public static final String NEKKO_BASE = "https://nekobot.xyz/api/image?type=";
     public static final int DEFAULT_COLOUR = 0x0751c6;
 
+    public static final String PATREON = "https://www.patreon.com/DuncteBot";
+
     public static final long SUPPORT_GUILD_ID = 191245668617158656L;
     public static final long GUILD_PATRONS_ROLE = 470581447196147733L;
     public static final long PATRONS_ROLE = 402497345721466892L;

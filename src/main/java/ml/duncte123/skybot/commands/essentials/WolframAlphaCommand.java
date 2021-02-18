@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static ml.duncte123.skybot.Settings.PATREON;
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
@@ -61,7 +62,7 @@ public class WolframAlphaCommand extends Command {
     private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, String googleKey, ObjectMapper mapper) {
         final Member member = ctx.getMember();
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed();
-        embed.setAuthor(member.getEffectiveName(), "https://patreon.com/DuncteBot", member.getUser().getAvatarUrl());
+        embed.setAuthor(member.getEffectiveName(), PATREON, member.getUser().getAvatarUrl());
 
         embed.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
