@@ -215,7 +215,8 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 allow_all_to_stop = ?,
                 invite_logging = ?,
                 youngAccountBanEnabled = ?,
-                youngAccountThreshold = ?
+                youngAccountThreshold = ?,
+                logMember = ?
                 WHERE guildId='${guildSettings.guildId}'
                 """.trimMargin()
             ).use {
@@ -248,6 +249,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setBoolean(27, guildSettings.isFilterInvites)
                 it.setBoolean(28, guildSettings.isYoungAccountBanEnabled)
                 it.setInt(29, guildSettings.youngAccountThreshold)
+                it.setBoolean(30, guildSettings.isMemberLogging)
                 it.executeUpdate()
             }
         }
@@ -1140,5 +1142,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             .setEmbedColor(embedColor)
             .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
             .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
+            .setMemberLogging(this.getBoolean("logMember"))
     }
 }

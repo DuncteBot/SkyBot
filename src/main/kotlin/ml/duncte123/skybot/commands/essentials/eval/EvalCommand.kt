@@ -134,8 +134,9 @@ class EvalCommand : Command() {
 
     private suspend fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
-            val out = withTimeoutOrNull(60000L /* = 60 seconds */) {
+            val out = withTimeoutOrNull(5000L /* = 5 seconds */) {
                 try {
+                    // NOTE: while(true) loops and sleeps do not trigger a timeout
                     engine.eval(script)
                 } catch (ex: Throwable) {
                     ex
@@ -169,7 +170,11 @@ class EvalCommand : Command() {
             }
 
             is RestAction<*> -> {
-                out.queue()
+                out.queue({
+                    sendMsg(ctx, "Rest action success: $it")
+                }) {
+                    sendMsg(ctx, "Rest action error: $it")
+                }
                 sendSuccess(ctx.message)
             }
 

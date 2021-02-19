@@ -48,6 +48,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static ml.duncte123.skybot.Settings.PATREON;
 
 /**
  * The {@link #parseInput(Flag[], List)} method has been rewritten in java from
@@ -166,7 +167,7 @@ public class CommandUtils {
         if (member == null) {
             sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
-                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot).\n" +
+                "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
                 "You will also need to join our discord server [here](https://dunctebot.link/server)"), false);
             return false;
         }
@@ -175,7 +176,7 @@ public class CommandUtils {
         if (!member.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
             sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
-                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."), false);
+                "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."), false);
             return false;
         }
 

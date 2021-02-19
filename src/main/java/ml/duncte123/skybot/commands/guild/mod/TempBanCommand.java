@@ -77,6 +77,12 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
+        final ParsedDuration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
+
+        if (duration == null) {
+            return;
+        }
+
         String reason = "No reason given";
         final var flags = ctx.getParsedFlags(this);
 
@@ -84,17 +90,11 @@ public class TempBanCommand extends ModBaseCommand {
             reason = String.join(" ", flags.get("r"));
         }
 
-        final ParsedDuration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());
-
-        if (duration == null) {
-            return;
-        }
-
         final String finalUnbanDate = AirUtils.getDatabaseDateFormat(duration);
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBan.getId(), 1, fReason).queue(
+        ctx.getGuild().ban(toBan.getId(), 1, ctx.getAuthor().getAsTag() + ": " + fReason).queue(
             (ignored) -> {
                 if (duration.getSeconds() > 0) {
                     ctx.getDatabaseAdapter().createBan(

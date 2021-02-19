@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils
+import ml.duncte123.skybot.Settings.PATREON
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
@@ -36,7 +37,7 @@ class DonateCommand : Command() {
             ctx,
             """Hey there thank you for your interest in supporting the bot.
                         |You can use one of the following methods to donate:
-                        |**Patreon:** <https://patreon.com/DuncteBot>
+                        |**Patreon:** <$PATREON>
                         |**PayPal:** <https://paypal.me/duncte123$amount>
                         |
                         |All donations will go directly into development of the bot ❤

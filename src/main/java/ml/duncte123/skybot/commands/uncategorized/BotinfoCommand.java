@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static ml.duncte123.skybot.Settings.PATREON;
 
 public class BotinfoCommand extends Command {
     public BotinfoCommand() {
@@ -69,7 +70,7 @@ public class BotinfoCommand extends Command {
                 "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
-                "[becoming a patron](https://www.patreon.com/DuncteBot).", false);
+                "[becoming a patron](" + PATREON + ").", false);
 
         sendEmbed(ctx, builder);
     }
