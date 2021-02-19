@@ -94,7 +94,7 @@ public class BanCommand extends ModBaseCommand {
         final int delDays = flags.containsKey("nodel") ? 0 : 1;
 
         ctx.getGuild().ban(toBan.getId(), delDays, ctx.getAuthor().getAsTag() + ": " + reason)
-            .reason(String.format("Ban by %#s: %s", ctx.getAuthor(), fReason))
+            .reason(String.format("%#s: %s", ctx.getAuthor(), fReason))
             .queue(
             (m) -> {
                 modLog(ctx.getAuthor(), toBan, "banned", fReason, null, ctx.getGuild());
