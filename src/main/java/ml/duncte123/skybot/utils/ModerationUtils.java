@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,14 @@ public class ModerationUtils {
     public static final int COLOUR_JOIN = 0x32a852;
     public static final int COLOUR_LEAVE = 0xcf362b;
 
+    private static final String[] PROFESSIONAL_RESPONSES = {
+        "WHy?",
+        "Nope",
+        "LOL no",
+        "YoU cAnNoT iNtErAcT wItH ThIs MeMbEr",
+        "<a:mmLol3d:394951523836362773>"
+    };
+
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);
 
     private ModerationUtils() {}
@@ -60,7 +69,7 @@ public class ModerationUtils {
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
 
         if (mod.equals(target)) {
-            sendMsg(channel, "Why?");
+            sendMsg(channel, PROFESSIONAL_RESPONSES[ThreadLocalRandom.current().nextInt(PROFESSIONAL_RESPONSES.length)]);
             return false;
         }
 
