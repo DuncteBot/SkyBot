@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.objects.user.ConsoleUser;
 import ml.duncte123.skybot.objects.user.FakeUser;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
