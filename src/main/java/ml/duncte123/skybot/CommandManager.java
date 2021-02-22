@@ -254,7 +254,6 @@ public class CommandManager {
         this.addCommand(new SaltyCommand());
         this.addCommand(new SaturateCommand());
         this.addCommand(new SaveCommand());
-        this.addCommand(new ScreenfetchCommand());
         this.addCommand(new ScreenshotCommand());
         this.addCommand(new ScrollCommand());
         this.addCommand(new SealCommand());
