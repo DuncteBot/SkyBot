@@ -346,11 +346,31 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     fun getWarningsForUser(userId: Long, guildId: Long): ArrayNode {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
 
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to fetch warnings\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+
+            // dummy array node
+            return mapper.createArrayNode()
+        }
+
         return response["data"] as ArrayNode
     }
 
     fun getWarningCountForUser(userId: Long, guildId: Long): Int {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId/count"))
+
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to fetch warning count\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+            return 0
+        }
 
         return response["data"].asInt(0)
     }
