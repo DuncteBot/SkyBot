@@ -221,10 +221,10 @@ public class CleanupCommand extends ModBaseCommand {
 
     private <T> T checkException(T value, Throwable thr) {
         if (thr instanceof ErrorResponseException) {
-            final ErrorResponseException ex = (ErrorResponseException) thr;
+            final ErrorResponseException exception = (ErrorResponseException) thr;
 
             // Ignore unknown messages
-            if (ex.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+            if (exception.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
                 LOGGER.debug("Recovering from unknown message");
                 return null;
             }
