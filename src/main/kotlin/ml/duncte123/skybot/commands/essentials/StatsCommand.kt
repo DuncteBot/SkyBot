@@ -19,8 +19,10 @@
 package ml.duncte123.skybot.commands.essentials
 
 import com.sun.management.OperatingSystemMXBean
+import fredboat.audio.player.LavalinkManager
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -40,6 +42,17 @@ class StatsCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
+        if (ctx.args.isEmpty()) {
+            sendNormalStats(ctx)
+            return
+        }
+
+        when (ctx.args[0]) {
+            "lavalink", "ll" -> sendLavalinkStats(ctx)
+        }
+    }
+
+    private fun sendNormalStats(ctx: CommandContext) {
         val shardManager = ctx.shardManager
         val connectedVC = shardManager.shardCache.map { shard ->
             shard.voiceChannelCache.filter { vc ->
@@ -99,6 +112,38 @@ class StatsCommand : Command() {
                         """.trimMargin(),
                 false
             )
+
+        sendEmbed(ctx, embed)
+    }
+
+    private fun sendLavalinkStats(ctx: CommandContext) {
+        val llm = LavalinkManager.INS
+
+        if (!llm.isEnabled) {
+            sendMsg(ctx, "Not enabled")
+            return
+        }
+
+        val availableNodes = llm.lavalink.nodes.filter { it.isAvailable }
+
+        val embed = EmbedUtils.getDefaultEmbed()
+            .setFooter("Available nodes: ${availableNodes.size}")
+
+        availableNodes.forEachIndexed { index, node ->
+            val stats = node.stats ?: return@forEachIndexed
+
+            embed.addField(
+                "Lavalink node #$index",
+                """**Region:** ${node.region.name}
+                    |**Uptime:** ${AirUtils.getUptime(stats.uptime)}
+                    |**Used memory:** ${stats.memUsed shr 20}MB
+                    |**Free memory:** ${stats.memFree shr 20}MB
+                    |**Players:** ${stats.players}
+                    |**Players playing:** ${stats.playingPlayers}
+                """.trimMargin(),
+                false
+            )
+        }
 
         sendEmbed(ctx, embed)
     }
