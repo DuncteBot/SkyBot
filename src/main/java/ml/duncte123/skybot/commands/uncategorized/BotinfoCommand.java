@@ -41,6 +41,7 @@ public class BotinfoCommand extends Command {
             "about",
             "support",
             "bi",
+            "info",
         };
         this.help = "Displays some information about the bot";
     }
