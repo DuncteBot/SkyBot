@@ -24,6 +24,7 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.text.TextColor;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -34,10 +35,7 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -67,6 +65,17 @@ public class GuildListener extends BaseListener {
             this.onGuildBan((GuildBanEvent) event);
         } else if (event instanceof GuildUnbanEvent) {
             this.onGuildUnban((GuildUnbanEvent) event);
+        } else if (event instanceof GuildReadyEvent) {
+            this.onGuildReady((GuildReadyEvent) event);
+        }
+    }
+
+    private void onGuildReady(GuildReadyEvent event) {
+        if (event.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID) {
+            // Load the members into the member cache
+            event.getGuild().loadMembers()
+                .onSuccess((__) -> LOGGER.info("Loaded members for DuncteBot guild"))
+                .onError((e) -> LOGGER.error("Failed to load members for DuncteBot guild", e));
         }
     }
 

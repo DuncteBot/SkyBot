@@ -47,7 +47,6 @@ import javax.security.auth.login.LoginException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
@@ -58,14 +57,9 @@ public final class SkyBot {
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
         // Member needs to be cached for JDA to fire role update event
-        final long userId = member.getIdLong();
-
         // the guild check is required for JDA to catch role updates in the support guild
-        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
-            PATRONS.contains(userId) ||
-            TAG_PATRONS.contains(userId) ||
-            ONEGUILD_PATRONS.containsKey(userId) ||
-            GUILD_PATRONS.contains(userId);
+        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID &&
+            member.getRoles().stream().anyMatch((role) -> role.getIdLong() == Settings.PATRONS_ROLE);
     };
 
     private SkyBot() throws LoginException {
@@ -118,10 +112,11 @@ public final class SkyBot {
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
             .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
-//            .setMemberCachePolicy(MemberCachePolicy.NONE)
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             // Enable lazy loading for guilds other than our own
+            // Not using this because it overrides the member cache policy
+            // we're calling loadMembers once the guild is ready
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES

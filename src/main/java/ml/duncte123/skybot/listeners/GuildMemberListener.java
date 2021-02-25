@@ -42,10 +42,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.*;
 import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
@@ -80,6 +77,7 @@ public class GuildMemberListener extends BaseListener {
             final Guild guild = ((GuildLeaveEvent) event).getGuild();
             final long guildId = guild.getIdLong();
 
+            ((EventManager) event.getJDA().getEventManager()).getInviteTracker().clearInvites(guildId);
             GuildUtils.GUILD_MEMBER_COUNTS.remove(guildId);
             variables.getGuildSettingsCache().remove(guildId);
         }
@@ -220,6 +218,7 @@ public class GuildMemberListener extends BaseListener {
                     CommandUtils.PATRONS.remove(userId);
                     handleNewOneGuildPatron(userId);
                     // We assume that the patron already did the steps to register
+                    typeToSet.set(null);
                     return;
                 }
 
