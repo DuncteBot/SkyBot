@@ -204,7 +204,7 @@ class UserinfoCommand : Command() {
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${userNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
-                        |**Bot Account:** ${userNitro.toEmoji()}
+                        |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
