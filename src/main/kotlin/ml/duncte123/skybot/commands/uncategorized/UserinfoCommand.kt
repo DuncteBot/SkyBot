@@ -220,7 +220,7 @@ class UserinfoCommand : Command() {
         }
 
         ctx.weebApi.generateDiscordStatus(
-            toWeebshStatus(member),
+            StatusType.values().random(),
             user.getStaticAvatarUrl() + "?size=256"
         ).async {
             event.channel.sendFile(it, "stat.png")
