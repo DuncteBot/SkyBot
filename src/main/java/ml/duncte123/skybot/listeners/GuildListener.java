@@ -74,7 +74,7 @@ public class GuildListener extends BaseListener {
         if (event.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID) {
             // Load the members into the member cache
             event.getGuild().loadMembers()
-                .onSuccess((__) -> LOGGER.info("Loaded members for DuncteBot guild"))
+                .onSuccess((unused) -> LOGGER.info("Loaded members for DuncteBot guild"))
                 .onError((e) -> LOGGER.error("Failed to load members for DuncteBot guild", e));
         }
     }
