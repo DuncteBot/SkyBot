@@ -214,7 +214,7 @@ public class GuildListener extends BaseListener {
                 final long selfId = guild.getSelfMember().getIdLong();
                 final Optional<AuditLogEntry> optionalAction = actions.stream()
                     // ignore any actions that where done by the bot
-                    .filter((action) -> action.getUser() != null && action.getUser().getIdLong() == selfId)
+                    .filter((action) -> action.getUser() != null && action.getUser().getIdLong() != selfId)
                     // Find the action with our banned user
                     .filter((action) -> action.getTargetIdLong() == user.getIdLong())
                     .findFirst();

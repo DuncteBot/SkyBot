@@ -63,7 +63,7 @@ public class HackbanCommand extends ModBaseCommand {
         final String reason;
 
         if (parsedFlags.containsKey("r")) {
-            reason = String.join(" ", parsedFlags.get("r"));
+            reason = ctx.getAuthor() + ": " + String.join(" ", parsedFlags.get("r"));
         } else {
             reason = String.format("Hackban by %#s", ctx.getAuthor());
         }
