@@ -30,6 +30,6 @@ class InviteCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        sendMsg(ctx, "Invite me with this link:\n<https://dunctebot.link/invite>")
+        sendMsg(ctx, "Invite me with this link:\n<https://duncte.bot/invite>")
     }
 }

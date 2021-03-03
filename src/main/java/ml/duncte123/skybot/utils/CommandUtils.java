@@ -168,7 +168,7 @@ public class CommandUtils {
             sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
-                "You will also need to join our discord server [here](https://dunctebot.link/server)"), false);
+                "You will also need to join our discord server [here](https://duncte.bot/server)"), false);
             return false;
         }
 

@@ -69,7 +69,7 @@ public class ChangeLogCommand extends Command {
                 final String hash = item.substring(0, 7);
                 final String text = item.substring(8).trim();
 
-                builder.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
+                builder.appendDescription(String.format("[%s](http://g.duncte.bot/%s)%n", text, hash));
             }
 
             // fallback if with url is too long

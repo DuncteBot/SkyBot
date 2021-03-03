@@ -91,7 +91,7 @@ class IssueCommand : Command() {
                     sendMsg(
                         ctx,
                         "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
-                            "https://dunctebot.link/server"
+                            "https://duncte.bot/server"
                     )
                 } catch (ex: Exception) {
                     Sentry.capture(ex)

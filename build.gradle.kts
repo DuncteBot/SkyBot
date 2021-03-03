@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.101.3"
+val numberVersion = "3.101.4"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"

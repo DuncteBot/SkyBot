@@ -3,8 +3,8 @@
 [dbl]: https://discordbots.org/api/widget/status/210363111729790977.png
 [dblLink]: https://discordbots.org/bot/210363111729790977
 [discord]: https://discord.com/api/guilds/191245668617158656/embed.png
-[discordLink]: https://dunctebot.link/server
-[inviteLink]: https://dunctebot.link/invite
+[discordLink]: https://duncte.bot/server
+[inviteLink]: https://duncte.bot/invite
 [patronLink]: https://patreon.com/DuncteBot
 [patronImage]: https://img.shields.io/badge/Donate-Patreon-orange.svg
 
@@ -29,7 +29,7 @@ The code of this bot was made public for people who want to see how the bot work
 
 
 # Support
-[![Support Guild](https://discord.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://dunctebot.link/server)
+[![Support Server](https://discord.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://duncte.bot/server)
 
 
 # Widgets from botlists

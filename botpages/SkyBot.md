@@ -15,5 +15,5 @@ The documentation can be found here: [https://github.com/DuncteBot/SkyBot/wiki/J
 
 If you don't want the bot to respond to commands in a certain channel make sure to add `-commands` to the channel topic.
 
-[guild]: https://dunctebot.link/server
+[guild]: https://duncte.bot/server
 [commandList]: https://dunctebot.com/commands
