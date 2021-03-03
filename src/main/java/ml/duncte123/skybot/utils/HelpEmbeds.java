@@ -75,7 +75,7 @@ public class HelpEmbeds {
         }
 
         return embed.addField("Support",
-            "Support server: [https://duncte.bot/server](https://duncte.bot/server)\n" +
+            "Discord server: [https://duncte.bot/server](https://duncte.bot/server)\n" +
                 "Support development of this bot: [" + PATREON + "](" + PATREON + ")", false);
     }
 

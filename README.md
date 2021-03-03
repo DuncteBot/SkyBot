@@ -15,12 +15,12 @@ SkyBot is an LGBT-friendly multipurpose discord bot with features such as music 
 
 
 # Support
-If you need any support please join our [support guild][discordLink] <br />
+If you need any support please join our [Discord server][discordLink] <br />
 If you want to support development of the bot [consider to be come a patron][patronLink]
 
 
 # How to invite the bot to a server?
-Go to [`https://dunctebotlink/invite`][inviteLink] and follow the steps on the website
+Go to [`https://duncte.bot/invite`][inviteLink] and follow the steps on the website
 
 
 # How to setup? / Self-hosting
