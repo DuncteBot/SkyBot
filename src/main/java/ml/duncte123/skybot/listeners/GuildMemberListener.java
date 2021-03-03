@@ -273,7 +273,7 @@ public class GuildMemberListener extends BaseListener {
             guild.retrieveAuditLogs()
                 .cache(false)
                 .type(ActionType.BOT_ADD)
-                .limit(1)
+                .limit(10)
                 .queue((logs) -> {
                     if (!logs.isEmpty()) {
                         final Optional<AuditLogEntry> optionalEntry = logs.stream()

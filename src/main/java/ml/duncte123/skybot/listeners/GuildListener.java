@@ -41,6 +41,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class GuildListener extends BaseListener {
@@ -208,25 +209,29 @@ public class GuildListener extends BaseListener {
         guild.retrieveAuditLogs()
             .cache(false)
             .type(type)
-            .limit(5)
+            .limit(10)
             .queue((actions) -> {
-                for (final AuditLogEntry action : actions) {
-                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
-                        continue;
-                    }
+                final long selfId = guild.getSelfMember().getIdLong();
+                final Optional<AuditLogEntry> optionalAction = actions.stream()
+                    // ignore any actions that where done by the bot
+                    .filter((action) -> action.getUser() != null && action.getUser().getIdLong() == selfId)
+                    // Find the action with our banned user
+                    .filter((action) -> action.getTargetIdLong() == user.getIdLong())
+                    .findFirst();
 
-                    if (action.getTargetIdLong() == user.getIdLong()) {
-                        ModerationUtils.modLog(
-                            action.getUser(),
-                            user,
-                            type == ActionType.BAN ? "banned" : "unbanned",
-                            action.getReason(),
-                            null,
-                            dbg
-                        );
+                if (optionalAction.isPresent()) {
+                    final AuditLogEntry action = optionalAction.get();
 
-                        break;
-                    }
+                    // we filter on null users
+                    //noinspection ConstantConditions
+                    ModerationUtils.modLog(
+                        action.getUser(),
+                        user,
+                        type == ActionType.BAN ? "banned" : "unbanned",
+                        action.getReason(),
+                        null,
+                        dbg
+                    );
                 }
             });
     }
