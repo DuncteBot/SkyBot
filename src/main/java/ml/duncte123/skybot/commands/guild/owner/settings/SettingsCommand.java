@@ -693,6 +693,7 @@ public class SettingsCommand extends Command {
         final String query = this.getSetValue(ctx);
 
         return List.of(
+            "none",
             "disable",
             "disabled",
             "off",

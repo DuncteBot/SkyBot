@@ -38,6 +38,8 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -49,9 +51,11 @@ import javax.annotation.Nonnull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.Settings.PATREON;
@@ -259,10 +263,39 @@ public class GuildMemberListener extends BaseListener {
             ))
             .addField("Account created", created.getFirst() + '\n' + created.getSecond(), false);
 
-        modLog(
+        final Consumer<Void> sendLog = (ignored) -> modLog(
             new MessageConfig.Builder().setEmbed(embed, true),
             new DunctebotGuild(guild, this.variables)
         );
+
+        if (user.isBot() && guild.getSelfMember().hasPermission(Permission.VIEW_AUDIT_LOGS) && "Join".equals(titlePart)) {
+            // fetch who added the bot from the audit logs
+            guild.retrieveAuditLogs()
+                .cache(false)
+                .type(ActionType.BOT_ADD)
+                .limit(1)
+                .queue((logs) -> {
+                    if (!logs.isEmpty()) {
+                        final Optional<AuditLogEntry> optionalEntry = logs.stream()
+                            .filter((log) -> log.getTargetIdLong() == user.getIdLong())
+                            .findFirst();
+
+                        if (optionalEntry.isPresent()) {
+                            final AuditLogEntry entry = optionalEntry.get();
+
+                            embed.appendDescription(String.format(
+                                "\nThis bot was added by **%#s**",
+                                entry.getUser()
+                            ));
+                        }
+                    }
+
+                    sendLog.accept(null);
+                });
+            return;
+        }
+
+        sendLog.accept(null);
     }
 
     private void updateGuildCount(GuildMemberJoinEvent event, Guild guild) {
