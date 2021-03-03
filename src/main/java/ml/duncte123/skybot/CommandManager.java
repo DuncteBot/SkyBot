@@ -218,7 +218,6 @@ public class CommandManager {
         this.addCommand(new LyricsCommand());
         this.addCommand(new MeguminCommand());
         this.addCommand(new MemeCommand());
-        this.addCommand(new MinehCommand());
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
