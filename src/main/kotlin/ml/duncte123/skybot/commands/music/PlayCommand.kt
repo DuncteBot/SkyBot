@@ -83,7 +83,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
             if (vidId == null) {
                 MessageUtils.sendError(ctx.message)
-                sendMsg(ctx, "No tracks where found")
+                sendMsg(ctx, "No tracks were found")
                 return
             }
             toPlay = "https://www.youtube.com/watch?v=$vidId"
