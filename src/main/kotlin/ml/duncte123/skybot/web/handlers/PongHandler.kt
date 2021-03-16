@@ -24,6 +24,6 @@ import ml.duncte123.skybot.websocket.SocketHandler
 
 class PongHandler(client: WebSocketClient) : SocketHandler(client) {
     override fun handleInternally(data: JsonNode) {
-        LOG.info("Got pong event")
+        LOG.debug("Got pong event")
     }
 }

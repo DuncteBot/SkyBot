@@ -31,4 +31,4 @@ jobs:
             - name: Lint code
               run: ./gradlew --no-daemon lintAll
             - name: Build with Gradle
-              run: ./gradlew --no-daemon build
+              run: ./gradlew --no-daemon build --warning-mode=summary
