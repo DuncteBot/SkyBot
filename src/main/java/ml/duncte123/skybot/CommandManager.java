@@ -177,6 +177,7 @@ public class CommandManager {
         this.addCommand(new EmoteCommand());
         this.addCommand(new EvalCommand());
         this.addCommand(new EveryoneCommand());
+        this.addCommand(new ExplosmCommand());
         this.addCommand(new FactsCommand());
         this.addCommand(new FakeWordCommand());
         this.addCommand(new FlagCommand());

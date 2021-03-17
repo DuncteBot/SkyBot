@@ -38,7 +38,6 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
 public abstract class Command implements ICommand {
-    public Flag[] flags = new Flag[0];
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(3,
@@ -58,6 +57,7 @@ public abstract class Command implements ICommand {
     protected String extraInfo = null;
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
+    public Flag[] flags = new Flag[0];
     // This is the cooldown in seconds
     protected int cooldown = 0;
     // Sets the scope of the cooldown, default is on user level
