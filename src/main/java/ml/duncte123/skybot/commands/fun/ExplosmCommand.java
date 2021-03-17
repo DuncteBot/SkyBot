@@ -65,7 +65,14 @@ public class ExplosmCommand extends Command {
 
         WebUtils.ins.prepareRaw(
             builder.build(),
-            (response) -> response.request().url().toString()
+            (response) -> {
+                // only return the url on a 200 status code
+                if (response.code() == 200) {
+                    return response.request().url().toString();
+                }
+
+                return null;
+            }
         ).async(callback, (e) -> callback.accept(null));
     }
 }
