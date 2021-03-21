@@ -151,4 +151,6 @@ class FakeMember(private val name: String) : Member {
     override fun canSync(targetChannel: GuildChannel, syncSource: GuildChannel) = false
 
     override fun canSync(channel: GuildChannel) = false
+
+    override fun isPending() = false
 }
