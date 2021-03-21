@@ -37,6 +37,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EventManager implements IEventManager {
 
@@ -46,6 +48,13 @@ public class EventManager implements IEventManager {
     private final ReactionHandler reactionHandler = new ReactionHandler();
     private final InviteTrackingListener inviteTracker;
     private final List<EventListener> listeners = new ArrayList<>();
+
+    private final ExecutorService eventExecutor = Executors.newSingleThreadExecutor((r) -> {
+        final Thread thread = new Thread(r, "Dunctebot-Event-Thread");
+        thread.setDaemon(true);
+
+        return thread;
+    });
 
     /* package */ EventManager(Variables variables) {
         final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
@@ -95,18 +104,20 @@ public class EventManager implements IEventManager {
         }
 
         for (final EventListener listener : this.listeners) {
-            try {
-                listener.onEvent(event);
-            }
-            catch (Throwable thr) {
-                LOGGER.error("Error while handling event {}({}); {}",
-                    event.getClass().getName(),
-                    listener.getClass().getSimpleName(),
-                    thr.getLocalizedMessage());
-                LOGGER.error("", thr);
+            eventExecutor.submit(() -> {
+                try {
+                    listener.onEvent(event);
+                }
+                catch (Throwable thr) {
+                    LOGGER.error("Error while handling event {}({}); {}",
+                        event.getClass().getName(),
+                        listener.getClass().getSimpleName(),
+                        thr.getLocalizedMessage());
+                    LOGGER.error("", thr);
 
-                Sentry.capture(thr);
-            }
+                    Sentry.capture(thr);
+                }
+            });
         }
     }
 

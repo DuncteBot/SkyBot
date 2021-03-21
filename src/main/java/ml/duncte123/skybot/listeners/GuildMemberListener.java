@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.dunctebot.models.settings.GuildSetting;
 import com.jagrosh.jagtag.Parser;
 import kotlin.Pair;
 import me.duncte123.botcommons.messaging.MessageConfig;
@@ -31,7 +32,6 @@ import ml.duncte123.skybot.extensions.UserKt;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.api.Patron;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
@@ -44,11 +44,14 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.member.*;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
 import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
-
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -69,19 +72,21 @@ public class GuildMemberListener extends BaseListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildMemberJoinEvent) {
-            this.onGuildMemberJoin((GuildMemberJoinEvent) event);
-        } else if (event instanceof GuildMemberRemoveEvent) {
-            this.onGuildMemberRemove((GuildMemberRemoveEvent) event);
-        } else if (event instanceof GuildMemberRoleRemoveEvent) {
-            this.onGuildMemberRoleRemove((GuildMemberRoleRemoveEvent) event);
-        } else if (event instanceof GuildMemberRoleAddEvent) {
-            this.onGuildMemberRoleAdd((GuildMemberRoleAddEvent) event);
-        } else if (event instanceof GuildLeaveEvent) {
-            final Guild guild = ((GuildLeaveEvent) event).getGuild();
+        if (event instanceof GuildMemberJoinEvent joinEvent) {
+            this.onGuildMemberJoin(joinEvent);
+        } else if (event instanceof GuildMemberUpdatePendingEvent pendingEvent) {
+            this.onGuildMemberUpdatePending(pendingEvent);
+        } else if (event instanceof GuildMemberRemoveEvent removeEvent) {
+            this.onGuildMemberRemove(removeEvent);
+        } else if (event instanceof GuildMemberRoleRemoveEvent roleRemoveEvent) {
+            this.onGuildMemberRoleRemove(roleRemoveEvent);
+        } else if (event instanceof GuildMemberRoleAddEvent roleAddEvent) {
+            this.onGuildMemberRoleAdd(roleAddEvent);
+        } else if (event instanceof GuildLeaveEvent leaveEvent) {
+            final Guild guild = leaveEvent.getGuild();
             final long guildId = guild.getIdLong();
 
-            ((EventManager) event.getJDA().getEventManager()).getInviteTracker().clearInvites(guildId);
+            // invites are cleared by the invite listener
             GuildUtils.GUILD_MEMBER_COUNTS.remove(guildId);
             variables.getGuildSettingsCache().remove(guildId);
         }
@@ -119,11 +124,22 @@ public class GuildMemberListener extends BaseListener {
             }
         }
 
-        if (settings.isAutoroleEnabled() && selfMember.hasPermission(Permission.MANAGE_ROLES)) {
-            final Role role = guild.getRoleById(settings.getAutoroleRole());
+        if (settings.isAutoroleEnabled() && !member.isPending() && selfMember.hasPermission(Permission.MANAGE_ROLES)) {
+            applyAutoRole(guild, member, settings);
+        }
+    }
 
-            if (role != null && !guild.getPublicRole().equals(role) && selfMember.canInteract(role)) {
-                guild.addRoleToMember(member, role).queue(null, it -> {});
+    private void onGuildMemberUpdatePending(GuildMemberUpdatePendingEvent event) {
+        final Member member = event.getMember();
+
+        // only apply the role if the member is not pending
+        if (!member.isPending()) {
+            final Guild guild = event.getGuild();
+            final Member selfMember = guild.getSelfMember();
+            final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
+
+            if (settings.isAutoroleEnabled() && selfMember.hasPermission(Permission.MANAGE_ROLES)) {
+                applyAutoRole(guild, member, settings);
             }
         }
     }
@@ -482,5 +498,13 @@ public class GuildMemberListener extends BaseListener {
                 return null;
             }
         );
+    }
+
+    private void applyAutoRole(Guild guild, Member member, GuildSetting settings) {
+        final Role role = guild.getRoleById(settings.getAutoroleRole());
+
+        if (role != null && !guild.getPublicRole().equals(role) && guild.getSelfMember().canInteract(role)) {
+            guild.addRoleToMember(member, role).queue(null, it -> {});
+        }
     }
 }

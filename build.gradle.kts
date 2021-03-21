@@ -94,7 +94,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.1.1")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_228") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_244") {
         exclude(module = "opus-java")
     }
 
@@ -240,7 +240,7 @@ val generateJavaSources = task<SourceTask>("generateJavaSources") {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.isIncremental = true
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "--enable-preview")
 }
 
 compileJava.apply {

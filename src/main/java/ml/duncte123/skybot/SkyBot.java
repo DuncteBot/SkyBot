@@ -49,6 +49,8 @@ import java.util.concurrent.TimeUnit;
 
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
+import static net.dv8tion.jda.api.utils.MemberCachePolicy.DEFAULT;
+import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
     private static SkyBot instance;
@@ -111,7 +113,7 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
-            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
+            .setMemberCachePolicy(DEFAULT.or(PENDING).or(PATRON_POLICY))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             // Enable lazy loading for guilds other than our own
