@@ -240,7 +240,7 @@ val generateJavaSources = task<SourceTask>("generateJavaSources") {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.isIncremental = true
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked", "--enable-preview")
+    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 }
 
 compileJava.apply {

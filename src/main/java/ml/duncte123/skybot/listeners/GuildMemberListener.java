@@ -72,18 +72,18 @@ public class GuildMemberListener extends BaseListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildMemberJoinEvent joinEvent) {
-            this.onGuildMemberJoin(joinEvent);
-        } else if (event instanceof GuildMemberUpdatePendingEvent pendingEvent) {
-            this.onGuildMemberUpdatePending(pendingEvent);
-        } else if (event instanceof GuildMemberRemoveEvent removeEvent) {
-            this.onGuildMemberRemove(removeEvent);
-        } else if (event instanceof GuildMemberRoleRemoveEvent roleRemoveEvent) {
-            this.onGuildMemberRoleRemove(roleRemoveEvent);
-        } else if (event instanceof GuildMemberRoleAddEvent roleAddEvent) {
-            this.onGuildMemberRoleAdd(roleAddEvent);
-        } else if (event instanceof GuildLeaveEvent leaveEvent) {
-            final Guild guild = leaveEvent.getGuild();
+        if (event instanceof GuildMemberJoinEvent) {
+            this.onGuildMemberJoin((GuildMemberJoinEvent) event);
+        } else if (event instanceof GuildMemberUpdatePendingEvent) {
+            this.onGuildMemberUpdatePending((GuildMemberUpdatePendingEvent) event);
+        } else if (event instanceof GuildMemberRemoveEvent) {
+            this.onGuildMemberRemove((GuildMemberRemoveEvent) event);
+        } else if (event instanceof GuildMemberRoleRemoveEvent) {
+            this.onGuildMemberRoleRemove((GuildMemberRoleRemoveEvent) event);
+        } else if (event instanceof GuildMemberRoleAddEvent) {
+            this.onGuildMemberRoleAdd((GuildMemberRoleAddEvent) event);
+        } else if (event instanceof GuildLeaveEvent) {
+            final Guild guild = ((GuildLeaveEvent) event).getGuild();
             final long guildId = guild.getIdLong();
 
             // invites are cleared by the invite listener

@@ -19,4 +19,4 @@ FROM adoptopenjdk:15-jre-hotspot
 WORKDIR /skybot
 COPY --from=builder /skybot/build/libs/skybot*.jar ./skybot.jar
 
-CMD ["java", "--enable-preview", "-jar", "skybot.jar"]
+CMD ["java", "-jar", "skybot.jar"]
