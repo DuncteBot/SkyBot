@@ -75,6 +75,7 @@ class WeebCommand : WeebCommandBase() {
         val img = ctx.weebApi.getRandomImage(
             ImageConfig.Builder().setType(type).build()
         ).execute()
+
         sendEmbed(ctx, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
     }
 }

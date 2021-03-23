@@ -56,6 +56,12 @@ java {
 
 repositories {
     mavenCentral()
+
+    // this before jcenter to cache my own repos
+    maven {
+        url = uri("https://duncte123.jfrog.io/artifactory/bintray-maven/")
+    }
+
     jcenter() // Legacy :(
 
     maven {
@@ -87,8 +93,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
 
     // Weeb api
-//    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
-    implementation(group = "com.github.duncte123", name = "weeb.java", version = "18ba8fc")
+    implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
     implementation(group = "me.duncte123", name = "botCommons", version = "2.1.1")
