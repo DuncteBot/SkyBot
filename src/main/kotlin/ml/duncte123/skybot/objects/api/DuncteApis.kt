@@ -816,6 +816,19 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return response["success"].asBoolean()
     }
 
+    fun getRCGUrl(): String? {
+        val request = defaultRequest("images/rcg/random", false)
+
+        return WebUtils.ins.prepareRaw(request.build()) {
+            // only return the url on a 200 status code
+            if (it.code() == 200) {
+                return@prepareRaw it.request().url().toString()
+            }
+
+            return@prepareRaw null
+        }.execute()
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error["errors"]
 

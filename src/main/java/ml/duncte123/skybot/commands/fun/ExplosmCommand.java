@@ -19,14 +19,10 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -49,30 +45,13 @@ public class ExplosmCommand extends Command {
             return;
         }
 
-        this.generateComic((comicUrl) -> {
-            if (comicUrl == null) {
-                sendMsg(ctx, "Generating comic failed, try again later");
-                return;
-            }
+        final String comicUrl = ctx.getApis().getRCGUrl();
 
-            sendEmbed(ctx, EmbedUtils.embedImageWithTitle("Fresh comic for you", "https://explosm.net/rcg", comicUrl));
-        });
-    }
+        if (comicUrl == null) {
+            sendMsg(ctx, "Generating comic failed, try again later");
+            return;
+        }
 
-    public void generateComic(Consumer<String> callback) {
-        // TODO: port to prod, beta is unstable as fuck
-        final Request.Builder builder = WebUtils.ins.prepareGet("https://apis.beta.duncte123.me/images/rcg/random");
-
-        WebUtils.ins.prepareRaw(
-            builder.build(),
-            (response) -> {
-                // only return the url on a 200 status code
-                if (response.code() == 200) {
-                    return response.request().url().toString();
-                }
-
-                return null;
-            }
-        ).async(callback, (e) -> callback.accept(null));
+        sendEmbed(ctx, EmbedUtils.embedImageWithTitle("Fresh comic for you", "https://explosm.net/rcg", comicUrl));
     }
 }

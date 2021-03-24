@@ -22,8 +22,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 
 public enum CooldownScope {
 
-    USER("USR:%s", ""),
-    GUILD("SRV:%s", " in this server");
+    USER("USER:%s", ""),
+    GUILD("GUILD:%s", " in this server");
 
     private final String pattern;
     private final String extraErrorMsg;
@@ -38,18 +38,13 @@ public enum CooldownScope {
     }
 
     public String formatKey(String commandName, CommandContext ctx) {
-        return commandName + '|' + String.format(this.pattern, (Object[]) getCorrectIds(ctx).split(","));
+        return commandName + '|' + this.pattern.formatted((Object[]) getCorrectIds(ctx).split(","));
     }
 
     private String getCorrectIds(CommandContext ctx) {
-        switch (this) {
-            case USER:
-                return ctx.getAuthor().getId();
-            case GUILD:
-                return ctx.getGuild().getId();
-
-            default:
-                return "";
-        }
+        return switch (this) {
+            case USER -> ctx.getAuthor().getId();
+            case GUILD -> ctx.getGuild().getId();
+        };
     }
 }
