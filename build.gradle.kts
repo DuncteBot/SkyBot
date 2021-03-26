@@ -96,7 +96,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.1")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.2")
 
     // JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_247") {

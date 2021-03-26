@@ -168,7 +168,7 @@ class ChatSession(userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         body.append("input", text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
-            .build({ it.body()!!.string() }, WebParserUtils::handleError)
+            .build({ it.body()!!.bytes() }, WebParserUtils::handleError)
             .async {
                 try {
                     response.invoke(xPathSearch(it, "//result/that/text()"))
@@ -185,12 +185,12 @@ class ChatSession(userId: Long) {
     }
 
     @Suppress("SameParameterValue")
-    private fun xPathSearch(input: String, expression: String): String {
+    private fun xPathSearch(input: ByteArray, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
 
-        return ByteArrayInputStream(input.toByteArray(charset("UTF-8"))).use {
+        return ByteArrayInputStream(input).use {
             val document = documentBuilder.parse(it)
             val output = xPathExpression.evaluate(document, XPathConstants.STRING)
             val outputString = (output as? String) ?: "Error on xpath, this should never be shown"
