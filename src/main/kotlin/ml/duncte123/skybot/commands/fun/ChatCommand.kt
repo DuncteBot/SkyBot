@@ -31,6 +31,7 @@ import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -168,7 +169,7 @@ class ChatSession(userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         body.append("input", text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
-            .build({ it.body()!!.bytes() }, WebParserUtils::handleError)
+            .build({ it.body()!!.byteStream() }, WebParserUtils::handleError)
             .async {
                 try {
                     response.invoke(xPathSearch(it, "//result/that/text()"))
@@ -185,12 +186,12 @@ class ChatSession(userId: Long) {
     }
 
     @Suppress("SameParameterValue")
-    private fun xPathSearch(input: ByteArray, expression: String): String {
+    private fun xPathSearch(input: InputStream, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
 
-        return ByteArrayInputStream(input).use {
+        return input.use {
             val document = documentBuilder.parse(it)
             val output = xPathExpression.evaluate(document, XPathConstants.STRING)
             val outputString = (output as? String) ?: "Error on xpath, this should never be shown"
