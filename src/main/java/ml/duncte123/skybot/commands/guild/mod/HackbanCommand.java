@@ -114,7 +114,7 @@ public class HackbanCommand extends ModBaseCommand {
             catch (HierarchyException e) {
               sendMsg(ctx, String.format("Could not ban id `%s`", userId));
             } catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
                 sendMsg(ctx, "ERROR: " + e.getMessage());
                 return;
             }

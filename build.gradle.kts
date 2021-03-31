@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.21"))
+        classpath(kotlin("gradle-plugin", version = "1.4.32"))
     }
 }
 
@@ -39,11 +39,11 @@ plugins {
     kotlin("jvm") version "1.4.21"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.3.0"
+    id("org.jmailen.kotlinter") version "3.4.0"
     pmd
 }
 
-val numberVersion = "3.101.4"
+val numberVersion = "3.102.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -58,27 +58,15 @@ repositories {
     mavenCentral()
 
     // this before jcenter to cache my own repos
-    maven {
-        url = uri("https://duncte123.jfrog.io/artifactory/bintray-maven/")
-    }
+    maven("https://duncte123.jfrog.io/artifactory/bintray-maven")
 
     jcenter() // Legacy :(
 
-    maven {
-        url = uri("https://repo.jenkins-ci.org/releases/")
-    }
-
-    maven {
-        url = uri("https://duncte123.jfrog.io/artifactory/maven")
-    }
-
-    maven {
-        url = uri("https://maven.notfab.net/Hosted")
-    }
-
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    maven("https://repo.jenkins-ci.org/releases")
+    maven("https://duncte123.jfrog.io/artifactory/maven")
+    maven("https://m2.dv8tion.net/releases")
+    maven("https://maven.notfab.net/Hosted")
+    maven("https://jitpack.io")
 }
 
 val devDependencies = arrayOf(
@@ -96,10 +84,10 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.2")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.3")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_247") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_252") {
         exclude(module = "opus-java")
     }
 
@@ -109,12 +97,12 @@ dependencies {
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.3")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.67")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.73")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.6")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.7")
 
     // Logback classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
@@ -130,7 +118,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.3")
 
     implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
 
@@ -140,10 +128,10 @@ dependencies {
     //Wolfaram alpha
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
-    implementation(group = "net.time4j", name = "time4j-base", version = "5.7")
+    implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "4.3.0")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")

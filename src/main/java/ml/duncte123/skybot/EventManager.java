@@ -115,7 +115,7 @@ public class EventManager implements IEventManager {
                         thr.getLocalizedMessage());
                     LOGGER.error("", thr);
 
-                    Sentry.capture(thr);
+                    Sentry.captureException(thr);
                 }
             });
         }

@@ -322,7 +322,7 @@ public class AirUtils {
                 }
             }
             catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         }
 

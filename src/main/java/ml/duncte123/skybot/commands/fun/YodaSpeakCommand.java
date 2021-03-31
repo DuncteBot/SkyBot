@@ -64,7 +64,7 @@ public class YodaSpeakCommand extends Command {
             );
         }
         catch (Exception e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
             sendMsg(ctx, "Could not connect to yoda service, try again in a few hours");
         }
     }

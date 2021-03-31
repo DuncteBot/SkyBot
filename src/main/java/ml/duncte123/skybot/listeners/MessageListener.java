@@ -113,7 +113,7 @@ public abstract class MessageListener extends BaseListener {
             ));
 
             LOGGER.error("Error with message listener", weirdEx);
-            Sentry.capture(weirdEx);
+            Sentry.captureException(weirdEx);
         }
 
         if (event.getAuthor().isBot() ||
@@ -144,7 +144,7 @@ public abstract class MessageListener extends BaseListener {
                 handleMessageEventChecked(raw, guild, event);
             }
             catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
                 e.printStackTrace();
             }
         });

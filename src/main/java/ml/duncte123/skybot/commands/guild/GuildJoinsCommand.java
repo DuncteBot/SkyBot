@@ -104,11 +104,11 @@ public class GuildJoinsCommand extends Command {
             }
             catch (IOException e) {
                 sendMsg(ctx, "Could not generate join graph: " + e.getMessage());
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         } catch (final InterruptedException | ExecutionException e) {
             sendMsg(ctx, "Could not generate join graph: " + e.getMessage());
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
     }
 }

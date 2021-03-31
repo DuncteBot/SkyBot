@@ -61,7 +61,7 @@ public class PerspectiveApi {
             return Float.parseFloat(score.get("value").asText());
         }
         catch (Exception e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
             e.printStackTrace();
 
             return 0f;

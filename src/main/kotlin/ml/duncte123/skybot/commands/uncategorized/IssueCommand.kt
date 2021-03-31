@@ -94,7 +94,7 @@ class IssueCommand : Command() {
                             "https://duncte.bot/server"
                     )
                 } catch (ex: Exception) {
-                    Sentry.capture(ex)
+                    Sentry.captureException(ex)
 
                     val msg = """You malformed the JSON.
                             | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/asdfsa"}"""

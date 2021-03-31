@@ -297,7 +297,7 @@ public class GuildListener extends BaseListener {
                 }
             }
             catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         });
     }

@@ -39,7 +39,7 @@ public abstract class SocketHandler {
         try {
             handleInternally(raw.get("d"));
         } catch (Exception e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
     }
 

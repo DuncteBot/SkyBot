@@ -104,7 +104,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
                 json["thumbnail_small"].asText()
             } catch (e: Exception) {
-                Sentry.capture(e)
+                Sentry.captureException(e)
                 null
             }
         }

@@ -235,7 +235,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
             try {
                 r.invoke()
             } catch (thr: Throwable) {
-                Sentry.capture(thr)
+                Sentry.captureException(thr)
                 onFail.invoke(thr)
                 thr.printStackTrace()
             }

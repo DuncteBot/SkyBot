@@ -55,7 +55,7 @@ public class DogCommand extends Command {
         catch (Exception e) {
             //e.printStackTrace();
             sendEmbed(ctx, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
 
     }

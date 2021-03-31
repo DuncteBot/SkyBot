@@ -488,7 +488,7 @@ public class CommandManager {
                 }
             }
             catch (Throwable ex) {
-                Sentry.capture(ex);
+                Sentry.captureException(ex);
                 LOGGER.error("Error while parsing command", ex);
                 sendMsg(MessageConfig.Builder.fromEvent(event)
                     .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
@@ -556,7 +556,7 @@ public class CommandManager {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Error with parsing custom command: " + e.getMessage())
                 .build());
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
     }
 
@@ -619,7 +619,7 @@ public class CommandManager {
             }
             catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         }
 

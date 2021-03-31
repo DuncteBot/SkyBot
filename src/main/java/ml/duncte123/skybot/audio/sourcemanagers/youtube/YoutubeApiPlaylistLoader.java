@@ -62,7 +62,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
             return buildPlaylist(firstPage, playlistId, selectedVideoId, trackFactory);
         }
         catch (IOException e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
 
             throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }

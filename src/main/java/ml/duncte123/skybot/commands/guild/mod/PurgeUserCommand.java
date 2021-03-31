@@ -86,7 +86,7 @@ public class PurgeUserCommand extends ModBaseCommand {
                     CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
                 }
                 catch (InterruptedException | ExecutionException e) {
-                    Sentry.capture(e);
+                    Sentry.captureException(e);
 
                     return 0;
                 }

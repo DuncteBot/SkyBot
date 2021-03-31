@@ -199,7 +199,7 @@ public class CleanupCommand extends ModBaseCommand {
                 return -100;
             }
 
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
         catch (CancellationException e) {
             sendSuccess(ctx.getMessage());
@@ -209,7 +209,7 @@ public class CleanupCommand extends ModBaseCommand {
                 .build());
         }
         catch (InterruptedException | ExecutionException e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
         finally {
             removeMessage(channel, hack);
