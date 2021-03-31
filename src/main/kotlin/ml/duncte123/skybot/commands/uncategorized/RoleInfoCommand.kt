@@ -53,7 +53,7 @@ class RoleInfoCommand : Command() {
             sendMsg(
                 ctx,
                 """No roles found, make sure that you have a role or are typing the name of a role on this server
-                |Hint: you cna use `${ctx.prefix}roles` to get a list of the roles in this server
+                |Hint: you can use `${ctx.prefix}roles` to get a list of the roles in this server
             """.trimMargin()
             )
 
@@ -66,7 +66,7 @@ class RoleInfoCommand : Command() {
         // Get the creation times of this role
         val role = roles[0]
         val perms = role.permissions.joinToString { it.getName() }
-        val memberCount = ctx.jdaGuild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
+        val memberCount = ctx.jdaGuild.findMembersWithRoles(role).get().size
         val times = role.parseTimeCreated()
 
         val embed = EmbedUtils.getDefaultEmbed()
