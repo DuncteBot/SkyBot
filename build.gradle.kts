@@ -136,9 +136,6 @@ dependencies {
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
 
-    // Oshi
-    implementation(group = "com.github.oshi", name = "oshi-core", version = "5.2.5")
-
     // ExpiringMap
     implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
 

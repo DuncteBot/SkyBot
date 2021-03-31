@@ -27,13 +27,12 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
-import oshi.SystemInfo
+import java.io.File
 import java.lang.management.ManagementFactory
 import java.text.DecimalFormat
 import kotlin.math.floor
 
 class StatsCommand : Command() {
-    private val oshi = SystemInfo().operatingSystem
 
     init {
         this.category = CommandCategory.UTILS
@@ -61,7 +60,7 @@ class StatsCommand : Command() {
         }.sum()
 
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
-        val serverUptimeString = AirUtils.getUptime(oshi.systemUptime * 1000)
+        val serverUptimeString = AirUtils.getUptime(getSystemUptimeSeconds() * 1000)
 
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val cores = platformMXBean.availableProcessors
@@ -146,5 +145,31 @@ class StatsCommand : Command() {
         }
 
         sendEmbed(ctx, embed)
+    }
+
+    // This code has been inspired from the oshi uptime method: https://duncte.bot/oGfi
+    // I decided to implement the part I needed here to not have to pull in the entire oshi-core lib
+    // Why? This code is expected to be run in linux envs in docker so I don't care about windows or mac
+    private fun getSystemUptimeSeconds(): Long {
+        val procFile = File("/proc/uptime")
+
+        // not on linux?
+        if (!procFile.exists()) {
+            return 0
+        }
+
+        val uptime = procFile.readText()
+        val spaceIndex = uptime.indexOf(' ')
+
+        if (spaceIndex < 0) {
+            return 0
+        }
+
+        return try {
+            // convert to long because that is what oshi returned to us in the past
+            uptime.substring(0, spaceIndex).toDouble().toLong()
+        } catch (ignored: NumberFormatException) {
+            0
+        }
     }
 }
