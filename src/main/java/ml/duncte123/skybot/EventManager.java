@@ -109,11 +109,9 @@ public class EventManager implements IEventManager {
                     listener.onEvent(event);
                 }
                 catch (Throwable thr) {
-                    LOGGER.error("Error while handling event {}({}); {}",
-                        event.getClass().getName(),
-                        listener.getClass().getSimpleName(),
-                        thr.getLocalizedMessage());
-                    LOGGER.error("", thr);
+                    LOGGER.error("Error while handling event at %s(%s); %s"
+                        .formatted(event.getClass().getName(), listener.getClass().getSimpleName(), thr.getMessage()),
+                        thr);
 
                     Sentry.captureException(thr);
                 }

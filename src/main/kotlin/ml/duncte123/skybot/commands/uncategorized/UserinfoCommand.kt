@@ -22,8 +22,10 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Settings.PATREON
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.*
+import ml.duncte123.skybot.objects.CooldownScope
 import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -37,6 +39,7 @@ import net.dv8tion.jda.api.entities.User.UserFlag
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.streams.toList
 
 class UserinfoCommand : Command() {
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
@@ -47,6 +50,7 @@ class UserinfoCommand : Command() {
         this.help = "Get some information about yourself or from another user"
         this.usage = "[@user]"
         this.cooldown = 30
+        this.cooldownScope = CooldownScope.GUILD
     }
 
     override fun execute(ctx: CommandContext) {
@@ -129,10 +133,8 @@ class UserinfoCommand : Command() {
         sendEmbed(ctx, embed)
     }
 
-    /*private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
-        val joins = guild.memberCache.applyStream {
-            it.sorted(Comparator.comparing(Member::getTimeJoined)).collect(Collectors.toList())
-        }!!
+    private fun generateJoinOrder(members: List<Member>, member: Member) = buildString {
+        val joins = members.stream().sorted(Comparator.comparing(Member::getTimeJoined)).toList()
 
         var index = joins.indexOf(member)
         index -= 3
@@ -164,7 +166,14 @@ class UserinfoCommand : Command() {
             append(" \\> ")
             append(usrName)
         }
-    }*/
+    }
+
+    private fun getJoinPosition(members: List<Member>, member: Member): Long {
+        return members.stream().sorted(Comparator.comparing(Member::getTimeJoined))
+            .takeWhile {
+                it != member
+            }.count() + 1
+    }
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
         val user = member.user
@@ -186,15 +195,11 @@ class UserinfoCommand : Command() {
 
         val userNitro = user.isNitro
         val nitroBadge = if (userNitro) " $DISCORD_NITRO" else ""
+        val loadedMembers = event.guild.loadMembers().get()
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
-            /*
-            * used to be below Joined Server
-                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
-                        |**Join Order:** ${generateJoinOrder(guild, member)}
-            * */
             .setDescription(
                 """User info for ${member.asMention}$nitroBadge ${user.badgeLine} $boostEmote
                         |
@@ -204,6 +209,8 @@ class UserinfoCommand : Command() {
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${userNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
+                        |**Join position:** #${getJoinPosition(loadedMembers, member)}
+                        |**Join Order:** ${generateJoinOrder(loadedMembers, member)}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |

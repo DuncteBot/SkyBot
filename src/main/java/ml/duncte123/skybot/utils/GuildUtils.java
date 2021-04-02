@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
@@ -145,20 +144,6 @@ public class GuildUtils {
             .count();
     }
 
-    public static TextChannel getPublicChannel(Guild guild) {
-
-        final TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
-
-        if (pubChann == null || !pubChann.canTalk()) {
-
-            return guild.getTextChannelCache().applyStream(
-                (s) -> s.filter(TextChannel::canTalk).findFirst().orElse(null)
-            );
-        }
-
-        return pubChann;
-    }
-
     public static String verificationLvlToName(VerificationLevel lvl) {
         if (lvl == null) {
             return "None";
@@ -172,15 +157,6 @@ public class GuildUtils {
             default -> "None";
         };
     }
-
-    /*public static long getMemberJoinPosition(Member member) {
-        //noinspection ConstantConditions
-        return member.getGuild().getMemberCache().applyStream(
-            (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
-                .takeWhile((it) -> !it.equals(member))
-                .count() + 1
-        );
-    }*/
 
     public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
         LOGGER.info("(Re)loading patrons");

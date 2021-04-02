@@ -66,6 +66,7 @@ repositories {
     maven("https://duncte123.jfrog.io/artifactory/maven")
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.notfab.net/Hosted")
+    maven("https://dl.bintray.com/sedmelluq/com.sedmelluq")
     maven("https://jitpack.io")
 }
 
@@ -97,7 +98,7 @@ dependencies {
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.3")
     // Lavaplayer/Lavalink
-    implementation(group = "com.github.sedmelluq", name = "lavaplayer", version = "1.3.75")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.75")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
 //    implementation(project(":Lavalink-Client"))
 
