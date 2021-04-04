@@ -66,7 +66,6 @@ repositories {
     maven("https://duncte123.jfrog.io/artifactory/maven")
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.notfab.net/Hosted")
-    maven("https://dl.bintray.com/sedmelluq/com.sedmelluq")
     maven("https://jitpack.io")
 }
 

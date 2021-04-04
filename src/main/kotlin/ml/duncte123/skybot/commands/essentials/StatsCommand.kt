@@ -37,7 +37,7 @@ class StatsCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "stats"
-        this.help = "Shows some nerdy statistics about the bot"
+        this.help = "Shows statistics about the bot"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -140,7 +140,7 @@ class StatsCommand : Command() {
                     |**Players:** ${stats.players}
                     |**Players playing:** ${stats.playingPlayers}
                 """.trimMargin(),
-                false
+                true
             )
         }
 
