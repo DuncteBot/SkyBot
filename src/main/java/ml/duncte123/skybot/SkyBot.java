@@ -120,7 +120,7 @@ public final class SkyBot {
             // Not using this because it overrides the member cache policy
             // we're calling loadMembers once the guild is ready
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
-            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
+            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)

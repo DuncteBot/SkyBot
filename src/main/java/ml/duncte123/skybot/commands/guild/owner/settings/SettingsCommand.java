@@ -663,6 +663,23 @@ public class SettingsCommand extends Command {
             return null;
         }
 
+        final Role.RoleTags tags = foundRole.getTags();
+
+        if (tags.isBot()) {
+            sendMsg(ctx, "I cannot give this role to members because it belongs to <@" + tags.getBotIdLong() + '>');
+            return null;
+        }
+
+        if (tags.isBoost()) {
+            sendMsg(ctx, "I cannot give the boost role to members");
+            return null;
+        }
+
+        if (tags.isIntegration()) {
+            sendMsg(ctx, "I cannot give this role to members because it is managed by an integration (for example twitch subscriber roles)");
+            return null;
+        }
+
         return foundRole;
     }
 

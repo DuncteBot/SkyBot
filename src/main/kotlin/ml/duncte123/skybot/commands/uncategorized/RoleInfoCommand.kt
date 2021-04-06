@@ -60,14 +60,12 @@ class RoleInfoCommand : Command() {
             return
         }
 
-        // In order: get the highest role
-        // Map the permissions to a readable string
-        // Get the amount of members with this role
-        // Get the creation times of this role
         val role = roles[0]
         val perms = role.permissions.joinToString { it.getName() }
         val memberCount = ctx.jdaGuild.findMembersWithRoles(role).get().size
         val times = role.parseTimeCreated()
+        val tags = role.tags
+        val botDisp = if (tags.isBot) "\n**Bot:** <@${tags.botIdLong}>" else ""
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(role.colorRaw)
@@ -81,6 +79,9 @@ class RoleInfoCommand : Command() {
                 |**Position:** ${role.position}
                 |**Members with this role:** $memberCount
                 |**Managed:** ${role.isManaged.toEmoji()}
+                |**Bot role:** ${tags.isBot.toEmoji()}$botDisp
+                |**Boost role:** ${tags.isBoost.toEmoji()}
+                |**Integration role:**  ${tags.isIntegration.toEmoji()}
                 |**Hoisted:** ${role.isHoisted.toEmoji()}
                 |**Mentionable:** ${role.isMentionable.toEmoji()}
                 |**Permissions:** $perms
