@@ -45,7 +45,7 @@ class RadioCommand : MusicCommand() {
                 sendRadioSender(ctx)
             }
             "fulllist" -> {
-                sendMsg(ctx, "The full list of radio streams can be found on <https://dunctebot.com/radiostreams>")
+                sendMsg(ctx, "The full list of radio streams can be found on <https://duncte.bot/radiostreams>")
             }
             else -> {
                 val search = ctx.argsRaw.toLowerCase()

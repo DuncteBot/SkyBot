@@ -36,7 +36,7 @@ class RolesCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val domain = if (Settings.IS_LOCAL) "http://localhost:2000" else "https://dashboard.dunctebot.com"
+        val domain = if (Settings.IS_LOCAL) "http://localhost:2000" else "https://dashboard.duncte.bot"
         val guildId = ctx.jdaGuild.id
         val hash = generateHash(guildId)
 

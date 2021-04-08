@@ -94,7 +94,7 @@ public class HelpCommand extends Command {
             .queue(
                 (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " check your DM's"),
                 //When sending fails, send to the channel
-                (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://dunctebot.com/commands")
+                (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://duncte.bot/commands")
             );
     }
 

@@ -30,6 +30,6 @@ class WebsiteCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        sendMsg(ctx, "My website is <https://dunctebot.com>")
+        sendMsg(ctx, "My website is <https://duncte.bot>")
     }
 }

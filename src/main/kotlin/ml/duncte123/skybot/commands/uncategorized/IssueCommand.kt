@@ -37,7 +37,7 @@ class IssueCommand : Command() {
         |This will create an invite to your server, so we can join and help you directly.
         |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
     """.trimMargin()
-        this.usage = "<issue json>` (issue can be generated at https://dunctebot.com/issuegenerator)"
+        this.usage = "<issue json>` (issue can be generated at https://duncte.bot/issuegenerator)"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -48,7 +48,7 @@ class IssueCommand : Command() {
                 sendErrorWithMessage(
                     event.message,
                     """Well you forgot to add formatted data we require so we can resolve the issue faster.
-                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin()
+                    |You can generate it by using our dashboard. Link: <https://duncte.bot/issuegenerator>""".trimMargin()
                 )
             }
             else -> {

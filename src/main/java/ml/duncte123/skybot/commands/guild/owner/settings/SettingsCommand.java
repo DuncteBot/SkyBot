@@ -303,7 +303,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="joinMessageSetting" defaultstate="collapsed">
     private void joinMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The join message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The join message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -326,7 +326,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="leaveMessageSetting" defaultstate="collapsed">
     private void leaveMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The leave message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The leave message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -406,7 +406,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="rateLimitSetting" defaultstate="collapsed">
     private void rateLimitSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The rate limits can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The rate limits can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -564,7 +564,7 @@ public class SettingsCommand extends Command {
         sendMsg(ctx, "The swearword filter has been toggled **" +
             (isEnabled ? "on" : "off") +
             "**.\nThe current filter type is set to `" +
-            settings.getFilterType().getName() + "`, this can be changed on <https://dashboard.dunctebot.com>");
+            settings.getFilterType().getName() + "`, this can be changed on <https://dashboard.duncte.bot>");
     }
     /// </editor-fold>
 
