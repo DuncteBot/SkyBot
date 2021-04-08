@@ -18,11 +18,15 @@
 
 package ml.duncte123.skybot.listeners;
 
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
@@ -34,19 +38,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReadyShutdownListener extends MessageListener {
     // Using an atomic boolean because multiple shards are writing to it
     private final AtomicBoolean arePoolsRunning = new AtomicBoolean(false);
+    private final Thread shutdownHook;
 
     public ReadyShutdownListener(Variables variables) {
         super(variables);
+
+        this.shutdownHook = new Thread(() -> {
+            LOGGER.info("Shutting down via shutdown hook");
+            SkyBot.getInstance().getShardManager().shutdown();
+            this.onShutdown();
+        });
+        this.shutdownHook.setName("DuncteBot shutdown hook");
+
+        Runtime.getRuntime().addShutdownHook(this.shutdownHook);
     }
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof ReadyEvent) {
-            this.onReady((ReadyEvent) event);
-        } else if (event instanceof GuildMessageUpdateEvent) {
+        if (event instanceof GuildMessageUpdateEvent) {
             this.onGuildMessageUpdate((GuildMessageUpdateEvent) event);
         } else if (event instanceof GuildMessageReceivedEvent) {
             this.onGuildMessageReceived((GuildMessageReceivedEvent) event);
+        } else if (event instanceof ReadyEvent) {
+            this.onReady((ReadyEvent) event);
+        } else if (event instanceof ShutdownEvent) {
+            this.onShutdown();
         }
     }
 
@@ -77,6 +93,29 @@ public class ReadyShutdownListener extends MessageListener {
             // Load the patrons here so that they are loaded once
             GuildUtils.loadAllPatrons(variables.getDatabaseAdapter());
         }
+    }
+
+    private void onShutdown() {
+        Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+        AirUtils.stop(this.variables.getAudioUtils());
+        LOGGER.info("Music system shutdown");
+
+        // Kill all threads
+        this.systemPool.shutdown();
+        LOGGER.info("System pool shutdown");
+
+        // kill the websocket
+        final WebSocketClient client = SkyBot.getInstance().getWebsocketClient();
+
+        if (client != null) {
+            client.shutdown();
+            LOGGER.info("Websocket client shutdown");
+        }
+
+        // shut down weeb.java
+        this.variables.getWeebApi().shutdown();
+        LOGGER.info("Weeb.java shutdown");
+        LOGGER.info("Bot and JDA shutdown cleanly");
     }
 
     private void startSQLiteTimers() {

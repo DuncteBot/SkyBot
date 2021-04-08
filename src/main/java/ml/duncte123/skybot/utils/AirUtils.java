@@ -145,26 +145,23 @@ public class AirUtils {
         return builder.toString();
     }
 
-    public static void stop(AudioUtils audioUtils, ShardManager manager) {
-        stopMusic(audioUtils, manager);
+    public static void stop(AudioUtils audioUtils) {
+        stopMusic(audioUtils);
 
         audioUtils.getPlayerManager().shutdown();
+        LavalinkManager.INS.shutdown();
     }
 
-    private static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
+    private static void stopMusic(AudioUtils audioUtils) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.getMusicManagers());
 
         for (final long key : temp.keys()) {
-            final Guild guild = manager.getGuildById(key);
-
-            if (guild != null) {
-                stopMusic(guild, audioUtils);
-            }
+            stopMusic(key, audioUtils);
         }
     }
 
-    public static void stopMusic(Guild guild, AudioUtils audioUtils) {
-        final GuildMusicManager mng = audioUtils.getMusicManagers().get(guild.getIdLong());
+    public static void stopMusic(Long guildId, AudioUtils audioUtils) {
+        final GuildMusicManager mng = audioUtils.getMusicManagers().get(guildId);
 
         if (mng == null) {
             return;
@@ -174,8 +171,9 @@ public class AirUtils {
 
         mng.stopAndClear();
 
-        if (lavalinkManager.isConnected(guild)) {
-            lavalinkManager.closeConnection(guild);
+        final String guildIdString = Long.toString(guildId);
+        if (lavalinkManager.isConnected(guildIdString)) {
+            lavalinkManager.closeConnection(guildIdString);
         }
     }
 

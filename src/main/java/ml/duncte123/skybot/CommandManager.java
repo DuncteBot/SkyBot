@@ -305,7 +305,6 @@ public class CommandManager {
         this.addCommand(new UnmuteCommand());
         this.addCommand(new UnshortenCommand());
         this.addCommand(new UnwarnCommand());
-        this.addCommand(new UpdateCommand());
         this.addCommand(new UptimeCommand());
         this.addCommand(new UrbanCommand());
         this.addCommand(new UserinfoCommand());

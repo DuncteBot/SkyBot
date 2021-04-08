@@ -91,27 +91,42 @@ public final class LavalinkManager {
     }
 
     public void closeConnection(Guild guild) {
+        closeConnection(guild.getId());
+    }
+
+    public void closeConnection(String guildId) {
         if (!isEnabled()) {
             throw new IllegalStateException("Using lavaplayer is no longer supported");
         }
 
-        lavalink.getLink(guild).destroy();
+        lavalink.getLink(guildId).destroy();
     }
 
     public boolean isConnected(Guild guild) {
+        return isConnected(guild.getId());
+    }
+
+    public boolean isConnected(String guildId) {
         if (!isEnabled()) {
             throw new IllegalStateException("Using lavaplayer is no longer supported");
         }
 
-        return lavalink.getLink(guild).getState() == Link.State.CONNECTED;
+        return lavalink.getLink(guildId).getState() == Link.State.CONNECTED;
     }
 
+    @SuppressWarnings("ConstantConditions") // cache is enabled
     public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
         // NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the
         // current voice channel if the bot is moved around in the client)
         return guild.getSelfMember().getVoiceState().getChannel();
+    }
+
+    public void shutdown() {
+        if (isEnabled()) {
+            this.lavalink.shutdown();
+        }
     }
 
     public JdaLavalink getLavalink() {

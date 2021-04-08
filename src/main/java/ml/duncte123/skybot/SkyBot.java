@@ -123,7 +123,7 @@ public final class SkyBot {
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
-            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
+            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
             .setGatewayEncoding(GatewayEncoding.ETF);
 
         // If lavalink is enabled we will hook it into jda

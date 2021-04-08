@@ -25,7 +25,6 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -33,11 +32,9 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import com.dunctebot.models.settings.GuildSetting;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
-import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -47,6 +44,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -131,8 +129,8 @@ public abstract class MessageListener extends BaseListener {
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
             event.getMessage().addReaction(MessageUtils.getSuccessReaction()).queue(
-                success -> killAllShards(manager, true),
-                failure -> killAllShards(manager, true)
+                success -> shutdownBot(manager),
+                failure -> shutdownBot(manager)
             );
 
             return;
@@ -464,36 +462,9 @@ public abstract class MessageListener extends BaseListener {
         return topic.contains(search);
     }
 
-    public void killAllShards(@Nonnull ShardManager manager, boolean kill) {
-        final Thread shutdownThread = new Thread(() -> {
-            try {
-                manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
-
-                // Sleep for 3 seconds
-                TimeUnit.SECONDS.sleep(3);
-
-                // Kill all threads
-                this.systemPool.shutdown();
-
-                final WebSocketClient client = SkyBot.getInstance().getWebsocketClient();
-
-                if (client != null) {
-                    client.shutdown();
-                }
-
-                AirUtils.stop(variables.getAudioUtils(), manager);
-                BotCommons.shutdown(manager);
-
-                // There are *some* applications (weeb.java *cough*) that are stupid
-                // and do not allow us to shut down okhttp or create deamon threads
-                if (kill) {
-                    System.exit(0);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, "shutdown-thread");
-        shutdownThread.start();
+    public void shutdownBot(@Nullable ShardManager manager) {
+        if (manager != null) {
+            BotCommons.shutdown(manager);
+        }
     }
 }

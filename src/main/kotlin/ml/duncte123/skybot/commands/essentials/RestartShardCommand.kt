@@ -106,7 +106,7 @@ class RestartShardCommand : Command() {
             }
 
             for (guild in jda.guildCache) {
-                AirUtils.stopMusic(guild, audioUtils)
+                AirUtils.stopMusic(guild.idLong, audioUtils)
             }
         }
     }
