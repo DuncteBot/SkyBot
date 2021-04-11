@@ -52,6 +52,6 @@ class AvatarCommand : Command() {
             return
         }
 
-        sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=2048")
+        sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=4096")
     }
 }

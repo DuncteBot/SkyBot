@@ -81,9 +81,9 @@ public class DiscordMethods {
             new Method("avatar", (env) -> {
                 final User user = env.get("user");
 
-                return user.getEffectiveAvatarUrl() + "?size=2048";
+                return user.getEffectiveAvatarUrl() + "?size=4096";
             },
-                (env, in) -> getMemberFromInput(env, in).getUser().getEffectiveAvatarUrl() + "?size=2048"
+                (env, in) -> getMemberFromInput(env, in).getUser().getEffectiveAvatarUrl() + "?size=4096"
             ),
 
             new Method("creation", (env, in) -> {
