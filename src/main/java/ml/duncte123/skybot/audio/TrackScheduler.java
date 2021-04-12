@@ -33,6 +33,7 @@ import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
@@ -73,7 +76,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             sendMsg(new MessageConfig.Builder()
                 .setChannel(latestChannel)
                 .setMessage(msg)
-                .setFailureAction((ignored) -> {})
+                .setFailureAction(new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_PERMISSIONS))
                 .build());
         }, DEBOUNCE_INTERVAL);
     }

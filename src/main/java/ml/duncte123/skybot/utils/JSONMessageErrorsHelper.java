@@ -25,11 +25,14 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static net.dv8tion.jda.api.requests.ErrorResponse.REACTION_BLOCKED;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 public class JSONMessageErrorsHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
@@ -50,7 +53,8 @@ public class JSONMessageErrorsHelper {
             }
         }
 
-        message.addReaction(MessageUtils.getErrorReaction()).queue(null, (ignored) -> {});
+        message.addReaction(MessageUtils.getErrorReaction())
+            .queue(null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, REACTION_BLOCKED));
 
         try {
             message.getChannel()

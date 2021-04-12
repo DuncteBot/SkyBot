@@ -49,6 +49,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
@@ -63,6 +64,7 @@ import java.util.function.Consumer;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.Settings.PATREON;
 import static ml.duncte123.skybot.utils.ModerationUtils.*;
+import static net.dv8tion.jda.api.requests.ErrorResponse.*;
 
 public class GuildMemberListener extends BaseListener {
 
@@ -504,7 +506,8 @@ public class GuildMemberListener extends BaseListener {
         final Role role = guild.getRoleById(settings.getAutoroleRole());
 
         if (role != null && !guild.getPublicRole().equals(role) && guild.getSelfMember().canInteract(role)) {
-            guild.addRoleToMember(member, role).queue(null, it -> {});
+            guild.addRoleToMember(member, role)
+                .queue(null, new ErrorHandler().ignore(UNKNOWN_ROLE, UNKNOWN_MEMBER, MISSING_PERMISSIONS));
         }
     }
 }

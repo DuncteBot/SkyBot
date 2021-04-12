@@ -65,6 +65,7 @@ import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.slf4j.Logger;
@@ -85,6 +86,8 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_ACCESS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
 public class CommandManager {
     private static final TObjectLongMap<String> COOLDOWNS = MapUtils.newObjectLongMap();
@@ -477,7 +480,7 @@ public class CommandManager {
             }
 
             // Suppress errors from when we can't type in the channel
-            channel.sendTyping().queue(null, (t) -> {});
+            channel.sendTyping().queue(null, new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_ACCESS));
 
             try {
                 if (cmd.isCustom()) {

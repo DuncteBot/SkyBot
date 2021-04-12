@@ -40,6 +40,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,6 +60,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 public abstract class MessageListener extends BaseListener {
 
@@ -321,7 +324,7 @@ public abstract class MessageListener extends BaseListener {
                                     .setMessage(event.getAuthor().getAsMention() + ", please don't post invite links here.")
                                     .setSuccessAction(m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                                     .build()),
-                            (t) -> {}
+                            new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS)
                         );
                     }
                 });
@@ -349,16 +352,18 @@ public abstract class MessageListener extends BaseListener {
 
             messageToCheck.delete()
                 .reason("Blocked for swearing: " + display)
-                .queue(null, (t) -> {});
+                .queue(null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS));
 
             sendMsg(new MessageConfig.Builder()
                 .setChannel(event.getChannel())
                 .setMessageFormat(
-                    "Hello there, %s please do not use cursive language within this Discord.",
+                    // TODO: allow patrons to customise this message
+                    "Hello there, %s please do not use cursive language within this server.",
                     messageToCheck.getAuthor().getAsMention()
                 )
                 .setSuccessAction(
-                    (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                    (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS,
+                        null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS))
                 )
                     .build());
 
@@ -403,7 +408,8 @@ public abstract class MessageListener extends BaseListener {
                         foundWord
                     )
                     .setSuccessAction(
-                        (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                        (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS,
+                            null, new ErrorHandler().ignore(UNKNOWN_MESSAGE))
                     )
                     .build());
 
