@@ -116,6 +116,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
     }
 
+    @Synchronized // TODO: test this
     private fun handleReminders(reminders: JsonNode) {
         if (reminderLock.isLocked) {
             return

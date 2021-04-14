@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.utils
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.extensions.escapeMarkDown
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -28,6 +29,7 @@ class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
+        this.aliases = arrayOf("emoji")
         this.help = "Shows information about an emoji or emote"
         this.usage = "<emote>"
     }
@@ -42,7 +44,6 @@ class EmoteCommand : Command() {
 
         val mentionedEmotes = ctx.message.emotes
 
-//        if (Message.MentionType.EMOTE.pattern.matcher(arg).matches()) {
         if (mentionedEmotes.isNotEmpty()) {
             customEmoteMentioned(ctx, mentionedEmotes[0])
             return
@@ -77,7 +78,7 @@ class EmoteCommand : Command() {
 
     private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {
         val message = buildString {
-            appendLine("Emoji/char info for $emote:")
+            appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
 
             emote.codePoints().forEach {
                 val chars = Character.toChars(it)

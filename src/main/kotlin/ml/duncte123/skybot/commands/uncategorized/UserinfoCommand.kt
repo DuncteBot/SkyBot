@@ -304,13 +304,4 @@ class UserinfoCommand : Command() {
             }
         }
     }
-
-    private fun String.escapeMarkDown(): String {
-        return this.replace("_", "\\_")
-            .replace("*", "\\*")
-            .replace("`", "\\`")
-            .replace("|", "\\|")
-            .replace(">", "\\?")
-            .replace("~", "\\~")
-    }
 }
