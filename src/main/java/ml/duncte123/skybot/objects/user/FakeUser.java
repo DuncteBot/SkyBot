@@ -111,6 +111,11 @@ public class FakeUser implements User {
         return false;
     }
 
+    @Override
+    public boolean isSystem() {
+        return false;
+    }
+
     @Nonnull
     @Override
     public JDA getJDA() {
