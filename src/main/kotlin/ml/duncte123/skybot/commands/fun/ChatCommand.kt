@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
+import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -77,9 +78,7 @@ class ChatCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
-        ctx.channel.sendTyping().queue(null) {
-            //
-        }
+        ctx.channel.sendTyping().queue()
 
         if (ctx.message.contentRaw.toLowerCase().contains("prefix")) {
             sendMsg(
@@ -115,13 +114,22 @@ class ChatCommand : Command() {
         session.think(message) {
             val response = parseATags(it)
 
+            LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+
+            if (response.isEmpty() || response.isBlank()) {
+                sendMsg(
+                    MessageConfig.Builder.fromCtx(ctx)
+                        .replyTo(ctx.message)
+                        .setMessage("$NO_STATIC Chatbot error: no content returned, this is likely due to the chatbot banning you (we are working on a fix)")
+                )
+                return@think
+            }
+
             sendMsg(
                 MessageConfig.Builder.fromCtx(ctx)
                     .replyTo(ctx.message)
                     .setMessage(response)
             )
-
-            LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
     }
 

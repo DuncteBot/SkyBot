@@ -43,7 +43,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.102.0"
+val numberVersion = "3.103.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -88,7 +88,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.1_254") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.1_259") {
         exclude(module = "opus-java")
     }
 
