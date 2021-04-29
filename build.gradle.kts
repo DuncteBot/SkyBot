@@ -36,10 +36,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.4.21"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.4.32"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.4.0"
+    id("org.jmailen.kotlinter") version "3.4.3"
     pmd
 }
 
@@ -246,8 +246,6 @@ jar.apply {
 }
 
 application {
-    // TODO: shadowjar uses this
-    mainClassName = "ml.duncte123.skybot.SkyBot"
     mainClass.set("ml.duncte123.skybot.SkyBot")
 }
 
@@ -268,7 +266,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.8"
+    gradleVersion = "7.0"
     distributionType = DistributionType.ALL
 }
 
