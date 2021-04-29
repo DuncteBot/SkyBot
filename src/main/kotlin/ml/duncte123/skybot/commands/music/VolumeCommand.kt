@@ -22,7 +22,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -41,24 +40,21 @@ class VolumeCommand : MusicCommand() {
 
         val mng = ctx.audioUtils.getMusicManager(ctx.guild)
         val player = mng.player
-        val filters = player.filters
         val args = ctx.args
 
         if (args.isEmpty()) {
-            sendMsg(ctx, "The current volume is **${floor(filters.volume * 100)}**")
+            sendMsg(ctx, "The current volume is **${player.volume}%**")
             return
         }
 
         try {
-            val userInput = args[0].toFloat() / 100
-            val newVolume = max(0f, min(10.0f, userInput))
-            val oldVolume = filters.volume
+            val userInput = args[0].toInt()
+            val newVolume = max(0, min(1000, userInput))
+            val oldVolume = player.volume
 
-            filters.volume = newVolume
+            player.volume = newVolume
 
-            filters.commit()
-
-            sendMsg(ctx, "Player volume changed from **${floor(oldVolume * 100)}** to **${floor(newVolume * 100)}**")
+            sendMsg(ctx, "Player volume changed from **$oldVolume%** to **$newVolume%**")
         } catch (e: NumberFormatException) {
             sendMsg(ctx, "**${args[0]}** is not a valid integer. (0 - 1000)")
         }

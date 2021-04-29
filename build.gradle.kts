@@ -57,11 +57,8 @@ java {
 repositories {
     mavenCentral()
 
-    // this before jcenter to cache my own repos
+    // caches old bintray packages
     maven("https://duncte123.jfrog.io/artifactory/bintray-maven")
-
-    jcenter() // Legacy :(
-
     maven("https://repo.jenkins-ci.org/releases")
     maven("https://duncte123.jfrog.io/artifactory/maven")
     maven("https://m2.dv8tion.net/releases")
@@ -96,7 +93,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.76")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54")
 //    implementation(project(":Lavalink-Client"))
 
     //groovy
@@ -118,7 +115,14 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.3")
 
-    implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
+    implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
+        // This is fine
+        exclude(module = "jda-utilities-examples")
+        exclude(module = "jda-utilities-doc")
+        exclude(module = "jda-utilities-command")
+        exclude(module = "jda-utilities-menu")
+        exclude(module = "jda-utilities-oauth2")
+    }
 
 //    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
