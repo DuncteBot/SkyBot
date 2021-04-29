@@ -45,7 +45,7 @@ public class HelpCommand extends Command {
             "h",
         };
         this.help = "Sends you a list of all the commands";
-        this.usage = "[command]";
+        this.usage = "[command/category]";
     }
 
     @Override
@@ -92,7 +92,7 @@ public class HelpCommand extends Command {
             .openPrivateChannel()
             .flatMap((pc) -> pc.sendMessage(embed.build()))
             .queue(
-                (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " check your DM's"),
+                (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " help has been sent to your private messages"),
                 //When sending fails, send to the channel
                 (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://duncte.bot/commands")
             );

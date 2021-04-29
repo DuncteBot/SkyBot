@@ -65,8 +65,7 @@ public class HelpEmbeds {
 
     public static EmbedBuilder generateCommandEmbed(@Nonnull String prefix, @Nullable CommandCategory category) {
         final EmbedBuilder embed = getDefaultEmbed()
-            .setTitle("Click here for my discord server", "https://duncte.bot/server")
-            .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n");
+            .setTitle("Use `" + prefix + "help [command/category]` to get more info about a command\n", PATREON);
 
         if (category == null) {
             addAllCategoriesToEmbed(embed);
