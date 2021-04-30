@@ -98,7 +98,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
-        boolean isPatron = reference instanceof DBAudioRef && ((DBAudioRef) reference).isPatron();
+        final boolean isPatron = reference instanceof DBAudioRef && ((DBAudioRef) reference).isPatron();
 
         return loadItem(reference, isPatron);
     }

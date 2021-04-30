@@ -21,14 +21,14 @@ package ml.duncte123.skybot.audio.sourcemanagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 
 public class DBAudioRef extends AudioReference {
-    private final boolean isPatron;
+    private final boolean patron;
 
-    public DBAudioRef(String identifier, String title, boolean isPatron) {
+    public DBAudioRef(String identifier, String title, boolean patron) {
         super(identifier, title);
-        this.isPatron = isPatron;
+        this.patron = patron;
     }
 
     public boolean isPatron() {
-        return isPatron;
+        return this.patron;
     }
 }
