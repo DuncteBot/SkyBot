@@ -34,6 +34,7 @@ import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.audio.BigChungusPlaylist;
 import ml.duncte123.skybot.audio.TrackScheduler;
+import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -58,9 +59,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/([a-zA-z0-9]+)";
     private static final String ALBUM_REGEX = "album/([a-zA-z0-9]+)";
-    private static final String USER_PART = "user/(?:.*)/";
+    private static final String USER_PART = "user/.*/";
     private static final String PLAYLIST_REGEX = "playlist/([a-zA-z0-9]+)";
-    private static final String REST_REGEX = "(?:.*)";
+    private static final String REST_REGEX = ".*";
     private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
 
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
@@ -68,7 +69,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX_USER = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" +
         USER_PART + PLAYLIST_REGEX + REST_REGEX + "$");
-    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^(?:spotify)(?::user:(?:.*))?(?::playlist:)(.*)$");
+    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^spotify(?::user:.*)?:playlist:(.*)$");
     private final SpotifyApi spotifyApi;
     /* package */ final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
@@ -97,11 +98,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
-        return loadItem(reference, false);
+        boolean isPatron = reference instanceof DBAudioRef && ((DBAudioRef) reference).isPatron();
+
+        return loadItem(reference, isPatron);
     }
 
     public AudioItem loadItem(AudioReference reference, boolean isPatron) {
-
         AudioItem item = getSpotifyAlbum(reference);
 
         if (item == null) {

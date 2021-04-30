@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
@@ -32,7 +33,7 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.audio.UserContextAudioPlayerManager;
+import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -45,13 +46,13 @@ public class AudioUtils {
     public static final String EMBED_TITLE = "AirPlayer";
     private final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
-    private final UserContextAudioPlayerManager playerManager;
+    private final AudioPlayerManager playerManager;
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
         musicManagers = MapUtils.newLongObjectMap();
 
-        playerManager = new UserContextAudioPlayerManager();
+        playerManager = new DefaultAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
         final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(
@@ -60,7 +61,6 @@ public class AudioUtils {
         );
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
-
         playerManager.registerSourceManager(sourceManager);
 
         setCustomSourcesOn(playerManager, false);
@@ -74,7 +74,7 @@ public class AudioUtils {
         playerManager.registerSourceManager(new HttpAudioSourceManager());
     }
 
-    public UserContextAudioPlayerManager getPlayerManager() {
+    public AudioPlayerManager getPlayerManager() {
         return playerManager;
     }
 
@@ -93,13 +93,18 @@ public class AudioUtils {
 
         final GuildMusicManager mng = getMusicManager(ctx.getJDAGuild());
         final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, isPatron);
+        final DBAudioRef reference = new DBAudioRef(trackUrl, null, isPatron);
 
-        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader, isPatron);
+        return getPlayerManager().loadItemOrdered(mng, reference, loader);
     }
 
+    // transition period
     public GuildMusicManager getMusicManager(Guild guild) {
+        return getMusicManager(guild.getIdLong());
+    }
+
+    public GuildMusicManager getMusicManager(long guildId) {
         synchronized(this) {
-            final long guildId = guild.getIdLong();
             GuildMusicManager mng = musicManagers.get(guildId);
 
             if (mng == null) {
@@ -112,8 +117,11 @@ public class AudioUtils {
     }
 
     public void removeMusicManager(Guild guild) {
+        removeMusicManager(guild.getIdLong());
+    }
+
+    public void removeMusicManager(long guildId) {
         synchronized(this) {
-            final long guildId = guild.getIdLong();
             final GuildMusicManager mng = musicManagers.get(guildId);
 
             if (mng != null) {
