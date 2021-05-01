@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
@@ -30,7 +30,7 @@ import ml.duncte123.skybot.utils.CommandUtils.isDev
 class CommandDumpCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
-        this.name = "commandsdump"
+        this.name = "commanddump"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -39,28 +39,23 @@ class CommandDumpCommand : Command() {
         }
 
         val jackson = ctx.variables.jackson
-        val jsonList = parseCommandsToJson(ctx.commandManager, jackson)
-        val data = jackson.writeValueAsBytes(jsonList)
+        val data = parseCommandsToJson(ctx.commandManager, jackson)
 
         ctx.channel.sendFile(data, "commands.json").queue()
     }
 
-    private fun parseCommandsToJson(commandManager: CommandManager, mapper: JsonMapper): ArrayNode {
+    private fun parseCommandsToJson(commandManager: CommandManager, mapper: JsonMapper): ByteArray {
         val commands = commandManager.getFilteredCommands().sortedBy { it.name }
-        val output = mapper.createArrayNode()
+        // category -> List<Command>
+        val map = mutableMapOf<String, MutableList<ObjectNode>>()
 
         for (command in commands) {
-            val obj = output.addObject()
+            val categoryList = map.getOrPut(command.category.search) { arrayListOf() }
 
-            obj.put("name", command.name)
-                .put("help", command.parseHelp())
-
-            val aliases = obj.putArray("aliases")
-
-            command.aliases.forEach { aliases.add(it) }
+            categoryList.add(command.toJson(mapper))
         }
 
-        return output
+        return mapper.writeValueAsBytes(map)
     }
 
     private fun Command.parseHelp(): String {
@@ -93,6 +88,19 @@ class CommandDumpCommand : Command() {
             .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
             .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
             .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
+    }
+
+    private fun Command.toJson(mapper: JsonMapper): ObjectNode {
+        val obj = mapper.createObjectNode()
+
+        obj.put("name", this.name)
+            .put("help", this.parseHelp())
+
+        val aliases = obj.putArray("aliases")
+
+        this.aliases.forEach { aliases.add(it) }
+
+        return obj
     }
 
     private fun CommandManager.getFilteredCommands(): List<Command> {

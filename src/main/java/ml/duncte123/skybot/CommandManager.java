@@ -669,11 +669,13 @@ public class CommandManager {
     }
 
     private void addCommand(ICommand command) {
-        if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
+        final String name = command.getName();
+
+        if (name.contains(" ")) {
+            throw new IllegalArgumentException(" Name can't have spaces!");
         }
 
-        final String cmdName = command.getName().toLowerCase();
+        final String cmdName = name.toLowerCase();
 
         if (this.commands.containsKey(cmdName)) {
             throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
@@ -688,7 +690,7 @@ public class CommandManager {
                         "Alias %s already present (Stored for: %s, trying to insert: %s))",
                         alias,
                         this.aliases.get(alias),
-                        command.getName()
+                        name
                     ));
                 }
 
@@ -703,7 +705,7 @@ public class CommandManager {
             }
 
             for (final String alias : lowerAliasses) {
-                this.aliases.put(alias, command.getName());
+                this.aliases.put(alias, name);
             }
         }
 
