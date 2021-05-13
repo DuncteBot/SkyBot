@@ -52,22 +52,22 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildJoinEvent) {
-            this.onGuildJoin((GuildJoinEvent) event);
-        } else if (event instanceof GuildLeaveEvent) {
-            this.onGuildLeave((GuildLeaveEvent) event);
-        } else if (event instanceof GuildVoiceLeaveEvent) {
-            this.onGuildVoiceLeave((GuildVoiceLeaveEvent) event);
-        } else if (event instanceof GuildVoiceJoinEvent) {
-            this.onGuildVoiceJoin((GuildVoiceJoinEvent) event);
-        } else if (event instanceof GuildVoiceMoveEvent) {
-            this.onGuildVoiceMove((GuildVoiceMoveEvent) event);
-        } else if (event instanceof GuildBanEvent) {
-            this.onGuildBan((GuildBanEvent) event);
-        } else if (event instanceof GuildUnbanEvent) {
-            this.onGuildUnban((GuildUnbanEvent) event);
-        } else if (event instanceof GuildReadyEvent) {
-            this.onGuildReady((GuildReadyEvent) event);
+        if (event instanceof GuildJoinEvent guildJoin) {
+            this.onGuildJoin(guildJoin);
+        } else if (event instanceof GuildLeaveEvent guildLeave) {
+            this.onGuildLeave(guildLeave);
+        } else if (event instanceof GuildVoiceLeaveEvent guildVoiceLeave) {
+            this.onGuildVoiceLeave(guildVoiceLeave);
+        } else if (event instanceof GuildVoiceJoinEvent guildVoiceJoin) {
+            this.onGuildVoiceJoin(guildVoiceJoin);
+        } else if (event instanceof GuildVoiceMoveEvent guildVoiceMove) {
+            this.onGuildVoiceMove(guildVoiceMove);
+        } else if (event instanceof GuildBanEvent guildBan) {
+            this.onGuildBan(guildBan);
+        } else if (event instanceof GuildUnbanEvent guildUnban) {
+            this.onGuildUnban(guildUnban);
+        } else if (event instanceof GuildReadyEvent guildReady) {
+            this.onGuildReady(guildReady);
         }
     }
 
