@@ -94,7 +94,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
     private fun playUploadedFile(ctx: CommandContext): Boolean {
         val file = ctx.message.attachments
-            .firstOrNull { it.fileExtension?.toLowerCase() in acceptedExtensions }
+            .firstOrNull { it.fileExtension?.lowercase() in acceptedExtensions }
 
         if (file == null) {
             sendMsg(ctx, "Cannot play that file, please attach an audio file instead")

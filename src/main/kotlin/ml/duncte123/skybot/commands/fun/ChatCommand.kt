@@ -80,7 +80,7 @@ class ChatCommand : Command() {
         val event = ctx.event
         ctx.channel.sendTyping().queue()
 
-        if (ctx.message.contentRaw.toLowerCase().contains("prefix")) {
+        if (ctx.message.contentRaw.lowercase().contains("prefix")) {
             sendMsg(
                 MessageConfig.Builder.fromCtx(ctx)
                     .replyTo(ctx.message)

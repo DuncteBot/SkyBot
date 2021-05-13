@@ -60,7 +60,7 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, shardManager, ctx.audioUtils)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
+                    MainScope().launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart()
 
@@ -80,7 +80,7 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, shardManager, ctx.audioUtils)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
+                    MainScope().launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart(id)
 

@@ -153,7 +153,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
             cache = new
         }
 
-        if (args[1].toLowerCase() == "all") {
+        if (args[1].lowercase() == "all") {
             val ids = guild.voiceChannelCache.applyStream {
                 it.map(VoiceChannel::getIdLong).collect(Collectors.toList())
             }!!

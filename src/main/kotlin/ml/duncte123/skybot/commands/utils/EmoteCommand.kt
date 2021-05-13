@@ -25,7 +25,8 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Emote
 
-class EmoteCommand : Command() {
+class
+EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
@@ -103,8 +104,8 @@ class EmoteCommand : Command() {
         sendMsg(ctx, message)
     }
 
-    private fun Int.toHex() = Integer.toHexString(this).toUpperCase()
+    private fun Int.toHex() = Integer.toHexString(this).uppercase()
     private fun Int.getName() = Character.getName(this)
-    private fun Char.toHex() = this.toInt().toHex()
+    private fun Char.toHex() = this.code.toHex()
     private fun String.ensureFourHex() = "0000$this".substring(this.length)
 }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
@@ -43,7 +44,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
     private val reminderLock = ReentrantLock()
 
     override fun handleInternally(data: JsonNode) {
-        GlobalScope.launch(context = Dispatchers.IO) {
+        MainScope().launch(context = Dispatchers.IO) {
             if (data.has("new_one_guild")) {
                 handleNewOneGuild(data["new_one_guild"])
             }

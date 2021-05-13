@@ -124,7 +124,7 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        GlobalScope.launch(
+        MainScope().launch(
             Dispatchers.Default, start = CoroutineStart.ATOMIC,
             block = {
                 return@launch eval(ctx, script)

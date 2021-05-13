@@ -57,7 +57,7 @@ class ReactionHandler : EventListener {
         if (cacheElement.equals(ctx.reactionEvent)) {
             val event = ctx.reactionEvent
             val channel = ctx.channel
-            val content = event.message.contentRaw.toLowerCase()
+            val content = event.message.contentRaw.lowercase()
             val index = AirUtils.parseIntSafe(content)
             val msgId = cacheElement.msgID
 
@@ -112,7 +112,7 @@ class ReactionHandler : EventListener {
 
         val checkId = event.author.idLong
         val content = event.message.contentRaw
-        val intCheck = AirUtils.isInt(content) || content.toLowerCase() == "cancel"
+        val intCheck = AirUtils.isInt(content) || content.lowercase() == "cancel"
 
         if (!consumerCache.containsKey(checkId) && !intCheck) {
             return

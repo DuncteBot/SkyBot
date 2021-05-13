@@ -43,7 +43,7 @@ class RemindersCommand : Command() {
             return
         }
 
-        val action = args[0].toLowerCase()
+        val action = args[0].lowercase()
 
         if (action == "list") {
             showRemindersList(ctx)
@@ -118,7 +118,7 @@ class RemindersCommand : Command() {
     private fun deleteReminder(reminder: Reminder, ctx: CommandContext) {
         val args = ctx.args
 
-        if (args.size >= 3 && args[2].toLowerCase() == "--just-flipping-do-it") {
+        if (args.size >= 3 && args[2].lowercase() == "--just-honking-do-it") {
             ctx.databaseAdapter.removeReminder(reminder) {
                 sendMsg(ctx, "Successfully deleted reminder with id `${reminder.id}`")
             }
@@ -129,7 +129,7 @@ class RemindersCommand : Command() {
             ctx,
             "To prevent accidental deleting of reminders, you will need to confirm that you want to delete this reminder.\n" +
                 "To confirm that you want to delete the reminder please run the following command" +
-                "`${ctx.prefix}reminders delete ${reminder.id} --just-flipping-do-it`"
+                "`${ctx.prefix}reminders delete ${reminder.id} --just-honking-do-it`"
         )
     }
 }

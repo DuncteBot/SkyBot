@@ -76,8 +76,8 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         when (args[0]) {
-            "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, ctx)
-            "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, ctx)
+            "add" -> addWordToBlacklist(args[1].lowercase(), ctx.databaseAdapter, ctx.guild, ctx)
+            "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.databaseAdapter, ctx.guild, ctx)
             else -> sendMsg(ctx, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }

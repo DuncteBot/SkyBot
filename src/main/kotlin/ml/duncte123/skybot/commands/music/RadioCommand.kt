@@ -48,9 +48,9 @@ class RadioCommand : MusicCommand() {
                 sendMsg(ctx, "The full list of radio streams can be found on <https://duncte.bot/radiostreams>")
             }
             else -> {
-                val search = ctx.argsRaw.toLowerCase()
+                val search = ctx.argsRaw.lowercase()
                 val radio = radioStreams.firstOrNull {
-                    it.name.toLowerCase().contains(search) || it.website.toLowerCase().contains(search)
+                    it.name.lowercase().contains(search) || it.website.lowercase().contains(search)
                 }
 
                 if (radio == null) {

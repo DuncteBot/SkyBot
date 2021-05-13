@@ -38,7 +38,7 @@ class TextToBricksCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val message = ctx.argsRaw
-            .toLowerCase()
+            .lowercase()
             .replace("([a-zA-Z])".toRegex(), ":regional_indicator_\$1:")
             .replace("([0-9])".toRegex(), "\$1\u20E3")
             .replace("!!", "\u203C")

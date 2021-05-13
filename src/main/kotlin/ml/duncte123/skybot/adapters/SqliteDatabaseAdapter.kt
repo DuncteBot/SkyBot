@@ -317,7 +317,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                     while (resultSet.next()) {
                         val guildId = if (resultSet.getLong("guild_id") == 0L) null else resultSet.getLong("guild_id")
                         val patron = Patron(
-                            Patron.Type.valueOf(resultSet.getString("type").toUpperCase()),
+                            Patron.Type.valueOf(resultSet.getString("type").uppercase()),
                             resultSet.getLong("user_id"),
                             guildId
                         )
