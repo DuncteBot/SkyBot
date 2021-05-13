@@ -1,4 +1,4 @@
-FROM adoptopenjdk:15-jdk-hotspot AS builder
+FROM adoptopenjdk:16-jdk-hotspot AS builder
 
 WORKDIR /skybot
 
@@ -14,7 +14,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY . .
 RUN ./gradlew --no-daemon build
 
-FROM adoptopenjdk:15-jre-hotspot
+FROM adoptopenjdk:16-jre-hotspot
 
 WORKDIR /skybot
 COPY --from=builder /skybot/build/libs/skybot*.jar ./skybot.jar

@@ -27,7 +27,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.32"))
+        classpath(kotlin("gradle-plugin", version = "1.5.0"))
     }
 }
 
@@ -36,7 +36,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
     id("org.jmailen.kotlinter") version "3.4.3"
@@ -50,8 +50,8 @@ project.version = "${numberVersion}_${getGitHash()}"
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 repositories {
@@ -116,7 +116,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.3")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0-RC")
 
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
         // This is fine
@@ -273,7 +273,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.0"
+    gradleVersion = "7.0.1"
     distributionType = DistributionType.ALL
 }
 
