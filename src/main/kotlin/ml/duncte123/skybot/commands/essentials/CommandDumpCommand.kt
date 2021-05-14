@@ -55,7 +55,7 @@ class CommandDumpCommand : Command() {
             categoryList.add(command.toJson(mapper))
         }
 
-        return mapper.writeValueAsBytes(map)
+        return mapper.writeValueAsBytes(map.toSortedMap(compareBy { it }))
     }
 
     private fun Command.parseHelp(): String {

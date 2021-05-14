@@ -290,7 +290,6 @@ public class CommandManager {
         this.addCommand(new TagCommand(variables));
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
-        this.addCommand(new TestFlagCommand());
         this.addCommand(new TestTagCommand());
         this.addCommand(new TextToBricksCommand());
         this.addCommand(new TheSearchCommand());
