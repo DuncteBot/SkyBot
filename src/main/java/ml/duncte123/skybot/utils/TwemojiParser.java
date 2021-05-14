@@ -30,7 +30,6 @@ public class TwemojiParser extends EmojiParser {
     private static final String BASE_URL = "https://twemoji.maxcdn.com/v/latest/72x72/";
 
     public static String parseOne(String text) {
-        // TODO: extract the things I need from the huge emoji-java lib
         final List<UnicodeCandidate> emojis = getUnicodeCandidates(text);
 
         if  (!emojis.isEmpty()) {
