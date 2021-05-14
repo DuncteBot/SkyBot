@@ -39,7 +39,7 @@ plugins {
     kotlin("jvm") version "1.5.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.4.3"
+    id("org.jmailen.kotlinter") version "3.4.4"
     pmd
 }
 
@@ -118,6 +118,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0-RC")
 
+    // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
         // This is fine
         exclude(module = "jda-utilities-examples")
@@ -127,12 +128,13 @@ dependencies {
         exclude(module = "jda-utilities-oauth2")
     }
 
-//    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
+    // jagtag
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
 
     //Wolfaram alpha
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
+    // time parsing
     implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
@@ -146,8 +148,14 @@ dependencies {
 
     // okhttp
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
+
+    // trove maps
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
+    // emoji-java
+    implementation(group = "com.vdurmont", name = "emoji-java", version = "5.1.1")
+
+    // dev deps
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
     }
@@ -292,7 +300,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.31.0"
+    toolVersion = "6.34.0"
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))

@@ -33,6 +33,7 @@
         <exclude name="AvoidPrintStackTrace"/>
         <exclude name="GuardLogStatement"/>
         <exclude name="UseVarargs"/>
+        <exclude name="MethodReturnsInternalArray"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml">

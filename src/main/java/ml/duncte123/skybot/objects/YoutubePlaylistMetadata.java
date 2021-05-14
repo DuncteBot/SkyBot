@@ -23,42 +23,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class YoutubePlaylistMetadata {
-
-    private final String listId;
-    private final String title;
-    private final String nextPageKey;
-    private final List<AudioTrackInfo> tracks;
-
-    public YoutubePlaylistMetadata(String listId, String title, @Nullable String nextPageKey, List<AudioTrackInfo> tracks) {
-        this.listId = listId;
-        this.title = title;
-        this.nextPageKey = nextPageKey;
-        this.tracks = tracks;
-    }
-
-    public String getId() {
-        return listId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    @Nullable
-    public String getNextPageKey() {
-        return nextPageKey;
-    }
-
-    public List<AudioTrackInfo> getTracks() {
-        return tracks;
-    }
-
-    @Override
-    public String toString() {
-        return "YoutubePlaylistMetadata{" +
-            "id='" + listId + '\'' +
-            ", title='" + title + '\'' +
-            '}';
-    }
+public record YoutubePlaylistMetadata(String listId, String title, @Nullable String nextPageKey,
+                                      List<AudioTrackInfo> tracks) {
+    //
 }

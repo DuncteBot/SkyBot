@@ -87,6 +87,8 @@ public class EventManager implements IEventManager {
         throw new IllegalArgumentException();
     }
 
+
+    @SuppressWarnings("PMD.InvalidLogMessageFormat") // /shrug
     @Override
     public void handle(@Nonnull GenericEvent event) {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
@@ -109,9 +111,14 @@ public class EventManager implements IEventManager {
                     listener.onEvent(event);
                 }
                 catch (Throwable thr) {
-                    LOGGER.error("Error while handling event at %s(%s); %s"
-                        .formatted(event.getClass().getName(), listener.getClass().getSimpleName(), thr.getMessage()),
-                        thr);
+                    LOGGER.error(
+                        "Error while handling event at %s(%s); %s".formatted(
+                            event.getClass().getName(),
+                            listener.getClass().getSimpleName(),
+                            thr.getMessage()
+                        ),
+                        thr
+                    );
 
                     Sentry.captureException(thr);
                 }

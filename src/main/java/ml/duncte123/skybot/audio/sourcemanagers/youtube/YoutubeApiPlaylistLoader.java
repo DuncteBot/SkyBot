@@ -72,12 +72,12 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
                                         Function<AudioTrackInfo, AudioTrack> trackFactory) throws IOException {
         final List<AudioTrack> convertedTracks = new ArrayList<>();
 
-        firstPage.getTracks()
+        firstPage.tracks()
             .stream()
             .map(trackFactory)
             .forEach(convertedTracks::add);
 
-        String nextPageKey = firstPage.getNextPageKey();
+        String nextPageKey = firstPage.nextPageKey();
         int loadCount = 0;
         final int pageCount = playlistPageCount;
 
@@ -86,7 +86,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
         }
 
         return new BasicAudioPlaylist(
-            firstPage.getTitle(),
+            firstPage.title(),
             convertedTracks,
             getSelectedTrack(selectedVideoId, convertedTracks),
             false
@@ -112,11 +112,11 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
             return null;
         }
 
-        nextPage.getTracks()
+        nextPage.tracks()
             .stream()
             .map(trackFactory)
             .forEach(tracks::add);
 
-        return nextPage.getNextPageKey();
+        return nextPage.nextPageKey();
     }
 }

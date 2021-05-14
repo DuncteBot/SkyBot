@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -111,13 +112,13 @@ public abstract class Command implements ICommand {
             final long remainingCooldown = commandManager.getRemainingCooldown(cooldownKey);
 
             if (remainingCooldown > 0) {
-                // TODO: delete after?
                 sendMsg(MessageConfig.Builder.fromCtx(ctx)
                     .setMessageFormat(
                         "This command is on cooldown for %s more seconds%s!",
                         remainingCooldown,
                         this.cooldownScope.getExtraErrorMsg()
                     )
+                    .setSuccessAction((message) -> message.delete().queueAfter(10, TimeUnit.SECONDS))
                     .build());
                 sendError(ctx.getMessage());
                 return;
@@ -191,11 +192,9 @@ public abstract class Command implements ICommand {
             return false;
         }
 
-        if (!(obj instanceof Command)) {
+        if (!(obj instanceof final Command command)) {
             return false;
         }
-
-        final Command command = (Command) obj;
 
         return this.name.equals(command.getName());
     }

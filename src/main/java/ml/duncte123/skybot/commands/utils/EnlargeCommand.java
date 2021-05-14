@@ -22,10 +22,13 @@ import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.TwemojiParser;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageSticker;
+import net.dv8tion.jda.api.entities.MessageSticker.StickerFormat;
+import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,17 +47,14 @@ public class EnlargeCommand extends Command {
 
     @Override
     public void execute(@NotNull CommandContext ctx) {
-        // https://github.com/twitter/twemoji/issues/138
-        // https://gist.github.com/danfickle/82dc6757244edfb1937722eebbb9e9e2
-
         final Message message = ctx.getMessage();
         final List<MessageSticker> stickers = message.getStickers();
 
         if (!stickers.isEmpty()) {
             final MessageSticker sticker = stickers.get(0);
-            final MessageSticker.StickerFormat formatType = sticker.getFormatType();
+            final StickerFormat formatType = sticker.getFormatType();
 
-            if (formatType == MessageSticker.StickerFormat.UNKNOWN || "json".equals(formatType.getExtension())) {
+            if (formatType == StickerFormat.UNKNOWN || formatType == StickerFormat.LOTTIE) {
                 sendMsg(ctx, "The sticker supplied could not be rendered");
                 return;
             }
@@ -73,16 +73,35 @@ public class EnlargeCommand extends Command {
             return;
         }
 
-        sendMsg(ctx, "Enlarging emojis is currently not supported, we are still looking into this");
+        final List<User> mentionedUsers = message.getMentionedUsers();
 
-        /*final List<String> args = ctx.getArgs();
+        if (!mentionedUsers.isEmpty()) {
+            final User user = mentionedUsers.get(0);
+            final String avatarUrl = user.getEffectiveAvatarUrl() + "?size=4096";
 
-        if (args.isEmpty()) {
-            // alert user
+            // sending the avatar url is cheaper since its already on discord
+            sendMsg(ctx, avatarUrl);
             return;
         }
 
-        final String arg = args.get(0);*/
+        final List<String> args = ctx.getArgs();
+
+        if (args.isEmpty()) {
+            sendMsg(ctx, "Usage: " + this.getUsageInstructions(ctx) +
+                "\nYou can also attach a sticker instead (you'll need to type the command first)."
+            );
+            return;
+        }
+
+        final String arg = args.get(0);
+        final String emojiUrl = TwemojiParser.parseOne(arg);
+
+        if (emojiUrl == null) {
+            sendMsg(ctx, "Your input `" + arg + "` does not look like an emoji to me");
+            return;
+        }
+
+        this.uploadFile(emojiUrl, ctx);
     }
 
     private void uploadFile(final String url, final CommandContext ctx) {

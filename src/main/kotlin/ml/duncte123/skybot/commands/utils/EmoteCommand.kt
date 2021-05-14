@@ -73,6 +73,8 @@ EmoteCommand : Command() {
             |**Id:** $id
             |**Guild:** $guild
             |**Url:** $url
+            |
+            |*Hint: use `${ctx.prefix}enlarge` to get an image for this emote*
         """.trimMargin()
         )
     }
@@ -101,7 +103,7 @@ EmoteCommand : Command() {
             }
         }
 
-        sendMsg(ctx, message)
+        sendMsg(ctx, message + "\n\n*Hint: use `${ctx.prefix}enlarge` to get an image for this emoji*")
     }
 
     private fun Int.toHex() = Integer.toHexString(this).uppercase()
