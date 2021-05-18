@@ -21,15 +21,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.5.0"))
-    }
-}
+import kotlin.math.min
 
 plugins {
     java
@@ -188,7 +180,7 @@ build.apply {
 
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "15"
+        jvmTarget = "16"
     }
 }
 
@@ -316,6 +308,7 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName(numberVersion)
+    releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)
     body(changelog())
@@ -335,7 +328,7 @@ fun getGitHash(): String {
         // Ugly hacks 101 :D
         val hash = System.getenv("GIT_HASH") ?: "dev"
 
-        return hash.substring(0, Math.min(8, hash.length))
+        return hash.substring(0, min(8, hash.length))
     }
 }
 
