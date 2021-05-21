@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.1_262") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.1_265") {
         exclude(module = "opus-java")
     }
 
@@ -85,6 +85,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.76")
+    // https://github.com/sedmelluq/lavaplayer/pull/620
     implementation(group = "com.github.duncte123", name = "lavaplayer", version = "2226fa8")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54") {
         exclude(module = "lavaplayer")
@@ -98,7 +99,7 @@ dependencies {
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.1")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.4")
 
     // Youtube Cache
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2.1")
