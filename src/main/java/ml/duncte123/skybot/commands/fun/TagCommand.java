@@ -153,13 +153,14 @@ public class TagCommand extends Command {
         final String invoke = ctx.getInvoke();
         final String prefix = ctx.getGuildSettings().getCustomPrefix();
         final String message = String.format(
-            "Tag help:\n" +
-                "\t`%1$s%2$s help` => Shows this message\n" +
-                "\t`%1$s%2$s list` => Gives you a list of all the tags\n" +
-                "\t`%1$s%2$s author <tag name>` => Shows the owner of a tag\n" +
-                "\t`%1$s%2$s raw <tag name>` => Shows raw content of a tag\n" +
-                "\t`%1$s%2$s delete <tag name>` => Deletes a tag\n" +
-                "\t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag",
+            """
+                Tag help:
+                \t`%1$s%2$s help` => Shows this message
+                \t`%1$s%2$s list` => Gives you a list of all the tags
+                \t`%1$s%2$s author <tag name>` => Shows the owner of a tag
+                \t`%1$s%2$s raw <tag name>` => Shows raw content of a tag
+                \t`%1$s%2$s delete <tag name>` => Deletes a tag
+                \t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag""",
             prefix,
             invoke
         );
@@ -273,11 +274,11 @@ public class TagCommand extends Command {
             return;
         }
 
-        final Tag newTag = new Tag();
-
-        newTag.owner_id = ctx.getAuthor().getIdLong();
-        newTag.name = tagName;
-        newTag.content = ctx.getArgsRaw().split("\\s+", 3)[2];
+        final Tag newTag = new Tag(
+            tagName,
+            ctx.getArgsRaw().split("\\s+", 3)[2],
+            ctx.getAuthor().getIdLong()
+        );
 
         ctx.getDatabaseAdapter().createTag(newTag, (success, reason) -> {
             if (!success) {

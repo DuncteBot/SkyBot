@@ -18,9 +18,30 @@
 
 package ml.duncte123.skybot.objects;
 
-@SuppressWarnings("PMD")
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Tag {
-    public String name;
-    public String content;
-    public long owner_id;
+    public final String name;
+    public final String content;
+    public final long owner_id;
+
+    @JsonCreator
+    public Tag(@JsonProperty("name") String name, @JsonProperty("content") String content, @JsonProperty("owner_id") long owner_id) {
+        this.name = name;
+        this.content = content;
+        this.owner_id = owner_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public long getOwnerId() {
+        return owner_id;
+    }
 }
