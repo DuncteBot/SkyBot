@@ -59,11 +59,11 @@ public class InviteTrackingListener extends BaseListener {
 
         // events that we always want to handle no mater what (has to do with cleanup)
         // return in both cases so the code stops here
-        if (event instanceof GuildInviteDeleteEvent) {
-            this.onGuildInviteDelete((GuildInviteDeleteEvent) event);
+        if (event instanceof GuildInviteDeleteEvent inviteDelete) {
+            this.onGuildInviteDelete(inviteDelete);
             return;
-        } else if (event instanceof GuildLeaveEvent) {
-            this.onGuildLeave((GuildLeaveEvent) event);
+        } else if (event instanceof GuildLeaveEvent leaveEvent) {
+            this.onGuildLeave(leaveEvent);
             return;
         }
 
@@ -73,15 +73,15 @@ public class InviteTrackingListener extends BaseListener {
             return;
         }
 
-        if (event instanceof GuildInviteCreateEvent) {
-            this.onGuildInviteCreate((GuildInviteCreateEvent) event);
-        } else if (event instanceof GuildMemberJoinEvent) {
-            this.onGuildMemberJoin((GuildMemberJoinEvent) event);
-        } else if (event instanceof GuildReadyEvent) {
-            this.onGuildReady((GuildReadyEvent) event);
-        } else if (event instanceof GuildJoinEvent) {
+        if (event instanceof GuildInviteCreateEvent inviteCreate) {
+            this.onGuildInviteCreate(inviteCreate);
+        } else if (event instanceof GuildMemberJoinEvent memberJoin) {
+            this.onGuildMemberJoin(memberJoin);
+        } else if (event instanceof GuildReadyEvent guildReady) {
+            this.onGuildReady(guildReady);
+        } else if (event instanceof GuildJoinEvent guildJoin) {
             // probably not needed, doubt that any guilds will be patreon guilds on join
-            this.onGuildJoin((GuildJoinEvent) event);
+            this.onGuildJoin(guildJoin);
         }
     }
 

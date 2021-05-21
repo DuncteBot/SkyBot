@@ -120,8 +120,8 @@ public class AudioLoader implements AudioLoadResultHandler {
             if (this.announce) {
                 final String sizeMsg;
 
-                if (playlist instanceof BigChungusPlaylist && ((BigChungusPlaylist) playlist).isBig()) {
-                    sizeMsg = playlist.getTracks().size() + "/" + ((BigChungusPlaylist) playlist).getOriginalSize();
+                if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
+                    sizeMsg = playlist.getTracks().size() + "/" + bigBoi.getOriginalSize();
                 } else {
                     sizeMsg = String.valueOf(playlist.getTracks().size());
                 }
@@ -153,8 +153,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void loadFailed(FriendlyException exception) {
 
-        if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
-            final LimitReachedException cause = (LimitReachedException) exception.getCause();
+        if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize()));
 
             return;

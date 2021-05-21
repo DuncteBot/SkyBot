@@ -58,8 +58,8 @@ public class ShardWatcher implements EventListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GatewayPingEvent) {
-            this.onGatewayPing((GatewayPingEvent) event);
+        if (event instanceof GatewayPingEvent pingEvent) {
+            this.onGatewayPing(pingEvent);
         }
     }
 

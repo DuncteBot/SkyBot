@@ -82,29 +82,24 @@ public class WolframAlphaCommand extends Command {
                 builder.append(parseString(sp.getTitle()));
                 //loop over the contents
                 for (final Visitable variable : sp.getContents()) {
-                    if (variable instanceof WAImage) {
-                        final WAImage image = (WAImage) variable;
+                    if (variable instanceof final WAImage image) {
                         builder.append("[Image by text](")
                             .append(shortenUrl(image.getURL(), googleKey, mapper).execute())
                             .append(')');
-                    } else if (variable instanceof WAInfo) {
-                        final WAInfo info = (WAInfo) variable;
+                    } else if (variable instanceof final WAInfo info) {
                         builder.append(parseString(info.getText()));
                         //System.out.println(i.getText());
                         //Ramid when?
                         // TODO: Display more...
-                    } else if (variable instanceof WALink) {
-                        final WALink link = (WALink) variable;
+                    } else if (variable instanceof final WALink link) {
                         builder.append('[')
                             .append(parseString(link.getText()))
                             .append("](")
                             .append(shortenUrl(link.getURL(), googleKey, mapper).execute())
                             .append(')');
-                    } else if (variable instanceof WAPlainText) {
-                        final WAPlainText plainText = (WAPlainText) variable;
+                    } else if (variable instanceof final WAPlainText plainText) {
                         builder.append(parseString(plainText.getText()));
-                    } else if (variable instanceof WASound) {
-                        final WASound sound = (WASound) variable;
+                    } else if (variable instanceof final WASound sound) {
                         builder.append(shortenUrl(sound.getURL(), googleKey, mapper).execute());
                     }
 

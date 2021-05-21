@@ -98,7 +98,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
-        final boolean isPatron = reference instanceof DBAudioRef && ((DBAudioRef) reference).isPatron();
+        final boolean isPatron = reference instanceof DBAudioRef dbRef && dbRef.isPatron();
 
         return loadItem(reference, isPatron);
     }
@@ -176,11 +176,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 final IPlaylistItem item = playlistTrack.getTrack();
 
                 // playlist item can either be a track or podcast episode
-                if (!(item instanceof Track)) {
+                if (!(item instanceof final Track track)) {
                     continue;
                 }
-
-                final Track track = (Track) item;
 
                 finalPlaylist.add(buildTrack(track));
             }

@@ -103,8 +103,8 @@ public class HackbanCommand extends ModBaseCommand {
                 ctx.getGuild().ban(finalId, 0, reason)
                     .reason(reason)
                     .queue(null, (thr) -> {
-                        if (thr instanceof ErrorResponseException) {
-                            sendMsg(ctx, "Could not ban `" + finalId + "`, reason: " + ((ErrorResponseException) thr).getMeaning());
+                        if (thr instanceof ErrorResponseException err) {
+                            sendMsg(ctx, "Could not ban `" + finalId + "`, reason: " + err.getMeaning());
                         } else {
                             RestActionImpl.getDefaultFailure().accept(thr);
                         }

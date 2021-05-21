@@ -55,12 +55,12 @@ public class ReadyShutdownListener extends MessageListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildMessageUpdateEvent) {
-            this.onGuildMessageUpdate((GuildMessageUpdateEvent) event);
-        } else if (event instanceof GuildMessageReceivedEvent) {
-            this.onGuildMessageReceived((GuildMessageReceivedEvent) event);
-        } else if (event instanceof ReadyEvent) {
-            this.onReady((ReadyEvent) event);
+        if (event instanceof GuildMessageUpdateEvent messageUpdate) {
+            this.onGuildMessageUpdate(messageUpdate);
+        } else if (event instanceof GuildMessageReceivedEvent messageReceived) {
+            this.onGuildMessageReceived(messageReceived);
+        } else if (event instanceof ReadyEvent ready) {
+            this.onReady(ready);
         } else if (event instanceof ShutdownEvent) {
             this.onShutdown();
         }
