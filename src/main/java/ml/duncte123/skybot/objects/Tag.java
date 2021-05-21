@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@SuppressWarnings("PMD")
 public class Tag {
     public final String name;
     public final String content;

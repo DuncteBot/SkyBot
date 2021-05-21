@@ -463,11 +463,11 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             }
 
             connManager.connection.prepareStatement(
-                    """
+                """
                     INSERT INTO mutes(guild_id, mod_id, user_id, user_tag, unmute_date)
                     VALUES(? , ? , ? , ? , ?)
-                    """.trimIndent()
-                )
+                """.trimIndent()
+            )
                 .use {
                     it.setString(1, guildId.toString())
                     it.setString(2, modId.toString())
@@ -527,13 +527,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 smt.setString(2, guildId.toString())
                 smt.executeQuery().use { res ->
                     while (res.next()) {
-                        warnings.add(Warning(
-                            res.getInt("id"),
-                            res.getString("warn_date"),
-                            res.getString("mod_id"),
-                            res.getString("reason"),
-                            res.getString("guild_id")
-                        ))
+                        warnings.add(
+                            Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getString("mod_id"),
+                                res.getString("reason"),
+                                res.getString("guild_id")
+                            )
+                        )
                     }
                 }
             }
@@ -578,13 +580,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             connManager.connection.createStatement().use { smt ->
                 smt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP").use { res ->
                     while (res.next()) {
-                        mutes.add(Mute(
-                            res.getInt("id"),
-                            res.getString("mod_id"),
-                            res.getString("user_id"),
-                            res.getString("user_tag"),
-                            res.getString("guild_id")
-                        ))
+                        mutes.add(
+                            Mute(
+                                res.getInt("id"),
+                                res.getString("mod_id"),
+                                res.getString("user_id"),
+                                res.getString("user_tag"),
+                                res.getString("guild_id")
+                            )
+                        )
                     }
                 }
             }
@@ -592,14 +596,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             connManager.connection.createStatement().use { smt ->
                 smt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP").use { res ->
                     while (res.next()) {
-                        bans.add(Ban(
-                            res.getInt("id"),
-                            res.getString("modUserId"),
-                            res.getString("userId"),
-                            res.getString("Username"),
-                            res.getString("discriminator"),
-                            res.getString("guildId")
-                        ))
+                        bans.add(
+                            Ban(
+                                res.getInt("id"),
+                                res.getString("modUserId"),
+                                res.getString("userId"),
+                                res.getString("Username"),
+                                res.getString("discriminator"),
+                                res.getString("guildId")
+                            )
+                        )
                     }
                 }
             }
@@ -622,11 +628,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             connManager.connection.createStatement().use { smt ->
                 smt.executeQuery("SELECT * FROM `vcAutoRoles`").use { res ->
                     while (res.next()) {
-                        items.add(VcAutoRole(
-                            res.getLong("guild_id"),
-                            res.getLong("voice_channel_id"),
-                            res.getLong("role_id")
-                        ))
+                        items.add(
+                            VcAutoRole(
+                                res.getLong("guild_id"),
+                                res.getLong("voice_channel_id"),
+                                res.getLong("role_id")
+                            )
+                        )
                     }
                 }
             }
@@ -682,11 +690,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             connManager.connection.createStatement().use { smt ->
                 smt.executeQuery("SELECT * FROM tags").use { res ->
                     while (res.next()) {
-                        tags.add(Tag(
-                            res.getString("name"),
-                            res.getString("content"),
-                            res.getLong("owner_id")
-                        ))
+                        tags.add(
+                            Tag(
+                                res.getString("name"),
+                                res.getString("content"),
+                                res.getLong("owner_id")
+                            )
+                        )
                     }
                 }
             }
@@ -877,10 +887,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setLong(2, userId)
                 it.executeQuery().use { res ->
                     if (res.next()) {
-                        callback(BanBypas(
-                            res.getLong("guild_id"),
-                            res.getLong("user_id")
-                        ))
+                        callback(
+                            BanBypas(
+                                res.getLong("guild_id"),
+                                res.getLong("user_id")
+                            )
+                        )
                     } else {
                         callback(null)
                     }
@@ -939,11 +951,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             smt.setString(1, guildId.toString())
             smt.executeQuery().use { res ->
                 while (res.next()) {
-                    list.add(WarnAction(
-                        WarnAction.Type.valueOf(res.getString("type")),
-                        res.getInt("threshold"),
-                        res.getInt("duration")
-                    ))
+                    list.add(
+                        WarnAction(
+                            WarnAction.Type.valueOf(res.getString("type")),
+                            res.getInt("threshold"),
+                            res.getInt("duration")
+                        )
+                    )
                 }
             }
         }
@@ -980,37 +994,37 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     )
 
     private fun ResultSet.toGuildSettings(guildId: Long) = GuildSetting(guildId)
-            .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
-            .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
-            .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))
-            .setCustomPrefix(this.getString("prefix"))
-            .setLogChannel(toLong(this.getString("logChannelId")))
-            .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
-            .setCustomLeaveMessage(replaceNewLines(this.getString("customLeaveMessage")))
-            .setAutoroleRole(toLong(this.getString("autoRole")))
-            .setServerDesc(replaceNewLines(this.getString("serverDesc")))
-            .setAnnounceTracks(this.getBoolean("announceNextTrack"))
-            .setAutoDeHoist(this.getBoolean("autoDeHoist"))
-            .setFilterInvites(this.getBoolean("filterInvites"))
-            .setEnableSpamFilter(this.getBoolean("spamFilterState"))
-            .setMuteRoleId(toLong(this.getString("muteRoleId")))
-            .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
-            .setKickState(this.getBoolean("kickInsteadState"))
-            .setLeaveTimeout(this.getInt("leave_timeout"))
-            .setSpamThreshold(this.getInt("spam_threshold"))
-            .setBanLogging(this.getBoolean("logBan"))
-            .setUnbanLogging(this.getBoolean("logUnban"))
-            .setKickLogging(this.getBoolean("logKick"))
-            .setMuteLogging(this.getBoolean("logMute"))
-            .setWarnLogging(this.getBoolean("logWarn"))
-            .setFilterType(this.getString("profanity_type"))
-            .setAiSensitivity(this.getFloat("aiSensitivity"))
-            .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
-            .setFilterInvites(this.getBoolean("invite_logging"))
-            .setBlacklistedWords(getBlackListsForGuild(guildId))
-            .setWarnActions(getWarnActionsForGuild(guildId))
-            .setEmbedColor(getEmbedColorForGuild(guildId))
-            .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
-            .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
-            .setMemberLogging(this.getBoolean("logMember"))
+        .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
+        .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
+        .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))
+        .setCustomPrefix(this.getString("prefix"))
+        .setLogChannel(toLong(this.getString("logChannelId")))
+        .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
+        .setCustomLeaveMessage(replaceNewLines(this.getString("customLeaveMessage")))
+        .setAutoroleRole(toLong(this.getString("autoRole")))
+        .setServerDesc(replaceNewLines(this.getString("serverDesc")))
+        .setAnnounceTracks(this.getBoolean("announceNextTrack"))
+        .setAutoDeHoist(this.getBoolean("autoDeHoist"))
+        .setFilterInvites(this.getBoolean("filterInvites"))
+        .setEnableSpamFilter(this.getBoolean("spamFilterState"))
+        .setMuteRoleId(toLong(this.getString("muteRoleId")))
+        .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
+        .setKickState(this.getBoolean("kickInsteadState"))
+        .setLeaveTimeout(this.getInt("leave_timeout"))
+        .setSpamThreshold(this.getInt("spam_threshold"))
+        .setBanLogging(this.getBoolean("logBan"))
+        .setUnbanLogging(this.getBoolean("logUnban"))
+        .setKickLogging(this.getBoolean("logKick"))
+        .setMuteLogging(this.getBoolean("logMute"))
+        .setWarnLogging(this.getBoolean("logWarn"))
+        .setFilterType(this.getString("profanity_type"))
+        .setAiSensitivity(this.getFloat("aiSensitivity"))
+        .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
+        .setFilterInvites(this.getBoolean("invite_logging"))
+        .setBlacklistedWords(getBlackListsForGuild(guildId))
+        .setWarnActions(getWarnActionsForGuild(guildId))
+        .setEmbedColor(getEmbedColorForGuild(guildId))
+        .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
+        .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
+        .setMemberLogging(this.getBoolean("logMember"))
 }
