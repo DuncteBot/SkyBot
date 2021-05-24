@@ -50,7 +50,7 @@ class CommandDumpCommand : Command() {
         val map = mutableMapOf<String, MutableList<ObjectNode>>()
 
         for (command in commands) {
-            val categoryList = map.getOrPut(command.category.search) { arrayListOf() }
+            val categoryList = map.getOrPut(command.category.display) { arrayListOf() }
 
             categoryList.add(command.toJson(mapper))
         }

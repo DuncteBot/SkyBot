@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,34 +33,23 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
 import static ml.duncte123.skybot.Settings.PATREON;
 
-@SuppressWarnings({"FieldCanBeLocal", "unused", "FieldMayBeFinal", "PMD"})
+@SuppressWarnings("PMD")
 public class HelpEmbeds {
     /// <editor-fold desc="Command storage" defaultstate="collapsed">
     private static String MAIN_COMMANDS = "";
-    private static final String MAIN_COMMANDS_DESC = "Main commands";
     private static String MUSIC_COMMANDS = "";
-    private static final String MUSIC_COMMANDS_DESC = "Music commands";
     private static String ANIMALS_COMMANDS = "";
-    private static final String ANIMALS_COMMANDS_DESC = "Animal commands";
     private static String WEEB_COMMANDS = "";
-    private static final String WEEB_COMMANDS_DESC = "Weeb commands";
     private static String LGBTQ_COMMANDS = "";
-    private static final String LGBTQ_COMMANDS_DESC = "LGBTQ+ commands";
     private static String FUN_COMMANDS = "";
-    private static final String FUN_COMMANDS_DESC = "Fun commands";
     private static String UTILS_COMMANDS = "";
-    private static final String UTILS_COMMANDS_DESC = "Util commands";
     private static String MODERATION_COMMANDS = "";
-    private static final String MODERATION_COMMANDS_DESC = "Mod commands";
     private static String ADMINISTRATION_COMMANDS = "";
-    private static final String ADMINISTRATION_COMMANDS_DESC = "Admin commands";
     private static String PATRON_COMMANDS = "";
-    private static final String PATRON_COMMANDS_DESC = "Patron only commands";
     private static String NSFW_COMMANDS = "";
-    private static final String NSFW_COMMANDS_DESC = "NSFW commands";
     /// </editor-fold>
 
-    private static final boolean INLINE = true;
+    private static final boolean INLINE = false;
 
     public static EmbedBuilder generateCommandEmbed(@Nonnull String prefix, @Nullable CommandCategory category) {
         final EmbedBuilder embed = getDefaultEmbed()
@@ -81,19 +69,14 @@ public class HelpEmbeds {
     /// <editor-fold desc="Reflection magic" defaultstate="collapsed">
     public static void init(final CommandManager manager) {
         final CommandCategory[] categories = CommandCategory.values();
-        final Class<?> cls = HelpEmbeds.class;
 
         for (final CommandCategory category : categories) {
-
-            if ("unlisted".equalsIgnoreCase(category.name())) {
+            if (category == CommandCategory.UNLISTED) {
                 continue;
             }
 
             try {
                 final List<String> cmds = new ArrayList<>();
-                final String fieldName = category.name() + "_COMMANDS";
-                final Field field = cls.getDeclaredField(fieldName);
-
                 final List<ICommand> foundCommands = manager.getCommands(category);
 
                 for (final ICommand command : foundCommands) {
@@ -104,8 +87,21 @@ public class HelpEmbeds {
                     }
                 }
 
-                field.set(cls, joinCommands(cmds));
+                final String joinedCommands = joinCommands(cmds);
 
+                switch (category) {
+                    case ANIMALS -> ANIMALS_COMMANDS = joinedCommands;
+                    case MAIN -> MAIN_COMMANDS = joinedCommands;
+                    case FUN -> FUN_COMMANDS = joinedCommands;
+                    case MUSIC -> MUSIC_COMMANDS = joinedCommands;
+                    case MODERATION -> MODERATION_COMMANDS = joinedCommands;
+                    case ADMINISTRATION -> ADMINISTRATION_COMMANDS = joinedCommands;
+                    case UTILS -> UTILS_COMMANDS = joinedCommands;
+                    case PATRON -> PATRON_COMMANDS = joinedCommands;
+                    case WEEB -> WEEB_COMMANDS = joinedCommands;
+                    case NSFW -> NSFW_COMMANDS = joinedCommands;
+                    case LGBTQ -> LGBTQ_COMMANDS = joinedCommands;
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -116,63 +112,41 @@ public class HelpEmbeds {
 
     private static void addAllCategoriesToEmbed(EmbedBuilder embed) {
         final CommandCategory[] categories = CommandCategory.values();
-        final Class<?> cls = HelpEmbeds.class;
 
         for (final CommandCategory category : categories) {
-
-            if ("unlisted".equalsIgnoreCase(category.name())) {
+            if (category == CommandCategory.UNLISTED) {
                 continue;
             }
 
-            try {
-                final String fieldName = category.name() + "_COMMANDS";
-                final String descFieldName = category.name() + "_COMMANDS_DESC";
-
-                final Field field = cls.getDeclaredField(fieldName);
-                final Field descField = cls.getDeclaredField(descFieldName);
-
-                embed.addField(
-                    (String) descField.get(cls),
-                    (String) field.get(cls),
-                    INLINE
-                );
-            }
-            catch (NoSuchFieldException ignored) {
-                // ignored
-            }
-            catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
+            embed.addField(getFieldForCategory(category));
         }
     }
 
     private static MessageEmbed.Field getFieldForCategory(CommandCategory category) {
-        if ("unlisted".equalsIgnoreCase(category.name())) {
+        if (category == CommandCategory.UNLISTED) {
             return null;
         }
 
-        final Class<?> cls = HelpEmbeds.class;
-        final String fieldName = category.name() + "_COMMANDS";
-        final String descFieldName = category.name() + "_COMMANDS_DESC";
-        try {
-            final Field field = cls.getDeclaredField(fieldName);
-            final Field descField = cls.getDeclaredField(descFieldName);
+        final String commands = switch (category) {
+            case ANIMALS -> ANIMALS_COMMANDS;
+            case MAIN -> MAIN_COMMANDS;
+            case FUN -> FUN_COMMANDS;
+            case MUSIC -> MUSIC_COMMANDS;
+            case MODERATION -> MODERATION_COMMANDS;
+            case ADMINISTRATION -> ADMINISTRATION_COMMANDS;
+            case UTILS -> UTILS_COMMANDS;
+            case PATRON -> PATRON_COMMANDS;
+            case WEEB -> WEEB_COMMANDS;
+            case NSFW -> NSFW_COMMANDS;
+            case LGBTQ -> LGBTQ_COMMANDS;
+            case UNLISTED -> null;
+        };
 
-            return new MessageEmbed.Field(
-                (String) descField.get(cls),
-                (String) field.get(cls),
-                INLINE
-            );
-        }
-        catch (NoSuchFieldException ignored) {
-            return null;
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return new MessageEmbed.Field(
+            category.getDisplay() + " Commands",
+            commands,
+            INLINE
+        );
     }
     /// </editor-fold>
 
