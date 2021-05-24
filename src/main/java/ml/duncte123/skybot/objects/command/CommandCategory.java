@@ -19,17 +19,18 @@
 package ml.duncte123.skybot.objects.command;
 
 public enum CommandCategory {
-    ANIMALS("animals", "Animal"),
-    MAIN("main", "Uncategorized"),
-    FUN("fun", "Fun"),
-    MUSIC("music", "Music"),
-    MODERATION("mod", "Moderation"),
     ADMINISTRATION("admin", "Administration"),
-    UTILS("utils", "Utility"),
-    PATRON("patron", "Patron only"),
-    WEEB("weeb", "Weeb"),
-    NSFW("nsfw", "NSFW"),
+    ANIMALS("animals", "Animal"),
+    FUN("fun", "Fun"),
     LGBTQ("lgbtq+", "LGBTQ+"),
+    MAIN("main", "Uncategorized"),
+    MODERATION("mod", "Moderation"),
+    MUSIC("music", "Music"),
+    NSFW("nsfw", "NSFW"),
+    PATRON("patron", "Patron only"),
+    UTILS("utils", "Utility"),
+    WEEB("weeb", "Weeb"),
+    // Unlisted is always last
     UNLISTED(null, null);
 
     private final String search;

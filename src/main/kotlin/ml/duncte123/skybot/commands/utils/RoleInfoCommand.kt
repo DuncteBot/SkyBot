@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.uncategorized
+package ml.duncte123.skybot.commands.utils
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
@@ -25,6 +25,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.extensions.parseTimeCreated
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import net.dv8tion.jda.api.entities.Role
@@ -32,6 +33,7 @@ import net.dv8tion.jda.api.entities.Role
 class RoleInfoCommand : Command() {
 
     init {
+        this.category = CommandCategory.UTILS
         this.name = "roleinfo"
         this.aliases = arrayOf("role", "ri")
         this.help = "Displays info about a specified role or the highest role that you have"

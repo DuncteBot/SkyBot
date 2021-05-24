@@ -55,6 +55,7 @@ import ml.duncte123.skybot.commands.patreon.ScreenshotCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.utils.EnlargeCommand;
+import ml.duncte123.skybot.commands.utils.RoleInfoCommand;
 import ml.duncte123.skybot.commands.weeb.*;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
