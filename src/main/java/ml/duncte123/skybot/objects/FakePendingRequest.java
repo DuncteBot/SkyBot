@@ -41,8 +41,9 @@ public class FakePendingRequest<T> extends PendingRequest<T> {
     private final T resp;
 
     public FakePendingRequest(@Nonnull T resp) {
-        // Oh the cheats
-        super(WebUtils.ins, DUMMY_REQUEST);
+        // Oh the cheats, this null is safe
+        //noinspection ConstantConditions
+        super(WebUtils.ins, null, DUMMY_REQUEST);
 
         this.resp = resp;
     }
