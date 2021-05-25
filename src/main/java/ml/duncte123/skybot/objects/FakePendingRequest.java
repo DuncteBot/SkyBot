@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.github.natanbc.reliqua.request.RequestException;
-import me.duncte123.botcommons.web.WebUtils;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -37,22 +36,20 @@ import java.util.function.Consumer;
  *     what to return from this pending request
  */
 public class FakePendingRequest<T> extends PendingRequest<T> {
-    private static final Request DUMMY_REQUEST = WebUtils.defaultRequest().url("http://localhost/").build();
     private final T resp;
 
     public FakePendingRequest(@Nonnull T resp) {
         // Oh the cheats, this null is safe
         //noinspection ConstantConditions
-        super(WebUtils.ins, null, DUMMY_REQUEST);
+        super(null, null, (Request) null);
 
         this.resp = resp;
     }
 
     @Nullable
     @Override
-    @SuppressWarnings("NullableProblems")
     protected T onSuccess(@Nonnull Response response) {
-        return this.resp;
+        return null;
     }
 
     @Override
@@ -60,7 +57,6 @@ public class FakePendingRequest<T> extends PendingRequest<T> {
         final Consumer<T> finalOnSuccess = Objects.requireNonNullElseGet(onSuccess, () -> (ignored) -> {});
 
         // this should work fine
-        //noinspection ConstantConditions
-        finalOnSuccess.accept(this.onSuccess(null));
+        finalOnSuccess.accept(this.resp);
     }
 }
