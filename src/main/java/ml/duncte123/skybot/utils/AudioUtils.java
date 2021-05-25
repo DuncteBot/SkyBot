@@ -150,7 +150,7 @@ public class AudioUtils {
     private static void setCustomSourcesOn(AudioPlayerManager playerManager, boolean isLavalinkPlayer) {
         DuncteBotSources.registerCustom(playerManager,
             "en-AU",
-            1,
+            6,
             // Update youtube data when not local
             // When we are dealing with a lavalink player we don't want to update everything since we are only decoding
             !Settings.IS_LOCAL && !isLavalinkPlayer
