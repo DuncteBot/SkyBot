@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.github.natanbc.reliqua.Reliqua
+import com.github.natanbc.reliqua.limiter.factory.RateLimiterFactory
 import com.github.natanbc.reliqua.request.PendingRequest
 import com.github.natanbc.reliqua.util.ResponseMapper
 import me.duncte123.botcommons.web.ContentType.JSON
@@ -966,7 +967,9 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     // a big hack :D
     private class NotFollowingRedirects : Reliqua(
-        OkHttpClient.Builder().followRedirects(false).build()
+        OkHttpClient.Builder().followRedirects(false).build(),
+        RateLimiterFactory.directFactory(), // No rate limiting :D
+        false
     ) {
         fun <T> prepareRaw(request: Request, mapper: ResponseMapper<T>): PendingRequest<T> {
             return createRequest(request).build(mapper, WebParserUtils::handleError)

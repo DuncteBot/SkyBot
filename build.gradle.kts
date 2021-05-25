@@ -73,7 +73,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.3")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.4")
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
@@ -84,9 +84,7 @@ dependencies {
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.5")
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.76")
-    // https://github.com/sedmelluq/lavaplayer/pull/620
-    implementation(group = "com.github.duncte123", name = "lavaplayer", version = "2226fa8")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.77")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54") {
         exclude(module = "lavaplayer")
     }
