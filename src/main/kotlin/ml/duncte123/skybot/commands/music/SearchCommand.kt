@@ -26,6 +26,8 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import ml.duncte123.skybot.utils.YoutubeUtils
+import net.dv8tion.jda.api.interactions.ActionRow
+import net.dv8tion.jda.api.interactions.button.Button
 import java.util.concurrent.TimeUnit
 
 class SearchCommand : MusicCommand() {
@@ -45,10 +47,10 @@ class SearchCommand : MusicCommand() {
 
         val handler = ctx.reactionHandler
         val isPatron = isUserOrGuildPatron(ctx, false)
-        val author = ctx.author
+        val userId = ctx.author.idLong
 
         val timeout = when {
-            isDev(author) || isPatron -> 60L
+            isDev(userId) || isPatron -> 60L
             else -> 15L
         }
 
@@ -68,15 +70,28 @@ class SearchCommand : MusicCommand() {
             }
 
             append("\n\n")
-            append("Type the number of the song that you want to play or type `cancel` to cancel your search")
+            append("Click the button with the number of the song that you want to play, or click `cancel` to cancel your search")
         }
+
+
+        val rows = res.mapIndexed { index, it ->
+            Button.secondary("select-track:${it.id.videoId}:$userId", "${index + 1}")
+        }
+            .chunked(5)
+            .map { ActionRow.of(it) }
+            .toMutableList()
+
+        rows.add(ActionRow.of(Button.danger("cancel-search:$userId", "Cancel")))
 
         sendMsg(
             MessageConfig.Builder()
                 .setChannel(ctx.channel)
                 .setEmbed(EmbedUtils.embedMessage(string))
+                .configureMessageBuilder {
+                    it.setActionRows(rows)
+                }
                 .setSuccessAction {
-                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, author.idLong, ctx, res)
+                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, userId, ctx)
                 }
                 .build()
         )

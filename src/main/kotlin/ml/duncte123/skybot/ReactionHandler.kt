@@ -18,31 +18,39 @@
 
 package ml.duncte123.skybot
 
-import com.google.api.services.youtube.model.SearchResult
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
+import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.hooks.EventListener
+import net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ReactionHandler : EventListener {
     private val requirementsCache = arrayListOf<ReactionCacheElement>()
-    private val consumerCache = hashMapOf<Long, Pair<CommandContext, List<SearchResult>>>()
+    private val consumerCache = hashMapOf<Long, CommandContext>()
     private val executor = Executors.newScheduledThreadPool(2) { r ->
         val t = Thread(r, "ReactionAwaiter")
         t.isDaemon = true
         return@newScheduledThreadPool t
     }
 
-    private fun TextChannel.editMsg(id: Long, msg: String) = this.editMessageById(id, msg).override(true).queue(null, {})
+    private fun TextChannel.editMsg(id: Long, msg: String) = this.editMessageById(id, msg)
+        .override(true)
+        .queue()
 
-    private fun handleUserInput(ctx: CommandContext, resSet: List<SearchResult>) {
-        if (!ctx.reactionEventIsSet() && !ctx.replyIsSet()) {
+    private fun CommandContext.editMsg(msg: String) = this.buttonEvent.hook.editOriginal(msg)
+        .setEmbeds(listOf())
+        .setActionRows(listOf())
+        .queue()
+
+    private fun handleUserInput(ctx: CommandContext) {
+        if (!ctx.buttonEventIsSet() && !ctx.replyIsSet()) {
+            // TODO: keep?
             sendErrorWithMessage(ctx.message, "Internal error!")
             return
         }
@@ -50,79 +58,88 @@ class ReactionHandler : EventListener {
         val cacheElement = requirementsCache.firstOrNull { ctx.sendId == it.authorId }
 
         if (cacheElement == null) {
+            // TODO: keep?
             sendMsg(ctx, "Internal error!")
             return
         }
 
-        if (cacheElement.equals(ctx.reactionEvent)) {
-            val event = ctx.reactionEvent
+        if (cacheElement.equals(ctx.buttonEvent)) {
+            val event = ctx.buttonEvent
             val channel = ctx.channel
-            val content = event.message.contentRaw.lowercase()
-            val index = AirUtils.parseIntSafe(content)
-            val msgId = cacheElement.msgID
+            val buttonId = event.componentId
 
-            if (content == "cancel") {
-                channel.editMsg(msgId, "\uD83D\uDD0E Search canceled")
+            if (buttonId.startsWith("cancel-search")) {
+                ctx.editMsg("\uD83D\uDD0E Search canceled")
                 requirementsCache.remove(cacheElement)
                 return
             }
 
-            if (index < 1 || index > resSet.size) {
-                channel.editMsg(msgId, "\uD83D\uDD0E Invalid index")
+            val items = buttonId.split(":")
+
+            if (items.size != 3 || items[0] != "select-track") {
+                ctx.editMsg("\uD83D\uDD0E Invalid button")
                 return
             }
 
-            val res = resSet.getOrNull(index - 1)
-
-            if (res == null) {
-                channel.editMsg(msgId, "\uD83D\uDD0E Invalid index")
-                return
-            }
-
-            ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=${res.id.videoId}", true)
+            ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=${items[1]}", true)
             requirementsCache.remove(cacheElement)
 
-            channel.deleteMessageById(msgId).queue(null, {}) // Ignore the error if the message has already been deleted
+            channel.deleteMessageById(cacheElement.msgID)
+                .queue(null, ignore(UNKNOWN_MESSAGE)) // Ignore the error if the message has already been deleted
         }
     }
 
-    fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, ctx: CommandContext, resultSet: List<SearchResult>) {
+    fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, ctx: CommandContext) {
         val cacheElement = ReactionCacheElement(msg.idLong, userId)
-        val pair = userId to (ctx.applySentId(userId) to resultSet)
 
         requirementsCache.add(cacheElement)
-        consumerCache[pair.first] = pair.second
+        consumerCache[userId] = ctx.applySentId(userId)
 
-        executor.schedule(
-            {
+        executor.schedule({
+            try {
                 if (requirementsCache.contains(cacheElement)) {
                     requirementsCache.remove(cacheElement)
                     consumerCache.remove(userId)
                     ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
                 }
-            },
-            timeoutInMillis, TimeUnit.MILLISECONDS
-        )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }, timeoutInMillis, TimeUnit.MILLISECONDS)
     }
 
     override fun onEvent(event: GenericEvent) {
-        if (event !is GuildMessageReceivedEvent) {
+        if (event !is ButtonClickEvent) {
             return
         }
 
-        val checkId = event.author.idLong
-        val content = event.message.contentRaw
-        val intCheck = AirUtils.isInt(content) || content.lowercase() == "cancel"
-
-        if (!consumerCache.containsKey(checkId) && !intCheck) {
+        if (!event.componentId.endsWith(event.user.id)) {
+            event.deferReply(true)
+                .setContent("This button was not meant for you.")
+                .queue()
             return
         }
 
-        val pair = consumerCache[checkId] ?: return
-        val ctx = pair.first.applyReactionEvent(event)
+        val checkId = event.user.idLong
 
-        if (ctx.author.idLong == event.author.idLong) {
-            handleUserInput(ctx, pair.second)
+        if (!consumerCache.containsKey(checkId)) {
+            event.deferEdit()
+                .setContent("Event was not registered, auto remove in 10 seconds.")
+                .setEmbeds(listOf())
+                .setActionRows(listOf())
+                .queue {
+                    it.deleteOriginal().queueAfter(10, TimeUnit.SECONDS)
+                }
+            return
+        }
+
+        val fromCache = consumerCache[checkId] ?: return
+        val ctx = fromCache.applyButtonEvent(event)
+
+        if (ctx.author.idLong == checkId) {
+            // ack discord to let them know we're good
+            event.deferEdit().queue()
+            handleUserInput(ctx)
             consumerCache.remove(checkId)
         }
     }

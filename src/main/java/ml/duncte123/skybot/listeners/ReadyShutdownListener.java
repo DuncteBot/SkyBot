@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import me.duncte123.botcommons.BotCommons;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -97,6 +98,9 @@ public class ReadyShutdownListener extends MessageListener {
 
     private void onShutdown() {
         Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+
+        BotCommons.shutdown();
+
         AirUtils.stop(this.variables.getAudioUtils());
         LOGGER.info("Music system shutdown");
 
