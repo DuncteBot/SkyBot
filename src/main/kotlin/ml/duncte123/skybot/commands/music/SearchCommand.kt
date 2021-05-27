@@ -73,7 +73,6 @@ class SearchCommand : MusicCommand() {
             append("Click the button with the number of the song that you want to play, or click `cancel` to cancel your search")
         }
 
-
         val rows = res.mapIndexed { index, it ->
             Button.secondary("select-track:${it.id.videoId}:$userId", "${index + 1}")
         }

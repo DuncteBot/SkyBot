@@ -95,17 +95,20 @@ class ReactionHandler : EventListener {
         requirementsCache.add(cacheElement)
         consumerCache[userId] = ctx.applySentId(userId)
 
-        executor.schedule({
-            try {
-                if (requirementsCache.contains(cacheElement)) {
-                    requirementsCache.remove(cacheElement)
-                    consumerCache.remove(userId)
-                    ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
+        executor.schedule(
+            {
+                try {
+                    if (requirementsCache.contains(cacheElement)) {
+                        requirementsCache.remove(cacheElement)
+                        consumerCache.remove(userId)
+                        ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, timeoutInMillis, TimeUnit.MILLISECONDS)
+            },
+            timeoutInMillis, TimeUnit.MILLISECONDS
+        )
     }
 
     override fun onEvent(event: GenericEvent) {
