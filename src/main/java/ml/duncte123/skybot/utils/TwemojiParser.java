@@ -30,7 +30,7 @@ public class TwemojiParser extends EmojiParser {
     private static final String BASE_URL = "https://twemoji.maxcdn.com/v/latest/72x72/";
 
     public static String parseOne(String text) {
-        final List<UnicodeCandidate> emojis = getUnicodeCandidates(text);
+        final List<UnicodeCandidate> emojis = getUnicodeCandidates(stripVariants(text));
 
         if  (!emojis.isEmpty()) {
             final String iconId = grabTheRightIcon(emojis.get(0).getEmoji().getUnicode());
@@ -43,7 +43,7 @@ public class TwemojiParser extends EmojiParser {
 
     // for future use
     public static List<String> parseAll(String text) {
-        final List<UnicodeCandidate> emojis = getUnicodeCandidates(text);
+        final List<UnicodeCandidate> emojis = getUnicodeCandidates(stripVariants(text));
 
         if (emojis.isEmpty()) {
             return null;
@@ -89,10 +89,12 @@ public class TwemojiParser extends EmojiParser {
         return String.join("-", codes);
     }
 
-    private static String grabTheRightIcon(String rawText) {
+    private static String stripVariants(String rawText) {
         // if variant is present as \uFE0F
-        return toCodePoint(
-            rawText.indexOf('\u200D') < 0 ? rawText.replace("\uFE0F", "") : rawText
-        );
+        return rawText.indexOf('\u200D') < 0 ? rawText.replace("\uFE0F", "") : rawText;
+    }
+
+    private static String grabTheRightIcon(String rawText) {
+        return toCodePoint(stripVariants(rawText));
     }
 }
