@@ -26,8 +26,8 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import ml.duncte123.skybot.utils.YoutubeUtils
-import net.dv8tion.jda.api.interactions.ActionRow
-import net.dv8tion.jda.api.interactions.button.Button
+import net.dv8tion.jda.api.interactions.components.ActionRow
+import net.dv8tion.jda.api.interactions.components.Button
 import java.util.concurrent.TimeUnit
 
 class SearchCommand : MusicCommand() {
