@@ -134,7 +134,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
                 AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
             }
         } catch (e: Exception) {
-            Sentry.captureException(e);
+            Sentry.captureException(e)
             LOG.error("Updating reminders failed", e)
         }
 
