@@ -89,7 +89,7 @@ public class TwemojiParser extends EmojiParser {
         return String.join("-", codes);
     }
 
-    private static String stripVariants(String rawText) {
+    public static String stripVariants(String rawText) {
         // if variant is present as \uFE0F
         return rawText.indexOf('\u200D') < 0 ? rawText.replace("\uFE0F", "") : rawText;
     }
