@@ -813,11 +813,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun purgeReminders(ids: List<Int>) {
-        runOnThread {
-            connManager.connection.createStatement().use { smt ->
-                smt.execute("DELETE FROM reminders WHERE id IN (${ids.joinToString()})")
-            }
+    override fun purgeRemindersSync(ids: List<Int>) {
+        connManager.connection.createStatement().use { smt ->
+            smt.execute("DELETE FROM reminders WHERE id IN (${ids.joinToString()})")
         }
     }
 

@@ -261,7 +261,6 @@ public class AirUtils {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
-    // FIXME: find a way to prevent duped reminders
     public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
@@ -334,7 +333,7 @@ public class AirUtils {
             .collect(Collectors.toList());
 
         toPurge.addAll(extraRemoval);
-        adapter.purgeReminders(toPurge);
+        adapter.purgeRemindersSync(toPurge);
     }
 
     public static String parsePerms(Permission[] perms) {

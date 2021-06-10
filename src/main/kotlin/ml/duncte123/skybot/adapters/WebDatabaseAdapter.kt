@@ -431,10 +431,8 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun purgeReminders(ids: List<Int>) {
-        runOnThread {
-            apis.purgeReminders(ids)
-        }
+    override fun purgeRemindersSync(ids: List<Int>) {
+        apis.purgeReminders(ids)
     }
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
