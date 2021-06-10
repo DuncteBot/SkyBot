@@ -112,25 +112,25 @@ public class CommandManager {
 
     static {
         COOLDOWN_THREAD.scheduleWithFixedDelay(() -> {
-                try {
-                    // Loop over all cooldowns with a 5 minute interval
-                    // This makes sure that we don't have any useless cooldowns in the system hogging up memory
-                    COOLDOWNS.forEachEntry((key, val) -> {
-                        final long remaining = calcTimeRemaining(val);
+            try {
+                // Loop over all cooldowns with a 5 minute interval
+                // This makes sure that we don't have any useless cooldowns in the system hogging up memory
+                COOLDOWNS.forEachEntry((key, val) -> {
+                    final long remaining = calcTimeRemaining(val);
 
-                        // Remove the value from the cooldowns if it is less or equal to 0
-                        if (remaining <= 0) {
-                            COOLDOWNS.remove(key);
-                        }
+                    // Remove the value from the cooldowns if it is less or equal to 0
+                    if (remaining <= 0) {
+                        COOLDOWNS.remove(key);
+                    }
 
-                        // Return true to indicate that we are allowed to continue the loop
-                        return true;
-                    });
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }, 5, 5, TimeUnit.MINUTES);
+                    // Return true to indicate that we are allowed to continue the loop
+                    return true;
+                });
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 5, 5, TimeUnit.MINUTES);
     }
 
     public CommandManager(Variables variables) {
@@ -370,10 +370,12 @@ public class CommandManager {
     }
 
     public boolean isCommand(String customPrefix, String message) {
-        final String[] split = message.toLowerCase().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
-                Pattern.quote(customPrefix),
-            "").split("\\s+", 2);
+        final String[] split = message.toLowerCase()
+            .replaceFirst(
+                "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' + Pattern.quote(customPrefix),
+                ""
+            )
+            .split("\\s+", 2);
 
         if (split.length >= 1) {
             final String invoke = split[0].toLowerCase();
@@ -381,14 +383,16 @@ public class CommandManager {
             return getCommand(invoke) != null;
         }
 
-
         return false;
     }
 
     @Nullable
     public CustomCommand getCustomCommand(String invoke, long guildId) {
-        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
-            .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+        return this.customCommands.stream()
+            .filter((c) -> c.getGuildId() == guildId)
+            .filter((c) -> c.getName().equalsIgnoreCase(invoke))
+            .findFirst()
+            .orElse(null);
     }
 
     public List<CustomCommand> getAutoResponses(long guildId) {
@@ -399,10 +403,12 @@ public class CommandManager {
     }
 
     public void runCommand(GuildMessageReceivedEvent event, String customPrefix) {
-        final String[] split = event.getMessage().getContentRaw().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
-                Pattern.quote(customPrefix),
-            "")
+        final String[] split = event.getMessage()
+            .getContentRaw()
+            .replaceFirst(
+                "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' + Pattern.quote(customPrefix),
+                ""
+            )
             .trim()
             .split("\\s+", 2);
         final String invoke = split[0];
@@ -442,13 +448,6 @@ public class CommandManager {
         }
 
         return timeLeft;
-    }
-
-    private static long calcTimeRemaining(long startTime) {
-        // Get the start time as an OffsetDateTime
-        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
-        // get the time that is left for the cooldown
-        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
     }
 
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
@@ -529,7 +528,6 @@ public class CommandManager {
             MDC.put("command.custom.message", cusomCommand.getMessage());
 
             final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
-
             final String message = parser.parse(cusomCommand.getMessage());
             final MessageConfig.Builder messageBuilder = MessageConfig.Builder.fromEvent(event);
             final DataObject object = parser.get("embed");
@@ -551,7 +549,6 @@ public class CommandManager {
             if (hasContent) {
                 sendMsg(messageBuilder.build());
             }
-
 
             parser.clear();
         }
@@ -711,5 +708,12 @@ public class CommandManager {
         }
 
         this.commands.put(cmdName, command);
+    }
+
+    private static long calcTimeRemaining(long startTime) {
+        // Get the start time as an OffsetDateTime
+        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // get the time that is left for the cooldown
+        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
     }
 }
