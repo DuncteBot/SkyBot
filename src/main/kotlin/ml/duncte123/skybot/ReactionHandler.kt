@@ -19,11 +19,12 @@
 package ml.duncte123.skybot
 
 import me.duncte123.botcommons.messaging.MessageUtils.*
+import ml.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE
@@ -43,13 +44,13 @@ class ReactionHandler : EventListener {
         .override(true)
         .queue()
 
-    private fun CommandContext.editMsg(msg: String) = this.buttonEvent.hook.editOriginal(msg)
+    private fun CommandContext.editMsg(msg: String) = this.selectionEvent.hook.editOriginal(msg)
         .setEmbeds(listOf())
         .setActionRows(listOf())
         .queue()
 
     private fun handleUserInput(ctx: CommandContext) {
-        if (!ctx.buttonEventIsSet() && !ctx.replyIsSet()) {
+        if (!ctx.selectionEventIsSet() && !ctx.replyIsSet()) {
             // TODO: keep?
             sendErrorWithMessage(ctx.message, "Internal error!")
             return
@@ -63,25 +64,42 @@ class ReactionHandler : EventListener {
             return
         }
 
-        if (cacheElement.equals(ctx.buttonEvent)) {
-            val event = ctx.buttonEvent
-            val channel = ctx.channel
-            val buttonId = event.componentId
+        if (cacheElement.equals(ctx.selectionEvent)) {
+            val event = ctx.selectionEvent
+            val menu = event.component
 
-            if (buttonId.startsWith("cancel-search")) {
-                ctx.editMsg("\uD83D\uDD0E Search canceled")
+            // should not happen, just to be safe
+            if (menu == null) {
+                ctx.editMsg("$SEARCH_EMOTE Missing component?")
                 requirementsCache.remove(cacheElement)
                 return
             }
 
-            val items = buttonId.split(":")
+            val channel = ctx.channel
+            val selected = event.values
 
-            if (items.size != 3 || items[0] != "select-track") {
-                ctx.editMsg("\uD83D\uDD0E Invalid button")
+            if (selected.isEmpty()) {
+                ctx.editMsg("$SEARCH_EMOTE Search canceled (nothing selected)")
+                requirementsCache.remove(cacheElement)
                 return
             }
 
-            ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=${items[1]}", true)
+            val selectedId = selected[0]
+
+            if (selectedId == "cancel-search") {
+                ctx.editMsg("$SEARCH_EMOTE Search canceled")
+                requirementsCache.remove(cacheElement)
+                return
+            }
+
+            /*val items = selectedId.split(":")
+
+            if (items.size != 3 || items[0] != "select-track") {
+                ctx.editMsg("$SEARCH_EMOTE Invalid button")
+                return
+            }*/
+
+            ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=$selectedId", true)
             requirementsCache.remove(cacheElement)
 
             channel.deleteMessageById(cacheElement.msgID)
@@ -101,7 +119,7 @@ class ReactionHandler : EventListener {
                     if (requirementsCache.contains(cacheElement)) {
                         requirementsCache.remove(cacheElement)
                         consumerCache.remove(userId)
-                        ctx.channel.editMsg(msg.idLong, "\uD83D\uDD0E Search timed out")
+                        ctx.channel.editMsg(msg.idLong, "$SEARCH_EMOTE Search timed out")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -112,7 +130,7 @@ class ReactionHandler : EventListener {
     }
 
     override fun onEvent(event: GenericEvent) {
-        if (event !is ButtonClickEvent) {
+        if (event !is SelectionMenuEvent) {
             return
         }
 

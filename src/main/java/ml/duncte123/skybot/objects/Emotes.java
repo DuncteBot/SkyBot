@@ -33,4 +33,7 @@ public class Emotes {
     public static final String DISCORD_EARLY_SUPPORTER = "<:early_supporter:738364464734404688>";
     public static final String DISCORD_VERIFIED_SERVER = "<:discord_verified:756041238800629781>";
     public static final String DISCORD_VERIFIED_DEVELOPER = "<:verified_developer:738370070480420865>";
+
+    // unicode emotes
+    public static final String SEARCH_EMOTE = "\uD83D\uDD0E";
 }

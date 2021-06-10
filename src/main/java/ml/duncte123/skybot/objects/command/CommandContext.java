@@ -33,7 +33,7 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.notfab.caching.client.CacheClient;
 
@@ -52,7 +52,7 @@ public class CommandContext implements ICommandContext {
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
     private Map<String, List<String>> cachedFlags;
-    private ButtonClickEvent buttonEvent = null;
+    private SelectionMenuEvent selectionEvent = null;
     private long replyId = 0L;
 
     public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
@@ -182,8 +182,8 @@ public class CommandContext implements ICommandContext {
         return manager.getReactionHandler();
     }
 
-    public CommandContext applyButtonEvent(ButtonClickEvent event) {
-        this.buttonEvent = event;
+    public CommandContext applyButtonEvent(SelectionMenuEvent event) {
+        this.selectionEvent = event;
         return this;
     }
 
@@ -196,12 +196,12 @@ public class CommandContext implements ICommandContext {
         return this.replyId != 0L;
     }
 
-    public boolean buttonEventIsSet() {
-        return this.buttonEvent != null;
+    public boolean selectionEventIsSet() {
+        return this.selectionEvent != null;
     }
 
-    public ButtonClickEvent getButtonEvent() {
-        return this.buttonEvent;
+    public SelectionMenuEvent getSelectionEvent() {
+        return this.selectionEvent;
     }
 
     public long getSendId() {
