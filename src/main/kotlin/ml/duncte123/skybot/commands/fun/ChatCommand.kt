@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MapUtils
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.InputStream
@@ -57,6 +58,10 @@ class ChatCommand : Command() {
         this.name = "chat"
         this.help = "Have a chat with DuncteBot"
         this.usage = "<message>"
+        // needed for reactions
+        this.botPermissions = arrayOf(
+            Permission.MESSAGE_HISTORY
+        )
 
         SERVICE.scheduleAtFixedRate(
             {

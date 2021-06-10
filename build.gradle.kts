@@ -35,7 +35,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.103.0"
+val numberVersion = "3.104.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -73,7 +73,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.4")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.2.7")
 
     // JDA (java discord api)
      implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "bacd237") {
@@ -145,6 +145,10 @@ dependencies {
 
     // emoji-java
     implementation(group = "com.vdurmont", name = "emoji-java", version = "5.1.1")
+
+    // jackson
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
+    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
 
     // dev deps
     devDependencies.forEach {

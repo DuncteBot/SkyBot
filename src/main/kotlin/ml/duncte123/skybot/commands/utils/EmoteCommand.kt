@@ -78,6 +78,7 @@ EmoteCommand : Command() {
     }
 
     private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {
+        val joinedHex = StringBuilder()
         val message = buildString {
             appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
 
@@ -91,14 +92,20 @@ EmoteCommand : Command() {
                     val extraHex = buildString {
                         chars.forEach { c ->
                             append("\\u${c.toHex().ensureFourHex()}")
+                            joinedHex.append("\\u${c.toHex().ensureFourHex()}")
                         }
                     }
 
                     append("[`$extraHex`]")
+                    joinedHex.append("\\u$extraHex")
+                } else {
+                    joinedHex.append("\\u$hex")
                 }
 
                 appendLine(" _${it.getName()}_")
             }
+
+            appendLine("\nJoined string: `$joinedHex`")
         }
 
         sendMsg(ctx, message)

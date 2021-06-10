@@ -20,6 +20,7 @@ package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
+import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -125,11 +126,16 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         // we lock this method to prevent the same reminder from being sent multiple times
         reminderLock.lock()
 
-        val parsedReminders: List<Reminder> = jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
+        try {
+            val parsedReminders: List<Reminder> = jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
-        // Uses complete, must be handled last
-        if (parsedReminders.isNotEmpty()) {
-            AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
+            // Uses complete, must be handled last
+            if (parsedReminders.isNotEmpty()) {
+                AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
+            }
+        } catch (e: Exception) {
+            Sentry.captureException(e)
+            LOG.error("Updating reminders failed", e)
         }
 
         // we can safely unlock here as "handleExpiredReminders" is sync

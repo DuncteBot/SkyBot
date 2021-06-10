@@ -212,7 +212,13 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
 
-    abstract fun purgeReminders(ids: List<Int>)
+    fun purgeReminders(ids: List<Int>) {
+        runOnThread {
+            this.purgeRemindersSync(ids)
+        }
+    }
+
+    abstract fun purgeRemindersSync(ids: List<Int>)
 
     /**
      * Important: Callback must not be called if the list is empty

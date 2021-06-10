@@ -63,7 +63,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    /* package */ boolean passes(CommandContext ctx) {
+        /* package */ boolean passes(CommandContext ctx) {
         return passes(ctx, true);
     }
 
@@ -131,7 +131,7 @@ public abstract class ImageCommandBase extends Command {
                 final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
                 if (!textMentions.isEmpty()) {
-                    url =  getAvatarUrl(textMentions.get(0).getUser());
+                    url = getAvatarUrl(textMentions.get(0).getUser());
                 }
             }
         }
@@ -158,7 +158,8 @@ public abstract class ImageCommandBase extends Command {
         }
 
         //mimetype should be something like "image/png"
-        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+//        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+        if (mimetype == null || !mimetype.startsWith("image/")) {
             sendMsg(ctx, "That file does not look like an image");
             return null;
         }

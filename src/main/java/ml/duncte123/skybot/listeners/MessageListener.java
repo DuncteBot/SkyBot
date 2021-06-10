@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.dunctebot.models.settings.GuildSetting;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
@@ -31,7 +32,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import com.dunctebot.models.settings.GuildSetting;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
@@ -236,20 +236,21 @@ public abstract class MessageListener extends BaseListener {
         return !raw.matches("^<@!?" + selfId + "?.*$");
     }
 
+    private String getCommandName(@Nonnull String customPrefix, @Nonnull String raw) {
+        return raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+            .replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
+            .replaceFirst(Pattern.quote(Settings.PREFIX), "")
+            .split("\\s+", 2)[0];
+    }
+
     private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String raw, @Nonnull String input) {
-        return input.equalsIgnoreCase(
-            raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(customPrefix), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0]
-        );
+        return input.equalsIgnoreCase(getCommandName(customPrefix, raw));
     }
 
     private boolean hasCorrectCategory(@Nonnull String raw, @Nonnull String categoryName, @Nonnull String customPrefix) {
-
         final ICommand command = commandManager.getCommand(
-            raw.replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+            getCommandName(customPrefix, raw).toLowerCase()
+        );
 
         if (command == null) {
             return false;
@@ -269,7 +270,6 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private boolean canRunCommands(String raw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
-
         final String topic = event.getChannel().getTopic();
 
         if (topic == null || topic.isEmpty()) {
@@ -283,10 +283,14 @@ public abstract class MessageListener extends BaseListener {
         final String[] blocked = topic.split("-");
 
         for (final String item : blocked) {
+            if (item.isBlank()) {
+                continue;
+            }
+
             String string = item;
 
             if (!string.isEmpty() && string.charAt(0) == '!') {
-                string = string.split("!")[1];
+                string = string.substring(1);
 
                 if (isCategory(string.toUpperCase()) && !hasCorrectCategory(raw, string, customPrefix)) {
                     return false;
@@ -302,7 +306,6 @@ public abstract class MessageListener extends BaseListener {
             if (shouldBlockCommand(customPrefix, raw, string)) {
                 return false;
             }
-
         }
 
         return true;
@@ -366,7 +369,7 @@ public abstract class MessageListener extends BaseListener {
                     (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS,
                         null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS))
                 )
-                    .build());
+                .build());
 
             modLog(String.format(
                 "Message with score %.2f by %#s deleted in %s for profanity, message content was:```\n%s```",

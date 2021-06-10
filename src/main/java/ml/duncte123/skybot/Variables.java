@@ -22,6 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
@@ -48,7 +49,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
 public final class Variables {
-    private final JsonMapper mapper = new JsonMapper();
+    private final JsonMapper mapper = JsonMapper.builder()
+        .addModule(new JavaTimeModule())
+        .enable(
+            JsonParser.Feature.ALLOW_COMMENTS,
+            JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES
+        )
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build();
     private final String googleBaseUrl;
     private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
     private final CommandManager commandManager;
@@ -81,10 +89,6 @@ public final class Variables {
 
 
     /* package */ Variables() {
-        this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
-        this.mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
-
         this.config = DunctebotConfig.fromEnv();
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         this.commandManager = new CommandManager(this);
