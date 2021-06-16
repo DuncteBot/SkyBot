@@ -144,8 +144,6 @@ class FakeMember(private val name: String) : Member {
         throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
-    override fun isFake() = true
-
     override fun hasTimeJoined() = false
 
     override fun canSync(targetChannel: GuildChannel, syncSource: GuildChannel) = false
