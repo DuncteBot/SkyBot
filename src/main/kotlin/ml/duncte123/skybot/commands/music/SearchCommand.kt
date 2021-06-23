@@ -74,7 +74,7 @@ class SearchCommand : MusicCommand() {
         sendMsg(
             MessageConfig.Builder()
                 .setChannel(ctx.channel)
-                .setEmbed(EmbedUtils.embedMessage(string))
+                .addEmbed(EmbedUtils.embedMessage(string))
                 .setSuccessAction {
                     handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, author.idLong, ctx, res)
                 }

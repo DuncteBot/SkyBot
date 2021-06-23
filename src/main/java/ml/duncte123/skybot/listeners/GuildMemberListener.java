@@ -282,7 +282,7 @@ public class GuildMemberListener extends BaseListener {
             .addField("Account created", created.getFirst() + '\n' + created.getSecond(), false);
 
         final Consumer<Void> sendLog = (ignored) -> modLog(
-            new MessageConfig.Builder().setEmbed(embed, true),
+            new MessageConfig.Builder().addEmbed(true, embed),
             new DunctebotGuild(guild, this.variables)
         );
 

@@ -112,7 +112,7 @@ public class AnnounceCommand extends ModBaseCommand {
 
         sendMsg(new MessageConfig.Builder()
             .setChannel(targetChannel)
-            .setEmbed(embed)
+            .addEmbed(embed)
             .build());
 
         sendSuccess(ctx.getMessage());

@@ -90,7 +90,7 @@ public class HelpCommand extends Command {
     private void sendHelp(CommandContext ctx, EmbedBuilder embed) {
         ctx.getAuthor()
             .openPrivateChannel()
-            .flatMap((pc) -> pc.sendMessage(embed.build()))
+            .flatMap((pc) -> pc.sendMessageEmbeds(embed.build()))
             .queue(
                 (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " help has been sent to your private messages"),
                 //When sending fails, send to the channel

@@ -103,7 +103,7 @@ public class LoveCommand extends Command {
 
                 channel.sendMessage(message)
                     .addFile(image, "love.png")
-                    .embed(embed.setImage("attachment://love.png").build())
+                    .setEmbeds(embed.setImage("attachment://love.png").build())
                     .queue();
             });
         } else {

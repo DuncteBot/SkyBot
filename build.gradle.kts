@@ -73,11 +73,11 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.2.7")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.8")
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_278") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_282") {
         exclude(module = "opus-java")
     }
 
