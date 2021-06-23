@@ -26,8 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
 import net.dv8tion.jda.api.entities.Emote
 
-class
-EmoteCommand : Command() {
+class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
@@ -73,6 +72,7 @@ EmoteCommand : Command() {
             """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
+            |**Markdown:** `${emote.asMention}`
             |**Url:** $url
         """.trimMargin()
         )
@@ -93,12 +93,11 @@ EmoteCommand : Command() {
                     val extraHex = buildString {
                         chars.forEach { c ->
                             append("\\u${c.toHex().ensureFourHex()}")
-                            joinedHex.append("\\u${c.toHex().ensureFourHex()}")
                         }
                     }
 
                     append("[`$extraHex`]")
-                    joinedHex.append("\\u$extraHex")
+                    joinedHex.append(extraHex)
                 } else {
                     joinedHex.append("\\u$hex")
                 }
@@ -106,7 +105,9 @@ EmoteCommand : Command() {
                 appendLine(" _${it.getName()}_")
             }
 
-            appendLine("\nJoined string: `$joinedHex`")
+            if (emote.codePointCount(0, emote.length) > 1) {
+                appendLine("\nCopy-paste string: `$joinedHex`")
+            }
         }
 
         sendMsg(ctx, message)
