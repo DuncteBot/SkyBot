@@ -52,7 +52,7 @@ object EvalFunctions {
             .addField("Users", shardManager.userCache.size().toString(), true)
             .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
             .addField("Socket-Ping", shardManager.averageGatewayPing.toString(), false).build()
-        return channel.sendMessage(embed)
+        return channel.sendMessageEmbeds(embed)
     }
 
     @JvmStatic
