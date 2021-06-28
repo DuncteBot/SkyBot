@@ -28,10 +28,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.4.4"
+    id("org.jmailen.kotlinter") version "3.4.5"
     pmd
 }
 
@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_282") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_285") {
         exclude(module = "opus-java")
     }
 
@@ -107,7 +107,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0-RC")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
