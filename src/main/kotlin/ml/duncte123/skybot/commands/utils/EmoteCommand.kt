@@ -24,13 +24,14 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emote
 
 class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
-        this.aliases = arrayOf("emoji")
+        this.aliases = arrayOf("emoji", "unicode")
         this.help = "Shows information about an emoji or emote"
         this.usage = "<emote>"
     }
@@ -66,13 +67,14 @@ class EmoteCommand : Command() {
         val id = emote.id
         val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
+        val markdownStr = "<${EmbedBuilder.ZERO_WIDTH_SPACE}:${emote.name}:${emote.idLong}>"
 
         sendMsg(
             ctx,
             """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
-            |**Markdown:** `${emote.asMention}`
+            |**Markdown:** `$markdownStr` (there's a ZWSP after the first `<`)
             |**Url:** $url
         """.trimMargin()
         )
