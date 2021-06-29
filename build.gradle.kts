@@ -84,7 +84,7 @@ dependencies {
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.5")
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.77")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54") {
         exclude(module = "lavaplayer")
     }
