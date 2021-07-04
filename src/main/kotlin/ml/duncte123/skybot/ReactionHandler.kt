@@ -66,13 +66,15 @@ class ReactionHandler : EventListener {
         }
 
         if (cacheElement.equals(ctx.selectionEvent)) {
+            // remove from cache
+            requirementsCache.remove(cacheElement)
+
             val event = ctx.selectionEvent
             val menu = event.component
 
             // should not happen, just to be safe
             if (menu == null) {
                 ctx.editMsg("$SEARCH_EMOTE Missing component?")
-                requirementsCache.remove(cacheElement)
                 return
             }
 
@@ -89,13 +91,10 @@ class ReactionHandler : EventListener {
 
             if (selectedId == "cancel-search") {
                 ctx.editMsg("$SEARCH_EMOTE Search canceled")
-                requirementsCache.remove(cacheElement)
                 return
             }
 
             ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=$selectedId", true)
-            requirementsCache.remove(cacheElement)
-
             channel.deleteMessageById(cacheElement.msgID)
                 .queue(null, ignore(UNKNOWN_MESSAGE)) // Ignore the error if the message has already been deleted
         }
