@@ -59,7 +59,7 @@ public class EnlargeCommand extends Command {
                 return;
             }
 
-            this.uploadFile(sticker.getAssetUrl().replace("apng", "png"), ctx);
+            this.uploadFile(sticker.getIconUrl().replace("apng", "png"), ctx);
             return;
         }
 

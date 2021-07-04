@@ -44,7 +44,8 @@ class ReactionHandler : EventListener {
         .override(true)
         .queue()
 
-    private fun CommandContext.editMsg(msg: String) = this.selectionEvent.hook.editOriginal(msg)
+    private fun CommandContext.editMsg(msg: String) = this.selectionEvent.channel
+        .editMessageById(this.selectionEvent.messageIdLong, msg)
         .setEmbeds(listOf())
         .setActionRows(listOf())
         .queue()
@@ -91,13 +92,6 @@ class ReactionHandler : EventListener {
                 requirementsCache.remove(cacheElement)
                 return
             }
-
-            /*val items = selectedId.split(":")
-
-            if (items.size != 3 || items[0] != "select-track") {
-                ctx.editMsg("$SEARCH_EMOTE Invalid button")
-                return
-            }*/
 
             ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=$selectedId", true)
             requirementsCache.remove(cacheElement)
