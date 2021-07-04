@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit
 
 class ReactionHandler : EventListener {
     private val requirementsCache = arrayListOf<ReactionCacheElement>()
-    private val consumerCache = hashMapOf<Long, CommandContext>()
+    private val consumerCache = hashMapOf<String, CommandContext>()
     private val executor = Executors.newScheduledThreadPool(2) { r ->
         val t = Thread(r, "ReactionAwaiter")
         t.isDaemon = true
@@ -101,18 +101,18 @@ class ReactionHandler : EventListener {
         }
     }
 
-    fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, ctx: CommandContext) {
+    fun waitForReaction(timeoutInMillis: Long, msg: Message, componentId: String, userId: Long, ctx: CommandContext) {
         val cacheElement = ReactionCacheElement(msg.idLong, userId)
 
         requirementsCache.add(cacheElement)
-        consumerCache[userId] = ctx.applySentId(userId)
+        consumerCache[componentId] = ctx.applySentId(userId)
 
         executor.schedule(
             {
                 try {
                     if (requirementsCache.contains(cacheElement)) {
                         requirementsCache.remove(cacheElement)
-                        consumerCache.remove(userId)
+                        consumerCache.remove(componentId)
                         ctx.channel.editMsg(msg.idLong, "$SEARCH_EMOTE Search timed out")
                     }
                 } catch (e: Exception) {
@@ -128,34 +128,32 @@ class ReactionHandler : EventListener {
             return
         }
 
-        if (!event.componentId.endsWith(event.user.id)) {
+        val componentId = event.componentId
+
+        if (!componentId.endsWith(event.user.id)) {
             event.deferReply(true)
                 .setContent("This button was not meant for you.")
                 .queue()
             return
         }
 
-        val checkId = event.user.idLong
-
-        if (!consumerCache.containsKey(checkId)) {
-            event.deferEdit()
-                .setContent("Event was not registered, auto remove in 10 seconds.")
-                .setEmbeds(listOf())
-                .setActionRows(listOf())
-                .queue {
-                    it.deleteOriginal().queueAfter(10, TimeUnit.SECONDS)
-                }
+        if (!consumerCache.containsKey(componentId)) {
+            event.deferReply(true)
+                .setContent("That menu is not registered!")
+                .queue()
             return
         }
 
-        val fromCache = consumerCache[checkId] ?: return
+        val fromCache = consumerCache[componentId] ?: return
         val ctx = fromCache.applyButtonEvent(event)
+
+        val checkId = event.user.idLong
 
         if (ctx.author.idLong == checkId) {
             // ack discord to let them know we're good
             event.deferEdit().queue()
             handleUserInput(ctx)
-            consumerCache.remove(checkId)
+            consumerCache.remove(componentId)
         }
     }
 }

@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
@@ -75,16 +76,9 @@ class SearchCommand : MusicCommand() {
             append("Click the button with the number of the song that you want to play, or click `cancel` to cancel your search")
         }
 
-        /*val rows = res.mapIndexed { index, it ->
-            Button.secondary("select-track:${it.id.videoId}:$userId", "${index + 1}")
-        }
-            .chunked(5)
-            .map { ActionRow.of(it) }
-            .toMutableList()
+        val componentId = "search-menu:${UUID.randomUUID()}:$userId"
 
-        rows.add(ActionRow.of(Button.danger("cancel-search:$userId", "Cancel")))*/
-
-        val menu = SelectionMenu.create("search-menu:$userId")
+        val menu = SelectionMenu.create(componentId)
             .setPlaceholder("Select a song to play")
 
         res.forEachIndexed { index, searchResult ->
@@ -107,7 +101,7 @@ class SearchCommand : MusicCommand() {
                     it.setActionRows(ActionRow.of(menu.build()))
                 }
                 .setSuccessAction {
-                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, userId, ctx)
+                    handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, componentId, userId, ctx)
                 }
                 .build()
         )
