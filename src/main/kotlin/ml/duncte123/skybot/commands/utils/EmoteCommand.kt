@@ -23,14 +23,15 @@ import ml.duncte123.skybot.extensions.escapeMarkDown
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emote
 
-class
-EmoteCommand : Command() {
+class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
-        this.aliases = arrayOf("emoji")
+        this.aliases = arrayOf("emoji", "unicode")
         this.help = "Shows information about an emoji or emote"
         this.usage = "<emote>"
     }
@@ -58,7 +59,7 @@ EmoteCommand : Command() {
             return
         }
 
-        normalEmoteMentioned(ctx, arg)
+        normalEmoteMentioned(ctx, stripVariants(arg))
     }
 
     private fun customEmoteMentioned(ctx: CommandContext, emote: Emote) {
@@ -66,12 +67,14 @@ EmoteCommand : Command() {
         val id = emote.id
         val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
+        val markdownStr = "<${EmbedBuilder.ZERO_WIDTH_SPACE}:${emote.name}:${emote.idLong}>"
 
         sendMsg(
             ctx,
             """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
+            |**Markdown:** `$markdownStr` (there's a ZWSP after the first `<`)
             |**Url:** $url
         """.trimMargin()
         )
@@ -92,12 +95,11 @@ EmoteCommand : Command() {
                     val extraHex = buildString {
                         chars.forEach { c ->
                             append("\\u${c.toHex().ensureFourHex()}")
-                            joinedHex.append("\\u${c.toHex().ensureFourHex()}")
                         }
                     }
 
                     append("[`$extraHex`]")
-                    joinedHex.append("\\u$extraHex")
+                    joinedHex.append(extraHex)
                 } else {
                     joinedHex.append("\\u$hex")
                 }
@@ -105,7 +107,9 @@ EmoteCommand : Command() {
                 appendLine(" _${it.getName()}_")
             }
 
-            appendLine("\nJoined string: `$joinedHex`")
+            if (emote.codePointCount(0, emote.length) > 1) {
+                appendLine("\nCopy-paste string: `$joinedHex`")
+            }
         }
 
         sendMsg(ctx, message)

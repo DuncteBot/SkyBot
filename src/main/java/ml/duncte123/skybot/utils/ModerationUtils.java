@@ -338,7 +338,7 @@ public class ModerationUtils {
                     if (sendMessages) {
                         sendMsg(new MessageConfig.Builder()
                             .setChannel(logChannel)
-                            .setEmbed(embedMessage(message))
+                            .addEmbed(embedMessage(message))
                             .build());
                     }
                 }

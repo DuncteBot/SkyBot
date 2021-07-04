@@ -31,7 +31,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
-import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -157,15 +156,11 @@ class EvalCommand : Command() {
             null -> sendSuccess(ctx.message)
 
             is Throwable -> {
-                if (Settings.USE_JSON) {
-                    sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)
-                } else {
-                    // respond instantly
-                    sendMsg(ctx, "ERROR: $out")
-                    // send the trace when uploaded
-                    makeHastePost(out.getString()).async {
-                        sendMsg(ctx, "Stacktrace: <$it>")
-                    }
+                // respond instantly
+                sendMsg(ctx, "ERROR: $out")
+                // send the trace when uploaded
+                makeHastePost(out.getString()).async {
+                    sendMsg(ctx, "Stacktrace: <$it>")
                 }
             }
 

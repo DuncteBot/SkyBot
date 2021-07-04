@@ -18,17 +18,16 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.EventManager
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isDev
-import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.api.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 
@@ -91,11 +90,8 @@ class RestartShardCommand : Command() {
                 else -> MessageUtils.sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
-            if (Settings.USE_JSON) {
-                JSONMessageErrorsHelper.sendErrorJSON(event.message, ex, false, ctx.variables.jackson)
-            } else {
-                MessageUtils.sendError(event.message)
-            }
+            MessageUtils.sendError(event.message)
+            Sentry.captureException(ex)
         }
     }
 

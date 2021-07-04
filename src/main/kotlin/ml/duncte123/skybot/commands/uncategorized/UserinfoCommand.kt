@@ -231,7 +231,7 @@ class UserinfoCommand : Command() {
             user.getStaticAvatarUrl() + "?size=256"
         ).async {
             event.channel.sendFile(it, "stat.png")
-                .embed(embed.setThumbnail("attachment://stat.png").build())
+                .setEmbeds(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
                     sendEmbed(ctx, embed.setThumbnail(user.effectiveAvatarUrl), true)
                 }

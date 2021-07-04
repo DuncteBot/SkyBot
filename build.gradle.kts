@@ -28,10 +28,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.4.4"
+    id("org.jmailen.kotlinter") version "3.4.5"
     pmd
 }
 
@@ -73,18 +73,18 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.2.7")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.8")
 
     // JDA (java discord api)
-     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4fd5c57") {
-//    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.1_276") {
+//     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_293") {
         exclude(module = "opus-java")
     }
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.5")
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.77")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54") {
         exclude(module = "lavaplayer")
     }
@@ -107,7 +107,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0-RC")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.0")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {

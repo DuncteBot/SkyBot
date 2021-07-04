@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 @SuppressWarnings({"PMD.FieldNamingConventions", "PMD.ClassNamingConventions"})
 public class Settings {
     public static String PREFIX = "db!";
-    public static boolean USE_JSON = false;
     public static boolean AUTO_REBOOT_SHARDS = true; // set to false if shards are rebooted when they shouldn't be
     public static final long OWNER_ID = 191231307290771456L;
     public static long[] DEVELOPERS = new long[0];

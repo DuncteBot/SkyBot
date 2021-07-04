@@ -123,7 +123,8 @@ public class GuildInfoCommand extends Command {
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
                 "**Name:** " + guild.getName() + ' ' + emoteList + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                "**Region:** " + guild.getRegion().getName() + "\n" +
+                // TODO: remove this once it's removed
+                "**Region:** " + guild.getRegion().getEmoji() + ' ' + guild.getRegion().getName() + "\n" +
                 "**Created at:** " + String.format("%s (%s)", times.getFirst(), times.getSecond()) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(guild.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)

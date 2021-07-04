@@ -154,7 +154,7 @@ public class WolframAlphaCommand extends Command {
         }
 
         editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
-            .setEmbed(
+            .setEmbeds(
                 generateEmbed(ctx, result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
             ).build());
     }

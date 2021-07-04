@@ -542,7 +542,7 @@ public class CommandManager {
                 final JDAImpl jda = (JDAImpl) event.getJDA();
                 final EmbedBuilder embed = new EmbedBuilder(jda.getEntityBuilder().createMessageEmbed(object));
 
-                messageBuilder.setEmbed(embed, true);
+                messageBuilder.addEmbed(true, embed);
                 hasContent = true;
             }
 

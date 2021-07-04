@@ -84,7 +84,7 @@ class SearchCommand : MusicCommand() {
 
         rows.add(ActionRow.of(Button.danger("cancel-search:$userId", "Cancel")))*/
 
-        val menu = SelectionMenu.Builder("search-menu:$userId")
+        val menu = SelectionMenu.create("search-menu:$userId")
             .setPlaceholder("Select a song to play")
 
         res.forEachIndexed { index, searchResult ->
@@ -102,7 +102,7 @@ class SearchCommand : MusicCommand() {
         sendMsg(
             MessageConfig.Builder()
                 .setChannel(ctx.channel)
-                .setEmbed(EmbedUtils.embedMessage(string))
+                .addEmbed(EmbedUtils.embedMessage(string))
                 .configureMessageBuilder {
                     it.setActionRows(ActionRow.of(menu.build()))
                 }

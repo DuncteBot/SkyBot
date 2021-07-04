@@ -37,11 +37,9 @@ import ml.duncte123.skybot.utils.ModerationUtils
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.entities.Role
-import java.util.concurrent.locks.ReentrantLock
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
-    private val reminderLock = ReentrantLock()
 
     override fun handleInternally(data: JsonNode) {
         MainScope().launch(context = Dispatchers.IO) {
@@ -117,15 +115,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
     }
 
-    @Synchronized // TODO: test this
     private fun handleReminders(reminders: JsonNode) {
-        if (reminderLock.isLocked) {
-            return
-        }
-
-        // we lock this method to prevent the same reminder from being sent multiple times
-        reminderLock.lock()
-
         try {
             val parsedReminders: List<Reminder> = jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
@@ -137,8 +127,5 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             Sentry.captureException(e)
             LOG.error("Updating reminders failed", e)
         }
-
-        // we can safely unlock here as "handleExpiredReminders" is sync
-        reminderLock.unlock()
     }
 }
