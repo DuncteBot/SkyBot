@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_293") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_295") {
         exclude(module = "opus-java")
     }
 
@@ -85,7 +85,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "ade4a54") {
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "4dfc2be") {
         exclude(module = "lavaplayer")
     }
 //    implementation(project(":Lavalink-Client"))
