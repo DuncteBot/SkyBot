@@ -38,7 +38,6 @@ import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.entities.Role
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
