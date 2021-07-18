@@ -252,7 +252,7 @@ public class AirUtils {
     }
 
     public static String makeDatePretty(TemporalAccessor accessor) {
-        return TimeFormat.DATE_LONG.format(accessor);
+        return TimeFormat.DATE_TIME_LONG.format(accessor);
     }
 
     public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
