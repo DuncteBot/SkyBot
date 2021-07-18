@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.OffsetDateTime
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
@@ -95,7 +96,7 @@ data class Reminder(
     val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
     override fun toString(): String {
-        return "$id) `$reminder` on $reminderDateDate"
+        return "$id) `$reminder` on ${TimeFormat.DATE_TIME_LONG.format(reminder_date)}"
     }
 }
 

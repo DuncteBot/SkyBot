@@ -50,7 +50,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.time4j.format.TextWidth;
+import net.dv8tion.jda.api.utils.TimeFormat;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -347,7 +347,7 @@ public class GuildMemberListener extends BaseListener {
         if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
             final CompletableFuture<Boolean> booleanFuture = new CompletableFuture<>();
             final DatabaseAdapter database = variables.getDatabaseAdapter();
-            final String humanTime = Time4JKt.humanize(timeCreated, TextWidth.ABBREVIATED);
+            final String humanTime = TimeFormat.RELATIVE.format(timeCreated);
 
             // we have to use futures since the callback runs on a different thread
             database.getBanBypass(guild.getIdLong(), member.getIdLong(), (byPass) -> {

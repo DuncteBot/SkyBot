@@ -37,7 +37,6 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
-import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -50,14 +49,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
@@ -254,7 +252,7 @@ public class AirUtils {
     }
 
     public static String makeDatePretty(TemporalAccessor accessor) {
-        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(accessor);
+        return TimeFormat.DATE_LONG.format(accessor);
     }
 
     public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
@@ -270,7 +268,7 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                Time4JKt.humanize(reminder.getCreate_date(), TextWidth.ABBREVIATED),
+                TimeFormat.RELATIVE.format(reminder.getCreate_date()),
                 reminder.getReminder().trim()
             );
 

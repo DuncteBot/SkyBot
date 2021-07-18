@@ -39,7 +39,6 @@ import net.dv8tion.jda.api.entities.User.UserFlag
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
-import kotlin.streams.toList
 
 class UserinfoCommand : Command() {
     private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"

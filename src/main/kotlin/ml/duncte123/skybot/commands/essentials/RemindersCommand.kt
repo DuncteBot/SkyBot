@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.utils.TimeFormat
 
 class RemindersCommand : Command() {
 
@@ -108,7 +109,7 @@ class RemindersCommand : Command() {
             |**Message:** ${reminder.reminder}
             |**Remind in:** $remindChannel
             |**Created:** ${reminder.reminderCreateDateDate}
-            |**Remind on:** ${reminder.reminderDateDate}
+            |**Remind on:** ${reminder.reminderDateDate} (${TimeFormat.RELATIVE.format(reminder.reminder_date)})
             |** Message link:** ${reminder.jumpUrl}
         """.trimMargin()
 

@@ -35,7 +35,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.104.0"
+val numberVersion = "3.105.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_295") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_297") {
         exclude(module = "opus-java")
     }
 
@@ -126,7 +126,7 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
     // time parsing
-    implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
+    // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "4.3.0")
