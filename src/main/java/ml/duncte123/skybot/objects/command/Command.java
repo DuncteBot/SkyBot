@@ -164,7 +164,7 @@ public abstract class Command implements ICommand {
 
     @Nonnull
     public String getUsageInstructions(@Nonnull String prefix, @Nonnull String invoke) {
-        return '`' + prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix).trim() + '`';
+        return '`' + (prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix)).trim() + '`';
     }
 
     @Nonnull
