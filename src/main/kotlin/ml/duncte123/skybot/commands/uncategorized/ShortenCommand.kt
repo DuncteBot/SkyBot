@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.isURL
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 
 class ShortenCommand : Command() {
 
@@ -42,7 +43,9 @@ class ShortenCommand : Command() {
             return
         }
 
-        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async(
+        val prefix = if (isDev(ctx.author)) "duncte.bot" else "dunctebot.page.link"
+
+        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson, prefix).async(
             {
                 sendMsg(ctx, "Here is your shortened url: <$it>")
             },

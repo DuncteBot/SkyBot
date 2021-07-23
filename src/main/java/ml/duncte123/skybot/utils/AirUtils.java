@@ -346,13 +346,17 @@ public class AirUtils {
         ((JDAImpl) jda).setContext();
     }
 
-    @Nonnull
     public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
+        return shortenUrl(url, googleKey, mapper, "duncte.bot");
+    }
+
+    @Nonnull
+    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper, String prefix) {
         final ObjectNode json = mapper.createObjectNode();
 
         json.set("dynamicLinkInfo",
             mapper.createObjectNode()
-                .put("domainUriPrefix", "duncte.bot")
+                .put("domainUriPrefix", prefix)
                 .put("link", url)
         );
         json.set("suffix",
