@@ -67,14 +67,14 @@ class EmoteCommand : Command() {
         val id = emote.id
         val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
-        val markdownStr = "<${EmbedBuilder.ZERO_WIDTH_SPACE}:${emote.name}:${emote.idLong}>"
+        val markdownStr = "< :${emote.name}:${emote.idLong}>"
 
         sendMsg(
             ctx,
             """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
-            |**Markdown:** `$markdownStr` (there's a ZWSP after the first `<`)
+            |**Markdown:** `$markdownStr`
             |**Url:** $url
         """.trimMargin()
         )
