@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emote
 
 class EmoteCommand : Command() {
