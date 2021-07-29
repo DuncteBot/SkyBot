@@ -133,7 +133,7 @@ public class TempMuteCommand extends ModBaseCommand {
 
 
         guild.addRoleToMember(toMute, role)
-            .reason("Muted by " + author.getAsTag() + ": " + fReason)
+            .reason("Muted by " + String.format("%#s: %s", ctx.getAuthor(), fReason))
             .queue(success -> {
                     ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());
                     sendSuccess(ctx.getMessage());

@@ -90,7 +90,7 @@ public class KickCommand extends ModBaseCommand {
 
             if (flags.containsKey("r")) {
                 reason = String.join(" ", flags.get("r"));
-                kickAction.reason("Kicked by " + ctx.getAuthor().getAsTag() + ": " + reason);
+                kickAction.reason("Kicked by " + String.format("%#s: %s", ctx.getAuthor(), reason));
             }
 
             final String finalReason = reason;

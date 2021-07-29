@@ -99,7 +99,7 @@ public class UnmuteCommand extends ModBaseCommand {
         final String fReason = reason;
 
         ctx.getGuild().removeRoleFromMember(toMute, role)
-            .reason("Unmute by " + ctx.getAuthor().getAsTag() + ": " + fReason).queue(success -> {
+            .reason("Unmute by " + String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(success -> {
                 ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "unmuted", fReason, null, ctx.getGuild());
                 sendSuccess(ctx.getMessage());
             }

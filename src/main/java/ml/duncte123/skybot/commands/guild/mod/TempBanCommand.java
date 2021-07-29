@@ -94,7 +94,7 @@ public class TempBanCommand extends ModBaseCommand {
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBan.getId(), 1, ctx.getAuthor().getAsTag() + ": " + fReason).queue(
+        ctx.getGuild().ban(toBan.getId(), 1, String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(
             (ignored) -> {
                 if (duration.getSeconds() > 0) {
                     ctx.getDatabaseAdapter().createBan(
