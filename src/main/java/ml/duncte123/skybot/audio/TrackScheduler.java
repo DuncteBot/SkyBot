@@ -136,9 +136,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         final TrackUserData data = track.getUserData(TrackUserData.class);
 
         // If the track was a skipped track or we announce tracks
-        if (data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
+        if ((data != null && data.getWasFromSkip()) || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
-            data.setWasFromSkip(false);
+            if (data != null) {
+                data.setWasFromSkip(false);
+            }
 
             final EmbedBuilder message = AudioTrackKt.toEmbed(
                 track,

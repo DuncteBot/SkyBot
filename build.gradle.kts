@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_297") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_305") {
         exclude(module = "opus-java")
     }
 
@@ -129,7 +129,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "4.3.0")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.0.1")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
