@@ -35,7 +35,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.105.0"
+val numberVersion = "3.105.1"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -174,6 +174,8 @@ task<Exec>("botVersion") {
 }
 
 build.apply {
+    println("Git token: ${System.getenv("GITHUB_TOKEN")}")
+
     dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)
@@ -276,7 +278,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.0.1"
+    gradleVersion = "7.2"
     distributionType = DistributionType.ALL
 }
 
@@ -314,6 +316,7 @@ githubRelease {
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)
+    dryRun(false)
     body(changelog())
 }
 

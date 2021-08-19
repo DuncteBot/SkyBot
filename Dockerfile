@@ -1,4 +1,4 @@
-FROM adoptopenjdk:16-jdk-hotspot AS builder
+FROM azul/zulu-openjdk-alpine:16 AS builder
 
 WORKDIR /skybot
 
@@ -14,7 +14,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY . .
 RUN ./gradlew --no-daemon build
 
-FROM adoptopenjdk:16-jre-hotspot
+FROM azul/zulu-openjdk-alpine:16-jre
 
 WORKDIR /skybot
 COPY --from=builder /skybot/build/libs/skybot*.jar ./skybot.jar
