@@ -49,6 +49,11 @@ public abstract class MusicCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
+        if (!LavalinkManager.INS.isEnabled()) {
+            sendMsg(ctx, "The music feature is currently under maintenance.");
+            return;
+        }
+
         if (this.withAutoJoin) {
             runWithAutoJoin(ctx);
         } else if (channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {

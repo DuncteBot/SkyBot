@@ -28,10 +28,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.5.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.4.5"
+    id("org.jmailen.kotlinter") version "3.5.1"
     pmd
 }
 
@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_305") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_310") {
         exclude(module = "opus-java")
     }
 
@@ -85,7 +85,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
     implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "4dfc2be") {
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
         exclude(module = "lavaplayer")
     }
 //    implementation(project(":Lavalink-Client"))

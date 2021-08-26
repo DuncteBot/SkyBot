@@ -32,17 +32,16 @@ import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.Base64;
 
-
 /**
  * This class has been taken from
- * https://github.com/Frederikam/FredBoat/blob/master/FredBoat/src/main/java/fredboat/audio/player/LavalinkManager.java\
+ * https://github.com/Frederikam/FredBoat/blob/master/FredBoat/src/main/java/fredboat/audio/player/LavalinkManager.java
  * and has been modified to fit my needs
  */
 public final class LavalinkManager {
-
     public static final LavalinkManager INS = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
+    private boolean enabledOverride = true;
 
     private LavalinkManager() {
     }
@@ -65,8 +64,20 @@ public final class LavalinkManager {
         loadNodes();
     }
 
+    @SuppressWarnings("unused") // we need it from eval
+    public void forceEnable(boolean enabled) {
+        this.enabledOverride = enabled;
+
+        // disconnect all links
+        this.lavalink.getLinks().forEach(Link::destroy);
+        // close all connections to all nodes
+        for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
+            this.lavalink.removeNode(i);
+        }
+    }
+
     public boolean isEnabled() {
-        return config.lavalink.enable;
+        return this.enabledOverride || config.lavalink.enable;
     }
 
     public LavalinkPlayer createPlayer(long guildId) {
@@ -139,7 +150,6 @@ public final class LavalinkManager {
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
             lavalink.addNode(URI.create(node.wsurl), node.pass, LavalinkRegion.valueOf(node.region));
         }
-
     }
 
     private String getIdFromToken(String token) {
