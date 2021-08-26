@@ -65,6 +65,11 @@ public class LoveCommand extends Command {
             name2 = args.get(1);
         }
 
+        if (name1.isBlank()) {
+            sendMsg(ctx, "You will need to provide me a username");
+            return;
+        }
+
         final Member target1 = AirUtils.getMentionedMember(name1, ctx);
         final Member target2 = AirUtils.getMentionedMember(name2, ctx);
         final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
