@@ -212,7 +212,7 @@ public class CleanupCommand extends ModBaseCommand {
             Sentry.captureException(e);
         }
         finally {
-            removeMessage(channel, hack);
+            removeMessage(ctx, channel, hack);
             this.futureMap.remove(channel.getIdLong());
         }
 
