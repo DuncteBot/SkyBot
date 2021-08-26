@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.update.GuildUpdateVanityCodeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -82,23 +83,43 @@ public class InviteTrackingListener extends BaseListener {
         } else if (event instanceof GuildJoinEvent guildJoin) {
             // probably not needed, doubt that any guilds will be patreon guilds on join
             this.onGuildJoin(guildJoin);
+        } else if (event instanceof GuildUpdateVanityCodeEvent codeUpdate) {
+            this.onGuildUpdateVanityCode(codeUpdate);
         }
     }
 
-    private void onGuildInviteCreate(GuildInviteCreateEvent event) {
+    private void onGuildInviteCreate(final GuildInviteCreateEvent event) {
         final String code = event.getCode();
         final InviteData inviteData = InviteData.from(event.getInvite());
 
         inviteCache.put(code, inviteData);
     }
 
-    private void onGuildInviteDelete(GuildInviteDeleteEvent event) {
+    private void onGuildInviteDelete(final GuildInviteDeleteEvent event) {
         final String code = event.getCode();
 
         inviteCache.remove(code);
     }
 
-    private void onGuildMemberJoin(GuildMemberJoinEvent event) {
+    private void onGuildUpdateVanityCode(final GuildUpdateVanityCodeEvent event) {
+        if (!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+            return;
+        }
+
+        if (event.getOldVanityCode() == null) {
+            event.getGuild().retrieveVanityInvite().queue((invite) -> {
+                // TODO: insert in cache and update model
+            });
+        } else if (event.getNewVanityCode() == null) {
+            this.inviteCache.remove(event.getOldVanityCode());
+        } else {
+            final InviteData oldData = this.inviteCache.remove(event.getOldVanityCode());
+
+            this.inviteCache.put(event.getNewVanityCode(), oldData);
+        }
+    }
+
+    private void onGuildMemberJoin(final GuildMemberJoinEvent event) {
         final Guild guild = event.getGuild();
         final User user = event.getUser();
         final Member selfMember = guild.getSelfMember();
@@ -113,6 +134,15 @@ public class InviteTrackingListener extends BaseListener {
             return;
         }
 
+        guild.retrieveInvites()
+                .and(guild.retrieveVanityInvite(), (invites, vanity) -> {
+                    //
+                    return null;
+                })
+                .queue((invites) -> {
+                    //
+                });
+
         guild.retrieveInvites().queue((invites) -> {
             boolean inviteFound = false;
 
@@ -126,6 +156,7 @@ public class InviteTrackingListener extends BaseListener {
                 final InviteData cachedInvite = inviteCache.get(code);
 
                 if (cachedInvite == null) {
+                    inviteCache.put(code, InviteData.from(invite));
                     continue;
                 }
 
@@ -173,7 +204,7 @@ public class InviteTrackingListener extends BaseListener {
         inviteCache.entrySet().removeIf(entry -> entry.getValue().getGuildId() == guildId);
     }
 
-    public void attemptInviteCaching(Guild guild) {
+    public void attemptInviteCaching(final Guild guild) {
         if (!isInviteLoggingEnabled(guild)) {
             return;
         }
@@ -191,7 +222,7 @@ public class InviteTrackingListener extends BaseListener {
         );
     }
 
-    private boolean isInviteLoggingEnabled(Guild guild) {
+    private boolean isInviteLoggingEnabled(final Guild guild) {
         if (!CommandUtils.isGuildPatron(guild)) {
             return false;
         }

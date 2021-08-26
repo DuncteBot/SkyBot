@@ -21,12 +21,14 @@ package ml.duncte123.skybot.objects.invites;
 import net.dv8tion.jda.api.entities.Invite;
 
 public class InviteData {
+    private final String code;
     private final long guildId;
     private int uses;
 
-    private InviteData(long guildId, int uses) {
+    private InviteData(long guildId, String code, int uses) {
         this.guildId = guildId;
         this.uses = uses;
+        this.code = code;
     }
 
     public long getGuildId() {
@@ -35,6 +37,10 @@ public class InviteData {
 
     public int getUses() {
         return this.uses;
+    }
+
+    public String getCode() {
+        return this.code;
     }
 
     public void incrementUses() {
@@ -48,6 +54,6 @@ public class InviteData {
             throw new IllegalArgumentException("Can only accept guild invites");
         }
 
-        return new InviteData(guild.getIdLong(), invite.getUses());
+        return new InviteData(guild.getIdLong(), invite.getCode(), invite.getUses());
     }
 }
