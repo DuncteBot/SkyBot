@@ -91,7 +91,6 @@ class StatsCommand : Command() {
                 """.trimMargin(),
                 false
             )
-
             .addField(
                 "Server stats",
                 """**CPU cores:** $cores
@@ -102,7 +101,6 @@ class StatsCommand : Command() {
                 """.trimMargin(),
                 false
             )
-
             .addField(
                 "JVM stats",
                 """**CPU usage:** $jvmCpuUsage
@@ -135,6 +133,8 @@ class StatsCommand : Command() {
                 "Lavalink node #$index",
                 """**Region:** ${node.region.name}
                     |**Uptime:** ${AirUtils.getUptime(stats.uptime)}
+                    |**CPU cores:** ${stats.cpuCores}
+                    |**System Load:** ${stats.systemLoad}%
                     |**Used memory:** ${stats.memUsed shr 20}MB
                     |**Free memory:** ${stats.memFree shr 20}MB
                     |**Players:** ${stats.players}
