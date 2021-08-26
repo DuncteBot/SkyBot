@@ -176,7 +176,7 @@ public class CleanupCommand extends ModBaseCommand {
         final CompletableFuture<Message> hack = new CompletableFuture<>();
 
         sendMsg(MessageConfig.Builder.fromCtx(ctx)
-            .setMessage("Deleting messages, this might take a long time (this message will be deleted once complete)")
+            .setMessage("Deleting messages, this will take a long time (this message will auto delete when it's done)")
             .setSuccessAction(hack::complete)
             .build());
 
@@ -299,13 +299,24 @@ public class CleanupCommand extends ModBaseCommand {
         return future;
     }
 
-    private void removeMessage(TextChannel channel, CompletableFuture<Message> hack) {
+    private void removeMessage(CommandContext ctx, TextChannel channel, CompletableFuture<Message> hack) {
         try {
             final Message hacked = hack.get();
 
             if (hacked != null) {
                 channel.deleteMessageById(hacked.getIdLong())
-                    .queue(null, ignore(ErrorResponse.UNKNOWN_MESSAGE));
+                    .queue(
+                        null,
+                        ignore(ErrorResponse.UNKNOWN_MESSAGE)
+                            .andThen((e) -> {
+                                if (e instanceof ErrorResponseException ex && ex.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                                    modLog(
+                                        "Failed to clean own message, text channel was deleted during message delete progress!",
+                                        ctx.getGuild()
+                                    );
+                                }
+                            })
+                    );
             }
         }
         catch (InterruptedException | ExecutionException e) {

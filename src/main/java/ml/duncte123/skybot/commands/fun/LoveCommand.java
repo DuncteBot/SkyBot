@@ -66,7 +66,12 @@ public class LoveCommand extends Command {
         }
 
         if (name1.isBlank()) {
-            sendMsg(ctx, "You will need to provide me a username");
+            sendMsg(ctx, "You will need to provide me a username for the first user");
+            return;
+        }
+
+        if (name2.isBlank()) {
+            sendMsg(ctx, "You will need to provide me a username for the user to match with");
             return;
         }
 
