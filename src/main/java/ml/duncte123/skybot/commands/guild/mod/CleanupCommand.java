@@ -309,7 +309,8 @@ public class CleanupCommand extends ModBaseCommand {
                         null,
                         ignore(ErrorResponse.UNKNOWN_MESSAGE)
                             .andThen((e) -> {
-                                if (e instanceof ErrorResponseException ex && ex.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                                if (e instanceof ErrorResponseException erx
+                                    && erx.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
                                     modLog(
                                         "Failed to clean own message, text channel was deleted during message delete progress!",
                                         ctx.getGuild()
