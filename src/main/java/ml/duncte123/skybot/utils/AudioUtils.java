@@ -29,7 +29,6 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import gnu.trove.map.TLongObjectMap;
 import lavalink.client.LavalinkUtil;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -63,8 +62,8 @@ public class AudioUtils {
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
         playerManager.registerSourceManager(sourceManager);
 
-        setCustomSourcesOn(playerManager);
-        setCustomSourcesOn(LavalinkUtil.getPlayerManager());
+        DuncteBotSources.registerCustom(playerManager, "en-AU", 6);
+        DuncteBotSources.registerCustom(LavalinkUtil.getPlayerManager(), "en-AU", 6);
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
@@ -148,6 +147,6 @@ public class AudioUtils {
     }
 
     private static void setCustomSourcesOn(AudioPlayerManager playerManager) {
-        DuncteBotSources.registerCustom(playerManager,"en-AU",6);
+        DuncteBotSources.registerCustom(playerManager, "en-AU", 6);
     }
 }

@@ -77,7 +77,7 @@ public final class LavalinkManager {
     }
 
     public boolean isEnabled() {
-        return this.enabledOverride || config.lavalink.enable;
+        return this.enabledOverride && config.lavalink.enable;
     }
 
     public LavalinkPlayer createPlayer(long guildId) {
