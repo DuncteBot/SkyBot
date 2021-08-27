@@ -93,7 +93,7 @@ public final class SkyBot {
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
-        LavalinkManager.INS.start(config);
+        LavalinkManager.INS.start(config, variables.getAudioUtils());
 
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager

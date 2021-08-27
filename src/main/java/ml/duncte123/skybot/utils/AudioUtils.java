@@ -145,8 +145,4 @@ public class AudioUtils {
             return String.format("%02d:%02d", minutes, seconds);
         }
     }
-
-    private static void setCustomSourcesOn(AudioPlayerManager playerManager) {
-        DuncteBotSources.registerCustom(playerManager, "en-AU", 6);
-    }
 }

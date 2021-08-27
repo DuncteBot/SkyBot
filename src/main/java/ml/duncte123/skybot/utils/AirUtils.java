@@ -150,7 +150,7 @@ public class AirUtils {
         LavalinkManager.INS.shutdown();
     }
 
-    private static void stopMusic(AudioUtils audioUtils) {
+    public static void stopMusic(AudioUtils audioUtils) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.getMusicManagers());
 
         for (final long key : temp.keys()) {

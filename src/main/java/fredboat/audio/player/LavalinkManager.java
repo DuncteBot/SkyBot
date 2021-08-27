@@ -24,6 +24,8 @@ import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -41,13 +43,15 @@ public final class LavalinkManager {
     public static final LavalinkManager INS = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
+    private AudioUtils audioUtils;
     private boolean enabledOverride = true;
 
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig config) {
+    public void start(DunctebotConfig config, AudioUtils audioUtils) {
         this.config = config;
+        this.audioUtils = audioUtils;
 
         if (!isEnabled()) {
             return;
@@ -68,11 +72,17 @@ public final class LavalinkManager {
     public void forceEnable(boolean enabled) {
         this.enabledOverride = enabled;
 
-        // disconnect all links
-        this.lavalink.getLinks().forEach(Link::destroy);
-        // close all connections to all nodes
-        for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
-            this.lavalink.removeNode(i);
+        if (enabled) {
+            this.loadNodes();
+        } else {
+            AirUtils.stopMusic(this.audioUtils);
+
+            // disconnect all links
+            this.lavalink.getLinks().forEach(Link::destroy);
+            // close all connections to all nodes
+            for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
+                this.lavalink.removeNode(i);
+            }
         }
     }
 
