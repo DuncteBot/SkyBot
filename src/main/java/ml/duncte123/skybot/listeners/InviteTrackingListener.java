@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -40,12 +39,16 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateVanityCodeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class InviteTrackingListener extends BaseListener {
+    // TODO: don't store this in the application, store it in redis or something
     private final Map<String, InviteData> inviteCache = new ConcurrentHashMap<>();
 
     public InviteTrackingListener(Variables variables) {
@@ -102,13 +105,17 @@ public class InviteTrackingListener extends BaseListener {
     }
 
     private void onGuildUpdateVanityCode(final GuildUpdateVanityCodeEvent event) {
-        if (!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+        final Guild guild = event.getGuild();
+
+        if (!guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
             return;
         }
 
         if (event.getOldVanityCode() == null) {
-            event.getGuild().retrieveVanityInvite().queue((invite) -> {
-                // TODO: insert in cache and update model
+            guild.retrieveVanityInvite().queue((invite) -> {
+                final InviteData data = InviteData.from(invite, guild);
+
+                this.inviteCache.put(data.getCode(), data);
             });
         } else if (event.getNewVanityCode() == null) {
             this.inviteCache.remove(event.getOldVanityCode());
@@ -134,51 +141,69 @@ public class InviteTrackingListener extends BaseListener {
             return;
         }
 
+        // TODO: handle invalid vanity codes
         guild.retrieveInvites()
                 .and(guild.retrieveVanityInvite(), (invites, vanity) -> {
-                    //
-                    return null;
+                    final List<InviteData> fetchedInvites = new ArrayList<>();
+
+                    fetchedInvites.add(InviteData.from(vanity, guild));
+
+                    fetchedInvites.addAll(
+                        invites.stream()
+                            .map(InviteData::from)
+                            .collect(Collectors.toList())
+                    );
+
+                    return fetchedInvites;
                 })
                 .queue((invites) -> {
-                    //
+                    boolean inviteFound = false;
+
+                    for (final InviteData invite : invites) {
+                        // break out of the loop to prevent looping over other invites
+                        if (inviteFound) {
+                            break;
+                        }
+
+                        final String code = invite.getCode();
+                        final InviteData cachedInvite = inviteCache.get(code);
+
+                        if (cachedInvite == null) {
+                            inviteCache.put(code, invite);
+                            continue;
+                        }
+
+                        if (invite.getUses() == cachedInvite.getUses()) {
+                            continue;
+                        }
+
+                        inviteFound = true;
+
+                        cachedInvite.incrementUses();
+
+                        final String pattern = "User **%s** used invite with url <%s>, created by **%s** to join.";
+                        final String tag = user.getAsTag();
+                        final String url = invite.getUrl();
+                        final String inviterTag;
+
+                        if (invite.isVanity()) {
+                            // if this happens to be null we fucked up badly
+                            inviterTag = guild.getOwner().getUser().getAsTag();
+                        } else {
+                            inviterTag = invite.getInviter().getAsTag();
+                        }
+
+                        final String toLog = String.format(pattern, tag, url, inviterTag);
+
+                        modLog(
+                            toLog,
+                            new DunctebotGuild(guild, variables)
+                        );
+                    }
                 });
 
         guild.retrieveInvites().queue((invites) -> {
-            boolean inviteFound = false;
 
-            for (final Invite invite : invites) {
-                // break out of the loop to prevent looping over other invites
-                if (inviteFound) {
-                    break;
-                }
-
-                final String code = invite.getCode();
-                final InviteData cachedInvite = inviteCache.get(code);
-
-                if (cachedInvite == null) {
-                    inviteCache.put(code, InviteData.from(invite));
-                    continue;
-                }
-
-                if (invite.getUses() == cachedInvite.getUses()) {
-                    continue;
-                }
-
-                inviteFound = true;
-
-                cachedInvite.incrementUses();
-
-                final String pattern = "User **%s** used invite with url <%s>, created by **%s** to join.";
-                final String tag = user.getAsTag();
-                final String url = invite.getUrl();
-                @SuppressWarnings("ConstantConditions") final String inviterTag = invite.getInviter().getAsTag();
-                final String toLog = String.format(pattern, tag, url, inviterTag);
-
-                modLog(
-                    toLog,
-                    new DunctebotGuild(guild, variables)
-                );
-            }
         });
     }
 
