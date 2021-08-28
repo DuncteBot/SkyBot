@@ -44,6 +44,11 @@ jobs:
     build_docker:
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v2.3.4
+              with:
+                  path: './'
+                  fetch-depth: 0
+
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v1
 
