@@ -263,7 +263,7 @@ application {
 }
 
 shadowJar.apply {
-    archiveClassifier.set("")
+    archiveClassifier.set("prod")
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",

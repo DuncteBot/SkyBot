@@ -39,7 +39,7 @@ jobs:
             - name: Release bot
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: ./gradlew --no-daemon githubRelease
+              run: ./gradlew --no-daemon shadowJar githubRelease
 
     build_docker:
         runs-on: ubuntu-latest

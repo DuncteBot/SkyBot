@@ -17,6 +17,6 @@ RUN ./gradlew --no-daemon build
 FROM azul/zulu-openjdk-alpine:16-jre
 
 WORKDIR /skybot
-COPY --from=builder /skybot/build/libs/skybot*.jar ./skybot.jar
+COPY --from=builder /skybot/build/libs/skybot*-prod.jar ./skybot.jar
 
 CMD ["java", "-jar", "skybot.jar"]
