@@ -25,13 +25,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Tag {
     public final String name;
     public final String content;
-    public final long owner_id;
+    public final long ownerId;
 
     @JsonCreator
-    public Tag(@JsonProperty("name") String name, @JsonProperty("content") String content, @JsonProperty("owner_id") long owner_id) {
+    public Tag(@JsonProperty("name") String name, @JsonProperty("content") String content, @JsonProperty("owner_id") long ownerId) {
         this.name = name;
         this.content = content;
-        this.owner_id = owner_id;
+        this.ownerId = ownerId;
     }
 
     public String getName() {
@@ -43,6 +43,6 @@ public class Tag {
     }
 
     public long getOwnerId() {
-        return owner_id;
+        return ownerId;
     }
 }

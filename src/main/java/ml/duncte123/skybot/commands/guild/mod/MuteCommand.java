@@ -40,6 +40,9 @@ public class MuteCommand extends ModBaseCommand {
         this.name = "mute";
         this.help = "Mutes a user in the server";
         this.usage = "<@user> [-r reason]";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,

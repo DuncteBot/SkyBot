@@ -46,6 +46,9 @@ public class TempMuteCommand extends ModBaseCommand {
         this.name = "tempmute";
         this.help = "Temporally mutes a user in the server, this will override any existing tempmutes for the user";
         this.usage = "<@user> <time><w/d/h/m/s> [-r reason]";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,

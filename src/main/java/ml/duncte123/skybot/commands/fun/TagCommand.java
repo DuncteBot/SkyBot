@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -42,6 +44,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.*;
 public class TagCommand extends Command {
 
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
+    private final TLongObjectMap<List<Tag>> guildTags = MapUtils.newLongObjectMap();
 
     public TagCommand(Variables variables) {
         this.category = CommandCategory.FUN;
@@ -214,7 +217,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        final long ownerId = this.tagStore.get(tagName).owner_id;
+        final long ownerId = this.tagStore.get(tagName).ownerId;
         final User user = ctx.getShardManager().getUserById(ownerId);
         final String userTag = user == null ? "UnknownUser#0000" : user.getAsTag();
 
@@ -230,7 +233,7 @@ public class TagCommand extends Command {
 
         final Tag tag = this.tagStore.get(tagName);
 
-        if (ctx.getAuthor().getIdLong() != tag.owner_id && !isDev(ctx.getAuthor())) {
+        if (ctx.getAuthor().getIdLong() != tag.ownerId && !isDev(ctx.getAuthor())) {
             sendMsg(ctx, "You do not own that tag");
 
             return;
