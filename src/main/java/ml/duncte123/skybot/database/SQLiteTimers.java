@@ -21,6 +21,7 @@ package ml.duncte123.skybot.database;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.adapters.SqliteDatabaseAdapter;
 import ml.duncte123.skybot.utils.AirUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +54,14 @@ public class SQLiteTimers {
     public static void startReminderTimer(Variables variables) {
         LOGGER.info("Starting reminder checker! {}(SQLITE){}", TextColor.RED, TextColor.RESET);
         SYSPOOL.scheduleAtFixedRate(
-            () -> variables.getDatabaseAdapter().getExpiredReminders((reminders) -> {
+            () -> ((SqliteDatabaseAdapter) variables.getDatabaseAdapter()).getExpiredReminders((reminders) -> {
                 AirUtils.handleExpiredReminders(reminders, variables.getDatabaseAdapter());
                 return null;
             }), 2, 2, TimeUnit.MINUTES);
     }
 
     private static void checkUnbansAndUnmutes(Variables variables) {
-        variables.getDatabaseAdapter().getExpiredBansAndMutes(
+        ((SqliteDatabaseAdapter) variables.getDatabaseAdapter()).getExpiredBansAndMutes(
             (bans, mutes) -> {
                 final DatabaseAdapter adapter = variables.getDatabaseAdapter();
 

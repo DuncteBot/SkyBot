@@ -154,8 +154,6 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
 
-    abstract fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit)
-
     @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
     fun purgeBans(ids: List<Int>) = runOnThread {
         this.purgeBansSync(ids)
@@ -228,11 +226,6 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     }
 
     abstract fun purgeRemindersSync(ids: List<Int>)
-
-    /**
-     * Important: Callback must not be called if the list is empty
-     */
-    abstract fun getExpiredReminders(callback: (List<Reminder>) -> Unit)
 
     abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>)
 

@@ -151,6 +151,12 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
 
+    // implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.4'
+    implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
+    implementation(group = "mysql", name = "mysql-connector-java", version = "8.0.26") {
+        exclude(group = "com.google.protobuf", module = "protobuf-java")
+    }
+
     // dev deps
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)

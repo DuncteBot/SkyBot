@@ -303,10 +303,6 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
 
     override fun purgeMutesSync(ids: List<Int>) = apis.purgeMutes(ids)
 
-    override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
-        throw UnsupportedOperationException("Not used anymore")
-    }
-
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
         runOnThread {
             val storedData = apis.getVcAutoRoles()
@@ -424,10 +420,6 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     }
 
     override fun purgeRemindersSync(ids: List<Int>) = apis.purgeReminders(ids)
-
-    override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
-        throw UnsupportedOperationException("Not used anymore")
-    }
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
         runOnThread {

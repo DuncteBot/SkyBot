@@ -570,7 +570,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
+    fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
         runOnThread {
             val mutes = arrayListOf<Mute>()
             val bans = arrayListOf<Ban>()
@@ -815,7 +815,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
+    fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val reminders = ArrayList<Reminder>()
             connManager.connection.prepareStatement(
