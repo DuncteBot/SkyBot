@@ -226,7 +226,7 @@ public class ModerationUtils {
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
         if (!purgeIds.isEmpty()) {
-            adapter.purgeMutes(purgeIds);
+            adapter.purgeMutesSync(purgeIds);
         }
     }
 
@@ -276,7 +276,7 @@ public class ModerationUtils {
         // If the bans are not empty send a purge request to the databse
         // This will make sure that we don't get them again
         if (!purgeIds.isEmpty()) {
-            adapter.purgeBans(purgeIds);
+            adapter.purgeBansSync(purgeIds);
         }
     }
 
@@ -290,7 +290,7 @@ public class ModerationUtils {
                     "We disabled your spam filter until you have set up a role.");
             }
 
-            guildSettings.setEnableSpamFilter(false);
+            guild.setSettings(guildSettings.setEnableSpamFilter(false));
             return;
         }
 
@@ -298,7 +298,7 @@ public class ModerationUtils {
 
         if (muteRole == null) {
             if (sendMessages) {
-                sendMsg(channel, "The role for the punished people is inexistent.");
+                sendMsg(channel, "The role for the punished people is nonexistent.");
             }
             return;
         }

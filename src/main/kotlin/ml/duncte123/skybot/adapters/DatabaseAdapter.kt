@@ -156,9 +156,19 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit)
 
-    abstract fun purgeBans(ids: List<Int>)
+    @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
+    fun purgeBans(ids: List<Int>) = runOnThread {
+        this.purgeBansSync(ids)
+    }
 
-    abstract fun purgeMutes(ids: List<Int>)
+    abstract fun purgeBansSync(ids: List<Int>)
+
+    @Deprecated("Switch to sync method", ReplaceWith("purgeMutesSync(ids)"))
+    fun purgeMutes(ids: List<Int>) = runOnThread {
+        this.purgeMutesSync(ids)
+    }
+
+    abstract fun purgeMutesSync(ids: List<Int>)
 
     abstract fun createBanBypass(guildId: Long, userId: Long)
 
@@ -212,10 +222,9 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
 
-    fun purgeReminders(ids: List<Int>) {
-        runOnThread {
-            this.purgeRemindersSync(ids)
-        }
+    @Deprecated("Switch to sync method", ReplaceWith("purgeRemindersSync(ids)"))
+    fun purgeReminders(ids: List<Int>) = runOnThread {
+        this.purgeRemindersSync(ids)
     }
 
     abstract fun purgeRemindersSync(ids: List<Int>)

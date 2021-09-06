@@ -331,7 +331,10 @@ public class AirUtils {
             .collect(Collectors.toList());
 
         toPurge.addAll(extraRemoval);
-        adapter.purgeRemindersSync(toPurge);
+
+        if (!toPurge.isEmpty()) {
+            adapter.purgeRemindersSync(toPurge);
+        }
     }
 
     public static String parsePerms(Permission[] perms) {

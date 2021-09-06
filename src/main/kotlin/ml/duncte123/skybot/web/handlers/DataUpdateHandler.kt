@@ -41,29 +41,44 @@ import java.util.concurrent.locks.ReentrantLock
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
-    private val reminderLock = ReentrantLock()
+    private val updateLock = ReentrantLock()
+    private val scope = MainScope()
 
     override fun handleInternally(data: JsonNode) {
-        MainScope().launch(context = Dispatchers.IO) {
-            if (data.has("new_one_guild")) {
-                handleNewOneGuild(data["new_one_guild"])
-            }
+        // swallow the update if locked
+        if (updateLock.isLocked) {
+            return
+        }
 
-            if (data.has("patrons")) {
-                handlePatrons(data["patrons"])
-            }
+        scope.launch(context = Dispatchers.IO) {
+            updateLock.lock()
 
-            if (data.has("unbans")) {
-                handleUnbans(data["unbans"])
-            }
+            try {
+                if (data.has("new_one_guild")) {
+                    handleNewOneGuild(data["new_one_guild"])
+                }
 
-            if (data.has("unmutes")) {
-                handleUnmutes(data["unmutes"])
-            }
+                if (data.has("patrons")) {
+                    handlePatrons(data["patrons"])
+                }
 
-            // Uses complete, must be handled last
-            if (data.has("reminders")) {
-                handleReminders(data["reminders"])
+                if (data.has("unbans")) {
+                    handleUnbans(data["unbans"])
+                }
+
+                if (data.has("unmutes")) {
+                    handleUnmutes(data["unmutes"])
+                }
+
+                // Uses complete, must be handled last
+                if (data.has("reminders")) {
+                    handleReminders(data["reminders"])
+                }
+            } catch (e: Exception) {
+                LOG.error("Data update failure!", e)
+                Sentry.captureException(e)
+            } finally {
+                updateLock.unlock()
             }
         }
     }
@@ -118,15 +133,9 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
     }
 
     private fun handleReminders(reminders: JsonNode) {
-        // swallow the update if locked
-        if (reminderLock.isLocked) {
-            return
-        }
-
-        reminderLock.lock()
-
         try {
-            val parsedReminders: List<Reminder> = jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
+            val parsedReminders: List<Reminder> =
+                jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
             // Uses complete, must be handled last
             if (parsedReminders.isNotEmpty()) {
@@ -135,8 +144,6 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         } catch (e: Exception) {
             Sentry.captureException(e)
             LOG.error("Updating reminders failed", e)
-        } finally {
-            reminderLock.unlock()
         }
     }
 }

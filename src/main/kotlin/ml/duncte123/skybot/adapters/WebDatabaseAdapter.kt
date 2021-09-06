@@ -299,17 +299,9 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun purgeBans(ids: List<Int>) {
-        runOnThread {
-            apis.purgeBans(ids)
-        }
-    }
+    override fun purgeBansSync(ids: List<Int>) = apis.purgeBans(ids)
 
-    override fun purgeMutes(ids: List<Int>) {
-        runOnThread {
-            apis.purgeMutes(ids)
-        }
-    }
+    override fun purgeMutesSync(ids: List<Int>) = apis.purgeMutes(ids)
 
     override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
         throw UnsupportedOperationException("Not used anymore")
@@ -431,9 +423,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun purgeRemindersSync(ids: List<Int>) {
-        apis.purgeReminders(ids)
-    }
+    override fun purgeRemindersSync(ids: List<Int>) = apis.purgeReminders(ids)
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         throw UnsupportedOperationException("Not used anymore")

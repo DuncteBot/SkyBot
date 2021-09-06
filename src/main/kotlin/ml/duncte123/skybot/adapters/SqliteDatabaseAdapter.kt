@@ -563,12 +563,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun purgeBans(ids: List<Int>) {
-        runOnThread {
-            val idsString = ids.joinToString(separator = ", ")
-            connManager.connection.createStatement().use {
-                it.execute("DELETE FROM bans WHERE id in ($idsString)")
-            }
+    override fun purgeBansSync(ids: List<Int>) {
+        val idsString = ids.joinToString(separator = ", ")
+        connManager.connection.createStatement().use {
+            it.execute("DELETE FROM bans WHERE id in ($idsString)")
         }
     }
 
@@ -614,11 +612,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun purgeMutes(ids: List<Int>) {
-        runOnThread {
-            connManager.connection.createStatement().use {
-                it.execute("DELETE FROM mutes WHERE id in (${ids.joinToString(separator = ", ")})")
-            }
+    override fun purgeMutesSync(ids: List<Int>) {
+        connManager.connection.createStatement().use {
+            it.execute("DELETE FROM mutes WHERE id in (${ids.joinToString(separator = ", ")})")
         }
     }
 
