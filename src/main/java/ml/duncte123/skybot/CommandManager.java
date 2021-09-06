@@ -65,6 +65,7 @@ import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -499,8 +500,16 @@ public class CommandManager {
         });
     }
 
+    private boolean isSafeForWork(GuildMessageReceivedEvent event) {
+        final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
+
+        return !event.getChannel().isNSFW() ||
+            nsfwLevel == Guild.NSFWLevel.DEFAULT ||
+            nsfwLevel == Guild.NSFWLevel.SAFE;
+    }
+
     private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+        if (cmd.getCategory() == CommandCategory.NSFW && this.isSafeForWork(event)) {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Woops, this channel is not marked as NSFW.\n" +
                     "Please mark this channel as NSFW to use this command")
