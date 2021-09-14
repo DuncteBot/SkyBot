@@ -97,9 +97,10 @@ public class ReadyShutdownListener extends MessageListener {
     }
 
     private void onShutdown() {
-        Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
-
         BotCommons.shutdown();
+
+        this.redis.shutdown();
+        LOGGER.info("Redis shutdown");
 
         AirUtils.stop(this.variables.getAudioUtils());
         LOGGER.info("Music system shutdown");

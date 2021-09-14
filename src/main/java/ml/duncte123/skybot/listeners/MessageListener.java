@@ -27,17 +27,20 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.database.RedisConnection;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.discord.MessageData;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -65,6 +68,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 public abstract class MessageListener extends BaseListener {
 
+    protected final RedisConnection redis = new RedisConnection();
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
     /* package */ final SpamFilter spamFilter = new SpamFilter(variables);
@@ -94,6 +98,10 @@ public abstract class MessageListener extends BaseListener {
                 checkSwearFilter(event.getMessage(), event, guild);
             }
         });
+    }
+
+    /* package */ void onMessageDelete(final GuildMessageDeleteEvent event) {
+        //
     }
 
     /* package */ void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -126,6 +134,19 @@ public abstract class MessageListener extends BaseListener {
         }
 
         final String raw = event.getMessage().getContentRaw().trim();
+
+        if (raw.startsWith("!")) {
+            if (raw.startsWith("!save")) {
+                this.redis.test(event.getMessage());
+            } else if (raw.startsWith("!get")) {
+                final var msgId = raw.substring("!get".length() + 1);
+                final MessageData messageData = this.redis.testGet(msgId);
+
+                event.getChannel().sendMessage("```" + messageData + "```").queue();
+            }
+
+            return;
+        }
 
         if (raw.equals(Settings.PREFIX + "shutdown") && isDev(author.getIdLong())) {
             LOGGER.info("Initialising shutdown!!!");

@@ -151,6 +151,9 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
 
+    // redis
+    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
+
     // dev deps
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
