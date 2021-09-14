@@ -100,7 +100,7 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    /* package */ void onMessageDelete(final GuildMessageDeleteEvent event) {
+    /* package */ void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
         //
     }
 
