@@ -20,28 +20,42 @@ package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.objects.discord.MessageData;
 import net.dv8tion.jda.api.entities.Message;
+import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.Map;
+
 public class RedisConnection {
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
 
-    public void test(Message message) {
+    public void storeMessage(MessageData data) {
         try (Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
-                message.getId(),
-                MessageData.from(message).toMap()
+                data.getMessageIdString(),
+                data.toMap()
             );
         }
     }
 
-    public MessageData testGet(String messageId) {
+    @Nullable
+    public MessageData getMessage(String messageId) {
         try (Jedis jedis = this.pool.getResource()) {
-            return MessageData.from(
-                jedis.hgetAll(messageId)
-            );
+            final Map<String, String> response = jedis.hgetAll(messageId);
+
+            if (response.isEmpty()) {
+                return null;
+            }
+
+            return MessageData.from(response);
+        }
+    }
+
+    public void deleteMessage(String messageId) {
+        try (Jedis jedis = this.pool.getResource()) {
+            jedis.del(messageId);
         }
     }
 

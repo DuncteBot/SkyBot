@@ -80,6 +80,12 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /* package */ void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        // check if logging is enabled and guild is patron
+        // get old message
+        // log new message if old is null
+        // log update for message
+        // store new message
+
         if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             return;
         }
@@ -101,7 +107,11 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /* package */ void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
-        //
+        // get data
+        // log delete
+        // delete from db
+
+        this.redis.deleteMessage(event.getMessageId());
     }
 
     /* package */ void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -135,19 +145,6 @@ public abstract class MessageListener extends BaseListener {
 
         final String raw = event.getMessage().getContentRaw().trim();
 
-        if (raw.startsWith("!")) {
-            if (raw.startsWith("!save")) {
-                this.redis.test(event.getMessage());
-            } else if (raw.startsWith("!get")) {
-                final var msgId = raw.substring("!get".length() + 1);
-                final MessageData messageData = this.redis.testGet(msgId);
-
-                event.getChannel().sendMessage("```" + messageData + "```").queue();
-            }
-
-            return;
-        }
-
         if (raw.equals(Settings.PREFIX + "shutdown") && isDev(author.getIdLong())) {
             LOGGER.info("Initialising shutdown!!!");
 
@@ -165,8 +162,7 @@ public abstract class MessageListener extends BaseListener {
             try {
                 setJDAContext(event.getJDA());
                 handleMessageEventChecked(raw, guild, event);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Sentry.captureException(e);
                 e.printStackTrace();
             }
@@ -192,6 +188,14 @@ public abstract class MessageListener extends BaseListener {
     private void handleMessageEventChecked(String raw, Guild guild, GuildMessageReceivedEvent event) {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
+        final Message message = event.getMessage();
+        final MessageData data = MessageData.from(message);
+
+        // check if logging is enabled
+        // check if guild is patron
+        // store message
+
+        this.redis.storeMessage(data);
 
         if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
             return;

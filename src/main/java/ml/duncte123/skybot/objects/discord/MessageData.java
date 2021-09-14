@@ -36,6 +36,26 @@ public class MessageData {
         this.content = content;
     }
 
+    public long getMessageId() {
+        return messageId;
+    }
+
+    public String getMessageIdString() {
+        return String.valueOf(messageId);
+    }
+
+    public long getAuthorId() {
+        return authorId;
+    }
+
+    public String getAuthorTag() {
+        return authorTag;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
     public Map<String, String> toMap() {
         final Map<String, String> map = new HashMap<>();
 
