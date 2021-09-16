@@ -19,7 +19,11 @@
 package ml.duncte123.skybot.objects.discord;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.utils.TimeUtil;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +32,17 @@ public class MessageData {
     private final long authorId;
     private final String authorTag; // TODO: do we need this?
     private final String content;
+    private final OffsetDateTime editedAt;
 
-    public MessageData(long messageId, long authorId, String authorTag, String content) {
+    public MessageData(
+        long messageId, long authorId, String authorTag, String content,
+        OffsetDateTime editedAt
+    ) {
         this.messageId = messageId;
         this.authorId = authorId;
         this.authorTag = authorTag;
         this.content = content;
+        this.editedAt = editedAt;
     }
 
     public long getMessageId() {
@@ -56,6 +65,15 @@ public class MessageData {
         return content;
     }
 
+    public OffsetDateTime getCratedAt() {
+        return TimeUtil.getTimeCreated(this.messageId);
+    }
+
+    @Nullable
+    public OffsetDateTime getEditedAt() {
+        return editedAt;
+    }
+
     public Map<String, String> toMap() {
         final Map<String, String> map = new HashMap<>();
 
@@ -63,6 +81,7 @@ public class MessageData {
         map.put("author_id", String.valueOf(this.authorId));
         map.put("author_tag", this.authorTag);
         map.put("content", this.content);
+        map.put("edited_at", this.editedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
         return map;
     }
@@ -72,7 +91,8 @@ public class MessageData {
             Long.parseLong(map.get("message_id")),
             Long.parseLong(map.get("author_id")),
             map.get("author_tag"),
-            map.get("content")
+            map.get("content"),
+            map.get("edited_at") == null ? null : OffsetDateTime.parse(map.get("edited_at"))
         );
     }
 
@@ -83,6 +103,8 @@ public class MessageData {
             ", authorId=" + authorId +
             ", authorTag='" + authorTag + '\'' +
             ", content='" + content + '\'' +
+            ", cratedAt=" + getCratedAt() +
+            ", editedAt=" + editedAt +
             '}';
     }
 
@@ -91,7 +113,8 @@ public class MessageData {
             message.getIdLong(),
             message.getAuthor().getIdLong(),
             message.getAuthor().getAsTag(),
-            message.getContentRaw()
+            message.getContentRaw(),
+            message.getTimeEdited()
         );
     }
 }

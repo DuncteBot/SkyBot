@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.objects.discord.MessageData;
-import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -31,7 +30,7 @@ public class RedisConnection {
     private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
 
     public void storeMessage(MessageData data) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (final Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
                 data.getMessageIdString(),
@@ -40,9 +39,10 @@ public class RedisConnection {
         }
     }
 
+    // NOTE: not optimized update and insert operations
     @Nullable
     public MessageData getMessage(String messageId) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (final Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             if (response.isEmpty()) {
@@ -53,8 +53,24 @@ public class RedisConnection {
         }
     }
 
+    @Nullable
+    public MessageData getMessageAndUpdate(String messageId, MessageData updateData) {
+        try (final Jedis jedis = this.pool.getResource()) {
+            final Map<String, String> response = jedis.hgetAll(messageId);
+
+            // update the data after getting it
+            jedis.hset(messageId, updateData.toMap());
+
+            if (response.isEmpty()) {
+                return null;
+            }
+
+            return MessageData.from(response);
+        }
+    }
+
     public void deleteMessage(String messageId) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (final Jedis jedis = this.pool.getResource()) {
             jedis.del(messageId);
         }
     }

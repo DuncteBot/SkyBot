@@ -64,7 +64,7 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.20")
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")

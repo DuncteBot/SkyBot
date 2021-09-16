@@ -80,11 +80,13 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /* package */ void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
-        // check if logging is enabled and guild is patron
-        // get old message
-        // log new message if old is null
-        // log update for message
-        // store new message
+        // ignore bots
+        final Message message = event.getMessage();
+        final User author = message.getAuthor();
+
+        if (author.isBot() || author.isSystem() || message.isWebhookMessage()) {
+            return;
+        }
 
         if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             return;
@@ -94,14 +96,22 @@ public abstract class MessageListener extends BaseListener {
             final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
             final GuildSetting settings = guild.getSettings();
 
-            if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
-                !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
+            if (settings.isMessageLogging()) {
+                final MessageData data = MessageData.from(message);
+                final MessageData oldMessage = this.redis.getMessageAndUpdate(message.getId(), data);
 
-                if (blacklistedWordCheck(guild, event.getMessage(), event.getMember(), settings.getBlacklistedWords())) {
+                // todo: log differences
+            }
+
+            //noinspection ConstantConditions
+            if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+
+                if (blacklistedWordCheck(guild, message, event.getMember(), settings.getBlacklistedWords())) {
                     return;
                 }
 
-                checkSwearFilter(event.getMessage(), event, guild);
+                checkSwearFilter(message, event, guild);
             }
         });
     }
@@ -189,13 +199,13 @@ public abstract class MessageListener extends BaseListener {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
         final Message message = event.getMessage();
-        final MessageData data = MessageData.from(message);
 
-        // check if logging is enabled
-        // check if guild is patron
-        // store message
+        // check if guild is patron?
+        if (settings.isMessageLogging()){
+            final MessageData data = MessageData.from(message);
 
-        this.redis.storeMessage(data);
+            this.redis.storeMessage(data);
+        }
 
         if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
             return;
