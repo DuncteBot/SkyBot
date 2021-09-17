@@ -36,6 +36,8 @@ public class RedisConnection {
                 data.getMessageIdString(),
                 data.toMap()
             );
+            // normal 1 month, patreom 5 months
+            jedis.expire(data.getMessageIdString(), 0L);
         }
     }
 
@@ -54,16 +56,32 @@ public class RedisConnection {
     }
 
     @Nullable
-    public MessageData getMessageAndUpdate(String messageId, MessageData updateData) {
+    public MessageData getAndUpdateMessage(String messageId, MessageData updateData) {
         try (final Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             // update the data after getting it
             jedis.hset(messageId, updateData.toMap());
+            // TODO: update timeout
 
             if (response.isEmpty()) {
                 return null;
             }
+
+            return MessageData.from(response);
+        }
+    }
+
+    @Nullable
+    public MessageData getAndDeleteMessage(String messageId) {
+        try (final Jedis jedis = this.pool.getResource()) {
+            final Map<String, String> response = jedis.hgetAll(messageId);
+
+            if (response.isEmpty()) {
+                return null;
+            }
+
+            jedis.del(messageId);
 
             return MessageData.from(response);
         }

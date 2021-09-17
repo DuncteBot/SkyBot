@@ -71,20 +71,20 @@ public abstract class MessageListener extends BaseListener {
     protected final RedisConnection redis = new RedisConnection();
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
-    /* package */ final SpamFilter spamFilter = new SpamFilter(variables);
-    /* package */ final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
+    protected final SpamFilter spamFilter = new SpamFilter(variables);
+    protected final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
         (r) -> new Thread(r, "Bot-Service-Thread"));
 
-    /* package */ MessageListener(Variables variables) {
+    protected MessageListener(Variables variables) {
         super(variables);
     }
 
-    /* package */ void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    protected void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         // ignore bots
         final Message message = event.getMessage();
         final User author = message.getAuthor();
 
-        if (author.isBot() || author.isSystem() || message.isWebhookMessage()) {
+        if (author.isBot() || author.isSystem() || message.isWebhookMessage() || event.getMember() == null) {
             return;
         }
 
@@ -98,12 +98,11 @@ public abstract class MessageListener extends BaseListener {
 
             if (settings.isMessageLogging()) {
                 final MessageData data = MessageData.from(message);
-                final MessageData oldMessage = this.redis.getMessageAndUpdate(message.getId(), data);
+                final MessageData oldMessage = this.redis.getAndUpdateMessage(message.getId(), data);
 
                 // todo: log differences
             }
 
-            //noinspection ConstantConditions
             if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
                 !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
@@ -116,15 +115,23 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    /* package */ void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
-        // get data
-        // log delete
-        // delete from db
+    protected void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
+        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
-        this.redis.deleteMessage(event.getMessageId());
+        if (!guild.getSettings().isMessageLogging()) {
+            // just delete the message here as we don't want to keep it around
+            this.redis.deleteMessage(event.getMessageId());
+            return;
+        }
+
+        final MessageData data = this.redis.getAndDeleteMessage(event.getMessageId());
+
+        if (data != null) {
+            // log message
+        }
     }
 
-    /* package */ void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    protected void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
