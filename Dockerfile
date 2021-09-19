@@ -16,6 +16,9 @@ RUN ./gradlew --no-daemon build
 
 FROM azul/zulu-openjdk-alpine:16-jre
 
+# add libstdc++ for playing back mp3's with lavaplayer
+RUN apk add --no-cache libstdc++
+
 WORKDIR /skybot
 COPY --from=builder /skybot/build/libs/skybot*-prod.jar ./skybot.jar
 
