@@ -67,6 +67,7 @@ public class TagCommand extends Command {
     }
 
     @Override
+    @SuppressWarnings("PMD.NPathComplexity") // this will be rewritten some day
     public void execute(@Nonnull CommandContext ctx) {
         if ("tags".equalsIgnoreCase(ctx.getInvoke())) {
             sendTagsList(ctx);
@@ -112,16 +113,16 @@ public class TagCommand extends Command {
             sendTag(ctx, this.tagStore.get(subCmd));
 
             return;
-        } else if (this.guildTags.containsKey(ctx.getGuild().getIdLong())) {
+        }
+
+        if (this.guildTags.containsKey(ctx.getGuild().getIdLong())) {
             final List<Tag> tags = this.guildTags.get(ctx.getGuild().getIdLong());
             final Optional<Tag> foundTag = tags.stream()
                 .filter((tag) -> subCmd.equals(tag.name))
                 .findFirst();
 
             if (foundTag.isPresent()) {
-                final Tag tag = foundTag.get();
-
-                sendTag(ctx, tag);
+                sendTag(ctx, foundTag.get());
                 return;
             }
         }

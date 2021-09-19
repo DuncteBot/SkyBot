@@ -139,6 +139,7 @@ public class DunctebotConfig {
         }
     }
 
+    // TODO: redis settings
     @Nonnull
     public static DunctebotConfig fromEnv() {
         final long[] admins = Arrays.stream(System.getenv("BOT_ADMINS").split(","))

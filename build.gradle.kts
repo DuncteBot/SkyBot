@@ -64,7 +64,7 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.20")
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
@@ -77,7 +77,7 @@ dependencies {
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_323") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_327") {
         exclude(module = "opus-java")
     }
 
@@ -150,6 +150,9 @@ dependencies {
     // jackson
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
+
+    // redis
+    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
 
     // dev deps
     devDependencies.forEach {
