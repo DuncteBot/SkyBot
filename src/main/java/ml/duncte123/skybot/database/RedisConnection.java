@@ -44,7 +44,7 @@ public class RedisConnection {
     }
 
     public void storeMessage(MessageData data, boolean isPatron) {
-        try (final Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
                 data.getMessageIdString(),
@@ -56,23 +56,9 @@ public class RedisConnection {
         }
     }
 
-    // NOTE: not optimized update and insert operations
-    @Nullable
-    public MessageData getMessage(String messageId) {
-        try (final Jedis jedis = this.pool.getResource()) {
-            final Map<String, String> response = jedis.hgetAll(messageId);
-
-            if (response.isEmpty()) {
-                return null;
-            }
-
-            return MessageData.from(response);
-        }
-    }
-
     @Nullable
     public MessageData getAndUpdateMessage(String messageId, MessageData updateData, boolean isPatron) {
-        try (final Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             // update the data after getting it
@@ -90,7 +76,7 @@ public class RedisConnection {
 
     @Nullable
     public MessageData getAndDeleteMessage(String messageId) {
-        try (final Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             if (response.isEmpty()) {
@@ -104,7 +90,7 @@ public class RedisConnection {
     }
 
     public void deleteMessage(String messageId) {
-        try (final Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.pool.getResource()) {
             jedis.del(messageId);
         }
     }

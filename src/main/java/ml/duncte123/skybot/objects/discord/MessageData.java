@@ -27,6 +27,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+// Fuck off :)
+@SuppressWarnings({"PMD.NullAssignment", "PMD.UseConcurrentHashMap"})
 public class MessageData {
     private final long messageId;
     private final long authorId;
@@ -36,7 +38,7 @@ public class MessageData {
 
     public MessageData(
         long messageId, long authorId, long channelId, String content,
-        OffsetDateTime editedAt
+        @Nullable OffsetDateTime editedAt
     ) {
         this.messageId = messageId;
         this.authorId = authorId;
@@ -96,7 +98,7 @@ public class MessageData {
             Long.parseLong(map.get("author_id")),
             Long.parseLong(map.get("channel_id")),
             map.get("content"),
-            map.get("edited_at").equals("") ? null : OffsetDateTime.parse(map.get("edited_at"))
+            "".equals(map.get("edited_at")) ? null : OffsetDateTime.parse(map.get("edited_at"))
         );
     }
 
