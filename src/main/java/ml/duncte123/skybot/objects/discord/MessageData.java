@@ -30,17 +30,17 @@ import java.util.Map;
 public class MessageData {
     private final long messageId;
     private final long authorId;
-    private final String authorTag; // TODO: do we need this?
+    private final long channelId;
     private final String content;
     private final OffsetDateTime editedAt;
 
     public MessageData(
-        long messageId, long authorId, String authorTag, String content,
+        long messageId, long authorId, long channelId, String content,
         OffsetDateTime editedAt
     ) {
         this.messageId = messageId;
         this.authorId = authorId;
-        this.authorTag = authorTag;
+        this.channelId = channelId;
         this.content = content;
         this.editedAt = editedAt;
     }
@@ -57,8 +57,8 @@ public class MessageData {
         return authorId;
     }
 
-    public String getAuthorTag() {
-        return authorTag;
+    public long getChannelId() {
+        return channelId;
     }
 
     public String getContent() {
@@ -67,6 +67,10 @@ public class MessageData {
 
     public OffsetDateTime getCratedAt() {
         return TimeUtil.getTimeCreated(this.messageId);
+    }
+
+    public boolean isEdit() {
+        return this.getEditedAt() != null;
     }
 
     @Nullable
@@ -79,9 +83,9 @@ public class MessageData {
 
         map.put("message_id", String.valueOf(this.messageId));
         map.put("author_id", String.valueOf(this.authorId));
-        map.put("author_tag", this.authorTag);
+        map.put("channel_id", String.valueOf(this.channelId));
         map.put("content", this.content);
-        map.put("edited_at", this.editedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        map.put("edited_at", this.isEdit() ? this.editedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) : "");
 
         return map;
     }
@@ -90,9 +94,9 @@ public class MessageData {
         return new MessageData(
             Long.parseLong(map.get("message_id")),
             Long.parseLong(map.get("author_id")),
-            map.get("author_tag"),
+            Long.parseLong(map.get("channel_id")),
             map.get("content"),
-            map.get("edited_at") == null ? null : OffsetDateTime.parse(map.get("edited_at"))
+            map.get("edited_at").equals("") ? null : OffsetDateTime.parse(map.get("edited_at"))
         );
     }
 
@@ -101,7 +105,7 @@ public class MessageData {
         return "MessageData{" +
             "messageId=" + messageId +
             ", authorId=" + authorId +
-            ", authorTag='" + authorTag + '\'' +
+            ", channelId=" + channelId +
             ", content='" + content + '\'' +
             ", cratedAt=" + getCratedAt() +
             ", editedAt=" + editedAt +
@@ -112,7 +116,7 @@ public class MessageData {
         return new MessageData(
             message.getIdLong(),
             message.getAuthor().getIdLong(),
-            message.getAuthor().getAsTag(),
+            message.getChannel().getIdLong(),
             message.getContentRaw(),
             message.getTimeEdited()
         );

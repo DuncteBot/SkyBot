@@ -22,6 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
@@ -34,9 +35,11 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.discord.MessageData;
+import ml.duncte123.skybot.objects.user.FakeUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -45,10 +48,12 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -56,12 +61,14 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
+import static ml.duncte123.skybot.utils.CommandUtils.isGuildPatron;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
@@ -97,10 +104,13 @@ public abstract class MessageListener extends BaseListener {
             final GuildSetting settings = guild.getSettings();
 
             if (settings.isMessageLogging()) {
-                final MessageData data = MessageData.from(message);
-                final MessageData oldMessage = this.redis.getAndUpdateMessage(message.getId(), data);
+                final MessageData edited = MessageData.from(message);
+                final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited, isGuildPatron(guild));
 
-                // todo: log differences
+                // this may happen, idk
+                if (original != null) {
+                    this.logEditedMessage(original, edited, guild);
+                }
             }
 
             if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
@@ -127,7 +137,7 @@ public abstract class MessageListener extends BaseListener {
         final MessageData data = this.redis.getAndDeleteMessage(event.getMessageId());
 
         if (data != null) {
-            // log message
+            this.logDeletedMessage(data, guild);
         }
     }
 
@@ -211,7 +221,7 @@ public abstract class MessageListener extends BaseListener {
         if (settings.isMessageLogging()){
             final MessageData data = MessageData.from(message);
 
-            this.redis.storeMessage(data);
+            this.redis.storeMessage(data, isGuildPatron(guild));
         }
 
         if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
@@ -518,5 +528,74 @@ public abstract class MessageListener extends BaseListener {
         if (manager != null) {
             BotCommons.shutdown(manager);
         }
+    }
+
+    private void logEditedMessage(MessageData original, MessageData edited, DunctebotGuild guild) {
+        // I would not expect this to happen, but we're still working with discord here
+        // At this point I am expecting update events for messages that are not edited
+        if (!edited.isEdit()) {
+            return;
+        }
+
+        final Consumer<User> userConsumer = (user) -> {
+            final EmbedBuilder embedBuilder = EmbedUtils.getDefaultEmbed()
+                .setColor(0xDEBB0B)
+                .setAuthor(
+                    "%s (%s)".formatted(user.getAsTag(), edited.getAuthorId()),
+                    "https://duncte.bot/patreon",
+                    user.getEffectiveAvatarUrl().replace(".gif", ".png")
+                )
+                .setDescription(
+                    "Message %s edited in <#%s>\n**Before:** %s\n**After:** %s".formatted(
+                        edited.getMessageId(),
+                        edited.getChannelId(),
+                        MarkdownSanitizer.escape(original.getContent()),
+                        MarkdownSanitizer.escape(edited.getContent())
+                    )
+                )
+                .setTimestamp(Instant.now());
+
+            modLog(
+                new MessageConfig.Builder().setEmbeds(true, embedBuilder),
+                guild
+            );
+        };
+
+        // try to fetch the user since we don't cache them
+        guild.getJDA().retrieveUserById(edited.getAuthorId()).queue(
+            userConsumer,
+            (error) -> userConsumer.accept(new FakeUser("UnknownUser", edited.getAuthorId(), 0))
+        );
+    }
+
+    private void logDeletedMessage(MessageData data, DunctebotGuild guild) {
+        final Consumer<User> userConsumer = (user) -> {
+            final EmbedBuilder embedBuilder = EmbedUtils.getDefaultEmbed()
+                .setColor(0xFF0000)
+                .setAuthor(
+                    "%s (%s)".formatted(user.getAsTag(), data.getAuthorId()),
+                    "https://duncte.bot/patreon",
+                    user.getEffectiveAvatarUrl().replace(".gif", ".png")
+                )
+                .setDescription(
+                    "Message %s deleted from <#%s>\n**Content:** %s".formatted(
+                        data.getMessageId(),
+                        data.getChannelId(),
+                        MarkdownSanitizer.escape(data.getContent())
+                    )
+                )
+                .setTimestamp(Instant.now());
+
+            modLog(
+                new MessageConfig.Builder().setEmbeds(true, embedBuilder),
+                guild
+            );
+        };
+
+        // try to fetch the user since we don't cache them
+        guild.getJDA().retrieveUserById(data.getAuthorId()).queue(
+            userConsumer,
+            (error) -> userConsumer.accept(new FakeUser("UnknownUser", data.getAuthorId(), 0))
+        );
     }
 }

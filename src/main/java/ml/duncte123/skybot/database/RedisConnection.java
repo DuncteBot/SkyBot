@@ -27,17 +27,32 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.Map;
 
 public class RedisConnection {
-    private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+    /* seconds * minutes * hours * days */
+    private static final long TWO_WEEKS_IN_SECONDS = 60L * 60L * 24L * 14L;
+    private static final long TWO_MONTHS_IN_SECONDS = 60L * 60L * 24L * 61L;
 
-    public void storeMessage(MessageData data) {
+    private final JedisPool pool;
+
+    public RedisConnection() {
+        String host = System.getenv("REDIS_HOST");
+
+        if (host == null) {
+            host = "localhost";
+        }
+
+        this.pool = new JedisPool(new JedisPoolConfig(), host);
+    }
+
+    public void storeMessage(MessageData data, boolean isPatron) {
         try (final Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
                 data.getMessageIdString(),
                 data.toMap()
             );
-            // normal 1 month, patreom 5 months
-            jedis.expire(data.getMessageIdString(), 0L);
+            // normal 2 weeks, patreon 2 months
+            final long seconds = isPatron ? TWO_MONTHS_IN_SECONDS : TWO_WEEKS_IN_SECONDS;
+            jedis.expire(data.getMessageIdString(), seconds);
         }
     }
 
@@ -56,13 +71,14 @@ public class RedisConnection {
     }
 
     @Nullable
-    public MessageData getAndUpdateMessage(String messageId, MessageData updateData) {
+    public MessageData getAndUpdateMessage(String messageId, MessageData updateData, boolean isPatron) {
         try (final Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             // update the data after getting it
             jedis.hset(messageId, updateData.toMap());
-            // TODO: update timeout
+            // update timeout
+            jedis.expire(messageId, isPatron ? TWO_MONTHS_IN_SECONDS : TWO_WEEKS_IN_SECONDS);
 
             if (response.isEmpty()) {
                 return null;
