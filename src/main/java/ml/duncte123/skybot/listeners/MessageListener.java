@@ -217,7 +217,6 @@ public abstract class MessageListener extends BaseListener {
         final String customPrefix = settings.getCustomPrefix();
         final Message message = event.getMessage();
 
-        // check if guild is patron?
         if (settings.isMessageLogging()){
             final MessageData data = MessageData.from(message);
 
