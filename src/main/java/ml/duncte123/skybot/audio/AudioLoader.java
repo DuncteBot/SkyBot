@@ -71,8 +71,9 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         final TrackScheduler scheduler = this.mng.getScheduler();
 
-        if (!scheduler.canQueue()) {
-            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached", TrackScheduler.MAX_QUEUE_SIZE));
+        if (!this.isPatron && !scheduler.canQueue()) {
+            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached.\n" +
+                "Consider supporting us on patreon to queue up unlimited songs.", TrackScheduler.MAX_QUEUE_SIZE));
             return;
         }
 
@@ -127,7 +128,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                 }
 
                 final String msg = String.format(
-                    "Adding **%s** tracks to the queue from playlist %s",
+                    "Adding **%s** tracks to the queue from %s",
                     sizeMsg,
                     playlist.getName()
                 );
@@ -137,10 +138,10 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
         catch (LimitReachedException e) {
             if (this.announce) {
-                sendMsg(this.ctx, String.format("The first %s tracks have been queued up", e.getSize()));
+                sendMsg(this.ctx, String.format("The first %s tracks from %s have been queued up\n" +
+                    "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlist.getName()));
             }
         }
-
     }
 
     @Override

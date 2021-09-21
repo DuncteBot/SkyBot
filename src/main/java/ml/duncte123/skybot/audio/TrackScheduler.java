@@ -52,15 +52,15 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    public static final int MAX_QUEUE_SIZE = 50;
+    public static final int MAX_QUEUE_SIZE = 100;
     public final Queue<AudioTrack> queue;
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
     private final LavalinkPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
-    private boolean repeating = false;
-    private boolean repeatPlayList = false;
+    private boolean looping = false;
+    private boolean loopingQueue = false;
 
     /* package */ TrackScheduler(LavalinkPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
@@ -135,7 +135,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         final TrackUserData data = track.getUserData(TrackUserData.class);
 
-        // If the track was a skipped track or we announce tracks
+        // If the track was a skipped track, or we announce tracks
         if (data != null && data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
             if (data != null) {
@@ -158,51 +158,48 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         LOGGER.debug("track ended");
 
         if (!endReason.mayStartNext) {
+            LOGGER.debug("Cannot start next");
             return;
         }
-
-        LOGGER.debug("can start");
-
-        if (!repeating) {
-            LOGGER.debug("starting next track");
-            skipTrack();
-            return;
-        }
-
-        LOGGER.debug("repeating");
 
         // Get if the track was from a skip event
         final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
 
-        if (repeatPlayList) {
-            LOGGER.debug("a playlist.....");
-            skipTrack();
+        if (this.looping) {
+            LOGGER.debug("repeating the current song");
+
+            final AudioTrack clone = lastTrack.makeClone();
+            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            this.play(clone);
+
+            return;
+        } else if (this.loopingQueue) {
+            LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
             clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
             queue.offer(clone);
-            return;
         }
 
-        final AudioTrack clone = lastTrack.makeClone();
-        clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
-        this.play(clone);
+        LOGGER.debug("can start next track");
+
+        skipTrack();
     }
 
-    public boolean isRepeating() {
-        return repeating;
+    public boolean isLooping() {
+        return looping;
     }
 
-    public void setRepeating(boolean repeating) {
-        this.repeating = repeating;
+    public void setLooping(boolean looping) {
+        this.looping = looping;
     }
 
-    public boolean isRepeatingPlaylists() {
-        return repeatPlayList;
+    public boolean isLoopingQueue() {
+        return loopingQueue;
     }
 
-    public void setRepeatingPlaylists(boolean repeatingPlaylists) {
-        this.repeatPlayList = repeatingPlaylists;
+    public void setLoopingQueue(boolean loopingQueue) {
+        this.loopingQueue = loopingQueue;
     }
 
     public void shuffle() {

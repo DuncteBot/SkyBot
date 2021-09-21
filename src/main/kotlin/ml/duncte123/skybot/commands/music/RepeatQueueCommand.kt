@@ -18,40 +18,33 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils.sendError
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
-class PPlayCommand : MusicCommand() {
+class RepeatQueueCommand : MusicCommand() {
 
     init {
-        this.mayAutoJoin = true
-        this.name = "pplay"
-        this.help = "Adds a playlist to the queue"
-        this.usage = "<playlist url>"
+        this.name = "repeatqueue"
+        this.aliases = arrayOf("loopqueue")
+        this.help = "Turn on or off looping of the entire queue"
     }
 
     override fun run(ctx: CommandContext) {
-        if (ctx.args.isEmpty()) {
-            sendMsg(ctx, "To few arguments, use `${ctx.prefix}$name <media link>`")
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val scheduler = mng.scheduler
+
+        if (scheduler.isLooping) {
+            sendMsg(ctx, "Cannot turn on queue looping when track looping is enabled.")
             return
         }
 
-        val toPlay = ctx.argsRaw
-
-        if (toPlay.length > 1024) {
-            sendError(ctx.message)
-            sendMsg(ctx, "Input cannot be longer than 1024 characters.")
-            return
-        }
+        val newState = !scheduler.isLoopingQueue
+        scheduler.isLoopingQueue = newState
 
         sendMsg(
             ctx,
-            "Loading playlist.......\n" +
-                "This may take a while depending on the size."
+            "Looping the current queue has been turned **${if (newState) "on" else "off"}**!"
         )
-
-        ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
     }
 }

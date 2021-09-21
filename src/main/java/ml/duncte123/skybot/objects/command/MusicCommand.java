@@ -22,6 +22,7 @@ import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 @SuppressWarnings("ConstantConditions")
 public abstract class MusicCommand extends Command {
 
-    protected boolean withAutoJoin = false;
+    protected boolean mayAutoJoin = false;
 
     public static final Function<String, String> KEY_GEN = (guildId) -> "musicCommand|" + guildId;
     public static final int MUSIC_COOLDOWN = 12;
@@ -54,17 +55,14 @@ public abstract class MusicCommand extends Command {
             return;
         }
 
-        if (this.withAutoJoin) {
+        if (this.mayAutoJoin) {
             runWithAutoJoin(ctx);
         } else if (channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
             run(ctx);
         }
     }
 
-    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
-    public void run(@Nonnull CommandContext ctx) {
-        // Cannot be abstract due to the join command
-    }
+    public abstract void run(@Nonnull CommandContext ctx);
 
     private void runWithAutoJoin(@Nonnull CommandContext ctx) {
         if (isAbleToJoinChannel(ctx)) {
@@ -77,6 +75,10 @@ public abstract class MusicCommand extends Command {
     }
 
     private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
+        if ("join".equals(this.name)) {
+            return true;
+        }
+
         if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
             return false;
@@ -87,13 +89,14 @@ public abstract class MusicCommand extends Command {
 
         if (!lavalinkManager.isConnected(guild)) {
             sendMsg(ctx, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
-                "Want to have the bot automatically join your channel? Consider becoming a patron.");
+                "Want to have the bot automatically join your channel? Consider supporting us on patreon.");
 
             return false;
         }
 
-        if (lavalinkManager.getConnectedChannel(guild) != null &&
-            !lavalinkManager.getConnectedChannel(guild).getMembers().contains(ctx.getMember())) {
+        final VoiceChannel connectedChannel = lavalinkManager.getConnectedChannel(guild);
+
+        if (connectedChannel != null && !connectedChannel.getMembers().contains(ctx.getMember())) {
             sendMsg(ctx, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
 
             return false;
@@ -106,12 +109,8 @@ public abstract class MusicCommand extends Command {
 
     private boolean isAbleToJoinChannel(CommandContext ctx) {
         if (isUserOrGuildPatron(ctx, false)) {
-            //If the member is not connected
-            if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
-                return false;
-            }
-
-            return !getLavalinkManager().isConnected(ctx.getGuild());
+            return ctx.getMember().getVoiceState().inVoiceChannel() &&
+                !getLavalinkManager().isConnected(ctx.getGuild());
         }
 
         return false;

@@ -30,7 +30,7 @@ class RadioCommand : MusicCommand() {
 
     init {
         this.requiresArgs = true
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
         this.help = "Stops all currently playing music and starts a radio station"

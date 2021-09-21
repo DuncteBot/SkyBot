@@ -29,7 +29,7 @@ import java.util.*
 
 class LoadCommand : MusicCommand() {
     init {
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "load"
         this.help = "Loads the given playlist file\nThe playlist can be exported with `{prefix}save`"
     }
