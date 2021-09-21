@@ -74,7 +74,6 @@ class RepeatCommand : MusicCommand() {
             return
         }
 
-
         val wasLoopingQueue = scheduler.isLoopingQueue
 
         // turn off all looping

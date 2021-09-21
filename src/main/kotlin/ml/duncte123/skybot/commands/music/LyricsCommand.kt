@@ -32,12 +32,14 @@ import java.nio.charset.StandardCharsets
 
 class LyricsCommand : MusicCommand() {
     init {
+        this.justRunLmao = true
+
         this.name = "lyrics"
         this.help = "Search for song lyrics or show the ones for the currently playing song"
         this.usage = "[song name]"
     }
 
-    override fun execute(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
         val args = ctx.args
 
         if (args.isNotEmpty()) {

@@ -34,6 +34,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 public abstract class MusicCommand extends Command {
 
     protected boolean mayAutoJoin = false;
+    protected boolean justRunLmao = false;
 
     public static final Function<String, String> KEY_GEN = (guildId) -> "musicCommand|" + guildId;
     public static final int MUSIC_COOLDOWN = 12;
@@ -57,7 +58,7 @@ public abstract class MusicCommand extends Command {
 
         if (this.mayAutoJoin) {
             runWithAutoJoin(ctx);
-        } else if (channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
+        } else if (this.justRunLmao || channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
             run(ctx);
         }
     }
@@ -75,10 +76,6 @@ public abstract class MusicCommand extends Command {
     }
 
     private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
-        if ("join".equals(this.name)) {
-            return true;
-        }
-
         if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
             return false;

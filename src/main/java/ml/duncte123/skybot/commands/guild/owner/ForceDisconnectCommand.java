@@ -31,6 +31,8 @@ import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 public class ForceDisconnectCommand extends MusicCommand {
 
     public ForceDisconnectCommand() {
+        this.justRunLmao = true;
+
         this.name = "forcedisconnect";
         this.aliases = new String[]{
             "forceleave",
@@ -39,7 +41,7 @@ public class ForceDisconnectCommand extends MusicCommand {
     }
 
     @Override
-    public void execute(@Nonnull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(ctx, "You need administrator perms to run this command.");
             return;

@@ -27,6 +27,8 @@ import net.dv8tion.jda.api.exceptions.PermissionException
 class JoinCommand : MusicCommand() {
 
     init {
+        this.justRunLmao = true
+
         this.name = "join"
         this.aliases = arrayOf("summon", "connect")
         this.help = "Makes the bot join the voice channel that you are in."
