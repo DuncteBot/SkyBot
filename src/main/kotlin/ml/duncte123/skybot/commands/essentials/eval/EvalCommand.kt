@@ -132,14 +132,16 @@ class EvalCommand : Command() {
 
     private fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
-            val future: Future<*> = this.evalThread.submit(Callable {
-                try {
-                    // NOTE: while(true) loops and sleeps do not trigger a timeout
-                    return@Callable engine.eval(script)
-                } catch (ex: Throwable) {
-                    return@Callable ex
+            val future: Future<*> = this.evalThread.submit(
+                Callable {
+                    try {
+                        // NOTE: while(true) loops and sleeps do not trigger a timeout
+                        return@Callable engine.eval(script)
+                    } catch (ex: Throwable) {
+                        return@Callable ex
+                    }
                 }
-            })
+            )
 
             val out = try {
                 future.get(5, TimeUnit.SECONDS)
