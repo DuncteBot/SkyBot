@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.essentials
 
 import io.sentry.Sentry
-import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.EventManager
 import ml.duncte123.skybot.objects.command.Command
@@ -29,10 +28,13 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import net.dv8tion.jda.api.sharding.ShardManager
+import java.lang.Thread.sleep
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class RestartShardCommand : Command() {
 
+    private val thread = Executors.newSingleThreadExecutor()
     private val restartInSec = 5L
 
     init {
@@ -59,8 +61,8 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, shardManager, ctx.audioUtils)
-                    MainScope().launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
+                    thread.execute {
+                        sleep(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart()
 
                         EventManager.restartingShard = -32
@@ -79,8 +81,8 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, shardManager, ctx.audioUtils)
-                    MainScope().launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
+                    thread.execute {
+                        sleep(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart(id)
 
                         EventManager.restartingShard = -32

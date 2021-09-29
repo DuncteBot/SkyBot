@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.essentials.eval
 
 import com.github.natanbc.reliqua.request.PendingRequest
-import kotlinx.coroutines.*
 import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
@@ -34,11 +33,18 @@ import ml.duncte123.skybot.utils.CommandUtils.isDev
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.concurrent.*
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
 class EvalCommand : Command() {
+    private val evalThread = Executors.newSingleThreadExecutor {
+        val thread = Thread(it, "eval-thread")
+        thread.isDaemon = true
+
+        return@newSingleThreadExecutor thread
+    }
     private val engine: ScriptEngine by lazy { ScriptEngineManager().getEngineByName("groovy") }
     private val importString: String
 
@@ -84,7 +90,6 @@ class EvalCommand : Command() {
             staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
 
-    @ExperimentalCoroutinesApi
     override fun execute(ctx: CommandContext) {
         if (!isDev(ctx.author) && ctx.author.idLong != Settings.OWNER_ID) {
             sendError(ctx.message)
@@ -122,23 +127,25 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        MainScope().launch(
-            Dispatchers.Default, start = CoroutineStart.ATOMIC,
-            block = {
-                return@launch eval(ctx, script)
-            }
-        )
+        eval(ctx, script)
     }
 
-    private suspend fun eval(ctx: CommandContext, script: String) {
+    private fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
-            val out = withTimeoutOrNull(5000L /* = 5 seconds */) {
+            val future: Future<*> = this.evalThread.submit(Callable {
                 try {
                     // NOTE: while(true) loops and sleeps do not trigger a timeout
-                    engine.eval(script)
+                    return@Callable engine.eval(script)
                 } catch (ex: Throwable) {
-                    ex
+                    return@Callable ex
                 }
+            })
+
+            val out = try {
+                future.get(5, TimeUnit.SECONDS)
+            } catch (ex: TimeoutException) {
+                future.cancel(true)
+                ex
             }
 
             parseEvalResponse(out, ctx)

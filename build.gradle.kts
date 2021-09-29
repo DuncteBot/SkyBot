@@ -108,7 +108,6 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.1")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
