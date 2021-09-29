@@ -18,17 +18,9 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.botcommons.web.WebParserUtils
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.objects.config.DunctebotConfig
-import org.apache.commons.lang3.StringUtils
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 class LyricsCommand : MusicCommand() {
     init {
@@ -40,6 +32,10 @@ class LyricsCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
+        sendMsg(ctx, "The lyrics command is currently disabled.")
+    }
+
+    /*override fun run(ctx: CommandContext) {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
@@ -105,5 +101,5 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    private data class LyricInfo(val art: String, val url: String, val lyrics: String)
+    private data class LyricInfo(val art: String, val url: String, val lyrics: String)*/
 }
