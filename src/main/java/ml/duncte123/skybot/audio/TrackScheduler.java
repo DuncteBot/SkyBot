@@ -112,11 +112,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.onTrackEnd(null, playingTrack, AudioTrackEndReason.FINISHED);
     }
 
-    private void skipTrack() {
-        skipTracks(1);
+    private void skipTrack(boolean wasFromSkip) {
+        skipTracks(1, wasFromSkip);
     }
 
-    public void skipTracks(int count) {
+    public void skipTracks(int count, boolean wasFromSkip) {
         AudioTrack nextTrack = null;
 
         for (int i = 0; i < count; i++) {
@@ -127,6 +127,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             player.stopTrack();
             sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
         } else {
+            // Make sure to cary over the skip state, we want to announce skipped tracks
+            nextTrack.getUserData(TrackUserData.class).setWasFromSkip(wasFromSkip);
+
             this.play(nextTrack);
         }
     }
@@ -183,7 +186,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         LOGGER.debug("can start next track");
 
-        skipTrack();
+        skipTrack(wasFromSkip);
     }
 
     public boolean isLooping() {

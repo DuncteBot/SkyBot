@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.objects.config;
 
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
@@ -181,8 +183,14 @@ public class DunctebotConfig {
             final Lavalink.LavalinkNode[] nodes = new Lavalink.LavalinkNode[count];
 
             for (int i = 0; i < count; i++) {
+                final String host = System.getenv("LAVALINK_NODE_" + i + "_HOST");
+
+                if (host == null) {
+                    throw new IllegalArgumentException("Missing configuration for LAVALINK_NODE_"+i+". Please check the config");
+                }
+
                 nodes[i] = new Lavalink.LavalinkNode(
-                    System.getenv("LAVALINK_NODE_"+i+"_HOST"),
+                    host,
                     System.getenv("LAVALINK_NODE_"+i+"_PASS"),
                     System.getenv("LAVALINK_NODE_"+i+"_REGION")
                 );
