@@ -65,8 +65,7 @@ class ForceSkip : MusicCommand() {
 
         val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
 
-        // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        scheduler.skipTracks(count)
+        scheduler.skipTracks(count, false)
 
         // Return the console user if the requester is null
         val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()

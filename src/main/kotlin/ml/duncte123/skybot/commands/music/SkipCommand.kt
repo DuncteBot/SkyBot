@@ -57,6 +57,7 @@ class SkipCommand : MusicCommand() {
             return
         }
 
+        // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
         val listeners = getLavalinkManager()
             .getConnectedChannel(ctx.guild)
             .members.filter {
