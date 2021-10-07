@@ -39,8 +39,12 @@ import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.utils.data.DataObject;
+import net.dv8tion.jda.internal.requests.RestActionImpl;
+import net.dv8tion.jda.internal.requests.Route;
 
 import javax.annotation.Nonnull;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -145,7 +149,26 @@ public class GuildListener extends BaseListener {
         final VoiceChannel channel = event.getChannelJoined();
 
         if (member.equals(self)) {
+            if (channel.getType() == ChannelType.STAGE) {
+                if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK)) {
+                    // request to speak
+                    final Route.CompiledRoute route = Route.Guilds.UPDATE_VOICE_STATE.compile(guild.getId(), "@me");
+                    new RestActionImpl<Void>(
+                        event.getJDA(),
+                        route,
+                        DataObject.empty()
+                            .put("channel_id", channel.getId())
+                            .put("request_to_speak_timestamp", OffsetDateTime.now())
+                    );
+                } else {
+                    // send message that requesting to speak failed
+                }
+
+                return;
+            }
+
             channelCheckThing(guild, channel);
+            return;
         }
 
         handleVcAutoRole(guild, member, channel, false);
