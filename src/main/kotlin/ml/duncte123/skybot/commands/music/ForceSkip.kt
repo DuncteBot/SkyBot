@@ -26,7 +26,6 @@ import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.objects.user.ConsoleUser
 import ml.duncte123.skybot.objects.user.UnknownUser
 import net.dv8tion.jda.api.Permission
 
