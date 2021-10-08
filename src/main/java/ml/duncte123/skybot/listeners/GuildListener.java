@@ -23,9 +23,11 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -47,6 +49,8 @@ import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildListener extends BaseListener {
 
@@ -150,20 +154,7 @@ public class GuildListener extends BaseListener {
 
         if (member.equals(self)) {
             if (channel.getType() == ChannelType.STAGE) {
-                if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK)) {
-                    // request to speak
-                    final Route.CompiledRoute route = Route.Guilds.UPDATE_VOICE_STATE.compile(guild.getId(), "@me");
-                    new RestActionImpl<Void>(
-                        event.getJDA(),
-                        route,
-                        DataObject.empty()
-                            .put("channel_id", channel.getId())
-                            .put("request_to_speak_timestamp", OffsetDateTime.now())
-                    );
-                } else {
-                    // send message that requesting to speak failed
-                }
-
+                requestToSpeak(event, guild, self, channel);
                 return;
             }
 
@@ -323,5 +314,43 @@ public class GuildListener extends BaseListener {
                 Sentry.captureException(e);
             }
         });
+    }
+
+    private void requestToSpeak(GuildVoiceJoinEvent event, Guild guild, Member self, VoiceChannel channel) {
+        final boolean canMute = self.hasPermission(channel, Permission.VOICE_MUTE_OTHERS);
+
+        if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK) || canMute) {
+            final DataObject data = DataObject.empty()
+                .put("channel_id", channel.getId())
+                .put("request_to_speak_timestamp", OffsetDateTime.now().toString());
+
+            // unmute ourselves if we have the permission to do so
+            if (canMute) {
+                data.put("request_to_speak_timestamp", null)
+                    .put("suppress", false);
+            }
+
+            // request to speak
+            final Route.CompiledRoute route = Route.Guilds.UPDATE_VOICE_STATE.compile(guild.getId(), "@me");
+            new RestActionImpl<Void>(event.getJDA(), route, data).queue();
+        } else {
+            final GuildMusicManager musicManager = this.variables.getAudioUtils().getMusicManager(guild.getIdLong());
+            final TextChannel textChan = musicManager.getLatestChannel();
+
+            if (textChan == null) {
+                return;
+            }
+
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(textChan)
+                    .setMessageFormat(
+                        "In order for stage channels to work properly, I need to be able to request to speak.\n" +
+                            "Alternatively, you could give me the %s permission so I can unmute myself or invite me to speak on this stage.",
+                        Permission.VOICE_MUTE_OTHERS.getName()
+                    )
+                    .build()
+            );
+        }
     }
 }

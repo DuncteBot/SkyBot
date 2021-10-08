@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 public class GuildMusicManager {
     public final LavalinkPlayer player;
     private final TrackScheduler scheduler;
-    private final AtomicLong lastChannel = new AtomicLong(-1);
+    private final AtomicLong latestChannel = new AtomicLong(-1);
     private final Supplier<Boolean> announceTracksSupplier;
 
     public GuildMusicManager(long guildId, Variables variables) {
@@ -47,12 +47,12 @@ public class GuildMusicManager {
     }
 
     // Has to be public because of kotlin
-    public long getLastChannel() {
-        return this.lastChannel.get();
+    public long getLatestChannelId() {
+        return this.latestChannel.get();
     }
 
-    public void setLastChannel(long lastChannel) {
-        this.lastChannel.set(lastChannel);
+    public void setLatestChannelId(long latestChannel) {
+        this.latestChannel.set(latestChannel);
     }
 
     public TrackScheduler getScheduler() {
@@ -72,8 +72,8 @@ public class GuildMusicManager {
     }
 
     @Nullable
-    /* package */ TextChannel getLatestChannel() {
-        final long last = this.getLastChannel();
+    public TextChannel getLatestChannel() {
+        final long last = this.getLatestChannelId();
 
         if (last == -1 || last == 0) {
             return null;
