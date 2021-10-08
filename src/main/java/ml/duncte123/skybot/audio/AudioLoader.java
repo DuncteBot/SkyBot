@@ -104,15 +104,23 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        final TrackUserData userData = new TrackUserData(this.requester);
         final List<AudioTrack> tracks = playlist.getTracks().stream().peek((track) -> {
             addToIndex(track);
-            track.setUserData(userData);
+            // don't store this externally since it will cause issues
+            track.setUserData(new TrackUserData(this.requester));
         })
             .collect(Collectors.toList());
 
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
+
+            final AudioTrack selectedTrack = playlist.getSelectedTrack();
+
+            if (selectedTrack != null) {
+                // find track in playlist
+                // add tracks starting from the index
+                // profit??
+            }
 
             for (final AudioTrack track : tracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
@@ -153,7 +161,6 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
-
         if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize()));
 
@@ -192,7 +199,9 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         if (track.getInfo().isStream) {
             final Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
-                .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                .getRadioStreams()
+                .stream()
+                .filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
 
             if (stream.isPresent()) {
                 title = stream.get().getName();

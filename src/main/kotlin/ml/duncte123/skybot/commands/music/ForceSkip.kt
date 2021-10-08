@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.user.ConsoleUser
+import ml.duncte123.skybot.objects.user.UnknownUser
 import net.dv8tion.jda.api.Permission
 
 class ForceSkip : MusicCommand() {
@@ -68,7 +69,7 @@ class ForceSkip : MusicCommand() {
         scheduler.skipTracks(count, false)
 
         // Return the console user if the requester is null
-        val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
+        val user = ctx.jda.getUserById(trackData.requester) ?: UnknownUser()
 
         val track: AudioTrack? = player.playingTrack
 
