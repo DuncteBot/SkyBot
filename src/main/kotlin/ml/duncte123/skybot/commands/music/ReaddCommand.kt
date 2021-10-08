@@ -24,7 +24,6 @@ import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 
 class ReaddCommand : MusicCommand() {
@@ -65,7 +64,7 @@ class ReaddCommand : MusicCommand() {
         try {
             manager.scheduler.addToQueue(clone, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
-            sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
+            sendEmbed(ctx, EmbedUtils.embedMessage(msg))
         } catch (e: LimitReachedException) {
             sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")
         }

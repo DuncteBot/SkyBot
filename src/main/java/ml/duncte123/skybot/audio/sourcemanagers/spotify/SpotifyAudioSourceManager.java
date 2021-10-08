@@ -134,7 +134,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 playList.add(buildTrackFromSimple(t, images));
             }
 
-            return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
+            return new BasicAudioPlaylist(album.getName(), playList, null, false);
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
@@ -187,7 +187,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 throw new FriendlyException("This playlist does not contain playable tracks (podcasts cannot be played)", Severity.COMMON, null);
             }
 
-            return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false, originalSize);
+            return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, null, false, originalSize);
         }
         catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);

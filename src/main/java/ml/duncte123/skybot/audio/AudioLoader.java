@@ -32,7 +32,6 @@ import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -41,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -86,7 +85,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
 
                 sendEmbed(this.ctx,
-                    embedField(AudioUtils.EMBED_TITLE, msg)
+                    embedMessage(msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
                 );
             }
@@ -99,28 +98,31 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Error: This playlist is empty."));
+            sendEmbed(this.ctx, embedMessage("Error: This playlist is empty."));
 
             return;
         }
 
-        final List<AudioTrack> tracks = playlist.getTracks().stream().peek((track) -> {
-            addToIndex(track);
-            // don't store this externally since it will cause issues
-            track.setUserData(new TrackUserData(this.requester));
-        })
-            .collect(Collectors.toList());
-
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
 
+            List<AudioTrack> tracksRaw = playlist.getTracks();
             final AudioTrack selectedTrack = playlist.getSelectedTrack();
 
             if (selectedTrack != null) {
-                // find track in playlist
-                // add tracks starting from the index
-                // profit??
+                final int index = tracksRaw.indexOf(selectedTrack);
+
+                if (index > -1) {
+                    tracksRaw = tracksRaw.subList(index, tracksRaw.size());
+                }
             }
+
+            final List<AudioTrack> tracks = tracksRaw.stream().peek((track) -> {
+                    addToIndex(track);
+                    // don't store this externally since it will cause issues
+                    track.setUserData(new TrackUserData(this.requester));
+                })
+                .collect(Collectors.toList());
 
             for (final AudioTrack track : tracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
@@ -130,18 +132,18 @@ public class AudioLoader implements AudioLoadResultHandler {
                 final String sizeMsg;
 
                 if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
-                    sizeMsg = playlist.getTracks().size() + "/" + bigBoi.getOriginalSize();
+                    sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
                 } else {
-                    sizeMsg = String.valueOf(playlist.getTracks().size());
+                    sizeMsg = String.valueOf(tracks.size());
                 }
 
                 final String msg = String.format(
-                    "Adding **%s** tracks to the queue from %s",
+                    "Adding **%s** tracks to the queue from **%s**",
                     sizeMsg,
                     playlist.getName()
                 );
 
-                sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, msg));
+                sendEmbed(this.ctx, embedMessage(msg));
             }
         }
         catch (LimitReachedException e) {
@@ -155,7 +157,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
+            sendEmbed(this.ctx, embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
         }
     }
 
@@ -172,7 +174,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
+            sendEmbed(this.ctx, embedMessage("Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -183,7 +185,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+        sendEmbed(this.ctx, embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
             + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!"));
 
     }

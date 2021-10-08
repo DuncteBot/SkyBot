@@ -23,12 +23,12 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
 import org.apache.commons.lang3.StringUtils
 import java.util.*
+import kotlin.math.min
 
-class ListCommand : MusicCommand() {
+class QueueCommand : MusicCommand() {
 
     init {
         this.name = "list"
@@ -41,29 +41,34 @@ class ListCommand : MusicCommand() {
         val mng = ctx.audioUtils.getMusicManager(event.guild)
         val scheduler = mng.scheduler
         val queue: Queue<AudioTrack> = scheduler.queue
+        val playingTrack = mng.player.playingTrack
 
         synchronized(queue) {
+            val playing = if (playingTrack == null) "Nothing" else "${playingTrack.info.title} by ${playingTrack.info.author}"
+            val current = "**Currently playing:** $playing"
+
             if (queue.isEmpty()) {
-                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, "The queue is currently empty!"))
+                sendEmbed(ctx, EmbedUtils.embedMessage("$current\n**Queue:** Empty"))
             } else {
-                val queueLength = queue.map { it.duration }.sum()
+                val queueLength = queue.sumOf { it.duration }
                 val maxTracks = 10
                 val queueText = buildString {
-                    appendLine("Current Queue: Entries: ${queue.size}")
+                    appendLine(current)
+                    appendLine("**Queue:** Showing **${min(maxTracks, queue.size)}**/**${queue.size}** tracks")
 
                     for ((index, track) in queue.withIndex()) {
                         if (index == maxTracks) {
                             break
                         }
 
-                        appendLine(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 40))
+                        appendLine(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 60))
                     }
 
                     appendLine("Total Queue Time Length: ${getTimestamp(queueLength)}")
                     appendLine("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, queueText))
+                sendEmbed(ctx, EmbedUtils.embedMessage(queueText))
             }
         }
     }

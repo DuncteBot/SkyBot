@@ -217,7 +217,6 @@ public class CommandManager {
         this.addCommand(new LewdNekoCommand());
         this.addCommand(new LickCommand());
         this.addCommand(new LinusCommand());
-        this.addCommand(new ListCommand());
         this.addCommand(new LlamaCommand());
         this.addCommand(new LoadCommand());
         this.addCommand(new LoadingBarCommand());
@@ -247,6 +246,7 @@ public class CommandManager {
         this.addCommand(new PunchCommand());
         this.addCommand(new PurgeChannelCommand());
         this.addCommand(new PurgeUserCommand());
+        this.addCommand(new QueueCommand());
         this.addCommand(new QuoteCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
