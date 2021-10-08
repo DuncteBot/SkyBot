@@ -35,13 +35,15 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.discord.MessageData;
-import ml.duncte123.skybot.objects.user.FakeUser;
+import ml.duncte123.skybot.objects.user.UnknownUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -54,10 +56,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -100,45 +100,133 @@ public abstract class MessageListener extends BaseListener {
         }
 
         this.handlerThread.submit(() -> {
-            final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
-            final GuildSetting settings = guild.getSettings();
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+                final GuildSetting settings = guild.getSettings();
 
-            if (settings.isMessageLogging()) {
-                final MessageData edited = MessageData.from(message);
-                final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited, isGuildPatron(guild));
+                if (settings.isMessageLogging()) {
+                    final MessageData edited = MessageData.from(message);
+                    final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited, isGuildPatron(guild));
 
-                // this may happen, idk
-                if (original != null) {
-                    this.logEditedMessage(original, edited, guild);
+                    // data will be null if the message expired
+                    if (original != null) {
+                        this.logEditedMessage(original, edited, guild);
+                    }
                 }
+
+                if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                    !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+
+                    if (blacklistedWordCheck(guild, message, event.getMember(), settings.getBlacklistedWords())) {
+                        return;
+                    }
+
+                    checkSwearFilter(message, event, guild);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception on message update", e);
             }
+        });
+    }
 
-            if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
-                !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    protected void onMessageBulkDelete(final MessageBulkDeleteEvent event) {
+        this.handlerThread.submit(() -> {
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
-                if (blacklistedWordCheck(guild, message, event.getMember(), settings.getBlacklistedWords())) {
+                if (!guild.getSettings().isMessageLogging()) {
+                    // just delete the message here as we don't want to keep it around
+                    this.redis.deleteMessages(event.getMessageIds());
                     return;
                 }
 
-                checkSwearFilter(message, event, guild);
+                final List<MessageData> dataList = this.redis.getAndDeleteMessages(event.getMessageIds());
+                final StringBuilder builder = new StringBuilder();
+                // temporarily store the users to prevent spamming discord for the data
+                final Map<Long, User> tmpUsers = new HashMap<>();
+                final JDA jda = event.getJDA();
+
+                // reverse the list to preserve the correct order
+                Collections.reverse(dataList);
+
+                for (final MessageData data : dataList) {
+                    final long authorId = data.getAuthorId();
+
+                    final Consumer<User> userConsumer = (user) -> {
+                        builder.append('[')
+                            .append(data.getCratedAt().format(DateTimeFormatter.RFC_1123_DATE_TIME))
+                            .append("] (")
+                            .append(user.getAsTag())
+                            .append(" - ")
+                            .append(user.getIdLong())
+                            .append(") [")
+                            .append(data.getMessageId())
+                            .append("]: ")
+                            .append(data.getContent())
+                            .append('\n');
+                    };
+
+                    if (tmpUsers.containsKey(authorId)) {
+                        userConsumer.accept(tmpUsers.get(authorId));
+                    } else {
+                        // try to fetch the user since we don't cache them
+                        // calls are sequential making sure the messages are still in order
+                        jda.retrieveUserById(authorId).queue(
+                            (user) -> {
+                                tmpUsers.put(authorId, user);
+                                userConsumer.accept(user);
+                            },
+                            (error) -> userConsumer.accept(new UnknownUser(authorId))
+                        );
+                    }
+                }
+
+                final TextChannel channel = event.getChannel();
+                final EmbedBuilder embed = EmbedUtils.embedField(
+                        "Bulk Delete",
+                        "Bulk deleted messages from <#%s> are available in the attached file.".formatted(channel.getIdLong())
+                    )
+                    .setColor(0xE67E22)
+                    .setTimestamp(Instant.now());
+
+                modLog(
+                    new MessageConfig.Builder()
+                        .addEmbed(true, embed)
+                        .setActionConfig(
+                            (action) -> action.addFile(
+                                builder.toString().getBytes(),
+                                "bulk_delete_%s.txt".formatted(System.currentTimeMillis())
+                            )
+                        ),
+                    guild
+                );
+            } catch (Exception e) {
+                LOGGER.error("Exception on message bulk delete", e);
             }
         });
     }
 
     protected void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
-        final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+        this.handlerThread.submit(() -> {
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
 
-        if (!guild.getSettings().isMessageLogging()) {
-            // just delete the message here as we don't want to keep it around
-            this.redis.deleteMessage(event.getMessageId());
-            return;
-        }
+                if (!guild.getSettings().isMessageLogging()) {
+                    // just delete the message here as we don't want to keep it around
+                    this.redis.deleteMessage(event.getMessageId());
+                    return;
+                }
 
-        final MessageData data = this.redis.getAndDeleteMessage(event.getMessageId());
+                final MessageData data = this.redis.getAndDeleteMessage(event.getMessageId());
 
-        if (data != null) {
-            this.logDeletedMessage(data, guild);
-        }
+                if (data != null) {
+                    this.logDeletedMessage(data, guild);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception on message delete", e);
+            }
+        });
     }
 
     protected void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -538,7 +626,7 @@ public abstract class MessageListener extends BaseListener {
 
         final Consumer<User> userConsumer = (user) -> {
             final EmbedBuilder embedBuilder = EmbedUtils.getDefaultEmbed()
-                .setColor(0xDEBB0B)
+                .setColor(0xF1C40F)
                 .setAuthor(
                     "%s (%s)".formatted(user.getAsTag(), edited.getAuthorId()),
                     "https://duncte.bot/patreon",
@@ -563,7 +651,7 @@ public abstract class MessageListener extends BaseListener {
         // try to fetch the user since we don't cache them
         guild.getJDA().retrieveUserById(edited.getAuthorId()).queue(
             userConsumer,
-            (error) -> userConsumer.accept(new FakeUser("UnknownUser", edited.getAuthorId(), 0))
+            (error) -> userConsumer.accept(new UnknownUser(edited.getAuthorId()))
         );
     }
 
@@ -594,7 +682,7 @@ public abstract class MessageListener extends BaseListener {
         // try to fetch the user since we don't cache them
         guild.getJDA().retrieveUserById(data.getAuthorId()).queue(
             userConsumer,
-            (error) -> userConsumer.accept(new FakeUser("UnknownUser", data.getAuthorId(), 0))
+            (error) -> userConsumer.accept(new UnknownUser(data.getAuthorId()))
         );
     }
 }

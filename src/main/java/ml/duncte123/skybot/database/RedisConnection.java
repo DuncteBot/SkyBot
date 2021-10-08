@@ -19,11 +19,14 @@
 package ml.duncte123.skybot.database;
 
 import ml.duncte123.skybot.objects.discord.MessageData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RedisConnection {
@@ -43,7 +46,7 @@ public class RedisConnection {
         this.pool = new JedisPool(new JedisPoolConfig(), host);
     }
 
-    public void storeMessage(MessageData data, boolean isPatron) {
+    public void storeMessage(@NotNull MessageData data, boolean isPatron) {
         try (Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
@@ -57,7 +60,7 @@ public class RedisConnection {
     }
 
     @Nullable
-    public MessageData getAndUpdateMessage(String messageId, MessageData updateData, boolean isPatron) {
+    public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron) {
         try (Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
@@ -75,7 +78,7 @@ public class RedisConnection {
     }
 
     @Nullable
-    public MessageData getAndDeleteMessage(String messageId) {
+    public MessageData getAndDeleteMessage(@NotNull String messageId) {
         try (Jedis jedis = this.pool.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
@@ -89,9 +92,41 @@ public class RedisConnection {
         }
     }
 
-    public void deleteMessage(String messageId) {
+    @NotNull
+    public List<MessageData> getAndDeleteMessages(@NotNull List<String> messageIds) {
+        try (Jedis jedis = this.pool.getResource()) {
+            final List<MessageData> response = new ArrayList<>();
+
+            for (final String messageId : messageIds) {
+                final Map<String, String> data = jedis.hgetAll(messageId);
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                response.add(MessageData.from(data));
+            }
+
+            // delete all messages from the database in one go
+            final String[] idArray = messageIds.toArray(String[]::new);
+
+            jedis.del(idArray);
+
+            return response;
+        }
+    }
+
+    public void deleteMessage(@NotNull String messageId) {
         try (Jedis jedis = this.pool.getResource()) {
             jedis.del(messageId);
+        }
+    }
+
+    public void deleteMessages(@NotNull List<String> messageIds) {
+        try (Jedis jedis = this.pool.getResource()) {
+            final String[] idArray = messageIds.toArray(String[]::new);
+
+            jedis.del(idArray);
         }
     }
 

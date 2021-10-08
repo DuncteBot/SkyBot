@@ -22,4 +22,8 @@ public class UnknownUser extends FakeUser {
     public UnknownUser() {
         super("UnknownUser", 210363111729790977L, 0);
     }
+
+    public UnknownUser(long userId) {
+        super("UnknownUser", userId, 0);
+    }
 }
