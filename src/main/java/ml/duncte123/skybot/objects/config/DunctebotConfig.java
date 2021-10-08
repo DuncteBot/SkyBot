@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.objects.config;
 
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
@@ -143,6 +141,7 @@ public class DunctebotConfig {
 
     // TODO: redis settings
     @Nonnull
+    @SuppressWarnings("PMD.PrematureDeclaration") // fuck off <3
     public static DunctebotConfig fromEnv() {
         final long[] admins = Arrays.stream(System.getenv("BOT_ADMINS").split(","))
             .mapToLong(Long::parseLong)

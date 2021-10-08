@@ -99,7 +99,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        audioUtils.getMusicManager(guild).setLastChannel(ctx.getChannel().getIdLong());
+        audioUtils.getMusicManager(guild).setLatestChannelId(ctx.getChannel().getIdLong());
 
         return true;
     }

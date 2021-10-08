@@ -49,7 +49,7 @@ class JoinCommand : MusicCommand() {
         val guild = event.guild
         val mng = ctx.audioUtils.getMusicManager(guild)
 
-        mng.lastChannel = event.channel.idLong
+        mng.latestChannelId = event.channel.idLong
 
         val lavalink = getLavalinkManager()
 
