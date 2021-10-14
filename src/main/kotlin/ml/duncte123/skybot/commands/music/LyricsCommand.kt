@@ -18,9 +18,17 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botcommons.StringUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.web.WebParserUtils
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.objects.config.DunctebotConfig
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class LyricsCommand : MusicCommand() {
     init {
@@ -32,10 +40,6 @@ class LyricsCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        sendMsg(ctx, "The lyrics command is currently disabled.")
-    }
-
-    /*override fun run(ctx: CommandContext) {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
@@ -68,8 +72,8 @@ class LyricsCommand : MusicCommand() {
                     .setTitle("Lyrics for $search", it.url)
                     .setThumbnail(it.art)
                     .setDescription(StringUtils.abbreviate(it.lyrics, 1900))
-                    .appendDescription("\n\n Full lyrics on [ksoft.si](${it.url})")
-                    .setFooter("Powered by ksoft.si")
+                    .appendDescription("\n\n Full lyrics on [genuis.com](${it.url})")
+                    .setFooter("Powered by genuis.com")
             )
         }
     }
@@ -77,29 +81,58 @@ class LyricsCommand : MusicCommand() {
     private fun searchForSong(search: String, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
         WebUtils.ins.prepareRaw(
             WebUtils.defaultRequest()
-                .header("Authorization", "Bearer ${config.apis.ksoft}")
-                .url("https://api.ksoft.si/lyrics/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
+                .header("Authorization", "Bearer ${config.apis.genius}")
+                .url("https://api.genius.com/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
                 .build(),
             WebParserUtils::toJSONObject
         ).async {
-            val results = it["data"]
+            val results = it["response"]["hits"]
 
             if (results.isEmpty) {
                 callback(null)
                 return@async
             }
 
-            val firstResult = results[0]
+            val firstResult = results.firstOrNull { node -> node["type"].asText() == "song" }
 
-            callback(
-                LyricInfo(
-                    firstResult["album_art"].asText(),
-                    firstResult["url"].asText(),
-                    firstResult["lyrics"].asText()
-                )
-            )
+            if (firstResult == null) {
+                callback(null)
+                return@async
+            }
+
+            val data = firstResult["result"]
+            val path = data["path"].asText()
+
+            loadLyrics(path) { lyrics ->
+                if (lyrics.isNullOrEmpty()) {
+                    callback(null)
+                } else {
+                    callback(
+                        LyricInfo(
+                            data["song_art_image_url"].asText(),
+                            data["url"].asText(),
+                            lyrics
+                        )
+                    )
+                }
+            }
         }
     }
 
-    private data class LyricInfo(val art: String, val url: String, val lyrics: String)*/
+    private fun loadLyrics(path: String, callback: (String?) -> Unit) {
+        WebUtils.ins.scrapeWebPage("https://genius.com/amp$path")
+            .async({
+                val lyricsContainer = it.select("div.lyrics")
+                val text = lyricsContainer.first()
+                    .wholeText()
+                    .replace("<br>", "\n")
+                    .trim()
+
+                callback(text)
+            }) {
+                callback(null)
+            }
+    }
+
+    private data class LyricInfo(val art: String, val url: String, val lyrics: String)
 }
