@@ -126,6 +126,7 @@ class LyricsCommand : MusicCommand() {
                 val text = lyricsContainer.first()
                     .wholeText()
                     .replace("<br>", "\n")
+                    .replace("\n\n\n", "\n\n")
                     .trim()
 
                 callback(text)

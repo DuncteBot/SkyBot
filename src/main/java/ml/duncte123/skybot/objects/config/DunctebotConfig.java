@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.config;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
+@SuppressWarnings("PMD.ExcessiveParameterList")
 public class DunctebotConfig {
     public final Discord discord;
     public final Apis apis;
