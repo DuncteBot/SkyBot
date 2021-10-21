@@ -636,8 +636,8 @@ public abstract class MessageListener extends BaseListener {
                     "Message %s edited in <#%s>\n**Before:** %s\n**After:** %s".formatted(
                         edited.getMessageId(),
                         edited.getChannelId(),
-                        MarkdownSanitizer.escape(original.getContent()),
-                        MarkdownSanitizer.escape(edited.getContent())
+                        MarkdownSanitizer.escape(original.getContent(), true),
+                        MarkdownSanitizer.escape(edited.getContent(), true)
                     )
                 )
                 .setTimestamp(Instant.now());
@@ -668,7 +668,7 @@ public abstract class MessageListener extends BaseListener {
                     "Message %s deleted from <#%s>\n**Content:** %s".formatted(
                         data.getMessageId(),
                         data.getChannelId(),
-                        MarkdownSanitizer.escape(data.getContent())
+                        MarkdownSanitizer.escape(data.getContent(), true)
                     )
                 )
                 .setTimestamp(Instant.now());
