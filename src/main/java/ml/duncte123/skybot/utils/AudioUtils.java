@@ -42,7 +42,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import java.util.concurrent.Future;
 
 public class AudioUtils {
-    public static final String EMBED_TITLE = "AirPlayer";
+    // public static final String EMBED_TITLE = "AirPlayer";
     private final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
     private final AudioPlayerManager playerManager;

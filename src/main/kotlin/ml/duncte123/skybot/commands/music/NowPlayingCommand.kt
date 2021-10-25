@@ -32,7 +32,7 @@ class NowPlayingCommand : MusicCommand() {
         this.help = "Prints information about the currently playing song (title, current time)"
     }
 
-    override fun execute(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val mng = ctx.audioUtils.getMusicManager(event.guild)
         val player = mng.player

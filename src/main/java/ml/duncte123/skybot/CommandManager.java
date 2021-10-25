@@ -217,7 +217,6 @@ public class CommandManager {
         this.addCommand(new LewdNekoCommand());
         this.addCommand(new LickCommand());
         this.addCommand(new LinusCommand());
-        this.addCommand(new ListCommand());
         this.addCommand(new LlamaCommand());
         this.addCommand(new LoadCommand());
         this.addCommand(new LoadingBarCommand());
@@ -233,7 +232,7 @@ public class CommandManager {
         this.addCommand(new OrlyCommand());
         this.addCommand(new OwoCommand());
         this.addCommand(new PatCommand());
-        // TODO: remove, some day, can't do any harm really
+        // TODO: remove some day, can't do any harm really
         this.addCommand(new PatreonCheckCommand());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
@@ -247,12 +246,14 @@ public class CommandManager {
         this.addCommand(new PunchCommand());
         this.addCommand(new PurgeChannelCommand());
         this.addCommand(new PurgeUserCommand());
+        this.addCommand(new QueueCommand());
         this.addCommand(new QuoteCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
         this.addCommand(new RemindersCommand());
         this.addCommand(new RemindmeCommand());
         this.addCommand(new RepeatCommand());
+        this.addCommand(new RepeatQueueCommand());
         this.addCommand(new RestartCommand());
         this.addCommand(new RestartShardCommand());
         this.addCommand(new ReverseCommand());

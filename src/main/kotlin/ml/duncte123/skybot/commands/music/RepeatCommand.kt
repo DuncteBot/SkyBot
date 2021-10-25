@@ -28,50 +28,66 @@ class RepeatCommand : MusicCommand() {
     init {
         this.name = "repeat"
         this.aliases = arrayOf("loop")
-        this.help = "Makes the player repeat the currently playing song"
-        this.usage = "[playlist/status]"
+        this.help = "Makes the player repeat the currently playing song or the entire queue"
+        this.usage = "[playlist/queue/status]"
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val mng = ctx.audioUtils.getMusicManager(event.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
         val scheduler = mng.scheduler
 
         if (ctx.args.size == 1) {
             when (ctx.args[0]) {
-                "playlist" -> {
-                    scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
-                    scheduler.isRepeating = scheduler.isRepeatingPlaylists
+                "playlist", "queue" -> {
+                    val wasLooping = scheduler.isLooping
+
+                    scheduler.isLoopingQueue = !scheduler.isLoopingQueue
+                    scheduler.isLooping = false
+
+                    var extra = ""
+
+                    if (wasLooping) {
+                        extra = "\n(Normal looping has been turned off)"
+                    }
+
+                    sendMsg(
+                        ctx,
+                        "Player is now set to: **${if (scheduler.isLoopingQueue) "" else "not "}repeating the current queue**$extra"
+                    )
                 }
 
                 "status" -> {
                     sendMsg(
                         ctx,
                         """Current repeat status:
-                        |Repeating: **${scheduler.isRepeating.toEmoji()}**
-                        |Repeating queue: **${scheduler.isRepeatingPlaylists.toEmoji()}**
+                        |Repeating: **${scheduler.isLooping.toEmoji()}**
+                        |Repeating queue: **${scheduler.isLoopingQueue.toEmoji()}**
                     """.trimMargin()
                     )
-
-                    return
                 }
 
                 else -> {
                     this.sendUsageInstructions(ctx)
-
-                    return
                 }
             }
-        } else {
-            // turn off all repeats if they are on
-            if (scheduler.isRepeatingPlaylists) scheduler.isRepeatingPlaylists = false
-            scheduler.isRepeating = !scheduler.isRepeating
+
+            return
         }
+
+        val wasLoopingQueue = scheduler.isLoopingQueue
+
+        // turn off all looping
+        if (scheduler.isLoopingQueue || scheduler.isLooping) {
+            scheduler.isLoopingQueue = false
+            scheduler.isLooping = false
+        }
+
+        scheduler.isLooping = !scheduler.isLooping
 
         sendMsg(
             ctx,
-            "Player is now set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
-                "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**"
+            "Player is now set to: **${if (scheduler.isLooping) "" else "not "}repeating" +
+                "${if (wasLoopingQueue) " the current queue" else ""}**"
         )
     }
 }

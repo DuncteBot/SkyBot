@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.config;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
+@SuppressWarnings("PMD.ExcessiveParameterList")
 public class DunctebotConfig {
     public final Discord discord;
     public final Apis apis;
@@ -59,17 +60,22 @@ public class DunctebotConfig {
         public final String googl;
         public final String weebSh;
         public final String ksoft;
+        public final String genius;
         public final Spotify spotify;
         public final String blargbot;
         public final String wolframalpha;
         public final String thecatapi;
 
-        public Apis(String alexflipnote, Cache youtubeCache, String googl, String weebSh, String ksoft, Spotify spotify, String blargbot, String wolframalpha, String thecatapi) {
+        public Apis(
+            String alexflipnote, Cache youtubeCache, String googl, String weebSh, String ksoft, String genius,
+            Spotify spotify, String blargbot, String wolframalpha, String thecatapi
+        ) {
             this.alexflipnote = alexflipnote;
             this.youtubeCache = youtubeCache;
             this.googl = googl;
             this.weebSh = weebSh;
             this.ksoft = ksoft;
+            this.genius = genius;
             this.spotify = spotify;
             this.blargbot = blargbot;
             this.wolframalpha = wolframalpha;
@@ -139,7 +145,9 @@ public class DunctebotConfig {
         }
     }
 
+    // TODO: redis settings
     @Nonnull
+    @SuppressWarnings("PMD.PrematureDeclaration") // fuck off <3
     public static DunctebotConfig fromEnv() {
         final long[] admins = Arrays.stream(System.getenv("BOT_ADMINS").split(","))
             .mapToLong(Long::parseLong)
@@ -165,6 +173,7 @@ public class DunctebotConfig {
             System.getenv("API_GOOGLE"),
             System.getenv("API_WEEBSH"),
             System.getenv("API_KSOFT"),
+            System.getenv("API_GENIUS"),
             spotify,
             System.getenv("API_BLARGBOT"),
             System.getenv("API_WOLFRAMALPHA"),
@@ -180,8 +189,14 @@ public class DunctebotConfig {
             final Lavalink.LavalinkNode[] nodes = new Lavalink.LavalinkNode[count];
 
             for (int i = 0; i < count; i++) {
+                final String host = System.getenv("LAVALINK_NODE_" + i + "_HOST");
+
+                if (host == null) {
+                    throw new IllegalArgumentException("Missing configuration for LAVALINK_NODE_"+i+". Please check the config");
+                }
+
                 nodes[i] = new Lavalink.LavalinkNode(
-                    System.getenv("LAVALINK_NODE_"+i+"_HOST"),
+                    host,
                     System.getenv("LAVALINK_NODE_"+i+"_PASS"),
                     System.getenv("LAVALINK_NODE_"+i+"_REGION")
                 );

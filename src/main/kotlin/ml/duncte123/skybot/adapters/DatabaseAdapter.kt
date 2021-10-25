@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
-import kotlinx.coroutines.asCoroutineDispatcher
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -30,11 +29,11 @@ import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 
 abstract class DatabaseAdapter(threads: Int = 2) {
-    private val coroutineContext = Executors.newFixedThreadPool(threads) {
+    private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true
         t
-    }.asCoroutineDispatcher()
+    }
 
     // ////////////////
     // Custom commands
@@ -237,7 +236,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     // Cannot be an option callback due to it targeting the onFail param
     protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
-        coroutineContext.dispatch(coroutineContext) {
+        databaseThread.execute {
             try {
                 r.invoke()
             } catch (thr: Throwable) {

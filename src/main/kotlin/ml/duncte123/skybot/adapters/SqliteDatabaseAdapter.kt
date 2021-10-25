@@ -1021,4 +1021,5 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
         .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
         .setMemberLogging(this.getBoolean("logMember"))
+        .setMessageLogging(this.getBoolean("message_logging"))
 }

@@ -31,7 +31,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
 
     init {
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "play"
         this.help = "Plays a song on the bot or adds it to the queue"
         this.usage = "[url/search term]"

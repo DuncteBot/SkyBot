@@ -21,9 +21,6 @@ package ml.duncte123.skybot.web.handlers
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import io.sentry.Sentry
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
@@ -37,12 +34,13 @@ import ml.duncte123.skybot.utils.ModerationUtils
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.entities.Role
+import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
     private val updateLock = ReentrantLock()
-    private val scope = MainScope()
+    private val thread = Executors.newSingleThreadExecutor()
 
     override fun handleInternally(data: JsonNode) {
         // swallow the update if locked
@@ -50,7 +48,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             return
         }
 
-        scope.launch(context = Dispatchers.IO) {
+        thread.execute {
             updateLock.lock()
 
             try {

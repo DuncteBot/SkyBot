@@ -35,7 +35,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.105.1"
+val numberVersion = "3.106.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -64,7 +64,7 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.20")
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
@@ -73,19 +73,19 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.8")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.9")
 
     // JDA (java discord api)
 //     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_323") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_335") {
         exclude(module = "opus-java")
     }
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.6")
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-//    implementation(group = "com.github.Walkyst", name = "lavaplayer-fork", version = "5eee2e9") // breaks my code smh
+//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
+    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.95")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
         exclude(module = "lavaplayer")
     }
@@ -108,7 +108,6 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.5.1")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
@@ -130,7 +129,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.0.1")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.2.1")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
@@ -150,6 +149,9 @@ dependencies {
     // jackson
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
+
+    // redis
+    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
 
     // implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.4'
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")

@@ -31,7 +31,7 @@ jobs:
             - name: Grant execute permission for sentry
               run: chmod +x ./.github/sentry.sh
             - name: Build with Gradle
-              run: ./gradlew --no-daemon dependencies lintAll build
+              run: ./gradlew --no-daemon lintAll build
             - name: Release sentry
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

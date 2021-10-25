@@ -36,7 +36,7 @@ import kotlin.math.min
 class SearchCommand : MusicCommand() {
 
     init {
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "search"
         this.help = "Search for a song to play"
         this.usage = "<search term>"

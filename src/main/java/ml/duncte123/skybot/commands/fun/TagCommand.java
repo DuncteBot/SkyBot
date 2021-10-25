@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
@@ -66,6 +67,7 @@ public class TagCommand extends Command {
     }
 
     @Override
+    @SuppressWarnings("PMD.NPathComplexity") // this will be rewritten some day
     public void execute(@Nonnull CommandContext ctx) {
         if ("tags".equalsIgnoreCase(ctx.getInvoke())) {
             sendTagsList(ctx);
@@ -108,9 +110,21 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.containsKey(subCmd)) {
-            sendTag(ctx, subCmd);
+            sendTag(ctx, this.tagStore.get(subCmd));
 
             return;
+        }
+
+        if (this.guildTags.containsKey(ctx.getGuild().getIdLong())) {
+            final List<Tag> tags = this.guildTags.get(ctx.getGuild().getIdLong());
+            final Optional<Tag> foundTag = tags.stream()
+                .filter((tag) -> subCmd.equals(tag.name))
+                .findFirst();
+
+            if (foundTag.isPresent()) {
+                sendTag(ctx, foundTag.get());
+                return;
+            }
         }
 
         sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" + ctx.getPrefix() + ctx.getInvoke() + " help`");
@@ -140,8 +154,8 @@ public class TagCommand extends Command {
         return false;
     }
 
-    private void sendTag(CommandContext ctx, String subCmd) {
-        final String parsed = parseJagTag(ctx, this.tagStore.get(subCmd).content);
+    private void sendTag(CommandContext ctx, Tag tag) {
+        final String parsed = parseJagTag(ctx, tag.content);
 
         if (parsed.length() > 2000) {
             sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");

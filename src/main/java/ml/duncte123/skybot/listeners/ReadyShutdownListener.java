@@ -28,6 +28,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
@@ -60,6 +62,10 @@ public class ReadyShutdownListener extends MessageListener {
             this.onGuildMessageUpdate(messageUpdate);
         } else if (event instanceof GuildMessageReceivedEvent messageReceived) {
             this.onGuildMessageReceived(messageReceived);
+        } else if (event instanceof GuildMessageDeleteEvent delete) {
+            this.onGuildMessageDelete(delete);
+        } else if (event instanceof MessageBulkDeleteEvent bulkDelete) {
+            this.onMessageBulkDelete(bulkDelete);
         } else if (event instanceof ReadyEvent ready) {
             this.onReady(ready);
         } else if (event instanceof ShutdownEvent) {
@@ -97,9 +103,21 @@ public class ReadyShutdownListener extends MessageListener {
     }
 
     private void onShutdown() {
-        Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+        if (!arePoolsRunning.get()) {
+            return;
+        }
+
+        // little hack to make sure this method only gets called once
+        arePoolsRunning.set(false);
+
+        try {
+            Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+        } catch (final Exception ignored) {}
 
         BotCommons.shutdown();
+
+        this.redis.shutdown();
+        LOGGER.info("Redis shutdown");
 
         AirUtils.stop(this.variables.getAudioUtils());
         LOGGER.info("Music system shutdown");

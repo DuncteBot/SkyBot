@@ -27,13 +27,15 @@ import net.dv8tion.jda.api.exceptions.PermissionException
 class JoinCommand : MusicCommand() {
 
     init {
+        this.justRunLmao = true
+
         this.name = "join"
         this.aliases = arrayOf("summon", "connect")
         this.help = "Makes the bot join the voice channel that you are in."
         this.cooldown = MUSIC_COOLDOWN
     }
 
-    override fun execute(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val member = ctx.member
         val voiceState = member.voiceState!!
@@ -47,29 +49,31 @@ class JoinCommand : MusicCommand() {
         val guild = event.guild
         val mng = ctx.audioUtils.getMusicManager(guild)
 
-        mng.lastChannel = event.channel.idLong
+        mng.latestChannelId = event.channel.idLong
 
         val lavalink = getLavalinkManager()
 
         if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
-            sendMsg(ctx, "I'm already in a channel.")
+            val channel = lavalink.getConnectedChannel(event.guild).idLong
+
+            sendMsg(ctx, "I am already playing music in <#$channel>.")
             return
         }
 
         if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-            sendMsg(ctx, "I cannot connect to <#${vc.id}>")
+            sendMsg(ctx, "I cannot connect to <#${vc.idLong}>")
 
             return
         }
 
         try {
             lavalink.openConnection(vc)
-            sendSuccess(event.message)
+            sendMsg(ctx, "Connected to <#${vc.idLong}>")
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                sendMsg(ctx, "I don't have permission to join `${vc.name}`")
+                sendMsg(ctx, "I don't have permission to join <#${vc.idLong}>")
             } else {
-                sendMsg(ctx, "Error while joining channel `${vc.name}`: ${e.message}")
+                sendMsg(ctx, "Error while joining channel <#${vc.idLong}>: ${e.message}")
             }
         } catch (other: Exception) {
             sendErrorWithMessage(ctx.message, "Could not join channel: ${other.message}")

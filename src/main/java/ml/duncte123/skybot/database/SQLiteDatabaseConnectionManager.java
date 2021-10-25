@@ -106,6 +106,7 @@ public class SQLiteDatabaseConnectionManager {
                     "aiSensitivity FLOAT(3, 2) default 0.7," +
                     "allow_all_to_stop TINYINT(1) NOT NULL DEFAULT '1'," +
                     "invite_logging TINYINT(1) NOT NULL DEFAULT '0'," +
+                    "message_logging TINYINT(1) NOT NULL DEFAULT '0'," +
                     "youngAccountBanEnabled TINYINT(1) NOT NULL DEFAULT '0'," +
                     "youngAccountThreshold integer(100) NOT NULL DEFAULT -1" +
                     ");"
