@@ -26,13 +26,51 @@
 		 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd">
     <changeSet id="1" author="duncte123">
         <createTable tableName="guild_settings">
-            <column name="guild_id" type="bigserial">
+            <column name="guild_id" type="bigserial"> <!-- only use serial for PKs -->
                 <constraints primaryKey="true"/>
             </column>
             <column name="prefix" type="varchar(10)" defaultValue="db!">
                 <constraints nullable="false"/>
             </column>
-            <column name="auto_role_id" type="bigserial"/>
+            <column name="auto_role_id" type="bigint"/>
+
+            <column name="voice_leave_timeout_seconds" type="integer" defaultValueNumeric="1"/>
+            <column name="announce_track_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="allow_all_to_stop" type="boolean" defaultValueBoolean="false"/>
+
+            <!-- TODO: remove, guilds have descriptions build-in these days -->
+            <column name="server_description" type="varchar"/>
+
+            <!-- welcome (join)/leave messages -->
+            <column name="join_leave_channel_id" type="bigint"/>
+            <column name="join_message_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="leave_message_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="join_message" type="text"/>
+            <column name="leave_message" type="text"/>
+
+            <!-- moderation -->
+            <column name="log_channel_id" type="bigint"/>
+            <column name="mute_role_id" type="bigint"/>
+            <column name="swear_filter_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="swear_filter_type" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
+            <column name="swear_sensitivity" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
+            <column name="auto_dehoist_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="invite_filter_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="spam_filter_state" type="boolean" defaultValueBoolean="false"/>
+            <column name="kick_instead_state" type="boolean" defaultValueBoolean="false"/>
+            <column name="ratelimits" type="varchar(255)" defaultValue="20|45|60|120|240|2400"/>
+            <column name="spam_threshold" type="real" defaultValueNumeric="0.7"/>
+            <column name="ban_young_account_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="ban_young_account_threshold_days" type="integer" defaultValueNumeric="10"/>
+            <!-- _________________________________________________________________________ -->
+            <column name="ban_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="unban_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="mute_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="kick_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="warn_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="member_logging_enabled" type="boolean" defaultValueBoolean="false"/> <!-- TODO: probably could enable this by default -->
+            <column name="invite_logging_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="message_logging_enabled" type="boolean" defaultValueBoolean="false"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

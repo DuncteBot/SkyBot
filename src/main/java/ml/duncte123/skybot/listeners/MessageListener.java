@@ -458,6 +458,7 @@ public abstract class MessageListener extends BaseListener {
                 //Get the invite Id from the message
                 final String inviteID = matcher.group(matcher.groupCount());
 
+                // TODO: use the invite cache to check if invite is cached before retrieving
                 //Prohibiting failure because the bot is currently banned from the other guild.
                 guild.retrieveInvites().queue((invites) -> {
                     //Check if the invite is for this guild, if it is not delete the message
