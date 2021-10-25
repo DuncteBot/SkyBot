@@ -27,8 +27,7 @@ import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 
@@ -37,7 +36,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
         runOnThread {
             val array = apis.getCustomCommands()
-            val customCommands: List<CustomCommand> = jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
+            val customCommands: List<CustomCommand> = jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommand>>() {})
 
             callback(customCommands)
         }

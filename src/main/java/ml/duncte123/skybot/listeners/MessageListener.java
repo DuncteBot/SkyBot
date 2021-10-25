@@ -33,7 +33,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.command.CustomCommand;
 import ml.duncte123.skybot.objects.discord.MessageData;
 import ml.duncte123.skybot.objects.user.UnknownUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;

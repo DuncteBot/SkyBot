@@ -153,11 +153,8 @@ dependencies {
     // redis
     implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
 
-    // implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.4'
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
-    implementation(group = "mysql", name = "mysql-connector-java", version = "8.0.26") {
-        exclude(group = "com.google.protobuf", module = "protobuf-java")
-    }
+    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
 
     // dev deps
     devDependencies.forEach {

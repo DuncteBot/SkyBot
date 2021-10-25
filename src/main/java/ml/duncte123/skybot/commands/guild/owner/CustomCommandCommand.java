@@ -24,8 +24,7 @@ import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
+import ml.duncte123.skybot.objects.command.CustomCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -194,7 +193,7 @@ public class CustomCommandCommand extends Command {
     }
 
     private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, false));
+        return manager.registerCustomCommand(new CustomCommand(name, action, guildId, false));
     }
 
     private boolean editCustomCommand(@Nullable CustomCommand customCommand, String newMessage, CommandManager manager) {
@@ -202,7 +201,7 @@ public class CustomCommandCommand extends Command {
             return false;
         }
 
-        final CustomCommand cmd = new CustomCommandImpl(
+        final CustomCommand cmd = new CustomCommand(
             customCommand.getName(),
             newMessage,
             customCommand.getGuildId(),

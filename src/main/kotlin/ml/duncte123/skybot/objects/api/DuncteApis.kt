@@ -35,7 +35,7 @@ import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.OkHttpClient
@@ -93,7 +93,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         val commandManager = variables.commandManager
 
         commandManager.customCommands.add(
-            CustomCommandImpl(
+            CustomCommand(
                 command["invoke"].asText(),
                 command["message"].asText(),
                 command["guildId"].asLong(),

@@ -24,7 +24,7 @@ import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.command.custom.CustomCommand
+import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 

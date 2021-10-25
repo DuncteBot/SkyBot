@@ -26,8 +26,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils.fromDatabaseFormat
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import java.io.File
@@ -49,7 +48,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 smt.executeQuery("SELECT * FROM customCommands").use { res ->
                     while (res.next()) {
                         customCommands.add(
-                            CustomCommandImpl(
+                            CustomCommand(
                                 res.getString("invoke"),
                                 res.getString("message"),
                                 res.getLong("guildId"),

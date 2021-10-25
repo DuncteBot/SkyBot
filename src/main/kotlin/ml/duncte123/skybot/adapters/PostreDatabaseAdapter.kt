@@ -25,24 +25,20 @@ import com.zaxxer.hikari.HikariDataSource
 import gnu.trove.map.TLongLongMap
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.command.custom.CustomCommand
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CustomCommand
+import java.io.PrintWriter
 import java.sql.Connection
 import java.time.OffsetDateTime
 
-class MySQLDatabaseAdapter : DatabaseAdapter() {
+class PostreDatabaseAdapter : DatabaseAdapter() {
     private val ds: HikariDataSource
     private val connection: Connection
         get() { return this.ds.connection }
 
     init {
         val config = HikariConfig()
-        config.jdbcUrl = "jdbc:mysql://localhost:3306/simpsons"
-        config.username = "bart"
-        config.password = "51mp50n"
-        config.addDataSourceProperty("cachePrepStmts", "true")
-        config.addDataSourceProperty("prepStmtCacheSize", "250")
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+        config.jdbcUrl = "jdbc:postgresql://user:pass@localhost:5432/skybot"
+        config.addDataSourceProperty("logWriter", PrintWriter(System.out))
 
         this.ds = HikariDataSource(config)
     }
@@ -52,14 +48,14 @@ class MySQLDatabaseAdapter : DatabaseAdapter() {
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * from customCommands").use { res ->
+                smt.executeQuery("SELECT * from custom_commands").use { res ->
                     res.use {
                         while (res.next()) {
                             customCommands.add(
-                                CustomCommandImpl(
+                                CustomCommand(
                                     res.getString("invoke"),
                                     res.getString("message"),
-                                    res.getLong("guildId"),
+                                    res.getLong("guild_id"),
                                     res.getBoolean("autoresponse")
                                 )
                             )
