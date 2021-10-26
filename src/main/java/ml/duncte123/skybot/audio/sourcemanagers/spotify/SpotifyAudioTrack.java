@@ -49,7 +49,7 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
         if (this.youtubeId == null) {
             final AudioTrackInfo info = this.trackInfo;
             try {
-                final List<SearchResult> results = searchYoutubeIdOnly(info.title + " " + info.author, this.apiKey, 1L);
+                final List<SearchResult> results = searchYoutubeIdOnly(info.title + ' ' + info.author, this.apiKey, 1L);
 
                 if (results.isEmpty()) {
                     throw new FriendlyException("Failed to read info for " + info.uri, Severity.SUSPICIOUS, null);
