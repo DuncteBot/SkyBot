@@ -61,9 +61,10 @@ public class HelpEmbeds {
             embed.addField(getFieldForCategory(category));
         }
 
-        return embed.addField("Support",
-            "Discord server: [https://duncte.bot/server](https://duncte.bot/server)\n" +
-                "Support development of this bot: [" + PATREON + "](" + PATREON + ")", false);
+        return embed.addField("Important links",
+            "Discord server: [duncte.bot/server](https://duncte.bot/server)\n" +
+                "Support development of this bot: [" + PATREON + "](" + PATREON + ")\n" +
+                "Privacy policy: [duncte.bot/privacy](https://duncte.bot/privacy)", false);
     }
 
     /// <editor-fold desc="Reflection magic" defaultstate="collapsed">
