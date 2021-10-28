@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
@@ -633,14 +634,26 @@ public abstract class MessageListener extends BaseListener {
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(
-                    "Message %s edited in <#%s>\n**Before:** %s\n**After:** %s".formatted(
+                    "Message %s edited in <#%s> ([link](%s))\n**Before:** %s\n**After:** %s".formatted(
                         edited.getMessageId(),
                         edited.getChannelId(),
+                        edited.getJumpUrl(guild.getIdLong()),
                         MarkdownSanitizer.escape(original.getContent(), true),
                         MarkdownSanitizer.escape(edited.getContent(), true)
                     )
                 )
                 .setTimestamp(Instant.now());
+
+            if (!edited.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    edited.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
+            }
 
             modLog(
                 new MessageConfig.Builder().setEmbeds(true, embedBuilder),
@@ -665,13 +678,25 @@ public abstract class MessageListener extends BaseListener {
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(
-                    "Message %s deleted from <#%s>\n**Content:** %s".formatted(
+                    "Message %s deleted from <#%s> ([link](%s))\n**Content:** %s".formatted(
                         data.getMessageId(),
                         data.getChannelId(),
+                        data.getJumpUrl(guild.getIdLong()),
                         MarkdownSanitizer.escape(data.getContent(), true)
                     )
                 )
                 .setTimestamp(Instant.now());
+
+            if (!data.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    data.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
+            }
 
             modLog(
                 new MessageConfig.Builder().setEmbeds(true, embedBuilder),
