@@ -22,8 +22,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:pro="http://www.liquibase.org/xml/ns/pro"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
-		 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+		 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
     <changeSet id="1" author="duncte123">
         <createTable tableName="guild_settings">
             <column name="guild_id" type="bigserial"> <!-- only use serial for PKs -->
@@ -33,6 +33,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="auto_role_id" type="bigint"/>
+            <column name="embed_color" type="int"/>
 
             <column name="voice_leave_timeout_seconds" type="integer" defaultValueNumeric="1"/>
             <column name="announce_track_enabled" type="boolean" defaultValueBoolean="true"/>
@@ -71,6 +72,20 @@
             <column name="member_logging_enabled" type="boolean" defaultValueBoolean="false"/> <!-- TODO: probably could enable this by default -->
             <column name="invite_logging_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="message_logging_enabled" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+
+        <createTable tableName="custom_commands">
+            <!-- https://stackoverflow.com/questions/54440479/liquibase-how-to-add-a-group-of-fields-like-primary-key -->
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_custom_command" />
+            </column>
+            <column name="invoke" type="varchar(25)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_custom_command" />
+            </column>
+            <column name="message" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="auto_response" type="boolean" defaultValueBoolean="false"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

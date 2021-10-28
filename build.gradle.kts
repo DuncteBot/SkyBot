@@ -156,6 +156,8 @@ dependencies {
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
     implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
+    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
+    implementation(group = "org.liquibase.ext", name = "liquibase-postgresql", version = "4.5.0") //might not be needed
 
     // dev deps
     devDependencies.forEach {

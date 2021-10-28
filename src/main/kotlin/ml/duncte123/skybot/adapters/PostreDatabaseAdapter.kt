@@ -23,12 +23,16 @@ import com.dunctebot.models.settings.WarnAction
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gnu.trove.map.TLongLongMap
+import liquibase.Liquibase
+import liquibase.database.jvm.JdbcConnection
+import liquibase.resource.ClassLoaderResourceAccessor
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.io.PrintWriter
 import java.sql.Connection
 import java.time.OffsetDateTime
+
 
 class PostreDatabaseAdapter : DatabaseAdapter() {
     private val ds: HikariDataSource
@@ -41,6 +45,25 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
         config.addDataSourceProperty("logWriter", PrintWriter(System.out))
 
         this.ds = HikariDataSource(config)
+
+        // could be useful?
+        /*val dataTypeFactory = DataTypeFactory.getInstance()
+        dataTypeFactory.register(Pos)*/
+
+        this.connection.use { con ->
+            Liquibase(
+                "/dbchangelog.xml",
+                ClassLoaderResourceAccessor(),
+                JdbcConnection(con)
+            ).use { lb ->
+                /*lb.update(
+                    // TODO: figure out what these strings are, both seem to be comma seperated strings
+                    Contexts(""),
+                    LabelExpression("")
+                )*/
+                lb.update("")
+            }
+        }
     }
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) = runOnThread {
@@ -56,7 +79,7 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
                                     res.getString("invoke"),
                                     res.getString("message"),
                                     res.getLong("guild_id"),
-                                    res.getBoolean("autoresponse")
+                                    res.getBoolean("auto_response")
                                 )
                             )
                         }
