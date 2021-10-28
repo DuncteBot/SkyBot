@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 // Fuck off :)
 @SuppressWarnings({"PMD.NullAssignment", "PMD.UseConcurrentHashMap"})
@@ -34,45 +33,57 @@ public class MessageData {
     private final long authorId;
     private final long channelId;
     private final String content;
+    private final List<String> attachments;
     private final OffsetDateTime editedAt;
 
     public MessageData(
-        long messageId, long authorId, long channelId, String content,
+        long messageId, long authorId, long channelId, String content, List<String> attachments,
         @Nullable OffsetDateTime editedAt
     ) {
         this.messageId = messageId;
         this.authorId = authorId;
         this.channelId = channelId;
         this.content = content;
+        this.attachments = attachments;
         this.editedAt = editedAt;
     }
 
     public long getMessageId() {
-        return messageId;
+        return this.messageId;
     }
 
     public String getMessageIdString() {
-        return String.valueOf(messageId);
+        return String.valueOf(this.messageId);
     }
 
     public long getAuthorId() {
-        return authorId;
+        return this.authorId;
     }
 
     public long getChannelId() {
-        return channelId;
+        return this.channelId;
     }
 
     public String getContent() {
-        return content;
+        return this.content;
     }
 
     public OffsetDateTime getCratedAt() {
         return TimeUtil.getTimeCreated(this.messageId);
     }
 
+    public List<String> getAttachments() {
+        return this.attachments;
+    }
+
     public boolean isEdit() {
         return this.getEditedAt() != null;
+    }
+
+    // TODO: using the param as failover for now, remove in the future when we can ensure the guild is stored
+    // Although we don't actually have to store the guild id as we can get it from JDA
+    public String getJumpUrl(long guildId) {
+        return String.format("https://discord.com/channels/%s/%s/%s", guildId, this.channelId, this.messageId);
     }
 
     @Nullable
@@ -87,17 +98,37 @@ public class MessageData {
         map.put("author_id", String.valueOf(this.authorId));
         map.put("channel_id", String.valueOf(this.channelId));
         map.put("content", this.content);
-        map.put("edited_at", this.isEdit() ? this.editedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) : "");
+        map.put("edited_at", this.editedAt == null ? "" : this.editedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
+        map.put("attachment_count", String.valueOf(this.attachments.size()));
+
+        for (int i = 0; i < this.attachments.size(); i++) {
+            map.put("attachment_" + i, this.attachments.get(i));
+        }
 
         return map;
     }
 
     public static MessageData from(Map<String, String> map) {
+        final List<String> attachments;
+
+        if (map.containsKey("attachment_count")) {
+            final int size = Integer.parseInt(map.get("attachment_count"));
+            attachments = new ArrayList<>(size);
+
+            for (int i = 0; i < size; i++) {
+                attachments.add(i, map.get("attachment_" + i));
+            }
+        } else {
+            attachments = Collections.emptyList();
+        }
+
         return new MessageData(
             Long.parseLong(map.get("message_id")),
             Long.parseLong(map.get("author_id")),
             Long.parseLong(map.get("channel_id")),
             map.get("content"),
+            attachments,
             "".equals(map.get("edited_at")) ? null : OffsetDateTime.parse(map.get("edited_at"))
         );
     }
@@ -105,12 +136,12 @@ public class MessageData {
     @Override
     public String toString() {
         return "MessageData{" +
-            "messageId=" + messageId +
-            ", authorId=" + authorId +
-            ", channelId=" + channelId +
-            ", content='" + content + '\'' +
-            ", cratedAt=" + getCratedAt() +
-            ", editedAt=" + editedAt +
+            "messageId=" + this.messageId +
+            ", authorId=" + this.authorId +
+            ", channelId=" + this.channelId +
+            ", content='" + this.content + '\'' +
+            ", cratedAt=" + this.getCratedAt() +
+            ", editedAt=" + this.editedAt +
             '}';
     }
 
@@ -120,6 +151,7 @@ public class MessageData {
             message.getAuthor().getIdLong(),
             message.getChannel().getIdLong(),
             message.getContentRaw(),
+            message.getAttachments().stream().map(Message.Attachment::getProxyUrl).toList(),
             message.getTimeEdited()
         );
     }

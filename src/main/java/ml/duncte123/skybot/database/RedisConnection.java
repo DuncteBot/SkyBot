@@ -32,7 +32,7 @@ import java.util.Map;
 public class RedisConnection {
     /* seconds * minutes * hours * days */
     private static final long TWO_WEEKS_IN_SECONDS = 60L * 60L * 24L * 14L;
-    private static final long TWO_MONTHS_IN_SECONDS = 60L * 60L * 24L * 61L;
+    private static final long ONE_MONTH_IN_SECONDS = 60L * 60L * 24L * 31L;
 
     private final JedisPool pool;
 
@@ -53,8 +53,8 @@ public class RedisConnection {
                 data.getMessageIdString(),
                 data.toMap()
             );
-            // normal 2 weeks, patreon 2 months
-            final long seconds = isPatron ? TWO_MONTHS_IN_SECONDS : TWO_WEEKS_IN_SECONDS;
+            // normal 2 weeks, patreon 1 month
+            final long seconds = isPatron ? ONE_MONTH_IN_SECONDS : TWO_WEEKS_IN_SECONDS;
             jedis.expire(data.getMessageIdString(), seconds);
         }
     }
@@ -67,7 +67,7 @@ public class RedisConnection {
             // update the data after getting it
             jedis.hset(messageId, updateData.toMap());
             // update timeout
-            jedis.expire(messageId, isPatron ? TWO_MONTHS_IN_SECONDS : TWO_WEEKS_IN_SECONDS);
+            jedis.expire(messageId, isPatron ? ONE_MONTH_IN_SECONDS : TWO_WEEKS_IN_SECONDS);
 
             if (response.isEmpty()) {
                 return null;
