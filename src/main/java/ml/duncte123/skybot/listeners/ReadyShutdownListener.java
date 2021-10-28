@@ -91,7 +91,7 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.DAYS
             );
 
-            if (!variables.useApi()) {
+            if ("false".equals(variables.getConfig().useDatabase)) {
                 this.startSQLiteTimers();
             }
 

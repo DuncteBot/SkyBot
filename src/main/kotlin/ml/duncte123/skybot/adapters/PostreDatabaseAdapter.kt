@@ -33,7 +33,6 @@ import java.io.PrintWriter
 import java.sql.Connection
 import java.time.OffsetDateTime
 
-
 class PostreDatabaseAdapter : DatabaseAdapter() {
     private val ds: HikariDataSource
     private val connection: Connection

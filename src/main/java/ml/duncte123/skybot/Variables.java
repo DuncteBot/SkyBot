@@ -31,6 +31,7 @@ import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.adapters.PostreDatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
@@ -162,10 +163,6 @@ public final class Variables {
         return this.weebApi;
     }
 
-    public boolean useApi() {
-        return this.config.useDatabase;
-    }
-
     public Alexflipnote getAlexflipnote() {
         return this.alexflipnote;
     }
@@ -185,10 +182,14 @@ public final class Variables {
     public DatabaseAdapter getDatabaseAdapter() {
         try {
             if (this.databaseAdapter == null) {
-                this.databaseAdapter = this.useApi() ?
-                    new WebDatabaseAdapter(this.getApis(), this.getJackson()) :
-                    (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
+                if ("psql".equals(this.config.useDatabase)) {
+                    this.databaseAdapter = new PostreDatabaseAdapter();
+                } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
+                    this.databaseAdapter = new WebDatabaseAdapter(this.getApis(), this.getJackson());
+                } else {
+                    this.databaseAdapter = (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
                         .getDeclaredConstructor().newInstance());
+                }
             }
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |

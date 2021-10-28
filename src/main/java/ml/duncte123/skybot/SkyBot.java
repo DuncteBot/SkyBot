@@ -76,11 +76,14 @@ public final class SkyBot {
 
         Settings.PREFIX = config.discord.prefix;
 
-        if (variables.useApi()) {
-            logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
+        final String useDatabase = variables.getConfig().useDatabase;
+
+        if ("psql".equals(useDatabase)) {
+            logger.warn("Using PostreSQL as database, well done ;)");
+        } else if ("true".equals(useDatabase) || "web".equals(useDatabase)) {
+            logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {
-            logger.warn("Using SQLite as the database");
-            logger.warn("Please note that is is not recommended for production");
+            logger.warn("Using SQLite as the database, please migrate to PostgreSQL");
         }
 
         //Load the settings before loading the bot

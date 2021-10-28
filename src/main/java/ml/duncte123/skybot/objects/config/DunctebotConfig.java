@@ -28,9 +28,9 @@ public class DunctebotConfig {
     public final Lavalink lavalink;
     public final Sentry sentry;
     public final Websocket websocket;
-    public final boolean useDatabase;
+    public final String useDatabase;
 
-    public DunctebotConfig(Discord discord, Apis apis, Lavalink lavalink, Sentry sentry, Websocket websocket, boolean useDatabase) {
+    public DunctebotConfig(Discord discord, Apis apis, Lavalink lavalink, Sentry sentry, Websocket websocket, String useDatabase) {
         this.discord = discord;
         this.apis = apis;
         this.lavalink = lavalink;
@@ -223,7 +223,7 @@ public class DunctebotConfig {
             lavalink,
             sentry,
             websocket,
-            Boolean.parseBoolean(System.getenv("USE_DATABASE"))
+            System.getenv("USE_DATABASE")
         );
     }
 }
