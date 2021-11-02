@@ -129,7 +129,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.2.1")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.3.0")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
