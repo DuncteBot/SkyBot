@@ -41,12 +41,8 @@ import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.api.utils.data.DataObject;
-import net.dv8tion.jda.internal.requests.RestActionImpl;
-import net.dv8tion.jda.internal.requests.Route;
 
 import javax.annotation.Nonnull;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -154,7 +150,7 @@ public class GuildListener extends BaseListener {
 
         if (member.equals(self)) {
             if (channel.getType() == ChannelType.STAGE) {
-                requestToSpeak(event, guild, self, channel);
+                requestToSpeak(guild, self, channel);
                 return;
             }
 
@@ -316,23 +312,11 @@ public class GuildListener extends BaseListener {
         });
     }
 
-    private void requestToSpeak(GuildVoiceJoinEvent event, Guild guild, Member self, VoiceChannel channel) {
-        final boolean canMute = self.hasPermission(channel, Permission.VOICE_MUTE_OTHERS);
-
-        if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK) || canMute) {
-            final DataObject data = DataObject.empty()
-                .put("channel_id", channel.getId())
-                .put("request_to_speak_timestamp", OffsetDateTime.now().toString());
-
-            // unmute ourselves if we have the permission to do so
-            if (canMute) {
-                data.put("request_to_speak_timestamp", null)
-                    .put("suppress", false);
-            }
-
-            // request to speak
-            final Route.CompiledRoute route = Route.Guilds.UPDATE_VOICE_STATE.compile(guild.getId(), "@me");
-            new RestActionImpl<Void>(event.getJDA(), route, data).queue();
+    private void requestToSpeak(Guild guild, Member self, VoiceChannel channel) {
+        // JDA handles all the logic for us :)
+        if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK) ||
+            self.hasPermission(channel, Permission.VOICE_MUTE_OTHERS)) {
+            guild.requestToSpeak();
         } else {
             final GuildMusicManager musicManager = this.variables.getAudioUtils().getMusicManager(guild.getIdLong());
             final TextChannel textChan = musicManager.getLatestChannel();

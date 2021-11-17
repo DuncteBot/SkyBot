@@ -22,6 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -51,7 +52,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -639,8 +639,8 @@ public abstract class MessageListener extends BaseListener {
                         edited.getMessageId(),
                         edited.getChannelId(),
                         edited.getJumpUrl(guild.getIdLong()),
-                        MarkdownSanitizer.escape(original.getContent(), true),
-                        MarkdownSanitizer.escape(edited.getContent(), true)
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(original.getContent(), true), 1500),
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(edited.getContent(), true), 1500)
                     )
                 )
                 .setTimestamp(Instant.now());
@@ -679,10 +679,9 @@ public abstract class MessageListener extends BaseListener {
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(
-                    "Message %s deleted from <#%s> ([link](%s))\n**Content:** %s".formatted(
+                    "Message %s deleted from <#%s>\n**Content:** %s".formatted(
                         data.getMessageId(),
                         data.getChannelId(),
-                        data.getJumpUrl(guild.getIdLong()),
                         MarkdownSanitizer.escape(data.getContent(), true)
                     )
                 )

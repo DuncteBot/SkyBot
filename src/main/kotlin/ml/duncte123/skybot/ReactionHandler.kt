@@ -46,8 +46,7 @@ class ReactionHandler : EventListener {
 
     private fun CommandContext.editMsg(msg: String) = this.selectionEvent.channel
         .editMessageById(this.selectionEvent.messageIdLong, msg)
-        .setEmbeds(listOf())
-        .setActionRows(listOf())
+        .override(true)
         .queue()
 
     private fun handleUserInput(ctx: CommandContext) {

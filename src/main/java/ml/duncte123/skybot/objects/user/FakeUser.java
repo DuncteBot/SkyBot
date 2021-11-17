@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -97,6 +98,12 @@ public class FakeUser implements User {
     @Nonnull
     @Override
     public RestAction<PrivateChannel> openPrivateChannel() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public RestAction<Profile> retrieveProfile() {
         return null;
     }
 
