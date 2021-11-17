@@ -158,6 +158,7 @@ dependencies {
     implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
     implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
     implementation(group = "org.liquibase.ext", name = "liquibase-postgresql", version = "4.5.0") //might not be needed
+    runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
 
     // dev deps
     devDependencies.forEach {

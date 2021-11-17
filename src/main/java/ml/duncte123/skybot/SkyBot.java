@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
@@ -79,7 +78,7 @@ public final class SkyBot {
         final String useDatabase = variables.getConfig().useDatabase;
 
         if ("psql".equals(useDatabase)) {
-            logger.warn("Using PostreSQL as database, well done ;)");
+            logger.info("Using PostgreSQL as database adapter");
         } else if ("true".equals(useDatabase) || "web".equals(useDatabase)) {
             logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {

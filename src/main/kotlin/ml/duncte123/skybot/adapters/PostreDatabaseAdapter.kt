@@ -29,7 +29,6 @@ import liquibase.resource.ClassLoaderResourceAccessor
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
-import java.io.PrintWriter
 import java.sql.Connection
 import java.time.OffsetDateTime
 
@@ -40,8 +39,8 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
 
     init {
         val config = HikariConfig()
-        config.jdbcUrl = "jdbc:postgresql://user:pass@localhost:5432/skybot"
-        config.addDataSourceProperty("logWriter", PrintWriter(System.out))
+        config.jdbcUrl = "jdbc:postgresql://localhost:5432/skybot?user=skybot&password=password" // &ssl=true
+        // config.addDataSourceProperty("logWriter", PrintWriter(System.out))
 
         this.ds = HikariDataSource(config)
 
@@ -55,11 +54,6 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
                 ClassLoaderResourceAccessor(),
                 JdbcConnection(con)
             ).use { lb ->
-                /*lb.update(
-                    // TODO: figure out what these strings are, both seem to be comma seperated strings
-                    Contexts(""),
-                    LabelExpression("")
-                )*/
                 lb.update("")
             }
         }
@@ -70,7 +64,7 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * from custom_commands").use { res ->
+                smt.executeQuery("SELECT * FROM custom_commands").use { res ->
                     res.use {
                         while (res.next()) {
                             customCommands.add(
@@ -235,8 +229,26 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
         TODO("Not yet implemented")
     }
 
-    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) = runOnThread {
+        val roles = arrayListOf<VcAutoRole>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM vc_autoroles").use { res ->
+                    while (res.next()) {
+                        roles.add(
+                            VcAutoRole(
+                                res.getLong("guild_id"),
+                                res.getLong("voice_channel_id"),
+                                res.getLong("role_id")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        callback(roles)
     }
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
@@ -255,8 +267,27 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
         TODO("Not yet implemented")
     }
 
-    override fun loadTags(callback: (List<Tag>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun loadTags(callback: (List<Tag>) -> Unit) = runOnThread {
+        val tags = arrayListOf<Tag>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM tags").use { res ->
+                    while (res.next()) {
+                        tags.add(
+                            Tag(
+                                res.getInt("id"),
+                                res.getString("name"),
+                                res.getString("content"),
+                                res.getLong("owner_id")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        callback(tags)
     }
 
     override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {

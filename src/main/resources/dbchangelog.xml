@@ -69,7 +69,7 @@
             <column name="mute_logging_enabled" type="boolean" defaultValueBoolean="true"/>
             <column name="kick_logging_enabled" type="boolean" defaultValueBoolean="true"/>
             <column name="warn_logging_enabled" type="boolean" defaultValueBoolean="true"/>
-            <column name="member_logging_enabled" type="boolean" defaultValueBoolean="false"/> <!-- TODO: probably could enable this by default -->
+            <column name="member_logging_enabled" type="boolean" defaultValueBoolean="true"/>
             <column name="invite_logging_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="message_logging_enabled" type="boolean" defaultValueBoolean="false"/>
         </createTable>
@@ -86,6 +86,31 @@
                 <constraints nullable="false" />
             </column>
             <column name="auto_response" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="duncte123">
+        <createTable tableName="tags">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="owner_id" type="bigint"/>
+            <column name="name" type="varchar(25)"/>
+            <column name="content" type="varchar(4000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="duncte123">
+        <createTable tableName="vc_autoroles">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+            <column name="voice_channel_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+            <column name="role_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -23,15 +23,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @SuppressWarnings("PMD")
 public class Tag {
+    private final int id;
     public final String name;
     public final String content;
     public final long ownerId;
 
-    @JsonCreator
-    public Tag(@JsonProperty("name") String name, @JsonProperty("content") String content, @JsonProperty("owner_id") long ownerId) {
+    public Tag(int id, String name, String content, long ownerId) {
+        this.id = id;
         this.name = name;
         this.content = content;
         this.ownerId = ownerId;
+    }
+
+    @JsonCreator
+    public Tag(@JsonProperty("name") String name, @JsonProperty("content") String content, @JsonProperty("owner_id") long ownerId) {
+        this(0, name, content, ownerId);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
