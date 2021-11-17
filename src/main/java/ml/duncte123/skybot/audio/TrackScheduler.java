@@ -166,7 +166,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
 
         // Get if the track was from a skip event
-        final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
+        final Object userData = lastTrack.getUserData();
+        final boolean wasFromSkip;
+
+        if (userData instanceof TrackUserData data) {
+            wasFromSkip = data.getWasFromSkip();
+        } else {
+            wasFromSkip = false;
+        }
 
         if (this.looping) {
             LOGGER.debug("repeating the current song");
