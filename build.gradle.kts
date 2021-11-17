@@ -85,7 +85,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.95")
+    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
         exclude(module = "lavaplayer")
     }
@@ -129,7 +129,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.3.0")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.4.0")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")

@@ -54,14 +54,21 @@ class JoinCommand : MusicCommand() {
         val lavalink = getLavalinkManager()
 
         if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
-            val channel = lavalink.getConnectedChannel(event.guild).idLong
+            val channel = lavalink.getConnectedChannel(event.guild)
 
-            sendMsg(ctx, "I am already playing music in <#$channel>.")
+            if (channel == null) {
+                sendMsg(ctx, "I am already playing music in a channel, but somehow discord did not tell me what channel I am in.")
+                return
+            }
+
+            val channelId = channel.idLong
+
+            sendMsg(ctx, "I am already playing music in <#$channelId>.")
             return
         }
 
         if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-            sendMsg(ctx, "I cannot connect to <#${vc.idLong}>")
+            sendMsg(ctx, "I cannot join to <#${vc.idLong}> because I am missing the permission to do so.")
 
             return
         }
