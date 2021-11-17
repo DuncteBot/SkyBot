@@ -18,7 +18,6 @@ FROM azul/zulu-openjdk-alpine:16-jre
 
 # add libstdc++ for playing back mp3's with lavaplayer
 # also add some fonts
-# RUN apk add --no-cache libstdc++ freetype fontconfig dejavu-sans-fonts
 RUN apk add --no-cache libstdc++ fontconfig font-noto
 
 WORKDIR /skybot
