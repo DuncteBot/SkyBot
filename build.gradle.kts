@@ -315,7 +315,7 @@ githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    tagName(numberVersion)
+    tagName("v$numberVersion")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)
