@@ -70,8 +70,6 @@ public final class LavalinkManager {
 
     @SuppressWarnings("unused") // we need it from eval
     public void forceEnable(boolean enabled) {
-        this.enabledOverride = enabled;
-
         if (enabled) {
             this.loadNodes();
         } else {
@@ -84,6 +82,9 @@ public final class LavalinkManager {
                 this.lavalink.removeNode(i);
             }
         }
+
+        // Do this last, otherwise we can't disconnect
+        this.enabledOverride = enabled;
     }
 
     public boolean isEnabled() {

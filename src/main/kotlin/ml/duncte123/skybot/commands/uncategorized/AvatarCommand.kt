@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.FinderUtils
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 
 class AvatarCommand : Command() {
@@ -34,6 +35,7 @@ class AvatarCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         var user: User? = ctx.author
+        var member: Member? = null
 
         if (ctx.args.isNotEmpty()) {
             // We're searching for members in the guild to get more accurate results
@@ -43,7 +45,10 @@ class AvatarCommand : Command() {
                 val foundUsers = FinderUtils.searchUsers(ctx.argsRaw, ctx)
 
                 if (foundUsers.isNotEmpty()) foundUsers[0] else null
-            } else foundMembers[0].user
+            } else {
+                member = foundMembers[0]
+                member.user
+            }
         }
 
         if (user == null) {
@@ -52,6 +57,8 @@ class AvatarCommand : Command() {
             return
         }
 
-        sendMsg(ctx, "**${user.asTag}'s** avatar:\n${user.effectiveAvatarUrl}?size=4096")
+        val avUrl = member?.effectiveAvatarUrl ?: user.effectiveAvatarUrl
+
+        sendMsg(ctx, "**${user.asTag}'s** avatar:\n$avUrl?size=4096")
     }
 }
