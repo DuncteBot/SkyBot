@@ -61,9 +61,10 @@ public class HelpEmbeds {
             embed.addField(getFieldForCategory(category));
         }
 
-        return embed.addField("Support",
-            "Discord server: [https://duncte.bot/server](https://duncte.bot/server)\n" +
-                "Support development of this bot: [" + PATREON + "](" + PATREON + ")", false);
+        return embed.addField("Important links",
+            "Discord server: [duncte.bot/server](https://duncte.bot/server)\n" +
+                "Support development of this bot: [" + PATREON + "](" + PATREON + ")\n" +
+                "Privacy policy: [duncte.bot/privacy](https://duncte.bot/privacy)", false);
     }
 
     /// <editor-fold desc="Reflection magic" defaultstate="collapsed">
@@ -123,10 +124,6 @@ public class HelpEmbeds {
     }
 
     private static MessageEmbed.Field getFieldForCategory(CommandCategory category) {
-        if (category == CommandCategory.UNLISTED) {
-            return null;
-        }
-
         final String commands = switch (category) {
             case ANIMALS -> ANIMALS_COMMANDS;
             case MAIN -> MAIN_COMMANDS;
@@ -141,6 +138,10 @@ public class HelpEmbeds {
             case LGBTQ -> LGBTQ_COMMANDS;
             case UNLISTED -> null;
         };
+
+        if (commands == null) {
+            return null;
+        }
 
         return new MessageEmbed.Field(
             category.getDisplay() + " Commands",

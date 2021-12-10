@@ -28,9 +28,13 @@ import java.time.OffsetDateTime
 import java.util.*
 
 class FakeMember(private val name: String) : Member {
+    private val internalUser = FakeUser(name, 0, 0)
+
     override fun getEffectiveName() = name
 
-    override fun getUser() = FakeUser(name, 0, 0)
+    override fun getUser() = internalUser
+
+    override fun getAvatarId() = internalUser.avatarId
 
     override fun canInteract(member: Member): Boolean {
         throw NotImplementedError("An operation is not implemented: not implemented")

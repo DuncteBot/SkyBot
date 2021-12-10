@@ -71,7 +71,8 @@ public class YoutubeUtils {
     }
 
     public static List<SearchResult> searchYoutubeIdOnly(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("id")
+        return youtube.search()
+            .list("id")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
@@ -81,7 +82,8 @@ public class YoutubeUtils {
     }
 
     public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("snippet")
+        return youtube.search()
+            .list("snippet")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
@@ -176,7 +178,8 @@ public class YoutubeUtils {
     }
 
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
-        return youtube.videos().list("id,snippet,contentDetails")
+        return youtube.videos()
+            .list("id,snippet,contentDetails")
             .setId(videoIds)
             .setKey(apiKey)
             .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)");

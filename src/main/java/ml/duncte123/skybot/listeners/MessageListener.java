@@ -22,6 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -51,7 +52,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
@@ -633,14 +634,26 @@ public abstract class MessageListener extends BaseListener {
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(
-                    "Message %s edited in <#%s>\n**Before:** %s\n**After:** %s".formatted(
+                    "Message %s edited in <#%s> ([link](%s))\n**Before:** %s\n**After:** %s".formatted(
                         edited.getMessageId(),
                         edited.getChannelId(),
-                        MarkdownSanitizer.escape(original.getContent(), true),
-                        MarkdownSanitizer.escape(edited.getContent(), true)
+                        edited.getJumpUrl(guild.getIdLong()),
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(original.getContent(), true), 1500),
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(edited.getContent(), true), 1500)
                     )
                 )
                 .setTimestamp(Instant.now());
+
+            if (!edited.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    edited.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
+            }
 
             modLog(
                 new MessageConfig.Builder().setEmbeds(true, embedBuilder),
@@ -672,6 +685,17 @@ public abstract class MessageListener extends BaseListener {
                     )
                 )
                 .setTimestamp(Instant.now());
+
+            if (!data.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    data.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
+            }
 
             modLog(
                 new MessageConfig.Builder().setEmbeds(true, embedBuilder),

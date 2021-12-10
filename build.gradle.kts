@@ -35,7 +35,7 @@ plugins {
     pmd
 }
 
-val numberVersion = "3.106.0"
+val numberVersion = "3.106.2"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -76,8 +76,8 @@ dependencies {
     implementation(group = "me.duncte123", name = "botCommons", version = "2.3.9")
 
     // JDA (java discord api)
-//     implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.3.0_335") {
+//     implementation(group = "com.github.duncte123", name = "JDA", version = "af7956e") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
         exclude(module = "opus-java")
     }
 
@@ -85,7 +85,7 @@ dependencies {
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.95")
+    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
         exclude(module = "lavaplayer")
     }
@@ -129,7 +129,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.2.1")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.4.0")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
@@ -315,7 +315,7 @@ githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    tagName(numberVersion)
+    tagName("v$numberVersion")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)

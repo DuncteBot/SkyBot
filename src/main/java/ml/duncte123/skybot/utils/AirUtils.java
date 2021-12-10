@@ -158,18 +158,18 @@ public class AirUtils {
         }
     }
 
-    public static void stopMusic(Long guildId, AudioUtils audioUtils) {
+    public static void stopMusic(long guildId, AudioUtils audioUtils) {
         final GuildMusicManager mng = audioUtils.getMusicManagers().get(guildId);
 
         if (mng == null) {
             return;
         }
 
-        final LavalinkManager lavalinkManager = LavalinkManager.INS;
-
         mng.stopAndClear();
 
+        final LavalinkManager lavalinkManager = LavalinkManager.INS;
         final String guildIdString = Long.toString(guildId);
+
         if (lavalinkManager.isConnected(guildIdString)) {
             lavalinkManager.closeConnection(guildIdString);
         }
