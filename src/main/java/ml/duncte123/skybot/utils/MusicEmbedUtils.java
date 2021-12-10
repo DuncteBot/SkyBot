@@ -28,7 +28,7 @@ public class MusicEmbedUtils {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
             generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
             + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
-            + getVolumeIcon(mng.player.getFilters().getVolume());
+            + getVolumeIcon(mng.player.getVolume());
     }
 
     private static String generateProgressBar(double percent) {

@@ -18,12 +18,45 @@
 
 package ml.duncte123.skybot.audio.sourcemanagers.ocremix;
 
-public class OCRemixAudioTrack {
-    // https:// + HOST + remix[file_name]
+import com.dunctebot.sourcemanagers.AbstractDuncteBotHttpSource;
+import com.dunctebot.sourcemanagers.Mp3Track;
+import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
+
+public class OCRemixAudioTrack extends Mp3Track {
     private static final String[] MUSIC_HOSTS = {
         "iterations.org",
         "ocrmirror.org",
         "ocr.blueblue.fr",
     };
+    private int hostIndex = 0;
 
+    public OCRemixAudioTrack(AudioTrackInfo trackInfo, AbstractDuncteBotHttpSource manager) {
+        super(trackInfo, manager);
+    }
+
+    @Override
+    public void process(LocalAudioTrackExecutor executor) throws Exception {
+        // attempt to load all hosts if one fails
+        try (HttpInterface httpInterface = this.getSourceManager().getHttpInterface()) {
+            while (this.hostIndex < MUSIC_HOSTS.length) {
+                try {
+                    loadStream(executor, httpInterface);
+                    break;
+                } catch (Exception e) {
+                    this.hostIndex++;
+
+                    if ((this.hostIndex >= MUSIC_HOSTS.length)) {
+                        throw e;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected String getPlaybackUrl() {
+        return "https://" + MUSIC_HOSTS[this.hostIndex] + this.trackInfo.uri;
+    }
 }
