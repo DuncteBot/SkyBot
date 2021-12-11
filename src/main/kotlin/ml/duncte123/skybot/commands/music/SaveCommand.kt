@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.music
 
 import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
@@ -49,15 +50,12 @@ class SaveCommand : MusicCommand() {
 
         val urls = manager.scheduler.queue
             .map {
-                when (it) {
-                    is IWillUseIdentifierInstead -> it.info.identifier
-                    else -> it.info.uri
-                }
+                it.lpUrl()
             }
             .toMutableList()
 
         if (manager.player.playingTrack != null) {
-            urls.add(0, manager.player.playingTrack.info.uri)
+            urls.add(0, manager.player.playingTrack.lpUrl())
         }
 
         for (url in urls) {
@@ -65,5 +63,10 @@ class SaveCommand : MusicCommand() {
         }
 
         return mapper.writeValueAsBytes(array)
+    }
+
+    private fun AudioTrack.lpUrl() = when (this) {
+        is IWillUseIdentifierInstead -> this.info.identifier
+        else -> this.info.uri
     }
 }
