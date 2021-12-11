@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -47,7 +48,12 @@ class SaveCommand : MusicCommand() {
         val manager = audioUtils.getMusicManager(guild)
 
         val urls = manager.scheduler.queue
-            .map { it.info.uri }
+            .map {
+                when (it) {
+                    is IWillUseIdentifierInstead -> it.info.identifier
+                    else -> it.info.uri
+                }
+            }
             .toMutableList()
 
         if (manager.player.playingTrack != null) {
