@@ -95,7 +95,7 @@ dependencies {
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.7")
 
     // Logback classic
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
+    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
 
     //Spotify API
     implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.4")
