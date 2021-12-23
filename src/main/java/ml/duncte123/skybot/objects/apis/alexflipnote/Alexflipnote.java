@@ -42,7 +42,7 @@ public class Alexflipnote {
 
     public PendingRequest<FlipnoteColourObj> getColour(String color) {
         return WebUtils.ins.prepareRaw(
-            makeRequest("colour/" + color),
+            makeRequest("https://api.alexflipnote.dev/", "colour/" + color),
             (r) -> {
                 final JsonNode node = mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
 
@@ -124,8 +124,12 @@ public class Alexflipnote {
     }
 
     private Request makeRequest(String path) {
+        return makeRequest("https://flipnote.duncte.bot/", path);
+    }
+
+    private Request makeRequest(String url, String path) {
         return defaultRequest()
-            .url("https://api.alexflipnote.dev/" + path)
+            .url(url + path)
             .addHeader("Authorization", this.apiKey)
             .get()
             .build();

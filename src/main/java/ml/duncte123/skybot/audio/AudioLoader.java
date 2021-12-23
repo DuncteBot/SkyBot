@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.audio;
 
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -38,7 +39,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -81,8 +81,15 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final AudioTrackInfo info = track.getInfo();
+                final String uri;
+                if (track instanceof IWillUseIdentifierInstead) {
+                    uri = info.identifier;
+                } else {
+                    uri = info.uri;
+                }
+
                 final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
-                final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
+                final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + uri + ')';
 
                 sendEmbed(this.ctx,
                     embedMessage(msg)
@@ -118,11 +125,10 @@ public class AudioLoader implements AudioLoadResultHandler {
             }
 
             final List<AudioTrack> tracks = tracksRaw.stream().peek((track) -> {
-                    addToIndex(track);
-                    // don't store this externally since it will cause issues
-                    track.setUserData(new TrackUserData(this.requester));
-                })
-                .collect(Collectors.toList());
+                addToIndex(track);
+                // don't store this externally since it will cause issues
+                track.setUserData(new TrackUserData(this.requester));
+            }).toList();
 
             for (final AudioTrack track : tracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
