@@ -218,6 +218,7 @@ public class CommandManager {
         this.addCommand(new LickCommand());
         this.addCommand(new LinusCommand());
         this.addCommand(new LlamaCommand());
+        this.addCommand(new LLRwCommand());
         this.addCommand(new LoadCommand());
         this.addCommand(new LoadingBarCommand());
         this.addCommand(new LockEmoteCommand());

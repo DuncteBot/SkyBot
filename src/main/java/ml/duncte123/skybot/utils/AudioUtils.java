@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
+import com.dunctebot.tss.TTSAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
@@ -64,6 +65,8 @@ public class AudioUtils {
 
         DuncteBotSources.registerCustom(playerManager, "en-AU", 6);
         DuncteBotSources.registerCustom(LavalinkUtil.getPlayerManager(), "en-AU", 6);
+
+        LavalinkUtil.getPlayerManager().registerSourceManager(new TTSAudioSourceManager(null));
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());

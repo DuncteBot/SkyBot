@@ -56,6 +56,7 @@ repositories {
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.notfab.net/Hosted")
     maven("https://jitpack.io")
+    jcenter()
 }
 
 val devDependencies = arrayOf(
@@ -82,11 +83,12 @@ dependencies {
     }
 
     implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.9")
+    implementation(group = "com.github.dunctebot", name = "tts-plugin", version = "0408853")
 //    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "68b7277")
     // Lavaplayer/Lavalink
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "04b608b") {
         exclude(module = "lavaplayer")
     }
 //    implementation(project(":Lavalink-Client"))
