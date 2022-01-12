@@ -157,11 +157,11 @@ class WebSocketClient(
             is SocketTimeoutException -> {
                 log.debug("Socket timed out")
             }
-            is IOException -> {
-                log.debug("Encountered I/O error", cause)
-            }
             is ConnectException -> {
                 log.warn("Failed to connect to {}, retrying in {} seconds", websocket.uri, reconnectInterval / 1000)
+            }
+            is IOException -> {
+                log.debug("Encountered I/O error", cause)
             }
             else -> {
                 log.error("There was an error in the WebSocket connection", cause)
@@ -200,7 +200,7 @@ class WebSocketClient(
 
     private fun setupHandlers() {
         handlersMap[SocketTypes.DATA_UPDATE] = DataUpdateHandler(variables, this)
-        handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(shardManager, this)
+        handlersMap[SocketTypes.FETCH_DATA] = RequestHandler(variables, shardManager, this)
         handlersMap[SocketTypes.GUILD_SETTINGS] = GuildSettingsHandler(variables, this)
         handlersMap[SocketTypes.CUSTOM_COMMANDS] = CustomCommandHandler(variables, this)
         handlersMap[SocketTypes.PONG] = PongHandler(this)
