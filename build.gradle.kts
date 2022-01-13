@@ -24,15 +24,15 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.min
 
 plugins {
+    pmd
     java
     idea
     application
 
     kotlin("jvm") version "1.6.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
     id("org.jmailen.kotlinter") version "3.5.1"
-    pmd
 }
 
 val numberVersion = "3.106.2"
