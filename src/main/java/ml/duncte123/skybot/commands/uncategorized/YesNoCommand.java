@@ -20,18 +20,20 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-public class YesNoCommand extends Command {
+public class YesNoCommand extends BaseCommand {
 
     public YesNoCommand() {
-        this.name = "yesno";
-        this.help = "Chooses between yes or no";
+        super(
+            "yesno",
+            "Chooses between yes or no"
+        );
     }
 
     @Override
