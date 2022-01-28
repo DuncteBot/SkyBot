@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CommandUtils;
@@ -30,16 +30,20 @@ import javax.annotation.Nonnull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class TestTagCommand extends Command {
+public class TestTagCommand extends BaseCommand {
 
     public TestTagCommand() {
-        this.category = CommandCategory.UTILS;
-        this.name = "testtag";
-        this.aliases = new String[]{
-            "tt",
-        };
-        this.help = "Test your jagtag format before you save it as custom command etc.";
-        this.usage = "<JagTag syntax>";
+        super(
+            "testtag",
+            "Test your jagtag format before you save it as custom command etc.",
+            CommandCategory.UTILS,
+            null,
+            new String[]{
+                "tt",
+            },
+            false,
+            "<JagTag syntax>"
+        );
     }
 
     @Override

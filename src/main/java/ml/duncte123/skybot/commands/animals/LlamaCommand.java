@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.animals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -28,12 +28,14 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-public class LlamaCommand extends Command {
+public class LlamaCommand extends BaseCommand {
 
     public LlamaCommand() {
-        this.category = CommandCategory.ANIMALS;
-        this.name = "llama";
-        this.help = "Shows a llama";
+        super(
+            "llama",
+            "Shows a random llama",
+            CommandCategory.ANIMALS
+        );
     }
 
     @Override

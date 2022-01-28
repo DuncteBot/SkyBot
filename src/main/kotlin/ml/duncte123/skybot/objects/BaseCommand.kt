@@ -29,9 +29,10 @@ import ml.duncte123.skybot.objects.command.ICommand
 import net.dv8tion.jda.api.Permission
 import java.util.concurrent.TimeUnit
 
-abstract class BaseCommand(
+abstract class BaseCommand @JvmOverloads constructor (
     private val name: String,
     val help: String,
+    private val category: CommandCategory = CommandCategory.MAIN,
     val extraInfo: String? = null,
 
     private val aliases: Array<String> = arrayOf(),
@@ -41,7 +42,6 @@ abstract class BaseCommand(
     val requiresArgs: Boolean = false,
     val requiredArgCount: Int = 1,
 
-    private val category: CommandCategory = CommandCategory.MAIN,
     val userPermissions: List<Permission> = listOf(),
     val botPermissions: List<Permission> = listOf(),
     val flags: Array<Flag> = arrayOf(),
@@ -52,7 +52,15 @@ abstract class BaseCommand(
     val overridesCooldown: (CommandContext) -> Boolean = { false }
 ) : ICommand {
     // I love mixing java into this :D
-    constructor(name: String, help: String) : this(name, help, extraInfo = null)
+    // TODO: might try to optimize this a bit instead of using JvmOverloads
+    // constructor(name: String, help: String) : this(name, help, extraInfo = null)
+    constructor(
+        name: String,
+        help: String,
+        category: CommandCategory,
+        aliases: Array<String>,
+        flags: Array<Flag>
+    ) : this(name, help, category = category, null, aliases = aliases, flags = flags)
 
     abstract fun execute(ctx: CommandContext)
 

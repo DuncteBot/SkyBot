@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.durationparser.DurationParser;
 import me.duncte123.durationparser.ParsedDuration;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
@@ -34,29 +34,36 @@ import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class RemindmeCommand extends Command {
+public class RemindmeCommand extends BaseCommand {
 
     public RemindmeCommand() {
-        this.category = CommandCategory.UTILS;
-        this.name = "remind";
-        this.aliases = new String[]{
-            "remindme",
-        };
-        this.help = "Creates a reminder for you, add `--channel` to remind you in the current channel";
-        this.usage = "<reminder> -t <number><w/d/h/m/s>";
-        this.extraInfo = "Example: `{prefix}remind Clean your room :/ -t 1d5m";
-        this.flags = new Flag[]{
-            new Flag(
-                't',
-                "time",
-                "Sets the time for the reminder"
-            ),
-            new Flag(
-                'c',
-                "channel",
-                "When this flag is set you will be reminded in the channel where you executed the command (reminder is in dms by default)"
-            ),
-        };
+        super(
+            "remind",
+            "Creates a reminder for you, add `--channel` to remind you in the current channel",
+            CommandCategory.UTILS,
+            "Example: `{prefix}remind Clean your room :/ -t 1d5m",
+            new String[]{
+                "remindme",
+            },
+            false,
+            "<reminder> -t <number><w/d/h/m/s>",
+            true,
+            2,
+            List.of(),
+            List.of(),
+            new Flag[]{
+                new Flag(
+                    't',
+                    "time",
+                    "Sets the time for the reminder"
+                ),
+                new Flag(
+                    'c',
+                    "channel",
+                    "When this flag is set you will be reminded in the channel where you executed the command (reminder is in your DMs by default)"
+                ),
+            }
+        );
     }
 
     @Override

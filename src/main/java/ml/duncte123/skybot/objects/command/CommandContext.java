@@ -24,6 +24,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -113,9 +114,18 @@ public class CommandContext implements ICommandContext {
         return variables.getApis();
     }
 
+    @Deprecated
     public Map<String, List<String>> getParsedFlags(Command cmd) {
         if (this.cachedFlags == null) {
             this.cachedFlags = CommandUtils.parseInput(cmd.flags, this.getArgs());
+        }
+
+        return this.cachedFlags;
+    }
+
+    public Map<String, List<String>> getParsedFlags(BaseCommand cmd) {
+        if (this.cachedFlags == null) {
+            this.cachedFlags = CommandUtils.parseInput(cmd.getFlags(), this.getArgs());
         }
 
         return this.cachedFlags;

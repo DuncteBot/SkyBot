@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.animals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -28,15 +29,14 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-public class SealCommand extends Command {
+public class SealCommand extends BaseCommand {
 
     public SealCommand() {
-        this.category = CommandCategory.ANIMALS;
-        this.name = "seal";
-        this.aliases = new String[]{
-            "zeehond",
-        };
-        this.help = "Shows a seal";
+        super(
+            "seal",
+            "Shows a random seal",
+            CommandCategory.ANIMALS
+        );
     }
 
     @Override
