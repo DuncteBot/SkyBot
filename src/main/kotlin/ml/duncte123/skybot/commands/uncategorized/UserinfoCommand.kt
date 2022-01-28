@@ -112,6 +112,7 @@ class UserinfoCommand : Command() {
 
     private fun renderUserEmbed(ctx: CommandContext, user: User, guild: DunctebotGuild) {
         val times = user.parseTimeCreated()
+        val profile = user.retrieveProfile().complete() // Don't tell the JDA guild
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(guild.color)
@@ -122,7 +123,7 @@ class UserinfoCommand : Command() {
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Account Created:** ${times.first} (${times.second})
-                        |$nitroUserLink ${user.isNitro.toEmoji()}
+                        |$nitroUserLink ${user.nitroStatus(profile).toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
@@ -176,6 +177,7 @@ class UserinfoCommand : Command() {
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
         val user = member.user
+        val profile = user.retrieveProfile().complete() // Don't tell the JDA guild
 
         val userTimes = user.parseTimeCreated()
         val memberTimes = member.parseTimeJoined()
@@ -192,7 +194,7 @@ class UserinfoCommand : Command() {
             "\n**Boosting since:** ${boostTimes.first} (${boostTimes.second})"
         }
 
-        val userNitro = user.isNitro
+        val userNitro = user.nitroStatus(profile) || member.isNitro
         val nitroBadge = if (userNitro) " $DISCORD_NITRO" else ""
         val loadedMembers = event.guild.loadMembers().get()
 
@@ -249,6 +251,11 @@ class UserinfoCommand : Command() {
             else -> StatusType.OFFLINE
         }
     }
+
+    private fun User.nitroStatus(profile: User.Profile) = profile.bannerId != null || this.isNitro
+
+    private val Member.isNitro: Boolean
+        get() = this.avatarId != null || this.user.isNitro
 
     private val User.isNitro: Boolean
         get() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
