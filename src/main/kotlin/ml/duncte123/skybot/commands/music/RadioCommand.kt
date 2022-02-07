@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
@@ -30,7 +30,7 @@ class RadioCommand : MusicCommand() {
 
     init {
         this.requiresArgs = true
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "radio"
         this.aliases = arrayOf("pstream", "stream", "webstream", "webradio")
         this.help = "Stops all currently playing music and starts a radio station"
@@ -45,12 +45,12 @@ class RadioCommand : MusicCommand() {
                 sendRadioSender(ctx)
             }
             "fulllist" -> {
-                sendMsg(ctx, "The full list of radio streams can be found on <https://dunctebot.com/radiostreams>")
+                sendMsg(ctx, "The full list of radio streams can be found on <https://duncte.bot/radiostreams>")
             }
             else -> {
-                val search = ctx.argsRaw.toLowerCase()
+                val search = ctx.argsRaw.lowercase()
                 val radio = radioStreams.firstOrNull {
-                    it.name.toLowerCase().contains(search) || it.website.toLowerCase().contains(search)
+                    it.name.lowercase().contains(search) || it.website.lowercase().contains(search)
                 }
 
                 if (radio == null) {

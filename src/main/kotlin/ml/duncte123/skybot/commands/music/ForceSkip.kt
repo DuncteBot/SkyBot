@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
@@ -26,7 +26,7 @@ import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.objects.user.ConsoleUser
+import ml.duncte123.skybot.objects.user.UnknownUser
 import net.dv8tion.jda.api.Permission
 
 class ForceSkip : MusicCommand() {
@@ -65,11 +65,10 @@ class ForceSkip : MusicCommand() {
 
         val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
 
-        // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        scheduler.skipTracks(count)
+        scheduler.skipTracks(count, false)
 
         // Return the console user if the requester is null
-        val user = ctx.jda.getUserById(trackData.requester) ?: ConsoleUser()
+        val user = ctx.jda.getUserById(trackData.requester) ?: UnknownUser()
 
         val track: AudioTrack? = player.playingTrack
 

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,12 +13,14 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
 
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
@@ -47,11 +49,13 @@ class SaveCommand : MusicCommand() {
         val manager = audioUtils.getMusicManager(guild)
 
         val urls = manager.scheduler.queue
-            .map { it.info.uri }
+            .map {
+                it.lpUrl()
+            }
             .toMutableList()
 
         if (manager.player.playingTrack != null) {
-            urls.add(0, manager.player.playingTrack.info.uri)
+            urls.add(0, manager.player.playingTrack.lpUrl())
         }
 
         for (url in urls) {
@@ -59,5 +63,10 @@ class SaveCommand : MusicCommand() {
         }
 
         return mapper.writeValueAsBytes(array)
+    }
+
+    private fun AudioTrack.lpUrl() = when (this) {
+        is IWillUseIdentifierInstead -> this.info.identifier
+        else -> this.info.uri
     }
 }

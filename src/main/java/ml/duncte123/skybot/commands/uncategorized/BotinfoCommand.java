@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized;
@@ -41,6 +41,7 @@ public class BotinfoCommand extends Command {
             "about",
             "support",
             "bi",
+            "info",
         };
         this.help = "Displays some information about the bot";
     }
@@ -48,7 +49,7 @@ public class BotinfoCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         if ("support".equals(ctx.getInvoke())) {
-            MessageUtils.sendMsg(ctx, "You can join my support server here: <https://dunctebot.link/server>");
+            MessageUtils.sendMsg(ctx, "You can join my discord server here: <https://duncte.bot/server>");
             return;
         }
 
@@ -59,9 +60,9 @@ public class BotinfoCommand extends Command {
             .setThumbnail(user.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                 duncte + ".\n" +
-                "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                "\n**[Support server](https://dunctebot.link/server)** \u2022 **[Website](https://dunctebot.com/)** \u2022 " +
-                "**[Invite me](https://dunctebot.link/invite)**" +
+                "If you want to add me to your server you can do that by [clicking here](https://discord.bots.gg/bots/210363111729790977).\n" +
+                "\n**[Discord server](https://duncte.bot/server)** \u2022 **[Website](https://duncte.bot/)** \u2022 " +
+                "**[Invite me](https://duncte.bot/invite)**" +
                 " \u2022 **[Twitter](https://twitter.com/DuncteBot)**  \u2022 **[Cheap hosting](https://billing.oxide.host/aff.php?aff=6)**" +
                 "\n\u200B", true)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +

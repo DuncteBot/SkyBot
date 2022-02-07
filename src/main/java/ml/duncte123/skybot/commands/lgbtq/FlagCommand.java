@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.lgbtq;
@@ -54,13 +54,13 @@ public class FlagCommand extends ImageCommandBase {
         final String flag = args.get(0).toLowerCase();
 
         if ("list".equalsIgnoreCase(flag)) {
-            sendMsg(ctx, "A list of flags can be found at https://dunctebot.com/flags");
+            sendMsg(ctx, "A list of flags can be found at https://duncte.bot/flags");
 
             return;
         }
 
         if (!flags.contains(flag)) {
-            sendMsg(ctx, "I do not know what this flag is, visit <https://dunctebot.com/flags> for a list of available flags.");
+            sendMsg(ctx, "I do not know what this flag is, visit <https://duncte.bot/flags> for a list of available flags.");
 
             return;
         }

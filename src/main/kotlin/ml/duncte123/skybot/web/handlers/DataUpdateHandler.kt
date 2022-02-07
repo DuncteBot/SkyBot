@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,16 +13,14 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.sentry.Sentry
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
@@ -36,31 +34,49 @@ import ml.duncte123.skybot.utils.ModerationUtils
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.entities.Role
+import java.util.concurrent.Executors
+import java.util.concurrent.locks.ReentrantLock
 
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
+    private val updateLock = ReentrantLock()
+    private val thread = Executors.newSingleThreadExecutor()
 
     override fun handleInternally(data: JsonNode) {
-        GlobalScope.launch(context = Dispatchers.IO) {
-            if (data.has("new_one_guild")) {
-                handleNewOneGuild(data["new_one_guild"])
-            }
+        // swallow the update if locked
+        if (updateLock.isLocked) {
+            return
+        }
 
-            if (data.has("patrons")) {
-                handlePatrons(data["patrons"])
-            }
+        thread.execute {
+            updateLock.lock()
 
-            if (data.has("unbans")) {
-                handleUnbans(data["unbans"])
-            }
+            try {
+                if (data.has("new_one_guild")) {
+                    handleNewOneGuild(data["new_one_guild"])
+                }
 
-            if (data.has("unmutes")) {
-                handleUnmutes(data["unmutes"])
-            }
+                if (data.has("patrons")) {
+                    handlePatrons(data["patrons"])
+                }
 
-            // Uses complete, must be handled last
-            if (data.has("reminders")) {
-                handleReminders(data["reminders"])
+                if (data.has("unbans")) {
+                    handleUnbans(data["unbans"])
+                }
+
+                if (data.has("unmutes")) {
+                    handleUnmutes(data["unmutes"])
+                }
+
+                // Uses complete, must be handled last
+                if (data.has("reminders")) {
+                    handleReminders(data["reminders"])
+                }
+            } catch (e: Exception) {
+                LOG.error("Data update failure!", e)
+                Sentry.captureException(e)
+            } finally {
+                updateLock.unlock()
             }
         }
     }
@@ -115,11 +131,17 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
     }
 
     private fun handleReminders(reminders: JsonNode) {
-        val parsedReminders: List<Reminder> = jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
+        try {
+            val parsedReminders: List<Reminder> =
+                jackson.readValue(reminders.traverse(), object : TypeReference<List<Reminder>>() {})
 
-        // Uses complete, must be handled last
-        if (parsedReminders.isNotEmpty()) {
-            AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
+            // Uses complete, must be handled last
+            if (parsedReminders.isNotEmpty()) {
+                AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
+            }
+        } catch (e: Exception) {
+            Sentry.captureException(e)
+            LOG.error("Updating reminders failed", e)
         }
     }
 }

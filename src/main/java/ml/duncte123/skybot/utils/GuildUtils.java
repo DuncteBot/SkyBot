@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.utils;
@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
@@ -67,7 +66,7 @@ public class GuildUtils {
                 GUILD_MEMBER_COUNTS.put(guild.getIdLong(), GuildMemberInfo.init(guild));
             }
             catch (ExecutionException | InterruptedException e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
                 LOGGER.error("Failed to fetch member counts", e);
                 // backup if we fail to fetch
                 GUILD_MEMBER_COUNTS.put(guild.getIdLong(), new GuildMemberInfo());
@@ -145,20 +144,6 @@ public class GuildUtils {
             .count();
     }
 
-    public static TextChannel getPublicChannel(Guild guild) {
-
-        final TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
-
-        if (pubChann == null || !pubChann.canTalk()) {
-
-            return guild.getTextChannelCache().applyStream(
-                (s) -> s.filter(TextChannel::canTalk).findFirst().orElse(null)
-            );
-        }
-
-        return pubChann;
-    }
-
     public static String verificationLvlToName(VerificationLevel lvl) {
         if (lvl == null) {
             return "None";
@@ -172,15 +157,6 @@ public class GuildUtils {
             default -> "None";
         };
     }
-
-    /*public static long getMemberJoinPosition(Member member) {
-        //noinspection ConstantConditions
-        return member.getGuild().getMemberCache().applyStream(
-            (s) -> s.sorted(Comparator.comparing(Member::getTimeJoined))
-                .takeWhile((it) -> !it.equals(member))
-                .count() + 1
-        );
-    }*/
 
     public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
         LOGGER.info("(Re)loading patrons");

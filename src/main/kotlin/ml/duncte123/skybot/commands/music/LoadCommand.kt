@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
@@ -24,12 +24,11 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import java.util.*
 
 class LoadCommand : MusicCommand() {
     init {
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "load"
         this.help = "Loads the given playlist file\nThe playlist can be exported with `{prefix}save`"
     }
@@ -83,10 +82,7 @@ class LoadCommand : MusicCommand() {
 
                 sendEmbed(
                     ctx,
-                    EmbedUtils.embedField(
-                        AudioUtils.EMBED_TITLE,
-                        "Added ${array.size()} requested tracks."
-                    )
+                    EmbedUtils.embedMessage("Added ${array.size()} requested tracks.")
                 )
             } catch (exception: Exception) {
                 sendError(ctx.message)

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized
@@ -32,8 +32,8 @@ class SuggestCommand : Command() {
     override fun execute(ctx: CommandContext) {
         MessageUtils.sendMsg(
             ctx,
-            """You can leave you suggestions for the bot on his page: https://dunctebot.com/suggest
-            |Make sure to join our server so we can contact you when needed: <https://dunctebot.link/server>
+            """You can leave you suggestions for the bot on his page: https://duncte.bot/suggest
+            |Make sure to join our Discord server so we can contact you when needed: <https://duncte.bot/server>
         """.trimMargin()
         )
     }

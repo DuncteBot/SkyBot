@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 import static me.duncte123.botcommons.messaging.MessageConfigDefaults.DELETE_MESSAGE_AFTER_SECONDS;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 
 public class CleanupCommand extends ModBaseCommand {
     private final TLongObjectMap<CompletableFuture<Void>> futureMap = new TLongObjectHashMap<>();
@@ -111,7 +112,7 @@ public class CleanupCommand extends ModBaseCommand {
 
         final int total = getTotal(args, ctx);
 
-        // if the total is -1 it means that the user got notified for someting being wrong
+        // if the total is -1 it means that the user got notified for something being wrong
         if (total == -1) {
             return;
         }
@@ -166,24 +167,23 @@ public class CleanupCommand extends ModBaseCommand {
         if (keepPinned) {
             msgStream = msgStream.filter((msg) -> !msg.isPinned());
         }
+
         if (clearBots) {
             msgStream = msgStream.filter((msg) -> msg.getAuthor().isBot());
         }
 
-        final List<Message> msgList = msgStream
-            // TODO: Still needed?
-            // .filter((msg) -> msg.getCreationTime().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
-            .collect(Collectors.toList());
-
+        final List<Message> msgList = msgStream.collect(Collectors.toList());
         final CompletableFuture<Message> hack = new CompletableFuture<>();
+
         sendMsg(MessageConfig.Builder.fromCtx(ctx)
-            .setMessage("Deleting messages, please wait this might take a long time (this message will be deleted once complete)")
+            .setMessage("Deleting messages, this will take a long time (this message will auto delete when it's done)")
             .setSuccessAction(hack::complete)
             .build());
 
         try {
             final CompletableFuture<?>[] futures = channel.purgeMessages(msgList)
                 .stream()
+                .peek((f) -> f.handle(this::checkException))
                 .map(this::hackTimeout)
                 .toArray(CompletableFuture[]::new);
 
@@ -199,7 +199,7 @@ public class CleanupCommand extends ModBaseCommand {
                 return -100;
             }
 
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
         catch (CancellationException e) {
             sendSuccess(ctx.getMessage());
@@ -209,14 +209,24 @@ public class CleanupCommand extends ModBaseCommand {
                 .build());
         }
         catch (InterruptedException | ExecutionException e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
         finally {
-            removeMessage(channel, hack);
+            removeMessage(ctx, channel, hack);
             this.futureMap.remove(channel.getIdLong());
         }
 
         return msgList.size();
+    }
+
+    private <T> T checkException(T value, Throwable thr) {
+        if (thr instanceof final ErrorResponseException exception && exception.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+            // Ignore unknown messages
+            LOGGER.debug("Recovering from unknown message");
+            return null;
+        }
+
+        return value;
     }
 
     private int handleException(Throwable thr, CommandContext ctx) {
@@ -239,6 +249,7 @@ public class CleanupCommand extends ModBaseCommand {
         sendMsg(DELETE_MESSAGE_AFTER_SECONDS.apply(5L)
             .setChannel(ctx.getChannel())
             .setMessageFormat("Removed %d messages! (this message will auto delete in 5 seconds)", count)
+            .setFailureAction(ignore(ErrorResponse.UNKNOWN_MESSAGE))
             .build());
 
         modLog(String.format(
@@ -288,12 +299,25 @@ public class CleanupCommand extends ModBaseCommand {
         return future;
     }
 
-    private void removeMessage(TextChannel channel, CompletableFuture<Message> hack) {
+    private void removeMessage(CommandContext ctx, TextChannel channel, CompletableFuture<Message> hack) {
         try {
             final Message hacked = hack.get();
 
             if (hacked != null) {
-                channel.deleteMessageById(hacked.getIdLong()).queue();
+                channel.deleteMessageById(hacked.getIdLong())
+                    .queue(
+                        null,
+                        ignore(ErrorResponse.UNKNOWN_MESSAGE)
+                            .andThen((e) -> {
+                                if (e instanceof ErrorResponseException erx
+                                    && erx.getErrorResponse() == ErrorResponse.UNKNOWN_CHANNEL) {
+                                    modLog(
+                                        "Failed to clean own message, text channel was deleted during message delete progress!",
+                                        ctx.getGuild()
+                                    );
+                                }
+                            })
+                    );
             }
         }
         catch (InterruptedException | ExecutionException e) {

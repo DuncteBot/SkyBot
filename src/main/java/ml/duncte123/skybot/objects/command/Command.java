@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.command;
@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -38,7 +39,6 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
 public abstract class Command implements ICommand {
-    public Flag[] flags = new Flag[0];
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(3,
@@ -58,6 +58,7 @@ public abstract class Command implements ICommand {
     protected String extraInfo = null;
     protected Permission[] userPermissions = new Permission[0];
     protected Permission[] botPermissions = new Permission[0];
+    public Flag[] flags = new Flag[0];
     // This is the cooldown in seconds
     protected int cooldown = 0;
     // Sets the scope of the cooldown, default is on user level
@@ -111,13 +112,13 @@ public abstract class Command implements ICommand {
             final long remainingCooldown = commandManager.getRemainingCooldown(cooldownKey);
 
             if (remainingCooldown > 0) {
-                // TODO: delete after?
                 sendMsg(MessageConfig.Builder.fromCtx(ctx)
                     .setMessageFormat(
                         "This command is on cooldown for %s more seconds%s!",
                         remainingCooldown,
                         this.cooldownScope.getExtraErrorMsg()
                     )
+                    .setSuccessAction((message) -> message.delete().queueAfter(10, TimeUnit.SECONDS))
                     .build());
                 sendError(ctx.getMessage());
                 return;
@@ -163,7 +164,7 @@ public abstract class Command implements ICommand {
 
     @Nonnull
     public String getUsageInstructions(@Nonnull String prefix, @Nonnull String invoke) {
-        return '`' + prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix).trim() + '`';
+        return '`' + (prefix + invoke + ' ' + this.usage.replace("{prefix}", prefix)).trim() + '`';
     }
 
     @Nonnull
@@ -191,11 +192,9 @@ public abstract class Command implements ICommand {
             return false;
         }
 
-        if (!(obj instanceof Command)) {
+        if (!(obj instanceof final Command command)) {
             return false;
         }
-
-        final Command command = (Command) obj;
 
         return this.name.equals(command.getName());
     }

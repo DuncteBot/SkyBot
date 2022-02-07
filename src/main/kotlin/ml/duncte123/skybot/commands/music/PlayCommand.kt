@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
@@ -31,7 +31,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
 
     init {
-        this.withAutoJoin = true
+        this.mayAutoJoin = true
         this.name = "play"
         this.help = "Plays a song on the bot or adds it to the queue"
         this.usage = "[url/search term]"
@@ -78,12 +78,12 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
-        if (!AirUtils.isURL(toPlay)) {
+        if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
             val vidId = searchCache(toPlay, ctx)
 
             if (vidId == null) {
                 MessageUtils.sendError(ctx.message)
-                sendMsg(ctx, "No tracks where found")
+                sendMsg(ctx, "No tracks were found")
                 return
             }
             toPlay = "https://www.youtube.com/watch?v=$vidId"
@@ -94,7 +94,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
     private fun playUploadedFile(ctx: CommandContext): Boolean {
         val file = ctx.message.attachments
-            .firstOrNull { it.fileExtension?.toLowerCase() in acceptedExtensions }
+            .firstOrNull { it.fileExtension?.lowercase() in acceptedExtensions }
 
         if (file == null) {
             sendMsg(ctx, "Cannot play that file, please attach an audio file instead")

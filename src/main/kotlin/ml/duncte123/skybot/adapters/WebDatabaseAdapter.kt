@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.adapters
@@ -299,17 +299,9 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun purgeBans(ids: List<Int>) {
-        runOnThread {
-            apis.purgeBans(ids)
-        }
-    }
+    override fun purgeBansSync(ids: List<Int>) = apis.purgeBans(ids)
 
-    override fun purgeMutes(ids: List<Int>) {
-        runOnThread {
-            apis.purgeMutes(ids)
-        }
-    }
+    override fun purgeMutesSync(ids: List<Int>) = apis.purgeMutes(ids)
 
     override fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit) {
         throw UnsupportedOperationException("Not used anymore")
@@ -431,11 +423,7 @@ class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: Obje
         }
     }
 
-    override fun purgeReminders(ids: List<Int>) {
-        runOnThread {
-            apis.purgeReminders(ids)
-        }
-    }
+    override fun purgeRemindersSync(ids: List<Int>) = apis.purgeReminders(ids)
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         throw UnsupportedOperationException("Not used anymore")

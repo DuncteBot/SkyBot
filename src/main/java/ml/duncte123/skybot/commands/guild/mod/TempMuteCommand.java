@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -46,6 +46,9 @@ public class TempMuteCommand extends ModBaseCommand {
         this.name = "tempmute";
         this.help = "Temporally mutes a user in the server, this will override any existing tempmutes for the user";
         this.usage = "<@user> <time><w/d/h/m/s> [-r reason]";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,
@@ -133,7 +136,7 @@ public class TempMuteCommand extends ModBaseCommand {
 
 
         guild.addRoleToMember(toMute, role)
-            .reason("Muted by " + author.getAsTag() + ": " + fReason)
+            .reason("Muted by " + String.format("%#s: %s", ctx.getAuthor(), fReason))
             .queue(success -> {
                     ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());
                     sendSuccess(ctx.getMessage());

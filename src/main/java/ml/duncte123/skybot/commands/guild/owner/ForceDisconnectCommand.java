@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.owner;
@@ -31,6 +31,8 @@ import static ml.duncte123.skybot.utils.CommandUtils.isDev;
 public class ForceDisconnectCommand extends MusicCommand {
 
     public ForceDisconnectCommand() {
+        this.justRunLmao = true;
+
         this.name = "forcedisconnect";
         this.aliases = new String[]{
             "forceleave",
@@ -39,7 +41,7 @@ public class ForceDisconnectCommand extends MusicCommand {
     }
 
     @Override
-    public void execute(@Nonnull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(ctx, "You need administrator perms to run this command.");
             return;

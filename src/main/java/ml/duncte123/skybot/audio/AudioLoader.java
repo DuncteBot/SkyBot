@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,11 +13,12 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.audio;
 
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -32,16 +33,14 @@ import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -71,8 +70,9 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         final TrackScheduler scheduler = this.mng.getScheduler();
 
-        if (!scheduler.canQueue()) {
-            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached", TrackScheduler.MAX_QUEUE_SIZE));
+        if (!this.isPatron && !scheduler.canQueue()) {
+            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached.\n" +
+                "Consider supporting us on patreon to queue up unlimited songs.", TrackScheduler.MAX_QUEUE_SIZE));
             return;
         }
 
@@ -81,11 +81,18 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (this.announce) {
                 final AudioTrackInfo info = track.getInfo();
+                final String uri;
+                if (track instanceof IWillUseIdentifierInstead) {
+                    uri = info.identifier;
+                } else {
+                    uri = info.uri;
+                }
+
                 final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
-                final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + info.uri + ')';
+                final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + uri + ')';
 
                 sendEmbed(this.ctx,
-                    embedField(AudioUtils.EMBED_TITLE, msg)
+                    embedMessage(msg)
                         .setThumbnail(AudioTrackKt.getImageUrl(track, true))
                 );
             }
@@ -98,20 +105,30 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Error: This playlist is empty."));
+            sendEmbed(this.ctx, embedMessage("Error: This playlist is empty."));
 
             return;
         }
 
-        final TrackUserData userData = new TrackUserData(this.requester);
-        final List<AudioTrack> tracks = playlist.getTracks().stream().peek((track) -> {
-            addToIndex(track);
-            track.setUserData(userData);
-        })
-            .collect(Collectors.toList());
-
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
+
+            List<AudioTrack> tracksRaw = playlist.getTracks();
+            final AudioTrack selectedTrack = playlist.getSelectedTrack();
+
+            if (selectedTrack != null) {
+                final int index = tracksRaw.indexOf(selectedTrack);
+
+                if (index > -1) {
+                    tracksRaw = tracksRaw.subList(index, tracksRaw.size());
+                }
+            }
+
+            final List<AudioTrack> tracks = tracksRaw.stream().peek((track) -> {
+                addToIndex(track);
+                // don't store this externally since it will cause issues
+                track.setUserData(new TrackUserData(this.requester));
+            }).toList();
 
             for (final AudioTrack track : tracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
@@ -120,41 +137,39 @@ public class AudioLoader implements AudioLoadResultHandler {
             if (this.announce) {
                 final String sizeMsg;
 
-                if (playlist instanceof BigChungusPlaylist && ((BigChungusPlaylist) playlist).isBig()) {
-                    sizeMsg = playlist.getTracks().size() + "/" + ((BigChungusPlaylist) playlist).getOriginalSize();
+                if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
+                    sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
                 } else {
-                    sizeMsg = String.valueOf(playlist.getTracks().size());
+                    sizeMsg = String.valueOf(tracks.size());
                 }
 
                 final String msg = String.format(
-                    "Adding **%s** tracks to the queue from playlist %s",
+                    "Adding **%s** tracks to the queue from **%s**",
                     sizeMsg,
                     playlist.getName()
                 );
 
-                sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, msg));
+                sendEmbed(this.ctx, embedMessage(msg));
             }
         }
         catch (LimitReachedException e) {
             if (this.announce) {
-                sendMsg(this.ctx, String.format("The first %s tracks have been queued up", e.getSize()));
+                sendMsg(this.ctx, String.format("The first %s tracks from %s have been queued up\n" +
+                    "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlist.getName()));
             }
         }
-
     }
 
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
+            sendEmbed(this.ctx, embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
         }
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-
-        if (exception.getCause() != null && exception.getCause() instanceof LimitReachedException) {
-            final LimitReachedException cause = (LimitReachedException) exception.getCause();
+        if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize()));
 
             return;
@@ -165,7 +180,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + this.trackUrl
+            sendEmbed(this.ctx, embedMessage("Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -176,8 +191,8 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.ctx, embedField(AudioUtils.EMBED_TITLE, "Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
-            + "\nIf this happens often try another link or join our [support guild](https://dunctebot.link/server) for more!"));
+        sendEmbed(this.ctx, embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+            + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!"));
 
     }
 
@@ -192,7 +207,9 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         if (track.getInfo().isStream) {
             final Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
-                .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                .getRadioStreams()
+                .stream()
+                .filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
 
             if (stream.isPresent()) {
                 title = stream.get().getName();

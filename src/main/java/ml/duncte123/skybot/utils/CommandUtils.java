@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.utils;
@@ -168,7 +168,7 @@ public class CommandUtils {
             sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
                 "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
-                "You will also need to join our discord server [here](https://dunctebot.link/server)"), false);
+                "You will also need to join our discord server [here](https://duncte.bot/server)"), false);
             return false;
         }
 

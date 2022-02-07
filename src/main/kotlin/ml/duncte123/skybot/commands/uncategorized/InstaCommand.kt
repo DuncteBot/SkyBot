@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,13 +13,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -28,6 +28,7 @@ class InstaCommand : Command() {
 
     init {
         this.name = "insta"
+        this.aliases = arrayOf("instagram")
         this.help = "Shows the latest picture on someones instagram account"
         this.usage = "<username>"
     }
@@ -48,7 +49,7 @@ class InstaCommand : Command() {
             return
         }
 
-        val imagesArray = it["images"]
+        val imagesArray = it["data"]["images"]
 
         if (imagesArray.isEmpty) {
             sendMsg(ctx, "This user did not upload any images")
@@ -56,7 +57,7 @@ class InstaCommand : Command() {
         }
 
         val img = imagesArray[0]
-        val user = it["user"]
+        val user = it["data"]["user"]
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setAuthor(user["username"].asText(), "https://instagram.com/$username/", user["profile_pic_url"].asText())
@@ -64,6 +65,6 @@ class InstaCommand : Command() {
             .setDescription(img["caption"].asText())
             .setImage(img["url"].asText())
 
-        MessageUtils.sendEmbed(ctx, embed)
+        sendEmbed(ctx, embed)
     }
 }

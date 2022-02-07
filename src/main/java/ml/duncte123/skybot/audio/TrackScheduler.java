@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.audio;
@@ -33,6 +33,7 @@ import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,18 +47,20 @@ import java.util.concurrent.TimeUnit;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    public static final int MAX_QUEUE_SIZE = 50;
+    public static final int MAX_QUEUE_SIZE = 100;
     public final Queue<AudioTrack> queue;
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
     private final LavalinkPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
-    private boolean repeating = false;
-    private boolean repeatPlayList = false;
+    private boolean looping = false;
+    private boolean loopingQueue = false;
 
     /* package */ TrackScheduler(LavalinkPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
@@ -73,7 +76,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             sendMsg(new MessageConfig.Builder()
                 .setChannel(latestChannel)
                 .setMessage(msg)
-                .setFailureAction((ignored) -> {})
+                .setFailureAction(new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_PERMISSIONS))
                 .build());
         }, DEBOUNCE_INTERVAL);
     }
@@ -109,11 +112,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.onTrackEnd(null, playingTrack, AudioTrackEndReason.FINISHED);
     }
 
-    private void skipTrack() {
-        skipTracks(1);
+    private void skipTrack(boolean wasFromSkip) {
+        skipTracks(1, wasFromSkip);
     }
 
-    public void skipTracks(int count) {
+    public void skipTracks(int count, boolean wasFromSkip) {
         AudioTrack nextTrack = null;
 
         for (int i = 0; i < count; i++) {
@@ -124,6 +127,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             player.stopTrack();
             sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
         } else {
+            // Make sure to cary over the skip state, we want to announce skipped tracks
+            nextTrack.getUserData(TrackUserData.class).setWasFromSkip(wasFromSkip);
+
             this.play(nextTrack);
         }
     }
@@ -132,10 +138,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         final TrackUserData data = track.getUserData(TrackUserData.class);
 
-        // If the track was a skipped track or we announce tracks
-        if (data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
+        // If the track was a skipped track, or we announce tracks
+        if (data != null && data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
-            data.setWasFromSkip(false);
+            if (data != null) {
+                data.setWasFromSkip(false);
+            }
 
             final EmbedBuilder message = AudioTrackKt.toEmbed(
                 track,
@@ -153,51 +161,55 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         LOGGER.debug("track ended");
 
         if (!endReason.mayStartNext) {
+            LOGGER.debug("Cannot start next");
             return;
         }
-
-        LOGGER.debug("can start");
-
-        if (!repeating) {
-            LOGGER.debug("starting next track");
-            skipTrack();
-            return;
-        }
-
-        LOGGER.debug("repeating");
 
         // Get if the track was from a skip event
-        final boolean wasFromSkip = lastTrack.getUserData(TrackUserData.class).getWasFromSkip();
+        final Object userData = lastTrack.getUserData();
+        final boolean wasFromSkip;
 
-        if (repeatPlayList) {
-            LOGGER.debug("a playlist.....");
-            skipTrack();
+        if (userData instanceof TrackUserData data) {
+            wasFromSkip = data.getWasFromSkip();
+        } else {
+            wasFromSkip = false;
+        }
+
+        if (this.looping) {
+            LOGGER.debug("repeating the current song");
+
+            final AudioTrack clone = lastTrack.makeClone();
+            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            this.play(clone);
+
+            return;
+        } else if (this.loopingQueue) {
+            LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
             final AudioTrack clone = lastTrack.makeClone();
             clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
             queue.offer(clone);
-            return;
         }
 
-        final AudioTrack clone = lastTrack.makeClone();
-        clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
-        this.play(clone);
+        LOGGER.debug("can start next track");
+
+        skipTrack(wasFromSkip);
     }
 
-    public boolean isRepeating() {
-        return repeating;
+    public boolean isLooping() {
+        return looping;
     }
 
-    public void setRepeating(boolean repeating) {
-        this.repeating = repeating;
+    public void setLooping(boolean looping) {
+        this.looping = looping;
     }
 
-    public boolean isRepeatingPlaylists() {
-        return repeatPlayList;
+    public boolean isLoopingQueue() {
+        return loopingQueue;
     }
 
-    public void setRepeatingPlaylists(boolean repeatingPlaylists) {
-        this.repeatPlayList = repeatingPlaylists;
+    public void setLoopingQueue(boolean loopingQueue) {
+        this.loopingQueue = loopingQueue;
     }
 
     public void shuffle() {

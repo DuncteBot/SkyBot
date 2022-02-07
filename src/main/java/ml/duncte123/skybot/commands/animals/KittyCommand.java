@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.animals;
@@ -42,13 +42,12 @@ public class KittyCommand extends Command {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final String apiKey = ctx.getConfig().apis.thecatapi;
-        final String url = "https://api.thecatapi.com/api/images/get?" +
-            (apiKey.isEmpty() ? "" : "api_key=" + apiKey + "&") + "format=xml&results_per_page=1";
+        final String url = "https://api.thecatapi.com/v1/images/search?limit=1";
 
-        WebUtils.ins.scrapeWebPage(url).async((doc) -> {
-            final String fullUrl = doc.selectFirst("url").text();
-            final String sourceUrl = doc.selectFirst("source_url").text();
-            sendEmbed(ctx, EmbedUtils.embedImageWithTitle("Source", sourceUrl, fullUrl));
+        WebUtils.ins.getJSONArray(url, null, (req) -> req.header("x-api-key", apiKey)).async((json) -> {
+            sendEmbed(ctx, EmbedUtils.embedImage(
+                json.get(0).get("url").asText()
+            ));
         });
     }
 }

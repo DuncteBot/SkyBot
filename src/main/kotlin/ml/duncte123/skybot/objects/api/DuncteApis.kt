@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.api
@@ -25,7 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.github.natanbc.reliqua.Reliqua
+import com.github.natanbc.reliqua.limiter.factory.RateLimiterFactory
+import com.github.natanbc.reliqua.request.PendingRequest
+import com.github.natanbc.reliqua.util.ResponseMapper
 import me.duncte123.botcommons.web.ContentType.JSON
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
@@ -33,6 +38,7 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
@@ -43,6 +49,7 @@ import java.util.*
 class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+    private val notFollowingRedirectClient = NotFollowingRedirects()
 
     fun getCustomCommands(): ArrayNode {
         return paginateData("customcommands")
@@ -346,11 +353,31 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     fun getWarningsForUser(userId: Long, guildId: Long): ArrayNode {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
 
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to fetch warnings\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+
+            // dummy array node
+            return mapper.createArrayNode()
+        }
+
         return response["data"] as ArrayNode
     }
 
     fun getWarningCountForUser(userId: Long, guildId: Long): Int {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId/count"))
+
+        if (!response["success"].asBoolean()) {
+            logger.error(
+                "Failed to fetch warning count\n" +
+                    "Response: {}",
+                response["error"].toString()
+            )
+            return 0
+        }
 
         return response["data"].asInt(0)
     }
@@ -796,6 +823,20 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return response["success"].asBoolean()
     }
 
+    fun getRCGUrl(): String? {
+        val request = defaultRequest("images/rcg/random", false)
+
+        // don't follow the redirect so we return faster
+        return notFollowingRedirectClient.prepareRaw(request.build()) {
+            // only return the url on a 200 status code
+            if (it.code() == 302) {
+                return@prepareRaw it.header("Location")
+            }
+
+            return@prepareRaw null
+        }.execute()
+    }
+
     private fun buildValidationErrorString(error: ObjectNode): String {
         val errors = error["errors"]
 
@@ -924,8 +965,18 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private fun String.enc() = urlEncodeString(this)
 
-    companion object {
+    // a big hack :D
+    private class NotFollowingRedirects : Reliqua(
+        OkHttpClient.Builder().followRedirects(false).build(),
+        RateLimiterFactory.directFactory(), // No rate limiting :D
+        false
+    ) {
+        fun <T> prepareRaw(request: Request, mapper: ResponseMapper<T>): PendingRequest<T> {
+            return createRequest(request).build(mapper, WebParserUtils::handleError)
+        }
+    }
 
+    companion object {
 //        const val API_HOST = "http://localhost:8081"
 //        const val API_HOST = "http://duncte123-apis-lumen.test/"
         const val API_HOST = "https://apis.duncte123.me"

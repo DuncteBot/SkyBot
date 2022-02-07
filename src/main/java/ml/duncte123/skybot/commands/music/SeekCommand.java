@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music;
@@ -48,13 +48,22 @@ public class SeekCommand extends MusicCommand {
         };
         this.help = "Seek in the currently playing track";
         this.usage = "<minutes:seconds>` / `{prefix}seek [-]<seconds>";
-        this.extraInfo = "Examples: `{prefix}seek 04:20`\n" +
-                "`{prefix}seek 00:50`\n" +
-                "`{prefix}seek 120`";
+        this.extraInfo = """
+            Examples: `{prefix}seek 04:20`
+            `{prefix}seek 00:50`
+            `{prefix}seek 120`""";
     }
 
     @Override
-    public void run(@Nonnull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
+        try {
+            this.run0(ctx);
+        } catch (NumberFormatException e) {
+            sendMsg(ctx, "Your input \"" + ctx.getArgs().get(0) + "\" is not a valid number.");
+        }
+    }
+
+    public void run0(@Nonnull CommandContext ctx) throws NumberFormatException {
         final LavalinkPlayer player = ctx.getAudioUtils().getMusicManager(ctx.getGuild()).player;
         final AudioTrack currentTrack = player.getPlayingTrack();
 

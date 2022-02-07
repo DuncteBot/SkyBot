@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot;
@@ -54,6 +54,8 @@ import ml.duncte123.skybot.commands.nsfw.LewdNekoCommand;
 import ml.duncte123.skybot.commands.patreon.ScreenshotCommand;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.commands.utils.EmoteCommand;
+import ml.duncte123.skybot.commands.utils.EnlargeCommand;
+import ml.duncte123.skybot.commands.utils.RoleInfoCommand;
 import ml.duncte123.skybot.commands.weeb.*;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -63,8 +65,10 @@ import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.slf4j.Logger;
@@ -85,6 +89,8 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_ACCESS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
 public class CommandManager {
     private static final TObjectLongMap<String> COOLDOWNS = MapUtils.newObjectLongMap();
@@ -107,25 +113,25 @@ public class CommandManager {
 
     static {
         COOLDOWN_THREAD.scheduleWithFixedDelay(() -> {
-                try {
-                    // Loop over all cooldowns with a 5 minute interval
-                    // This makes sure that we don't have any useless cooldowns in the system hogging up memory
-                    COOLDOWNS.forEachEntry((key, val) -> {
-                        final long remaining = calcTimeRemaining(val);
+            try {
+                // Loop over all cooldowns with a 5 minute interval
+                // This makes sure that we don't have any useless cooldowns in the system hogging up memory
+                COOLDOWNS.forEachEntry((key, val) -> {
+                    final long remaining = calcTimeRemaining(val);
 
-                        // Remove the value from the cooldowns if it is less or equal to 0
-                        if (remaining <= 0) {
-                            COOLDOWNS.remove(key);
-                        }
+                    // Remove the value from the cooldowns if it is less or equal to 0
+                    if (remaining <= 0) {
+                        COOLDOWNS.remove(key);
+                    }
 
-                        // Return true to indicate that we are allowed to continue the loop
-                        return true;
-                    });
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }, 5, 5, TimeUnit.MINUTES);
+                    // Return true to indicate that we are allowed to continue the loop
+                    return true;
+                });
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 5, 5, TimeUnit.MINUTES);
     }
 
     public CommandManager(Variables variables) {
@@ -175,8 +181,10 @@ public class CommandManager {
         this.addCommand(new DrakeCommand());
         this.addCommand(new EightBallCommand());
         this.addCommand(new EmoteCommand());
+        this.addCommand(new EnlargeCommand());
         this.addCommand(new EvalCommand());
         this.addCommand(new EveryoneCommand());
+        this.addCommand(new ExplosmCommand());
         this.addCommand(new FactsCommand());
         this.addCommand(new FakeWordCommand());
         this.addCommand(new FlagCommand());
@@ -209,7 +217,6 @@ public class CommandManager {
         this.addCommand(new LewdNekoCommand());
         this.addCommand(new LickCommand());
         this.addCommand(new LinusCommand());
-        this.addCommand(new ListCommand());
         this.addCommand(new LlamaCommand());
         this.addCommand(new LoadCommand());
         this.addCommand(new LoadingBarCommand());
@@ -218,7 +225,6 @@ public class CommandManager {
         this.addCommand(new LyricsCommand());
         this.addCommand(new MeguminCommand());
         this.addCommand(new MemeCommand());
-        this.addCommand(new MinehCommand());
         this.addCommand(new MuteCommand());
         this.addCommand(new MuteRoleCommand());
         this.addCommand(new NowPlayingCommand());
@@ -226,7 +232,7 @@ public class CommandManager {
         this.addCommand(new OrlyCommand());
         this.addCommand(new OwoCommand());
         this.addCommand(new PatCommand());
-        // TODO: remove, some day, can't do any harm really
+        // TODO: remove some day, can't do any harm really
         this.addCommand(new PatreonCheckCommand());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
@@ -240,12 +246,14 @@ public class CommandManager {
         this.addCommand(new PunchCommand());
         this.addCommand(new PurgeChannelCommand());
         this.addCommand(new PurgeUserCommand());
+        this.addCommand(new QueueCommand());
         this.addCommand(new QuoteCommand());
         this.addCommand(new RadioCommand());
         this.addCommand(new ReaddCommand());
         this.addCommand(new RemindersCommand());
         this.addCommand(new RemindmeCommand());
         this.addCommand(new RepeatCommand());
+        this.addCommand(new RepeatQueueCommand());
         this.addCommand(new RestartCommand());
         this.addCommand(new RestartShardCommand());
         this.addCommand(new ReverseCommand());
@@ -254,7 +262,6 @@ public class CommandManager {
         this.addCommand(new SaltyCommand());
         this.addCommand(new SaturateCommand());
         this.addCommand(new SaveCommand());
-        this.addCommand(new ScreenfetchCommand());
         this.addCommand(new ScreenshotCommand());
         this.addCommand(new ScrollCommand());
         this.addCommand(new SealCommand());
@@ -280,13 +287,13 @@ public class CommandManager {
         this.addCommand(new SlowModeCommand());
         this.addCommand(new SoftbanCommand());
         this.addCommand(new SpamCommand());
+        this.addCommand(new SPLookupCommand());
         this.addCommand(new StatsCommand());
         this.addCommand(new StopCommand());
         this.addCommand(new SuggestCommand());
         this.addCommand(new TagCommand(variables));
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
-        this.addCommand(new TestFlagCommand());
         this.addCommand(new TestTagCommand());
         this.addCommand(new TextToBricksCommand());
         this.addCommand(new TheSearchCommand());
@@ -300,13 +307,11 @@ public class CommandManager {
         this.addCommand(new TokenCommand());
         this.addCommand(new TranslateCommand());
         this.addCommand(new TrashCommand());
-        this.addCommand(new TriggerCommand());
         this.addCommand(new UnbanCommand());
         this.addCommand(new UnlockEmoteCommand());
         this.addCommand(new UnmuteCommand());
         this.addCommand(new UnshortenCommand());
         this.addCommand(new UnwarnCommand());
-        this.addCommand(new UpdateCommand());
         this.addCommand(new UptimeCommand());
         this.addCommand(new UrbanCommand());
         this.addCommand(new UserinfoCommand());
@@ -368,10 +373,12 @@ public class CommandManager {
     }
 
     public boolean isCommand(String customPrefix, String message) {
-        final String[] split = message.toLowerCase().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
-                Pattern.quote(customPrefix),
-            "").split("\\s+", 2);
+        final String[] split = message.toLowerCase()
+            .replaceFirst(
+                "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' + Pattern.quote(customPrefix),
+                ""
+            )
+            .split("\\s+", 2);
 
         if (split.length >= 1) {
             final String invoke = split[0].toLowerCase();
@@ -379,14 +386,16 @@ public class CommandManager {
             return getCommand(invoke) != null;
         }
 
-
         return false;
     }
 
     @Nullable
     public CustomCommand getCustomCommand(String invoke, long guildId) {
-        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
-            .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+        return this.customCommands.stream()
+            .filter((c) -> c.getGuildId() == guildId)
+            .filter((c) -> c.getName().equalsIgnoreCase(invoke))
+            .findFirst()
+            .orElse(null);
     }
 
     public List<CustomCommand> getAutoResponses(long guildId) {
@@ -397,10 +406,12 @@ public class CommandManager {
     }
 
     public void runCommand(GuildMessageReceivedEvent event, String customPrefix) {
-        final String[] split = event.getMessage().getContentRaw().replaceFirst(
-            "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' +
-                Pattern.quote(customPrefix),
-            "")
+        final String[] split = event.getMessage()
+            .getContentRaw()
+            .replaceFirst(
+                "(?i)" + Pattern.quote(Settings.PREFIX) + '|' + Pattern.quote(Settings.OTHER_PREFIX) + '|' + Pattern.quote(customPrefix),
+                ""
+            )
             .trim()
             .split("\\s+", 2);
         final String invoke = split[0];
@@ -442,13 +453,6 @@ public class CommandManager {
         return timeLeft;
     }
 
-    private static long calcTimeRemaining(long startTime) {
-        // Get the start time as an OffsetDateTime
-        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
-        // get the time that is left for the cooldown
-        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
-    }
-
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invokeLower);
 
@@ -479,7 +483,7 @@ public class CommandManager {
             }
 
             // Suppress errors from when we can't type in the channel
-            channel.sendTyping().queue(null, (t) -> {});
+            channel.sendTyping().queue(null, new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_ACCESS));
 
             try {
                 if (cmd.isCustom()) {
@@ -489,7 +493,7 @@ public class CommandManager {
                 }
             }
             catch (Throwable ex) {
-                Sentry.capture(ex);
+                Sentry.captureException(ex);
                 LOGGER.error("Error while parsing command", ex);
                 sendMsg(MessageConfig.Builder.fromEvent(event)
                     .setMessage("Something went wrong whilst executing the command, my developers have been informed of this\n" + ex.getMessage())
@@ -498,8 +502,16 @@ public class CommandManager {
         });
     }
 
+    private boolean isSafeForWork(GuildMessageReceivedEvent event) {
+        final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
+
+        return !event.getChannel().isNSFW() ||
+            nsfwLevel == Guild.NSFWLevel.DEFAULT ||
+            nsfwLevel == Guild.NSFWLevel.SAFE;
+    }
+
     private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+        if (cmd.getCategory() == CommandCategory.NSFW && this.isSafeForWork(event)) {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Woops, this channel is not marked as NSFW.\n" +
                     "Please mark this channel as NSFW to use this command")
@@ -527,7 +539,6 @@ public class CommandManager {
             MDC.put("command.custom.message", cusomCommand.getMessage());
 
             final Parser parser = CommandUtils.getParser(new CommandContext(invoke, args, event, variables));
-
             final String message = parser.parse(cusomCommand.getMessage());
             final MessageConfig.Builder messageBuilder = MessageConfig.Builder.fromEvent(event);
             final DataObject object = parser.get("embed");
@@ -542,7 +553,7 @@ public class CommandManager {
                 final JDAImpl jda = (JDAImpl) event.getJDA();
                 final EmbedBuilder embed = new EmbedBuilder(jda.getEntityBuilder().createMessageEmbed(object));
 
-                messageBuilder.setEmbed(embed, true);
+                messageBuilder.addEmbed(true, embed);
                 hasContent = true;
             }
 
@@ -550,14 +561,13 @@ public class CommandManager {
                 sendMsg(messageBuilder.build());
             }
 
-
             parser.clear();
         }
         catch (Exception e) {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Error with parsing custom command: " + e.getMessage())
                 .build());
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
     }
 
@@ -620,7 +630,7 @@ public class CommandManager {
             }
             catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         }
 
@@ -668,11 +678,13 @@ public class CommandManager {
     }
 
     private void addCommand(ICommand command) {
-        if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
+        final String name = command.getName();
+
+        if (name.contains(" ")) {
+            throw new IllegalArgumentException(" Name can't have spaces!");
         }
 
-        final String cmdName = command.getName().toLowerCase();
+        final String cmdName = name.toLowerCase();
 
         if (this.commands.containsKey(cmdName)) {
             throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
@@ -687,7 +699,7 @@ public class CommandManager {
                         "Alias %s already present (Stored for: %s, trying to insert: %s))",
                         alias,
                         this.aliases.get(alias),
-                        command.getName()
+                        name
                     ));
                 }
 
@@ -702,10 +714,17 @@ public class CommandManager {
             }
 
             for (final String alias : lowerAliasses) {
-                this.aliases.put(alias, command.getName());
+                this.aliases.put(alias, name);
             }
         }
 
         this.commands.put(cmdName, command);
+    }
+
+    private static long calcTimeRemaining(long startTime) {
+        // Get the start time as an OffsetDateTime
+        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // get the time that is left for the cooldown
+        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.utils;
@@ -71,7 +71,8 @@ public class YoutubeUtils {
     }
 
     public static List<SearchResult> searchYoutubeIdOnly(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("id")
+        return youtube.search()
+            .list("id")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
@@ -81,7 +82,8 @@ public class YoutubeUtils {
     }
 
     public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
-        return youtube.search().list("snippet")
+        return youtube.search()
+            .list("snippet")
             .setKey(apiKey)
             .setQ(query)
             .setType("video")
@@ -176,7 +178,8 @@ public class YoutubeUtils {
     }
 
     private static YouTube.Videos.List getVideosByIdBase(String videoIds, String apiKey) throws IOException {
-        return youtube.videos().list("id,snippet,contentDetails")
+        return youtube.videos()
+            .list("id,snippet,contentDetails")
             .setId(videoIds)
             .setKey(apiKey)
             .setFields("items(id/*,snippet/title,snippet/channelTitle,contentDetails/duration)");

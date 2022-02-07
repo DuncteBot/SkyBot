@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,13 +13,12 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.essentials.eval
 
 import com.github.natanbc.reliqua.request.PendingRequest
-import kotlinx.coroutines.*
 import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
@@ -31,15 +30,21 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
-import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.concurrent.*
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
 class EvalCommand : Command() {
+    private val evalThread = Executors.newSingleThreadExecutor {
+        val thread = Thread(it, "eval-thread")
+        thread.isDaemon = true
+
+        return@newSingleThreadExecutor thread
+    }
     private val engine: ScriptEngine by lazy { ScriptEngineManager().getEngineByName("groovy") }
     private val importString: String
 
@@ -77,8 +82,7 @@ class EvalCommand : Command() {
         val staticImports = listOf(
             "ml.duncte123.skybot.objects.EvalFunctions.*",
             "me.duncte123.botcommons.messaging.MessageUtils.*",
-            "me.duncte123.botcommons.messaging.EmbedUtils.*",
-            "ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*"
+            "me.duncte123.botcommons.messaging.EmbedUtils.*"
         )
 
         importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
@@ -86,7 +90,6 @@ class EvalCommand : Command() {
             staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
 
-    @ExperimentalCoroutinesApi
     override fun execute(ctx: CommandContext) {
         if (!isDev(ctx.author) && ctx.author.idLong != Settings.OWNER_ID) {
             sendError(ctx.message)
@@ -124,23 +127,27 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        GlobalScope.launch(
-            Dispatchers.Default, start = CoroutineStart.ATOMIC,
-            block = {
-                return@launch eval(ctx, script)
-            }
-        )
+        eval(ctx, script)
     }
 
-    private suspend fun eval(ctx: CommandContext, script: String) {
+    private fun eval(ctx: CommandContext, script: String) {
         val time = measureTimeMillis {
-            val out = withTimeoutOrNull(5000L /* = 5 seconds */) {
-                try {
-                    // NOTE: while(true) loops and sleeps do not trigger a timeout
-                    engine.eval(script)
-                } catch (ex: Throwable) {
-                    ex
+            val future: Future<*> = this.evalThread.submit(
+                Callable {
+                    try {
+                        // NOTE: while(true) loops and sleeps do not trigger a timeout
+                        return@Callable engine.eval(script)
+                    } catch (ex: Throwable) {
+                        return@Callable ex
+                    }
                 }
+            )
+
+            val out = try {
+                future.get(5, TimeUnit.SECONDS)
+            } catch (ex: TimeoutException) {
+                future.cancel(true)
+                ex
             }
 
             parseEvalResponse(out, ctx)
@@ -157,15 +164,11 @@ class EvalCommand : Command() {
             null -> sendSuccess(ctx.message)
 
             is Throwable -> {
-                if (Settings.USE_JSON) {
-                    sendErrorJSON(ctx.message, out, false, ctx.variables.jackson)
-                } else {
-                    // respond instantly
-                    sendMsg(ctx, "ERROR: $out")
-                    // send the trace when uploaded
-                    makeHastePost(out.getString()).async {
-                        sendMsg(ctx, "Stacktrace: <$it>")
-                    }
+                // respond instantly
+                sendMsg(ctx, "ERROR: $out")
+                // send the trace when uploaded
+                makeHastePost(out.getString()).async {
+                    sendMsg(ctx, "Stacktrace: <$it>")
                 }
             }
 

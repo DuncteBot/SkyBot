@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.apis.alexflipnote;
@@ -42,7 +42,7 @@ public class Alexflipnote {
 
     public PendingRequest<FlipnoteColourObj> getColour(String color) {
         return WebUtils.ins.prepareRaw(
-            makeRequest("colour/" + color),
+            makeRequest("https://api.alexflipnote.dev/", "colour/" + color),
             (r) -> {
                 final JsonNode node = mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
 
@@ -124,8 +124,12 @@ public class Alexflipnote {
     }
 
     private Request makeRequest(String path) {
+        return makeRequest("https://flipnote.duncte.bot/", path);
+    }
+
+    private Request makeRequest(String url, String path) {
         return defaultRequest()
-            .url("https://api.alexflipnote.dev/" + path)
+            .url(url + path)
             .addHeader("Authorization", this.apiKey)
             .get()
             .build();

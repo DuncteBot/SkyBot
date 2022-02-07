@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized;
@@ -45,7 +45,7 @@ public class HelpCommand extends Command {
             "h",
         };
         this.help = "Sends you a list of all the commands";
-        this.usage = "[command]";
+        this.usage = "[command/category]";
     }
 
     @Override
@@ -90,11 +90,11 @@ public class HelpCommand extends Command {
     private void sendHelp(CommandContext ctx, EmbedBuilder embed) {
         ctx.getAuthor()
             .openPrivateChannel()
-            .flatMap((pc) -> pc.sendMessage(embed.build()))
+            .flatMap((pc) -> pc.sendMessageEmbeds(embed.build()))
             .queue(
-                (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " check your DM's"),
+                (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " help has been sent to your private messages"),
                 //When sending fails, send to the channel
-                (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://dunctebot.com/commands")
+                (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://duncte.bot/commands")
             );
     }
 

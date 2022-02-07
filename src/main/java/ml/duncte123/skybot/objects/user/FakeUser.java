@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.user;
@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -100,6 +101,12 @@ public class FakeUser implements User {
         return null;
     }
 
+    @NotNull
+    @Override
+    public RestAction<Profile> retrieveProfile() {
+        return null;
+    }
+
     @Nonnull
     @Override
     public List<Guild> getMutualGuilds() {
@@ -111,16 +118,15 @@ public class FakeUser implements User {
         return false;
     }
 
+    @Override
+    public boolean isSystem() {
+        return false;
+    }
+
     @Nonnull
     @Override
     public JDA getJDA() {
         return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean isFake() {
-        return true;
     }
 
     @Nonnull

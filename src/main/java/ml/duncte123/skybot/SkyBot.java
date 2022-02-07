@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot;
@@ -47,9 +47,10 @@ import javax.security.auth.login.LoginException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static ml.duncte123.skybot.utils.CommandUtils.*;
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
+import static net.dv8tion.jda.api.utils.MemberCachePolicy.DEFAULT;
+import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
     private static SkyBot instance;
@@ -58,14 +59,9 @@ public final class SkyBot {
 
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
         // Member needs to be cached for JDA to fire role update event
-        final long userId = member.getIdLong();
-
         // the guild check is required for JDA to catch role updates in the support guild
-        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID ||
-            PATRONS.contains(userId) ||
-            TAG_PATRONS.contains(userId) ||
-            ONEGUILD_PATRONS.containsKey(userId) ||
-            GUILD_PATRONS.contains(userId);
+        return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID &&
+            member.getRoles().stream().anyMatch((role) -> role.getIdLong() == Settings.PATRONS_ROLE);
     };
 
     private SkyBot() throws LoginException {
@@ -97,7 +93,7 @@ public final class SkyBot {
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
-        LavalinkManager.INS.start(config);
+        LavalinkManager.INS.start(config, variables.getAudioUtils());
 
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
@@ -117,16 +113,17 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
-            .setMemberCachePolicy(MemberCachePolicy.DEFAULT.or(PATRON_POLICY))
-//            .setMemberCachePolicy(MemberCachePolicy.NONE)
+            .setMemberCachePolicy(DEFAULT.or(PENDING).or(PATRON_POLICY))
             // Enable lazy loading
             .setChunkingFilter(ChunkingFilter.NONE)
             // Enable lazy loading for guilds other than our own
+            // Not using this because it overrides the member cache policy
+            // we're calling loadMembers once the guild is ready
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
-            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES)
+            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
-            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
+            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
             .setGatewayEncoding(GatewayEncoding.ETF);
 
         // If lavalink is enabled we will hook it into jda
@@ -149,7 +146,7 @@ public final class SkyBot {
         MessageUtils.setSuccessReaction("a:_yes:577795293546938369");
 
         // Set the user-agent of the bot
-        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
+        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://duncte.bot;)");
         EmbedUtils.setDefaultColor(Settings.DEFAULT_COLOUR);
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized;
@@ -69,7 +69,7 @@ public class ChangeLogCommand extends Command {
                 final String hash = item.substring(0, 7);
                 final String text = item.substring(8).trim();
 
-                builder.appendDescription(String.format("[%s](http://g.entered.space/%s)%n", text, hash));
+                builder.appendDescription(String.format("[%s](http://g.duncte.bot/%s)%n", text, hash));
             }
 
             // fallback if with url is too long

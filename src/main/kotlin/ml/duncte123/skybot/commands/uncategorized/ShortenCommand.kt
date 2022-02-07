@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized
@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.isURL
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
+import ml.duncte123.skybot.utils.CommandUtils.isDev
 
 class ShortenCommand : Command() {
 
@@ -42,7 +43,9 @@ class ShortenCommand : Command() {
             return
         }
 
-        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson).async(
+        val prefix = if (isDev(ctx.author)) "duncte.bot" else "dunctebot.page.link"
+
+        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson, prefix).async(
             {
                 sendMsg(ctx, "Here is your shortened url: <$it>")
             },

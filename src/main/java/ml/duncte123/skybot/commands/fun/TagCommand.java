@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,17 +13,19 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.fun;
 
+import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -32,6 +34,7 @@ import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
@@ -42,6 +45,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.*;
 public class TagCommand extends Command {
 
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
+    private final TLongObjectMap<List<Tag>> guildTags = MapUtils.newLongObjectMap();
 
     public TagCommand(Variables variables) {
         this.category = CommandCategory.FUN;
@@ -63,6 +67,7 @@ public class TagCommand extends Command {
     }
 
     @Override
+    @SuppressWarnings("PMD.NPathComplexity") // this will be rewritten some day
     public void execute(@Nonnull CommandContext ctx) {
         if ("tags".equalsIgnoreCase(ctx.getInvoke())) {
             sendTagsList(ctx);
@@ -105,9 +110,21 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.containsKey(subCmd)) {
-            sendTag(ctx, subCmd);
+            sendTag(ctx, this.tagStore.get(subCmd));
 
             return;
+        }
+
+        if (this.guildTags.containsKey(ctx.getGuild().getIdLong())) {
+            final List<Tag> tags = this.guildTags.get(ctx.getGuild().getIdLong());
+            final Optional<Tag> foundTag = tags.stream()
+                .filter((tag) -> subCmd.equals(tag.name))
+                .findFirst();
+
+            if (foundTag.isPresent()) {
+                sendTag(ctx, foundTag.get());
+                return;
+            }
         }
 
         sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" + ctx.getPrefix() + ctx.getInvoke() + " help`");
@@ -137,8 +154,8 @@ public class TagCommand extends Command {
         return false;
     }
 
-    private void sendTag(CommandContext ctx, String subCmd) {
-        final String parsed = parseJagTag(ctx, this.tagStore.get(subCmd).content);
+    private void sendTag(CommandContext ctx, Tag tag) {
+        final String parsed = parseJagTag(ctx, tag.content);
 
         if (parsed.length() > 2000) {
             sendErrorWithMessage(ctx.getMessage(), "Error: output is over 2000 character limit");
@@ -153,13 +170,14 @@ public class TagCommand extends Command {
         final String invoke = ctx.getInvoke();
         final String prefix = ctx.getGuildSettings().getCustomPrefix();
         final String message = String.format(
-            "Tag help:\n" +
-                "\t`%1$s%2$s help` => Shows this message\n" +
-                "\t`%1$s%2$s list` => Gives you a list of all the tags\n" +
-                "\t`%1$s%2$s author <tag name>` => Shows the owner of a tag\n" +
-                "\t`%1$s%2$s raw <tag name>` => Shows raw content of a tag\n" +
-                "\t`%1$s%2$s delete <tag name>` => Deletes a tag\n" +
-                "\t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag",
+            """
+                Tag help:
+                \t`%1$s%2$s help` => Shows this message
+                \t`%1$s%2$s list` => Gives you a list of all the tags
+                \t`%1$s%2$s author <tag name>` => Shows the owner of a tag
+                \t`%1$s%2$s raw <tag name>` => Shows raw content of a tag
+                \t`%1$s%2$s delete <tag name>` => Deletes a tag
+                \t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag""",
             prefix,
             invoke
         );
@@ -213,7 +231,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        final long ownerId = this.tagStore.get(tagName).owner_id;
+        final long ownerId = this.tagStore.get(tagName).ownerId;
         final User user = ctx.getShardManager().getUserById(ownerId);
         final String userTag = user == null ? "UnknownUser#0000" : user.getAsTag();
 
@@ -229,7 +247,7 @@ public class TagCommand extends Command {
 
         final Tag tag = this.tagStore.get(tagName);
 
-        if (ctx.getAuthor().getIdLong() != tag.owner_id && !isDev(ctx.getAuthor())) {
+        if (ctx.getAuthor().getIdLong() != tag.ownerId && !isDev(ctx.getAuthor())) {
             sendMsg(ctx, "You do not own that tag");
 
             return;
@@ -273,11 +291,11 @@ public class TagCommand extends Command {
             return;
         }
 
-        final Tag newTag = new Tag();
-
-        newTag.owner_id = ctx.getAuthor().getIdLong();
-        newTag.name = tagName;
-        newTag.content = ctx.getArgsRaw().split("\\s+", 3)[2];
+        final Tag newTag = new Tag(
+            tagName,
+            ctx.getArgsRaw().split("\\s+", 3)[2],
+            ctx.getAuthor().getIdLong()
+        );
 
         ctx.getDatabaseAdapter().createTag(newTag, (success, reason) -> {
             if (!success) {

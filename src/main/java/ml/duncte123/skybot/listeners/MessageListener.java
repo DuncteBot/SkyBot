@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,89 +13,224 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.listeners;
 
+import com.dunctebot.models.settings.GuildSetting;
 import io.sentry.Sentry;
 import kotlin.Triple;
 import me.duncte123.botcommons.BotCommons;
+import me.duncte123.botcommons.StringUtils;
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.database.RedisConnection;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import com.dunctebot.models.settings.GuildSetting;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.objects.discord.MessageData;
+import ml.duncte123.skybot.objects.user.UnknownUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
-import ml.duncte123.skybot.web.WebSocketClient;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import org.apache.commons.lang3.StringUtils;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import javax.annotation.Nullable;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static ml.duncte123.skybot.utils.CommandUtils.isDev;
+import static ml.duncte123.skybot.utils.CommandUtils.isGuildPatron;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 public abstract class MessageListener extends BaseListener {
 
+    protected final RedisConnection redis = new RedisConnection();
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
-    /* package */ final SpamFilter spamFilter = new SpamFilter(variables);
-    /* package */ final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
+    protected final SpamFilter spamFilter = new SpamFilter(variables);
+    protected final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
         (r) -> new Thread(r, "Bot-Service-Thread"));
 
-    /* package */ MessageListener(Variables variables) {
+    protected MessageListener(Variables variables) {
         super(variables);
     }
 
-    /* package */ void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    protected void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        // ignore bots
+        final Message message = event.getMessage();
+        final User author = message.getAuthor();
+
+        if (author.isBot() || author.isSystem() || message.isWebhookMessage() || event.getMember() == null) {
+            return;
+        }
+
         if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             return;
         }
 
         this.handlerThread.submit(() -> {
-            final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
-            final GuildSetting settings = guild.getSettings();
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+                final GuildSetting settings = guild.getSettings();
 
-            if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
-                !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {
+                if (settings.isMessageLogging()) {
+                    final MessageData edited = MessageData.from(message);
+                    final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited, isGuildPatron(guild));
 
-                if (blacklistedWordCheck(guild, event.getMessage(), event.getMember(), settings.getBlacklistedWords())) {
-                    return;
+                    // data will be null if the message expired
+                    if (original != null) {
+                        this.logEditedMessage(original, edited, guild);
+                    }
                 }
 
-                checkSwearFilter(event.getMessage(), event, guild);
+                if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) &&
+                    !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+
+                    if (blacklistedWordCheck(guild, message, event.getMember(), settings.getBlacklistedWords())) {
+                        return;
+                    }
+
+                    checkSwearFilter(message, event, guild);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception on message update", e);
             }
         });
     }
 
-    /* package */ void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    protected void onMessageBulkDelete(final MessageBulkDeleteEvent event) {
+        this.handlerThread.submit(() -> {
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+
+                if (!guild.getSettings().isMessageLogging()) {
+                    // just delete the message here as we don't want to keep it around
+                    this.redis.deleteMessages(event.getMessageIds());
+                    return;
+                }
+
+                final List<MessageData> dataList = this.redis.getAndDeleteMessages(event.getMessageIds());
+                final StringBuilder builder = new StringBuilder();
+                // temporarily store the users to prevent spamming discord for the data
+                final Map<Long, User> tmpUsers = new HashMap<>();
+                final JDA jda = event.getJDA();
+
+                // reverse the list to preserve the correct order
+                Collections.reverse(dataList);
+
+                for (final MessageData data : dataList) {
+                    final long authorId = data.getAuthorId();
+
+                    final Consumer<User> userConsumer = (user) -> {
+                        builder.append('[')
+                            .append(data.getCratedAt().format(DateTimeFormatter.RFC_1123_DATE_TIME))
+                            .append("] (")
+                            .append(user.getAsTag())
+                            .append(" - ")
+                            .append(user.getIdLong())
+                            .append(") [")
+                            .append(data.getMessageId())
+                            .append("]: ")
+                            .append(data.getContent())
+                            .append('\n');
+                    };
+
+                    if (tmpUsers.containsKey(authorId)) {
+                        userConsumer.accept(tmpUsers.get(authorId));
+                    } else {
+                        // try to fetch the user since we don't cache them
+                        // calls are sequential making sure the messages are still in order
+                        jda.retrieveUserById(authorId).queue(
+                            (user) -> {
+                                tmpUsers.put(authorId, user);
+                                userConsumer.accept(user);
+                            },
+                            (error) -> userConsumer.accept(new UnknownUser(authorId))
+                        );
+                    }
+                }
+
+                final TextChannel channel = event.getChannel();
+                final EmbedBuilder embed = EmbedUtils.embedField(
+                        "Bulk Delete",
+                        "Bulk deleted messages from <#%s> are available in the attached file.".formatted(channel.getIdLong())
+                    )
+                    .setColor(0xE67E22)
+                    .setTimestamp(Instant.now());
+
+                modLog(
+                    new MessageConfig.Builder()
+                        .addEmbed(true, embed)
+                        .setActionConfig(
+                            (action) -> action.addFile(
+                                builder.toString().getBytes(),
+                                "bulk_delete_%s.txt".formatted(System.currentTimeMillis())
+                            )
+                        ),
+                    guild
+                );
+            } catch (Exception e) {
+                LOGGER.error("Exception on message bulk delete", e);
+            }
+        });
+    }
+
+    protected void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
+        this.handlerThread.submit(() -> {
+            try {
+                final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
+
+                if (!guild.getSettings().isMessageLogging()) {
+                    // just delete the message here as we don't want to keep it around
+                    this.redis.deleteMessage(event.getMessageId());
+                    return;
+                }
+
+                final MessageData data = this.redis.getAndDeleteMessage(event.getMessageId());
+
+                if (data != null) {
+                    this.logDeletedMessage(data, guild);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception on message delete", e);
+            }
+        });
+    }
+
+    protected void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -103,20 +238,21 @@ public abstract class MessageListener extends BaseListener {
         }
 
         // This happens?
+        final User author = event.getAuthor();
         if (event.getMember() == null && !event.isWebhookMessage()) {
             final Exception weirdEx = new Exception(String.format(
                 "Got null member for no webhook message (what the fuck):\n Event:GuildMessageReceivedEvent\nMember:%s\nMessage:%s\nAuthor:%s (bot %s)",
                 event.getMember(),
                 event.getMessage(),
-                event.getAuthor(),
-                event.getAuthor().isBot()
+                author,
+                author.isBot()
             ));
 
             LOGGER.error("Error with message listener", weirdEx);
-            Sentry.capture(weirdEx);
+            Sentry.captureException(weirdEx);
         }
 
-        if (event.getAuthor().isBot() ||
+        if (author.isBot() || author.isSystem() ||
             event.isWebhookMessage() ||
             event.getMember() == null // Just in case Discord fucks up *again*
         ) {
@@ -125,14 +261,14 @@ public abstract class MessageListener extends BaseListener {
 
         final String raw = event.getMessage().getContentRaw().trim();
 
-        if (raw.equals(Settings.PREFIX + "shutdown") && isDev(event.getAuthor().getIdLong())) {
+        if (raw.equals(Settings.PREFIX + "shutdown") && isDev(author.getIdLong())) {
             LOGGER.info("Initialising shutdown!!!");
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
             event.getMessage().addReaction(MessageUtils.getSuccessReaction()).queue(
-                success -> killAllShards(manager, true),
-                failure -> killAllShards(manager, true)
+                success -> shutdownBot(manager),
+                failure -> shutdownBot(manager)
             );
 
             return;
@@ -142,9 +278,8 @@ public abstract class MessageListener extends BaseListener {
             try {
                 setJDAContext(event.getJDA());
                 handleMessageEventChecked(raw, guild, event);
-            }
-            catch (Exception e) {
-                Sentry.capture(e);
+            } catch (Exception e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
             }
         });
@@ -169,6 +304,13 @@ public abstract class MessageListener extends BaseListener {
     private void handleMessageEventChecked(String raw, Guild guild, GuildMessageReceivedEvent event) {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
+        final Message message = event.getMessage();
+
+        if (settings.isMessageLogging()){
+            final MessageData data = MessageData.from(message);
+
+            this.redis.storeMessage(data, isGuildPatron(guild));
+        }
 
         if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
             return;
@@ -234,20 +376,21 @@ public abstract class MessageListener extends BaseListener {
         return !raw.matches("^<@!?" + selfId + "?.*$");
     }
 
+    private String getCommandName(@Nonnull String customPrefix, @Nonnull String raw) {
+        return raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+            .replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
+            .replaceFirst(Pattern.quote(Settings.PREFIX), "")
+            .split("\\s+", 2)[0];
+    }
+
     private boolean shouldBlockCommand(@Nonnull String customPrefix, @Nonnull String raw, @Nonnull String input) {
-        return input.equalsIgnoreCase(
-            raw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(customPrefix), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0]
-        );
+        return input.equalsIgnoreCase(getCommandName(customPrefix, raw));
     }
 
     private boolean hasCorrectCategory(@Nonnull String raw, @Nonnull String categoryName, @Nonnull String customPrefix) {
-
         final ICommand command = commandManager.getCommand(
-            raw.replaceFirst(Pattern.quote(customPrefix), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+            getCommandName(customPrefix, raw).toLowerCase()
+        );
 
         if (command == null) {
             return false;
@@ -267,7 +410,6 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private boolean canRunCommands(String raw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
-
         final String topic = event.getChannel().getTopic();
 
         if (topic == null || topic.isEmpty()) {
@@ -281,10 +423,14 @@ public abstract class MessageListener extends BaseListener {
         final String[] blocked = topic.split("-");
 
         for (final String item : blocked) {
+            if (item.isBlank()) {
+                continue;
+            }
+
             String string = item;
 
             if (!string.isEmpty() && string.charAt(0) == '!') {
-                string = string.split("!")[1];
+                string = string.substring(1);
 
                 if (isCategory(string.toUpperCase()) && !hasCorrectCategory(raw, string, customPrefix)) {
                     return false;
@@ -300,7 +446,6 @@ public abstract class MessageListener extends BaseListener {
             if (shouldBlockCommand(customPrefix, raw, string)) {
                 return false;
             }
-
         }
 
         return true;
@@ -323,7 +468,7 @@ public abstract class MessageListener extends BaseListener {
                                     .setMessage(event.getAuthor().getAsMention() + ", please don't post invite links here.")
                                     .setSuccessAction(m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                                     .build()),
-                            (t) -> {}
+                            new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS)
                         );
                     }
                 });
@@ -351,18 +496,20 @@ public abstract class MessageListener extends BaseListener {
 
             messageToCheck.delete()
                 .reason("Blocked for swearing: " + display)
-                .queue(null, (t) -> {});
+                .queue(null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS));
 
             sendMsg(new MessageConfig.Builder()
                 .setChannel(event.getChannel())
                 .setMessageFormat(
-                    "Hello there, %s please do not use cursive language within this Discord.",
+                    // TODO: allow patrons to customise this message
+                    "Hello there, %s please do not use cursive language within this server.",
                     messageToCheck.getAuthor().getAsMention()
                 )
                 .setSuccessAction(
-                    (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                    (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS,
+                        null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS))
                 )
-                    .build());
+                .build());
 
             modLog(String.format(
                 "Message with score %.2f by %#s deleted in %s for profanity, message content was:```\n%s```",
@@ -405,7 +552,8 @@ public abstract class MessageListener extends BaseListener {
                         foundWord
                     )
                     .setSuccessAction(
-                        (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {})
+                        (m) -> m.delete().queueAfter(5, TimeUnit.SECONDS,
+                            null, new ErrorHandler().ignore(UNKNOWN_MESSAGE))
                     )
                     .build());
 
@@ -464,36 +612,101 @@ public abstract class MessageListener extends BaseListener {
         return topic.contains(search);
     }
 
-    public void killAllShards(@Nonnull ShardManager manager, boolean kill) {
-        final Thread shutdownThread = new Thread(() -> {
-            try {
-                manager.getShardCache().forEach((jda) -> jda.setEventManager(null));
+    public void shutdownBot(@Nullable ShardManager manager) {
+        if (manager != null) {
+            BotCommons.shutdown(manager);
+        }
+    }
 
-                // Sleep for 3 seconds
-                TimeUnit.SECONDS.sleep(3);
+    private void logEditedMessage(MessageData original, MessageData edited, DunctebotGuild guild) {
+        // I would not expect this to happen, but we're still working with discord here
+        // At this point I am expecting update events for messages that are not edited
+        if (!edited.isEdit()) {
+            return;
+        }
 
-                // Kill all threads
-                this.systemPool.shutdown();
+        final Consumer<User> userConsumer = (user) -> {
+            final EmbedBuilder embedBuilder = EmbedUtils.getDefaultEmbed()
+                .setColor(0xF1C40F)
+                .setAuthor(
+                    "%s (%s)".formatted(user.getAsTag(), edited.getAuthorId()),
+                    "https://duncte.bot/patreon",
+                    user.getEffectiveAvatarUrl().replace(".gif", ".png")
+                )
+                .setDescription(
+                    "Message %s edited in <#%s> ([link](%s))\n**Before:** %s\n**After:** %s".formatted(
+                        edited.getMessageId(),
+                        edited.getChannelId(),
+                        edited.getJumpUrl(guild.getIdLong()),
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(original.getContent(), true), 1500),
+                        StringUtils.abbreviate(MarkdownSanitizer.escape(edited.getContent(), true), 1500)
+                    )
+                )
+                .setTimestamp(Instant.now());
 
-                final WebSocketClient client = SkyBot.getInstance().getWebsocketClient();
-
-                if (client != null) {
-                    client.shutdown();
-                }
-
-                AirUtils.stop(variables.getAudioUtils(), manager);
-                BotCommons.shutdown(manager);
-
-                // There are *some* applications (weeb.java *cough*) that are stupid
-                // and do not allow us to shut down okhttp or create deamon threads
-                if (kill) {
-                    System.exit(0);
-                }
+            if (!edited.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    edited.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
             }
-            catch (Exception e) {
-                e.printStackTrace();
+
+            modLog(
+                new MessageConfig.Builder().setEmbeds(true, embedBuilder),
+                guild
+            );
+        };
+
+        // try to fetch the user since we don't cache them
+        guild.getJDA().retrieveUserById(edited.getAuthorId()).queue(
+            userConsumer,
+            (error) -> userConsumer.accept(new UnknownUser(edited.getAuthorId()))
+        );
+    }
+
+    private void logDeletedMessage(MessageData data, DunctebotGuild guild) {
+        final Consumer<User> userConsumer = (user) -> {
+            final EmbedBuilder embedBuilder = EmbedUtils.getDefaultEmbed()
+                .setColor(0xFF0000)
+                .setAuthor(
+                    "%s (%s)".formatted(user.getAsTag(), data.getAuthorId()),
+                    "https://duncte.bot/patreon",
+                    user.getEffectiveAvatarUrl().replace(".gif", ".png")
+                )
+                .setDescription(
+                    "Message %s deleted from <#%s>\n**Content:** %s".formatted(
+                        data.getMessageId(),
+                        data.getChannelId(),
+                        MarkdownSanitizer.escape(data.getContent(), true)
+                    )
+                )
+                .setTimestamp(Instant.now());
+
+            if (!data.getAttachments().isEmpty()) {
+                embedBuilder.addField(
+                    "Attachments",
+                    data.getAttachments()
+                        .stream()
+                        .map((a) -> "[View](" + a + ')')
+                        .collect(Collectors.joining(" ")),
+                    false
+                );
             }
-        }, "shutdown-thread");
-        shutdownThread.start();
+
+            modLog(
+                new MessageConfig.Builder().setEmbeds(true, embedBuilder),
+                guild
+            );
+        };
+
+        // try to fetch the user since we don't cache them
+        guild.getJDA().retrieveUserById(data.getAuthorId()).queue(
+            userConsumer,
+            (error) -> userConsumer.accept(new UnknownUser(data.getAuthorId()))
+        );
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.adapters
@@ -22,9 +22,7 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -32,11 +30,11 @@ import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 
 abstract class DatabaseAdapter(threads: Int = 2) {
-    private val coroutineContext = Executors.newFixedThreadPool(threads) {
+    private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true
         t
-    }.asCoroutineDispatcher()
+    }
 
     // ////////////////
     // Custom commands
@@ -158,9 +156,19 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun getExpiredBansAndMutes(callback: (List<Ban>, List<Mute>) -> Unit)
 
-    abstract fun purgeBans(ids: List<Int>)
+    @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
+    fun purgeBans(ids: List<Int>) = runOnThread {
+        this.purgeBansSync(ids)
+    }
 
-    abstract fun purgeMutes(ids: List<Int>)
+    abstract fun purgeBansSync(ids: List<Int>)
+
+    @Deprecated("Switch to sync method", ReplaceWith("purgeMutesSync(ids)"))
+    fun purgeMutes(ids: List<Int>) = runOnThread {
+        this.purgeMutesSync(ids)
+    }
+
+    abstract fun purgeMutesSync(ids: List<Int>)
 
     abstract fun createBanBypass(guildId: Long, userId: Long)
 
@@ -214,7 +222,12 @@ abstract class DatabaseAdapter(threads: Int = 2) {
 
     abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
 
-    abstract fun purgeReminders(ids: List<Int>)
+    @Deprecated("Switch to sync method", ReplaceWith("purgeRemindersSync(ids)"))
+    fun purgeReminders(ids: List<Int>) = runOnThread {
+        this.purgeRemindersSync(ids)
+    }
+
+    abstract fun purgeRemindersSync(ids: List<Int>)
 
     /**
      * Important: Callback must not be called if the list is empty
@@ -230,12 +243,24 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     }
 
     // Cannot be an option callback due to it targeting the onFail param
-    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
-        GlobalScope.launch(coroutineContext) {
+    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit = {}) {
+        databaseThread.execute {
             try {
                 r.invoke()
             } catch (thr: Throwable) {
-                Sentry.capture(thr)
+                Sentry.captureException(thr)
+                onFail.invoke(thr)
+                thr.printStackTrace()
+            }
+        }
+    }*/
+
+    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
+        launch {
+            try {
+                r.invoke()
+            } catch (thr: Throwable) {
+                Sentry.captureException(thr)
                 onFail.invoke(thr)
                 thr.printStackTrace()
             }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.adapters
@@ -45,47 +45,43 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
         runOnThread {
             val customCommands = arrayListOf<CustomCommand>()
-            // language=SQLite
-            val res = connManager.connection.createStatement().executeQuery("SELECT * FROM customCommands")
-
-            while (res.next()) {
-                customCommands.add(
-                    CustomCommandImpl(
-                        res.getString("invoke"),
-                        res.getString("message"),
-                        res.getLong("guildId"),
-                        res.getBoolean("autoresponse")
-                    )
-                )
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM customCommands").use { res ->
+                    while (res.next()) {
+                        customCommands.add(
+                            CustomCommandImpl(
+                                res.getString("invoke"),
+                                res.getString("message"),
+                                res.getLong("guildId"),
+                                res.getBoolean("autoresponse")
+                            )
+                        )
+                    }
+                }
             }
+
             callback.invoke(customCommands)
         }
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         runOnThread {
-            val res = changeCommand(guildId, invoke, message, false)
-
-            callback.invoke(res)
+            callback.invoke(changeCommand(guildId, invoke, message, false))
         }
     }
 
     override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         runOnThread {
-            val res = changeCommand(guildId, invoke, message, true)
-
-            callback.invoke(res)
+            callback.invoke(changeCommand(guildId, invoke, message, true))
         }
     }
 
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
         runOnThread {
-            // language=SQLite
             connManager.connection.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?").use {
                 it.setString(1, invoke)
                 it.setString(2, guildId.toString())
                 it.execute()
-                it.closeOnCompletion()
             }
 
             callback.invoke(true)
@@ -95,28 +91,25 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
         runOnThread {
             val settings = arrayListOf<GuildSetting>()
-            val smt = connManager.connection.createStatement()
-
-            // language=SQLite
-            val res = smt.executeQuery("SELECT * FROM guildSettings")
-
-            while (res.next()) {
-                val guildId = toLong(res.getString("guildId"))
-                settings.add(res.toGuildSettings(guildId))
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM guildSettings").use { res ->
+                    while (res.next()) {
+                        val guildId = toLong(res.getString("guildId"))
+                        settings.add(res.toGuildSettings(guildId))
+                    }
+                }
             }
+
             callback.invoke(settings)
         }
     }
 
     override fun addWordToBlacklist(guildId: Long, word: String) {
         runOnThread {
-            // language=SQLite
             connManager.connection.prepareStatement("INSERT INTO blacklists(guild_id, word) VALUES( ? , ? )").use {
                 it.setString(1, guildId.toString())
                 it.setString(2, word)
-
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
@@ -129,46 +122,41 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
         runOnThread {
-            // language=SQLite
             connManager.connection.prepareStatement("DELETE FROM blacklists WHERE guild_id = ? AND word = ?").use {
                 it.setString(1, guildId.toString())
                 it.setString(2, word)
-
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
 
     override fun clearBlacklist(guildId: Long) {
         runOnThread {
-            val connection = connManager.connection
-
-            // language=SQLite
-            connection.createStatement().execute("DELETE FROM blacklists where guild_id = '$guildId'")
+            connManager.connection.createStatement().use {
+                it.execute("DELETE FROM blacklists where guild_id = '$guildId'")
+            }
         }
     }
 
     override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
         runOnThread {
-            // language=SQLite
-            val res = connManager.connection.createStatement().executeQuery("SELECT * FROM guildSettings WHERE guildId = '$guildId'")
-
-            while (res.next()) {
-                callback.invoke(res.toGuildSettings(guildId))
-
-                return@runOnThread
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM guildSettings WHERE guildId = '$guildId'").use { res ->
+                    if (res.next()) {
+                        callback.invoke(res.toGuildSettings(guildId))
+                    } else {
+                        callback.invoke(null)
+                    }
+                }
             }
-            callback.invoke(null)
         }
     }
 
     override fun deleteGuildSetting(guildId: Long) {
         runOnThread {
-            val connection = connManager.connection
-
-            // language=SQLite
-            connection.createStatement().execute("DELETE FROM guildSettings where guildId = '$guildId'")
+            connManager.connection.createStatement().use { smt ->
+                smt.execute("DELETE FROM guildSettings where guildId = '$guildId'")
+            }
         }
     }
 
@@ -177,14 +165,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val idsString = guildIds.joinToString(separator = ", ")
             connManager.connection.createStatement().use {
                 it.execute("DELETE FROM guildSettings WHERE guildId in ($idsString)")
-                it.closeOnCompletion()
             }
         }
     }
 
     override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
         runOnThread {
-            // language=SQLite
             connManager.connection.prepareStatement(
                 """UPDATE guildSettings SET 
                 enableJoinMessage= ? ,
@@ -261,29 +247,28 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         runOnThread {
             val guildId = guildSettings.guildId
             val connection = connManager.connection
-            val resultSet = connection.createStatement()
-                // language=SQLite
-                .executeQuery("SELECT id FROM guildSettings WHERE guildId='$guildId'")
-
             var rows = 0
 
-            while (resultSet.next()) {
-                rows++
+            connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT id FROM guildSettings WHERE guildId='$guildId'").use { res ->
+                    while (res.next()) {
+                        rows++
+                    }
+                }
             }
 
             if (rows == 0) {
-                // language=SQLite
-                val smt = connection.prepareStatement(
+                connection.prepareStatement(
                     """INSERT INTO guildSettings
                     (guildId, customWelcomeMessage, prefix, customLeaveMessage, ratelimits)
                     VALUES('$guildId' , ? , ? , ? , ?)""".trimMargin()
-                )
-
-                smt.setString(1, guildSettings.customJoinMessage)
-                smt.setString(2, Settings.PREFIX)
-                smt.setString(3, guildSettings.customLeaveMessage.replace("\\P{Print}".toRegex(), ""))
-                smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
-                smt.execute()
+                ).use { smt ->
+                    smt.setString(1, guildSettings.customJoinMessage)
+                    smt.setString(2, Settings.PREFIX)
+                    smt.setString(3, guildSettings.customLeaveMessage.replace("\\P{Print}".toRegex(), ""))
+                    smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
+                    smt.execute()
+                }
             }
 
             callback.invoke(true)
@@ -298,9 +283,7 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setString(1, guildId.toString())
                 it.setInt(2, color)
                 it.setInt(3, color)
-
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
@@ -312,13 +295,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val oneGuildPatrons = arrayListOf<Patron>()
             val guildPatrons = arrayListOf<Patron>()
 
-            connManager.connection.createStatement().use { statement ->
-                statement.executeQuery("SELECT * FROM patrons").use { resultSet ->
-                    while (resultSet.next()) {
-                        val guildId = if (resultSet.getLong("guild_id") == 0L) null else resultSet.getLong("guild_id")
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM patrons").use { res ->
+                    while (res.next()) {
+                        val guildId = if (res.getLong("guild_id") == 0L) null else res.getLong("guild_id")
                         val patron = Patron(
-                            Patron.Type.valueOf(resultSet.getString("type").toUpperCase()),
-                            resultSet.getLong("user_id"),
+                            Patron.Type.valueOf(res.getString("type").uppercase()),
+                            res.getLong("user_id"),
                             guildId
                         )
 
@@ -338,67 +321,59 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun removePatron(userId: Long) {
         runOnThread {
-            connManager.connection.createStatement()
-                .execute("DELETE FROM patrons WHERE user_id = $userId")
+            connManager.connection.createStatement().use { smt ->
+                smt.execute("DELETE FROM patrons WHERE user_id = $userId")
+            }
         }
     }
 
     override fun createOrUpdatePatron(patron: Patron) {
         runOnThread {
-            connManager.connection.use { connection ->
-                var id = 0
+            val connection = connManager.connection
+            var id = 0
 
-                // Check for an existing patron in the database and store the id
-                connection.prepareStatement("SELECT id FROM patrons WHERE user_id = ? LIMIT 1").use { smt ->
-                    smt.setLong(1, patron.userId)
-
-                    smt.executeQuery().use { res ->
-                        while (res.next()) {
-                            id = res.getInt("id")
-                        }
+            // Check for an existing patron in the database and store the id
+            connection.prepareStatement("SELECT id FROM patrons WHERE user_id = ? LIMIT 1").use { smt ->
+                smt.setLong(1, patron.userId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        id = res.getInt("id")
                     }
                 }
+            }
 
-                // Update the patron if we found an id
-                if (id > 0) {
-                    connection.prepareStatement("UPDATE patrons SET user_id = ?, guild_id = ?, type = ? WHERE id = ?").use { smt ->
-                        smt.setLong(1, patron.userId)
-                        smt.setString(2, patron.guildId?.toString())
-                        smt.setString(3, patron.type.name)
-                        smt.setInt(4, id)
-
-                        smt.executeUpdate()
-                        smt.closeOnCompletion()
-                    }
-
-                    return@runOnThread
-                }
-
-                // Create a patron if we didn't find one in the database
-                connection.prepareStatement("INSERT INTO patrons (user_id, guild_id, type) VALUES (?, ?, ?)").use { smt ->
+            // Update the patron if we found an id
+            if (id > 0) {
+                connection.prepareStatement("UPDATE patrons SET user_id = ?, guild_id = ?, type = ? WHERE id = ?").use { smt ->
                     smt.setLong(1, patron.userId)
                     smt.setString(2, patron.guildId?.toString())
                     smt.setString(3, patron.type.name)
-
+                    smt.setInt(4, id)
                     smt.executeUpdate()
-                    smt.closeOnCompletion()
                 }
+
+                return@runOnThread
+            }
+
+            // Create a patron if we didn't find one in the database
+            connection.prepareStatement("INSERT INTO patrons (user_id, guild_id, type) VALUES (?, ?, ?)").use { smt ->
+                smt.setLong(1, patron.userId)
+                smt.setString(2, patron.guildId?.toString())
+                smt.setString(3, patron.type.name)
+                smt.executeUpdate()
             }
         }
     }
 
     override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
         runOnThread {
-            // language=SQLite
             connManager.connection.prepareStatement(
                 "INSERT INTO oneGuildPatrons(user_id, guild_id) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET guild_id = ?"
             ).use {
                 it.setLong(1, userId)
                 it.setLong(2, guildId)
                 it.setLong(3, guildId)
-
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
 
             callback.invoke(userId, guildId)
@@ -409,21 +384,15 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         val map = TLongLongHashMap()
 
         runOnThread {
-            val statement = connManager.connection.prepareStatement(
+            connManager.connection.prepareStatement(
                 "SELECT * FROM oneGuildPatrons WHERE user_id = ? LIMIT 1"
-            ).use {
-                it.setLong(1, userId)
-                it.closeOnCompletion()
-
-                return@use it
-            }
-
-            val resultSet = statement.executeQuery()
-
-            while (resultSet.next()) {
-                val guildId = resultSet.getLong("guild_id")
-
-                map.put(userId, guildId)
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        map.put(userId, res.getLong("guild_id"))
+                    }
+                }
             }
 
             callback.invoke(map)
@@ -433,7 +402,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         runOnThread {
             connManager.connection.prepareStatement(
-                // language=SQLite
                 """
                     INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId)
                     VALUES(? , ? , ? , ? , current_date , ?, ?)
@@ -446,7 +414,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setString(5, unbanDate)
                 it.setString(6, guildId.toString())
                 it.execute()
-                it.closeOnCompletion()
             }
         }
     }
@@ -454,7 +421,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {
         runOnThread {
             connManager.connection.prepareStatement(
-                // language=SQLite
                 """
                     INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date)
                     VALUES(? , ? , ? , ?  , current_date, date(current_date, '+3 day') )
@@ -465,7 +431,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 it.setString(3, reason)
                 it.setString(4, guildId.toString())
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
 
             // invoke callback here as the apis request is sync
@@ -477,48 +442,39 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         runOnThread {
             var oldMute: Mute? = null
 
-            // language=SQLite
-            val res1 = connManager.connection.prepareStatement(
+            connManager.connection.prepareStatement(
                 """
                 SELECT id FROM mutes WHERE guild_id = ? AND user_id = ?
                 """.trimIndent()
-            )
-                .use {
-                    it.setString(1, guildId.toString())
-                    it.setString(2, userId.toString())
-
-                    it.executeQuery()
-                }
-
-            res1.use { res ->
-                if (res.next()) {
-                    oldMute = Mute(
-                        res.getInt("id"),
-                        res.getString("mod_id"),
-                        res.getString("user_id"),
-                        res.getString("user_tag"),
-                        res.getString("guild_id")
-                    )
+            ).use {
+                it.setString(1, guildId.toString())
+                it.setString(2, userId.toString())
+                it.executeQuery().use { res ->
+                    if (res.next()) {
+                        oldMute = Mute(
+                            res.getInt("id"),
+                            res.getString("mod_id"),
+                            res.getString("user_id"),
+                            res.getString("user_tag"),
+                            res.getString("guild_id")
+                        )
+                    }
                 }
             }
 
-            connManager.connection
-                // language=SQLite
-                .prepareStatement(
-                    """
+            connManager.connection.prepareStatement(
+                """
                     INSERT INTO mutes(guild_id, mod_id, user_id, user_tag, unmute_date)
                     VALUES(? , ? , ? , ? , ?)
-                    """.trimIndent()
-                )
+                """.trimIndent()
+            )
                 .use {
                     it.setString(1, guildId.toString())
                     it.setString(2, modId.toString())
                     it.setString(3, userId.toString())
                     it.setString(4, userTag)
                     it.setDate(5, unmuteDate.toDate())
-
                     it.execute()
-                    it.closeOnCompletion()
                 }
 
             callback(oldMute)
@@ -528,43 +484,35 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
         runOnThread {
             val conn = connManager.connection
-
-            val smt = conn.prepareStatement(
-                // language=SQLite
-                "SELECT * FROM warnings WHERE user_id=? AND guild_id=? ORDER BY id DESC LIMIT 1"
-            ).use {
-                it.setString(1, userId.toString())
-                it.setString(2, guildId.toString())
-
-                return@use it
-            }
-
-            val result = smt.executeQuery()
             var ret: Warning? = null
 
-            while (result.next()) {
-                ret = Warning(
-                    result.getInt("id"),
-                    result.getString("warn_date"),
-                    result.getString("mod_id"),
-                    result.getString("reason"),
-                    result.getString("guild_id")
-                )
+            conn.prepareStatement(
+                "SELECT * FROM warnings WHERE user_id=? AND guild_id=? ORDER BY id DESC LIMIT 1"
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        ret = Warning(
+                            res.getInt("id"),
+                            res.getString("warn_date"),
+                            res.getString("mod_id"),
+                            res.getString("reason"),
+                            res.getString("guild_id")
+                        )
+                    }
+                }
             }
 
             if (ret != null) {
                 conn.prepareStatement(
-                    // language=SQLite
                     "DELETE FROM warnings WHERE id=?"
                 ).use {
-                    it.setInt(1, ret.id)
+                    it.setInt(1, ret!!.id)
                     it.executeUpdate()
-                    it.closeOnCompletion()
                 }
             }
 
-            smt.close()
-            result.close()
             callback.invoke(ret)
         }
     }
@@ -572,28 +520,24 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         runOnThread {
             val warnings = ArrayList<Warning>()
-            val smt = connManager.connection.prepareStatement(
-                // language=SQLite
+            connManager.connection.prepareStatement(
                 "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
-            ).use {
-                it.setString(1, userId.toString())
-                it.setString(2, guildId.toString())
-                it.closeOnCompletion()
-                return@use it
-            }
-
-            val result = smt.executeQuery()
-
-            while (result.next()) {
-                warnings.add(
-                    Warning(
-                        result.getInt("id"),
-                        result.getString("warn_date"),
-                        result.getString("mod_id"),
-                        result.getString("reason"),
-                        result.getString("guild_id")
-                    )
-                )
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        warnings.add(
+                            Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getString("mod_id"),
+                                res.getString("reason"),
+                                res.getString("guild_id")
+                            )
+                        )
+                    }
+                }
             }
 
             callback.invoke(warnings)
@@ -603,33 +547,26 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
         runOnThread {
             var count = 0
-            val smt = connManager.connection.prepareStatement(
-                // language=SQLite
+            connManager.connection.prepareStatement(
                 "SELECT COUNT(id) as counter FROM `warnings` WHERE user_id=? AND guild_id=? AND (DATE('now') <= DATE(expire_date, '+3 day'))"
-            ).use {
-                it.setString(1, userId.toString())
-                it.setString(2, guildId.toString())
-                it.closeOnCompletion()
-                return@use it
-            }
-
-            val result = smt.executeQuery()
-
-            while (result.next()) {
-                count = result.getInt("counter")
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        count = res.getInt("counter")
+                    }
+                }
             }
 
             callback.invoke(count)
         }
     }
 
-    override fun purgeBans(ids: List<Int>) {
-        runOnThread {
-            val idsString = ids.joinToString(separator = ", ")
-            connManager.connection.createStatement().use {
-                it.execute("DELETE FROM bans WHERE id in ($idsString)")
-                it.closeOnCompletion()
-            }
+    override fun purgeBansSync(ids: List<Int>) {
+        val idsString = ids.joinToString(separator = ", ")
+        connManager.connection.createStatement().use {
+            it.execute("DELETE FROM bans WHERE id in ($idsString)")
         }
     }
 
@@ -638,73 +575,64 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             val mutes = arrayListOf<Mute>()
             val bans = arrayListOf<Ban>()
 
-            val muteSmt = connManager.connection.createStatement()
-            val banSmt = connManager.connection.createStatement()
-
-            muteSmt.closeOnCompletion()
-            banSmt.closeOnCompletion()
-
-            muteSmt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP")
-                .use {
-                    while (it.next()) {
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= CURRENT_TIMESTAMP").use { res ->
+                    while (res.next()) {
                         mutes.add(
                             Mute(
-                                it.getInt("id"),
-                                it.getString("mod_id"),
-                                it.getString("user_id"),
-                                it.getString("user_tag"),
-                                it.getString("guild_id")
+                                res.getInt("id"),
+                                res.getString("mod_id"),
+                                res.getString("user_id"),
+                                res.getString("user_tag"),
+                                res.getString("guild_id")
                             )
                         )
                     }
-                    it.close()
                 }
+            }
 
-            banSmt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP")
-                .use {
-                    while (it.next()) {
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM bans WHERE unban_date <= CURRENT_TIMESTAMP").use { res ->
+                    while (res.next()) {
                         bans.add(
                             Ban(
-                                it.getInt("id"),
-                                it.getString("modUserId"),
-                                it.getString("userId"),
-                                it.getString("Username"),
-                                it.getString("discriminator"),
-                                it.getString("guildId")
+                                res.getInt("id"),
+                                res.getString("modUserId"),
+                                res.getString("userId"),
+                                res.getString("Username"),
+                                res.getString("discriminator"),
+                                res.getString("guildId")
                             )
                         )
                     }
-                    it.close()
                 }
+            }
 
             callback(bans, mutes)
         }
     }
 
-    override fun purgeMutes(ids: List<Int>) {
-        runOnThread {
-            val idsString = ids.joinToString(separator = ", ")
-            connManager.connection.createStatement().use {
-                it.execute("DELETE FROM mutes WHERE id in ($idsString)")
-                it.closeOnCompletion()
-            }
+    override fun purgeMutesSync(ids: List<Int>) {
+        connManager.connection.createStatement().use {
+            it.execute("DELETE FROM mutes WHERE id in (${ids.joinToString(separator = ", ")})")
         }
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
         runOnThread {
             val items = ArrayList<VcAutoRole>()
-            // language=SQLite
-            val result = connManager.connection.createStatement().executeQuery("SELECT * FROM `vcAutoRoles`")
-
-            while (result.next()) {
-                items.add(
-                    VcAutoRole(
-                        result.getLong("guild_id"),
-                        result.getLong("voice_channel_id"),
-                        result.getLong("role_id")
-                    )
-                )
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM `vcAutoRoles`").use { res ->
+                    while (res.next()) {
+                        items.add(
+                            VcAutoRole(
+                                res.getLong("guild_id"),
+                                res.getLong("voice_channel_id"),
+                                res.getLong("role_id")
+                            )
+                        )
+                    }
+                }
             }
 
             callback.invoke(items)
@@ -714,14 +642,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
         runOnThread {
             connManager.connection.prepareStatement(
-                // language=SQLite
                 "INSERT INTO vcAutoRoles(guild_id, voice_channel_id, role_id) VALUES(? , ? , ?)"
             ).use {
                 it.setString(1, guildId.toString())
                 it.setString(2, voiceChannelId.toString())
                 it.setString(3, roleId.toString())
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
@@ -735,12 +661,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun removeVcAutoRole(voiceChannelId: Long) {
         runOnThread {
             connManager.connection.prepareStatement(
-                // language=SQLite
                 "DELETE FROM vcAutoRoles WHERE voice_channel_id = ?"
             ).use {
                 it.setString(1, voiceChannelId.toString())
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
@@ -748,12 +672,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun removeVcAutoRoleForGuild(guildId: Long) {
         runOnThread {
             connManager.connection.prepareStatement(
-                // language=SQLite
                 "DELETE FROM vcAutoRoles WHERE guild_id = ?"
             ).use {
                 it.setString(1, guildId.toString())
                 it.executeUpdate()
-                it.closeOnCompletion()
             }
         }
     }
@@ -761,20 +683,19 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun loadTags(callback: (List<Tag>) -> Unit) {
         runOnThread {
             val tags = arrayListOf<Tag>()
-            // language=SQLite
-            val res = connManager.connection.createStatement().executeQuery("SELECT * FROM tags")
-
-            while (res.next()) {
-                val tag = Tag()
-
-                tag.owner_id = res.getLong("owner_id")
-                tag.name = res.getString("name")
-                tag.content = res.getString("content")
-
-                tags.add(tag)
+            connManager.connection.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM tags").use { res ->
+                    while (res.next()) {
+                        tags.add(
+                            Tag(
+                                res.getString("name"),
+                                res.getString("content"),
+                                res.getLong("owner_id")
+                            )
+                        )
+                    }
+                }
             }
-
-            res.close()
 
             callback.invoke(tags)
         }
@@ -782,14 +703,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
         runOnThread {
-            // language=SQLite
-            val smt = connManager.connection.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
-            smt.setLong(1, tag.owner_id)
-            smt.setString(2, tag.name)
-            smt.setString(3, tag.content)
-
-            smt.executeUpdate()
-            smt.closeOnCompletion()
+            connManager.connection.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)").use { smt ->
+                smt.setLong(1, tag.ownerId)
+                smt.setString(2, tag.name)
+                smt.setString(3, tag.content)
+                smt.executeUpdate()
+            }
 
             callback.invoke(true, "")
         }
@@ -797,11 +716,10 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
         runOnThread {
-            // language=SQLite
-            val smt = connManager.connection.prepareStatement("DELETE FROM tags where name = ?")
-            smt.setString(1, tag.name)
-            smt.executeUpdate()
-            smt.closeOnCompletion()
+            connManager.connection.prepareStatement("DELETE FROM tags where name = ?").use { smt ->
+                smt.setString(1, tag.name)
+                smt.executeUpdate()
+            }
 
             callback.invoke(true, "")
         }
@@ -818,29 +736,28 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         callback: (Boolean, Int) -> Unit
     ) {
         runOnThread {
-            val smt = connManager.connection.prepareStatement(
-                // language=SQLite
+            connManager.connection.prepareStatement(
                 """
                     INSERT INTO reminders(user_id, reminder, remind_date, remind_create_date, channel_id, message_id, message_id, guild_id, in_channel) 
                     VALUES (? , ? , ? , ? , ?, ? , ? , ? , ?)
                 """.trimIndent()
-            )
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, reminder)
+                smt.setDate(3, expireDate.toSQL())
+                smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
+                smt.setString(5, channelId.toString())
+                smt.setString(6, messageId.toString())
+                smt.setString(7, guildId.toString())
+                smt.setBoolean(8, inChannel)
 
-            smt.setString(1, userId.toString())
-            smt.setString(2, reminder)
-            smt.setDate(3, expireDate.toSQL())
-            smt.setDate(4, java.sql.Date(System.currentTimeMillis()))
-            smt.setString(5, channelId.toString())
-            smt.setString(6, messageId.toString())
-            smt.setString(7, guildId.toString())
-            smt.setBoolean(8, inChannel)
-
-            try {
-                smt.execute()
-                callback.invoke(true, smt.generatedKeys.getInt(1))
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                callback.invoke(false, -1)
+                try {
+                    smt.execute()
+                    callback.invoke(true, smt.generatedKeys.getInt(1))
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                    callback.invoke(false, -1)
+                }
             }
         }
     }
@@ -848,11 +765,9 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
         runOnThread(
             {
-                val smt = connManager.connection.createStatement()
-
-                // language=SQLite
-                smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
-                smt.closeOnCompletion()
+                connManager.connection.createStatement().use { smt ->
+                    smt.execute("DELETE FROM reminders WHERE id = $reminderId AND user_id = $userId")
+                }
 
                 callback.invoke(true)
             },
@@ -864,20 +779,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
         runOnThread {
-            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ? LIMIT 1").use {
-                it.setInt(1, reminderId)
-                it.setLong(2, userId)
-
-                it.executeQuery().use results@{ result ->
-                    if (!result.next()) {
+            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ? LIMIT 1").use { smt ->
+                smt.setInt(1, reminderId)
+                smt.setLong(2, userId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback(res.toReminder())
+                    } else {
                         callback(null)
-                        return@results
                     }
-
-                    callback(result.toReminder())
                 }
-
-                it.closeOnCompletion()
             }
         }
     }
@@ -885,16 +796,12 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val reminders = arrayListOf<Reminder>()
-
-            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use {
-                it.setLong(1, userId)
-
-                it.executeQuery().use { result ->
-                    while (result.next()) {
-                        reminders.add(result.toReminder())
+            connManager.connection.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use { smt ->
+                smt.setLong(1, userId)
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        reminders.add(res.toReminder())
                     }
-
-                    it.closeOnCompletion()
 
                     callback(reminders)
                 }
@@ -902,32 +809,23 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
         }
     }
 
-    override fun purgeReminders(ids: List<Int>) {
-        runOnThread {
-            val inClause = '(' + ids.joinToString() + ')'
-            //language=SQLite
-            val sql = "DELETE FROM reminders WHERE id IN $inClause"
-            val smt = connManager.connection.createStatement()
-
-            smt.execute(sql)
-            smt.closeOnCompletion()
+    override fun purgeRemindersSync(ids: List<Int>) {
+        connManager.connection.createStatement().use { smt ->
+            smt.execute("DELETE FROM reminders WHERE id IN (${ids.joinToString()})")
         }
     }
 
     override fun getExpiredReminders(callback: (List<Reminder>) -> Unit) {
         runOnThread {
             val reminders = ArrayList<Reminder>()
-            val smt = connManager.connection.prepareStatement(
-                // language=SQLite
+            connManager.connection.prepareStatement(
                 "SELECT * FROM `reminders` WHERE (DATETIME('now') > DATETIME(remind_date / 1000, 'unixepoch'))"
-            )
-
-            smt.closeOnCompletion()
-
-            val result = smt.executeQuery()
-
-            while (result.next()) {
-                reminders.add(result.toReminder())
+            ).use { smt ->
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        reminders.add(res.toReminder())
+                    }
+                }
             }
 
             if (reminders.isNotEmpty()) {
@@ -960,19 +858,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                 }
 
                 smt.execute()
-                smt.closeOnCompletion()
             }
         }
     }
 
     override fun createBanBypass(guildId: Long, userId: Long) {
         runOnThread {
-            //language=SQLite
             connManager.connection.prepareStatement("INSERT INTO ban_bypasses(guild_id, user_id) VALUES( ? , ?)").use {
                 it.setLong(1, guildId)
                 it.setLong(2, userId)
                 it.execute()
-                it.closeOnCompletion()
             }
         }
     }
@@ -980,7 +875,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
         runOnThread {
             connManager.connection.prepareStatement(
-                //language=SQLite
                 "SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?"
             ).use {
                 it.setLong(1, guildId)
@@ -997,19 +891,16 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
                         callback(null)
                     }
                 }
-                it.closeOnCompletion()
             }
         }
     }
 
     override fun deleteBanBypass(banBypass: BanBypas) {
         runOnThread {
-            //language=SQLite
             connManager.connection.prepareStatement("DELETE FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use {
                 it.setLong(1, banBypass.guildId)
                 it.setLong(2, banBypass.userId)
                 it.execute()
-                it.closeOnCompletion()
             }
         }
     }
@@ -1022,15 +913,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
             //language=SQLite
             "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
-        val conn = connManager.connection
 
-        conn.prepareStatement(sqlQuerry).use {
+        connManager.connection.prepareStatement(sqlQuerry).use {
             it.setString(if (isEdit) 3 else 1, guildId.toString())
             it.setString(if (isEdit) 4 else 2, invoke)
             it.setString(if (isEdit) 1 else 3, message)
             it.setBoolean(if (isEdit) 2 else 4, autoresponse)
             it.execute()
-            it.closeOnCompletion()
         }
 
         return null
@@ -1038,16 +927,13 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
     private fun getBlackListsForGuild(guildId: Long): List<String> {
         val list = arrayListOf<String>()
-        val smt = connManager.connection.createStatement()
-
-        // language=SQLite
-        val res = smt.executeQuery("SELECT * FROM blacklists WHERE guild_id = '$guildId'")
-
-        while (res.next()) {
-            list.add(res.getString("word"))
+        connManager.connection.createStatement().use { smt ->
+            smt.executeQuery("SELECT * FROM blacklists WHERE guild_id = '$guildId'").use { res ->
+                while (res.next()) {
+                    list.add(res.getString("word"))
+                }
+            }
         }
-
-        res.close()
 
         return list
     }
@@ -1057,7 +943,6 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
 
         connManager.connection.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
             smt.setString(1, guildId.toString())
-
             smt.executeQuery().use { res ->
                 while (res.next()) {
                     list.add(
@@ -1090,58 +975,51 @@ class SqliteDatabaseAdapter : DatabaseAdapter(1) {
     private fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
     private fun String.toDate() = fromDatabaseFormat(this).toSQL()
 
-    private fun ResultSet.toReminder(): Reminder {
-        return Reminder(
-            this.getInt("id"),
-            this.getLong("user_id"),
-            this.getString("reminder"),
-            this.getDate("remind_create_date").asInstant(),
-            this.getDate("remind_date").asInstant(),
-            this.getLong("channel_id"),
-            this.getLong("message_id"),
-            this.getLong("guild_id"),
-            this.getBoolean("in_channel")
-        )
-    }
+    private fun ResultSet.toReminder() = Reminder(
+        this.getInt("id"),
+        this.getLong("user_id"),
+        this.getString("reminder"),
+        this.getDate("remind_create_date").asInstant(),
+        this.getDate("remind_date").asInstant(),
+        this.getLong("channel_id"),
+        this.getLong("message_id"),
+        this.getLong("guild_id"),
+        this.getBoolean("in_channel")
+    )
 
-    private fun ResultSet.toGuildSettings(guildId: Long): GuildSetting {
-        val blackList = getBlackListsForGuild(guildId)
-        val warnActions = getWarnActionsForGuild(guildId)
-        val embedColor = getEmbedColorForGuild(guildId)
-
-        return GuildSetting(guildId)
-            .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
-            .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
-            .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))
-            .setCustomPrefix(this.getString("prefix"))
-            .setLogChannel(toLong(this.getString("logChannelId")))
-            .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
-            .setCustomLeaveMessage(replaceNewLines(this.getString("customLeaveMessage")))
-            .setAutoroleRole(toLong(this.getString("autoRole")))
-            .setServerDesc(replaceNewLines(this.getString("serverDesc")))
-            .setAnnounceTracks(this.getBoolean("announceNextTrack"))
-            .setAutoDeHoist(this.getBoolean("autoDeHoist"))
-            .setFilterInvites(this.getBoolean("filterInvites"))
-            .setEnableSpamFilter(this.getBoolean("spamFilterState"))
-            .setMuteRoleId(toLong(this.getString("muteRoleId")))
-            .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
-            .setKickState(this.getBoolean("kickInsteadState"))
-            .setLeaveTimeout(this.getInt("leave_timeout"))
-            .setSpamThreshold(this.getInt("spam_threshold"))
-            .setBanLogging(this.getBoolean("logBan"))
-            .setUnbanLogging(this.getBoolean("logUnban"))
-            .setKickLogging(this.getBoolean("logKick"))
-            .setMuteLogging(this.getBoolean("logMute"))
-            .setWarnLogging(this.getBoolean("logWarn"))
-            .setFilterType(this.getString("profanity_type"))
-            .setAiSensitivity(this.getFloat("aiSensitivity"))
-            .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
-            .setFilterInvites(this.getBoolean("invite_logging"))
-            .setBlacklistedWords(blackList)
-            .setWarnActions(warnActions)
-            .setEmbedColor(embedColor)
-            .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
-            .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
-            .setMemberLogging(this.getBoolean("logMember"))
-    }
+    private fun ResultSet.toGuildSettings(guildId: Long) = GuildSetting(guildId)
+        .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
+        .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
+        .setCustomJoinMessage(replaceNewLines(this.getString("customWelcomeMessage")))
+        .setCustomPrefix(this.getString("prefix"))
+        .setLogChannel(toLong(this.getString("logChannelId")))
+        .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
+        .setCustomLeaveMessage(replaceNewLines(this.getString("customLeaveMessage")))
+        .setAutoroleRole(toLong(this.getString("autoRole")))
+        .setServerDesc(replaceNewLines(this.getString("serverDesc")))
+        .setAnnounceTracks(this.getBoolean("announceNextTrack"))
+        .setAutoDeHoist(this.getBoolean("autoDeHoist"))
+        .setFilterInvites(this.getBoolean("filterInvites"))
+        .setEnableSpamFilter(this.getBoolean("spamFilterState"))
+        .setMuteRoleId(toLong(this.getString("muteRoleId")))
+        .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
+        .setKickState(this.getBoolean("kickInsteadState"))
+        .setLeaveTimeout(this.getInt("leave_timeout"))
+        .setSpamThreshold(this.getInt("spam_threshold"))
+        .setBanLogging(this.getBoolean("logBan"))
+        .setUnbanLogging(this.getBoolean("logUnban"))
+        .setKickLogging(this.getBoolean("logKick"))
+        .setMuteLogging(this.getBoolean("logMute"))
+        .setWarnLogging(this.getBoolean("logWarn"))
+        .setFilterType(this.getString("profanity_type"))
+        .setAiSensitivity(this.getFloat("aiSensitivity"))
+        .setAllowAllToStop(this.getBoolean("allow_all_to_stop"))
+        .setFilterInvites(this.getBoolean("invite_logging"))
+        .setBlacklistedWords(getBlackListsForGuild(guildId))
+        .setWarnActions(getWarnActionsForGuild(guildId))
+        .setEmbedColor(getEmbedColorForGuild(guildId))
+        .setYoungAccountBanEnabled(this.getBoolean("youngAccountBanEnabled"))
+        .setYoungAccountThreshold(this.getInt("youngAccountThreshold"))
+        .setMemberLogging(this.getBoolean("logMember"))
+        .setMessageLogging(this.getBoolean("message_logging"))
 }

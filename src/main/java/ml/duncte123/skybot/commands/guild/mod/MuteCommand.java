@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -40,6 +40,9 @@ public class MuteCommand extends ModBaseCommand {
         this.name = "mute";
         this.help = "Mutes a user in the server";
         this.usage = "<@user> [-r reason]";
+        this.userPermissions = new Permission[]{
+            Permission.KICK_MEMBERS,
+        };
         this.botPermissions = new Permission[]{
             Permission.MANAGE_SERVER,
             Permission.MANAGE_ROLES,
@@ -87,7 +90,7 @@ public class MuteCommand extends ModBaseCommand {
         }
 
         ctx.getGuild().addRoleToMember(toMute, role)
-            .reason("Muted by " + ctx.getAuthor().getAsTag() + ": " + reason).queue(success -> {
+            .reason("Muted by " + String.format("%#s: %s", ctx.getAuthor(), reason)).queue(success -> {
                 ModerationUtils.modLog(ctx.getAuthor(), toMute.getUser(), "muted", null, null, ctx.getGuild());
                 sendSuccess(ctx.getMessage());
             }

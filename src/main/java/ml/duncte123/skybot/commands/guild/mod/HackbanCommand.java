@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -63,7 +63,7 @@ public class HackbanCommand extends ModBaseCommand {
         final String reason;
 
         if (parsedFlags.containsKey("r")) {
-            reason = String.join(" ", parsedFlags.get("r"));
+            reason = ctx.getAuthor().getAsTag() + ": " + String.join(" ", parsedFlags.get("r"));
         } else {
             reason = String.format("Hackban by %#s", ctx.getAuthor());
         }
@@ -103,8 +103,8 @@ public class HackbanCommand extends ModBaseCommand {
                 ctx.getGuild().ban(finalId, 0, reason)
                     .reason(reason)
                     .queue(null, (thr) -> {
-                        if (thr instanceof ErrorResponseException) {
-                            sendMsg(ctx, "Could not ban `" + finalId + "`, reason: " + ((ErrorResponseException) thr).getMeaning());
+                        if (thr instanceof ErrorResponseException err) {
+                            sendMsg(ctx, "Could not ban `" + finalId + "`, reason: " + err.getMeaning());
                         } else {
                             RestActionImpl.getDefaultFailure().accept(thr);
                         }
@@ -114,7 +114,7 @@ public class HackbanCommand extends ModBaseCommand {
             catch (HierarchyException e) {
               sendMsg(ctx, String.format("Could not ban id `%s`", userId));
             } catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
                 sendMsg(ctx, "ERROR: " + e.getMessage());
                 return;
             }

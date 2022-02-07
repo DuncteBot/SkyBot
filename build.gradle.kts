@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -21,58 +21,41 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.21"))
-    }
-}
+import kotlin.math.min
 
 plugins {
+    pmd
     java
     idea
     application
 
-    kotlin("jvm") version "1.4.21"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.6.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.3.0"
-    pmd
+    id("org.jmailen.kotlinter") version "3.5.1"
 }
 
-val numberVersion = "3.101.3"
+val numberVersion = "3.106.2"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 repositories {
     mavenCentral()
-    jcenter() // Legacy :(
 
-    maven {
-        url = uri("https://repo.jenkins-ci.org/releases/")
-    }
-
-    maven {
-        url = uri("https://duncte123.jfrog.io/artifactory/maven")
-    }
-
-    maven {
-        url = uri("https://maven.notfab.net/Hosted")
-    }
-
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    // caches old bintray packages
+    maven("https://duncte123.jfrog.io/artifactory/bintray-maven")
+    maven("https://repo.jenkins-ci.org/releases")
+    maven("https://duncte123.jfrog.io/artifactory/maven")
+    maven("https://m2.dv8tion.net/releases")
+    maven("https://maven.notfab.net/Hosted")
+    maven("https://jitpack.io")
 }
 
 val devDependencies = arrayOf(
@@ -81,42 +64,37 @@ val devDependencies = arrayOf(
 )
 
 dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.20")
+    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
     // loadingbar
     implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
 
     // Weeb api
-//    implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
-    implementation(group = "com.github.duncte123", name = "weeb.java", version = "18ba8fc")
+    implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.1.1")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.9")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.2.0_228") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
         exclude(module = "opus-java")
     }
 
-    /*implementation(group = "com.github.dv8fromtheworld", name = "JDA", version = "4208971") {
-        exclude(module = "opus-java")
-    }*/
-
-//    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.3")
-    implementation(group = "com.github.DuncteBot", name = "skybot-source-managers", version = "aad4b94")
-    // Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.67")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "d2fb620")
-//    implementation(project(":Lavalink-Client"))
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.5.9")
+//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
+    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
+    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
+        exclude(module = "lavaplayer")
+    }
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.6")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.7")
 
     // Logback classic
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
+    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.1")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.4")
 
     // Youtube Cache
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2.1")
@@ -126,34 +104,54 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
+//    implementation(kotlin("kotlinx-coroutines-core"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
-    implementation(group = "com.jagrosh", name = "jda-utilities-commons", version = "3.0.4")
+    // JDA utils
+    implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
+        // This is fine
+        exclude(module = "jda-utilities-examples")
+        exclude(module = "jda-utilities-doc")
+        exclude(module = "jda-utilities-command")
+        exclude(module = "jda-utilities-menu")
+        exclude(module = "jda-utilities-oauth2")
+    }
 
-//    implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
+    // jagtag
     implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
 
     //Wolfaram alpha
     implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
 
-    implementation(group = "net.time4j", name = "time4j-base", version = "5.7")
+    // time parsing
+    // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.30")
+    implementation(group = "io.sentry", name = "sentry-logback", version = "5.4.0")
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
-
-    // Oshi
-    implementation(group = "com.github.oshi", name = "oshi-core", version = "5.2.5")
 
     // ExpiringMap
     implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
 
     // okhttp
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
+
+    // trove maps
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
+    // emoji-java
+    implementation(group = "com.vdurmont", name = "emoji-java", version = "5.1.1")
+
+    // jackson
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
+    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
+
+    // redis
+    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
+
+    // dev deps
     devDependencies.forEach {
         implementation(group = it.group, name = it.name, version = it.version)
     }
@@ -177,6 +175,8 @@ task<Exec>("botVersion") {
 }
 
 build.apply {
+    println("Git token: ${System.getenv("GITHUB_TOKEN")}")
+
     dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)
@@ -186,7 +186,7 @@ build.apply {
 
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "15"
+        jvmTarget = "16"
     }
 }
 
@@ -259,13 +259,11 @@ jar.apply {
 }
 
 application {
-    // TODO: shadowjar uses this
-    mainClassName = "ml.duncte123.skybot.SkyBot"
     mainClass.set("ml.duncte123.skybot.SkyBot")
 }
 
 shadowJar.apply {
-    archiveClassifier.set("")
+    archiveClassifier.set("prod")
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
@@ -281,7 +279,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.8"
+    gradleVersion = "7.2"
     distributionType = DistributionType.ALL
 }
 
@@ -300,7 +298,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.31.0"
+    toolVersion = "6.34.0"
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))
@@ -315,9 +313,11 @@ githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
     owner("DuncteBot")
     repo("SkyBot")
-    tagName(numberVersion)
+    tagName("v$numberVersion")
+    releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)
+    dryRun(false)
     body(changelog())
 }
 
@@ -335,7 +335,7 @@ fun getGitHash(): String {
         // Ugly hacks 101 :D
         val hash = System.getenv("GIT_HASH") ?: "dev"
 
-        return hash.substring(0, Math.min(8, hash.length))
+        return hash.substring(0, min(8, hash.length))
     }
 }
 

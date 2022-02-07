@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.essentials;
@@ -82,29 +82,24 @@ public class WolframAlphaCommand extends Command {
                 builder.append(parseString(sp.getTitle()));
                 //loop over the contents
                 for (final Visitable variable : sp.getContents()) {
-                    if (variable instanceof WAImage) {
-                        final WAImage image = (WAImage) variable;
+                    if (variable instanceof final WAImage image) {
                         builder.append("[Image by text](")
                             .append(shortenUrl(image.getURL(), googleKey, mapper).execute())
                             .append(')');
-                    } else if (variable instanceof WAInfo) {
-                        final WAInfo info = (WAInfo) variable;
+                    } else if (variable instanceof final WAInfo info) {
                         builder.append(parseString(info.getText()));
                         //System.out.println(i.getText());
                         //Ramid when?
                         // TODO: Display more...
-                    } else if (variable instanceof WALink) {
-                        final WALink link = (WALink) variable;
+                    } else if (variable instanceof final WALink link) {
                         builder.append('[')
                             .append(parseString(link.getText()))
                             .append("](")
                             .append(shortenUrl(link.getURL(), googleKey, mapper).execute())
                             .append(')');
-                    } else if (variable instanceof WAPlainText) {
-                        final WAPlainText plainText = (WAPlainText) variable;
+                    } else if (variable instanceof final WAPlainText plainText) {
                         builder.append(parseString(plainText.getText()));
-                    } else if (variable instanceof WASound) {
-                        final WASound sound = (WASound) variable;
+                    } else if (variable instanceof final WASound sound) {
                         builder.append(shortenUrl(sound.getURL(), googleKey, mapper).execute());
                     }
 
@@ -159,7 +154,7 @@ public class WolframAlphaCommand extends Command {
         }
 
         editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
-            .setEmbed(
+            .setEmbeds(
                 generateEmbed(ctx, result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
             ).build());
     }

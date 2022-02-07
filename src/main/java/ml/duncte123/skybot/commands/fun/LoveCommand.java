@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.fun;
@@ -65,6 +65,16 @@ public class LoveCommand extends Command {
             name2 = args.get(1);
         }
 
+        if (name1.isBlank()) {
+            sendMsg(ctx, "You will need to provide me a username for the first user");
+            return;
+        }
+
+        if (name2.isBlank()) {
+            sendMsg(ctx, "You will need to provide me a username for the user to match with");
+            return;
+        }
+
         final Member target1 = AirUtils.getMentionedMember(name1, ctx);
         final Member target2 = AirUtils.getMentionedMember(name2, ctx);
         final JsonNode response = ctx.getApis().getLove(target1.getEffectiveName(), target2.getEffectiveName());
@@ -103,7 +113,7 @@ public class LoveCommand extends Command {
 
                 channel.sendMessage(message)
                     .addFile(image, "love.png")
-                    .embed(embed.setImage("attachment://love.png").build())
+                    .setEmbeds(embed.setImage("attachment://love.png").build())
                     .queue();
             });
         } else {

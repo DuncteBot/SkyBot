@@ -1,4 +1,4 @@
-FROM adoptopenjdk:15-jdk-hotspot AS builder
+FROM azul/zulu-openjdk-alpine:16 AS builder
 
 WORKDIR /skybot
 
@@ -14,9 +14,13 @@ RUN ./gradlew --no-daemon dependencies
 COPY . .
 RUN ./gradlew --no-daemon build
 
-FROM adoptopenjdk:15-jre-hotspot
+FROM azul/zulu-openjdk-alpine:16-jre
+
+# add libstdc++ for playing back mp3's with lavaplayer
+# also add some fonts
+RUN apk add --no-cache libstdc++ fontconfig font-noto
 
 WORKDIR /skybot
-COPY --from=builder /skybot/build/libs/skybot*.jar ./skybot.jar
+COPY --from=builder /skybot/build/libs/skybot*-prod.jar ./skybot.jar
 
 CMD ["java", "-jar", "skybot.jar"]

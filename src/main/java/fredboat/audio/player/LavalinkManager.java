@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package fredboat.audio.player;
@@ -24,6 +24,8 @@ import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -32,23 +34,24 @@ import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.Base64;
 
-
 /**
  * This class has been taken from
- * https://github.com/Frederikam/FredBoat/blob/master/FredBoat/src/main/java/fredboat/audio/player/LavalinkManager.java\
+ * https://github.com/Frederikam/FredBoat/blob/master/FredBoat/src/main/java/fredboat/audio/player/LavalinkManager.java
  * and has been modified to fit my needs
  */
 public final class LavalinkManager {
-
     public static final LavalinkManager INS = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
+    private AudioUtils audioUtils;
+    private boolean enabledOverride = true;
 
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig config) {
+    public void start(DunctebotConfig config, AudioUtils audioUtils) {
         this.config = config;
+        this.audioUtils = audioUtils;
 
         if (!isEnabled()) {
             return;
@@ -65,8 +68,27 @@ public final class LavalinkManager {
         loadNodes();
     }
 
+    @SuppressWarnings("unused") // we need it from eval
+    public void forceEnable(boolean enabled) {
+        if (enabled) {
+            this.loadNodes();
+        } else {
+            AirUtils.stopMusic(this.audioUtils);
+
+            // disconnect all links
+            this.lavalink.getLinks().forEach(Link::destroy);
+            // close all connections to all nodes
+            for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
+                this.lavalink.removeNode(i);
+            }
+        }
+
+        // Do this last, otherwise we can't disconnect
+        this.enabledOverride = enabled;
+    }
+
     public boolean isEnabled() {
-        return config.lavalink.enable;
+        return this.enabledOverride && config.lavalink.enable;
     }
 
     public LavalinkPlayer createPlayer(long guildId) {
@@ -91,27 +113,42 @@ public final class LavalinkManager {
     }
 
     public void closeConnection(Guild guild) {
+        closeConnection(guild.getId());
+    }
+
+    public void closeConnection(String guildId) {
         if (!isEnabled()) {
             throw new IllegalStateException("Using lavaplayer is no longer supported");
         }
 
-        lavalink.getLink(guild).destroy();
+        lavalink.getLink(guildId).destroy();
     }
 
     public boolean isConnected(Guild guild) {
+        return isConnected(guild.getId());
+    }
+
+    public boolean isConnected(String guildId) {
         if (!isEnabled()) {
             throw new IllegalStateException("Using lavaplayer is no longer supported");
         }
 
-        return lavalink.getLink(guild).getState() == Link.State.CONNECTED;
+        return lavalink.getLink(guildId).getState() == Link.State.CONNECTED;
     }
 
+    @SuppressWarnings("ConstantConditions") // cache is enabled
     public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
         // NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the
         // current voice channel if the bot is moved around in the client)
         return guild.getSelfMember().getVoiceState().getChannel();
+    }
+
+    public void shutdown() {
+        if (isEnabled()) {
+            this.lavalink.shutdown();
+        }
     }
 
     public JdaLavalink getLavalink() {
@@ -124,7 +161,6 @@ public final class LavalinkManager {
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
             lavalink.addNode(URI.create(node.wsurl), node.pass, LavalinkRegion.valueOf(node.region));
         }
-
     }
 
     private String getIdFromToken(String token) {

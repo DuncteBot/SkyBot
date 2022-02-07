@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.audio.sourcemanagers.spotify;
@@ -34,6 +34,7 @@ import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.audio.BigChungusPlaylist;
 import ml.duncte123.skybot.audio.TrackScheduler;
+import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -58,9 +59,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/([a-zA-z0-9]+)";
     private static final String ALBUM_REGEX = "album/([a-zA-z0-9]+)";
-    private static final String USER_PART = "user/(?:.*)/";
+    private static final String USER_PART = "user/.*/";
     private static final String PLAYLIST_REGEX = "playlist/([a-zA-z0-9]+)";
-    private static final String REST_REGEX = "(?:.*)";
+    private static final String REST_REGEX = ".*";
     private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
 
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
@@ -68,7 +69,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX_USER = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" +
         USER_PART + PLAYLIST_REGEX + REST_REGEX + "$");
-    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^(?:spotify)(?::user:(?:.*))?(?::playlist:)(.*)$");
+    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^spotify(?::user:.*)?:playlist:(.*)$");
     private final SpotifyApi spotifyApi;
     /* package */ final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
@@ -97,11 +98,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
-        return loadItem(reference, false);
+        final boolean isPatron = reference instanceof DBAudioRef dbRef && dbRef.isPatron();
+
+        return loadItem(reference, isPatron);
     }
 
     public AudioItem loadItem(AudioReference reference, boolean isPatron) {
-
         AudioItem item = getSpotifyAlbum(reference);
 
         if (item == null) {
@@ -132,7 +134,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 playList.add(buildTrackFromSimple(t, images));
             }
 
-            return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
+            return new BasicAudioPlaylist(album.getName(), playList, null, false);
         }
         catch (Exception e) {
             //logger.error("Something went wrong!", e);
@@ -174,11 +176,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 final IPlaylistItem item = playlistTrack.getTrack();
 
                 // playlist item can either be a track or podcast episode
-                if (!(item instanceof Track)) {
+                if (!(item instanceof final Track track)) {
                     continue;
                 }
-
-                final Track track = (Track) item;
 
                 finalPlaylist.add(buildTrack(track));
             }
@@ -187,7 +187,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 throw new FriendlyException("This playlist does not contain playable tracks (podcasts cannot be played)", Severity.COMMON, null);
             }
 
-            return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false, originalSize);
+            return new BigChungusPlaylist(spotifyPlaylist.getName(), finalPlaylist, null, false, originalSize);
         }
         catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);

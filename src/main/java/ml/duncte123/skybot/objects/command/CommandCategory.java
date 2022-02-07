@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,33 +13,40 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.command;
 
 public enum CommandCategory {
-    ANIMALS("animals"),
-    MAIN("main"),
-    FUN("fun"),
-    MUSIC("music"),
-    MODERATION("mod"),
-    ADMINISTRATION("admin"),
-    UTILS("utils"),
-    PATRON("patron"),
-    WEEB("weeb"),
-    NSFW("nsfw"),
-    LGBTQ("lgbtq+"),
-    UNLISTED(null);
+    ADMINISTRATION("admin", "Administration"),
+    ANIMALS("animals", "Animal"),
+    FUN("fun", "Fun"),
+    LGBTQ("lgbtq+", "LGBTQ+"),
+    MAIN("main", "Uncategorized"),
+    MODERATION("mod", "Moderation"),
+    MUSIC("music", "Music"),
+    NSFW("nsfw", "NSFW"),
+    PATRON("patron", "Patron only"),
+    UTILS("utils", "Utility"),
+    WEEB("weeb", "Weeb"),
+    // Unlisted is always last
+    UNLISTED(null, null);
 
     private final String search;
+    private final String display;
 
-    CommandCategory(String search) {
+    CommandCategory(String search, String display) {
         this.search = search;
+        this.display = display;
     }
 
     public String getSearch() {
         return search;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 
     public static CommandCategory fromSearch(String input) {

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.command;
@@ -33,6 +33,7 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.notfab.caching.client.CacheClient;
 
@@ -51,7 +52,7 @@ public class CommandContext implements ICommandContext {
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
     private Map<String, List<String>> cachedFlags;
-    private GuildMessageReceivedEvent reactionAddEvent = null;
+    private SelectionMenuEvent selectionEvent = null;
     private long replyId = 0L;
 
     public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
@@ -181,8 +182,8 @@ public class CommandContext implements ICommandContext {
         return manager.getReactionHandler();
     }
 
-    public CommandContext applyReactionEvent(GuildMessageReceivedEvent event) {
-        this.reactionAddEvent = event;
+    public CommandContext applyButtonEvent(SelectionMenuEvent event) {
+        this.selectionEvent = event;
         return this;
     }
 
@@ -195,12 +196,12 @@ public class CommandContext implements ICommandContext {
         return this.replyId != 0L;
     }
 
-    public boolean reactionEventIsSet() {
-        return this.reactionAddEvent != null;
+    public boolean selectionEventIsSet() {
+        return this.selectionEvent != null;
     }
 
-    public GuildMessageReceivedEvent getReactionEvent() {
-        return this.reactionAddEvent;
+    public SelectionMenuEvent getSelectionEvent() {
+        return this.selectionEvent;
     }
 
     public long getSendId() {

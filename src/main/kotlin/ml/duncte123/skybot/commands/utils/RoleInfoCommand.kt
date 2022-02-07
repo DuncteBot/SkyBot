@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,10 +13,10 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.uncategorized
+package ml.duncte123.skybot.commands.utils
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
@@ -25,6 +25,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.extensions.parseTimeCreated
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import net.dv8tion.jda.api.entities.Role
@@ -32,6 +33,7 @@ import net.dv8tion.jda.api.entities.Role
 class RoleInfoCommand : Command() {
 
     init {
+        this.category = CommandCategory.UTILS
         this.name = "roleinfo"
         this.aliases = arrayOf("role", "ri")
         this.help = "Displays info about a specified role or the highest role that you have"
@@ -53,21 +55,19 @@ class RoleInfoCommand : Command() {
             sendMsg(
                 ctx,
                 """No roles found, make sure that you have a role or are typing the name of a role on this server
-                |Hint: you cna use `${ctx.prefix}roles` to get a list of the roles in this server
+                |Hint: you can use `${ctx.prefix}roles` to get a list of the roles in this server
             """.trimMargin()
             )
 
             return
         }
 
-        // In order: get the highest role
-        // Map the permissions to a readable string
-        // Get the amount of members with this role
-        // Get the creation times of this role
         val role = roles[0]
         val perms = role.permissions.joinToString { it.getName() }
-        val memberCount = ctx.jdaGuild.memberCache.applyStream { it.filter { r -> r.roles.contains(role) }.count() }
+        val memberCount = ctx.jdaGuild.findMembersWithRoles(role).get().size
         val times = role.parseTimeCreated()
+        val tags = role.tags
+        val botDisp = if (tags.isBot) "\n**Bot:** <@${tags.botIdLong}>" else ""
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(role.colorRaw)
@@ -81,6 +81,9 @@ class RoleInfoCommand : Command() {
                 |**Position:** ${role.position}
                 |**Members with this role:** $memberCount
                 |**Managed:** ${role.isManaged.toEmoji()}
+                |**Bot role:** ${tags.isBot.toEmoji()}$botDisp
+                |**Boost role:** ${tags.isBoost.toEmoji()}
+                |**Integration role:**  ${tags.isIntegration.toEmoji()}
                 |**Hoisted:** ${role.isHoisted.toEmoji()}
                 |**Mentionable:** ${role.isMentionable.toEmoji()}
                 |**Permissions:** $perms

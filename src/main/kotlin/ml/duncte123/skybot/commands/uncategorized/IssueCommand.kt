@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized
@@ -37,7 +37,7 @@ class IssueCommand : Command() {
         |This will create an invite to your server, so we can join and help you directly.
         |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
     """.trimMargin()
-        this.usage = "<issue json>` (issue can be generated at https://dunctebot.com/issuegenerator)"
+        this.usage = "<issue json>` (issue can be generated at https://duncte.bot/issuegenerator)"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -48,7 +48,7 @@ class IssueCommand : Command() {
                 sendErrorWithMessage(
                     event.message,
                     """Well you forgot to add formatted data we require so we can resolve the issue faster.
-                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin()
+                    |You can generate it by using our dashboard. Link: <https://duncte.bot/issuegenerator>""".trimMargin()
                 )
             }
             else -> {
@@ -84,17 +84,17 @@ class IssueCommand : Command() {
                     sendMsg(
                         MessageConfig.Builder()
                             .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!)
-                            .setEmbed(embed)
+                            .addEmbed(embed)
                             .build()
                     )
 
                     sendMsg(
                         ctx,
                         "Issue submitted, we suggest that you join our server so that we can contact you easier if you haven't already.\n" +
-                            "https://dunctebot.link/server"
+                            "https://duncte.bot/server"
                     )
                 } catch (ex: Exception) {
-                    Sentry.capture(ex)
+                    Sentry.captureException(ex)
 
                     val msg = """You malformed the JSON.
                             | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/asdfsa"}"""

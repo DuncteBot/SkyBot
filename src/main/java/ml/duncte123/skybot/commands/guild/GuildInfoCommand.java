@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild;
@@ -123,7 +123,8 @@ public class GuildInfoCommand extends Command {
             .addField("Basic Info", "**Owner:** " + owner + "\n" +
                 "**Name:** " + guild.getName() + ' ' + emoteList + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                "**Region:** " + guild.getRegion().getName() + "\n" +
+                // TODO: remove this once it's removed
+                "**Region:** " + guild.getRegion().getEmoji() + ' ' + guild.getRegion().getName() + "\n" +
                 "**Created at:** " + String.format("%s (%s)", times.getFirst(), times.getSecond()) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(guild.getVerificationLevel()) + "\n" +
                 inviteString + "\n\u200B", false)

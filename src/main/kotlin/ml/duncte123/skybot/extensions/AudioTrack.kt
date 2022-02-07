@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,12 +13,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.extensions
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
@@ -49,9 +50,11 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
         }
     }
 
+    val uri = if (this is IWillUseIdentifierInstead) this.info.identifier else this.info.uri
+
     if (this.info.isStream) {
         return embedMessage(
-            """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
             |**Requester:** $requester
         """.trimMargin()
         )
@@ -59,7 +62,7 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
     }
 
     return embedMessage(
-        """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
             |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
         """.trimMargin()
     )
@@ -104,7 +107,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
 
                 json["thumbnail_small"].asText()
             } catch (e: Exception) {
-                Sentry.capture(e)
+                Sentry.captureException(e)
                 null
             }
         }

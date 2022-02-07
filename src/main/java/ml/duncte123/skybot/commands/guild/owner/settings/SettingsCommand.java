@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
@@ -303,7 +303,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="joinMessageSetting" defaultstate="collapsed">
     private void joinMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The join message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The join message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -326,7 +326,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="leaveMessageSetting" defaultstate="collapsed">
     private void leaveMessageSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The leave message can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The leave message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -406,7 +406,7 @@ public class SettingsCommand extends Command {
     /// <editor-fold desc="rateLimitSetting" defaultstate="collapsed">
     private void rateLimitSetting(CommandContext ctx, String name, boolean setValue) {
         if (!setValue) {
-            sendMsg(ctx, "The rate limits can only be previewed on the dashboard <https://dashboard.dunctebot.com/>");
+            sendMsg(ctx, "The rate limits can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
         }
 
@@ -564,7 +564,7 @@ public class SettingsCommand extends Command {
         sendMsg(ctx, "The swearword filter has been toggled **" +
             (isEnabled ? "on" : "off") +
             "**.\nThe current filter type is set to `" +
-            settings.getFilterType().getName() + "`, this can be changed on <https://dashboard.dunctebot.com>");
+            settings.getFilterType().getName() + "`, this can be changed on <https://dashboard.duncte.bot>");
     }
     /// </editor-fold>
 
@@ -663,6 +663,22 @@ public class SettingsCommand extends Command {
             return null;
         }
 
+        if (foundRole.isManaged()) {
+            final Role.RoleTags tags = foundRole.getTags();
+
+            if (tags.isBot()) {
+                sendMsg(ctx, "I cannot give this role to members because it belongs to <@" + tags.getBotIdLong() + '>');
+            } else if (tags.isBoost()) {
+                sendMsg(ctx, "I cannot give the boost role to members");
+            } else if (tags.isIntegration()) {
+                sendMsg(ctx, "I cannot give this role to members because it is managed by an integration (for example twitch subscriber roles)");
+            } else {
+                sendMsg(ctx, "This role cannot be used, but I don't know why (`unknown managed role`)");
+            }
+
+            return null;
+        }
+
         return foundRole;
     }
 
@@ -693,6 +709,7 @@ public class SettingsCommand extends Command {
         final String query = this.getSetValue(ctx);
 
         return List.of(
+            "none",
             "disable",
             "disabled",
             "off",

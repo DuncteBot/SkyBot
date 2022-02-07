@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.`fun`
@@ -24,13 +24,15 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
+import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MapUtils
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
-import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -56,6 +58,10 @@ class ChatCommand : Command() {
         this.name = "chat"
         this.help = "Have a chat with DuncteBot"
         this.usage = "<message>"
+        // needed for reactions
+        this.botPermissions = arrayOf(
+            Permission.MESSAGE_HISTORY
+        )
 
         SERVICE.scheduleAtFixedRate(
             {
@@ -77,11 +83,9 @@ class ChatCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
-        ctx.channel.sendTyping().queue(null) {
-            //
-        }
+        ctx.channel.sendTyping().queue()
 
-        if (ctx.message.contentRaw.toLowerCase().contains("prefix")) {
+        if (ctx.message.contentRaw.lowercase().contains("prefix")) {
             sendMsg(
                 MessageConfig.Builder.fromCtx(ctx)
                     .replyTo(ctx.message)
@@ -115,13 +119,22 @@ class ChatCommand : Command() {
         session.think(message) {
             val response = parseATags(it)
 
+            LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+
+            if (response.isEmpty() || response.isBlank()) {
+                sendMsg(
+                    MessageConfig.Builder.fromCtx(ctx)
+                        .replyTo(ctx.message)
+                        .setMessage("$NO_STATIC Chatbot error: no content returned, this is likely due to the chatbot banning you (we are working on a fix)")
+                )
+                return@think
+            }
+
             sendMsg(
                 MessageConfig.Builder.fromCtx(ctx)
                     .replyTo(ctx.message)
                     .setMessage(response)
             )
-
-            LOGGER.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
     }
 
@@ -168,7 +181,7 @@ class ChatSession(userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         body.append("input", text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
-            .build({ it.body()!!.string() }, WebParserUtils::handleError)
+            .build({ it.body()!!.byteStream() }, WebParserUtils::handleError)
             .async {
                 try {
                     response.invoke(xPathSearch(it, "//result/that/text()"))
@@ -185,12 +198,12 @@ class ChatSession(userId: Long) {
     }
 
     @Suppress("SameParameterValue")
-    private fun xPathSearch(input: String, expression: String): String {
+    private fun xPathSearch(input: InputStream, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
 
-        return ByteArrayInputStream(input.toByteArray(charset("UTF-8"))).use {
+        return input.use {
             val document = documentBuilder.parse(it)
             val output = xPathExpression.evaluate(document, XPathConstants.STRING)
             val outputString = (output as? String) ?: "Error on xpath, this should never be shown"

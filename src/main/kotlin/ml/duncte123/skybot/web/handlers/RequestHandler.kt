@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,12 +13,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.databind.JsonNode
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.web.SocketTypes
 import ml.duncte123.skybot.web.WebSocketClient
@@ -27,7 +28,7 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.data.DataArray
 import net.dv8tion.jda.api.utils.data.DataObject
 
-class RequestHandler(private val shardManager: ShardManager, client: WebSocketClient) : SocketHandler(client) {
+class RequestHandler(private val variables: Variables, private val shardManager: ShardManager, client: WebSocketClient) : SocketHandler(client) {
     override fun handleInternally(data: JsonNode) {
         val responseData = DataObject.empty()
             .put("identifier", data["identifier"].asText())
@@ -38,6 +39,10 @@ class RequestHandler(private val shardManager: ShardManager, client: WebSocketCl
 
         if (data.has("guild_patron_status") && data["guild_patron_status"].isArray) {
             responseData.put("guild_patron_status", mapGuildPatronStatus(data["guild_patron_status"]))
+        }
+
+        if (data.has("guild_settings") && data["guild_settings"].isArray) {
+            responseData.put("guild_settings", fetchSettings(data["guild_settings"]))
         }
 
         client.send(
@@ -83,5 +88,16 @@ class RequestHandler(private val shardManager: ShardManager, client: WebSocketCl
         }
 
         return ret
+    }
+
+    private fun fetchSettings(guildIds: JsonNode): DataObject {
+        val settings = DataObject.empty()
+
+        guildIds.forEach {
+            val setting = variables.guildSettingsCache.getIfPresent(it.asLong()) ?: return@forEach
+            settings.put(it.asText(), setting.toJson(variables.jackson))
+        }
+
+        return settings
     }
 }

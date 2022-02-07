@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,27 +13,28 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.essentials
 
-import kotlinx.coroutines.*
+import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.EventManager
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isDev
-import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.api.sharding.ShardManager
+import java.lang.Thread.sleep
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class RestartShardCommand : Command() {
 
+    private val thread = Executors.newSingleThreadExecutor()
     private val restartInSec = 5L
 
     init {
@@ -60,8 +61,8 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, shardManager, ctx.audioUtils)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
+                    thread.execute {
+                        sleep(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart()
 
                         EventManager.restartingShard = -32
@@ -80,8 +81,8 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, shardManager, ctx.audioUtils)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        delay(TimeUnit.SECONDS.toMillis(restartInSec))
+                    thread.execute {
+                        sleep(TimeUnit.SECONDS.toMillis(restartInSec))
                         shardManager.restart(id)
 
                         EventManager.restartingShard = -32
@@ -91,11 +92,8 @@ class RestartShardCommand : Command() {
                 else -> MessageUtils.sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
-            if (Settings.USE_JSON) {
-                JSONMessageErrorsHelper.sendErrorJSON(event.message, ex, false, ctx.variables.jackson)
-            } else {
-                MessageUtils.sendError(event.message)
-            }
+            MessageUtils.sendError(event.message)
+            Sentry.captureException(ex)
         }
     }
 
@@ -106,7 +104,7 @@ class RestartShardCommand : Command() {
             }
 
             for (guild in jda.guildCache) {
-                AirUtils.stopMusic(guild, audioUtils)
+                AirUtils.stopMusic(guild.idLong, audioUtils)
             }
         }
     }

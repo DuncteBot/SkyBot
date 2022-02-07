@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.entities.jda
@@ -28,9 +28,13 @@ import java.time.OffsetDateTime
 import java.util.*
 
 class FakeMember(private val name: String) : Member {
+    private val internalUser = FakeUser(name, 0, 0)
+
     override fun getEffectiveName() = name
 
-    override fun getUser() = FakeUser(name, 0, 0)
+    override fun getUser() = internalUser
+
+    override fun getAvatarId() = internalUser.avatarId
 
     override fun canInteract(member: Member): Boolean {
         throw NotImplementedError("An operation is not implemented: not implemented")
@@ -144,11 +148,11 @@ class FakeMember(private val name: String) : Member {
         throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
-    override fun isFake() = true
-
     override fun hasTimeJoined() = false
 
     override fun canSync(targetChannel: GuildChannel, syncSource: GuildChannel) = false
 
     override fun canSync(channel: GuildChannel) = false
+
+    override fun isPending() = false
 }

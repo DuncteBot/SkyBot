@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects;
@@ -33,4 +33,7 @@ public class Emotes {
     public static final String DISCORD_EARLY_SUPPORTER = "<:early_supporter:738364464734404688>";
     public static final String DISCORD_VERIFIED_SERVER = "<:discord_verified:756041238800629781>";
     public static final String DISCORD_VERIFIED_DEVELOPER = "<:verified_developer:738370070480420865>";
+
+    // unicode emotes
+    public static final String SEARCH_EMOTE = "\uD83D\uDD0E";
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.utils;
@@ -37,7 +37,6 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
-import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -50,14 +49,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.time4j.format.TextWidth;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
@@ -145,37 +143,35 @@ public class AirUtils {
         return builder.toString();
     }
 
-    public static void stop(AudioUtils audioUtils, ShardManager manager) {
-        stopMusic(audioUtils, manager);
+    public static void stop(AudioUtils audioUtils) {
+        stopMusic(audioUtils);
 
         audioUtils.getPlayerManager().shutdown();
+        LavalinkManager.INS.shutdown();
     }
 
-    private static void stopMusic(AudioUtils audioUtils, ShardManager manager) {
+    public static void stopMusic(AudioUtils audioUtils) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.getMusicManagers());
 
         for (final long key : temp.keys()) {
-            final Guild guild = manager.getGuildById(key);
-
-            if (guild != null) {
-                stopMusic(guild, audioUtils);
-            }
+            stopMusic(key, audioUtils);
         }
     }
 
-    public static void stopMusic(Guild guild, AudioUtils audioUtils) {
-        final GuildMusicManager mng = audioUtils.getMusicManagers().get(guild.getIdLong());
+    public static void stopMusic(long guildId, AudioUtils audioUtils) {
+        final GuildMusicManager mng = audioUtils.getMusicManagers().get(guildId);
 
         if (mng == null) {
             return;
         }
 
-        final LavalinkManager lavalinkManager = LavalinkManager.INS;
-
         mng.stopAndClear();
 
-        if (lavalinkManager.isConnected(guild)) {
-            lavalinkManager.closeConnection(guild);
+        final LavalinkManager lavalinkManager = LavalinkManager.INS;
+        final String guildIdString = Long.toString(guildId);
+
+        if (lavalinkManager.isConnected(guildIdString)) {
+            lavalinkManager.closeConnection(guildIdString);
         }
     }
 
@@ -256,7 +252,7 @@ public class AirUtils {
     }
 
     public static String makeDatePretty(TemporalAccessor accessor) {
-        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(accessor);
+        return TimeFormat.DATE_TIME_LONG.format(accessor);
     }
 
     public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
@@ -272,7 +268,7 @@ public class AirUtils {
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
-                Time4JKt.humanize(reminder.getCreate_date(), TextWidth.ABBREVIATED),
+                TimeFormat.RELATIVE.format(reminder.getCreate_date()),
                 reminder.getReminder().trim()
             );
 
@@ -321,7 +317,7 @@ public class AirUtils {
                 }
             }
             catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         }
 
@@ -335,7 +331,10 @@ public class AirUtils {
             .collect(Collectors.toList());
 
         toPurge.addAll(extraRemoval);
-        adapter.purgeReminders(toPurge);
+
+        if (!toPurge.isEmpty()) {
+            adapter.purgeRemindersSync(toPurge);
+        }
     }
 
     public static String parsePerms(Permission[] perms) {
@@ -350,13 +349,17 @@ public class AirUtils {
         ((JDAImpl) jda).setContext();
     }
 
-    @Nonnull
     public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
+        return shortenUrl(url, googleKey, mapper, "duncte.bot");
+    }
+
+    @Nonnull
+    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper, String prefix) {
         final ObjectNode json = mapper.createObjectNode();
 
         json.set("dynamicLinkInfo",
             mapper.createObjectNode()
-                .put("domainUriPrefix", "dunctebot.link")
+                .put("domainUriPrefix", prefix)
                 .put("link", url)
         );
         json.set("suffix",

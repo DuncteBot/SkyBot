@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.listeners;
@@ -23,8 +23,11 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.text.TextColor;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -34,16 +37,16 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildListener extends BaseListener {
 
@@ -53,20 +56,31 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildJoinEvent) {
-            this.onGuildJoin((GuildJoinEvent) event);
-        } else if (event instanceof GuildLeaveEvent) {
-            this.onGuildLeave((GuildLeaveEvent) event);
-        } else if (event instanceof GuildVoiceLeaveEvent) {
-            this.onGuildVoiceLeave((GuildVoiceLeaveEvent) event);
-        } else if (event instanceof GuildVoiceJoinEvent) {
-            this.onGuildVoiceJoin((GuildVoiceJoinEvent) event);
-        } else if (event instanceof GuildVoiceMoveEvent) {
-            this.onGuildVoiceMove((GuildVoiceMoveEvent) event);
-        } else if (event instanceof GuildBanEvent) {
-            this.onGuildBan((GuildBanEvent) event);
-        } else if (event instanceof GuildUnbanEvent) {
-            this.onGuildUnban((GuildUnbanEvent) event);
+        if (event instanceof GuildJoinEvent guildJoin) {
+            this.onGuildJoin(guildJoin);
+        } else if (event instanceof GuildLeaveEvent guildLeave) {
+            this.onGuildLeave(guildLeave);
+        } else if (event instanceof GuildVoiceLeaveEvent guildVoiceLeave) {
+            this.onGuildVoiceLeave(guildVoiceLeave);
+        } else if (event instanceof GuildVoiceJoinEvent guildVoiceJoin) {
+            this.onGuildVoiceJoin(guildVoiceJoin);
+        } else if (event instanceof GuildVoiceMoveEvent guildVoiceMove) {
+            this.onGuildVoiceMove(guildVoiceMove);
+        } else if (event instanceof GuildBanEvent guildBan) {
+            this.onGuildBan(guildBan);
+        } else if (event instanceof GuildUnbanEvent guildUnban) {
+            this.onGuildUnban(guildUnban);
+        } else if (event instanceof GuildReadyEvent guildReady) {
+            this.onGuildReady(guildReady);
+        }
+    }
+
+    private void onGuildReady(GuildReadyEvent event) {
+        if (event.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID) {
+            // Load the members into the member cache
+            event.getGuild().loadMembers()
+                .onSuccess((unused) -> LOGGER.info("Loaded members for DuncteBot guild"))
+                .onError((e) -> LOGGER.error("Failed to load members for DuncteBot guild", e));
         }
     }
 
@@ -135,7 +149,13 @@ public class GuildListener extends BaseListener {
         final VoiceChannel channel = event.getChannelJoined();
 
         if (member.equals(self)) {
+            if (channel.getType() == ChannelType.STAGE) {
+                requestToSpeak(guild, self, channel);
+                return;
+            }
+
             channelCheckThing(guild, channel);
+            return;
         }
 
         handleVcAutoRole(guild, member, channel, false);
@@ -199,25 +219,29 @@ public class GuildListener extends BaseListener {
         guild.retrieveAuditLogs()
             .cache(false)
             .type(type)
-            .limit(5)
+            .limit(10)
             .queue((actions) -> {
-                for (final AuditLogEntry action : actions) {
-                    if (action.getUser() != null && action.getUser().getIdLong() == guild.getSelfMember().getIdLong()) {
-                        continue;
-                    }
+                final long selfId = guild.getSelfMember().getIdLong();
+                final Optional<AuditLogEntry> optionalAction = actions.stream()
+                    // ignore any actions that where done by the bot
+                    .filter((action) -> action.getUser() != null && action.getUser().getIdLong() != selfId)
+                    // Find the action with our banned user
+                    .filter((action) -> action.getTargetIdLong() == user.getIdLong())
+                    .findFirst();
 
-                    if (action.getTargetIdLong() == user.getIdLong()) {
-                        ModerationUtils.modLog(
-                            action.getUser(),
-                            user,
-                            type == ActionType.BAN ? "banned" : "unbanned",
-                            action.getReason(),
-                            null,
-                            dbg
-                        );
+                if (optionalAction.isPresent()) {
+                    final AuditLogEntry action = optionalAction.get();
 
-                        break;
-                    }
+                    // we filter on null users
+                    //noinspection ConstantConditions
+                    ModerationUtils.modLog(
+                        action.getUser(),
+                        user,
+                        type == ActionType.BAN ? "banned" : "unbanned",
+                        action.getReason(),
+                        null,
+                        dbg
+                    );
                 }
             });
     }
@@ -283,8 +307,34 @@ public class GuildListener extends BaseListener {
                 }
             }
             catch (Exception e) {
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
         });
+    }
+
+    private void requestToSpeak(Guild guild, Member self, VoiceChannel channel) {
+        // JDA handles all the logic for us :)
+        if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK) ||
+            self.hasPermission(channel, Permission.VOICE_MUTE_OTHERS)) {
+            guild.requestToSpeak();
+        } else {
+            final GuildMusicManager musicManager = this.variables.getAudioUtils().getMusicManager(guild.getIdLong());
+            final TextChannel textChan = musicManager.getLatestChannel();
+
+            if (textChan == null) {
+                return;
+            }
+
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(textChan)
+                    .setMessageFormat(
+                        "In order for stage channels to work properly, I need to be able to request to speak.\n" +
+                            "Alternatively, you could give me the %s permission so I can unmute myself or invite me to speak on this stage.",
+                        Permission.VOICE_MUTE_OTHERS.getName()
+                    )
+                    .build()
+            );
+        }
     }
 }

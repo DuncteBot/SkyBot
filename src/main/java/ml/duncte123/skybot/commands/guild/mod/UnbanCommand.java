@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -70,7 +70,7 @@ public class UnbanCommand extends ModBaseCommand {
                     String reason = "Unbanned by " + mod.getAsTag();
 
                     if (flags.containsKey("r")) {
-                        reason = reason + ": " + String.join(" ", flags.get("r"));
+                        reason = mod.getAsTag() + ": " + String.join(" ", flags.get("r"));
                     }
 
                     ctx.getJDAGuild().unban(bannedUser)
@@ -78,7 +78,7 @@ public class UnbanCommand extends ModBaseCommand {
                         .queue();
 
                     sendMsg(ctx, "User " + userFormatted + " unbanned.");
-                    modLog(mod, ban.getUser(), "unbanned", null, null, ctx.getGuild());
+                    modLog(mod, ban.getUser(), "unbanned", reason, null, ctx.getGuild());
                     return;
                 }
             }

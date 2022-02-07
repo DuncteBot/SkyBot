@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.jagtag;
@@ -24,6 +24,7 @@ import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.exceptions.ParsingException;
 import net.dv8tion.jda.api.utils.TimeUtil;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -34,6 +35,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength"})
 public class DiscordMethods {
@@ -60,12 +64,13 @@ public class DiscordMethods {
             new Method("nick", (env) -> {
                 final User user = env.get("user");
                 final Guild guild = env.get("guild");
+                final Member member = guild.getMember(user);
 
-                if (guild.getMember(user) == null) {
+                if (member == null) {
                     return user.getAsTag();
                 }
 
-                return guild.getMember(user).getEffectiveName();
+                return member.getEffectiveName();
             },
                 (env, in) -> getMemberFromInput(env, in).getEffectiveName()
             ),
@@ -81,9 +86,9 @@ public class DiscordMethods {
             new Method("avatar", (env) -> {
                 final User user = env.get("user");
 
-                return user.getEffectiveAvatarUrl() + "?size=2048";
+                return user.getEffectiveAvatarUrl() + "?size=4096";
             },
-                (env, in) -> getMemberFromInput(env, in).getUser().getEffectiveAvatarUrl() + "?size=2048"
+                (env, in) -> getMemberFromInput(env, in).getUser().getEffectiveAvatarUrl() + "?size=4096"
             ),
 
             new Method("creation", (env, in) -> {
@@ -198,13 +203,13 @@ public class DiscordMethods {
 
             new Method("deleteinvoke", (env) -> {
                 if (env.containsKey("messageId")) {
-
                     final TextChannel channel = env.get("channel");
 
                     if (channel != null) {
                         final String messageId = env.get("messageId");
 
-                        channel.deleteMessageById(messageId).queue(null, (failure) -> {});
+                        channel.deleteMessageById(messageId)
+                            .queue(null, new ErrorHandler().ignore(UNKNOWN_MESSAGE, MISSING_PERMISSIONS));
                     }
                 }
 

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects.api
@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.OffsetDateTime
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
@@ -95,7 +96,7 @@ data class Reminder(
     val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
     override fun toString(): String {
-        return "$id) `$reminder` on $reminderDateDate"
+        return "$id) `$reminder` on ${TimeFormat.DATE_TIME_LONG.format(reminder_date)}"
     }
 }
 

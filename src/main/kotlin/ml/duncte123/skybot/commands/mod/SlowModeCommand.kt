@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,13 +13,14 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
+import me.duncte123.durationparser.DurationParser
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
@@ -54,19 +55,25 @@ class SlowModeCommand : ModBaseCommand() {
             return
         }
 
-        if (!AirUtils.isInt(delay)) {
-            sendMsg(ctx, "Provided argument is not an integer")
-            return
-        }
+        val intDelay = if (!AirUtils.isInt(delay)) {
+            val parser = DurationParser.parse(delay)
 
-        val intDelay = delay.toInt()
+            if (parser.isEmpty) {
+                sendMsg(ctx, "Provided argument is not an integer or duration")
+                return
+            }
+
+            parser.get().seconds
+        } else {
+            delay.toLong()
+        }
 
         if (intDelay < 0 || intDelay > TextChannel.MAX_SLOWMODE) {
             sendMsg(ctx, "$intDelay is not valid, a valid delay is a number in the range 0-${TextChannel.MAX_SLOWMODE} (21600 is 6 hours in seconds)")
             return
         }
 
-        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
+        ctx.channel.manager.setSlowmode(intDelay.toInt()).reason("Requested by ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.audio.sourcemanagers.youtube;
@@ -62,7 +62,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
             return buildPlaylist(firstPage, playlistId, selectedVideoId, trackFactory);
         }
         catch (IOException e) {
-            Sentry.capture(e);
+            Sentry.captureException(e);
 
             throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
@@ -72,12 +72,12 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
                                         Function<AudioTrackInfo, AudioTrack> trackFactory) throws IOException {
         final List<AudioTrack> convertedTracks = new ArrayList<>();
 
-        firstPage.getTracks()
+        firstPage.tracks()
             .stream()
             .map(trackFactory)
             .forEach(convertedTracks::add);
 
-        String nextPageKey = firstPage.getNextPageKey();
+        String nextPageKey = firstPage.nextPageKey();
         int loadCount = 0;
         final int pageCount = playlistPageCount;
 
@@ -86,7 +86,7 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
         }
 
         return new BasicAudioPlaylist(
-            firstPage.getTitle(),
+            firstPage.title(),
             convertedTracks,
             getSelectedTrack(selectedVideoId, convertedTracks),
             false
@@ -112,11 +112,11 @@ public class YoutubeApiPlaylistLoader implements YoutubePlaylistLoader {
             return null;
         }
 
-        nextPage.getTracks()
+        nextPage.tracks()
             .stream()
             .map(trackFactory)
             .forEach(tracks::add);
 
-        return nextPage.getNextPageKey();
+        return nextPage.nextPageKey();
     }
 }

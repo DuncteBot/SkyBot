@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.uncategorized
@@ -22,8 +22,10 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Settings.PATREON
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.extensions.*
+import ml.duncte123.skybot.objects.CooldownScope
 import ml.duncte123.skybot.objects.Emotes.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -47,13 +49,14 @@ class UserinfoCommand : Command() {
         this.help = "Get some information about yourself or from another user"
         this.usage = "[@user]"
         this.cooldown = 30
+        this.cooldownScope = CooldownScope.GUILD
     }
 
     override fun execute(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 
-        if (ctx.invoke.toLowerCase() == "retrieveuserinfo") {
+        if (ctx.invoke.lowercase() == "retrieveuserinfo") {
             if (args.isEmpty()) {
                 sendMsg(ctx, "Missing arguments for retrieving user information")
 
@@ -109,6 +112,7 @@ class UserinfoCommand : Command() {
 
     private fun renderUserEmbed(ctx: CommandContext, user: User, guild: DunctebotGuild) {
         val times = user.parseTimeCreated()
+        val profile = user.retrieveProfile().complete() // Don't tell the JDA guild
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(guild.color)
@@ -119,7 +123,7 @@ class UserinfoCommand : Command() {
                         |**User Tag:** ${user.asTag.escapeMarkDown()}
                         |**User Id:** ${user.id}
                         |**Account Created:** ${times.first} (${times.second})
-                        |$nitroUserLink ${user.isNitro.toEmoji()}
+                        |$nitroUserLink ${user.nitroStatus(profile).toEmoji()}
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
@@ -129,10 +133,8 @@ class UserinfoCommand : Command() {
         sendEmbed(ctx, embed)
     }
 
-    /*private fun generateJoinOrder(guild: Guild, member: Member) = buildString {
-        val joins = guild.memberCache.applyStream {
-            it.sorted(Comparator.comparing(Member::getTimeJoined)).collect(Collectors.toList())
-        }!!
+    private fun generateJoinOrder(members: List<Member>, member: Member) = buildString {
+        val joins = members.stream().sorted(Comparator.comparing(Member::getTimeJoined)).toList()
 
         var index = joins.indexOf(member)
         index -= 3
@@ -164,10 +166,18 @@ class UserinfoCommand : Command() {
             append(" \\> ")
             append(usrName)
         }
-    }*/
+    }
+
+    private fun getJoinPosition(members: List<Member>, member: Member): Long {
+        return members.stream().sorted(Comparator.comparing(Member::getTimeJoined))
+            .takeWhile {
+                it != member
+            }.count() + 1
+    }
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
         val user = member.user
+        val profile = user.retrieveProfile().complete() // Don't tell the JDA guild
 
         val userTimes = user.parseTimeCreated()
         val memberTimes = member.parseTimeJoined()
@@ -184,17 +194,13 @@ class UserinfoCommand : Command() {
             "\n**Boosting since:** ${boostTimes.first} (${boostTimes.second})"
         }
 
-        val userNitro = user.isNitro
+        val userNitro = user.nitroStatus(profile) || member.isNitro
         val nitroBadge = if (userNitro) " $DISCORD_NITRO" else ""
+        val loadedMembers = event.guild.loadMembers().get()
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setColor(member.color)
             .setThumbnail(user.getStaticAvatarUrl())
-            /*
-            * used to be below Joined Server
-                        |**Join position:** #${GuildUtils.getMemberJoinPosition(member)}
-                        |**Join Order:** ${generateJoinOrder(guild, member)}
-            * */
             .setDescription(
                 """User info for ${member.asMention}$nitroBadge ${user.badgeLine} $boostEmote
                         |
@@ -204,7 +210,9 @@ class UserinfoCommand : Command() {
                         |**Account Created:** ${userTimes.first} (${userTimes.second})
                         |$nitroUserLink ${userNitro.toEmoji()}
                         |**Joined Server:** ${memberTimes.first} (${memberTimes.second})
-                        |**Bot Account:** ${userNitro.toEmoji()}
+                        |**Join position:** #${getJoinPosition(loadedMembers, member)}
+                        |**Join Order:** ${generateJoinOrder(loadedMembers, member)}
+                        |**Bot Account:** ${user.isBot.toEmoji()}
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
@@ -220,11 +228,11 @@ class UserinfoCommand : Command() {
         }
 
         ctx.weebApi.generateDiscordStatus(
-            toWeebshStatus(member),
+            StatusType.values().random(),
             user.getStaticAvatarUrl() + "?size=256"
         ).async {
             event.channel.sendFile(it, "stat.png")
-                .embed(embed.setThumbnail("attachment://stat.png").build())
+                .setEmbeds(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
                     sendEmbed(ctx, embed.setThumbnail(user.effectiveAvatarUrl), true)
                 }
@@ -243,6 +251,11 @@ class UserinfoCommand : Command() {
             else -> StatusType.OFFLINE
         }
     }
+
+    private fun User.nitroStatus(profile: User.Profile) = profile.bannerId != null || this.isNitro
+
+    private val Member.isNitro: Boolean
+        get() = this.avatarId != null || this.user.isNitro
 
     private val User.isNitro: Boolean
         get() = this.avatarId != null && (this.avatarId as String).startsWith("a_")
@@ -296,14 +309,5 @@ class UserinfoCommand : Command() {
                 "<:booster4:738374213970165782>"
             }
         }
-    }
-
-    private fun String.escapeMarkDown(): String {
-        return this.replace("_", "\\_")
-            .replace("*", "\\*")
-            .replace("`", "\\`")
-            .replace("|", "\\|")
-            .replace(">", "\\?")
-            .replace("~", "\\~")
     }
 }

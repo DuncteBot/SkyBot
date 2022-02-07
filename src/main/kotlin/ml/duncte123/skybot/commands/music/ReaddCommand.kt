@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.music
@@ -24,7 +24,6 @@ import ml.duncte123.skybot.exceptions.LimitReachedException
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 
 class ReaddCommand : MusicCommand() {
@@ -65,7 +64,7 @@ class ReaddCommand : MusicCommand() {
         try {
             manager.scheduler.addToQueue(clone, isUserTagPatron(ctx.author))
             sendSuccess(event.message)
-            sendEmbed(ctx, EmbedUtils.embedField(AudioUtils.EMBED_TITLE, msg))
+            sendEmbed(ctx, EmbedUtils.embedMessage(msg))
         } catch (e: LimitReachedException) {
             sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")
         }

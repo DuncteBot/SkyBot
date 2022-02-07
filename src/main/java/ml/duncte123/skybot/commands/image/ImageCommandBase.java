@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.image;
@@ -63,7 +63,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    /* package */ boolean passes(CommandContext ctx) {
+        /* package */ boolean passes(CommandContext ctx) {
         return passes(ctx, true);
     }
 
@@ -131,7 +131,7 @@ public abstract class ImageCommandBase extends Command {
                 final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
                 if (!textMentions.isEmpty()) {
-                    url =  getAvatarUrl(textMentions.get(0).getUser());
+                    url = getAvatarUrl(textMentions.get(0).getUser());
                 }
             }
         }
@@ -158,7 +158,8 @@ public abstract class ImageCommandBase extends Command {
         }
 
         //mimetype should be something like "image/png"
-        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+//        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+        if (mimetype == null || !mimetype.startsWith("image/")) {
             sendMsg(ctx, "That file does not look like an image");
             return null;
         }

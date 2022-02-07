@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,14 +13,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.objects;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.github.natanbc.reliqua.request.RequestException;
-import me.duncte123.botcommons.web.WebUtils;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -37,21 +36,20 @@ import java.util.function.Consumer;
  *     what to return from this pending request
  */
 public class FakePendingRequest<T> extends PendingRequest<T> {
-    private static final Request DUMMY_REQUEST = WebUtils.defaultRequest().url("http://localhost/").build();
     private final T resp;
 
     public FakePendingRequest(@Nonnull T resp) {
-        // Oh the cheats
-        super(WebUtils.ins, DUMMY_REQUEST);
+        // Oh the cheats, this null is safe
+        //noinspection ConstantConditions
+        super(null, null, (Request) null);
 
         this.resp = resp;
     }
 
     @Nullable
     @Override
-    @SuppressWarnings("NullableProblems")
     protected T onSuccess(@Nonnull Response response) {
-        return this.resp;
+        return null;
     }
 
     @Override
@@ -59,7 +57,6 @@ public class FakePendingRequest<T> extends PendingRequest<T> {
         final Consumer<T> finalOnSuccess = Objects.requireNonNullElseGet(onSuccess, () -> (ignored) -> {});
 
         // this should work fine
-        //noinspection ConstantConditions
-        finalOnSuccess.accept(this.onSuccess(null));
+        finalOnSuccess.accept(this.resp);
     }
 }

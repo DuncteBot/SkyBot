@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,12 +13,12 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent
 
 data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
     override fun equals(other: Any?): Boolean {
@@ -26,8 +26,8 @@ data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
             return false
         }
 
-        if (other is GuildMessageReceivedEvent) {
-            return other.author.idLong == this.authorId
+        if (other is SelectionMenuEvent) {
+            return other.user.idLong == this.authorId
         }
 
         if (other is ReactionCacheElement) {

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.essentials
@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.api.utils.TimeFormat
 
 class RemindersCommand : Command() {
 
@@ -43,7 +44,7 @@ class RemindersCommand : Command() {
             return
         }
 
-        val action = args[0].toLowerCase()
+        val action = args[0].lowercase()
 
         if (action == "list") {
             showRemindersList(ctx)
@@ -108,7 +109,7 @@ class RemindersCommand : Command() {
             |**Message:** ${reminder.reminder}
             |**Remind in:** $remindChannel
             |**Created:** ${reminder.reminderCreateDateDate}
-            |**Remind on:** ${reminder.reminderDateDate}
+            |**Remind on:** ${reminder.reminderDateDate} (${TimeFormat.RELATIVE.format(reminder.reminder_date)})
             |** Message link:** ${reminder.jumpUrl}
         """.trimMargin()
 
@@ -118,7 +119,7 @@ class RemindersCommand : Command() {
     private fun deleteReminder(reminder: Reminder, ctx: CommandContext) {
         val args = ctx.args
 
-        if (args.size >= 3 && args[2].toLowerCase() == "--just-flipping-do-it") {
+        if (args.size >= 3 && args[2].lowercase() == "--just-honking-do-it") {
             ctx.databaseAdapter.removeReminder(reminder) {
                 sendMsg(ctx, "Successfully deleted reminder with id `${reminder.id}`")
             }
@@ -129,7 +130,7 @@ class RemindersCommand : Command() {
             ctx,
             "To prevent accidental deleting of reminders, you will need to confirm that you want to delete this reminder.\n" +
                 "To confirm that you want to delete the reminder please run the following command" +
-                "`${ctx.prefix}reminders delete ${reminder.id} --just-flipping-do-it`"
+                "`${ctx.prefix}reminders delete ${reminder.id} --just-honking-do-it`"
         )
     }
 }

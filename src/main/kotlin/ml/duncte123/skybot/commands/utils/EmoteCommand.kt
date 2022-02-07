@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2020  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,21 +13,24 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package ml.duncte123.skybot.commands.utils
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.extensions.escapeMarkDown
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
 import net.dv8tion.jda.api.entities.Emote
 
 class EmoteCommand : Command() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
+        this.aliases = arrayOf("emoji", "unicode")
         this.help = "Shows information about an emoji or emote"
         this.usage = "<emote>"
     }
@@ -42,7 +45,6 @@ class EmoteCommand : Command() {
 
         val mentionedEmotes = ctx.message.emotes
 
-//        if (Message.MentionType.EMOTE.pattern.matcher(arg).matches()) {
         if (mentionedEmotes.isNotEmpty()) {
             customEmoteMentioned(ctx, mentionedEmotes[0])
             return
@@ -56,7 +58,7 @@ class EmoteCommand : Command() {
             return
         }
 
-        normalEmoteMentioned(ctx, arg)
+        normalEmoteMentioned(ctx, stripVariants(arg))
     }
 
     private fun customEmoteMentioned(ctx: CommandContext, emote: Emote) {
@@ -64,20 +66,23 @@ class EmoteCommand : Command() {
         val id = emote.id
         val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
+        val markdownStr = "< :${emote.name}:${emote.idLong}>"
 
         sendMsg(
             ctx,
             """**Emote:** $name
             |**Id:** $id
             |**Guild:** $guild
+            |**Markdown:** `$markdownStr`
             |**Url:** $url
         """.trimMargin()
         )
     }
 
     private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {
+        val joinedHex = StringBuilder()
         val message = buildString {
-            appendLine("Emoji/char info for $emote:")
+            appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
 
             emote.codePoints().forEach {
                 val chars = Character.toChars(it)
@@ -93,17 +98,24 @@ class EmoteCommand : Command() {
                     }
 
                     append("[`$extraHex`]")
+                    joinedHex.append(extraHex)
+                } else {
+                    joinedHex.append("\\u$hex")
                 }
 
                 appendLine(" _${it.getName()}_")
+            }
+
+            if (emote.codePointCount(0, emote.length) > 1) {
+                appendLine("\nCopy-paste string: `$joinedHex`")
             }
         }
 
         sendMsg(ctx, message)
     }
 
-    private fun Int.toHex() = Integer.toHexString(this).toUpperCase()
+    private fun Int.toHex() = Integer.toHexString(this).uppercase()
     private fun Int.getName() = Character.getName(this)
-    private fun Char.toHex() = this.toInt().toHex()
+    private fun Char.toHex() = this.code.toHex()
     private fun String.ensureFourHex() = "0000$this".substring(this.length)
 }
