@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
+// TODO: remove?
 public class CrashCommand extends Command {
 
     private final String[] errors = {

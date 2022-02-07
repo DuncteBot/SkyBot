@@ -44,7 +44,7 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 @kotlin.Deprecated(
     message = "Replaced in kotlin",
     replaceWith = @ReplaceWith(expression = "BaseCommand()", imports = {"ml.duncte123.skybot.objects.BaseCommand"}),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.WARNING
 )
 public abstract class Command implements ICommand {
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);

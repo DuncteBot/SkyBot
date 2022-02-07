@@ -33,14 +33,14 @@ abstract class BaseCommand @JvmOverloads constructor (
     private val name: String,
     val help: String,
     private val category: CommandCategory = CommandCategory.MAIN,
-    val extraInfo: String? = null,
+    private val extraInfo: String? = null,
 
     private val aliases: Array<String> = arrayOf(),
     private val displayAliasesInHelp: Boolean = false,
 
     val usage: String = "",
     val requiresArgs: Boolean = false,
-    val requiredArgCount: Int = 1,
+    private val requiredArgCount: Int = 1,
 
     val userPermissions: List<Permission> = listOf(),
     val botPermissions: List<Permission> = listOf(),
@@ -62,6 +62,7 @@ abstract class BaseCommand @JvmOverloads constructor (
         flags: Array<Flag>
     ) : this(name, help, category = category, null, aliases = aliases, flags = flags)
 
+    // TODO: coroutines
     abstract fun execute(ctx: CommandContext)
 
     override fun executeCommand(ctx: CommandContext) {
