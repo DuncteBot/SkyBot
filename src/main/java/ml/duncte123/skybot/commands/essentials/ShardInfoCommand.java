@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
@@ -40,22 +40,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 @SuppressWarnings("ConstantConditions")
-public class ShardInfoCommand extends Command {
+public class ShardInfoCommand extends BaseCommand {
 
     public ShardInfoCommand() {
-        this.category = CommandCategory.UTILS;
-        this.name = "shardinfo";
-        this.aliases = new String[]{
-            "shards",
-        };
-        this.help = "Get information about all things shards";
-        this.flags = new Flag[]{
-            new Flag(
-                'm',
-                "mobile",
-                "Shows a mobile friendly embed instead"
-            ),
-        };
+        super(
+            "shardinfo",
+            "Get information about all things shards!",
+            CommandCategory.UTILS,
+            new String[]{
+                "shards",
+            },
+            new Flag[]{
+                new Flag(
+                    'm',
+                    "mobile",
+                    "Shows a mobile friendly embed instead"
+                ),
+            }
+        );
     }
 
     @Override

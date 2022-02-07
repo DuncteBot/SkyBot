@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,15 +33,20 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.commands.guild.owner.settings.SettingsCommand.COLOR_REGEX;
 import static ml.duncte123.skybot.utils.AirUtils.colorToInt;
 
-public class ColorCommand extends Command {
+public class ColorCommand extends BaseCommand {
 
     public ColorCommand() {
-        this.category = CommandCategory.FUN;
-        this.name = "color";
-        this.aliases = new String[]{
-            "colour",
-        };
-        this.help = "Shows a random color";
+        super(
+            "color",
+            "Look up information about a color",
+            CommandCategory.FUN,
+            null,
+            new String[]{
+                "colour",
+            },
+            false,
+            "[color]"
+        );
     }
 
     @Override

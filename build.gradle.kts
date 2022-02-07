@@ -29,7 +29,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
     id("org.jmailen.kotlinter") version "3.5.1"
@@ -104,7 +104,6 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-//    implementation(kotlin("kotlinx-coroutines-core"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     // JDA utils
@@ -279,7 +278,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.2"
+    gradleVersion = "7.3.3"
     distributionType = DistributionType.ALL
 }
 

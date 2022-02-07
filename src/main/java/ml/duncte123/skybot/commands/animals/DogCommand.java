@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.animals;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -29,12 +29,14 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-public class DogCommand extends Command {
+public class DogCommand extends BaseCommand {
 
     public DogCommand() {
-        this.category = CommandCategory.ANIMALS;
-        this.name = "dog";
-        this.help = "Shows a dog";
+        super(
+            "Dog",
+            "Shows a random dog",
+            CommandCategory.ANIMALS
+        );
     }
 
     @Override

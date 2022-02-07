@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.duncte123.botcommons.messaging.MessageConfig;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.api.DuncteApis;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class TokenCommand extends Command {
+public class TokenCommand extends BaseCommand {
 
     private static final Pattern TOKEN_REGEX = Pattern.compile("([a-zA-Z0-9]+)\\.([a-zA-Z0-9\\-_]+)\\.([a-zA-Z0-9\\-_]+)");
     private static final String STRING_FORMAT = "Deconstruction results for token: `%s`%n%n" +
@@ -46,11 +46,16 @@ public class TokenCommand extends Command {
         "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
 
     public TokenCommand() {
-        this.requiresArgs = true;
-        this.category = CommandCategory.UTILS;
-        this.name = "token";
-        this.help = "Deconstructs a token to get as much information as possible from it";
-        this.usage = "<token of a discord bot>";
+        super(
+            "token",
+            "Deconstructs a bot token to get as much information as possible from it",
+            CommandCategory.UTILS,
+            null,
+            new String[0],
+            false,
+            "<token of a discord bot>",
+            true
+        );
     }
 
     @Override

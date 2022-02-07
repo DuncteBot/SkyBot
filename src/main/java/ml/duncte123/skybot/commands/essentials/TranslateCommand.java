@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -29,15 +29,20 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class TranslateCommand extends Command {
+public class TranslateCommand extends BaseCommand {
 
     public TranslateCommand() {
-        this.requiresArgs = true;
-        this.requiredArgCount = 2;
-        this.category = CommandCategory.UTILS;
-        this.name = "translate";
-        this.help = "Translate a text from English to another language";
-        this.usage = "<destination language> <text>";
+        super(
+            "translate",
+            "Translate a text from English to another language",
+            CommandCategory.UTILS,
+            null,
+            new String[0],
+            false,
+            "<destination language> <text>",
+            true,
+            2
+        );
     }
 
     @Override

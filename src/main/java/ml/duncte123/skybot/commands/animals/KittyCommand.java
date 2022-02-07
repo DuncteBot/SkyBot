@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.animals;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 
@@ -28,15 +28,18 @@ import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
-public class KittyCommand extends Command {
+public class KittyCommand extends BaseCommand {
 
     public KittyCommand() {
-        this.category = CommandCategory.ANIMALS;
-        this.name = "cat";
-        this.aliases = new String[]{
-            "kitty",
-        };
-        this.help = "Shows a cat";
+        super(
+            "cat",
+            "Shows a random cat",
+            CommandCategory.ANIMALS,
+            null,
+            new String[]{
+                "kitty",
+            }
+        );
     }
 
     @Override

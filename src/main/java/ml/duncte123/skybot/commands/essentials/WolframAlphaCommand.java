@@ -25,7 +25,7 @@ import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.BaseCommand;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,21 +42,25 @@ import static ml.duncte123.skybot.Settings.PATREON;
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 import static ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
-public class WolframAlphaCommand extends Command {
+public class WolframAlphaCommand extends BaseCommand {
 
     private WAEngine waEngine = null;
 
     public WolframAlphaCommand() {
-        this.requiresArgs = true;
-        this.category = CommandCategory.UTILS;
-        this.name = "alpha";
-        this.aliases = new String[]{
-            "wolfram",
-            "wa",
-            "wolframalpha",
-        };
-        this.help = "Ask Wolfram|Alpha all your geeky questions";
-        this.usage = "<query>";
+        super(
+            "alpha",
+            "Ask Wolfram|Alpha all your geeky questions",
+            CommandCategory.UTILS,
+            null,
+            new String[]{
+                "wolfram",
+                "wa",
+                "wolframalpha",
+            },
+            false,
+            "<query>",
+            true
+        );
     }
 
     private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, String googleKey, ObjectMapper mapper) {

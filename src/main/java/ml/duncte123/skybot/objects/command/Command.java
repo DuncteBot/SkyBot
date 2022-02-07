@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import kotlin.DeprecationLevel;
+import kotlin.ReplaceWith;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import me.duncte123.botcommons.messaging.MessageConfig;
@@ -38,6 +40,12 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
+@Deprecated // rewrite in kotlin
+@kotlin.Deprecated(
+    message = "Replaced in kotlin",
+    replaceWith = @ReplaceWith(expression = "BaseCommand()", imports = {"ml.duncte123.skybot.objects.BaseCommand"}),
+    level = DeprecationLevel.WARNING
+)
 public abstract class Command implements ICommand {
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
