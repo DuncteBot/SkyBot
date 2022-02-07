@@ -54,6 +54,7 @@
             <column name="mute_role_id" type="bigint"/>
             <column name="swear_filter_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="swear_filter_type" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
+            <!-- TODO: Fix, this is the incorrect type and value -->
             <column name="swear_sensitivity" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
             <column name="auto_dehoist_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="invite_filter_enabled" type="boolean" defaultValueBoolean="false"/>
@@ -110,6 +111,34 @@
             </column>
             <column name="role_id" type="bigserial">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="duncte123">
+        <createTable tableName="blacklisted_words">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="word" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="duncte123">
+        <createTable tableName="warn_actions">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_warn_action" />
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_warn_action" />
+            </column>
+            <column name="threshold" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="duration" type="int">
+                <constraints nullable="false" />
             </column>
         </createTable>
     </changeSet>

@@ -30,9 +30,9 @@ import io.sentry.Sentry;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.adapters.PostreDatabaseAdapter;
-import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
+import ml.duncte123.skybot.database.PostreDatabase;
+import ml.duncte123.skybot.database.WebDatabase;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
@@ -68,7 +68,7 @@ public final class Variables {
     private final WeebApi weebApi;
     private final DunctebotConfig config;
     private final CacheClient youtubeCache;
-    private DatabaseAdapter databaseAdapter;
+    private AbstractDatabase database;
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
@@ -179,15 +179,15 @@ public final class Variables {
         return this.apis;
     }
 
-    public DatabaseAdapter getDatabaseAdapter() {
+    public AbstractDatabase getDatabaseAdapter() {
         try {
-            if (this.databaseAdapter == null) {
+            if (this.database == null) {
                 if ("psql".equals(this.config.useDatabase)) {
-                    this.databaseAdapter = new PostreDatabaseAdapter();
+                    this.database = new PostreDatabase();
                 } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
-                    this.databaseAdapter = new WebDatabaseAdapter(this.getApis(), this.getJackson());
+                    this.database = new WebDatabase(this.getApis(), this.getJackson());
                 } else {
-                    this.databaseAdapter = (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
+                    this.database = (AbstractDatabase) (Class.forName("ml.duncte123.skybot.database.SqliteDatabase")
                         .getDeclaredConstructor().newInstance());
                 }
             }
@@ -200,6 +200,6 @@ public final class Variables {
             throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
 
-        return this.databaseAdapter;
+        return this.database;
     }
 }

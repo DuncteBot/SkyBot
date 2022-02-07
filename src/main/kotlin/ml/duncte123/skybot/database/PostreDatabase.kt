@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.adapters
+package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
@@ -26,13 +26,15 @@ import gnu.trove.map.TLongLongMap
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
+import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.time.OffsetDateTime
 
-class PostreDatabaseAdapter : DatabaseAdapter() {
+class PostreDatabase : AbstractDatabase() {
     private val ds: HikariDataSource
     private val connection: Connection
         get() { return this.ds.connection }
@@ -107,12 +109,41 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
         TODO("Not yet implemented")
     }
 
-    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) = runOnThread {
+        val settings = arrayListOf<GuildSetting>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM guild_settings").use { res ->
+                    while (res.next()) {
+                        val guildId = res.getLong("guild_id")
+                        settings.add(
+                            res.toGuildSetting()
+                                .setBlacklistedWords(getBlackListsForGuild(guildId))
+                                .setWarnActions(getWarnActionsForGuild(guildId))
+                        )
+                    }
+                }
+            }
+        }
+
+        callback(settings)
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
-        TODO("Not yet implemented")
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM guild_settings WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback.invoke(res.toGuildSetting())
+                    } else {
+                        callback.invoke(null)
+                    }
+                }
+            }
+        }
     }
 
     override fun deleteGuildSetting(guildId: Long) {
@@ -329,5 +360,47 @@ class PostreDatabaseAdapter : DatabaseAdapter() {
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
         TODO("Not yet implemented")
+    }
+
+    private fun getBlackListsForGuild(guildId: Long): List<String> {
+        val list = arrayListOf<String>()
+
+        this.connection.use { con ->
+            con.prepareStatement("SELECT word FROM blacklisted_words WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        list.add(res.getString("word"))
+                    }
+                }
+            }
+        }
+
+        return list
+    }
+
+    private fun getWarnActionsForGuild(guildId: Long): List<WarnAction> {
+        val list = arrayListOf<WarnAction>()
+
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        list.add(
+                            WarnAction(
+                                WarnAction.Type.valueOf(res.getString("type")),
+                                res.getInt("threshold"),
+                                res.getInt("duration")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return list
     }
 }

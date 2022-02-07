@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.adapters
+package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
@@ -31,7 +31,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 
-class WebDatabaseAdapter(private val apis: DuncteApis, private val jackson: ObjectMapper) : DatabaseAdapter() {
+class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMapper) : AbstractDatabase() {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
         runOnThread {

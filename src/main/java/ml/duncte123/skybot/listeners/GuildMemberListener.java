@@ -25,7 +25,7 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.extensions.UserKt;
@@ -346,7 +346,7 @@ public class GuildMemberListener extends BaseListener {
 
         if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
             final CompletableFuture<Boolean> booleanFuture = new CompletableFuture<>();
-            final DatabaseAdapter database = variables.getDatabaseAdapter();
+            final AbstractDatabase database = variables.getDatabaseAdapter();
             final String humanTime = TimeFormat.RELATIVE.format(timeCreated);
 
             // we have to use futures since the callback runs on a different thread

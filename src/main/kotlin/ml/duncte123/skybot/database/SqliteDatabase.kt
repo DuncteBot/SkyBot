@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.adapters
+package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.database.SQLiteDatabaseConnectionManager
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
@@ -38,7 +37,7 @@ import java.time.ZoneOffset
 import java.time.temporal.TemporalAccessor
 import java.util.*
 
-class SqliteDatabaseAdapter : DatabaseAdapter(1) {
+class SqliteDatabase : AbstractDatabase(1) {
     private val connManager = SQLiteDatabaseConnectionManager(File("database.db"))
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {

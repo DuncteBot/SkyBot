@@ -22,7 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
@@ -152,7 +152,7 @@ public class ModerationUtils {
         };
     }
 
-    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
+    public static int getWarningCountForUser(AbstractDatabase adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
         final CompletableFuture<Integer> future = new CompletableFuture<>();
 
         adapter.getWarningCountForUser(user.getIdLong(), guild.getIdLong(), (it) -> {
@@ -164,7 +164,7 @@ public class ModerationUtils {
         return future.get();
     }
 
-    public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
+    public static void handleUnmute(List<Mute> mutes, AbstractDatabase adapter, Variables variables) {
         LOG.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -230,7 +230,7 @@ public class ModerationUtils {
         }
     }
 
-    public static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
+    public static void handleUnban(List<Ban> bans, AbstractDatabase adapter, Variables variables) {
         LOG.debug("Checking for users to unban");
 
         // Get the ShardManager from our instance

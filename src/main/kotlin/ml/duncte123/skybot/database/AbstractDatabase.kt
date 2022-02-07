@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.adapters
+package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.OffsetDateTime
 import java.util.concurrent.Executors
 
-abstract class DatabaseAdapter(threads: Int = 2) {
+abstract class AbstractDatabase(threads: Int = 2) {
     private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true

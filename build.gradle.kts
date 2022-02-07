@@ -34,7 +34,6 @@ plugins {
     id("org.jmailen.kotlinter") version "3.5.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.5.1"
 }
 
 val numberVersion = "3.106.2"

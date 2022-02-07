@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public class AutoBanBypassCommand extends ModBaseCommand {
             return;
         }
 
-        final DatabaseAdapter database = ctx.getDatabaseAdapter();
+        final AbstractDatabase database = ctx.getDatabaseAdapter();
         final long guildId = ctx.getGuild().getIdLong();
 
         database.getBanBypass(guildId, checkId, (byPass) -> {

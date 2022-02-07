@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.adapters.DatabaseAdapter
+import ml.duncte123.skybot.database.AbstractDatabase
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -108,7 +108,7 @@ class BlackListCommand : ModBaseCommand() {
             }
     }
 
-    private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun clearBlacklist(adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
         adapter.clearBlacklist(guild.idLong)
 
         guild.settings.blacklistedWords.clear()
@@ -158,7 +158,7 @@ class BlackListCommand : ModBaseCommand() {
         }
     }
 
-    private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun addWordToBlacklist(word: String, adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
@@ -174,7 +174,7 @@ class BlackListCommand : ModBaseCommand() {
         sendMsg(ctx, "`$word` has been added to the blacklist")
     }
 
-    private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun removeWordFromBlacklist(word: String, adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {

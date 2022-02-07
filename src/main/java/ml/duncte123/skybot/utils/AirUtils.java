@@ -34,7 +34,7 @@ import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.FakePendingRequest;
@@ -259,7 +259,7 @@ public class AirUtils {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
+    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase adapter) {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();

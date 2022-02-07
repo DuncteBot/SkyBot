@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import io.sentry.Sentry;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
@@ -158,7 +158,7 @@ public class GuildUtils {
         };
     }
 
-    public static void loadAllPatrons(@Nonnull DatabaseAdapter adapter) {
+    public static void loadAllPatrons(@Nonnull AbstractDatabase adapter) {
         LOGGER.info("(Re)loading patrons");
 
         adapter.loadAllPatrons((data) -> {

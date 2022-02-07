@@ -23,7 +23,7 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class GuildSettingsUtils {
     private GuildSettingsUtils() {}
 
     public static void loadVcAutoRoles(Variables variables) {
-        final DatabaseAdapter adapter = variables.getDatabaseAdapter();
+        final AbstractDatabase adapter = variables.getDatabaseAdapter();
         final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
         LOGGER.info("Loading vc auto roles.");
