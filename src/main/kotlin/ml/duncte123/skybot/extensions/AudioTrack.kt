@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.extensions
 
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
+import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
@@ -49,9 +50,11 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
         }
     }
 
+    val uri = if (this is IWillUseIdentifierInstead) this.info.identifier else this.info.uri
+
     if (this.info.isStream) {
         return embedMessage(
-            """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
             |**Requester:** $requester
         """.trimMargin()
         )
@@ -59,7 +62,7 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
     }
 
     return embedMessage(
-        """**Currently playing** [${this.info.title}](${this.info.uri}) by ${this.info.author}
+        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
             |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
         """.trimMargin()
     )

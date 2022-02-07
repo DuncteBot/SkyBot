@@ -27,6 +27,7 @@ services:
             - API_BLARGBOT=
             - API_WOLFRAMALPHA=
             - API_THECATAPI=
+            - API_GENIUS=
 
             # Lavalink settings
             - LAVALINK_ENABLE=false
@@ -45,3 +46,4 @@ services:
 
             # Options are: psql, web/true, false
             - USE_DATABASE=psql
+            - REDIS_HOST=localhost

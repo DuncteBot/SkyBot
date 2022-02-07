@@ -503,11 +503,13 @@ public class CommandManager {
     }
 
     private boolean isSafeForWork(GuildMessageReceivedEvent event) {
+        if (event.getChannel().isNSFW()) {
+            return false;
+        }
+
         final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
 
-        return !event.getChannel().isNSFW() ||
-            nsfwLevel == Guild.NSFWLevel.DEFAULT ||
-            nsfwLevel == Guild.NSFWLevel.SAFE;
+        return nsfwLevel == Guild.NSFWLevel.DEFAULT || nsfwLevel == Guild.NSFWLevel.SAFE;
     }
 
     private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
@@ -690,7 +692,7 @@ public class CommandManager {
             throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
         }
 
-        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
+        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).toList();
 
         if (!lowerAliasses.isEmpty()) {
             for (final String alias : lowerAliasses) {

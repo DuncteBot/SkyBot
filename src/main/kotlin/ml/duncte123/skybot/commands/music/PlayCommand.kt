@@ -78,7 +78,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
-        if (!AirUtils.isURL(toPlay)) {
+        if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
             val vidId = searchCache(toPlay, ctx)
 
             if (vidId == null) {
