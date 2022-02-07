@@ -503,11 +503,11 @@ public class CommandManager {
     }
 
     private boolean isSafeForWork(GuildMessageReceivedEvent event) {
-        final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
-
         if (event.getChannel().isNSFW()) {
             return false;
         }
+
+        final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
 
         return nsfwLevel == Guild.NSFWLevel.DEFAULT || nsfwLevel == Guild.NSFWLevel.SAFE;
     }
