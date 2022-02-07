@@ -145,7 +145,7 @@ abstract class BaseCommand @JvmOverloads constructor (
                     .setSuccessAction {
                         it.delete().queueAfter(10, TimeUnit.SECONDS)
                     }
-                .build()
+                    .build()
             )
             MessageUtils.sendError(ctx.message)
             return true
