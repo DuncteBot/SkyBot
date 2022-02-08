@@ -81,7 +81,7 @@ dependencies {
         exclude(module = "opus-java")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.6.1")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.7.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
@@ -176,8 +176,6 @@ task<Exec>("botVersion") {
 }
 
 build.apply {
-    println("Git token: ${System.getenv("GITHUB_TOKEN")}")
-
     dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)

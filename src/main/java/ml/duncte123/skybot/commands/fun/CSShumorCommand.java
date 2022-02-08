@@ -48,11 +48,14 @@ public class CSShumorCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (ctx.getRandom().nextInt(2) == 1) {
+        sendRedditPost("css_irl", cssIndex, ctx, true);
+
+        // broken shit :D
+        /*if (ctx.getRandom().nextInt(2) == 1) {
             sendRedditPost("css_irl", cssIndex, ctx, true);
         } else {
             sendCssJoke(ctx);
-        }
+        }*/
     }
 
     // Thanks for the regex ramidzkh

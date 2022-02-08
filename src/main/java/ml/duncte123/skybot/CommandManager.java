@@ -165,7 +165,6 @@ public class CommandManager {
         this.addCommand(new CoinCommand());
         this.addCommand(new ColorCommand());
         this.addCommand(new CookieCommand());
-        this.addCommand(new CrashCommand());
         this.addCommand(new CSShumorCommand());
         this.addCommand(new CustomCommandCommand());
         this.addCommand(new DanceCommand());
