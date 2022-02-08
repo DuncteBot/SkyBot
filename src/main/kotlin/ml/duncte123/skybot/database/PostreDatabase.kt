@@ -119,8 +119,9 @@ class PostreDatabase : AbstractDatabase() {
                         val guildId = res.getLong("guild_id")
                         settings.add(
                             res.toGuildSetting()
-                                .setBlacklistedWords(getBlackListsForGuild(guildId))
-                                .setWarnActions(getWarnActionsForGuild(guildId))
+                                // be smart and re-use the connection we already have
+                                .setBlacklistedWords(getBlackListsForGuild(guildId, con))
+                                .setWarnActions(getWarnActionsForGuild(guildId, con))
                         )
                     }
                 }
@@ -137,7 +138,12 @@ class PostreDatabase : AbstractDatabase() {
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        callback.invoke(res.toGuildSetting())
+                        callback.invoke(
+                            res.toGuildSetting()
+                                // be smart and re-use the connection we already have
+                                .setBlacklistedWords(getBlackListsForGuild(guildId, con))
+                                .setWarnActions(getWarnActionsForGuild(guildId, con))
+                        )
                     } else {
                         callback.invoke(null)
                     }
@@ -147,6 +153,7 @@ class PostreDatabase : AbstractDatabase() {
     }
 
     override fun deleteGuildSetting(guildId: Long) {
+        // Also delete: vc-autorole, blacklisted words and custom commands?
         TODO("Not yet implemented")
     }
 
@@ -362,17 +369,15 @@ class PostreDatabase : AbstractDatabase() {
         TODO("Not yet implemented")
     }
 
-    private fun getBlackListsForGuild(guildId: Long): List<String> {
+    private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
         val list = arrayListOf<String>()
 
-        this.connection.use { con ->
-            con.prepareStatement("SELECT word FROM blacklisted_words WHERE guild_id = ?").use { smt ->
-                smt.setLong(1, guildId)
+        con.prepareStatement("SELECT word FROM blacklisted_words WHERE guild_id = ?").use { smt ->
+            smt.setLong(1, guildId)
 
-                smt.executeQuery().use { res ->
-                    while (res.next()) {
-                        list.add(res.getString("word"))
-                    }
+            smt.executeQuery().use { res ->
+                while (res.next()) {
+                    list.add(res.getString("word"))
                 }
             }
         }
@@ -380,23 +385,21 @@ class PostreDatabase : AbstractDatabase() {
         return list
     }
 
-    private fun getWarnActionsForGuild(guildId: Long): List<WarnAction> {
+    private fun getWarnActionsForGuild(guildId: Long, con: Connection): List<WarnAction> {
         val list = arrayListOf<WarnAction>()
 
-        this.connection.use { con ->
-            con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
-                smt.setString(1, guildId.toString())
+        con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
+            smt.setString(1, guildId.toString())
 
-                smt.executeQuery().use { res ->
-                    while (res.next()) {
-                        list.add(
-                            WarnAction(
-                                WarnAction.Type.valueOf(res.getString("type")),
-                                res.getInt("threshold"),
-                                res.getInt("duration")
-                            )
+            smt.executeQuery().use { res ->
+                while (res.next()) {
+                    list.add(
+                        WarnAction(
+                            WarnAction.Type.valueOf(res.getString("type")),
+                            res.getInt("threshold"),
+                            res.getInt("duration")
                         )
-                    }
+                    )
                 }
             }
         }
