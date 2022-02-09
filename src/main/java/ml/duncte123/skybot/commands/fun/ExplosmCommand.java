@@ -18,10 +18,12 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import kotlin.Pair;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.api.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -36,6 +38,9 @@ public class ExplosmCommand extends Command {
             "rcg"
         };
         this.help = "Generates a random comic using the Random Comic Generator on explosm.net";
+        this.botPermissions = new Permission[] {
+            Permission.MESSAGE_EMBED_LINKS,
+        };
     }
 
     @Override
@@ -45,13 +50,17 @@ public class ExplosmCommand extends Command {
             return;
         }
 
-        final String comicUrl = ctx.getApis().getRCGUrl();
+        final Pair<String, String> rcgParts = ctx.getApis().getRCGUrl();
 
-        if (comicUrl == null) {
+        if (rcgParts == null) {
             sendMsg(ctx, "Generating comic failed, try again later");
             return;
         }
 
-        sendEmbed(ctx, EmbedUtils.embedImageWithTitle("Fresh comic for you", "https://explosm.net/rcg", comicUrl));
+        sendEmbed(ctx, EmbedUtils.embedImageWithTitle(
+            "Click here to share",
+            rcgParts.getSecond(),
+            rcgParts.getFirst()
+        ));
     }
 }
