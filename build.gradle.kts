@@ -54,6 +54,7 @@ repositories {
     maven("https://repo.jenkins-ci.org/releases")
     maven("https://duncte123.jfrog.io/artifactory/maven")
     maven("https://m2.duncte123.dev/releases")
+    maven("https://m2.duncte123.dev/snapshots")
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.notfab.net/Hosted")
     maven("https://jitpack.io")
@@ -81,7 +82,7 @@ dependencies {
         exclude(module = "opus-java")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.7.0")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.7.2")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {

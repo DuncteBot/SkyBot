@@ -32,7 +32,7 @@ class CoinCommand : Command() {
     init {
         this.category = CommandCategory.FUN
         this.name = "coin"
-        this.aliases = arrayOf("coinflip", "cf")
+        this.aliases = arrayOf("coinflip", "cf", "flip")
         this.help = "Flips a coin"
     }
 

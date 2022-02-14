@@ -172,13 +172,11 @@ public class CommandManager {
         this.addCommand(new DeHoistCommand());
         this.addCommand(new DeletCommand());
         this.addCommand(new DeleteCommand());
-        this.addCommand(new DialogCommand());
         this.addCommand(new DidYouMeanCommand());
         this.addCommand(new DiscordMemesCommand());
         this.addCommand(new DogCommand());
         this.addCommand(new DonateCommand());
         this.addCommand(new DrakeCommand());
-        this.addCommand(new EightBallCommand());
         this.addCommand(new EmoteCommand());
         this.addCommand(new EnlargeCommand());
         this.addCommand(new EvalCommand());
@@ -187,7 +185,6 @@ public class CommandManager {
         this.addCommand(new FactsCommand());
         this.addCommand(new FakeWordCommand());
         this.addCommand(new FlagCommand());
-        this.addCommand(new FlipCommand());
         this.addCommand(new ForceDisconnectCommand());
         this.addCommand(new ForceSkip());
         this.addCommand(new GuildInfoCommand());
@@ -196,8 +193,6 @@ public class CommandManager {
         this.addCommand(new HelpCommand());
         this.addCommand(new HentaiCommand());
         this.addCommand(new HugCommand());
-        this.addCommand(new ImageCommand());
-        this.addCommand(new InstaCommand());
         this.addCommand(new InvertCommand());
         this.addCommand(new InviteCommand());
         this.addCommand(new IssueCommand());
@@ -209,7 +204,6 @@ public class CommandManager {
         this.addCommand(new KickCommand());
         this.addCommand(new KickMeCommand());
         this.addCommand(new KittyCommand());
-        this.addCommand(new KpopCommand());
         this.addCommand(new LeaveCommand());
         this.addCommand(new LewdCommand());
         this.addCommand(new LewdKitsuneCommand());
@@ -285,7 +279,6 @@ public class CommandManager {
         this.addCommand(new SkipCommand());
         this.addCommand(new SlowModeCommand());
         this.addCommand(new SoftbanCommand());
-        this.addCommand(new SpamCommand());
         this.addCommand(new SPLookupCommand());
         this.addCommand(new StatsCommand());
         this.addCommand(new StopCommand());
@@ -294,7 +287,6 @@ public class CommandManager {
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
         this.addCommand(new TestTagCommand());
-        this.addCommand(new TextToBricksCommand());
         this.addCommand(new TheSearchCommand());
         this.addCommand(new ToggleAnnounceTracksCommand());
         this.addCommand(new ToggleAutoDehoistCommand());
@@ -318,10 +310,8 @@ public class CommandManager {
         this.addCommand(new VoiceKickCommand());
         this.addCommand(new VolumeCommand());
         this.addCommand(new VoteCommand());
-        this.addCommand(new WamCommand());
         this.addCommand(new WarnCommand());
         this.addCommand(new WarningsCommand());
-        this.addCommand(new WebsiteCommand());
         this.addCommand(new WeebCommand());
         this.addCommand(new WolframAlphaCommand());
         this.addCommand(new XkcdCommand());
