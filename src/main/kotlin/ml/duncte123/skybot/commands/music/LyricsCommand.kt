@@ -84,9 +84,9 @@ class LyricsCommand : MusicCommand() {
             WebUtils.defaultRequest()
                 .header("Authorization", "Bearer ${config.apis.genius}")
                 .url("https://api.genius.com/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}"),
-            { it.setRateLimiter(
-                WebUtils.ins.getRateLimiter("api.genius.com/search")
-            ) },
+            {
+                it.setRateLimiter(WebUtils.ins.getRateLimiter("api.genius.com/search"))
+            },
             null
         ).build(
             WebParserUtils::toJSONObject,
