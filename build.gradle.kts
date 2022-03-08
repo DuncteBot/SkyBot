@@ -314,6 +314,7 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName("v$numberVersion")
+    targetCommitish("main")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)
