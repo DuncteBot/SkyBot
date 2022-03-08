@@ -161,7 +161,6 @@ public class CommandManager {
         this.addCommand(new ClearLeftGuildsCommand());
         this.addCommand(new ClintCommand());
         this.addCommand(new CommandDumpCommand());
-        this.addCommand(new CoffeeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new ColorCommand());
         this.addCommand(new CookieCommand());

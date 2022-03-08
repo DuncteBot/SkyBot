@@ -20,7 +20,10 @@ package ml.duncte123.skybot.objects.apis.alexflipnote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import com.github.natanbc.reliqua.request.PendingRequest;
+import com.github.natanbc.reliqua.util.ResponseMapper;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
 import me.duncte123.weebJava.helpers.QueryBuilder;
@@ -41,7 +44,7 @@ public class Alexflipnote {
     }
 
     public PendingRequest<FlipnoteColourObj> getColour(String color) {
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("https://api.alexflipnote.dev/", "colour/" + color),
             (r) -> {
                 final JsonNode node = mapper.readTree(Objects.requireNonNull(r.body()).byteStream());
@@ -53,7 +56,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getTrash(String face, String trash) {
         final QueryBuilder builder = new QueryBuilder().append("face", face).append("trash", trash);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("trash" + builder.build()),
             IOHelper::read
         );
@@ -61,7 +64,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getAchievement(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("achievement" + builder.build()),
             IOHelper::read
         );
@@ -69,7 +72,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getScroll(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("scroll" + builder.build()),
             IOHelper::read
         );
@@ -77,7 +80,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getDidYouMean(String input, String correction) {
         final QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("didyoumean" + builder.build()),
             IOHelper::read
         );
@@ -85,7 +88,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getFacts(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("facts" + builder.build()),
             IOHelper::read
         );
@@ -93,7 +96,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getCaptcha(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("captcha" + builder.build()),
             IOHelper::read
         );
@@ -101,7 +104,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getJokeoverhead(String image) {
         final QueryBuilder builder = new QueryBuilder().append("image", image);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("jokeoverhead" + builder.build()),
             IOHelper::read
         );
@@ -109,7 +112,7 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getSalty(String image) {
         final QueryBuilder builder = new QueryBuilder().append("image", image);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("salty" + builder.build()),
             IOHelper::read
         );
@@ -117,21 +120,28 @@ public class Alexflipnote {
 
     public PendingRequest<byte[]> getPornhub(String text1, String text2) {
         final QueryBuilder builder = new QueryBuilder().append("text", text1).append("text2", text2);
-        return WebUtils.ins.prepareRaw(
+        return prepareRaw(
             makeRequest("pornhub" + builder.build()),
             IOHelper::read
         );
     }
 
-    private Request makeRequest(String path) {
+    private <T> PendingRequest<T> prepareRaw(Request.Builder builder, ResponseMapper<T> mapper) {
+        return WebUtils.ins.prepareBuilder(
+            builder,
+            (it) -> it.setRateLimiter(RateLimiter.directLimiter()),
+            null
+        ).build(mapper, WebParserUtils::handleError);
+    }
+
+    private Request.Builder makeRequest(String path) {
         return makeRequest("https://flipnote.duncte.bot/", path);
     }
 
-    private Request makeRequest(String url, String path) {
+    private Request.Builder makeRequest(String url, String path) {
         return defaultRequest()
             .url(url + path)
             .addHeader("Authorization", this.apiKey)
-            .get()
-            .build();
+            .get();
     }
 }

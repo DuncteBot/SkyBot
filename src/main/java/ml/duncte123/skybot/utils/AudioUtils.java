@@ -62,8 +62,8 @@ public class AudioUtils {
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
         playerManager.registerSourceManager(sourceManager);
 
-        DuncteBotSources.registerCustom(playerManager, "en-AU", 6);
-        DuncteBotSources.registerCustom(LavalinkUtil.getPlayerManager(), "en-AU", 6);
+        DuncteBotSources.registerDuncteBot(playerManager, "en-AU", 6);
+        DuncteBotSources.registerDuncteBot(LavalinkUtil.getPlayerManager(), "en-AU", 6);
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());

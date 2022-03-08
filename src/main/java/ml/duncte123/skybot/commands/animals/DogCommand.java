@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
@@ -41,7 +42,7 @@ public class DogCommand extends Command {
     public void execute(@Nonnull CommandContext ctx) {
         final String base = "https://random.dog/";
         try {
-            WebUtils.ins.getText(base + "woof").async((it) -> {
+            WebUtils.ins.getText(base + "woof", (it) -> it.setRateLimiter(RateLimiter.directLimiter())).async((it) -> {
                 final String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {

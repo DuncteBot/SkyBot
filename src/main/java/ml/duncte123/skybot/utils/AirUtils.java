@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import fredboat.audio.player.LavalinkManager;
@@ -372,6 +373,7 @@ public class AirUtils {
                 "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + googleKey,
                 JSONRequestBody.fromJackson(json)
             )
+                .setRateLimiter(RateLimiter.directLimiter())
                 .build(
                     (r) -> {
                         final ObjectNode response = toJSONObject(r, mapper);

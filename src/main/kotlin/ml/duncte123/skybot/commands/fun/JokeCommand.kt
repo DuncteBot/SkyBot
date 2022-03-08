@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
@@ -53,7 +54,7 @@ class JokeCommand : Command() {
     }
 
     private fun sendRanddomJoke(ctx: CommandContext) {
-        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
+        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/") { it.setRateLimiter(RateLimiter.directLimiter()) }.async {
             sendEmbed(ctx, EmbedUtils.embedMessage(it["joke"].asText()))
         }
     }

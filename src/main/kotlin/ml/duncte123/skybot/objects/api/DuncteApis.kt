@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.web.ContentType.JSON
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
@@ -869,13 +871,15 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest(path, false)
             .post(body).addHeader("Content-Type", JSON.type)
 
-        return WebUtils.ins.prepareRaw(request.build()) {
-            if (it.header("Content-Type") == "application/json") {
-                return@prepareRaw null to mapper.readTree(it.body()!!.byteStream())
-            }
+        return WebUtils.ins.prepareBuilder(request, { it.setRateLimiter(RateLimiter.directLimiter()) }, null)
+            .build({
+                if (it.header("Content-Type") == "application/json") {
+                    return@build null to mapper.readTree(it.body()!!.byteStream())
+                }
 
-            return@prepareRaw IOHelper.read(it) to null
-        }.execute()
+                return@build IOHelper.read(it) to null
+            }, WebParserUtils::handleError)
+            .execute()
     }
 
     private fun parseTripleResponse(response: JsonNode): Triple<Boolean, Boolean, Boolean> {
@@ -934,7 +938,15 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun executeRequest(request: Request.Builder): JsonNode {
-        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body()!!.byteStream()) }.execute()
+        return WebUtils.ins.prepareBuilder(
+            request,
+            {
+                it.setRateLimiter(RateLimiter.directLimiter())
+            },
+            null
+        )
+            .build({ mapper.readTree(it.body()!!.byteStream()) }, WebParserUtils::handleError)
+            .execute()
     }
 
     private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {

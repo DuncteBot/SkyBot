@@ -75,14 +75,14 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.9")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.10")
 
     // JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
         exclude(module = "opus-java")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.7.2")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.8.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {

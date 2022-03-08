@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
@@ -79,12 +80,17 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun searchForSong(search: String, config: DunctebotConfig, callback: (LyricInfo?) -> Unit) {
-        WebUtils.ins.prepareRaw(
+        WebUtils.ins.prepareBuilder(
             WebUtils.defaultRequest()
                 .header("Authorization", "Bearer ${config.apis.genius}")
-                .url("https://api.genius.com/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}")
-                .build(),
-            WebParserUtils::toJSONObject
+                .url("https://api.genius.com/search?q=${URLEncoder.encode(search, StandardCharsets.UTF_8)}"),
+            { it.setRateLimiter(
+                WebUtils.ins.getRateLimiter("api.genius.com/search")
+            ) },
+            null
+        ).build(
+            WebParserUtils::toJSONObject,
+            WebParserUtils::handleError
         ).async {
             val results = it["response"]["hits"]
 
@@ -120,7 +126,7 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun loadLyrics(path: String, callback: (String?) -> Unit) {
-        WebUtils.ins.scrapeWebPage("https://genius.com/amp$path")
+        WebUtils.ins.scrapeWebPage("https://genius.com/amp$path") { it.setRateLimiter(RateLimiter.directLimiter()) }
             .async({
                 val lyricsContainer = it.select("div.lyrics")
                 val text = lyricsContainer.first()

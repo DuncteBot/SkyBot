@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
@@ -60,7 +61,9 @@ class FakeWordCommand : Command() {
     }
 
     private fun fetchRandomWordData(callback: (JsonNode) -> Unit) {
-        WebUtils.ins.getJSONObject("https://www.thisworddoesnotexist.com/api/random_word.json").async(callback)
+        WebUtils.ins.getJSONObject(
+            "https://www.thisworddoesnotexist.com/api/random_word.json"
+        ) { it.setRateLimiter(RateLimiter.directLimiter()) }.async(callback)
     }
 
     private fun shortenLongHashUrl(url: String, ctx: CommandContext, callback: (String) -> Unit) {

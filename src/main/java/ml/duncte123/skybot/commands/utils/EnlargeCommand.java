@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.utils;
 
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
@@ -105,7 +106,7 @@ public class EnlargeCommand extends Command {
     }
 
     private void uploadFile(final String url, final CommandContext ctx) {
-        WebUtils.ins.getByteStream(url).async(
+        WebUtils.ins.getByteStream(url, (it) -> it.setRateLimiter(RateLimiter.directLimiter())).async(
             (bytes) -> {
                 final String[] split = url.split("/");
                 final String fileName = split[split.length - 1];
