@@ -23,4 +23,4 @@ RUN apk add --no-cache libstdc++ fontconfig font-noto
 WORKDIR /skybot
 COPY --from=builder /skybot/build/libs/skybot*-prod.jar ./skybot.jar
 
-CMD ["java", "-jar", "skybot.jar"]
+CMD ["java", "-Xms4G", "-Xmx4G", "-jar", "skybot.jar"]
