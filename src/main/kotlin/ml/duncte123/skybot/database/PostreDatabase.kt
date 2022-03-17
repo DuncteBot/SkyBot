@@ -153,12 +153,46 @@ class PostreDatabase : AbstractDatabase() {
     }
 
     override fun deleteGuildSetting(guildId: Long) {
-        // Also delete: vc-autorole, blacklisted words and custom commands?
-        TODO("Not yet implemented")
+        val queries = arrayOf(
+            "DELETE FROM guild_settings WHERE guild_id = ?",
+            "DELETE FROM vc_autoroles WHERE guild_id = ?",
+            "DELETE FROM blacklisted_words WHERE guild_id = ?",
+            "DELETE FROM warn_actions WHERE guild_id = ?",
+            "DELETE FROM custom_commands WHERE guild_id = ?",
+        )
+
+        this.connection.use { con ->
+            queries.forEach { q ->
+                con.prepareStatement(q) .use { smt ->
+                    smt.setLong(1, guildId)
+
+                    smt.execute()
+                }
+            }
+        }
     }
 
     override fun purgeGuildSettings(guildIds: List<Long>) {
-        TODO("Not yet implemented")
+        val queries = arrayOf(
+            "DELETE FROM guild_settings WHERE guild_id IN",
+            "DELETE FROM vc_autoroles WHERE guild_id IN",
+            "DELETE FROM blacklisted_words WHERE guild_id IN",
+            "DELETE FROM warn_actions WHERE guild_id IN",
+            "DELETE FROM custom_commands WHERE guild_id IN",
+        )
+        val questions = guildIds.joinToString(", ") { "?" }
+
+        this.connection.use { con ->
+            queries.forEach { q ->
+                con.prepareStatement("$q $questions") .use { smt ->
+                    guildIds.forEachIndexed { index, id ->
+                        smt.setLong(index + 1, id)
+                    }
+
+                    smt.execute()
+                }
+            }
+        }
     }
 
     override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
