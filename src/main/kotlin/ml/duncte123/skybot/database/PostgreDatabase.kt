@@ -24,6 +24,7 @@ import com.dunctebot.models.utils.Utils.convertJ2S
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gnu.trove.map.TLongLongMap
+import io.sentry.Sentry
 import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
@@ -134,8 +135,21 @@ class PostgreDatabase : AbstractDatabase() {
         TODO("Not yet implemented")
     }
 
-    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
-        TODO("Not yet implemented")
+    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM custom_commands WHERE guild_id = ? AND invoke = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.setString(2, invoke)
+
+                try {
+                    smt.execute()
+                    callback(true)
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    callback(false)
+                }
+            }
+        }
     }
 
     override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) = runOnThread {
