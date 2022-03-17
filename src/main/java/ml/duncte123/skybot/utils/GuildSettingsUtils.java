@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// TODO: loads of methods from here are stored in the external package
 public class GuildSettingsUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
@@ -109,6 +110,7 @@ public class GuildSettingsUtils {
 
     public static void updateEmbedColor(long guildId, int color, Variables variables) {
         getGuild(guildId, variables).setEmbedColor(color);
+        // TODO: save guild setting instead, we've deprecated this
         variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
     }
 

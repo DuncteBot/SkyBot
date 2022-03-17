@@ -103,6 +103,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     // ///////////////
     // Embed settings
 
+    @Deprecated("Stored in guild settings")
     abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int)
 
     // /////////////

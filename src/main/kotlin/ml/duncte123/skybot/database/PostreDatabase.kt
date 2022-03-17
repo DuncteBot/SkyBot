@@ -155,7 +155,7 @@ class PostreDatabase : AbstractDatabase() {
 
     override fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
 
-    override fun purgeGuildSettings(guildIds: List<Long>) {
+    override fun purgeGuildSettings(guildIds: List<Long>) = runOnThread {
         val queries = arrayOf(
             "DELETE FROM guild_settings WHERE guild_id IN",
             "DELETE FROM vc_autoroles WHERE guild_id IN",
@@ -178,7 +178,7 @@ class PostreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
+    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
         this.connection.use { con ->
             // TODO: remove server_description, discord has this feature now
             con.prepareStatement(
@@ -292,8 +292,36 @@ class PostreDatabase : AbstractDatabase() {
         TODO("Not yet implemented")
     }
 
-    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
-        TODO("Not yet implemented")
+    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) = runOnThread {
+        val patrons = arrayListOf<Patron>()
+        val tagPatrons = arrayListOf<Patron>()
+        val oneGuildPatrons = arrayListOf<Patron>()
+        val guildPatrons = arrayListOf<Patron>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM patrons").use { res ->
+                    while (res.next()) {
+                        val idRes = res.getLong("guild_id")
+                        val guildId = if (idRes == 0L) null else idRes
+                        val patron = Patron(
+                            Patron.Type.valueOf(res.getString("type").uppercase()),
+                            res.getLong("user_id"),
+                            guildId
+                        )
+
+                        when (patron.type) {
+                            Patron.Type.NORMAL -> patrons.add(patron)
+                            Patron.Type.TAG -> tagPatrons.add(patron)
+                            Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                            Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                        }
+                    }
+                }
+            }
+
+            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+        }
     }
 
     override fun removePatron(userId: Long) {
@@ -392,9 +420,7 @@ class PostreDatabase : AbstractDatabase() {
         callback(roles)
     }
 
-    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
-        TODO("Not yet implemented")
-    }
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) = setVcAutoRoleBatch(guildId, listOf(voiceChannelId), roleId)
 
     override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
         TODO("Not yet implemented")
