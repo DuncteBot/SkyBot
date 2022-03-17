@@ -119,6 +119,7 @@ class PostgreDatabase : AbstractDatabase() {
                     smt.execute()
                     callback(Triple(true, false, false))
                 } catch (e: SQLException) {
+                    Sentry.captureException(e)
                     callback(Triple(false, false, false))
                 }
             }
@@ -131,8 +132,25 @@ class PostgreDatabase : AbstractDatabase() {
         message: String,
         autoresponse: Boolean,
         callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
-    ) {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "UPDATE custom_commands SET message = ?, auto_response = ? WHERE guild_id = ? AND invoke = ?"
+            ).use { smt ->
+                smt.setString(1, message)
+                smt.setBoolean(2, autoresponse)
+                smt.setLong(3, guildId)
+                smt.setString(4, invoke)
+
+                try {
+                    smt.executeUpdate()
+                    callback(Triple(true, false, false))
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    callback(Triple(false, false, false))
+                }
+            }
+        }
     }
 
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) = runOnThread {
