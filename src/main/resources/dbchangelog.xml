@@ -118,10 +118,10 @@
     <changeSet id="4" author="duncte123">
         <createTable tableName="blacklisted_words">
             <column name="guild_id" type="bigserial">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_guild_blacklist" />
             </column>
             <column name="word" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_guild_blacklist" />
             </column>
         </createTable>
     </changeSet>

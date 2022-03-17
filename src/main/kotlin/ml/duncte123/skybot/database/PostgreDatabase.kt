@@ -347,20 +347,36 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun addWordToBlacklist(guildId: Long, word: String) {
-        TODO("Not yet implemented")
-    }
+    override fun addWordToBlacklist(guildId: Long, word: String) = addWordsToBlacklist(guildId, listOf(word))
 
-    override fun addWordsToBlacklist(guildId: Long, words: List<String>) {
-        TODO("Not yet implemented")
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) = runOnThread {
+        val vals = words.joinToString(", ") { "(?, ?)" }
+
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO blacklisted_words(guild_id, word) VALUES $vals ON CONFLICT (guild_id, word) DO NOTHING /* LOL */"
+            ).use { smt ->
+                words.forEachIndexed { index, word ->
+                    smt.setLong(index + 1, guildId)
+                    smt.setString(index + 2, word)
+                }
+
+                smt.execute()
+            }
+        }
     }
 
     override fun removeWordFromBlacklist(guildId: Long, word: String) {
         TODO("Not yet implemented")
     }
 
-    override fun clearBlacklist(guildId: Long) {
-        TODO("Not yet implemented")
+    override fun clearBlacklist(guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM blacklisted_words WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.execute()
+            }
+        }
     }
 
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
