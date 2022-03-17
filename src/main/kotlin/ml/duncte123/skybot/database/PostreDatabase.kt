@@ -167,7 +167,7 @@ class PostreDatabase : AbstractDatabase() {
 
         this.connection.use { con ->
             queries.forEach { q ->
-                con.prepareStatement("$q $questions") .use { smt ->
+                con.prepareStatement("$q $questions").use { smt ->
                     guildIds.forEachIndexed { index, id ->
                         smt.setLong(index + 1, id)
                     }
