@@ -314,9 +314,11 @@ class PostgreDatabase : AbstractDatabase() {
 
     override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("""INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
+            con.prepareStatement(
+                """INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
                 |VALUES (?, ?, ?, ?) 
-                |ON CONFLICT (guild_id) DO NOTHING;""".trimMargin()).use { smt ->
+                |ON CONFLICT (guild_id) DO NOTHING;""".trimMargin()
+            ).use { smt ->
                 smt.setLong(1, guildSettings.guildId)
                 smt.setString(2, Settings.PREFIX)
                 smt.setString(3, guildSettings.customJoinMessage)
