@@ -31,7 +31,7 @@ import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.database.AbstractDatabase;
-import ml.duncte123.skybot.database.PostreDatabase;
+import ml.duncte123.skybot.database.PostgreDatabase;
 import ml.duncte123.skybot.database.WebDatabase;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
@@ -183,7 +183,7 @@ public final class Variables {
         try {
             if (this.database == null) {
                 if ("psql".equals(this.config.useDatabase)) {
-                    this.database = new PostreDatabase();
+                    this.database = new PostgreDatabase();
                 } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
                     this.database = new WebDatabase(this.getApis(), this.getJackson());
                 } else {

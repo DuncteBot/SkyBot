@@ -35,7 +35,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.time.OffsetDateTime
 
-class PostreDatabase : AbstractDatabase() {
+class PostgreDatabase : AbstractDatabase() {
     private val ds: HikariDataSource
     private val connection: Connection
         get() { return this.ds.connection }
@@ -268,7 +268,7 @@ class PostreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
+    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
         TODO("Not yet implemented")
     }
 
