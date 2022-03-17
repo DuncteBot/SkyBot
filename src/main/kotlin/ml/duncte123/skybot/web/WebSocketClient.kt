@@ -213,6 +213,10 @@ class WebSocketClient(
     }
 
     private fun connect() {
+        if (socket != null && socket.isOpen) {
+            socket.sendClose(WebSocketCloseCode.NORMAL)
+        }
+
         socket = factory.createSocket(config.websocket.url)
 
         socket.setDirectTextMessage(false)

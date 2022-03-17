@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Objects;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
@@ -76,24 +75,24 @@ public class BanCommand extends ModBaseCommand {
             return;
         }
 
-        final User toBan = toBanMember.getUser();
-        if (toBan.equals(ctx.getAuthor()) &&
-            !ctx.getMember().canInteract(Objects.requireNonNull(ctx.getGuild().getMember(toBan)))) {
-            sendMsg(ctx, "You are not permitted to perform this action.");
-            return;
-        }
-
         String reason = "No reason given";
         final var flags = ctx.getParsedFlags(this);
 
         if (flags.containsKey("r")) {
             reason = String.join(" ", flags.get("r"));
+        } else if (args.size() > 1 && !args.get(1).equals("--nodel")) {
+            final var example = "\nExample: `%sban %s -r %s`".formatted(
+                ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
+            );
+
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
         }
 
         final String fReason = reason;
         final int delDays = flags.containsKey("nodel") ? 0 : 1;
+        final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBan.getId(), delDays, String.format("%#s: %s", ctx.getAuthor(), fReason))
+        ctx.getGuild().ban(toBan, delDays, String.format("%#s: %s", ctx.getAuthor(), fReason))
             .reason(String.format("%#s: %s", ctx.getAuthor(), fReason))
             .queue(
             (m) -> {

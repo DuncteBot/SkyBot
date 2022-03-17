@@ -36,7 +36,7 @@ plugins {
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
-val numberVersion = "3.106.2"
+val numberVersion = "3.106.3"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -55,6 +55,7 @@ repositories {
     maven("https://repo.jenkins-ci.org/releases")
     maven("https://duncte123.jfrog.io/artifactory/maven")
     maven("https://m2.duncte123.dev/releases")
+    maven("https://m2.duncte123.dev/snapshots")
     maven("https://m2.dv8tion.net/releases")
     maven("https://maven.notfab.net/Hosted")
     maven("https://jitpack.io")
@@ -75,14 +76,14 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
 
     // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.9")
+    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.11")
 
     // JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
         exclude(module = "opus-java")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.6.1")
+    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.8.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
@@ -183,8 +184,6 @@ task<Exec>("botVersion") {
 }
 
 build.apply {
-    println("Git token: ${System.getenv("GITHUB_TOKEN")}")
-
     dependsOn(printVersion)
     dependsOn(clean)
     dependsOn(jar)
@@ -322,6 +321,7 @@ githubRelease {
     owner("DuncteBot")
     repo("SkyBot")
     tagName("v$numberVersion")
+    targetCommitish("main")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(false)
     prerelease(false)

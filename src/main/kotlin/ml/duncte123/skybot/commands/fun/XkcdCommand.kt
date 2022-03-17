@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -71,11 +72,11 @@ class XkcdCommand : Command() {
     }
 
     private fun getInfo(id: Int): ObjectNode {
-        return WebUtils.ins.getJSONObject("http://xkcd.com/$id/info.0.json").execute()
+        return WebUtils.ins.getJSONObject("http://xkcd.com/$id/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
     }
 
     private fun getLatest(): ObjectNode {
-        return WebUtils.ins.getJSONObject("http://xkcd.com/info.0.json").execute()
+        return WebUtils.ins.getJSONObject("http://xkcd.com/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
     }
 
     private fun getRandom(): Int {

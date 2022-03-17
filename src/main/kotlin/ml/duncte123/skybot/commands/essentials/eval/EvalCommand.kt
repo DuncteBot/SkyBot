@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import com.github.natanbc.reliqua.request.PendingRequest
 import me.duncte123.botcommons.StringUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
@@ -213,6 +214,7 @@ class EvalCommand : Command() {
         body.append("lang", lang)
 
         return WebUtils.ins.postRequest("$base/paste/new", body)
+            .setRateLimiter(RateLimiter.directLimiter())
             .build(
                 {
                     return@build base + it.request().url().url().path

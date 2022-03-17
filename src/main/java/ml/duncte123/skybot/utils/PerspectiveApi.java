@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebParserUtils;
@@ -95,7 +96,11 @@ public class PerspectiveApi {
     }
 
     private static JsonNode makeRequest(String text, String channelId, String apiKey, ProfanityFilterType filterType, ObjectMapper mapper) throws RequestException {
-        return WebUtils.ins.postRequest(genUrl(apiKey), Objects.requireNonNull(genBody(text, channelId, filterType, mapper)))
+        return WebUtils.ins.postRequest(
+            genUrl(apiKey),
+                Objects.requireNonNull(genBody(text, channelId, filterType, mapper))
+            )
+            .setRateLimiter(RateLimiter.directLimiter())
             .build((it) -> WebParserUtils.toJSONObject(it, mapper), WebParserUtils::handleError)
             .execute();
     }

@@ -19,17 +19,13 @@
 package ml.duncte123.skybot.commands.fun;
 
 import gnu.trove.map.TLongIntMap;
-import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MapUtils;
-import org.jsoup.nodes.Element;
 
 import javax.annotation.Nonnull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 
 public class CSShumorCommand extends Command {
@@ -48,27 +44,30 @@ public class CSShumorCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (ctx.getRandom().nextInt(2) == 1) {
+        sendRedditPost("css_irl", cssIndex, ctx, true);
+
+        // broken shit :D
+        /*if (ctx.getRandom().nextInt(2) == 1) {
             sendRedditPost("css_irl", cssIndex, ctx, true);
         } else {
             sendCssJoke(ctx);
-        }
+        }*/
     }
 
     // Thanks for the regex ramidzkh
-    private void sendCssJoke(CommandContext ctx) {
-        WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
-            final Element code = doc.selectFirst(".crayon-pre");
-            final String text = code.text()
-                .replace("*/ ", "*/\n") // Newline + tab after comments
-                .replace("{ ", "{\n\t") // Newline + tab after {
-                .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
-                .replace("; }", ";\n}");
-            final String message = String.format("```CSS\n%s```", text);
-            final Element link = doc.selectFirst(".funny h2 a");
-            sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
-                .setTitle(link.text(), link.attr("href"))
-                .setDescription(message));
-        });
-    }
+//    private void sendCssJoke(CommandContext ctx) {
+//        WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
+//            final Element code = doc.selectFirst(".crayon-pre");
+//            final String text = code.text()
+//                .replace("*/ ", "*/\n") // Newline + tab after comments
+//                .replace("{ ", "{\n\t") // Newline + tab after {
+//                .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
+//                .replace("; }", ";\n}");
+//            final String message = String.format("```CSS\n%s```", text);
+//            final Element link = doc.selectFirst(".funny h2 a");
+//            sendEmbed(ctx, EmbedUtils.getDefaultEmbed()
+//                .setTitle(link.text(), link.attr("href"))
+//                .setDescription(message));
+//        });
+//    }
 }

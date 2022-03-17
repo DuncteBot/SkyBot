@@ -26,6 +26,8 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
+import java.util.List;
+
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
@@ -39,7 +41,7 @@ public class UnbanCommand extends ModBaseCommand {
             "pardon",
         };
         this.help = "Removes the ban for a user";
-        this.usage = "<user> [-r reason]";
+        this.usage = "<@user> [-r reason]";
         this.botPermissions = new Permission[]{
             Permission.BAN_MEMBERS,
         };
@@ -57,12 +59,12 @@ public class UnbanCommand extends ModBaseCommand {
         final var flags = ctx.getParsedFlags(this);
         final String argsJoined = String.join(" ", flags.get("undefined"));
         final User mod = ctx.getAuthor();
+        final List<String> args = ctx.getArgs();
 
         ctx.getJDAGuild().retrieveBanList().queue((list) -> {
             for (final Guild.Ban ban : list) {
                 final User bannedUser = ban.getUser();
                 final String userFormatted = bannedUser.getAsTag();
-
 
                 if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||
                     userFormatted.equalsIgnoreCase(argsJoined)) {
@@ -71,9 +73,16 @@ public class UnbanCommand extends ModBaseCommand {
 
                     if (flags.containsKey("r")) {
                         reason = mod.getAsTag() + ": " + String.join(" ", flags.get("r"));
+                    } else if (args.size() > 1) {
+                        final var example = "\nExample: `%sunban %s -r %s`".formatted(
+                            ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
+                        );
+
+                        sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
                     }
 
-                    ctx.getJDAGuild().unban(bannedUser)
+                    ctx.getJDAGuild()
+                        .unban(bannedUser)
                         .reason(reason)
                         .queue();
 

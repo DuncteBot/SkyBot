@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
@@ -44,7 +45,11 @@ public class KittyCommand extends Command {
         final String apiKey = ctx.getConfig().apis.thecatapi;
         final String url = "https://api.thecatapi.com/v1/images/search?limit=1";
 
-        WebUtils.ins.getJSONArray(url, null, (req) -> req.header("x-api-key", apiKey)).async((json) -> {
+        WebUtils.ins.getJSONArray(
+            url,
+            (it) -> it.setRateLimiter(RateLimiter.directLimiter()),
+            (req) -> req.header("x-api-key", apiKey)
+        ).async((json) -> {
             sendEmbed(ctx, EmbedUtils.embedImage(
                 json.get(0).get("url").asText()
             ));

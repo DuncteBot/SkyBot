@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import com.github.natanbc.reliqua.request.RequestException
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -36,7 +37,7 @@ class AdviceCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         try {
-            val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice").execute()
+            val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
 
             if (json.has("message")) {
                 val type = json["message"]["type"].asText()

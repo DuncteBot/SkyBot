@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
@@ -34,7 +35,7 @@ class QuoteCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        WebUtils.ins.getText("http://inspirobot.me/api?${getQ()}").async {
+        WebUtils.ins.getText("http://inspirobot.me/api?${getQ()}") { it.setRateLimiter(RateLimiter.directLimiter()) }.async {
             sendEmbed(ctx, EmbedUtils.embedImage(it))
         }
     }

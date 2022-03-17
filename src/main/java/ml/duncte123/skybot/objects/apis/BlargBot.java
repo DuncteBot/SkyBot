@@ -21,8 +21,10 @@ package ml.duncte123.skybot.objects.apis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botcommons.web.ContentType;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
 import okhttp3.RequestBody;
@@ -71,15 +73,15 @@ public class BlargBot {
 
 
     private PendingRequest<byte[]> makeRequest(String path, JsonNode body) {
-        return WebUtils.ins.prepareRaw(
+        return WebUtils.ins.prepareBuilder(
             defaultRequest()
                 .url("https://api.blargbot.xyz/api/v1/" + path)
                 .header("Content-Type", ContentType.JSON.getType())
                 .post(RequestBody.create(null, jsonToString(body)))
-                .addHeader("Authorization", token)
-                .build(),
-            IOHelper::read
-        );
+                .addHeader("Authorization", token),
+            (it) -> it.setRateLimiter(RateLimiter.directLimiter()),
+            null
+        ).build(IOHelper::read, WebParserUtils::handleError);
     }
 
     private byte[] jsonToString(JsonNode body) {

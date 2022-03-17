@@ -25,10 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.natanbc.reliqua.Reliqua
-import com.github.natanbc.reliqua.limiter.factory.RateLimiterFactory
-import com.github.natanbc.reliqua.request.PendingRequest
-import com.github.natanbc.reliqua.util.ResponseMapper
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.web.ContentType.JSON
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
@@ -38,7 +35,6 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.LoggerFactory
@@ -49,7 +45,6 @@ import java.util.*
 class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val notFollowingRedirectClient = NotFollowingRedirects()
 
     fun getCustomCommands(): ArrayNode {
         return paginateData("customcommands")
@@ -823,18 +818,16 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return response["success"].asBoolean()
     }
 
-    fun getRCGUrl(): String? {
-        val request = defaultRequest("images/rcg/random", false)
+    fun getRCGUrl(): Pair<String, String>? {
+        val response = executeRequest(defaultRequest("images/rcg/random-v2", false))
 
-        // don't follow the redirect so we return faster
-        return notFollowingRedirectClient.prepareRaw(request.build()) {
-            // only return the url on a 200 status code
-            if (it.code() == 302) {
-                return@prepareRaw it.header("Location")
-            }
+        if (!response["success"].asBoolean()) {
+            return null
+        }
 
-            return@prepareRaw null
-        }.execute()
+        val data = response["data"]
+
+        return data["image"].asText() to data["page"].asText()
     }
 
     private fun buildValidationErrorString(error: ObjectNode): String {
@@ -878,13 +871,15 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         val request = defaultRequest(path, false)
             .post(body).addHeader("Content-Type", JSON.type)
 
-        return WebUtils.ins.prepareRaw(request.build()) {
-            if (it.header("Content-Type") == "application/json") {
-                return@prepareRaw null to mapper.readTree(it.body()!!.byteStream())
-            }
+        return WebUtils.ins.prepareBuilder(request, { it.setRateLimiter(RateLimiter.directLimiter()) }, null)
+            .build({
+                if (it.header("Content-Type") == "application/json") {
+                    return@build null to mapper.readTree(it.body()!!.byteStream())
+                }
 
-            return@prepareRaw IOHelper.read(it) to null
-        }.execute()
+                return@build IOHelper.read(it) to null
+            }, WebParserUtils::handleError)
+            .execute()
     }
 
     private fun parseTripleResponse(response: JsonNode): Triple<Boolean, Boolean, Boolean> {
@@ -943,7 +938,15 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun executeRequest(request: Request.Builder): JsonNode {
-        return WebUtils.ins.prepareRaw(request.build()) { mapper.readTree(it.body()!!.byteStream()) }.execute()
+        return WebUtils.ins.prepareBuilder(
+            request,
+            {
+                it.setRateLimiter(RateLimiter.directLimiter())
+            },
+            null
+        )
+            .build({ mapper.readTree(it.body()!!.byteStream()) }, WebParserUtils::handleError)
+            .execute()
     }
 
     private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {
@@ -964,17 +967,6 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     private fun JsonNode.toJsonString() = mapper.writeValueAsString(this)
 
     private fun String.enc() = urlEncodeString(this)
-
-    // a big hack :D
-    private class NotFollowingRedirects : Reliqua(
-        OkHttpClient.Builder().followRedirects(false).build(),
-        RateLimiterFactory.directFactory(), // No rate limiting :D
-        false
-    ) {
-        fun <T> prepareRaw(request: Request, mapper: ResponseMapper<T>): PendingRequest<T> {
-            return createRequest(request).build(mapper, WebParserUtils::handleError)
-        }
-    }
 
     companion object {
 //        const val API_HOST = "http://localhost:8081"

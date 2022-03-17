@@ -24,8 +24,6 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 
 import javax.annotation.Nonnull;
@@ -60,52 +58,45 @@ public class KickCommand extends ModBaseCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<Member> mentioned = ctx.getMentionedArg(0);
+        final List<String> args = ctx.getArgs();
 
         if (mentioned.isEmpty()) {
-            sendMsg(ctx, "I could not find any members with name " + ctx.getArgs().get(0));
+            sendMsg(ctx, "I could not find any members with name " + args.get(0));
             return;
         }
 
         final Member toKickMember = mentioned.get(0);
+        final Member member = ctx.getMember();
 
-        if (!canInteract(ctx.getMember(), toKickMember, "kick", ctx.getChannel())) {
+        if (!canInteract(member, toKickMember, "kick", ctx.getChannel())) {
             return;
         }
 
-        try {
+        final AuditableRestAction<Void> kickAction = ctx.getGuild()
+            .kick(toKickMember)
+            .reason("Kicked by " + ctx.getAuthor().getAsTag());
 
-            final User toKick = toKickMember.getUser();
-            if (toKick.equals(ctx.getAuthor()) || !ctx.getMember().canInteract(toKickMember)) {
-                sendMsg(ctx, "You are not permitted to perform this action.");
-                return;
-            }
+        String reason = null;
+        final var flags = ctx.getParsedFlags(this);
 
-            final AuditableRestAction<Void> kickAction = ctx.getGuild()
-
-                .kick(toKickMember)
-                .reason("Kicked by " + ctx.getAuthor().getAsTag());
-
-            String reason = null;
-            final var flags = ctx.getParsedFlags(this);
-
-            if (flags.containsKey("r")) {
-                reason = String.join(" ", flags.get("r"));
-                kickAction.reason("Kicked by " + String.format("%#s: %s", ctx.getAuthor(), reason));
-            }
-
-            final String finalReason = reason;
-
-            kickAction.queue(
-                (ignored) -> {
-                    ModerationUtils.modLog(ctx.getAuthor(), toKick, "kicked", finalReason, null, ctx.getGuild());
-                    MessageUtils.sendSuccess(ctx.getMessage());
-                }
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+            kickAction.reason("Kicked by " + String.format("%#s: %s", ctx.getAuthor(), reason));
+        } else if (args.size() > 1) {
+            final var example = "\nExample: `%skick %s -r %s`".formatted(
+                ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
             );
-        }
-        catch (HierarchyException ignored) {
-            sendMsg(ctx, "I can't kick that member because his roles are above or equals to mine.");
+
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
         }
 
+        final String finalReason = reason;
 
+        kickAction.queue(
+            (ignored) -> {
+                ModerationUtils.modLog(ctx.getAuthor(), toKickMember.getUser(), "kicked", finalReason, null, ctx.getGuild());
+                MessageUtils.sendSuccess(ctx.getMessage());
+            }
+        );
     }
 }

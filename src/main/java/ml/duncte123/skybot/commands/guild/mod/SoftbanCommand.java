@@ -58,12 +58,6 @@ public class SoftbanCommand extends ModBaseCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgs();
-
-        if (args.size() < 2) {
-            this.sendUsageInstructions(ctx);
-            return;
-        }
-
         final List<Member> mentioned = ctx.getMentionedArg(0);
 
         if (mentioned.isEmpty()) {
@@ -77,34 +71,31 @@ public class SoftbanCommand extends ModBaseCommand {
             return;
         }
 
-        try {
-            final User toBan = toBanMember.getUser();
-            if (toBan.equals(ctx.getAuthor()) && !ctx.getMember().canInteract(toBanMember)) {
-                sendMsg(ctx, "You are not permitted to perform this action.");
-                return;
-            }
+        String reason = "No reason given";
+        final var flags = ctx.getParsedFlags(this);
 
-            String reason = "No reason given";
-            final var flags = ctx.getParsedFlags(this);
+        if (flags.containsKey("r")) {
+            reason = String.join(" ", flags.get("r"));
+        } else if (args.size() > 1) {
+            final var example = "\nExample: `%ssoftban %s -r %s`".formatted(
+                ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
+            );
 
-            if (flags.containsKey("r")) {
-                reason = String.join(" ", flags.get("r"));
-            }
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
+        }
 
-            final String fReason = reason;
+        final String fReason = reason;
+        final User toBan = toBanMember.getUser();
 
-            ctx.getGuild().ban(toBanMember, 1, String.format("%#s: %s", ctx.getAuthor(), fReason))
-                .reason("Kicked by: " + String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(
+        ctx.getGuild().ban(toBanMember, 1, String.format("%#s: %s", ctx.getAuthor(), fReason))
+            .reason("Kicked by: " + String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(
                 nothing -> {
                     ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, null, ctx.getGuild());
                     MessageUtils.sendSuccess(ctx.getMessage());
-                    ctx.getGuild().unban(toBan.getId())
-                        .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag()).queue();
+                    ctx.getGuild().unban(toBan)
+                        .reason("(softban) Kicked by: " + ctx.getAuthor().getAsTag())
+                        .queue();
                 }
             );
-        }
-        catch (HierarchyException ignored) {
-            sendMsg(ctx, "I can't ban that member because his roles are above or equals to mine.");
-        }
     }
 }

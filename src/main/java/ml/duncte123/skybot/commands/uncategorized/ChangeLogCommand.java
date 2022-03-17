@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import com.github.natanbc.reliqua.limiter.RateLimiter;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
@@ -59,7 +60,10 @@ public class ChangeLogCommand extends Command {
     }
 
     private void fetchLatetstGitHubCommits(CommandContext ctx) {
-        WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
+        WebUtils.ins.getJSONObject(
+            "https://api.github.com/repos/DuncteBot/SkyBot/releases/latest",
+            (it) -> it.setRateLimiter(RateLimiter.directLimiter())
+        ).async(json -> {
             final String body = json.get("body").asText();
             final String version = json.get("tag_name").asText();
             final EmbedBuilder builder = EmbedUtils.getDefaultEmbed()

@@ -67,7 +67,6 @@ public class ModerationUtils {
     private ModerationUtils() {}
 
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
-
         if (mod.equals(target)) {
             sendMsg(channel, PROFESSIONAL_RESPONSES[ThreadLocalRandom.current().nextInt(PROFESSIONAL_RESPONSES.length)]);
             return false;

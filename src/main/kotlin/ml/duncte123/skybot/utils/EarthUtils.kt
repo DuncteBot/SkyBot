@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import gnu.trove.map.TLongIntMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed
@@ -57,63 +58,64 @@ object EarthUtils {
     fun sendRedditPost(reddit: String, index: TLongIntMap, ctx: CommandContext, all: Boolean = false) {
         val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
 
-        WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
-            val posts = it["data"]["children"].filter { filter ->
-                ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
-            }.filter { filter ->
-                filter["data"]["selftext"].asText().length <= 550 &&
-                    filter["data"]["title"].asText().length <= 256
-            }
-
-            if (posts.isEmpty()) {
-                sendError(ctx.message)
-                sendMsg(
-                    ctx,
-                    """Whoops I could not find any posts.
-                    |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)"""
-                        .trimMargin()
-                )
-                return@async
-            }
-
-            val guildId = ctx.guild.idLong
-
-            // We don't need to check for a contains because default value will be 0
-            if (index[guildId] >= posts.size) {
-                index.put(guildId, 0)
-            }
-
-            val postI = index[guildId]
-            var rand = ThreadLocalRandom.current().nextInt(0, posts.size)
-
-            if (postI == rand) {
-                rand = ThreadLocalRandom.current().nextInt(0, posts.size)
-            }
-
-            val post = posts[rand]["data"]
-
-            index.put(guildId, rand)
-
-            val title: String = post["title"].asText()
-            val text: String = post["selftext"].asText("")
-            val url: String = post["id"].asText()
-            val embed = getDefaultEmbed().setTitle(title, "https://redd.it/$url")
-
-            if (text.isNotEmpty()) {
-                embed.setDescription(text)
-            }
-
-            if (post.has("preview")) {
-                val imagesO = post["preview"]
-                val images = imagesO["images"]
-
-                if (images != null) {
-                    val image = images[0]["source"]["url"].asText()
-                    embed.setImage(image.replaceFirst("preview", "i"))
+        WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort") { it.setRateLimiter(RateLimiter.directLimiter()) }
+            .async {
+                val posts = it["data"]["children"].filter { filter ->
+                    ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
+                }.filter { filter ->
+                    filter["data"]["selftext"].asText().length <= 550 &&
+                        filter["data"]["title"].asText().length <= 256
                 }
-            }
 
-            sendEmbed(ctx, embed)
-        }
+                if (posts.isEmpty()) {
+                    sendError(ctx.message)
+                    sendMsg(
+                        ctx,
+                        """Whoops I could not find any posts.
+                        |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)"""
+                            .trimMargin()
+                    )
+                    return@async
+                }
+
+                val guildId = ctx.guild.idLong
+
+                // We don't need to check for a contains because default value will be 0
+                if (index[guildId] >= posts.size) {
+                    index.put(guildId, 0)
+                }
+
+                val postI = index[guildId]
+                var rand = ThreadLocalRandom.current().nextInt(0, posts.size)
+
+                if (postI == rand) {
+                    rand = ThreadLocalRandom.current().nextInt(0, posts.size)
+                }
+
+                val post = posts[rand]["data"]
+
+                index.put(guildId, rand)
+
+                val title: String = post["title"].asText()
+                val text: String = post["selftext"].asText("")
+                val url: String = post["id"].asText()
+                val embed = getDefaultEmbed().setTitle(title, "https://redd.it/$url")
+
+                if (text.isNotEmpty()) {
+                    embed.setDescription(text)
+                }
+
+                if (post.has("preview")) {
+                    val imagesO = post["preview"]
+                    val images = imagesO["images"]
+
+                    if (images != null) {
+                        val image = images[0]["source"]["url"].asText()
+                        embed.setImage(image.replaceFirst("preview", "i"))
+                    }
+                }
+
+                sendEmbed(ctx, embed)
+            }
     }
 }

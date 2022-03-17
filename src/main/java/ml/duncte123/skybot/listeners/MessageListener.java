@@ -80,7 +80,7 @@ public abstract class MessageListener extends BaseListener {
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
     protected final SpamFilter spamFilter = new SpamFilter(variables);
-    protected final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(4,
+    protected final ScheduledExecutorService systemPool = Executors.newSingleThreadScheduledExecutor(
         (r) -> new Thread(r, "Bot-Service-Thread"));
 
     protected MessageListener(Variables variables) {

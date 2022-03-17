@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.web.WebUtils
@@ -94,7 +95,9 @@ class RadioCommand : MusicCommand() {
     private fun loadStations() {
         // Fetch the streams from github
         val json = WebUtils.ins
-            .getJSONArray("https://raw.githubusercontent.com/DuncteBot/dunctebot.github.io/development/resources/radio_streams.json")
+            .getJSONArray(
+                "https://raw.githubusercontent.com/DuncteBot/dunctebot.github.io/development/resources/radio_streams.json"
+            ) { it.setRateLimiter(RateLimiter.directLimiter()) }
             .execute()
         // Clear before adding more (in case of reloading)
         radioStreams.clear()

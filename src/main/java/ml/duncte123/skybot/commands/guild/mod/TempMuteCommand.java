@@ -94,6 +94,12 @@ public class TempMuteCommand extends ModBaseCommand {
 
         if (flags.containsKey("r")) {
             reason = String.join(" ", flags.get("r"));
+        } else if (args.size() > 2) {
+            final var example = "\nExample: `%stempmute %s %s -r %s`".formatted(
+                ctx.getPrefix(), args.get(0), args.get(1), String.join(" ", args.subList(2, args.size()))
+            );
+
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
         }
 
         final ParsedDuration duration = getDuration(args.get(1), getName(), ctx, ctx.getPrefix());

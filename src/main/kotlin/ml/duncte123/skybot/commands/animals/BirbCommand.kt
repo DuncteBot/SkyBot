@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.animals
 
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
@@ -35,7 +36,7 @@ class BirbCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
+        WebUtils.ins.getJSONArray("https://shibe.online/api/birds") { it.setRateLimiter(RateLimiter.directLimiter()) }.async {
             sendEmbed(ctx, EmbedUtils.embedImage(it[0].asText()))
         }
     }

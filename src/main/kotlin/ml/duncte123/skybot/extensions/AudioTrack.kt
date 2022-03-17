@@ -21,6 +21,7 @@ package ml.duncte123.skybot.extensions
 import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
 import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
+import com.github.natanbc.reliqua.limiter.RateLimiter
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
@@ -115,7 +116,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         if (this is SoundCloudAudioTrack ||
             (this is HttpAudioTrack && this.info.uri.startsWith("https://www.pornhub.com/"))
         ) {
-            val page = WebUtils.ins.scrapeWebPage(this.info.uri).execute()
+            val page = WebUtils.ins.scrapeWebPage(this.info.uri) { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
             val elems = page.select("meta[property=og:image]")
 
             if (!elems.isEmpty()) {
