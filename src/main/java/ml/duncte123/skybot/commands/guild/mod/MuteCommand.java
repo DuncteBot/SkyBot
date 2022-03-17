@@ -87,6 +87,12 @@ public class MuteCommand extends ModBaseCommand {
 
         if (flags.containsKey("r")) {
             reason = String.join(" ", flags.get("r"));
+        } else if (args.size() > 1) {
+            final var example = "\nExample: `%smute %s -r %s`".formatted(
+                ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
+            );
+
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
         }
 
         ctx.getGuild().addRoleToMember(toMute, role)
