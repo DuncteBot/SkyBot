@@ -44,6 +44,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.*;
 
 public class TagCommand extends Command {
 
+    // TODO: don't cache these, look them up in the database instead (it's fast enough)
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
     private final TLongObjectMap<List<Tag>> guildTags = MapUtils.newLongObjectMap();
 

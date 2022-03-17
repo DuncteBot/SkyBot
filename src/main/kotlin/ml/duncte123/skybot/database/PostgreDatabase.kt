@@ -34,6 +34,7 @@ import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
+import java.sql.SQLException
 import java.time.OffsetDateTime
 
 class PostgreDatabase : AbstractDatabase() {
@@ -93,8 +94,34 @@ class PostgreDatabase : AbstractDatabase() {
         invoke: String,
         message: String,
         callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
-    ) {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT COUNT(guild_id) AS cmd_count FROM custom_commands WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+
+                smt.executeQuery().use { res ->
+                    // TODO: make count constant
+                    if (res.next() && res.getInt("cmd_count") >= 50) {
+                        callback(Triple(false, false, true))
+                        return@runOnThread
+                    }
+                }
+            }
+
+            con.prepareStatement("INSERT INTO custom_commands(guild_id, invoke, message, auto_response) VALUES (?, ?, ?, ?)").use { smt ->
+                smt.setLong(1, guildId)
+                smt.setString(2, invoke)
+                smt.setString(3, message)
+                smt.setBoolean(4, false)
+
+                try {
+                    smt.execute()
+                    callback(Triple(true, false, false))
+                } catch (e: SQLException) {
+                    callback(Triple(false, false, false))
+                }
+            }
+        }
     }
 
     override fun updateCustomCommand(
