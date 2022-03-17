@@ -28,6 +28,7 @@ import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
@@ -227,49 +228,62 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.setLong(2, guildSettings.autoroleRole)
                 smt.setInt(3, guildSettings.embedColor)
                 smt.setInt(4, guildSettings.leaveTimeout)
-                smt.setBoolean(4, guildSettings.isAnnounceTracks)
-                smt.setBoolean(5, guildSettings.isAllowAllToStop)
+                smt.setBoolean(5, guildSettings.isAnnounceTracks)
+                smt.setBoolean(6, guildSettings.isAllowAllToStop)
                 // TODO: remove, discord has this feature
-                smt.setString(6, guildSettings.serverDesc)
+                smt.setString(7, guildSettings.serverDesc)
 
-                smt.setLong(7, guildSettings.welcomeLeaveChannel)
-                smt.setBoolean(8, guildSettings.isEnableJoinMessage)
-                smt.setBoolean(9, guildSettings.isEnableLeaveMessage)
-                smt.setString(10, guildSettings.customJoinMessage)
-                smt.setString(11, guildSettings.customLeaveMessage)
+                smt.setLong(8, guildSettings.welcomeLeaveChannel)
+                smt.setBoolean(9, guildSettings.isEnableJoinMessage)
+                smt.setBoolean(10, guildSettings.isEnableLeaveMessage)
+                smt.setString(11, guildSettings.customJoinMessage)
+                smt.setString(12, guildSettings.customLeaveMessage)
 
-                smt.setLong(12, guildSettings.logChannel)
-                smt.setLong(13, guildSettings.muteRoleId)
-                smt.setBoolean(14, guildSettings.isEnableSwearFilter)
-                smt.setString(15, guildSettings.filterType.type)
-                smt.setFloat(16, guildSettings.aiSensitivity)
+                smt.setLong(13, guildSettings.logChannel)
+                smt.setLong(14, guildSettings.muteRoleId)
+                smt.setBoolean(15, guildSettings.isEnableSwearFilter)
+                smt.setString(16, guildSettings.filterType.type)
+                smt.setFloat(17, guildSettings.aiSensitivity)
 
-                smt.setBoolean(17, guildSettings.isAutoDeHoist)
-                smt.setBoolean(18, guildSettings.isFilterInvites)
-                smt.setBoolean(19, guildSettings.isEnableSpamFilter)
-                smt.setBoolean(20, guildSettings.kickState)
-                smt.setString(21, convertJ2S(guildSettings.ratelimits))
-                smt.setInt(22, guildSettings.spamThreshold)
-                smt.setBoolean(23, guildSettings.isYoungAccountBanEnabled)
-                smt.setInt(24, guildSettings.youngAccountThreshold)
+                smt.setBoolean(18, guildSettings.isAutoDeHoist)
+                smt.setBoolean(19, guildSettings.isFilterInvites)
+                smt.setBoolean(20, guildSettings.isEnableSpamFilter)
+                smt.setBoolean(21, guildSettings.kickState)
+                smt.setString(22, convertJ2S(guildSettings.ratelimits))
+                smt.setInt(23, guildSettings.spamThreshold)
+                smt.setBoolean(24, guildSettings.isYoungAccountBanEnabled)
+                smt.setInt(25, guildSettings.youngAccountThreshold)
 
                 // Logging :)
-                smt.setBoolean(25, guildSettings.isBanLogging)
-                smt.setBoolean(26, guildSettings.isUnbanLogging)
-                smt.setBoolean(27, guildSettings.isMuteLogging)
-                smt.setBoolean(28, guildSettings.isWarnLogging)
-                smt.setBoolean(29, guildSettings.isMemberLogging)
-                smt.setBoolean(30, guildSettings.isInviteLogging)
-                smt.setBoolean(31, guildSettings.isMessageLogging)
+                smt.setBoolean(26, guildSettings.isBanLogging)
+                smt.setBoolean(27, guildSettings.isUnbanLogging)
+                smt.setBoolean(28, guildSettings.isMuteLogging)
+                smt.setBoolean(29, guildSettings.isWarnLogging)
+                smt.setBoolean(30, guildSettings.isMemberLogging)
+                smt.setBoolean(31, guildSettings.isInviteLogging)
+                smt.setBoolean(32, guildSettings.isMessageLogging)
 
                 // What guild?
-                smt.setLong(32, guildSettings.guildId)
+                smt.setLong(33, guildSettings.guildId)
+
+                callback(smt.execute())
             }
         }
     }
 
     override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
-        TODO("Not yet implemented")
+        this.connection.use { con ->
+            con.prepareStatement("""INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
+                |VALUES (?, ?, ?, ?) 
+                |ON CONFLICT (guild_id) DO NOTHING;""".trimMargin()).use { smt ->
+                smt.setLong(1, guildSettings.guildId)
+                smt.setString(2, Settings.PREFIX)
+                smt.setString(3, guildSettings.customJoinMessage)
+                smt.setString(4, guildSettings.customLeaveMessage)
+
+                callback(smt.execute())
+            }
+        }
     }
 
     override fun addWordToBlacklist(guildId: Long, word: String) {
@@ -518,7 +532,7 @@ class PostgreDatabase : AbstractDatabase() {
         val list = arrayListOf<WarnAction>()
 
         con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
-            smt.setString(1, guildId.toString())
+            smt.setLong(1, guildId)
 
             smt.executeQuery().use { res ->
                 while (res.next()) {
