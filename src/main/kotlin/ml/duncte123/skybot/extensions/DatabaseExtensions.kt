@@ -19,9 +19,10 @@
 package ml.duncte123.skybot.extensions
 
 import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.utils.Utils.ratelimmitChecks
+import com.dunctebot.models.utils.Utils.toLong
 import ml.duncte123.skybot.objects.api.Reminder
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.GuildSettingsUtils
 import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -47,19 +48,19 @@ fun ResultSet.toReminder() = Reminder(
 fun ResultSet.toGuildSetting() = GuildSetting(this.getLong("guild_id"))
     .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
     .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
-    .setCustomJoinMessage(GuildSettingsUtils.replaceNewLines(this.getString("customWelcomeMessage")))
+    .setCustomJoinMessage(this.getString("customWelcomeMessage"))
     .setCustomPrefix(this.getString("prefix"))
-    .setLogChannel(GuildSettingsUtils.toLong(this.getString("logChannelId")))
-    .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(this.getString("welcomeLeaveChannel")))
-    .setCustomLeaveMessage(GuildSettingsUtils.replaceNewLines(this.getString("customLeaveMessage")))
-    .setAutoroleRole(GuildSettingsUtils.toLong(this.getString("autoRole")))
-    .setServerDesc(GuildSettingsUtils.replaceNewLines(this.getString("serverDesc")))
+    .setLogChannel(toLong(this.getString("logChannelId")))
+    .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
+    .setCustomLeaveMessage(this.getString("customLeaveMessage"))
+    .setAutoroleRole(toLong(this.getString("autoRole")))
+    .setServerDesc(this.getString("serverDesc"))
     .setAnnounceTracks(this.getBoolean("announceNextTrack"))
     .setAutoDeHoist(this.getBoolean("autoDeHoist"))
     .setFilterInvites(this.getBoolean("filterInvites"))
     .setEnableSpamFilter(this.getBoolean("spamFilterState"))
-    .setMuteRoleId(GuildSettingsUtils.toLong(this.getString("muteRoleId")))
-    .setRatelimits(GuildSettingsUtils.ratelimmitChecks(this.getString("ratelimits")))
+    .setMuteRoleId(toLong(this.getString("muteRoleId")))
+    .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
     .setKickState(this.getBoolean("kickInsteadState"))
     .setLeaveTimeout(this.getInt("leave_timeout"))
     .setSpamThreshold(this.getInt("spam_threshold"))

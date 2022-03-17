@@ -20,13 +20,14 @@ package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.Utils.convertJ2S
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gnu.trove.map.TLongLongMap
+import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
@@ -56,7 +57,7 @@ class PostreDatabase : AbstractDatabase() {
                 ClassLoaderResourceAccessor(),
                 JdbcConnection(con)
             ).use { lb ->
-                lb.update("")
+                lb.update(Contexts())
             }
         }
     }
@@ -152,25 +153,7 @@ class PostreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun deleteGuildSetting(guildId: Long) {
-        val queries = arrayOf(
-            "DELETE FROM guild_settings WHERE guild_id = ?",
-            "DELETE FROM vc_autoroles WHERE guild_id = ?",
-            "DELETE FROM blacklisted_words WHERE guild_id = ?",
-            "DELETE FROM warn_actions WHERE guild_id = ?",
-            "DELETE FROM custom_commands WHERE guild_id = ?",
-        )
-
-        this.connection.use { con ->
-            queries.forEach { q ->
-                con.prepareStatement(q) .use { smt ->
-                    smt.setLong(1, guildId)
-
-                    smt.execute()
-                }
-            }
-        }
-    }
+    override fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
 
     override fun purgeGuildSettings(guildIds: List<Long>) {
         val queries = arrayOf(
@@ -196,7 +179,93 @@ class PostreDatabase : AbstractDatabase() {
     }
 
     override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
-        TODO("Not yet implemented")
+        this.connection.use { con ->
+            // TODO: remove server_description, discord has this feature now
+            con.prepareStatement(
+                """UPDATE guild_settings SET
+                    |prefix = ?,
+                    |auto_role_id = ?,
+                    |embed_color = ?,
+                    |voice_leave_timeout_seconds = ?,
+                    |announce_track_enabled = ?,
+                    |allow_all_to_stop = ?,
+                    |server_description = ?,
+                    |
+                    |join_leave_channel_id = ?,
+                    |join_message_enabled = ?,
+                    |leave_message_enabled = ?,
+                    |join_message = ?,
+                    |leave_message = ?,
+                    |
+                    |log_channel_id = ?,
+                    |mute_role_id = ?,
+                    |swear_filter_enabled = ?,
+                    |swear_filter_type = ?,
+                    |swear_sensitivity = ?,
+                    |
+                    |auto_dehoist_enabled = ?,
+                    |invite_filter_enabled = ?,
+                    |spam_filter_state = ?,
+                    |kick_instead_state = ?,
+                    |ratelimits = ?,
+                    |spam_threshold = ?,
+                    |ban_young_account_enabled = ?,
+                    |ban_young_account_threshold_days = ?,
+                    |
+                    |ban_logging_enabled = ?,
+                    |unban_logging_enabled = ?,
+                    |mute_logging_enabled = ?,
+                    |warn_logging_enabled = ?,
+                    |member_logging_enabled = ?,
+                    |invite_logging_enabled = ?,
+                    |message_logging_enabled = ?
+                    |
+                    |WHERE guild_id = ?
+                """.trimMargin()
+            ).use { smt ->
+                smt.setString(1, guildSettings.customPrefix)
+                smt.setLong(2, guildSettings.autoroleRole)
+                smt.setInt(3, guildSettings.embedColor)
+                smt.setInt(4, guildSettings.leaveTimeout)
+                smt.setBoolean(4, guildSettings.isAnnounceTracks)
+                smt.setBoolean(5, guildSettings.isAllowAllToStop)
+                // TODO: remove, discord has this feature
+                smt.setString(6, guildSettings.serverDesc)
+
+                smt.setLong(7, guildSettings.welcomeLeaveChannel)
+                smt.setBoolean(8, guildSettings.isEnableJoinMessage)
+                smt.setBoolean(9, guildSettings.isEnableLeaveMessage)
+                smt.setString(10, guildSettings.customJoinMessage)
+                smt.setString(11, guildSettings.customLeaveMessage)
+
+                smt.setLong(12, guildSettings.logChannel)
+                smt.setLong(13, guildSettings.muteRoleId)
+                smt.setBoolean(14, guildSettings.isEnableSwearFilter)
+                smt.setString(15, guildSettings.filterType.type)
+                smt.setFloat(16, guildSettings.aiSensitivity)
+
+                smt.setBoolean(17, guildSettings.isAutoDeHoist)
+                smt.setBoolean(18, guildSettings.isFilterInvites)
+                smt.setBoolean(19, guildSettings.isEnableSpamFilter)
+                smt.setBoolean(20, guildSettings.kickState)
+                smt.setString(21, convertJ2S(guildSettings.ratelimits))
+                smt.setInt(22, guildSettings.spamThreshold)
+                smt.setBoolean(23, guildSettings.isYoungAccountBanEnabled)
+                smt.setInt(24, guildSettings.youngAccountThreshold)
+
+                // Logging :)
+                smt.setBoolean(25, guildSettings.isBanLogging)
+                smt.setBoolean(26, guildSettings.isUnbanLogging)
+                smt.setBoolean(27, guildSettings.isMuteLogging)
+                smt.setBoolean(28, guildSettings.isWarnLogging)
+                smt.setBoolean(29, guildSettings.isMemberLogging)
+                smt.setBoolean(30, guildSettings.isInviteLogging)
+                smt.setBoolean(31, guildSettings.isMessageLogging)
+
+                // What guild?
+                smt.setLong(32, guildSettings.guildId)
+            }
+        }
     }
 
     override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {

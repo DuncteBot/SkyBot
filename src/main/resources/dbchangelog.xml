@@ -54,8 +54,8 @@
             <column name="mute_role_id" type="bigint"/>
             <column name="swear_filter_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="swear_filter_type" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
-            <!-- TODO: Fix, this is the incorrect type and value -->
-            <column name="swear_sensitivity" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
+            <column name="swear_sensitivity" type="real" defaultValue="0.8"/>
+
             <column name="auto_dehoist_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="invite_filter_enabled" type="boolean" defaultValueBoolean="false"/>
             <column name="spam_filter_state" type="boolean" defaultValueBoolean="false"/>
