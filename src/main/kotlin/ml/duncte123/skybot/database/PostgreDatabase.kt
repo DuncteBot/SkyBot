@@ -806,12 +806,30 @@ class PostgreDatabase : AbstractDatabase() {
         callback(tags)
     }
 
-    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        TODO("Not yet implemented")
+    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)").use { smt ->
+                smt.setLong(1, tag.ownerId)
+                smt.setString(2, tag.name)
+                smt.setString(3, tag.content)
+
+                try {
+                    smt.execute()
+                    callback(true, "")
+                } catch (e: SQLException) {
+                    callback(false, e.message ?: "Unknown failure")
+                }
+            }
+        }
     }
 
-    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        TODO("Not yet implemented")
+    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM tags WHERE id = ?").use { smt ->
+                smt.setInt(1, tag.id)
+                smt.execute()
+            }
+        }
     }
 
     override fun createReminder(
