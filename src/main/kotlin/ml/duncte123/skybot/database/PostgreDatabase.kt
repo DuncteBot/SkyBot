@@ -680,16 +680,44 @@ class PostgreDatabase : AbstractDatabase() {
 
     override fun purgeMutesSync(ids: List<Int>) = this.purgeMutes(ids)
 
-    override fun createBanBypass(guildId: Long, userId: Long) {
-        TODO("Not yet implemented")
+    override fun createBanBypass(guildId: Long, userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO ban_bypasses(guild_id, user_id) VALUES (?, ?) ON CONFLICT (guild_id, user_id) DO NOTHING"
+            ).use { smt ->
+                smt.setLong(1, guildId)
+                smt.setLong(2, userId)
+                smt.execute()
+            }
+        }
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.setLong(2, userId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback(
+                            BanBypas(res.getLong("guild_id"), res.getLong("user_id"))
+                        )
+                    } else {
+                        callback(null)
+                    }
+                }
+            }
+        }
     }
 
-    override fun deleteBanBypass(banBypass: BanBypas) {
-        TODO("Not yet implemented")
+    override fun deleteBanBypass(banBypass: BanBypas) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setLong(1, banBypass.guildId)
+                smt.setLong(2, banBypass.userId)
+                smt.execute()
+            }
+        }
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) = runOnThread {

@@ -213,4 +213,16 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="8" author="duncte123">
+        <createTable tableName="ban_bypasses">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ban_bypass"/>
+            </column>
+            <column name="user_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ban_bypass"/>
+            </column>
+        </createTable>
+        //
+    </changeSet>
 </databaseChangeLog>
