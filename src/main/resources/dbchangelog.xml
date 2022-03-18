@@ -223,6 +223,11 @@
                 <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ban_bypass"/>
             </column>
         </createTable>
-        //
+        <addColumn tableName="tags">
+            <!-- For guild tags :) -->
+            <column name="guild_id" type="bigint" defaultValue="null">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

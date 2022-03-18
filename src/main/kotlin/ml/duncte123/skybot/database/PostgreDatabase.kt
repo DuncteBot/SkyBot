@@ -229,7 +229,7 @@ class PostgreDatabase : AbstractDatabase() {
 
         this.connection.use { con ->
             queries.forEach { q ->
-                con.prepareStatement("$q $questions").use { smt ->
+                con.prepareStatement("$q ($questions)").use { smt ->
                     guildIds.forEachIndexed { index, id ->
                         smt.setLong(index + 1, id)
                     }
@@ -744,16 +744,41 @@ class PostgreDatabase : AbstractDatabase() {
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) = setVcAutoRoleBatch(guildId, listOf(voiceChannelId), roleId)
 
-    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
-        TODO("Not yet implemented")
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) = runOnThread {
+        val values = voiceChannelIds.joinToString(", ") { "(?, ?, ?)" }
+
+        this.connection.use { con ->
+            con.prepareStatement(
+                """INSERT INTO vc_autoroles (guild_id, voice_channel_id, role_id)
+                    |VALUES $values
+                    |ON CONFLICT (guild_id, voice_channel_id, role_id) DO NOTHING""".trimMargin()
+            ).use { smt ->
+                voiceChannelIds.forEachIndexed { index, voiceChannelId ->
+                    smt.setLong(index + 1, guildId)
+                    smt.setLong(index + 2, voiceChannelId)
+                    smt.setLong(index + 3, roleId)
+                }
+                smt.execute()
+            }
+        }
     }
 
-    override fun removeVcAutoRole(voiceChannelId: Long) {
-        TODO("Not yet implemented")
+    override fun removeVcAutoRole(voiceChannelId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM vc_autoroles WHERE voice_channel_id = ?").use { smt ->
+                smt.setLong(1, voiceChannelId)
+                smt.execute()
+            }
+        }
     }
 
-    override fun removeVcAutoRoleForGuild(guildId: Long) {
-        TODO("Not yet implemented")
+    override fun removeVcAutoRoleForGuild(guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM vc_autoroles WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.execute()
+            }
+        }
     }
 
     override fun loadTags(callback: (List<Tag>) -> Unit) = runOnThread {
