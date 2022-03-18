@@ -24,6 +24,7 @@ import com.dunctebot.models.utils.Utils.convertJ2S
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import gnu.trove.map.TLongLongMap
+import gnu.trove.map.hash.TLongLongHashMap
 import io.sentry.Sentry
 import liquibase.Contexts
 import liquibase.Liquibase
@@ -36,6 +37,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.sql.SQLException
+import java.sql.Types
 import java.time.OffsetDateTime
 
 class PostgreDatabase : AbstractDatabase() {
@@ -366,8 +368,15 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun removeWordFromBlacklist(guildId: Long, word: String) {
-        TODO("Not yet implemented")
+    override fun removeWordFromBlacklist(guildId: Long, word: String) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM blacklisted_words WHERE guild_id = ? AND word = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.setString(2, word)
+
+                smt.execute()
+            }
+        }
     }
 
     override fun clearBlacklist(guildId: Long) = runOnThread {
@@ -415,20 +424,67 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun removePatron(userId: Long) {
-        TODO("Not yet implemented")
+    override fun removePatron(userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM patrons WHERE user_id = ?").use { smt ->
+                smt.setLong(1, userId)
+
+                smt.execute()
+            }
+        }
     }
 
-    override fun createOrUpdatePatron(patron: Patron) {
-        TODO("Not yet implemented")
+    override fun createOrUpdatePatron(patron: Patron) = runOnThread {
+        this.createOrUpdatePatronSync(patron)
     }
 
-    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
-        TODO("Not yet implemented")
+    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) = runOnThread {
+        this.createOrUpdatePatronSync(Patron(Patron.Type.ONE_GUILD, userId, guildId))
+        callback(userId, guildId)
     }
 
-    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
-        TODO("Not yet implemented")
+    private fun createOrUpdatePatronSync(patron: Patron) {
+        this.connection.use { con ->
+            con.prepareStatement(
+                """INSERT INTO patrons(user_id, type, guild_id)
+                    |VALUES (?, ?, ?) ON CONFLICT (user_id)
+                    |DO UPDATE SET type = ?, guild_id = ?""".trimMargin()
+            ).use { smt ->
+                smt.setLong(1, patron.userId)
+                smt.setString(2, patron.type.name)
+                smt.setString(4, patron.type.name)
+
+                if (patron.guildId == null) {
+                    smt.setNull(3, Types.REAL)
+                    smt.setNull(5, Types.REAL)
+                } else {
+                    smt.setLong(3, patron.guildId)
+                    smt.setLong(5, patron.guildId)
+                }
+
+                smt.execute()
+            }
+        }
+    }
+
+    // TODO: weird, could just return a nullable long
+    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) = runOnThread {
+        val map = TLongLongHashMap()
+
+        this.connection.use { con ->
+            con.prepareStatement("SELECT guild_id FROM patrons WHERE user_id = ? AND type = ?").use { smt ->
+                smt.setLong(1, userId)
+                smt.setString(2, Patron.Type.ONE_GUILD.name)
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        map.put(userId, res.getLong("guild_id"))
+                    }
+                }
+            }
+        }
+
+        callback(map)
     }
 
     override fun createBan(
