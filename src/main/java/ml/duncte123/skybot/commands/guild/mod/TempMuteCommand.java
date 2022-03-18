@@ -121,9 +121,9 @@ public class TempMuteCommand extends ModBaseCommand {
             guild.getIdLong(),
             (mute) -> {
                 if (mute != null) {
-                    final String modId = mute.getModId();
+                    final long modId = mute.getModId();
                     final User oldMuteMod = guild.getJDA().getUserById(modId);
-                    String modName = "Unknown";
+                    String modName = "Unknown#0000";
 
                     if (oldMuteMod != null) {
                         modName = oldMuteMod.getAsTag();

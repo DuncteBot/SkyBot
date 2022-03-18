@@ -509,8 +509,20 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {
-        TODO("Not yet implemented")
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason) VALUES (?, ?, ?, now(), ?)"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, modId)
+                smt.setLong(3, guildId)
+                smt.setString(4, reason)
+                smt.execute()
+            }
+
+            callback()
+        }
     }
 
     override fun createMute(
@@ -520,8 +532,46 @@ class PostgreDatabase : AbstractDatabase() {
         unmuteDate: String,
         guildId: Long,
         callback: (Mute?) -> Unit
-    ) {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            var oldMute: Mute? = null
+
+            con.prepareStatement("SELECT * FROM temp_mutes WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.setLong(2, userId)
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        oldMute = Mute(
+                            res.getInt("id"),
+                            res.getLong("mod_id"),
+                            res.getLong("user_id"),
+                            "",
+                            res.getLong("guild_id")
+                        )
+                    }
+                }
+            }
+
+            if (oldMute != null) {
+                con.prepareStatement("DELETE FROM temp_mutes WHERE id = ?").use { smt ->
+                    smt.setInt(1, oldMute!!.id)
+                    smt.execute()
+                }
+            }
+
+            con.prepareStatement(
+                "INSERT INTO temp_mutes(user_id, mod_id, guild_id, unmute_date) VALUES (?, ?, ?, ?)"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, modId)
+                smt.setLong(3, guildId)
+                smt.setString(4, unmuteDate)
+                smt.execute()
+            }
+
+            callback(oldMute)
+        }
     }
 
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {

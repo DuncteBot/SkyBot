@@ -451,10 +451,10 @@ class SqliteDatabase : AbstractDatabase(1) {
                     if (res.next()) {
                         oldMute = Mute(
                             res.getInt("id"),
-                            res.getString("mod_id"),
-                            res.getString("user_id"),
+                            res.getLong("mod_id"),
+                            res.getLong("user_id"),
                             res.getString("user_tag"),
-                            res.getString("guild_id")
+                            res.getLong("guild_id")
                         )
                     }
                 }
@@ -579,10 +579,10 @@ class SqliteDatabase : AbstractDatabase(1) {
                         mutes.add(
                             Mute(
                                 res.getInt("id"),
-                                res.getString("mod_id"),
-                                res.getString("user_id"),
+                                res.getLong("mod_id"),
+                                res.getLong("user_id"),
                                 res.getString("user_tag"),
-                                res.getString("guild_id")
+                                res.getLong("guild_id")
                             )
                         )
                     }
