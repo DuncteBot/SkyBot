@@ -31,9 +31,9 @@ data class KpopObject(val id: Int, val name: String, val band: String, val image
 data class Warning(
     val id: Int,
     val rawDate: String, /*val date: Date, val expiryDate: Date,*/
-    val modId: String,
+    val modId: Long,
     val reason: String,
-    val guildId: String
+    val guildId: Long
 )
 
 data class Ban

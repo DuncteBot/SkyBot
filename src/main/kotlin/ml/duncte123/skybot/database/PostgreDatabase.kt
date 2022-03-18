@@ -574,12 +574,51 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) = runOnThread {
+        val warnings = mutableListOf<Warning>()
+
+        this.connection.use { con ->
+            con.prepareStatement(
+                "SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - '6 day'::interval))"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, guildId)
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        warnings.add(
+                            Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getLong("mod_id"),
+                                res.getString("reason"),
+                                res.getLong("guild_id")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        callback(warnings)
     }
 
-    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
-        TODO("Not yet implemented")
+    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "SELECT COUNT(id) as amount FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - '6 day'::interval))"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, guildId)
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback(res.getInt("amount"))
+                    } else {
+                        callback(0)
+                    }
+                }
+            }
+        }
     }
 
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {

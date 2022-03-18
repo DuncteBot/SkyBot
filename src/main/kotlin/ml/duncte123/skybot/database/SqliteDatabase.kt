@@ -494,9 +494,9 @@ class SqliteDatabase : AbstractDatabase(1) {
                         ret = Warning(
                             res.getInt("id"),
                             res.getString("warn_date"),
-                            res.getString("mod_id"),
+                            res.getLong("mod_id"),
                             res.getString("reason"),
-                            res.getString("guild_id")
+                            res.getLong("guild_id")
                         )
                     }
                 }
@@ -529,9 +529,9 @@ class SqliteDatabase : AbstractDatabase(1) {
                             Warning(
                                 res.getInt("id"),
                                 res.getString("warn_date"),
-                                res.getString("mod_id"),
+                                res.getLong("mod_id"),
                                 res.getString("reason"),
-                                res.getString("guild_id")
+                                res.getLong("guild_id")
                             )
                         )
                     }

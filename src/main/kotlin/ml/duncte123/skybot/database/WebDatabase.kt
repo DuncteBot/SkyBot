@@ -260,9 +260,9 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
                 Warning(
                     json["id"].asInt(),
                     json["warn_date"].asText(),
-                    json["mod_id"].asText(),
+                    json["mod_id"].asLong(),
                     json["reason"].asText(),
-                    json["guild_id"].asText()
+                    json["guild_id"].asLong()
                 )
             )
         }
@@ -279,9 +279,9 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
                     Warning(
                         json["id"].asInt(),
                         json["warn_date"].asText().split(regex)[0],
-                        json["mod_id"].asText(),
+                        json["mod_id"].asLong(),
                         json["reason"].asText(),
-                        json["guild_id"].asText()
+                        json["guild_id"].asLong()
                     )
                 )
             }
