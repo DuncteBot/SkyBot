@@ -455,8 +455,8 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.setString(4, patron.type.name)
 
                 if (patron.guildId == null) {
-                    smt.setNull(3, Types.REAL)
-                    smt.setNull(5, Types.REAL)
+                    smt.setNull(3, Types.BIGINT)
+                    smt.setNull(5, Types.BIGINT)
                 } else {
                     smt.setLong(3, patron.guildId)
                     smt.setLong(5, patron.guildId)
@@ -494,8 +494,19 @@ class PostgreDatabase : AbstractDatabase() {
         userId: Long,
         unbanDate: String,
         guildId: Long
-    ) {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO temp_bans (user_id, mod_id, guild_id, unban_date) VALUES (?, ?, ?, ?)"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, modId)
+                smt.setLong(3, guildId)
+                // TODO: this should be a date datatype
+                smt.setString(4, unbanDate)
+                smt.execute()
+            }
+        }
     }
 
     override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {

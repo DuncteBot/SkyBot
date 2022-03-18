@@ -27,6 +27,7 @@ import java.time.OffsetDateTime
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
 // data class WarnObject(val userId: String, val warnings: List<Warning>)
+// TODO: insert user id here
 data class Warning(
     val id: Int,
     val rawDate: String, /*val date: Date, val expiryDate: Date,*/

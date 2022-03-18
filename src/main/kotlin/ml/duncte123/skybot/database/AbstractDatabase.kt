@@ -129,6 +129,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     // ///////////
     // Moderation
 
+    // TODO: remove useless data
     abstract fun createBan(
         modId: Long,
         userName: String,
@@ -156,6 +157,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
 
+    // TODO: futures will solve this issue :D
     @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
     fun purgeBans(ids: List<Int>) = runOnThread {
         this.purgeBansSync(ids)

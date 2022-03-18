@@ -156,4 +156,61 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="7" author="duncte123">
+        <createTable tableName="temp_bans">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="unban_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createTable tableName="warnings">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="warn_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="reason" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createTable tableName="temp_mutes">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="unmute_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
