@@ -621,17 +621,64 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
-        TODO("Not yet implemented")
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) = runOnThread {
+        var oldWarning: Warning? = null
+
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? ORDER BY id DESC LIMIT 1").use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, guildId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        oldWarning = Warning(
+                            res.getInt("id"),
+                            res.getString("warn_date"),
+                            res.getLong("mod_id"),
+                            res.getString("reason"),
+                            res.getLong("guild_id")
+                        )
+                    }
+                }
+            }
+
+            if (oldWarning != null) {
+                con.prepareStatement("DELETE FROM warnings WHERE id = ?").use { smt ->
+                    smt.setInt(1, oldWarning!!.id)
+                    smt.executeUpdate()
+                }
+            }
+
+            callback(oldWarning)
+        }
     }
 
-    override fun purgeBansSync(ids: List<Int>) {
-        TODO("Not yet implemented")
+    override fun purgeBans(ids: List<Int>) = runOnThread {
+        this.connection.use { con ->
+            val values = ids.joinToString(", ") { "?" }
+            con.prepareStatement("DELETE FROM temp_bans WHERE id IN ($values)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
     }
 
-    override fun purgeMutesSync(ids: List<Int>) {
-        TODO("Not yet implemented")
+    override fun purgeBansSync(ids: List<Int>) = this.purgeBans(ids)
+
+    override fun purgeMutes(ids: List<Int>) = runOnThread {
+        this.connection.use { con ->
+            val values = ids.joinToString(", ") { "?" }
+            con.prepareStatement("DELETE FROM temp_mutes WHERE id IN ($values)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
     }
+
+    override fun purgeMutesSync(ids: List<Int>) = this.purgeMutes(ids)
 
     override fun createBanBypass(guildId: Long, userId: Long) {
         TODO("Not yet implemented")
@@ -737,9 +784,11 @@ class PostgreDatabase : AbstractDatabase() {
         TODO("Not yet implemented")
     }
 
-    override fun purgeRemindersSync(ids: List<Int>) {
+    override fun purgeReminders(ids: List<Int>) {
         TODO("Not yet implemented")
     }
+
+    override fun purgeRemindersSync(ids: List<Int>) = this.purgeReminders(ids)
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
         TODO("Not yet implemented")

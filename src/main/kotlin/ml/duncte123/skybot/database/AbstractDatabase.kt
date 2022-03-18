@@ -159,14 +159,14 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     // TODO: futures will solve this issue :D
     @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
-    fun purgeBans(ids: List<Int>) = runOnThread {
+    open fun purgeBans(ids: List<Int>) = runOnThread {
         this.purgeBansSync(ids)
     }
 
     abstract fun purgeBansSync(ids: List<Int>)
 
     @Deprecated("Switch to sync method", ReplaceWith("purgeMutesSync(ids)"))
-    fun purgeMutes(ids: List<Int>) = runOnThread {
+    open fun purgeMutes(ids: List<Int>) = runOnThread {
         this.purgeMutesSync(ids)
     }
 
@@ -225,7 +225,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
 
     @Deprecated("Switch to sync method", ReplaceWith("purgeRemindersSync(ids)"))
-    fun purgeReminders(ids: List<Int>) = runOnThread {
+    open fun purgeReminders(ids: List<Int>) = runOnThread {
         this.purgeRemindersSync(ids)
     }
 
