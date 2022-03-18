@@ -358,9 +358,10 @@ class PostgreDatabase : AbstractDatabase() {
             con.prepareStatement(
                 "INSERT INTO blacklisted_words(guild_id, word) VALUES $vals ON CONFLICT (guild_id, word) DO NOTHING /* LOL */"
             ).use { smt ->
-                words.forEachIndexed { index, word ->
-                    smt.setLong(index + 1, guildId)
-                    smt.setString(index + 2, word)
+                var paramIndex = 0
+                words.forEach { word ->
+                    smt.setLong(++paramIndex, guildId)
+                    smt.setString(++paramIndex, word)
                 }
 
                 smt.execute()
@@ -753,10 +754,11 @@ class PostgreDatabase : AbstractDatabase() {
                     |VALUES $values
                     |ON CONFLICT (guild_id, voice_channel_id, role_id) DO NOTHING""".trimMargin()
             ).use { smt ->
-                voiceChannelIds.forEachIndexed { index, voiceChannelId ->
-                    smt.setLong(index + 1, guildId)
-                    smt.setLong(index + 2, voiceChannelId)
-                    smt.setLong(index + 3, roleId)
+                var paramIndex = 0
+                voiceChannelIds.forEach { voiceChannelId ->
+                    smt.setLong(++paramIndex, guildId)
+                    smt.setLong(++paramIndex, voiceChannelId)
+                    smt.setLong(++paramIndex, roleId)
                 }
                 smt.execute()
             }
