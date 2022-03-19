@@ -230,4 +230,32 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="9" author="duncte123">
+        <createTable tableName="reminders">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="channel_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="message_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="in_channel" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="reminder" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="remind_on" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

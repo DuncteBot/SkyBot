@@ -32,12 +32,11 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.toGuildSetting
+import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
-import java.sql.Connection
-import java.sql.SQLException
-import java.sql.Types
+import java.sql.*
 import java.time.OffsetDateTime
 
 class PostgreDatabase : AbstractDatabase() {
@@ -841,8 +840,36 @@ class PostgreDatabase : AbstractDatabase() {
         guildId: Long,
         inChannel: Boolean,
         callback: (Boolean, Int) -> Unit
-    ) {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_on) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                arrayOf("id") // cols to return
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, guildId)
+                smt.setLong(3, channelId)
+                smt.setLong(4, messageId)
+                smt.setBoolean(5, inChannel)
+                smt.setString(6, reminder)
+                smt.setDate(7, expireDate.toSQL())
+
+                try {
+                    smt.execute()
+
+                    smt.generatedKeys.use { res ->
+                        if (res.next()) {
+                            callback(true, res.getInt("id"))
+                        } else {
+                            callback(false, -1)
+                        }
+                    }
+                } catch (ex: SQLException) {
+                    Sentry.captureException(ex)
+                    callback(false, -1)
+                }
+            }
+        }
     }
 
     override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
