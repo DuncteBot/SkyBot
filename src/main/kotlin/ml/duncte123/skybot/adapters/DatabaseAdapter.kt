@@ -243,7 +243,7 @@ abstract class DatabaseAdapter(threads: Int = 2) {
     }
 
     // Cannot be an option callback due to it targeting the onFail param
-    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit = {}) {
+    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
         databaseThread.execute {
             try {
                 r.invoke()
@@ -253,9 +253,9 @@ abstract class DatabaseAdapter(threads: Int = 2) {
                 thr.printStackTrace()
             }
         }
-    }*/
+    }
 
-    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
+    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
         launch {
             try {
                 r.invoke()
@@ -265,5 +265,5 @@ abstract class DatabaseAdapter(threads: Int = 2) {
                 thr.printStackTrace()
             }
         }
-    }
+    }*/
 }
