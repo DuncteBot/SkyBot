@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
-import kotlinx.coroutines.*
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.custom.CustomCommand

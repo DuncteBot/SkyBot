@@ -80,7 +80,7 @@ public class BanCommand extends ModBaseCommand {
 
         if (flags.containsKey("r")) {
             reason = String.join(" ", flags.get("r"));
-        } else if (args.size() > 1 && !args.get(1).equals("--nodel")) {
+        } else if (args.size() > 1 && !"--nodel".equals(args.get(1))) {
             final var example = "\nExample: `%sban %s -r %s`".formatted(
                 ctx.getPrefix(), args.get(0), String.join(" ", args.subList(1, args.size()))
             );
