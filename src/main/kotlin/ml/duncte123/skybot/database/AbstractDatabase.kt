@@ -20,12 +20,13 @@ package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
-import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
+import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 
 abstract class AbstractDatabase(threads: Int = 2) {
@@ -38,7 +39,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     // ////////////////
     // Custom commands
 
-    abstract fun getCustomCommands(callback: (List<CustomCommand>) -> Unit)
+    abstract fun getCustomCommands(): CompletableFuture<List<CustomCommand>>
 
     /**
      * Creates a custom command
@@ -63,42 +64,40 @@ abstract class AbstractDatabase(threads: Int = 2) {
     abstract fun createCustomCommand(
         guildId: Long,
         invoke: String,
-        message: String,
-        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
-    )
+        message: String
+    ): CompletableFuture<CommandResult>
 
     abstract fun updateCustomCommand(
         guildId: Long,
         invoke: String,
         message: String,
-        autoresponse: Boolean,
-        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
-    )
+        autoresponse: Boolean
+    ): CompletableFuture<CommandResult>
 
-    abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?)
+    abstract fun deleteCustomCommand(guildId: Long, invoke: String): CompletableFuture<Boolean>
 
     // ///////////////
     // Guild settings
 
-    abstract fun getGuildSettings(callback: (List<GuildSetting>) -> Unit)
+    abstract fun getGuildSettings(): CompletableFuture<List<GuildSetting>>
 
-    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit)
+    abstract fun loadGuildSetting(guildId: Long): CompletableFuture<GuildSetting?>
 
-    abstract fun deleteGuildSetting(guildId: Long)
+    abstract fun deleteGuildSetting(guildId: Long): CompletableFuture<Unit>
 
-    abstract fun purgeGuildSettings(guildIds: List<Long>)
+    abstract fun purgeGuildSettings(guildIds: List<Long>): CompletableFuture<Unit>
 
-    abstract fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit)
+    abstract fun updateGuildSetting(guildSettings: GuildSetting): CompletableFuture<Boolean>
 
-    abstract fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit)
+    abstract fun registerNewGuild(guildSettings: GuildSetting): CompletableFuture<Boolean>
 
-    abstract fun addWordToBlacklist(guildId: Long, word: String)
+    abstract fun addWordToBlacklist(guildId: Long, word: String): CompletableFuture<Unit>
 
-    abstract fun addWordsToBlacklist(guildId: Long, words: List<String>)
+    abstract fun addWordsToBlacklist(guildId: Long, words: List<String>): CompletableFuture<Unit>
 
-    abstract fun removeWordFromBlacklist(guildId: Long, word: String)
+    abstract fun removeWordFromBlacklist(guildId: Long, word: String): CompletableFuture<Unit>
 
-    abstract fun clearBlacklist(guildId: Long)
+    abstract fun clearBlacklist(guildId: Long): CompletableFuture<Unit>
 
     // ///////////////
     // Embed settings
@@ -109,21 +108,21 @@ abstract class AbstractDatabase(threads: Int = 2) {
     // /////////////
     // Patron stuff
 
-    abstract fun loadAllPatrons(callback: (AllPatronsData) -> Unit)
+    abstract fun loadAllPatrons(): CompletableFuture<AllPatronsData>
 
-    abstract fun removePatron(userId: Long)
+    abstract fun removePatron(userId: Long): CompletableFuture<Unit>
 
-    fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?) {
+    fun createOrUpdatePatron(type: Patron.Type, userId: Long, guildId: Long?): CompletableFuture<Unit> {
         val patron = Patron(type, userId, guildId)
 
-        this.createOrUpdatePatron(patron)
+        return this.createOrUpdatePatron(patron)
     }
 
-    abstract fun createOrUpdatePatron(patron: Patron)
+    abstract fun createOrUpdatePatron(patron: Patron): CompletableFuture<Unit>
 
-    abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
+    abstract fun addOneGuildPatrons(userId: Long, guildId: Long): CompletableFuture<Pair<Long, Long>>
 
-    abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
+    abstract fun getOneGuildPatron(userId: Long): CompletableFuture<Long?>
 
     // ///////////
     // Moderation
@@ -136,9 +135,9 @@ abstract class AbstractDatabase(threads: Int = 2) {
         userId: Long,
         unbanDate: String,
         guildId: Long
-    )
+    ): CompletableFuture<Unit>
 
-    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit = {})
+    abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit>
 
     // callback is optional since we don't always need it
     abstract fun createMute(
@@ -146,58 +145,46 @@ abstract class AbstractDatabase(threads: Int = 2) {
         userId: Long,
         userTag: String,
         unmuteDate: String,
-        guildId: Long,
-        callback: (Mute?) -> Unit = {}
-    )
+        guildId: Long
+    ): CompletableFuture<Unit>
 
-    abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
+    abstract fun getWarningsForUser(userId: Long, guildId: Long): CompletableFuture<List<Warning>>
 
-    abstract fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit)
+    abstract fun getWarningCountForUser(userId: Long, guildId: Long): CompletableFuture<Int>
 
-    abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit)
+    abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long): CompletableFuture<Warning?>
 
-    // TODO: futures will solve this issue :D
-    @Deprecated("Switch to sync method", ReplaceWith("purgeBansSync(ids)"))
-    open fun purgeBans(ids: List<Int>) = runOnThread {
-        this.purgeBansSync(ids)
-    }
+    abstract fun purgeBans(ids: List<Int>): CompletableFuture<Unit>
 
-    abstract fun purgeBansSync(ids: List<Int>)
+    abstract fun purgeMutes(ids: List<Int>): CompletableFuture<Unit>
 
-    @Deprecated("Switch to sync method", ReplaceWith("purgeMutesSync(ids)"))
-    open fun purgeMutes(ids: List<Int>) = runOnThread {
-        this.purgeMutesSync(ids)
-    }
+    abstract fun createBanBypass(guildId: Long, userId: Long): CompletableFuture<Unit>
 
-    abstract fun purgeMutesSync(ids: List<Int>)
+    abstract fun getBanBypass(guildId: Long, userId: Long): CompletableFuture<BanBypas?>
 
-    abstract fun createBanBypass(guildId: Long, userId: Long)
-
-    abstract fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit)
-
-    abstract fun deleteBanBypass(banBypass: BanBypas)
+    abstract fun deleteBanBypass(banBypass: BanBypas): CompletableFuture<Unit>
 
     // /////////////
     // VC auto role
 
-    abstract fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit)
+    abstract fun getVcAutoRoles(): CompletableFuture<List<VcAutoRole>>
 
-    abstract fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long)
+    abstract fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long): CompletableFuture<Unit>
 
-    abstract fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long)
+    abstract fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long): CompletableFuture<Unit>
 
-    abstract fun removeVcAutoRole(voiceChannelId: Long)
+    abstract fun removeVcAutoRole(voiceChannelId: Long): CompletableFuture<Unit>
 
-    abstract fun removeVcAutoRoleForGuild(guildId: Long)
+    abstract fun removeVcAutoRoleForGuild(guildId: Long): CompletableFuture<Unit>
 
     // /////
     // Tags
 
-    abstract fun loadTags(callback: (List<Tag>) -> Unit)
+    abstract fun loadTags(): CompletableFuture<List<Tag>>
 
-    abstract fun createTag(tag: Tag, callback: (Boolean, String) -> Unit)
+    abstract fun createTag(tag: Tag): CompletableFuture<Pair<Boolean, String>>
 
-    abstract fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit)
+    abstract fun deleteTag(tag: Tag): CompletableFuture<Pair<Boolean, String>>
 
     // Reminders
 
@@ -208,58 +195,38 @@ abstract class AbstractDatabase(threads: Int = 2) {
         channelId: Long,
         messageId: Long,
         guildId: Long,
-        inChannel: Boolean,
-        callback: (Boolean, Int) -> Unit
-    )
+        inChannel: Boolean
+    ): CompletableFuture<Pair<Boolean, Int>>
 
-    fun removeReminder(reminder: Reminder, callback: (Boolean) -> Unit) {
-        removeReminder(reminder.id, reminder.user_id, callback)
-    }
+    fun removeReminder(reminder: Reminder) = removeReminder(reminder.id, reminder.user_id)
 
     // user id for security, a user can only remove their own reminders
-    abstract fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit)
+    abstract fun removeReminder(reminderId: Int, userId: Long): CompletableFuture<Boolean>
 
-    abstract fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit)
+    abstract fun showReminder(reminderId: Int, userId: Long): CompletableFuture<Reminder?>
 
-    abstract fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit)
+    abstract fun listReminders(userId: Long): CompletableFuture<List<Reminder>>
 
-    @Deprecated("Switch to sync method", ReplaceWith("purgeRemindersSync(ids)"))
-    open fun purgeReminders(ids: List<Int>) = runOnThread {
-        this.purgeRemindersSync(ids)
-    }
+    abstract fun purgeReminders(ids: List<Int>): CompletableFuture<Unit>
 
-    abstract fun purgeRemindersSync(ids: List<Int>)
-
-    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>)
-
-    protected fun runOnThread(r: () -> Unit) {
-        runOnThread(r) {
-            //
-        }
-    }
+    abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>): CompletableFuture<Unit>
 
     // Cannot be an option callback due to it targeting the onFail param
-    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
+    protected fun <T> runOnThread(r: () -> T): CompletableFuture<T> {
+        val future = CompletableFuture<T>()
+
         databaseThread.execute {
             try {
-                r.invoke()
-            } catch (thr: Throwable) {
-                Sentry.captureException(thr)
-                onFail.invoke(thr)
-                thr.printStackTrace()
-            }
-        }
-    }
+                val result = r.invoke()
 
-    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
-        launch {
-            try {
-                r.invoke()
+                future.complete(result)
             } catch (thr: Throwable) {
                 Sentry.captureException(thr)
-                onFail.invoke(thr)
                 thr.printStackTrace()
+                future.completeExceptionally(thr)
             }
         }
-    }*/
+
+        return future
+    }
 }

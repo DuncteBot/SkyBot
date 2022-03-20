@@ -225,7 +225,7 @@ public class ModerationUtils {
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
         if (!purgeIds.isEmpty()) {
-            adapter.purgeMutesSync(purgeIds);
+            adapter.purgeMutes(purgeIds).get();
         }
     }
 
@@ -275,7 +275,7 @@ public class ModerationUtils {
         // If the bans are not empty send a purge request to the databse
         // This will make sure that we don't get them again
         if (!purgeIds.isEmpty()) {
-            adapter.purgeBansSync(purgeIds);
+            adapter.purgeBans(purgeIds).get();
         }
     }
 

@@ -329,12 +329,12 @@ public class AirUtils {
         final List<Integer> extraRemoval = reminders.stream()
             .filter((reminder) -> reminder.getReminder_date().isAfter(plusTwoDays))
             .map(Reminder::getId)
-            .collect(Collectors.toList());
+            .toList();
 
         toPurge.addAll(extraRemoval);
 
         if (!toPurge.isEmpty()) {
-            adapter.purgeRemindersSync(toPurge);
+            adapter.purgeReminders(toPurge).get();
         }
     }
 

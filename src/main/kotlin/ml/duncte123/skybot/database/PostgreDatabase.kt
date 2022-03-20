@@ -663,9 +663,9 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
-    }
 
-    override fun purgeBansSync(ids: List<Int>) = this.purgeBans(ids)
+        return@runOnThread
+    }
 
     override fun purgeMutes(ids: List<Int>) = runOnThread {
         this.connection.use { con ->
@@ -677,9 +677,9 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
-    }
 
-    override fun purgeMutesSync(ids: List<Int>) = this.purgeMutes(ids)
+        return@runOnThread
+    }
 
     override fun createBanBypass(guildId: Long, userId: Long) = runOnThread {
         this.connection.use { con ->
