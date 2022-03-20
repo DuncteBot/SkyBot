@@ -395,8 +395,9 @@ class PostgreDatabase : AbstractDatabase() {
         return@runOnThread
     }
 
-    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
+    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
         TODO("Not yet implemented")
+        return@runOnThread
     }
 
     override fun loadAllPatrons() = runOnThread {
@@ -959,7 +960,7 @@ class PostgreDatabase : AbstractDatabase() {
             val spots = actions.joinToString(", ") { "(?, ?, ?, ?)" }
             con.prepareStatement("INSERT INTO warn_actions(guild_id, type, threshold, duration) VALUES $spots")
                 .use { smt ->
-                    var paramIndex = 0;
+                    var paramIndex = 0
 
                     actions.forEach {
                         smt.setLong(++paramIndex, guildId)

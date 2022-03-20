@@ -23,208 +23,149 @@ import com.dunctebot.models.settings.WarnAction
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import gnu.trove.map.TLongLongMap
-import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
+import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 
 class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMapper) : AbstractDatabase() {
 
-    override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
-        runOnThread {
-            val array = apis.getCustomCommands()
-            val customCommands: List<CustomCommand> = jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommand>>() {})
+    override fun getCustomCommands() = runOnThread {
+        val array = apis.getCustomCommands()
 
-            callback(customCommands)
-        }
+        jackson.readValue(array.traverse(), object : TypeReference<List<CustomCommand>>() {})
     }
 
-    override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
-        runOnThread {
-            callback(
-                apis.createCustomCommand(guildId, invoke, message)
-            )
-        }
+    override fun createCustomCommand(guildId: Long, invoke: String, message: String) = runOnThread {
+        // TODO: implement proper responses
+        apis.createCustomCommand(guildId, invoke, message)
+        CommandResult.SUCCESS
     }
 
-    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean) =
         runOnThread {
-            callback(
-                apis.updateCustomCommand(guildId, invoke, message, autoresponse)
-            )
+            apis.updateCustomCommand(guildId, invoke, message, autoresponse)
+            CommandResult.SUCCESS
         }
+
+    override fun deleteCustomCommand(guildId: Long, invoke: String) = runOnThread {
+        apis.deleteCustomCommand(guildId, invoke)
     }
 
-    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) {
-        runOnThread {
-            callback(apis.deleteCustomCommand(guildId, invoke))
-        }
+    override fun getGuildSettings() = runOnThread {
+        val array = apis.getGuildSettings()
+
+        jackson.readValue(array.traverse(), object : TypeReference<List<GuildSetting>>() {})
     }
 
-    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) {
-        runOnThread {
-            val array = apis.getGuildSettings()
-            val settings: List<GuildSetting> = jackson.readValue(array.traverse(), object : TypeReference<List<GuildSetting>>() {})
+    override fun loadGuildSetting(guildId: Long) = runOnThread {
+        val item = apis.getGuildSetting(guildId) ?: return@runOnThread null
 
-            callback(settings)
-        }
+        jackson.readValue(item.traverse(), GuildSetting::class.java)
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) {
-        runOnThread {
-            val item = apis.getGuildSetting(guildId)
-
-            if (item == null) {
-                callback(null)
-                return@runOnThread
-            }
-
-            val setting = jackson.readValue(item.traverse(), GuildSetting::class.java)
-
-            callback(setting)
-        }
+    override fun updateGuildSetting(guildSettings: GuildSetting) = runOnThread {
+        apis.updateGuildSettings(guildSettings)
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
-        runOnThread {
-            callback(
-                apis.updateGuildSettings(guildSettings)
-            )
-        }
+    override fun deleteGuildSetting(guildId: Long) = runOnThread {
+        apis.deleteGuildSetting(guildId)
     }
 
-    override fun deleteGuildSetting(guildId: Long) {
-        runOnThread {
-            apis.deleteGuildSetting(guildId)
-        }
+    override fun purgeGuildSettings(guildIds: List<Long>) = runOnThread {
+        apis.purgeGuildSettings(guildIds)
     }
 
-    override fun purgeGuildSettings(guildIds: List<Long>) {
-        runOnThread {
-            apis.purgeGuildSettings(guildIds)
-        }
+    override fun registerNewGuild(guildSettings: GuildSetting) = runOnThread {
+        apis.registerNewGuildSettings(guildSettings)
     }
 
-    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) {
-        runOnThread {
-            callback(
-                apis.registerNewGuildSettings(guildSettings)
-            )
-        }
+    override fun addWordToBlacklist(guildId: Long, word: String) = runOnThread {
+        apis.addWordToBlacklist(guildId, word)
     }
 
-    override fun addWordToBlacklist(guildId: Long, word: String) {
-        runOnThread {
-            apis.addWordToBlacklist(guildId, word)
-        }
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) = runOnThread {
+        apis.addBatchToBlacklist(guildId, words)
     }
 
-    override fun addWordsToBlacklist(guildId: Long, words: List<String>) {
-        runOnThread {
-            apis.addBatchToBlacklist(guildId, words)
-        }
+    override fun removeWordFromBlacklist(guildId: Long, word: String) = runOnThread {
+        apis.removeWordFromBlacklist(guildId, word)
     }
 
-    override fun removeWordFromBlacklist(guildId: Long, word: String) {
-        runOnThread {
-            apis.removeWordFromBlacklist(guildId, word)
-        }
+    override fun clearBlacklist(guildId: Long) = runOnThread {
+        apis.clearBlacklist(guildId)
     }
 
-    override fun clearBlacklist(guildId: Long) {
-        runOnThread {
-            apis.clearBlacklist(guildId)
-        }
+    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
+        apis.updateOrCreateEmbedColor(guildId, color)
     }
 
-    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
-        runOnThread {
-            apis.updateOrCreateEmbedColor(guildId, color)
-        }
-    }
+    override fun loadAllPatrons() = runOnThread {
+        val patrons = arrayListOf<Patron>()
+        val tagPatrons = arrayListOf<Patron>()
+        val oneGuildPatrons = arrayListOf<Patron>()
+        val guildPatrons = arrayListOf<Patron>()
 
-    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) {
-        runOnThread {
-            val patrons = arrayListOf<Patron>()
-            val tagPatrons = arrayListOf<Patron>()
-            val oneGuildPatrons = arrayListOf<Patron>()
-            val guildPatrons = arrayListOf<Patron>()
-
-            apis.loadAllPatrons()
-                .map { jackson.readValue(it.traverse(), Patron::class.java) }
-                .forEach { patron ->
-                    when (patron.type) {
-                        Patron.Type.NORMAL -> patrons.add(patron)
-                        Patron.Type.TAG -> tagPatrons.add(patron)
-                        Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
-                        Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
-                    }
+        apis.loadAllPatrons()
+            .map { jackson.readValue(it.traverse(), Patron::class.java) }
+            .forEach { patron ->
+                when (patron.type) {
+                    Patron.Type.NORMAL -> patrons.add(patron)
+                    Patron.Type.TAG -> tagPatrons.add(patron)
+                    Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                    Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
                 }
-
-            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
-        }
-    }
-
-    override fun removePatron(userId: Long) {
-        runOnThread {
-            apis.deletePatron(userId)
-        }
-    }
-
-    override fun createOrUpdatePatron(patron: Patron) {
-        runOnThread {
-            apis.createOrUpdatePatron(patron)
-        }
-    }
-
-    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
-        runOnThread {
-            val status = apis.updateOrCreateOneGuildPatron(userId, guildId)
-
-            if (status) {
-                callback(userId, guildId)
             }
-        }
+
+        return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
     }
 
-    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
-        runOnThread {
-            val map = TLongLongHashMap()
-            val patron = apis.getOneGuildPatron(userId) ?: return@runOnThread
-
-            map.put(patron["user_id"].asLong(), patron["guild_id"].asLong())
-
-            callback(map)
-        }
+    override fun removePatron(userId: Long) = runOnThread {
+        apis.deletePatron(userId)
     }
 
-    override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
-        runOnThread {
-            val json = jackson.createObjectNode()
-                .put("modUserId", modId.toString())
-                .put("Username", userName)
-                .put("discriminator", userDiscriminator)
-                .put("userId", userId.toString())
-                .put("guildId", guildId.toString())
-                .put("unban_date", unbanDate)
-
-            apis.createBan(json)
-        }
+    override fun createOrUpdatePatron(patron: Patron) = runOnThread {
+        apis.createOrUpdatePatron(patron)
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) {
-        runOnThread {
-            apis.createWarning(modId, userId, guildId, reason)
+    override fun addOneGuildPatrons(userId: Long, guildId: Long) = runOnThread {
+        val status = apis.updateOrCreateOneGuildPatron(userId, guildId)
 
-            // invoke callback here as the apis request is sync
-            callback()
-        }
+        return@runOnThread userId to guildId
     }
 
-    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long, callback: (Mute?) -> Unit) {
+    override fun getOneGuildPatron(userId: Long) = runOnThread {
+        val patron = apis.getOneGuildPatron(userId) ?: return@runOnThread null
+
+        return@runOnThread patron["guild_id"].asLong()
+    }
+
+    override fun createBan(
+        modId: Long,
+        userName: String,
+        userDiscriminator: String,
+        userId: Long,
+        unbanDate: String,
+        guildId: Long
+    ) = runOnThread {
+        val json = jackson.createObjectNode()
+            .put("modUserId", modId.toString())
+            .put("Username", userName)
+            .put("discriminator", userDiscriminator)
+            .put("userId", userId.toString())
+            .put("guildId", guildId.toString())
+            .put("unban_date", unbanDate)
+
+        apis.createBan(json)
+    }
+
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) = runOnThread {
+        apis.createWarning(modId, userId, guildId, reason)
+    }
+
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) =
         runOnThread {
             val json = jackson.createObjectNode()
                 .put("mod_id", modId.toString())
@@ -236,142 +177,110 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
             val muteData = apis.createMute(json)
 
             if (muteData.isEmpty) {
-                callback(null)
-                return@runOnThread
+                return@runOnThread null
             }
 
             val mute: Mute = jackson.readValue(muteData.traverse(), Mute::class.java)
 
-            callback(mute)
+            return@runOnThread mute
         }
+
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long) = runOnThread {
+        val json = apis.removeLatestWarningForUser(userId, guildId)
+
+        if (json == null) {
+            return@runOnThread null
+        }
+
+        return@runOnThread Warning(
+            json["id"].asInt(),
+            json["warn_date"].asText(),
+            json["mod_id"].asLong(),
+            json["reason"].asText(),
+            json["guild_id"].asLong()
+        )
     }
 
-    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) {
-        runOnThread {
-            val json = apis.removeLatestWarningForUser(userId, guildId)
+    override fun getWarningsForUser(userId: Long, guildId: Long) = runOnThread {
+        val data = apis.getWarningsForUser(userId, guildId)
+        val items = arrayListOf<Warning>()
 
-            if (json == null) {
-                callback(null)
-
-                return@runOnThread
-            }
-
-            callback(
+        val regex = "\\s+".toRegex()
+        data.forEach { json ->
+            items.add(
                 Warning(
                     json["id"].asInt(),
-                    json["warn_date"].asText(),
+                    json["warn_date"].asText().split(regex)[0],
                     json["mod_id"].asLong(),
                     json["reason"].asText(),
                     json["guild_id"].asLong()
                 )
             )
         }
+
+        return@runOnThread items.toList()
     }
 
-    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
-        runOnThread {
-            val data = apis.getWarningsForUser(userId, guildId)
-            val items = arrayListOf<Warning>()
+    override fun getWarningCountForUser(userId: Long, guildId: Long) = runOnThread {
+        apis.getWarningCountForUser(userId, guildId)
+    }
 
-            val regex = "\\s+".toRegex()
-            data.forEach { json ->
-                items.add(
-                    Warning(
-                        json["id"].asInt(),
-                        json["warn_date"].asText().split(regex)[0],
-                        json["mod_id"].asLong(),
-                        json["reason"].asText(),
-                        json["guild_id"].asLong()
-                    )
+    override fun purgeBans(ids: List<Int>) = runOnThread { apis.purgeBans(ids) }
+
+    override fun purgeMutes(ids: List<Int>) = runOnThread { apis.purgeMutes(ids) }
+
+    override fun getVcAutoRoles() = runOnThread {
+        val storedData = apis.getVcAutoRoles()
+        val converted = arrayListOf<VcAutoRole>()
+
+        for (item in storedData) {
+            converted.add(
+                VcAutoRole(
+                    item["guild_id"].asLong(),
+                    item["voice_channel_id"].asLong(),
+                    item["role_id"].asLong()
                 )
-            }
-
-            callback(items)
-        }
-    }
-
-    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) {
-        runOnThread {
-            callback(
-                apis.getWarningCountForUser(userId, guildId)
             )
         }
+
+        return@runOnThread converted.toList()
     }
 
-    override fun purgeBansSync(ids: List<Int>) = apis.purgeBans(ids)
-
-    override fun purgeMutesSync(ids: List<Int>) = apis.purgeMutes(ids)
-
-    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
-        runOnThread {
-            val storedData = apis.getVcAutoRoles()
-            val converted = arrayListOf<VcAutoRole>()
-
-            for (item in storedData) {
-                converted.add(
-                    VcAutoRole(
-                        item["guild_id"].asLong(),
-                        item["voice_channel_id"].asLong(),
-                        item["role_id"].asLong()
-                    )
-                )
-            }
-
-            callback(converted)
-        }
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) = runOnThread {
+        apis.setVcAutoRole(guildId, voiceChannelId, roleId)
     }
 
-    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
-        runOnThread {
-            apis.setVcAutoRole(guildId, voiceChannelId, roleId)
-        }
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) = runOnThread {
+        apis.setVcAutoRoleBatch(guildId, voiceChannelIds, roleId)
     }
 
-    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) {
-        runOnThread {
-            apis.setVcAutoRoleBatch(guildId, voiceChannelIds, roleId)
-        }
+    override fun removeVcAutoRole(voiceChannelId: Long) = runOnThread {
+        apis.removeVcAutoRole(voiceChannelId)
     }
 
-    override fun removeVcAutoRole(voiceChannelId: Long) {
-        runOnThread {
-            apis.removeVcAutoRole(voiceChannelId)
-        }
+    override fun removeVcAutoRoleForGuild(guildId: Long) = runOnThread {
+        apis.removeVcAutoRoleForGuild(guildId)
     }
 
-    override fun removeVcAutoRoleForGuild(guildId: Long) {
-        runOnThread {
-            apis.removeVcAutoRoleForGuild(guildId)
-        }
+    override fun loadTags() = runOnThread {
+        val allTags = apis.getAllTags()
+
+        jackson.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
     }
 
-    override fun loadTags(callback: (List<Tag>) -> Unit) {
-        runOnThread {
-            val allTags = apis.getAllTags()
+    override fun createTag(tag: Tag) = runOnThread {
+        val json = jackson.valueToTree(tag) as ObjectNode
+        json.put("owner_id", json["owner_id"].asText())
 
-            callback(
-                jackson.readValue(allTags.traverse(), object : TypeReference<List<Tag>>() {})
-            )
-        }
+        val response = apis.createTag(json)
+
+        return@runOnThread response.first to response.second
     }
 
-    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        runOnThread {
-            val json = jackson.valueToTree(tag) as ObjectNode
-            json.put("owner_id", json["owner_id"].asText())
+    override fun deleteTag(tag: Tag) = runOnThread {
+        val response = apis.deleteTag(tag.name)
 
-            val response = apis.createTag(json)
-
-            callback(response.first, response.second)
-        }
-    }
-
-    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
-        runOnThread {
-            val response = apis.deleteTag(tag.name)
-
-            callback(response.first, response.second)
-        }
+        return@runOnThread response.first to response.second
     }
 
     override fun createReminder(
@@ -381,69 +290,65 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         channelId: Long,
         messageId: Long,
         guildId: Long,
-        inChannel: Boolean,
-        callback: (Boolean, Int) -> Unit
-    ) {
+        inChannel: Boolean
+    ) =
         runOnThread {
             val date = AirUtils.getDatabaseDateFormat(expireDate)
-            val (res, reminderId) = apis.createReminder(userId, reminder, date, channelId, messageId, guildId, inChannel)
-
-            callback(res, reminderId)
-        }
-    }
-
-    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
-        runOnThread {
-            callback(
-                apis.deleteReminder(userId, reminderId)
+            val (res, reminderId) = apis.createReminder(
+                userId,
+                reminder,
+                date,
+                channelId,
+                messageId,
+                guildId,
+                inChannel
             )
-        }
-    }
 
-    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
+            return@runOnThread res to reminderId
+        }
+
+    override fun removeReminder(reminderId: Int, userId: Long) =
+        runOnThread {
+            apis.deleteReminder(userId, reminderId)
+        }
+
+    override fun showReminder(reminderId: Int, userId: Long) =
         runOnThread {
             val reminderJson = apis.showReminder(userId, reminderId)
             val reminder: Reminder? = jackson.readValue(reminderJson.traverse(), Reminder::class.java)
 
-            callback(reminder)
+            return@runOnThread reminder
         }
-    }
 
-    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
+    override fun listReminders(userId: Long) =
         runOnThread {
             val remindersJson = apis.listReminders(userId)
             val reminders = jackson.readValue(remindersJson.traverse(), object : TypeReference<List<Reminder>>() {})
 
-            callback(reminders)
+            return@runOnThread reminders
         }
+
+    override fun purgeReminders(ids: List<Int>) = runOnThread { apis.purgeReminders(ids) }
+
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) = runOnThread {
+        apis.setWarnActions(guildId, actions)
     }
 
-    override fun purgeRemindersSync(ids: List<Int>) = apis.purgeReminders(ids)
-
-    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
-        runOnThread {
-            apis.setWarnActions(guildId, actions)
-        }
+    override fun createBanBypass(guildId: Long, userId: Long) = runOnThread {
+        apis.createBanBypass(guildId, userId)
     }
 
-    override fun createBanBypass(guildId: Long, userId: Long) {
-        runOnThread {
-            apis.createBanBypass(guildId, userId)
-        }
-    }
-
-    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) {
+    override fun getBanBypass(guildId: Long, userId: Long) =
         runOnThread {
             val bypassJson = apis.getBanBypass(guildId, userId)
             val bypass: BanBypas? = jackson.readValue(bypassJson.traverse(), BanBypas::class.java)
 
-            callback(bypass)
+            return@runOnThread bypass
         }
-    }
 
-    override fun deleteBanBypass(banBypass: BanBypas) {
+    override fun deleteBanBypass(banBypass: BanBypas) =
         runOnThread {
             apis.deleteBanBypass(banBypass.guildId, banBypass.userId)
+            return@runOnThread
         }
-    }
 }
