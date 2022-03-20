@@ -133,7 +133,7 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
             }
 
             if (shouldModerate) {
-                val warnings = ModerationUtils.getWarningCountForUser(adapter, user, author.guild) + 1
+                val warnings = adapter.getWarningCountForUser(user.idLong, guild.idLong).get() + 1
 
                 if (rates.size < 6) {
                     logger.error("Found invalid spam rate settings for " + author.guild)

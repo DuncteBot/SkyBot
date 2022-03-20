@@ -350,7 +350,7 @@ public class GuildMemberListener extends BaseListener {
             final String humanTime = TimeFormat.RELATIVE.format(timeCreated);
 
             // we have to use futures since the callback runs on a different thread
-            database.getBanBypass(guild.getIdLong(), member.getIdLong(), (byPass) -> {
+            database.getBanBypass(guild.getIdLong(), member.getIdLong()).thenAccept((byPass) -> {
                 if (byPass != null) {
                     // delete the bypass as it is used
                     database.deleteBanBypass(byPass);
@@ -364,7 +364,7 @@ public class GuildMemberListener extends BaseListener {
                         ),
                         new DunctebotGuild(guild, this.variables)
                     );
-                    return null;
+                    return;
                 }
 
                 // return true, we did ban the user (prevents any welcome messages from displaying)
@@ -384,8 +384,6 @@ public class GuildMemberListener extends BaseListener {
                     null,
                     new DunctebotGuild(guild, this.variables)
                 );
-
-                return null;
             });
 
             try {

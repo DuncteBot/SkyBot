@@ -118,27 +118,24 @@ public class TempMuteCommand extends ModBaseCommand {
             mutee.getIdLong(),
             mutee.getAsTag(),
             finalDate,
-            guild.getIdLong(),
-            (mute) -> {
-                if (mute != null) {
-                    final long modId = mute.getModId();
-                    final User oldMuteMod = guild.getJDA().getUserById(modId);
-                    String modName = "Unknown#0000";
+            guild.getIdLong()
+        ).thenAccept((mute) -> {
+            if (mute != null) {
+                final long modId = mute.getModId();
+                final User oldMuteMod = guild.getJDA().getUserById(modId);
+                String modName = "Unknown#0000";
 
-                    if (oldMuteMod != null) {
-                        modName = oldMuteMod.getAsTag();
-                    }
-
-                    sendMsg(ctx, String.format(
-                        "Previously created muted for %#s removed, mute was created by %s",
-                        mutee,
-                        modName
-                    ));
+                if (oldMuteMod != null) {
+                    modName = oldMuteMod.getAsTag();
                 }
 
-                return null;
+                sendMsg(ctx, String.format(
+                    "Previously created muted for %#s removed, mute was created by %s",
+                    mutee,
+                    modName
+                ));
             }
-        );
+        });
 
 
         guild.addRoleToMember(toMute, role)

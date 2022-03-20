@@ -21,5 +21,6 @@ package ml.duncte123.skybot.objects.command;
 public enum CommandResult {
     SUCCESS,
     LIMIT_REACHED,
+    COMMAND_EXISTS,
     UNKNOWN,
 }

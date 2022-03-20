@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -260,7 +261,7 @@ public class AirUtils {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase adapter) {
+    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase adapter) throws ExecutionException, InterruptedException {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();

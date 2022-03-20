@@ -47,11 +47,11 @@ class WarningsCommand : ModBaseCommand() {
 
         val member = mentioned[0]
 
-        db.getWarningsForUser(member.idLong, ctx.guild.idLong) { warnings ->
+        db.getWarningsForUser(member.idLong, ctx.guild.idLong).thenAccept { warnings ->
             if (warnings.isEmpty()) {
                 sendMsg(ctx, "This member has no active warnings")
 
-                return@getWarningsForUser
+                return@thenAccept
             }
 
             val out = buildString {

@@ -136,24 +136,22 @@ public class RemindmeCommand extends Command {
             ctx.getChannel().getIdLong(),
             ctx.getMessage().getIdLong(),
             ctx.getJDAGuild().getIdLong(),
-            inChannel,
-            (success, id) -> {
-                if (success) {
-                    sendMsg(
-                        ctx,
-                        String.format(
-                            "Got it, I'll remind you%s in _%s_ about \"%s\" (Reminder id %d)",
-                            where,
-                            duration,
-                            reminder,
-                            id
-                        )
-                    );
-                } else {
-                    sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
-                }
-
-                return null;
-            });
+            inChannel
+        ).thenAccept((pair) -> {
+            if (pair.getFirst()) {
+                sendMsg(
+                    ctx,
+                    String.format(
+                        "Got it, I'll remind you%s in _%s_ about \"%s\" (Reminder id %d)",
+                        where,
+                        duration,
+                        reminder,
+                        pair.getSecond()
+                    )
+                );
+            } else {
+                sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
+            }
+        });
     }
 }

@@ -89,10 +89,10 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             return
         }
 
-        variables.databaseAdapter.addOneGuildPatrons(userId, guildId) { _, _ ->
+        variables.databaseAdapter.addOneGuildPatrons(userId, guildId).thenAccept { (_, _) ->
             val instance = SkyBot.getInstance()
-            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@addOneGuildPatrons
-            val newPatron = dbGuild.getMemberById(userId) ?: return@addOneGuildPatrons
+            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@thenAccept
+            val newPatron = dbGuild.getMemberById(userId) ?: return@thenAccept
 
             val hasRole = newPatron.roles
                 .map(Role::getIdLong)

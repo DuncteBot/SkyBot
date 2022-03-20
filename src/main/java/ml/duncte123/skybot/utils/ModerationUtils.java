@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -151,19 +150,7 @@ public class ModerationUtils {
         };
     }
 
-    public static int getWarningCountForUser(AbstractDatabase adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
-        final CompletableFuture<Integer> future = new CompletableFuture<>();
-
-        adapter.getWarningCountForUser(user.getIdLong(), guild.getIdLong(), (it) -> {
-            future.complete(it);
-
-            return null;
-        });
-
-        return future.get();
-    }
-
-    public static void handleUnmute(List<Mute> mutes, AbstractDatabase adapter, Variables variables) {
+    public static void handleUnmute(List<Mute> mutes, AbstractDatabase adapter, Variables variables) throws ExecutionException, InterruptedException {
         LOG.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -229,7 +216,7 @@ public class ModerationUtils {
         }
     }
 
-    public static void handleUnban(List<Ban> bans, AbstractDatabase adapter, Variables variables) {
+    public static void handleUnban(List<Ban> bans, AbstractDatabase adapter, Variables variables) throws ExecutionException, InterruptedException {
         LOG.debug("Checking for users to unban");
 
         // Get the ShardManager from our instance

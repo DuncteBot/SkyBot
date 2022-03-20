@@ -46,8 +46,7 @@ public class GuildSettingsUtils {
 
         LOGGER.info("Loading vc auto roles.");
 
-        adapter.getVcAutoRoles((items) -> {
-
+        adapter.getVcAutoRoles().thenAccept((items) -> {
             items.forEach(
                 (item) -> {
                     final TLongLongMap cache = Optional.ofNullable(
@@ -65,8 +64,6 @@ public class GuildSettingsUtils {
             );
 
             LOGGER.info("Loaded " + items.size() + " vc auto roles.");
-
-            return null;
         });
     }
 
@@ -87,7 +84,7 @@ public class GuildSettingsUtils {
             return;
         }
 
-        variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
+        variables.getDatabaseAdapter().updateGuildSetting(settings);
     }
 
     public static GuildSetting registerNewGuild(long guildId, Variables variables) {
@@ -102,7 +99,7 @@ public class GuildSettingsUtils {
             return settingForGuild;
         }
 
-        variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
+        variables.getDatabaseAdapter().registerNewGuild(newGuildSettings);
         variables.getGuildSettingsCache().put(guildId, newGuildSettings);
 
         return newGuildSettings;

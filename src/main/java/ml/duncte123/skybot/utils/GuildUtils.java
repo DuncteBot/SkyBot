@@ -161,7 +161,7 @@ public class GuildUtils {
     public static void loadAllPatrons(@Nonnull AbstractDatabase adapter) {
         LOGGER.info("(Re)loading patrons");
 
-        adapter.loadAllPatrons((data) -> {
+        adapter.loadAllPatrons().thenAccept((data) -> {
             data.getPatrons().forEach(
                 (patron) -> CommandUtils.PATRONS.add(patron.getUserId())
             );
@@ -189,8 +189,6 @@ public class GuildUtils {
             );
 
             LOGGER.info("Loaded {} guild patrons", CommandUtils.GUILD_PATRONS.size());
-
-            return null;
         });
     }
 }

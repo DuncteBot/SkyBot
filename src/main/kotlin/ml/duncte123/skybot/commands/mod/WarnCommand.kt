@@ -35,7 +35,6 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
-import java.util.concurrent.CompletableFuture
 
 class WarnCommand : ModBaseCommand() {
 
@@ -98,15 +97,13 @@ class WarnCommand : ModBaseCommand() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        val future = CompletableFuture<Unit>()
-
         // add the new warning to the database
-        ctx.databaseAdapter.createWarning(
+        val future = ctx.databaseAdapter.createWarning(
             modUser.idLong,
             target.idLong,
             guild.idLong,
             reason
-        ) { future.complete(null) }
+        )
 
         modLog(modUser, targetUser, "warned", reason, null, guild)
 
@@ -122,7 +119,7 @@ class WarnCommand : ModBaseCommand() {
         // Wait for the request to pass and then get the updated warn count
         future.get()
 
-        val warnCount = getWarningCountForUser(ctx.databaseAdapter, targetUser, jdaGuild)
+        val warnCount = ctx.databaseAdapter.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
         val action = getSelectedWarnAction(warnCount, ctx)
 
         if (action != null) {

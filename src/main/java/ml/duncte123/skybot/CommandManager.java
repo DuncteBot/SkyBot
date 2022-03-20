@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import com.jagrosh.jagtag.Parser;
 import gnu.trove.map.TObjectLongMap;
 import io.sentry.Sentry;
-import kotlin.Triple;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.commands.admin.BlackListCommand;
 import ml.duncte123.skybot.commands.admin.VcAutoRoleCommand;
@@ -57,10 +56,7 @@ import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.utils.EnlargeCommand;
 import ml.duncte123.skybot.commands.utils.RoleInfoCommand;
 import ml.duncte123.skybot.commands.weeb.*;
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.CustomCommand;
+import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
@@ -562,59 +558,54 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        this.variables.getDatabaseAdapter().getCustomCommands(
-            (loadedCommands) -> {
-                loadedCommands.forEach(
-                    (command) -> addCustomCommand(command, false, false)
-                );
-
-                return null;
-            }
-        );
+        this.variables.getDatabaseAdapter().getCustomCommands().thenAccept((loadedCommands) -> {
+            loadedCommands.forEach(
+                (command) -> addCustomCommand(command, false, false)
+            );
+        });
     }
 
     public boolean editCustomCommand(CustomCommand cmd) {
-        return addCustomCommand(cmd, true, true).getFirst();
+        return addCustomCommand(cmd, true, true) == CommandResult.SUCCESS;
     }
 
-    public Triple<Boolean, Boolean, Boolean> registerCustomCommand(CustomCommand cmd) {
+    public CommandResult registerCustomCommand(CustomCommand cmd) {
         return addCustomCommand(cmd, true, false);
     }
 
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    public CommandResult addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new IllegalArgumentException("Name can't have spaces!");
         }
 
-        final boolean commandFound = this.customCommands.stream()
-            .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
-        final boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
+        final boolean commandFound = !isEdit && this.customCommands.stream()
+            .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId());
 
-        if (commandFound || limitReached) {
-            return new Triple<>(false, commandFound, limitReached);
+        if (commandFound) {
+            return CommandResult.COMMAND_EXISTS;
+        }
+
+        final boolean limitReached = !isEdit && this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50;
+
+        if (limitReached) {
+            return CommandResult.LIMIT_REACHED;
         }
 
         if (insertInDb) {
             try {
-                final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
+                final CompletableFuture<CommandResult> future;
 
                 if (isEdit) {
-                    this.variables.getDatabaseAdapter()
-                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
-                            future.complete(triple);
-                            return null;
-                        });
+                    future = this.variables.getDatabaseAdapter()
+                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse());
                 } else {
-                    this.variables.getDatabaseAdapter()
-                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
-                            future.complete(triple);
-                            return null;
-                        });
+                    future = this.variables.getDatabaseAdapter()
+                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage());
                 }
 
-                final Triple<Boolean, Boolean, Boolean> res = future.get();
+                final CommandResult res = future.get();
 
-                if (res != null && !res.getFirst()) {
+                if (res != null && res != CommandResult.SUCCESS) {
                     return res;
                 }
             }
@@ -630,7 +621,7 @@ public class CommandManager {
 
         this.customCommands.add(command);
 
-        return new Triple<>(true, false, false);
+        return CommandResult.SUCCESS;
     }
 
     public boolean removeCustomCommand(String name, long guildId) {
@@ -650,9 +641,7 @@ public class CommandManager {
         }
 
         try {
-            final CompletableFuture<Boolean> future = new CompletableFuture<>();
-            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, future::complete);
-
+            final CompletableFuture<Boolean> future = this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name);
             final boolean result = future.get();
 
             if (result) {

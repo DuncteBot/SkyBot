@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
@@ -44,10 +43,11 @@ import net.jodah.expiringmap.EntryLoader;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.caching.client.CacheClient;
-import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class Variables {
     private final JsonMapper mapper = JsonMapper.builder()
@@ -74,14 +74,10 @@ public final class Variables {
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(12, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
-            final CompletableFuture<GuildSetting> future = new CompletableFuture<>();
-            getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
-                future.complete(setting);
-                return null;
-            });
-
             try {
-                return future.get(20L, TimeUnit.SECONDS);
+                return getDatabaseAdapter().
+                    loadGuildSetting(guildId)
+                    .get(20L, TimeUnit.SECONDS);
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 return null;
             }
