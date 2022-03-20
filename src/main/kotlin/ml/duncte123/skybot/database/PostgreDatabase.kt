@@ -23,8 +23,6 @@ import com.dunctebot.models.settings.WarnAction
 import com.dunctebot.models.utils.Utils.convertJ2S
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import gnu.trove.map.TLongLongMap
-import gnu.trove.map.hash.TLongLongHashMap
 import io.sentry.Sentry
 import liquibase.Contexts
 import liquibase.Liquibase
@@ -36,14 +34,19 @@ import ml.duncte123.skybot.extensions.toReminder
 import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
+import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
-import java.sql.*
+import java.sql.Connection
+import java.sql.SQLException
+import java.sql.Types
 import java.time.OffsetDateTime
 
 class PostgreDatabase : AbstractDatabase() {
     private val ds: HikariDataSource
     private val connection: Connection
-        get() { return this.ds.connection }
+        get() {
+            return this.ds.connection
+        }
 
     init {
         val config = HikariConfig()
@@ -67,7 +70,7 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) = runOnThread {
+    override fun getCustomCommands() = runOnThread {
         val customCommands = arrayListOf<CustomCommand>()
 
         this.connection.use { con ->
@@ -89,42 +92,42 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(customCommands)
+        return@runOnThread customCommands.toList()
     }
 
     override fun createCustomCommand(
         guildId: Long,
         invoke: String,
-        message: String,
-        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
+        message: String
     ) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("SELECT COUNT(guild_id) AS cmd_count FROM custom_commands WHERE guild_id = ?").use { smt ->
-                smt.setLong(1, guildId)
+            con.prepareStatement("SELECT COUNT(guild_id) AS cmd_count FROM custom_commands WHERE guild_id = ?")
+                .use { smt ->
+                    smt.setLong(1, guildId)
 
-                smt.executeQuery().use { res ->
-                    // TODO: make count constant
-                    if (res.next() && res.getInt("cmd_count") >= 50) {
-                        callback(Triple(false, false, true))
-                        return@runOnThread
+                    smt.executeQuery().use { res ->
+                        // TODO: make count constant
+                        if (res.next() && res.getInt("cmd_count") >= 50) {
+                            return@runOnThread CommandResult.LIMIT_REACHED
+                        }
                     }
                 }
-            }
 
-            con.prepareStatement("INSERT INTO custom_commands(guild_id, invoke, message, auto_response) VALUES (?, ?, ?, ?)").use { smt ->
-                smt.setLong(1, guildId)
-                smt.setString(2, invoke)
-                smt.setString(3, message)
-                smt.setBoolean(4, false)
+            con.prepareStatement("INSERT INTO custom_commands(guild_id, invoke, message, auto_response) VALUES (?, ?, ?, ?)")
+                .use { smt ->
+                    smt.setLong(1, guildId)
+                    smt.setString(2, invoke)
+                    smt.setString(3, message)
+                    smt.setBoolean(4, false)
 
-                try {
-                    smt.execute()
-                    callback(Triple(true, false, false))
-                } catch (e: SQLException) {
-                    Sentry.captureException(e)
-                    callback(Triple(false, false, false))
+                    try {
+                        smt.execute()
+                        return@runOnThread CommandResult.SUCCESS
+                    } catch (e: SQLException) {
+                        Sentry.captureException(e)
+                        return@runOnThread CommandResult.UNKNOWN
+                    }
                 }
-            }
         }
     }
 
@@ -132,8 +135,7 @@ class PostgreDatabase : AbstractDatabase() {
         guildId: Long,
         invoke: String,
         message: String,
-        autoresponse: Boolean,
-        callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit
+        autoresponse: Boolean
     ) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
@@ -146,16 +148,16 @@ class PostgreDatabase : AbstractDatabase() {
 
                 try {
                     smt.executeUpdate()
-                    callback(Triple(true, false, false))
+                    return@runOnThread CommandResult.SUCCESS
                 } catch (e: SQLException) {
                     Sentry.captureException(e)
-                    callback(Triple(false, false, false))
+                    return@runOnThread CommandResult.UNKNOWN
                 }
             }
         }
     }
 
-    override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Any?) = runOnThread {
+    override fun deleteCustomCommand(guildId: Long, invoke: String) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM custom_commands WHERE guild_id = ? AND invoke = ?").use { smt ->
                 smt.setLong(1, guildId)
@@ -163,16 +165,16 @@ class PostgreDatabase : AbstractDatabase() {
 
                 try {
                     smt.execute()
-                    callback(true)
+                    return@runOnThread true
                 } catch (e: SQLException) {
                     Sentry.captureException(e)
-                    callback(false)
+                    return@runOnThread false
                 }
             }
         }
     }
 
-    override fun getGuildSettings(callback: (List<GuildSetting>) -> Unit) = runOnThread {
+    override fun getGuildSettings() = runOnThread {
         val settings = arrayListOf<GuildSetting>()
 
         this.connection.use { con ->
@@ -191,25 +193,23 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(settings)
+        return@runOnThread settings.toList()
     }
 
-    override fun loadGuildSetting(guildId: Long, callback: (GuildSetting?) -> Unit) = runOnThread {
+    override fun loadGuildSetting(guildId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM guild_settings WHERE guild_id = ?").use { smt ->
                 smt.setLong(1, guildId)
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        callback.invoke(
-                            res.toGuildSetting()
-                                // be smart and re-use the connection we already have
-                                .setBlacklistedWords(getBlackListsForGuild(guildId, con))
-                                .setWarnActions(getWarnActionsForGuild(guildId, con))
-                        )
-                    } else {
-                        callback.invoke(null)
+                        return@runOnThread res.toGuildSetting()
+                            // be smart and re-use the connection we already have
+                            .setBlacklistedWords(getBlackListsForGuild(guildId, con))
+                            .setWarnActions(getWarnActionsForGuild(guildId, con))
                     }
+
+                    return@runOnThread null
                 }
             }
         }
@@ -240,7 +240,7 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
+    override fun updateGuildSetting(guildSettings: GuildSetting) = runOnThread {
         this.connection.use { con ->
             // TODO: remove server_description, discord has this feature now
             con.prepareStatement(
@@ -327,12 +327,12 @@ class PostgreDatabase : AbstractDatabase() {
                 // What guild?
                 smt.setLong(33, guildSettings.guildId)
 
-                callback(smt.execute())
+                return@runOnThread smt.execute()
             }
         }
     }
 
-    override fun registerNewGuild(guildSettings: GuildSetting, callback: (Boolean) -> Unit) = runOnThread {
+    override fun registerNewGuild(guildSettings: GuildSetting) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
                 """INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
@@ -344,7 +344,7 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.setString(3, guildSettings.customJoinMessage)
                 smt.setString(4, guildSettings.customLeaveMessage)
 
-                callback(smt.execute())
+                return@runOnThread smt.execute()
             }
         }
     }
@@ -367,6 +367,8 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun removeWordFromBlacklist(guildId: Long, word: String) = runOnThread {
@@ -378,6 +380,8 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun clearBlacklist(guildId: Long) = runOnThread {
@@ -387,13 +391,15 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun loadAllPatrons(callback: (AllPatronsData) -> Unit) = runOnThread {
+    override fun loadAllPatrons() = runOnThread {
         val patrons = arrayListOf<Patron>()
         val tagPatrons = arrayListOf<Patron>()
         val oneGuildPatrons = arrayListOf<Patron>()
@@ -421,7 +427,7 @@ class PostgreDatabase : AbstractDatabase() {
                 }
             }
 
-            callback(AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons))
+            return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
         }
     }
 
@@ -433,15 +439,18 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun createOrUpdatePatron(patron: Patron) = runOnThread {
         this.createOrUpdatePatronSync(patron)
     }
 
-    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) = runOnThread {
+    override fun addOneGuildPatrons(userId: Long, guildId: Long) = runOnThread {
         this.createOrUpdatePatronSync(Patron(Patron.Type.ONE_GUILD, userId, guildId))
-        callback(userId, guildId)
+
+        return@runOnThread userId to guildId
     }
 
     private fun createOrUpdatePatronSync(patron: Patron) {
@@ -468,10 +477,7 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    // TODO: weird, could just return a nullable long
-    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) = runOnThread {
-        val map = TLongLongHashMap()
-
+    override fun getOneGuildPatron(userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("SELECT guild_id FROM patrons WHERE user_id = ? AND type = ?").use { smt ->
                 smt.setLong(1, userId)
@@ -479,13 +485,13 @@ class PostgreDatabase : AbstractDatabase() {
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        map.put(userId, res.getLong("guild_id"))
+                        return@runOnThread res.getLong("guild_id")
+                    } else {
+                        return@runOnThread null
                     }
                 }
             }
         }
-
-        callback(map)
     }
 
     override fun createBan(
@@ -508,9 +514,11 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String, callback: () -> Unit) = runOnThread {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
                 "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason) VALUES (?, ?, ?, now(), ?)"
@@ -522,7 +530,7 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
 
-            callback()
+            return@runOnThread
         }
     }
 
@@ -531,8 +539,7 @@ class PostgreDatabase : AbstractDatabase() {
         userId: Long,
         userTag: String,
         unmuteDate: String,
-        guildId: Long,
-        callback: (Mute?) -> Unit
+        guildId: Long
     ) = runOnThread {
         this.connection.use { con ->
             var oldMute: Mute? = null
@@ -571,11 +578,11 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
 
-            callback(oldMute)
+            return@runOnThread oldMute
         }
     }
 
-    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) = runOnThread {
+    override fun getWarningsForUser(userId: Long, guildId: Long) = runOnThread {
         val warnings = mutableListOf<Warning>()
 
         this.connection.use { con ->
@@ -600,10 +607,10 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(warnings)
+        return@runOnThread warnings.toList()
     }
 
-    override fun getWarningCountForUser(userId: Long, guildId: Long, callback: (Int) -> Unit) = runOnThread {
+    override fun getWarningCountForUser(userId: Long, guildId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
                 "SELECT COUNT(id) as amount FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - '6 day'::interval))"
@@ -613,34 +620,35 @@ class PostgreDatabase : AbstractDatabase() {
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        callback(res.getInt("amount"))
-                    } else {
-                        callback(0)
+                        return@runOnThread res.getInt("amount")
                     }
                 }
             }
         }
+
+        return@runOnThread 0
     }
 
-    override fun deleteLatestWarningForUser(userId: Long, guildId: Long, callback: (Warning?) -> Unit) = runOnThread {
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long) = runOnThread {
         var oldWarning: Warning? = null
 
         this.connection.use { con ->
-            con.prepareStatement("SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? ORDER BY id DESC LIMIT 1").use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, guildId)
-                smt.executeQuery().use { res ->
-                    if (res.next()) {
-                        oldWarning = Warning(
-                            res.getInt("id"),
-                            res.getString("warn_date"),
-                            res.getLong("mod_id"),
-                            res.getString("reason"),
-                            res.getLong("guild_id")
-                        )
+            con.prepareStatement("SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? ORDER BY id DESC LIMIT 1")
+                .use { smt ->
+                    smt.setLong(1, userId)
+                    smt.setLong(2, guildId)
+                    smt.executeQuery().use { res ->
+                        if (res.next()) {
+                            oldWarning = Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getLong("mod_id"),
+                                res.getString("reason"),
+                                res.getLong("guild_id")
+                            )
+                        }
                     }
                 }
-            }
 
             if (oldWarning != null) {
                 con.prepareStatement("DELETE FROM warnings WHERE id = ?").use { smt ->
@@ -648,9 +656,9 @@ class PostgreDatabase : AbstractDatabase() {
                     smt.executeUpdate()
                 }
             }
-
-            callback(oldWarning)
         }
+
+        return@runOnThread oldWarning
     }
 
     override fun purgeBans(ids: List<Int>) = runOnThread {
@@ -691,24 +699,24 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long, callback: (BanBypas?) -> Unit) = runOnThread {
+    override fun getBanBypass(guildId: Long, userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
                 smt.setLong(1, guildId)
                 smt.setLong(2, userId)
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        callback(
-                            BanBypas(res.getLong("guild_id"), res.getLong("user_id"))
-                        )
-                    } else {
-                        callback(null)
+                        return@runOnThread BanBypas(res.getLong("guild_id"), res.getLong("user_id"))
                     }
                 }
             }
         }
+
+        return@runOnThread null
     }
 
     override fun deleteBanBypass(banBypass: BanBypas) = runOnThread {
@@ -719,9 +727,11 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
-    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) = runOnThread {
+    override fun getVcAutoRoles() = runOnThread {
         val roles = arrayListOf<VcAutoRole>()
 
         this.connection.use { con ->
@@ -740,10 +750,11 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(roles)
+        return@runOnThread roles.toList()
     }
 
-    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) = setVcAutoRoleBatch(guildId, listOf(voiceChannelId), roleId)
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) =
+        setVcAutoRoleBatch(guildId, listOf(voiceChannelId), roleId)
 
     override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) = runOnThread {
         val values = voiceChannelIds.joinToString(", ") { "(?, ?, ?)" }
@@ -763,6 +774,8 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun removeVcAutoRole(voiceChannelId: Long) = runOnThread {
@@ -772,6 +785,8 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
     override fun removeVcAutoRoleForGuild(guildId: Long) = runOnThread {
@@ -781,9 +796,10 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+        return@runOnThread
     }
 
-    override fun loadTags(callback: (List<Tag>) -> Unit) = runOnThread {
+    override fun loadTags() = runOnThread {
         val tags = arrayListOf<Tag>()
 
         this.connection.use { con ->
@@ -803,10 +819,10 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(tags)
+        return@runOnThread tags.toList()
     }
 
-    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) = runOnThread {
+    override fun createTag(tag: Tag) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)").use { smt ->
                 smt.setLong(1, tag.ownerId)
@@ -815,21 +831,24 @@ class PostgreDatabase : AbstractDatabase() {
 
                 try {
                     smt.execute()
-                    callback(true, "")
+                    return@runOnThread true to ""
                 } catch (e: SQLException) {
-                    callback(false, e.message ?: "Unknown failure")
+                    return@runOnThread false to (e.message ?: "Unknown failure")
                 }
             }
         }
     }
 
-    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) = runOnThread {
+    override fun deleteTag(tag: Tag) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM tags WHERE id = ?").use { smt ->
                 smt.setInt(1, tag.id)
                 smt.execute()
             }
         }
+
+        // TODO: failures to not work
+        return@runOnThread true to ""
     }
 
     override fun createReminder(
@@ -839,8 +858,7 @@ class PostgreDatabase : AbstractDatabase() {
         channelId: Long,
         messageId: Long,
         guildId: Long,
-        inChannel: Boolean,
-        callback: (Boolean, Int) -> Unit
+        inChannel: Boolean
     ) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
@@ -860,48 +878,47 @@ class PostgreDatabase : AbstractDatabase() {
 
                     smt.generatedKeys.use { res ->
                         if (res.next()) {
-                            callback(true, res.getInt("id"))
-                        } else {
-                            callback(false, -1)
+                            return@runOnThread true to res.getInt("id")
                         }
                     }
                 } catch (ex: SQLException) {
                     Sentry.captureException(ex)
-                    callback(false, -1)
                 }
             }
         }
+
+        return@runOnThread false to -1
     }
 
-    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) = runOnThread {
+    override fun removeReminder(reminderId: Int, userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
                 smt.setInt(1, reminderId)
                 smt.setLong(2, userId)
                 smt.execute()
-
-                callback(true)
             }
         }
+
+        return@runOnThread true
     }
 
-    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) = runOnThread {
+    override fun showReminder(reminderId: Int, userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
                 smt.setInt(1, reminderId)
                 smt.setLong(2, userId)
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        callback(res.toReminder())
-                    } else {
-                        callback(null)
+                        return@runOnThread res.toReminder()
                     }
                 }
             }
         }
+
+        return@runOnThread null
     }
 
-    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) = runOnThread {
+    override fun listReminders(userId: Long) = runOnThread {
         val reminders = arrayListOf<Reminder>()
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use { smt ->
@@ -914,7 +931,7 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-        callback(reminders)
+        return@runOnThread reminders.toList()
     }
 
     override fun purgeReminders(ids: List<Int>) = runOnThread {
@@ -928,31 +945,34 @@ class PostgreDatabase : AbstractDatabase() {
                 smt.execute()
             }
         }
+
+        return@runOnThread
     }
 
-    override fun purgeRemindersSync(ids: List<Int>) = this.purgeReminders(ids)
-
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) = runOnThread {
-       this.connection.use { con ->
-           con.prepareStatement("DELETE FROM warn_actions WHERE guild_id = ?").use { smt ->
-               smt.setLong(1, guildId)
-               smt.execute()
-           }
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM warn_actions WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.execute()
+            }
 
-           val spots = actions.joinToString(", ") { "(?, ?, ?, ?)" }
-           con.prepareStatement("INSERT INTO warn_actions(guild_id, type, threshold, duration) VALUES $spots").use { smt ->
-               var paramIndex = 0;
+            val spots = actions.joinToString(", ") { "(?, ?, ?, ?)" }
+            con.prepareStatement("INSERT INTO warn_actions(guild_id, type, threshold, duration) VALUES $spots")
+                .use { smt ->
+                    var paramIndex = 0;
 
-               actions.forEach {
-                   smt.setLong(++paramIndex, guildId)
-                   smt.setString(++paramIndex, it.type.name)
-                   smt.setInt(++paramIndex, it.threshold)
-                   smt.setInt(++paramIndex, it.duration)
-               }
+                    actions.forEach {
+                        smt.setLong(++paramIndex, guildId)
+                        smt.setString(++paramIndex, it.type.name)
+                        smt.setInt(++paramIndex, it.threshold)
+                        smt.setInt(++paramIndex, it.duration)
+                    }
 
-               smt.execute()
-           }
-       }
+                    smt.execute()
+                }
+        }
+
+        return@runOnThread
     }
 
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {

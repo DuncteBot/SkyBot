@@ -120,6 +120,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     abstract fun createOrUpdatePatron(patron: Patron): CompletableFuture<Unit>
 
+    // why is this returning the two parameters?
     abstract fun addOneGuildPatrons(userId: Long, guildId: Long): CompletableFuture<Pair<Long, Long>>
 
     abstract fun getOneGuildPatron(userId: Long): CompletableFuture<Long?>
@@ -146,7 +147,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
         userTag: String,
         unmuteDate: String,
         guildId: Long
-    ): CompletableFuture<Unit>
+    ): CompletableFuture<Mute?>
 
     abstract fun getWarningsForUser(userId: Long, guildId: Long): CompletableFuture<List<Warning>>
 

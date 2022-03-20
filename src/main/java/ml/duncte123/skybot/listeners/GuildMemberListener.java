@@ -487,19 +487,13 @@ public class GuildMemberListener extends BaseListener {
     }
 
     private void handleNewOneGuildPatron(long userId) {
-        variables.getDatabaseAdapter().getOneGuildPatron(userId,
-            (results) -> {
-                results.forEachEntry(
-                    (a, guildId) -> {
-                        CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
-
-                        return true;
-                    }
-                );
-
-                return null;
-            }
-        );
+        variables.getDatabaseAdapter()
+            .getOneGuildPatron(userId)
+            .thenAccept((guildId) -> {
+                if (guildId != null) {
+                    CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
+                }
+            });
     }
 
     private void applyAutoRole(Guild guild, Member member, GuildSetting settings) {
