@@ -49,7 +49,7 @@ public final class LavalinkManager {
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig config, AudioUtils audioUtils) {
+    public void start(SkyBot skybot, DunctebotConfig config, AudioUtils audioUtils) {
         this.config = config;
         this.audioUtils = audioUtils;
 
@@ -62,7 +62,7 @@ public final class LavalinkManager {
         lavalink = new JdaLavalink(
             userId,
             this.config.discord.totalShards,
-            shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
+            shardId -> skybot.getShardManager().getShardById(shardId)
         );
 
         loadNodes();
