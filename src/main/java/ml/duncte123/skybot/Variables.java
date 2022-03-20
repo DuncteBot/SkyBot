@@ -182,7 +182,7 @@ public final class Variables {
             } else if ("web".equals(this.config.useDatabase)) {
                 this.database = new WebDatabase(this.getApis(), this.getJackson());
             } else {
-                throw new IllegalArgumentException("SQLite has been removed");
+                throw new IllegalArgumentException("Unknown database engine: " + this.config.useDatabase);
             }
         }
 

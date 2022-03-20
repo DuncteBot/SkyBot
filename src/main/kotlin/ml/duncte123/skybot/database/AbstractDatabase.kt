@@ -52,13 +52,6 @@ abstract class AbstractDatabase(threads: Int = 2) {
      *
      * @param message
      *          the action of the command
-     *
-     * @param callback
-     *          the result of the action
-     *          the boolean values in the tripple are:
-     *             1. True when the command was added
-     *             2. True when the guild already has a command with this invoke
-     *             3. True when the guild reached the custom command limit
      */
     abstract fun createCustomCommand(
         guildId: Long,
@@ -211,7 +204,6 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     abstract fun setWarnActions(guildId: Long, actions: List<WarnAction>): CompletableFuture<Unit>
 
-    // Cannot be an option callback due to it targeting the onFail param
     protected fun <T> runOnThread(r: () -> T): CompletableFuture<T> {
         val future = CompletableFuture<T>()
 
