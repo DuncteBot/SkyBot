@@ -180,24 +180,14 @@ public final class Variables {
     }
 
     public AbstractDatabase getDatabaseAdapter() {
-        try {
-            if (this.database == null) {
-                if ("psql".equals(this.config.useDatabase)) {
-                    this.database = new PostgreDatabase();
-                } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
-                    this.database = new WebDatabase(this.getApis(), this.getJackson());
-                } else {
-                    this.database = (AbstractDatabase) (Class.forName("ml.duncte123.skybot.database.SqliteDatabase")
-                        .getDeclaredConstructor().newInstance());
-                }
+        if (this.database == null) {
+            if ("psql".equals(this.config.useDatabase)) {
+                this.database = new PostgreDatabase();
+            } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
+                this.database = new WebDatabase(this.getApis(), this.getJackson());
+            } else {
+                throw new IllegalArgumentException("SQLite has been removed");
             }
-        }
-        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-            InstantiationException | InvocationTargetException e) {
-            LoggerFactory.getLogger(Variables.class).error("Could not load database class.\n" +
-                "Are you a developer?", e);
-
-            throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
 
         return this.database;

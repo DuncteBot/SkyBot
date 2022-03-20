@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -91,10 +90,6 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.DAYS
             );
 
-            if ("false".equals(variables.getConfig().useDatabase)) {
-                this.startSQLiteTimers();
-            }
-
             arePoolsRunning.set(true);
 
             // Load the patrons here so that they are loaded once
@@ -138,31 +133,5 @@ public class ReadyShutdownListener extends MessageListener {
         this.variables.getWeebApi().shutdown();
         LOGGER.info("Weeb.java shutdown");
         LOGGER.info("Bot and JDA shutdown cleanly");
-    }
-
-    private void startSQLiteTimers() {
-        // This is ran on the systemPool to not hold the event thread from getting new events
-        // Reflection is used because the class is removed at compile time
-        systemPool.execute(() -> {
-            try {
-                // Get a new class instance or whatever you call this
-                // Basically this is SQLiteTimers.class
-                // A new instance would be new SQLiteTimers()
-                final Class<?> aClass = Class.forName("ml.duncte123.skybot.database.SQLiteTimers");
-                final Method[] methods = aClass.getDeclaredMethods();
-
-                // Loop over all the methods that start with "start"
-                for (final Method method : methods) {
-                    if (!method.getName().startsWith("start")) {
-                        continue;
-                    }
-
-                    // Invoke the method statically
-                    method.invoke(null, variables);
-                }
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        });
     }
 }

@@ -81,7 +81,7 @@ public final class SkyBot {
         } else if ("true".equals(useDatabase) || "web".equals(useDatabase)) {
             logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {
-            logger.warn("Using SQLite as the database, please migrate to PostgreSQL");
+            logger.error("Using SQLite as the database, please migrate to PostgreSQL");
         }
 
         //Load the settings before loading the bot

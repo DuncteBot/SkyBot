@@ -61,11 +61,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-val devDependencies = arrayOf(
-    // SQLite
-    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.32.3")
-)
-
 dependencies {
     implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
@@ -159,11 +154,6 @@ dependencies {
     implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
     implementation(group = "org.liquibase.ext", name = "liquibase-postgresql", version = "4.5.0") //might not be needed
     runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
-
-    // dev deps
-    devDependencies.forEach {
-        implementation(group = it.group, name = it.name, version = it.version)
-    }
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -257,32 +247,12 @@ compileJava.apply {
     dependsOn(generateJavaSources)
 }
 
-jar.apply {
-    exclude(
-        "**/SQLiteDatabaseConnectionManager.class",
-        "**/AudioPlayerSenderHandler.class",
-        "**/SqliteDatabaseAdapter**"
-    )
-}
-
 application {
     mainClass.set("ml.duncte123.skybot.SkyBot")
 }
 
 shadowJar.apply {
     archiveClassifier.set("prod")
-
-    exclude(
-        "**/SQLiteDatabaseConnectionManager.class",
-        "**/SQLiteTimers.class",
-        "**/SqliteDatabaseAdapter**"
-    )
-
-    dependencies {
-        devDependencies.forEach {
-            exclude(dependency("${it.group}:${it.name}:${it.version}"))
-        }
-    }
 }
 
 tasks.withType<Wrapper> {
