@@ -63,7 +63,11 @@ public final class SkyBot {
             member.getRoles().stream().anyMatch((role) -> role.getIdLong() == Settings.PATRONS_ROLE);
     };
 
+    // Sigh, might need to convert this to spring
+    @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
     private SkyBot() throws LoginException {
+        instance = this;
+
         // Load in our container
         final Variables variables = new Variables();
 
@@ -95,7 +99,7 @@ public final class SkyBot {
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
-        LavalinkManager.INS.start(config, variables.getAudioUtils());
+        LavalinkManager.INS.start(this, config, variables.getAudioUtils());
 
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
@@ -183,7 +187,7 @@ public final class SkyBot {
     }
 
     public static void main(final String[] args) throws LoginException {
-        instance = new SkyBot();
+        new SkyBot();
     }
 
     public static SkyBot getInstance() {

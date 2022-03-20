@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import gnu.trove.map.TLongLongMap
 import io.sentry.Sentry
-import kotlinx.coroutines.*
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
@@ -240,7 +239,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     }
 
     // Cannot be an option callback due to it targeting the onFail param
-    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit = {}) {
+    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) {
         databaseThread.execute {
             try {
                 r.invoke()
@@ -250,9 +249,9 @@ abstract class AbstractDatabase(threads: Int = 2) {
                 thr.printStackTrace()
             }
         }
-    }*/
+    }
 
-    protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
+    /*protected fun runOnThread(r: () -> Unit, onFail: (Throwable) -> Unit) = runBlocking {
         launch {
             try {
                 r.invoke()
@@ -262,5 +261,5 @@ abstract class AbstractDatabase(threads: Int = 2) {
                 thr.printStackTrace()
             }
         }
-    }
+    }*/
 }

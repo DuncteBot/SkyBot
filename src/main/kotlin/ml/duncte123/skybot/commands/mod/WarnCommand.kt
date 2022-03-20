@@ -85,9 +85,13 @@ class WarnCommand : ModBaseCommand() {
 
         var reason = ""
         val flags = ctx.getParsedFlags(this)
+        val args = ctx.args
 
         if (flags.containsKey("r")) {
             reason = flags["r"]!!.joinToString(" ")
+        } else if (args.size > 1) {
+            val example = "\nExample: `${ctx.prefix}warn ${args[0]} -r ${args.subList(1, args.size).joinToString(" ")}`"
+            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag$example")
         }
 
         val dmMessage = """You have been warned by ${modUser.asTag}
