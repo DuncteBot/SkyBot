@@ -873,12 +873,32 @@ class PostgreDatabase : AbstractDatabase() {
         }
     }
 
-    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) {
-        TODO("Not yet implemented")
+    override fun removeReminder(reminderId: Int, userId: Long, callback: (Boolean) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
+                smt.setInt(1, reminderId)
+                smt.setLong(2, userId)
+                smt.execute()
+
+                callback(true)
+            }
+        }
     }
 
-    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) {
-        TODO("Not yet implemented")
+    override fun showReminder(reminderId: Int, userId: Long, callback: (Reminder?) -> Unit) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
+                smt.setInt(1, reminderId)
+                smt.setLong(2, userId)
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        callback(res.toReminder())
+                    } else {
+                        callback(null)
+                    }
+                }
+            }
+        }
     }
 
     override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) = runOnThread {
@@ -894,12 +914,20 @@ class PostgreDatabase : AbstractDatabase() {
             }
         }
 
-
         callback(reminders)
     }
 
-    override fun purgeReminders(ids: List<Int>) {
-        TODO("Not yet implemented")
+    override fun purgeReminders(ids: List<Int>) = runOnThread {
+        val question = ids.joinToString(", ") { "?" }
+
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM reminders WHERE id IN ($question)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
     }
 
     override fun purgeRemindersSync(ids: List<Int>) = this.purgeReminders(ids)
