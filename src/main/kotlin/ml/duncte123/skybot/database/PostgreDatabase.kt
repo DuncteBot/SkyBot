@@ -51,13 +51,8 @@ class PostgreDatabase : AbstractDatabase() {
     init {
         val config = HikariConfig()
         config.jdbcUrl = "jdbc:postgresql://localhost:5432/skybot?user=skybot&password=password" // &ssl=true
-        // config.addDataSourceProperty("logWriter", PrintWriter(System.out))
 
         this.ds = HikariDataSource(config)
-
-        // could be useful?
-        /*val dataTypeFactory = DataTypeFactory.getInstance()
-        dataTypeFactory.register(Pos)*/
 
         this.connection.use { con ->
             Liquibase(

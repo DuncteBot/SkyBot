@@ -78,10 +78,12 @@ public final class SkyBot {
 
         if ("psql".equals(useDatabase)) {
             logger.info("Using PostgreSQL as database adapter");
-        } else if ("true".equals(useDatabase) || "web".equals(useDatabase)) {
+        } else if ("web".equals(useDatabase)) {
             logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {
-            logger.error("Using SQLite as the database, please migrate to PostgreSQL");
+            shardManager = null; // for compiling n' stuff
+            logger.error("Unknown database driver \"{}\", exiting!", useDatabase);
+            return;
         }
 
         //Load the settings before loading the bot

@@ -102,8 +102,6 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-//    implementation(kotlin("kotlinx-coroutines-core"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
@@ -152,7 +150,6 @@ dependencies {
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
     implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
     implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
-    implementation(group = "org.liquibase.ext", name = "liquibase-postgresql", version = "4.5.0") //might not be needed
     runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
 }
 

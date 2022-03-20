@@ -179,7 +179,7 @@ public final class Variables {
         if (this.database == null) {
             if ("psql".equals(this.config.useDatabase)) {
                 this.database = new PostgreDatabase();
-            } else if ("true".equals(this.config.useDatabase) || "web".equals(this.config.useDatabase)) {
+            } else if ("web".equals(this.config.useDatabase)) {
                 this.database = new WebDatabase(this.getApis(), this.getJackson());
             } else {
                 throw new IllegalArgumentException("SQLite has been removed");
