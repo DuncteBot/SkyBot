@@ -258,4 +258,12 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="10" author="duncte123">
+        <addColumn tableName="reminders">
+            <column name="created_at" type="datetime" defaultValueDate="now()">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

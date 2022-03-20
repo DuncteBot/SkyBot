@@ -32,6 +32,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.toGuildSetting
+import ml.duncte123.skybot.extensions.toReminder
 import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
@@ -880,8 +881,21 @@ class PostgreDatabase : AbstractDatabase() {
         TODO("Not yet implemented")
     }
 
-    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun listReminders(userId: Long, callback: (List<Reminder>) -> Unit) = runOnThread {
+        val reminders = arrayListOf<Reminder>()
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use { smt ->
+                smt.setLong(1, userId)
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        reminders.add(res.toReminder())
+                    }
+                }
+            }
+        }
+
+
+        callback(reminders)
     }
 
     override fun purgeReminders(ids: List<Int>) {
