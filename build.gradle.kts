@@ -35,7 +35,7 @@ plugins {
     id("org.jmailen.kotlinter") version "3.5.1"
 }
 
-val numberVersion = "3.106.5"
+val numberVersion = "3.106.6"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"

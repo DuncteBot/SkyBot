@@ -54,21 +54,16 @@ import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
     private static SkyBot instance;
-    private final ShardManager shardManager;
-    private WebSocketClient client;
-
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
         // Member needs to be cached for JDA to fire role update event
         // the guild check is required for JDA to catch role updates in the support guild
         return member.getGuild().getIdLong() == Settings.SUPPORT_GUILD_ID &&
             member.getRoles().stream().anyMatch((role) -> role.getIdLong() == Settings.PATRONS_ROLE);
     };
+    private final ShardManager shardManager;
+    private WebSocketClient client;
 
-    // Sigh, might need to convert this to spring
-    @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
     private SkyBot() throws LoginException {
-        instance = this;
-
         // Load in our container
         final Variables variables = new Variables();
 
@@ -102,13 +97,13 @@ public final class SkyBot {
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
-            GatewayIntent.GUILD_MEMBERS,
-            GatewayIntent.GUILD_INVITES,
-            GatewayIntent.GUILD_BANS,
-            GatewayIntent.GUILD_EMOJIS,
-            GatewayIntent.GUILD_VOICE_STATES,
-            GatewayIntent.GUILD_MESSAGES
-        )
+                GatewayIntent.GUILD_MEMBERS,
+                GatewayIntent.GUILD_INVITES,
+                GatewayIntent.GUILD_BANS,
+                GatewayIntent.GUILD_EMOJIS,
+                GatewayIntent.GUILD_VOICE_STATES,
+                GatewayIntent.GUILD_MESSAGES
+            )
             .setToken(token)
             .setShardsTotal(totalShards)
             .setActivityProvider((shardId) -> Activity.playing(
@@ -138,7 +133,7 @@ public final class SkyBot {
         this.shardManager = builder.build();
 
         HelpEmbeds.init(commandManager);
-        
+
         if (config.websocket.enable) {
             client = new WebSocketClient(variables, shardManager);
         }
@@ -185,7 +180,7 @@ public final class SkyBot {
     }
 
     public static void main(final String[] args) throws LoginException {
-        new SkyBot();
+        instance = new SkyBot();
     }
 
     public static SkyBot getInstance() {

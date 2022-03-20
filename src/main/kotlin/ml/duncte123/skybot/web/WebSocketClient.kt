@@ -213,7 +213,7 @@ class WebSocketClient(
     }
 
     private fun connect() {
-        if (socket != null && socket.isOpen) {
+        if (this::socket.isInitialized && socket.isOpen) {
             socket.sendClose(WebSocketCloseCode.NORMAL)
         }
 
