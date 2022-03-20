@@ -39,7 +39,8 @@ class BlackListCommand : ModBaseCommand() {
         this.category = CommandCategory.ADMINISTRATION
         this.name = "blacklist"
         this.help = """Control the blacklisted words on your server
-            |Note: **People that have the kick members permission will bypass the blacklist**""".trimMargin()
+            |Note: **People that have the kick members permission will bypass the blacklist**
+        """.trimMargin()
         this.usage = "<list/clear/import/add/remove> [word]"
         this.extraInfo = """```{prefix}$name list => Gives you a list of the current blacklisted words
         |{prefix}$name clear => Clears the blacklist

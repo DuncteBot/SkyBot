@@ -71,7 +71,6 @@ class WarnCommand : ModBaseCommand() {
             return
         }
 
-        val jdaGuild = ctx.jdaGuild
         val guild = ctx.guild
         val moderator = ctx.member
         val channel = ctx.channel

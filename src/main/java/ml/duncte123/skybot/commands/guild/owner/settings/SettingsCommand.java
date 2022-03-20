@@ -47,6 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.dunctebot.models.utils.Utils.ratelimmitChecks;
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 import static ml.duncte123.skybot.extensions.BooleanKt.toEmoji;
 import static ml.duncte123.skybot.utils.AirUtils.colorToHex;
@@ -420,7 +421,7 @@ public class SettingsCommand extends Command {
             return;
         }
 
-        final long[] rates = GuildSettingsUtils.ratelimmitChecks(newRateLimit);
+        final long[] rates = ratelimmitChecks(newRateLimit);
 
         if (rates.length != 6) {
             sendMsg(ctx, "Invalid rate limit settings (example settings are `20|45|60|120|240|2400`)");

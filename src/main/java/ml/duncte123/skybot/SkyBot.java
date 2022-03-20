@@ -69,7 +69,6 @@ public final class SkyBot {
         this.configureDefaults(variables);
 
         final DunctebotConfig config = variables.getConfig();
-        final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
         Settings.PREFIX = config.discord.prefix;
@@ -93,6 +92,7 @@ public final class SkyBot {
         final String token = config.discord.token;
         //But this time we are going to shard it
         final int totalShards = config.discord.totalShards;
+        final CommandManager commandManager = variables.getCommandManager();
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());

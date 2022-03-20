@@ -127,7 +127,7 @@ class UserinfoCommand : Command() {
                         |**Bot Account:** ${user.isBot.toEmoji()}
                         |
                         |_Use `${guild.settings.customPrefix}avatar [user]` to get a user's avatar_
-                    """.trimMargin()
+                """.trimMargin()
             )
 
         sendEmbed(ctx, embed)
@@ -216,7 +216,7 @@ class UserinfoCommand : Command() {
                         |**Boosting:** ${(member.timeBoosted != null).toEmoji()}$boostingSinceMsg
                         |
                         |_Use `${ctx.prefix}avatar [user]` to get a user's avatar_
-                    """.trimMargin()
+                """.trimMargin()
             )
 
         // If we don't have permission to send files or our weebSh key is null

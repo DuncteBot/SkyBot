@@ -42,7 +42,7 @@ class KickMeCommand : Command() {
                         |If you are sure that you want to kick yourself off this server use `$prefix$name YESIMSURE`
                         |By running `$prefix$name YESIMSURE` you agree that you are responsible for the consequences of this command.
                         |DuncteBot and any of it's developers are not responsible for your own kick by running this command
-                    """.trimMargin()
+        """.trimMargin()
         if (args.isEmpty() || args[0] != "YESIMSURE") {
             MessageUtils.sendMsg(ctx, warningMsg)
         } else if (args.isNotEmpty() && args[0] == "YESIMSURE") {
@@ -74,7 +74,7 @@ class KickMeCommand : Command() {
                     ctx,
                     """I'm missing the permission to kick you.
                             |You got lucky this time ${ctx.member.asMention}.
-                        """.trimMargin()
+                    """.trimMargin()
                 )
             }
         } else {

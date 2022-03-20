@@ -56,7 +56,7 @@ class RoleInfoCommand : Command() {
                 ctx,
                 """No roles found, make sure that you have a role or are typing the name of a role on this server
                 |Hint: you can use `${ctx.prefix}roles` to get a list of the roles in this server
-            """.trimMargin()
+                """.trimMargin()
             )
 
             return
@@ -87,7 +87,7 @@ class RoleInfoCommand : Command() {
                 |**Hoisted:** ${role.isHoisted.toEmoji()}
                 |**Mentionable:** ${role.isMentionable.toEmoji()}
                 |**Permissions:** $perms
-            """.trimMargin()
+                """.trimMargin()
             )
 
         sendEmbed(ctx, embed, true)

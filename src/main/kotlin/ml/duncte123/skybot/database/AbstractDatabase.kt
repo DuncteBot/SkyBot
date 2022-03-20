@@ -60,7 +60,6 @@ abstract class AbstractDatabase(threads: Int = 2) {
      *             2. True when the guild already has a command with this invoke
      *             3. True when the guild reached the custom command limit
      */
-    // TODO: replace tripple with CommandResult
     abstract fun createCustomCommand(
         guildId: Long,
         invoke: String,

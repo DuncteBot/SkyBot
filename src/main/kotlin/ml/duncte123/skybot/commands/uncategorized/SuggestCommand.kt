@@ -34,7 +34,7 @@ class SuggestCommand : Command() {
             ctx,
             """You can leave you suggestions for the bot on his page: https://duncte.bot/suggest
             |Make sure to join our Discord server so we can contact you when needed: <https://duncte.bot/server>
-        """.trimMargin()
+            """.trimMargin()
         )
     }
 }

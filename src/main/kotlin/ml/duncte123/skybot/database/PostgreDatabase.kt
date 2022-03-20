@@ -218,7 +218,7 @@ class PostgreDatabase : AbstractDatabase() {
             "DELETE FROM vc_autoroles WHERE guild_id IN",
             "DELETE FROM blacklisted_words WHERE guild_id IN",
             "DELETE FROM warn_actions WHERE guild_id IN",
-            "DELETE FROM custom_commands WHERE guild_id IN",
+            "DELETE FROM custom_commands WHERE guild_id IN"
         )
         val questions = guildIds.joinToString(", ") { "?" }
 
@@ -332,7 +332,8 @@ class PostgreDatabase : AbstractDatabase() {
             con.prepareStatement(
                 """INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
                 |VALUES (?, ?, ?, ?) 
-                |ON CONFLICT (guild_id) DO NOTHING;""".trimMargin()
+                |ON CONFLICT (guild_id) DO NOTHING;
+                """.trimMargin()
             ).use { smt ->
                 smt.setLong(1, guildSettings.guildId)
                 smt.setString(2, Settings.PREFIX)
@@ -454,7 +455,8 @@ class PostgreDatabase : AbstractDatabase() {
             con.prepareStatement(
                 """INSERT INTO patrons(user_id, type, guild_id)
                     |VALUES (?, ?, ?) ON CONFLICT (user_id)
-                    |DO UPDATE SET type = ?, guild_id = ?""".trimMargin()
+                    |DO UPDATE SET type = ?, guild_id = ?
+                """.trimMargin()
             ).use { smt ->
                 smt.setLong(1, patron.userId)
                 smt.setString(2, patron.type.name)
@@ -759,7 +761,8 @@ class PostgreDatabase : AbstractDatabase() {
             con.prepareStatement(
                 """INSERT INTO vc_autoroles (guild_id, voice_channel_id, role_id)
                     |VALUES $values
-                    |ON CONFLICT (guild_id, voice_channel_id, role_id) DO NOTHING""".trimMargin()
+                    |ON CONFLICT (guild_id, voice_channel_id, role_id) DO NOTHING
+                """.trimMargin()
             ).use { smt ->
                 var paramIndex = 0
                 voiceChannelIds.forEach { voiceChannelId ->

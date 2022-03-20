@@ -191,7 +191,7 @@ class ChatSession(userId: Long) {
                     |```
                     |${e.message}
                     |```
-                """.trimMargin()
+                        """.trimMargin()
                     )
                 }
             }

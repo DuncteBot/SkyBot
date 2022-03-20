@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
@@ -39,16 +38,12 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String) = runOnThread {
-        // TODO: implement proper responses
         apis.createCustomCommand(guildId, invoke, message)
-        CommandResult.SUCCESS
     }
 
-    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean) =
-        runOnThread {
-            apis.updateCustomCommand(guildId, invoke, message, autoresponse)
-            CommandResult.SUCCESS
-        }
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean) = runOnThread {
+        apis.updateCustomCommand(guildId, invoke, message, autoresponse)
+    }
 
     override fun deleteCustomCommand(guildId: Long, invoke: String) = runOnThread {
         apis.deleteCustomCommand(guildId, invoke)
@@ -131,7 +126,7 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
     }
 
     override fun addOneGuildPatrons(userId: Long, guildId: Long) = runOnThread {
-        val status = apis.updateOrCreateOneGuildPatron(userId, guildId)
+        apis.updateOrCreateOneGuildPatron(userId, guildId)
 
         return@runOnThread userId to guildId
     }
@@ -165,25 +160,24 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         apis.createWarning(modId, userId, guildId, reason)
     }
 
-    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) =
-        runOnThread {
-            val json = jackson.createObjectNode()
-                .put("mod_id", modId.toString())
-                .put("user_id", userId.toString())
-                .put("user_tag", userTag)
-                .put("guild_id", guildId.toString())
-                .put("unmute_date", unmuteDate)
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) = runOnThread {
+        val json = jackson.createObjectNode()
+            .put("mod_id", modId.toString())
+            .put("user_id", userId.toString())
+            .put("user_tag", userTag)
+            .put("guild_id", guildId.toString())
+            .put("unmute_date", unmuteDate)
 
-            val muteData = apis.createMute(json)
+        val muteData = apis.createMute(json)
 
-            if (muteData.isEmpty) {
-                return@runOnThread null
-            }
-
-            val mute: Mute = jackson.readValue(muteData.traverse(), Mute::class.java)
-
-            return@runOnThread mute
+        if (muteData.isEmpty) {
+            return@runOnThread null
         }
+
+        val mute: Mute = jackson.readValue(muteData.traverse(), Mute::class.java)
+
+        return@runOnThread mute
+    }
 
     override fun deleteLatestWarningForUser(userId: Long, guildId: Long) = runOnThread {
         val json = apis.removeLatestWarningForUser(userId, guildId)
@@ -291,42 +285,38 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         messageId: Long,
         guildId: Long,
         inChannel: Boolean
-    ) =
-        runOnThread {
-            val date = AirUtils.getDatabaseDateFormat(expireDate)
-            val (res, reminderId) = apis.createReminder(
-                userId,
-                reminder,
-                date,
-                channelId,
-                messageId,
-                guildId,
-                inChannel
-            )
+    ) = runOnThread {
+        val date = AirUtils.getDatabaseDateFormat(expireDate)
+        val (res, reminderId) = apis.createReminder(
+            userId,
+            reminder,
+            date,
+            channelId,
+            messageId,
+            guildId,
+            inChannel
+        )
 
-            return@runOnThread res to reminderId
-        }
+        return@runOnThread res to reminderId
+    }
 
-    override fun removeReminder(reminderId: Int, userId: Long) =
-        runOnThread {
-            apis.deleteReminder(userId, reminderId)
-        }
+    override fun removeReminder(reminderId: Int, userId: Long) = runOnThread {
+        apis.deleteReminder(userId, reminderId)
+    }
 
-    override fun showReminder(reminderId: Int, userId: Long) =
-        runOnThread {
-            val reminderJson = apis.showReminder(userId, reminderId)
-            val reminder: Reminder? = jackson.readValue(reminderJson.traverse(), Reminder::class.java)
+    override fun showReminder(reminderId: Int, userId: Long) = runOnThread {
+        val reminderJson = apis.showReminder(userId, reminderId)
+        val reminder: Reminder? = jackson.readValue(reminderJson.traverse(), Reminder::class.java)
 
-            return@runOnThread reminder
-        }
+        return@runOnThread reminder
+    }
 
-    override fun listReminders(userId: Long) =
-        runOnThread {
-            val remindersJson = apis.listReminders(userId)
-            val reminders = jackson.readValue(remindersJson.traverse(), object : TypeReference<List<Reminder>>() {})
+    override fun listReminders(userId: Long) = runOnThread {
+        val remindersJson = apis.listReminders(userId)
+        val reminders = jackson.readValue(remindersJson.traverse(), object : TypeReference<List<Reminder>>() {})
 
-            return@runOnThread reminders
-        }
+        return@runOnThread reminders
+    }
 
     override fun purgeReminders(ids: List<Int>) = runOnThread { apis.purgeReminders(ids) }
 
@@ -338,17 +328,15 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         apis.createBanBypass(guildId, userId)
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long) =
-        runOnThread {
-            val bypassJson = apis.getBanBypass(guildId, userId)
-            val bypass: BanBypas? = jackson.readValue(bypassJson.traverse(), BanBypas::class.java)
+    override fun getBanBypass(guildId: Long, userId: Long) = runOnThread {
+        val bypassJson = apis.getBanBypass(guildId, userId)
+        val bypass: BanBypas? = jackson.readValue(bypassJson.traverse(), BanBypas::class.java)
 
-            return@runOnThread bypass
-        }
+        return@runOnThread bypass
+    }
 
-    override fun deleteBanBypass(banBypass: BanBypas) =
-        runOnThread {
-            apis.deleteBanBypass(banBypass.guildId, banBypass.userId)
-            return@runOnThread
-        }
+    override fun deleteBanBypass(banBypass: BanBypas) = runOnThread {
+        apis.deleteBanBypass(banBypass.guildId, banBypass.userId)
+        return@runOnThread
+    }
 }

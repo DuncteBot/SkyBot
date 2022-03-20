@@ -39,7 +39,7 @@ class ReverseCommand : Command() {
         val message = """**${ctx.author.asTag}:**
                     |**Input:** ${ctx.argsRaw}
                     |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
+        """.trimMargin()
 
         MessageUtils.sendMsg(ctx, message)
     }

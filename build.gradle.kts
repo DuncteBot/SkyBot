@@ -31,7 +31,8 @@ plugins {
 
     kotlin("jvm") version "1.6.0"
     id("org.liquibase.gradle") version "2.0.4"
-    id("org.jmailen.kotlinter") version "3.5.1"
+//    id("org.jmailen.kotlinter") version "3.9.0" // removes star imports :(
+    id("org.jmailen.kotlinter") version "3.6.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }

@@ -36,7 +36,7 @@ class IssueCommand : Command() {
         this.help = """Reports heavy and weird issues to the developers.
         |This will create an invite to your server, so we can join and help you directly.
         |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
-    """.trimMargin()
+        """.trimMargin()
         this.usage = "<issue json>` (issue can be generated at https://duncte.bot/issuegenerator)"
     }
 
@@ -48,7 +48,8 @@ class IssueCommand : Command() {
                 sendErrorWithMessage(
                     event.message,
                     """Well you forgot to add formatted data we require so we can resolve the issue faster.
-                    |You can generate it by using our dashboard. Link: <https://duncte.bot/issuegenerator>""".trimMargin()
+                    |You can generate it by using our dashboard. Link: <https://duncte.bot/issuegenerator>
+                    """.trimMargin()
                 )
             }
             else -> {
@@ -97,7 +98,8 @@ class IssueCommand : Command() {
                     Sentry.captureException(ex)
 
                     val msg = """You malformed the JSON.
-                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/asdfsa"}"""
+                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/asdfsa"}
+                    """
 
                     sendErrorWithMessage(event.message, msg.trimMargin())
                 }

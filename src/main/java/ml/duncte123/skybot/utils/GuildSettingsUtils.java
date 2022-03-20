@@ -28,13 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-// TODO: loads of methods from here are stored in the external package
 public class GuildSettingsUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
@@ -109,72 +105,5 @@ public class GuildSettingsUtils {
         getGuild(guildId, variables).setEmbedColor(color);
         // TODO: save guild setting instead, we've deprecated this
         variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
-    }
-
-    public static String replaceNewLines(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\\\\n", "\n");
-    }
-
-    private static String fixNewLines(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\n", "\\\\n");
-    }
-
-    public static String replaceUnicode(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\\P{Print}", "");
-    }
-
-    /*private static String replaceUnicodeAndLines(String s) {
-        return replaceUnicode(replaceNewLines(s));
-    }*/
-
-    public static String fixUnicodeAndLines(String string) {
-        return replaceUnicode(fixNewLines(replaceNewLines(string)));
-    }
-
-    public static String convertJ2S(long[] input) {
-        return Arrays.stream(input)
-            .mapToObj(String::valueOf)
-            .collect(Collectors.joining("|", "", ""));
-    }
-
-    private static long[] convertS2J(String input) {
-        if (input.isEmpty()) {
-            return new long[]{20, 45, 60, 120, 240, 2400};
-        }
-
-        return Arrays.stream(input.split("\\|")).mapToLong(Long::valueOf).toArray();
-    }
-
-    public static long[] ratelimmitChecks(String fromDb) {
-        if (fromDb == null || fromDb.isEmpty()) {
-            return new long[]{20, 45, 60, 120, 240, 2400};
-        }
-
-        return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
-    }
-
-    public static long toLong(@Nullable String string) {
-        if (string == null) {
-            return 0L;
-        }
-
-        try {
-            return Long.parseUnsignedLong(string);
-        }
-        catch (NumberFormatException ignored) {
-            return 0L;
-        }
     }
 }
