@@ -44,7 +44,7 @@ public class AutoBanBypassCommand extends ModBaseCommand {
             return;
         }
 
-        final AbstractDatabase database = ctx.getDatabaseAdapter();
+        final AbstractDatabase database = ctx.getDatabase();
         final long guildId = ctx.getGuild().getIdLong();
 
         database.getBanBypass(guildId, checkId).thenAccept((byPass) -> {

@@ -150,7 +150,7 @@ public class ModerationUtils {
         };
     }
 
-    public static void handleUnmute(List<Mute> mutes, AbstractDatabase adapter, Variables variables) throws ExecutionException, InterruptedException {
+    public static void handleUnmute(List<Mute> mutes, AbstractDatabase database, Variables variables) throws ExecutionException, InterruptedException {
         LOG.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -212,11 +212,11 @@ public class ModerationUtils {
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
         if (!purgeIds.isEmpty()) {
-            adapter.purgeMutes(purgeIds).get();
+            database.purgeMutes(purgeIds).get();
         }
     }
 
-    public static void handleUnban(List<Ban> bans, AbstractDatabase adapter, Variables variables) throws ExecutionException, InterruptedException {
+    public static void handleUnban(List<Ban> bans, AbstractDatabase database, Variables variables) throws ExecutionException, InterruptedException {
         LOG.debug("Checking for users to unban");
 
         // Get the ShardManager from our instance
@@ -262,7 +262,7 @@ public class ModerationUtils {
         // If the bans are not empty send a purge request to the databse
         // This will make sure that we don't get them again
         if (!purgeIds.isEmpty()) {
-            adapter.purgeBans(purgeIds).get();
+            database.purgeBans(purgeIds).get();
         }
     }
 

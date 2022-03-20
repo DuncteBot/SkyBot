@@ -261,7 +261,7 @@ public class AirUtils {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase adapter) throws ExecutionException, InterruptedException {
+    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase database) throws ExecutionException, InterruptedException {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
@@ -335,7 +335,7 @@ public class AirUtils {
         toPurge.addAll(extraRemoval);
 
         if (!toPurge.isEmpty()) {
-            adapter.purgeReminders(toPurge).get();
+            database.purgeReminders(toPurge).get();
         }
     }
 

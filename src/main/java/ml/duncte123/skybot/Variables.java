@@ -75,7 +75,7 @@ public final class Variables {
         .expiration(12, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
             try {
-                return getDatabaseAdapter().
+                return getDatabase().
                     loadGuildSetting(guildId)
                     .get(20L, TimeUnit.SECONDS);
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
@@ -175,7 +175,7 @@ public final class Variables {
         return this.apis;
     }
 
-    public AbstractDatabase getDatabaseAdapter() {
+    public AbstractDatabase getDatabase() {
         if (this.database == null) {
             if ("psql".equals(this.config.useDatabase)) {
                 this.database = new PostgreDatabase();

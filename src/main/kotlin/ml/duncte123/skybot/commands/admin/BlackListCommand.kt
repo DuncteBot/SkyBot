@@ -61,7 +61,7 @@ class BlackListCommand : ModBaseCommand() {
                 return
             }
             "clear" -> {
-                clearBlacklist(ctx.databaseAdapter, ctx.guild, ctx)
+                clearBlacklist(ctx.database, ctx.guild, ctx)
                 return
             }
             "import" -> {
@@ -77,8 +77,8 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         when (args[0]) {
-            "add" -> addWordToBlacklist(args[1].lowercase(), ctx.databaseAdapter, ctx.guild, ctx)
-            "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.databaseAdapter, ctx.guild, ctx)
+            "add" -> addWordToBlacklist(args[1].lowercase(), ctx.database, ctx.guild, ctx)
+            "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.database, ctx.guild, ctx)
             else -> sendMsg(ctx, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }
@@ -109,8 +109,8 @@ class BlackListCommand : ModBaseCommand() {
             }
     }
 
-    private fun clearBlacklist(adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
-        adapter.clearBlacklist(guild.idLong)
+    private fun clearBlacklist(database: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
+        database.clearBlacklist(guild.idLong)
 
         guild.settings.blacklistedWords.clear()
 
@@ -140,14 +140,13 @@ class BlackListCommand : ModBaseCommand() {
         val jackson = ctx.variables.jackson
         val current = ctx.guildSettings.blacklistedWords
         val guildId = ctx.guild.idLong
-        val adapter = ctx.databaseAdapter
         attachments[0].retrieveInputStream().thenAcceptAsync {
             try {
                 val importedBlacklist = jackson.readValue<List<String>>(it, object : TypeReference<List<String>>() {})
                 val filtered = importedBlacklist.filter { w -> !current.contains(w) }
 
                 current.addAll(filtered)
-                adapter.addWordsToBlacklist(guildId, filtered)
+                ctx.database.addWordsToBlacklist(guildId, filtered)
 
                 ctx.channel.edit(msgId, "Blacklist successfully imported")
             } catch (e: Exception) {
@@ -159,7 +158,7 @@ class BlackListCommand : ModBaseCommand() {
         }
     }
 
-    private fun addWordToBlacklist(word: String, adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun addWordToBlacklist(word: String, database: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
@@ -170,12 +169,12 @@ class BlackListCommand : ModBaseCommand() {
 
         list.add(word)
 
-        adapter.addWordToBlacklist(guild.idLong, word)
+        database.addWordToBlacklist(guild.idLong, word)
 
         sendMsg(ctx, "`$word` has been added to the blacklist")
     }
 
-    private fun removeWordFromBlacklist(word: String, adapter: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun removeWordFromBlacklist(word: String, database: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
         val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {
@@ -186,7 +185,7 @@ class BlackListCommand : ModBaseCommand() {
 
         list.remove(word)
 
-        adapter.removeWordFromBlacklist(guild.idLong, word)
+        database.removeWordFromBlacklist(guild.idLong, word)
 
         sendMsg(ctx, "`$word` has been removed from the blacklist")
     }

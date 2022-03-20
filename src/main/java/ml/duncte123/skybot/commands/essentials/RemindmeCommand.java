@@ -129,7 +129,7 @@ public class RemindmeCommand extends Command {
         final boolean inChannel = flags.containsKey("c");
         final String where = inChannel ? " here" : "";
 
-        ctx.getDatabaseAdapter().createReminder(
+        ctx.getDatabase().createReminder(
             ctx.getAuthor().getIdLong(),
             reminder,
             expireDate,

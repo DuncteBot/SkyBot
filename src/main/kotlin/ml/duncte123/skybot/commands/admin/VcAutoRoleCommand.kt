@@ -69,7 +69,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             vcAutoRoleCache.remove(guild.idLong)
-            ctx.databaseAdapter.removeVcAutoRoleForGuild(guild.idLong)
+            ctx.database.removeVcAutoRoleForGuild(guild.idLong)
 
             sendMsg(ctx, "All Auto VC Roles has been disabled")
             return
@@ -119,7 +119,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
 
         cache.remove(targetChannel)
-        ctx.databaseAdapter.removeVcAutoRole(targetChannel)
+        ctx.database.removeVcAutoRole(targetChannel)
         sendMsg(ctx, "Autorole removed for <#$targetChannel>")
     }
 
@@ -158,7 +158,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
                 it.map(VoiceChannel::getIdLong).collect(Collectors.toList())
             }!!
 
-            ctx.databaseAdapter.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
+            ctx.database.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
             ids.forEach { cache.put(it, targetRole) }
 
             sendMsg(
@@ -185,7 +185,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
             val targetChannel = foundVoiceChannels[0].idLong
 
             cache.put(targetChannel, targetRole)
-            ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
+            ctx.database.setVcAutoRole(guild.idLong, targetChannel, targetRole)
 
             sendMsg(ctx, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
         }

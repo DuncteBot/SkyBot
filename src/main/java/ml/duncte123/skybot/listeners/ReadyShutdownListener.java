@@ -93,7 +93,7 @@ public class ReadyShutdownListener extends MessageListener {
             arePoolsRunning.set(true);
 
             // Load the patrons here so that they are loaded once
-            GuildUtils.loadAllPatrons(variables.getDatabaseAdapter());
+            GuildUtils.loadAllPatrons(variables.getDatabase());
         }
     }
 

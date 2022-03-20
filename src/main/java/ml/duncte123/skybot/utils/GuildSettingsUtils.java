@@ -37,12 +37,12 @@ public class GuildSettingsUtils {
     private GuildSettingsUtils() {}
 
     public static void loadVcAutoRoles(Variables variables) {
-        final AbstractDatabase adapter = variables.getDatabaseAdapter();
+        final AbstractDatabase database = variables.getDatabase();
         final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
         LOGGER.info("Loading vc auto roles.");
 
-        adapter.getVcAutoRoles().thenAccept((items) -> {
+        database.getVcAutoRoles().thenAccept((items) -> {
             items.forEach(
                 (item) -> {
                     final TLongLongMap cache = Optional.ofNullable(
@@ -80,7 +80,7 @@ public class GuildSettingsUtils {
             return;
         }
 
-        variables.getDatabaseAdapter().updateGuildSetting(settings);
+        variables.getDatabase().updateGuildSetting(settings);
     }
 
     public static GuildSetting registerNewGuild(long guildId, Variables variables) {
@@ -95,7 +95,7 @@ public class GuildSettingsUtils {
             return settingForGuild;
         }
 
-        variables.getDatabaseAdapter().registerNewGuild(newGuildSettings);
+        variables.getDatabase().registerNewGuild(newGuildSettings);
         variables.getGuildSettingsCache().put(guildId, newGuildSettings);
 
         return newGuildSettings;
@@ -104,6 +104,6 @@ public class GuildSettingsUtils {
     public static void updateEmbedColor(long guildId, int color, Variables variables) {
         getGuild(guildId, variables).setEmbedColor(color);
         // TODO: save guild setting instead, we've deprecated this
-        variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
+        variables.getDatabase().updateOrCreateEmbedColor(guildId, color);
     }
 }

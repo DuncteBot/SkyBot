@@ -558,7 +558,7 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        this.variables.getDatabaseAdapter().getCustomCommands().thenAccept((loadedCommands) -> {
+        this.variables.getDatabase().getCustomCommands().thenAccept((loadedCommands) -> {
             loadedCommands.forEach(
                 (command) -> addCustomCommand(command, false, false)
             );
@@ -596,10 +596,10 @@ public class CommandManager {
                 final CompletableFuture<CommandResult> future;
 
                 if (isEdit) {
-                    future = this.variables.getDatabaseAdapter()
+                    future = this.variables.getDatabase()
                         .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse());
                 } else {
-                    future = this.variables.getDatabaseAdapter()
+                    future = this.variables.getDatabase()
                         .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage());
                 }
 
@@ -641,7 +641,7 @@ public class CommandManager {
         }
 
         try {
-            final CompletableFuture<Boolean> future = this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name);
+            final CompletableFuture<Boolean> future = this.variables.getDatabase().deleteCustomCommand(guildId, name);
             final boolean result = future.get();
 
             if (result) {

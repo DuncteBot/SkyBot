@@ -39,8 +39,8 @@ class ClearLeftGuildsCommand : Command() {
 
         sendMsg(ctx, "Checking settings, please wait")
 
-        val adapter = ctx.variables.databaseAdapter
-        val future = adapter.getGuildSettings()
+        val database = ctx.variables.database
+        val future = database.getGuildSettings()
 
         val settings = future.get().filter {
             ctx.shardManager.getGuildById(it.guildId) == null && !ctx.shardManager.isUnavailable(it.guildId)
@@ -54,6 +54,6 @@ class ClearLeftGuildsCommand : Command() {
 
         sendMsg(ctx, "Deleting ${settings.size} guild settings as we are not in those guilds anymore")
 
-        adapter.purgeGuildSettings(settings.map { it.guildId })
+        database.purgeGuildSettings(settings.map { it.guildId })
     }
 }

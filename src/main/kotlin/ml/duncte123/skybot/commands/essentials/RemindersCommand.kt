@@ -82,7 +82,7 @@ class RemindersCommand : Command() {
     }
 
     private fun showRemindersList(ctx: CommandContext) {
-        ctx.databaseAdapter.listReminders(ctx.author.idLong).thenAccept {
+        ctx.database.listReminders(ctx.author.idLong).thenAccept {
             if (it.isEmpty()) {
                 sendMsg(ctx, "You do not have any currently active reminders")
                 return@thenAccept
@@ -93,7 +93,7 @@ class RemindersCommand : Command() {
     }
 
     private fun ensureReminderExists(reminderId: Int, ctx: CommandContext, callback: (Reminder) -> Unit) {
-        ctx.databaseAdapter.showReminder(reminderId, ctx.author.idLong).thenAccept {
+        ctx.database.showReminder(reminderId, ctx.author.idLong).thenAccept {
             if (it == null) {
                 sendMsg(ctx, "Reminder with id `$reminderId` was not found")
                 return@thenAccept
@@ -120,7 +120,7 @@ class RemindersCommand : Command() {
         val args = ctx.args
 
         if (args.size >= 3 && args[2].lowercase() == "--just-honking-do-it") {
-            ctx.databaseAdapter.removeReminder(reminder).thenAccept {
+            ctx.database.removeReminder(reminder).thenAccept {
                 sendMsg(ctx, "Successfully deleted reminder with id `${reminder.id}`")
             }
             return

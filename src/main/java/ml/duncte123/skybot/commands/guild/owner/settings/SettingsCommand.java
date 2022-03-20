@@ -31,7 +31,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;

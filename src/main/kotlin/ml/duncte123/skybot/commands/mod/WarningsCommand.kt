@@ -37,7 +37,7 @@ class WarningsCommand : ModBaseCommand() {
 
     override fun execute(ctx: CommandContext) {
         val mentioned = ctx.getMentionedArg(0)
-        val db = ctx.databaseAdapter
+        val db = ctx.database
 
         if (mentioned.isEmpty()) {
             this.sendUsageInstructions(ctx)

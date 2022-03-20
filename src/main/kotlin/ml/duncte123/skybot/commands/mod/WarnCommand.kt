@@ -97,7 +97,7 @@ class WarnCommand : ModBaseCommand() {
         """.trimMargin()
 
         // add the new warning to the database
-        val future = ctx.databaseAdapter.createWarning(
+        val future = ctx.database.createWarning(
             modUser.idLong,
             target.idLong,
             guild.idLong,
@@ -118,7 +118,7 @@ class WarnCommand : ModBaseCommand() {
         // Wait for the request to pass and then get the updated warn count
         future.get()
 
-        val warnCount = ctx.databaseAdapter.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
+        val warnCount = ctx.database.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
         val action = getSelectedWarnAction(warnCount, ctx)
 
         if (action != null) {
@@ -169,7 +169,7 @@ class WarnCommand : ModBaseCommand() {
 
                 val (finalDate, dur) = "${action.duration}m".toDuration()
 
-                ctx.databaseAdapter.createMute(
+                ctx.database.createMute(
                     modUser.idLong,
                     targetUser.idLong,
                     targetUser.asTag,
@@ -186,7 +186,7 @@ class WarnCommand : ModBaseCommand() {
             WarnAction.Type.TEMP_BAN -> {
                 val (finalUnbanDate, dur) = "${action.duration}d".toDuration()
 
-                ctx.databaseAdapter.createBan(
+                ctx.database.createBan(
                     modUser.idLong,
                     targetUser.name,
                     targetUser.discriminator,

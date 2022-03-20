@@ -81,8 +81,8 @@ public class CommandContext implements ICommandContext {
         return this.variables.getConfig();
     }
 
-    public AbstractDatabase getDatabaseAdapter() {
-        return this.variables.getDatabaseAdapter();
+    public AbstractDatabase getDatabase() {
+        return this.variables.getDatabase();
     }
 
     public ThreadLocalRandom getRandom() {

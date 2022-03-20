@@ -54,7 +54,7 @@ public class UnwarnCommand extends ModBaseCommand {
         final DunctebotGuild guild = ctx.getGuild();
         final User target = mentioned.get(0).getUser();
 
-        ctx.getDatabaseAdapter().deleteLatestWarningForUser(
+        ctx.getDatabase().deleteLatestWarningForUser(
             target.getIdLong(),
             guild.getIdLong()
         ).thenAccept((latestWarning) -> {

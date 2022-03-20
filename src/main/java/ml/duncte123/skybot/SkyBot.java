@@ -76,7 +76,7 @@ public final class SkyBot {
         final String useDatabase = variables.getConfig().useDatabase;
 
         if ("psql".equals(useDatabase)) {
-            logger.info("Using PostgreSQL as database adapter");
+            logger.info("Using PostgreSQL as database impl");
         } else if ("web".equals(useDatabase)) {
             logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {

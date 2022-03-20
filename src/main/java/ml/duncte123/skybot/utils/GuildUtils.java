@@ -158,10 +158,10 @@ public class GuildUtils {
         };
     }
 
-    public static void loadAllPatrons(@Nonnull AbstractDatabase adapter) {
+    public static void loadAllPatrons(@Nonnull AbstractDatabase databasee) {
         LOGGER.info("(Re)loading patrons");
 
-        adapter.loadAllPatrons().thenAccept((data) -> {
+        databasee.loadAllPatrons().thenAccept((data) -> {
             data.getPatrons().forEach(
                 (patron) -> CommandUtils.PATRONS.add(patron.getUserId())
             );

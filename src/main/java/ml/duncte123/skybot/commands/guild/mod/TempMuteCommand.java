@@ -113,7 +113,7 @@ public class TempMuteCommand extends ModBaseCommand {
         final User mutee = toMute.getUser();
         final User author = ctx.getAuthor();
 
-        ctx.getDatabaseAdapter().createMute(
+        ctx.getDatabase().createMute(
             author.getIdLong(),
             mutee.getIdLong(),
             mutee.getAsTag(),
