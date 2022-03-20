@@ -932,8 +932,27 @@ class PostgreDatabase : AbstractDatabase() {
 
     override fun purgeRemindersSync(ids: List<Int>) = this.purgeReminders(ids)
 
-    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) {
-        TODO("Not yet implemented")
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) = runOnThread {
+       this.connection.use { con ->
+           con.prepareStatement("DELETE FROM warn_actions WHERE guild_id = ?").use { smt ->
+               smt.setLong(1, guildId)
+               smt.execute()
+           }
+
+           val spots = actions.joinToString(", ") { "(?, ?, ?, ?)" }
+           con.prepareStatement("INSERT INTO warn_actions(guild_id, type, threshold, duration) VALUES $spots").use { smt ->
+               var paramIndex = 0;
+
+               actions.forEach {
+                   smt.setLong(++paramIndex, guildId)
+                   smt.setString(++paramIndex, it.type.name)
+                   smt.setInt(++paramIndex, it.threshold)
+                   smt.setInt(++paramIndex, it.duration)
+               }
+
+               smt.execute()
+           }
+       }
     }
 
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
