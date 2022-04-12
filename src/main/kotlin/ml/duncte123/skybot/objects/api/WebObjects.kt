@@ -40,7 +40,7 @@ data class Ban
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
     @JsonProperty("modUserId") val modId: String,
-    @JsonProperty("userId") val userId: String,
+    @JsonProperty("userId") val userId: Long,
     @JsonProperty("Username") val userName: String,
     @JsonProperty("discriminator") val discriminator: String,
     @JsonProperty("guildId") val guildId: String

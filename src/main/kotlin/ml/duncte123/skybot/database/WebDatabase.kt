@@ -139,16 +139,14 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
 
     override fun createBan(
         modId: Long,
-        userName: String,
-        userDiscriminator: String,
         userId: Long,
         unbanDate: String,
         guildId: Long
     ) = runOnThread {
         val json = jackson.createObjectNode()
             .put("modUserId", modId.toString())
-            .put("Username", userName)
-            .put("discriminator", userDiscriminator)
+            .put("Username", "Deleted User")
+            .put("discriminator", "0000")
             .put("userId", userId.toString())
             .put("guildId", guildId.toString())
             .put("unban_date", unbanDate)

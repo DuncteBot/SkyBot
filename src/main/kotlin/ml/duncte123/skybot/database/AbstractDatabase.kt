@@ -123,8 +123,6 @@ abstract class AbstractDatabase(threads: Int = 2) {
     // TODO: remove useless data
     abstract fun createBan(
         modId: Long,
-        userName: String,
-        userDiscriminator: String,
         userId: Long,
         unbanDate: String,
         guildId: Long
@@ -132,7 +130,6 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit>
 
-    // callback is optional since we don't always need it
     abstract fun createMute(
         modId: Long,
         userId: Long,

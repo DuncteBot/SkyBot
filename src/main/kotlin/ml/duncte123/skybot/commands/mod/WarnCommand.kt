@@ -188,8 +188,6 @@ class WarnCommand : ModBaseCommand() {
 
                 ctx.database.createBan(
                     modUser.idLong,
-                    targetUser.name,
-                    targetUser.discriminator,
                     targetUser.idLong,
                     finalUnbanDate,
                     guild.idLong

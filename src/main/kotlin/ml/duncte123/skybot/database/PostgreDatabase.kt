@@ -494,8 +494,6 @@ class PostgreDatabase : AbstractDatabase() {
 
     override fun createBan(
         modId: Long,
-        userName: String,
-        userDiscriminator: String,
         userId: Long,
         unbanDate: String,
         guildId: Long

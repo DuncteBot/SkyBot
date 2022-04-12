@@ -75,8 +75,8 @@ public final class Variables {
         .expiration(12, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
             try {
-                return getDatabase().
-                    loadGuildSetting(guildId)
+                return getDatabase()
+                    .loadGuildSetting(guildId)
                     .get(20L, TimeUnit.SECONDS);
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 return null;

@@ -105,9 +105,7 @@ public class TempBanCommand extends ModBaseCommand {
                 if (duration.getSeconds() > 0) {
                     ctx.getDatabase().createBan(
                         ctx.getAuthor().getIdLong(),
-                        toBan.getName(),
-                        toBan.getDiscriminator(),
-                        toBan.getIdLong(),
+                            toBan.getIdLong(),
                         finalUnbanDate,
                         ctx.getGuild().getIdLong()
                     );

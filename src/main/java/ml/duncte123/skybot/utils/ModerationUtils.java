@@ -217,8 +217,6 @@ public class ModerationUtils {
     }
 
     public static void handleUnban(List<Ban> bans, AbstractDatabase database, Variables variables) throws ExecutionException, InterruptedException {
-        LOG.debug("Checking for users to unban");
-
         // Get the ShardManager from our instance
         // Via the ShardManager we can fetch guilds and unban users
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
@@ -233,25 +231,22 @@ public class ModerationUtils {
                 continue;
             }
 
-            LOG.debug("Unbanning " + ban.getUserName());
-
             // Unban the user and set the reason to "Ban expired"
-            guild.unban(ban.getUserId())
+            guild.unban(User.fromId(ban.getUserId()))
                 .reason("Ban expired")
                 // Ignore errors that indicate an unknown ban
                 // This may happen some times
                 .queue(null, ignore(UNKNOWN_BAN));
 
-            // We're creating a fake user even though we can probably get a real user
-            // This is to make sure that we have the data we need when logging the unban
-            final User fakeUser = new FakeUser(
-                ban.getUserName(),
-                Long.parseUnsignedLong(ban.getUserId()),
-                Short.parseShort(ban.getDiscriminator())
-            );
-
             // Send the unban to the log channel
-            modLog(new ConsoleUser(), fakeUser, "unbanned", null, null, new DunctebotGuild(guild, variables));
+            shardManager.retrieveUserById(ban.getUserId()).queue(
+                (user) -> modLog(new ConsoleUser(), user, "unbanned", null, null, new DunctebotGuild(guild, variables)),
+                (err) -> {
+                    final User fakeUser = new FakeUser("Unknown", ban.getUserId(), 0);
+
+                    modLog(new ConsoleUser(), fakeUser, "unbanned", null, null, new DunctebotGuild(guild, variables));
+                }
+            );
         }
 
         LOG.debug("Checking done, unbanned {} users.", bans.size());
