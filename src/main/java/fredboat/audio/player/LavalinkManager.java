@@ -100,7 +100,7 @@ public final class LavalinkManager {
     }
 
     public void openConnection(VoiceChannel channel) {
-        if (!isEnabled()) {
+        if (isEnabled()) {
             final AudioManager audioManager = channel.getGuild().getAudioManager();
 
             // Turn on the deafen icon for the bot
