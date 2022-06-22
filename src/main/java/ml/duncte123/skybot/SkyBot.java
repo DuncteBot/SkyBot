@@ -79,7 +79,7 @@ public final class SkyBot {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
         } else {
             logger.warn("Using SQLite as the database");
-            logger.warn("Please note that is is not recommended for production");
+            logger.warn("Please note that it is not recommended for production");
         }
 
         //Load the settings before loading the bot
