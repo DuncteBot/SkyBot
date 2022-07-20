@@ -144,7 +144,7 @@ dependencies {
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 
     // emoji-java
-    implementation(group = "com.vdurmont", name = "emoji-java", version = "5.1.1")
+    implementation(group = "com.github.minndevelopment", name = "emoji-java", version = "master-SNAPSHOT")
 
     // jackson
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")

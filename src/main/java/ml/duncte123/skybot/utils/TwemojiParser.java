@@ -27,7 +27,7 @@ import java.util.List;
  * Adapted from https://gist.github.com/heyarny/71c246f2f7fa4d9d10904fb9d5b1fa1d
  */
 public class TwemojiParser extends EmojiParser {
-    private static final String BASE_URL = "https://twemoji.maxcdn.com/v/latest/72x72/";
+    private static final String BASE_URL = "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/";
 
     public static String parseOne(String text) {
         final List<UnicodeCandidate> emojis = getUnicodeCandidates(stripVariants(text));
