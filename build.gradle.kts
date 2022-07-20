@@ -279,7 +279,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.3.3"
+    gradleVersion = "7.5"
     distributionType = DistributionType.ALL
 }
 
