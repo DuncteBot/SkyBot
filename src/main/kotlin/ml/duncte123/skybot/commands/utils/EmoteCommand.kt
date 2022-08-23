@@ -23,6 +23,8 @@ import ml.duncte123.skybot.extensions.escapeMarkDown
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils.shortenUrl
+import ml.duncte123.skybot.utils.TwemojiParser
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
 import net.dv8tion.jda.api.entities.Emote
 
@@ -104,6 +106,14 @@ class EmoteCommand : Command() {
                 }
 
                 appendLine(" _${it.getName()}_")
+            }
+
+            val emojiUrl = TwemojiParser.parseOne(emote)
+
+            if (emojiUrl != null) {
+                val shortUrl = shortenUrl(emojiUrl, ctx.config.apis.googl, ctx.variables.jackson).execute()
+
+                appendLine("Image url (shortened): <$shortUrl>")
             }
 
             if (emote.codePointCount(0, emote.length) > 1) {

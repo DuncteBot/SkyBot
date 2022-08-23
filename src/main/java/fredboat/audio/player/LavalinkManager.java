@@ -93,23 +93,21 @@ public final class LavalinkManager {
 
     public LavalinkPlayer createPlayer(long guildId) {
         if (!isEnabled()) {
-            throw new IllegalStateException("Using lavaplayer is no longer supported");
+            throw new IllegalStateException("Music is not enabled right now");
         }
 
         return lavalink.getLink(String.valueOf(guildId)).getPlayer();
     }
 
     public void openConnection(VoiceChannel channel) {
-        if (!isEnabled()) {
-            throw new IllegalStateException("Using lavaplayer is no longer supported");
+        if (isEnabled()) {
+            final AudioManager audioManager = channel.getGuild().getAudioManager();
+
+            // Turn on the deafen icon for the bot
+            audioManager.setSelfDeafened(true);
+
+            lavalink.getLink(channel.getGuild()).connect(channel);
         }
-
-        final AudioManager audioManager = channel.getGuild().getAudioManager();
-
-        // Turn on the deafen icon for the bot
-        audioManager.setSelfDeafened(true);
-
-        lavalink.getLink(channel.getGuild()).connect(channel);
     }
 
     public void closeConnection(Guild guild) {
@@ -117,11 +115,9 @@ public final class LavalinkManager {
     }
 
     public void closeConnection(String guildId) {
-        if (!isEnabled()) {
-            throw new IllegalStateException("Using lavaplayer is no longer supported");
+        if (isEnabled()) {
+            lavalink.getLink(guildId).destroy();
         }
-
-        lavalink.getLink(guildId).destroy();
     }
 
     public boolean isConnected(Guild guild) {
@@ -130,7 +126,7 @@ public final class LavalinkManager {
 
     public boolean isConnected(String guildId) {
         if (!isEnabled()) {
-            throw new IllegalStateException("Using lavaplayer is no longer supported");
+            return false;
         }
 
         return lavalink.getLink(guildId).getState() == Link.State.CONNECTED;
