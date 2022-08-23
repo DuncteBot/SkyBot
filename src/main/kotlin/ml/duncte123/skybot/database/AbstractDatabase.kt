@@ -144,6 +144,8 @@ abstract class AbstractDatabase(threads: Int = 2) {
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long): CompletableFuture<Warning?>
 
+    abstract fun getExpiredBansAndMutes(): CompletableFuture<Pair<List<Ban>, List<Mute>>>
+
     abstract fun purgeBans(ids: List<Int>): CompletableFuture<Unit>
 
     abstract fun purgeMutes(ids: List<Int>): CompletableFuture<Unit>
@@ -196,6 +198,8 @@ abstract class AbstractDatabase(threads: Int = 2) {
     abstract fun showReminder(reminderId: Int, userId: Long): CompletableFuture<Reminder?>
 
     abstract fun listReminders(userId: Long): CompletableFuture<List<Reminder>>
+
+    abstract fun getExpiredReminders(): CompletableFuture<List<Reminder>>
 
     abstract fun purgeReminders(ids: List<Int>): CompletableFuture<Unit>
 

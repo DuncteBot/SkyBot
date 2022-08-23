@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
 
 class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMapper) : AbstractDatabase() {
 
@@ -217,6 +218,10 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         apis.getWarningCountForUser(userId, guildId)
     }
 
+    override fun getExpiredBansAndMutes(): CompletableFuture<Pair<List<Ban>, List<Mute>>> = runOnThread {
+        TODO("Not supported")
+    }
+
     override fun purgeBans(ids: List<Int>) = runOnThread { apis.purgeBans(ids) }
 
     override fun purgeMutes(ids: List<Int>) = runOnThread { apis.purgeMutes(ids) }
@@ -314,6 +319,10 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         val reminders = jackson.readValue(remindersJson.traverse(), object : TypeReference<List<Reminder>>() {})
 
         return@runOnThread reminders
+    }
+
+    override fun getExpiredReminders(): CompletableFuture<List<Reminder>> = runOnThread {
+        TODO("Not supported :(")
     }
 
     override fun purgeReminders(ids: List<Int>) = runOnThread { apis.purgeReminders(ids) }

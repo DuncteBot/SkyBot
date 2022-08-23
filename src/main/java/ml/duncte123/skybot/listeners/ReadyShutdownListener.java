@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import me.duncte123.botcommons.BotCommons;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.database.DataTimers;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.web.WebSocketClient;
@@ -89,6 +90,11 @@ public class ReadyShutdownListener extends MessageListener {
                 1,
                 TimeUnit.DAYS
             );
+
+            if ("psql".equals(this.variables.getConfig().useDatabase)) {
+                DataTimers.startReminderTimer(this.variables, LOGGER);
+                DataTimers.startUnbanTimer(this.variables, LOGGER);
+            }
 
             arePoolsRunning.set(true);
 

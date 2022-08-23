@@ -40,6 +40,7 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
 
 class PostgreDatabase : AbstractDatabase() {
     private val ds: HikariDataSource
@@ -657,6 +658,49 @@ class PostgreDatabase : AbstractDatabase() {
         return@runOnThread oldWarning
     }
 
+    override fun getExpiredBansAndMutes() = runOnThread {
+        val bans = mutableListOf<Ban>()
+        val mutes = mutableListOf<Mute>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM temp_bans WHERE unban_date <= now()").use { res ->
+                    while (res.next()) {
+                        bans.add(
+                            Ban(
+                                res.getInt("id"),
+                                res.getString("mod_id"),
+                                res.getLong("user_id"),
+                                "Deleted User",
+                                "0000",
+                                res.getString("guild_id")
+                            )
+                        )
+                    }
+                }
+            }
+
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM temp_mutes WHERE unmute_date <= now()").use { res ->
+                    while (res.next()) {
+                        mutes.add(
+                            Mute(
+                                res.getInt("id"),
+                                res.getLong("mod_id"),
+                                res.getLong("user_id"),
+                                "Deleted User#0000",
+                                res.getLong("guild_id")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+
+        return@runOnThread bans.toList() to mutes.toList()
+    }
+
     override fun purgeBans(ids: List<Int>) = runOnThread {
         this.connection.use { con ->
             val values = ids.joinToString(", ") { "?" }
@@ -924,6 +968,20 @@ class PostgreDatabase : AbstractDatabase() {
                     while (res.next()) {
                         reminders.add(res.toReminder())
                     }
+                }
+            }
+        }
+
+        return@runOnThread reminders.toList()
+    }
+
+    override fun getExpiredReminders() = runOnThread {
+        val reminders = mutableListOf<Reminder>()
+
+        this.connection.use { con ->
+            con.createStatement().executeQuery("SELECT * FROM reminders WHERE now() >= remind_on").use { res ->
+                while (res.next()) {
+                    reminders.add(res.toReminder())
                 }
             }
         }
