@@ -40,7 +40,6 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
-import java.util.concurrent.CompletableFuture
 
 class PostgreDatabase : AbstractDatabase() {
     private val ds: HikariDataSource
@@ -696,7 +695,6 @@ class PostgreDatabase : AbstractDatabase() {
                 }
             }
         }
-
 
         return@runOnThread bans.toList() to mutes.toList()
     }

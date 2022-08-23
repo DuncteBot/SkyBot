@@ -21,13 +21,11 @@ package ml.duncte123.skybot.database
 import io.sentry.Sentry
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.AirUtils
-import java.util.concurrent.Executors
-
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnban
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnmute
 import org.slf4j.Logger
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-
 
 object DataTimers {
     private val pool = Executors.newScheduledThreadPool(2)
@@ -73,7 +71,6 @@ object DataTimers {
             val db = variables.database
             val (bans, mutes) = db.getExpiredBansAndMutes().get()
 
-
             handleUnban(bans, db, variables)
             handleUnmute(mutes, db, variables)
         } catch (e: Exception) {
@@ -81,5 +78,4 @@ object DataTimers {
             e.printStackTrace()
         }
     }
-
 }
