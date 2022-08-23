@@ -106,7 +106,7 @@ class StatsCommand : Command() {
                 """**CPU usage:** $jvmCpuUsage
                     |**Threads:** ${threadBean.threadCount} / ${threadBean.peakThreadCount}
                             |**Ram:** ${jvmMemUsage}MB / ${jvmMemTotal}MB ($jvmMemPercent%)
-                        """.trimMargin(),
+                """.trimMargin(),
                 false
             )
 

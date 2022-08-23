@@ -35,7 +35,6 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
-import java.util.concurrent.CompletableFuture
 
 class WarnCommand : ModBaseCommand() {
 
@@ -72,7 +71,6 @@ class WarnCommand : ModBaseCommand() {
             return
         }
 
-        val jdaGuild = ctx.jdaGuild
         val guild = ctx.guild
         val moderator = ctx.member
         val channel = ctx.channel
@@ -98,15 +96,13 @@ class WarnCommand : ModBaseCommand() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        val future = CompletableFuture<Unit>()
-
         // add the new warning to the database
-        ctx.databaseAdapter.createWarning(
+        val future = ctx.database.createWarning(
             modUser.idLong,
             target.idLong,
             guild.idLong,
             reason
-        ) { future.complete(null) }
+        )
 
         modLog(modUser, targetUser, "warned", reason, null, guild)
 
@@ -122,7 +118,7 @@ class WarnCommand : ModBaseCommand() {
         // Wait for the request to pass and then get the updated warn count
         future.get()
 
-        val warnCount = getWarningCountForUser(ctx.databaseAdapter, targetUser, jdaGuild)
+        val warnCount = ctx.database.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
         val action = getSelectedWarnAction(warnCount, ctx)
 
         if (action != null) {
@@ -173,7 +169,7 @@ class WarnCommand : ModBaseCommand() {
 
                 val (finalDate, dur) = "${action.duration}m".toDuration()
 
-                ctx.databaseAdapter.createMute(
+                ctx.database.createMute(
                     modUser.idLong,
                     targetUser.idLong,
                     targetUser.asTag,
@@ -190,10 +186,8 @@ class WarnCommand : ModBaseCommand() {
             WarnAction.Type.TEMP_BAN -> {
                 val (finalUnbanDate, dur) = "${action.duration}d".toDuration()
 
-                ctx.databaseAdapter.createBan(
+                ctx.database.createBan(
                     modUser.idLong,
-                    targetUser.name,
-                    targetUser.discriminator,
                     targetUser.idLong,
                     finalUnbanDate,
                     guild.idLong

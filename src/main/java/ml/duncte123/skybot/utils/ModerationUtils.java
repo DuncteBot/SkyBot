@@ -22,7 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.api.Mute;
@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -151,19 +150,7 @@ public class ModerationUtils {
         };
     }
 
-    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User user, @Nonnull Guild guild) throws ExecutionException, InterruptedException {
-        final CompletableFuture<Integer> future = new CompletableFuture<>();
-
-        adapter.getWarningCountForUser(user.getIdLong(), guild.getIdLong(), (it) -> {
-            future.complete(it);
-
-            return null;
-        });
-
-        return future.get();
-    }
-
-    public static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter, Variables variables) {
+    public static void handleUnmute(List<Mute> mutes, AbstractDatabase database, Variables variables) throws ExecutionException, InterruptedException {
         LOG.debug("Checking for users to unmute");
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
@@ -225,13 +212,11 @@ public class ModerationUtils {
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
         if (!purgeIds.isEmpty()) {
-            adapter.purgeMutesSync(purgeIds);
+            database.purgeMutes(purgeIds).get();
         }
     }
 
-    public static void handleUnban(List<Ban> bans, DatabaseAdapter adapter, Variables variables) {
-        LOG.debug("Checking for users to unban");
-
+    public static void handleUnban(List<Ban> bans, AbstractDatabase database, Variables variables) throws ExecutionException, InterruptedException {
         // Get the ShardManager from our instance
         // Via the ShardManager we can fetch guilds and unban users
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
@@ -246,25 +231,22 @@ public class ModerationUtils {
                 continue;
             }
 
-            LOG.debug("Unbanning " + ban.getUserName());
-
             // Unban the user and set the reason to "Ban expired"
-            guild.unban(ban.getUserId())
+            guild.unban(User.fromId(ban.getUserId()))
                 .reason("Ban expired")
                 // Ignore errors that indicate an unknown ban
                 // This may happen some times
                 .queue(null, ignore(UNKNOWN_BAN));
 
-            // We're creating a fake user even though we can probably get a real user
-            // This is to make sure that we have the data we need when logging the unban
-            final User fakeUser = new FakeUser(
-                ban.getUserName(),
-                Long.parseUnsignedLong(ban.getUserId()),
-                Short.parseShort(ban.getDiscriminator())
-            );
-
             // Send the unban to the log channel
-            modLog(new ConsoleUser(), fakeUser, "unbanned", null, null, new DunctebotGuild(guild, variables));
+            shardManager.retrieveUserById(ban.getUserId()).queue(
+                (user) -> modLog(new ConsoleUser(), user, "unbanned", null, null, new DunctebotGuild(guild, variables)),
+                (err) -> {
+                    final User fakeUser = new FakeUser("Unknown", ban.getUserId(), 0);
+
+                    modLog(new ConsoleUser(), fakeUser, "unbanned", null, null, new DunctebotGuild(guild, variables));
+                }
+            );
         }
 
         LOG.debug("Checking done, unbanned {} users.", bans.size());
@@ -275,7 +257,7 @@ public class ModerationUtils {
         // If the bans are not empty send a purge request to the databse
         // This will make sure that we don't get them again
         if (!purgeIds.isEmpty()) {
-            adapter.purgeBansSync(purgeIds);
+            database.purgeBans(purgeIds).get();
         }
     }
 

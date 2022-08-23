@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
@@ -70,16 +69,20 @@ public final class SkyBot {
         this.configureDefaults(variables);
 
         final DunctebotConfig config = variables.getConfig();
-        final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
         Settings.PREFIX = config.discord.prefix;
 
-        if (variables.useApi()) {
-            logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
+        final String useDatabase = variables.getConfig().useDatabase;
+
+        if ("psql".equals(useDatabase)) {
+            logger.info("Using PostgreSQL as database impl");
+        } else if ("web".equals(useDatabase)) {
+            logger.warn("Using web api for all connections, please migrate to PostgreSQL");
         } else {
-            logger.warn("Using SQLite as the database");
-            logger.warn("Please note that it is not recommended for production");
+            shardManager = null; // for compiling n' stuff
+            logger.error("Unknown database driver \"{}\", exiting!", useDatabase);
+            return;
         }
 
         //Load the settings before loading the bot
@@ -89,6 +92,7 @@ public final class SkyBot {
         final String token = config.discord.token;
         //But this time we are going to shard it
         final int totalShards = config.discord.totalShards;
+        final CommandManager commandManager = variables.getCommandManager();
         final LongLongPair commandCount = commandManager.getCommandCount();
 
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());

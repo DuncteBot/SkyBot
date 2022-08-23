@@ -27,19 +27,20 @@ import java.time.OffsetDateTime
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
 // data class WarnObject(val userId: String, val warnings: List<Warning>)
+// TODO: insert user id here
 data class Warning(
     val id: Int,
     val rawDate: String, /*val date: Date, val expiryDate: Date,*/
-    val modId: String,
+    val modId: Long,
     val reason: String,
-    val guildId: String
+    val guildId: Long
 )
 
 data class Ban
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
     @JsonProperty("modUserId") val modId: String,
-    @JsonProperty("userId") val userId: String,
+    @JsonProperty("userId") val userId: Long,
     @JsonProperty("Username") val userName: String,
     @JsonProperty("discriminator") val discriminator: String,
     @JsonProperty("guildId") val guildId: String
@@ -54,10 +55,10 @@ data class BanBypas
 data class Mute
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,
-    @JsonProperty("mod_id") val modId: String,
-    @JsonProperty("user_id") val userId: String,
+    @JsonProperty("mod_id") val modId: Long,
+    @JsonProperty("user_id") val userId: Long,
     @JsonProperty("user_tag") val userTag: String,
-    @JsonProperty("guild_id") val guildId: String
+    @JsonProperty("guild_id") val guildId: Long
 )
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)

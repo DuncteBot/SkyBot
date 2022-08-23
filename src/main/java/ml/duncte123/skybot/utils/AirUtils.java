@@ -35,7 +35,7 @@ import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.FakePendingRequest;
@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -260,7 +261,7 @@ public class AirUtils {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
-    public static void handleExpiredReminders(List<Reminder> reminders, DatabaseAdapter adapter) {
+    public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase database) throws ExecutionException, InterruptedException {
         // Get the shardManager and a list of ints to purge the ids for
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
         final List<Integer> toPurge = new ArrayList<>();
@@ -329,12 +330,12 @@ public class AirUtils {
         final List<Integer> extraRemoval = reminders.stream()
             .filter((reminder) -> reminder.getReminder_date().isAfter(plusTwoDays))
             .map(Reminder::getId)
-            .collect(Collectors.toList());
+            .toList();
 
         toPurge.addAll(extraRemoval);
 
         if (!toPurge.isEmpty()) {
-            adapter.purgeRemindersSync(toPurge);
+            database.purgeReminders(toPurge).get();
         }
     }
 

@@ -54,25 +54,23 @@ public class UnwarnCommand extends ModBaseCommand {
         final DunctebotGuild guild = ctx.getGuild();
         final User target = mentioned.get(0).getUser();
 
-        ctx.getDatabaseAdapter().deleteLatestWarningForUser(
+        ctx.getDatabase().deleteLatestWarningForUser(
             target.getIdLong(),
-            guild.getIdLong(),
-            (latestWarning) -> {
-                if (latestWarning == null) {
-                    sendMsg(ctx, "This user has no active warnings");
+            guild.getIdLong()
+        ).thenAccept((latestWarning) -> {
+            if (latestWarning == null) {
+                sendMsg(ctx, "This user has no active warnings");
 
-                    return null;
-                }
+                return;
+            }
 
-                sendMsg(ctx, String.format("Latest warning for _%s_ removed\nReason was: %s", target.getAsTag(), latestWarning.getReason()));
-                modLog(String.format(
-                    "**%s** removed the latest warning for **%s**\nReason was: %s",
-                    ctx.getAuthor().getAsTag(),
-                    target.getAsTag(),
-                    latestWarning.getReason()
-                ), guild);
-
-                return null;
-            });
+            sendMsg(ctx, String.format("Latest warning for _%s_ removed\nReason was: %s", target.getAsTag(), latestWarning.getReason()));
+            modLog(String.format(
+                "**%s** removed the latest warning for **%s**\nReason was: %s",
+                ctx.getAuthor().getAsTag(),
+                target.getAsTag(),
+                latestWarning.getReason()
+            ), guild);
+        });
     }
 }

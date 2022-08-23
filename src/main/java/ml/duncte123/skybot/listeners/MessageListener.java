@@ -34,7 +34,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.command.CustomCommand;
 import ml.duncte123.skybot.objects.discord.MessageData;
 import ml.duncte123.skybot.objects.user.UnknownUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -459,6 +459,7 @@ public abstract class MessageListener extends BaseListener {
                 //Get the invite Id from the message
                 final String inviteID = matcher.group(matcher.groupCount());
 
+                // TODO: use the invite cache to check if invite is cached before retrieving
                 //Prohibiting failure because the bot is currently banned from the other guild.
                 guild.retrieveInvites().queue((invites) -> {
                     //Check if the invite is for this guild, if it is not delete the message

@@ -23,16 +23,13 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class GuildSettingsUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildSettingsUtils.class);
@@ -40,13 +37,12 @@ public class GuildSettingsUtils {
     private GuildSettingsUtils() {}
 
     public static void loadVcAutoRoles(Variables variables) {
-        final DatabaseAdapter adapter = variables.getDatabaseAdapter();
+        final AbstractDatabase database = variables.getDatabase();
         final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
         LOGGER.info("Loading vc auto roles.");
 
-        adapter.getVcAutoRoles((items) -> {
-
+        database.getVcAutoRoles().thenAccept((items) -> {
             items.forEach(
                 (item) -> {
                     final TLongLongMap cache = Optional.ofNullable(
@@ -64,8 +60,6 @@ public class GuildSettingsUtils {
             );
 
             LOGGER.info("Loaded " + items.size() + " vc auto roles.");
-
-            return null;
         });
     }
 
@@ -86,7 +80,7 @@ public class GuildSettingsUtils {
             return;
         }
 
-        variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
+        variables.getDatabase().updateGuildSetting(settings);
     }
 
     public static GuildSetting registerNewGuild(long guildId, Variables variables) {
@@ -101,7 +95,7 @@ public class GuildSettingsUtils {
             return settingForGuild;
         }
 
-        variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
+        variables.getDatabase().registerNewGuild(newGuildSettings);
         variables.getGuildSettingsCache().put(guildId, newGuildSettings);
 
         return newGuildSettings;
@@ -109,73 +103,7 @@ public class GuildSettingsUtils {
 
     public static void updateEmbedColor(long guildId, int color, Variables variables) {
         getGuild(guildId, variables).setEmbedColor(color);
-        variables.getDatabaseAdapter().updateOrCreateEmbedColor(guildId, color);
-    }
-
-    public static String replaceNewLines(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\\\\n", "\n");
-    }
-
-    private static String fixNewLines(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\n", "\\\\n");
-    }
-
-    public static String replaceUnicode(String entry) {
-        if (entry == null || entry.isEmpty()) {
-            return null;
-        }
-
-        return entry.replaceAll("\\P{Print}", "");
-    }
-
-    /*private static String replaceUnicodeAndLines(String s) {
-        return replaceUnicode(replaceNewLines(s));
-    }*/
-
-    public static String fixUnicodeAndLines(String string) {
-        return replaceUnicode(fixNewLines(replaceNewLines(string)));
-    }
-
-    public static String convertJ2S(long[] input) {
-        return Arrays.stream(input)
-            .mapToObj(String::valueOf)
-            .collect(Collectors.joining("|", "", ""));
-    }
-
-    private static long[] convertS2J(String input) {
-        if (input.isEmpty()) {
-            return new long[]{20, 45, 60, 120, 240, 2400};
-        }
-
-        return Arrays.stream(input.split("\\|")).mapToLong(Long::valueOf).toArray();
-    }
-
-    public static long[] ratelimmitChecks(String fromDb) {
-        if (fromDb == null || fromDb.isEmpty()) {
-            return new long[]{20, 45, 60, 120, 240, 2400};
-        }
-
-        return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
-    }
-
-    public static long toLong(@Nullable String string) {
-        if (string == null) {
-            return 0L;
-        }
-
-        try {
-            return Long.parseUnsignedLong(string);
-        }
-        catch (NumberFormatException ignored) {
-            return 0L;
-        }
+        // TODO: save guild setting instead, we've deprecated this
+        variables.getDatabase().updateOrCreateEmbedColor(guildId, color);
     }
 }

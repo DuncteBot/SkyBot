@@ -19,13 +19,8 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import com.dunctebot.models.settings.GuildSetting;
-import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
+import ml.duncte123.skybot.objects.command.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -155,9 +150,9 @@ public class CustomCommandCommand extends Command {
 
     private void createCustomCommand(CommandContext ctx, CommandManager manager, String commandName, String commandAction, long guildId) {
         try {
-            final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
+            final CommandResult result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
-            if (result.getFirst()) {
+            if (result == CommandResult.SUCCESS) {
                 sendMsg(ctx, "Command added.");
 
                 return;
@@ -166,11 +161,11 @@ public class CustomCommandCommand extends Command {
             final String error = "Failed to add custom command. \n Reason(s): %s";
             String reason = "";
 
-            if (result.getSecond()) {
+            if (result == CommandResult.COMMAND_EXISTS) {
                 reason += "The command was already found.\n";
-            } else if (result.getThird()) {
+            } else if (result == CommandResult.LIMIT_REACHED) {
                 reason += "You reached the limit of 50 custom commands on this server.\n";
-            } else if (!result.getSecond() && !result.getThird()) {
+            } else {
                 reason += "We have an database issue.";
             }
 
@@ -193,8 +188,8 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return manager.registerCustomCommand(new CustomCommandImpl(name, action, guildId, false));
+    private CommandResult registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
+        return manager.registerCustomCommand(new CustomCommand(name, action, guildId, false));
     }
 
     private boolean editCustomCommand(@Nullable CustomCommand customCommand, String newMessage, CommandManager manager) {
@@ -202,7 +197,7 @@ public class CustomCommandCommand extends Command {
             return false;
         }
 
-        final CustomCommand cmd = new CustomCommandImpl(
+        final CustomCommand cmd = new CustomCommand(
             customCommand.getName(),
             newMessage,
             customCommand.getGuildId(),

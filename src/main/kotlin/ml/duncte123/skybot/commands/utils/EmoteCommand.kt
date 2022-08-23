@@ -77,7 +77,7 @@ class EmoteCommand : Command() {
             |**Guild:** $guild
             |**Markdown:** `$markdownStr`
             |**Url:** $url
-        """.trimMargin()
+            """.trimMargin()
         )
     }
 

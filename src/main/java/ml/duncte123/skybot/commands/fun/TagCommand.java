@@ -44,6 +44,7 @@ import static ml.duncte123.skybot.utils.CommandUtils.*;
 
 public class TagCommand extends Command {
 
+    // TODO: don't cache these, look them up in the database instead (it's fast enough)
     private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
     private final TLongObjectMap<List<Tag>> guildTags = MapUtils.newLongObjectMap();
 
@@ -59,10 +60,8 @@ public class TagCommand extends Command {
             "Tags follow the same parsing as custom commands and the join/leave messages";
         this.usage = "<tag-name/raw/author/delete/create/help> [tag-name] [tag content]";
 
-        variables.getDatabaseAdapter().loadTags((tags) -> {
+        variables.getDatabase().loadTags().thenAccept((tags) -> {
             tags.forEach((tag) -> this.tagStore.put(tag.name, tag));
-
-            return null;
         });
     }
 
@@ -253,18 +252,16 @@ public class TagCommand extends Command {
             return;
         }
 
-        ctx.getDatabaseAdapter().deleteTag(tag, (success, reason) -> {
-            if (!success) {
-                sendMsg(ctx, "Failed to remove tag: " + reason);
+        ctx.getDatabase().deleteTag(tag).thenAccept((pair) -> {
+            if (!pair.getFirst()) {
+                sendMsg(ctx, "Failed to remove tag: " + pair.getSecond());
 
-                return null;
+                return;
             }
 
             this.tagStore.remove(tag.name);
 
             sendMsg(ctx, String.format("Tag `%s` deleted", tag.name));
-
-            return null;
         });
     }
 
@@ -297,18 +294,16 @@ public class TagCommand extends Command {
             ctx.getAuthor().getIdLong()
         );
 
-        ctx.getDatabaseAdapter().createTag(newTag, (success, reason) -> {
-            if (!success) {
-                sendMsg(ctx, "Failed to create tag: " + reason);
+        ctx.getDatabase().createTag(newTag).thenAccept((pair) -> {
+            if (!pair.getFirst()) {
+                sendMsg(ctx, "Failed to create tag: " + pair.getSecond());
 
-                return null;
+                return;
             }
 
             this.tagStore.put(tagName, newTag);
 
             sendMsg(ctx, String.format("Tag `%s` created", tagName));
-
-            return null;
         });
     }
 

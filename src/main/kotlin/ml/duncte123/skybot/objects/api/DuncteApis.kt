@@ -32,7 +32,8 @@ import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CommandResult
+import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
@@ -50,7 +51,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return paginateData("customcommands")
     }
 
-    fun createCustomCommand(guildId: Long, invoke: String, message: String): Triple<Boolean, Boolean, Boolean> {
+    fun createCustomCommand(guildId: Long, invoke: String, message: String): CommandResult {
         val json = mapper.createObjectNode().put("invoke", invoke).put("message", message)
         val response = postJSON("customcommands/$guildId", json)
 
@@ -62,7 +63,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         invoke: String,
         message: String,
         autoresponse: Boolean
-    ): Triple<Boolean, Boolean, Boolean> {
+    ): CommandResult {
         val json = mapper.createObjectNode().put("message", message).put("autoresponse", autoresponse)
         val response = patchJSON("customcommands/$guildId/$invoke", json)
 
@@ -88,7 +89,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         val commandManager = variables.commandManager
 
         commandManager.customCommands.add(
-            CustomCommandImpl(
+            CustomCommand(
                 command["invoke"].asText(),
                 command["message"].asText(),
                 command["guildId"].asLong(),
@@ -882,22 +883,22 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
             .execute()
     }
 
-    private fun parseTripleResponse(response: JsonNode): Triple<Boolean, Boolean, Boolean> {
+    private fun parseTripleResponse(response: JsonNode): CommandResult {
         val success = response["success"].asBoolean()
 
         if (success) {
-            return Triple(first = true, second = false, third = false)
+            return CommandResult.SUCCESS
         }
 
         val error = response["error"]
         val type = error["type"].asText()
 
         if (type == "AmountException") {
-            return Triple(first = false, second = false, third = true)
+            return CommandResult.LIMIT_REACHED
         }
 
         if (type !== "ValidationException") {
-            return Triple(first = false, second = false, third = false)
+            return CommandResult.UNKNOWN
         }
 
         val errors = response["error"]["errors"]
@@ -905,12 +906,12 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         for (key in errors.fieldNames()) {
             errors[key].forEach { reason ->
                 if (reason.asText().contains("The invoke has already been taken.")) {
-                    return Triple(first = false, second = true, third = false)
+                    return CommandResult.COMMAND_EXISTS
                 }
             }
         }
 
-        return Triple(first = false, second = false, third = false)
+        return CommandResult.UNKNOWN
     }
 
     private fun patchJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {

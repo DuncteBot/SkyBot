@@ -21,7 +21,7 @@ package ml.duncte123.skybot.web.handlers
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.command.CustomCommand
 import ml.duncte123.skybot.web.WebSocketClient
 import ml.duncte123.skybot.websocket.SocketHandler
 
@@ -50,7 +50,7 @@ class CustomCommandHandler(variables: Variables, client: WebSocketClient) : Sock
     }
 
     private fun updateCustomCommands(raw: JsonNode) {
-        val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
+        val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommand>>() {})
 
         commands.forEach {
             manager.addCustomCommand(it, false, true)
@@ -58,7 +58,7 @@ class CustomCommandHandler(variables: Variables, client: WebSocketClient) : Sock
     }
 
     private fun addCustomCommands(raw: JsonNode) {
-        val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommandImpl>>() {})
+        val commands = jackson.readValue(raw.traverse(), object : TypeReference<List<CustomCommand>>() {})
 
         commands.forEach {
             manager.addCustomCommand(it, false, false)

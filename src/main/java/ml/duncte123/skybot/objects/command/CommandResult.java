@@ -16,25 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.uncategorized
+package ml.duncte123.skybot.objects.command;
 
-import me.duncte123.botcommons.messaging.MessageUtils
-import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandContext
-
-class SuggestCommand : Command() {
-
-    init {
-        this.name = "suggest"
-        this.help = "Suggest a new feature for DuncteBot!"
-    }
-
-    override fun execute(ctx: CommandContext) {
-        MessageUtils.sendMsg(
-            ctx,
-            """You can leave you suggestions for the bot on his page: https://duncte.bot/suggest
-            |Make sure to join our Discord server so we can contact you when needed: <https://duncte.bot/server>
-            """.trimMargin()
-        )
-    }
+public enum CommandResult {
+    SUCCESS,
+    LIMIT_REACHED,
+    COMMAND_EXISTS,
+    UNKNOWN,
 }

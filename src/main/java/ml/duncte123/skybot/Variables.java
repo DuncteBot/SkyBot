@@ -23,15 +23,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import io.sentry.Sentry;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
+import ml.duncte123.skybot.database.PostgreDatabase;
+import ml.duncte123.skybot.database.WebDatabase;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
@@ -43,10 +43,11 @@ import net.jodah.expiringmap.EntryLoader;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.caching.client.CacheClient;
-import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class Variables {
     private final JsonMapper mapper = JsonMapper.builder()
@@ -67,20 +68,16 @@ public final class Variables {
     private final WeebApi weebApi;
     private final DunctebotConfig config;
     private final CacheClient youtubeCache;
-    private DatabaseAdapter databaseAdapter;
+    private AbstractDatabase database;
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(12, TimeUnit.HOURS)
         .entryLoader((EntryLoader<Long, GuildSetting>) guildId -> {
-            final CompletableFuture<GuildSetting> future = new CompletableFuture<>();
-            getDatabaseAdapter().loadGuildSetting(guildId, (setting) -> {
-                future.complete(setting);
-                return null;
-            });
-
             try {
-                return future.get(20L, TimeUnit.SECONDS);
+                return getDatabase()
+                    .loadGuildSetting(guildId)
+                    .get(20L, TimeUnit.SECONDS);
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 return null;
             }
@@ -162,10 +159,6 @@ public final class Variables {
         return this.weebApi;
     }
 
-    public boolean useApi() {
-        return this.config.useDatabase;
-    }
-
     public Alexflipnote getAlexflipnote() {
         return this.alexflipnote;
     }
@@ -182,23 +175,17 @@ public final class Variables {
         return this.apis;
     }
 
-    public DatabaseAdapter getDatabaseAdapter() {
-        try {
-            if (this.databaseAdapter == null) {
-                this.databaseAdapter = this.useApi() ?
-                    new WebDatabaseAdapter(this.getApis(), this.getJackson()) :
-                    (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
-                        .getDeclaredConstructor().newInstance());
+    public AbstractDatabase getDatabase() {
+        if (this.database == null) {
+            if ("psql".equals(this.config.useDatabase)) {
+                this.database = new PostgreDatabase();
+            } else if ("web".equals(this.config.useDatabase)) {
+                this.database = new WebDatabase(this.getApis(), this.getJackson());
+            } else {
+                throw new IllegalArgumentException("Unknown database engine: " + this.config.useDatabase);
             }
         }
-        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-            InstantiationException | InvocationTargetException e) {
-            LoggerFactory.getLogger(Variables.class).error("Could not load database class.\n" +
-                "Are you a developer?", e);
 
-            throw ExceptionTools.wrapUnfriendlyExceptions(e);
-        }
-
-        return this.databaseAdapter;
+        return this.database;
     }
 }

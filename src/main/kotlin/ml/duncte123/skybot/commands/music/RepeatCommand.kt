@@ -62,7 +62,7 @@ class RepeatCommand : MusicCommand() {
                         """Current repeat status:
                         |Repeating: **${scheduler.isLooping.toEmoji()}**
                         |Repeating queue: **${scheduler.isLoopingQueue.toEmoji()}**
-                    """.trimMargin()
+                        """.trimMargin()
                     )
                 }
 

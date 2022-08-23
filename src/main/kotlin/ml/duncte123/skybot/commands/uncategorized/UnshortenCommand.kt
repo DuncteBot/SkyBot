@@ -73,7 +73,7 @@ class UnshortenCommand : Command() {
                             |```
                             |${data["long_url"].asText()}
                             |```
-                        """.trimMargin()
+            """.trimMargin()
         )
 
         sendEmbed(ctx, embed)

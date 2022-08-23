@@ -41,7 +41,7 @@ class DonateCommand : Command() {
                         |**PayPal:** <https://paypal.me/duncte123$amount>
                         |
                         |All donations will go directly into development of the bot ❤
-                    """.trimMargin()
+            """.trimMargin()
         )
     }
 }

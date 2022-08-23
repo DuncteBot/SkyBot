@@ -16,15 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command.custom;
+package ml.duncte123.skybot.objects.command;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
 
-public class CustomCommandImpl implements CustomCommand {
+public class CustomCommand implements ICommand {
 
     private final String invoke;
     private final String message;
@@ -32,21 +34,19 @@ public class CustomCommandImpl implements CustomCommand {
     private final boolean autoresponse;
 
     @JsonCreator
-    public CustomCommandImpl(@JsonProperty("invoke") String invoke, @JsonProperty("message") String message,
-                             @JsonProperty("guildId") @JsonAlias({"guildId", "guild_id"}) long guildId,
-                             @JsonProperty("autoresponse") boolean autoresponse) {
+    public CustomCommand(@JsonProperty("invoke") String invoke, @JsonProperty("message") String message,
+                         @JsonProperty("guildId") @JsonAlias({"guildId", "guild_id"}) long guildId,
+                         @JsonProperty("autoresponse") boolean autoresponse) {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
         this.autoresponse = autoresponse;
     }
 
-    @Override
     public String getMessage() {
         return message;
     }
 
-    @Override
     public long getGuildId() {
         return guildId;
     }
@@ -63,8 +63,37 @@ public class CustomCommandImpl implements CustomCommand {
         return "null";
     }
 
-    @Override
     public boolean isAutoResponse() {
         return autoresponse;
+    }
+
+    @Override
+    public boolean isCustom() {
+        return true;
+    }
+
+    //Override some methods that are not needed
+    @Override
+    public void executeCommand(@Nonnull CommandContext ctx) {
+        // Custom commands are executed in a different way
+    }
+
+    @Nonnull
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.UNLISTED;
+    }
+
+    @Override
+    public boolean shouldDisplayAliasesInHelp() {
+        return false;
+    }
+
+    public JsonNode toJSONObject(ObjectMapper mapper) {
+        return mapper.createObjectNode()
+            .put("guildId", getGuildId())
+            .put("name", getName())
+            .put("autoresponse", isAutoResponse())
+            .put("message", getMessage());
     }
 }

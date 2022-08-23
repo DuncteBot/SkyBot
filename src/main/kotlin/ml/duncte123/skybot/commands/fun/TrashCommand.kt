@@ -52,7 +52,8 @@ class TrashCommand : NoPatronImageCommand() {
             sendMsg(
                 ctx,
                 """It's sad to hear that I'm trash.
-                            |Try suggesting a fix for any issues that you're facing on this page <https://duncte.bot/suggest>""".trimMargin()
+                            |Try suggesting a fix for any issues that you're facing on this page <https://duncte.bot/suggest>
+                """.trimMargin()
             )
             return
         }

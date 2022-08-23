@@ -22,7 +22,7 @@ import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.botcommons.commands.ICommandContext;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
@@ -81,8 +81,8 @@ public class CommandContext implements ICommandContext {
         return this.variables.getConfig();
     }
 
-    public DatabaseAdapter getDatabaseAdapter() {
-        return this.variables.getDatabaseAdapter();
+    public AbstractDatabase getDatabase() {
+        return this.variables.getDatabase();
     }
 
     public ThreadLocalRandom getRandom() {

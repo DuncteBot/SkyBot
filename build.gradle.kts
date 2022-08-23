@@ -30,9 +30,11 @@ plugins {
     application
 
     kotlin("jvm") version "1.6.0"
+    id("org.liquibase.gradle") version "2.0.4"
+//    id("org.jmailen.kotlinter") version "3.9.0" // removes star imports :(
+    id("org.jmailen.kotlinter") version "3.6.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
-    id("org.jmailen.kotlinter") version "3.5.1"
 }
 
 val numberVersion = "3.106.8"
@@ -59,11 +61,6 @@ repositories {
     maven("https://maven.notfab.net/Hosted")
     maven("https://jitpack.io")
 }
-
-val devDependencies = arrayOf(
-    // SQLite
-    DependencyInfo(group = "org.xerial", name = "sqlite-jdbc", version = "3.32.3")
-)
 
 dependencies {
     implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
@@ -106,8 +103,6 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
-//    implementation(kotlin("kotlinx-coroutines-core"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     // JDA utils
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
@@ -153,10 +148,10 @@ dependencies {
     // redis
     implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
 
-    // dev deps
-    devDependencies.forEach {
-        implementation(group = it.group, name = it.name, version = it.version)
-    }
+    implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
+    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
+    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
+    runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -250,32 +245,12 @@ compileJava.apply {
     dependsOn(generateJavaSources)
 }
 
-jar.apply {
-    exclude(
-        "**/SQLiteDatabaseConnectionManager.class",
-        "**/AudioPlayerSenderHandler.class",
-        "**/SqliteDatabaseAdapter**"
-    )
-}
-
 application {
     mainClass.set("ml.duncte123.skybot.SkyBot")
 }
 
 shadowJar.apply {
     archiveClassifier.set("prod")
-
-    exclude(
-        "**/SQLiteDatabaseConnectionManager.class",
-        "**/SQLiteTimers.class",
-        "**/SqliteDatabaseAdapter**"
-    )
-
-    dependencies {
-        devDependencies.forEach {
-            exclude(dependency("${it.group}:${it.name}:${it.version}"))
-        }
-    }
 }
 
 tasks.withType<Wrapper> {

@@ -38,7 +38,7 @@ object EarthUtils {
         val embed = EmbedUtils.embedMessage(
             """The ${if (oldest) "oldest" else "youngest"} member in this server is:
             |${user.asTag} - ${user.asMention}
-        """.trimMargin()
+            """.trimMargin()
         )
             .setFooter("Account created")
             .setTimestamp(user.timeCreated)
@@ -72,7 +72,8 @@ object EarthUtils {
                     sendMsg(
                         ctx,
                         """Whoops I could not find any posts.
-                        |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)"""
+                        |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)
+                        """
                             .trimMargin()
                     )
                     return@async

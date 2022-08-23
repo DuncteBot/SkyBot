@@ -44,6 +44,6 @@ services:
             - WEBSOCKET_URL=
             - WEBSOCKET_ENABLE=false
 
-            # And finally
-            - USE_DATABASE=false
+            # Options are: psql, web
+            - USE_DATABASE=psql
             - REDIS_HOST=localhost

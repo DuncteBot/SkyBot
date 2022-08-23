@@ -89,10 +89,10 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             return
         }
 
-        variables.databaseAdapter.addOneGuildPatrons(userId, guildId) { _, _ ->
+        variables.database.addOneGuildPatrons(userId, guildId).thenAccept { (_, _) ->
             val instance = SkyBot.getInstance()
-            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@addOneGuildPatrons
-            val newPatron = dbGuild.getMemberById(userId) ?: return@addOneGuildPatrons
+            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@thenAccept
+            val newPatron = dbGuild.getMemberById(userId) ?: return@thenAccept
 
             val hasRole = newPatron.roles
                 .map(Role::getIdLong)
@@ -121,13 +121,13 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
     private fun handleUnbans(unbans: JsonNode) {
         val bans: List<Ban> = jackson.readValue(unbans.traverse(), object : TypeReference<List<Ban>>() {})
 
-        ModerationUtils.handleUnban(bans, variables.databaseAdapter, variables)
+        ModerationUtils.handleUnban(bans, variables.database, variables)
     }
 
     private fun handleUnmutes(unmutes: JsonNode) {
         val mutes: List<Mute> = jackson.readValue(unmutes.traverse(), object : TypeReference<List<Mute>>() {})
 
-        ModerationUtils.handleUnmute(mutes, variables.databaseAdapter, variables)
+        ModerationUtils.handleUnmute(mutes, variables.database, variables)
     }
 
     private fun handleReminders(reminders: JsonNode) {
@@ -137,7 +137,7 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
 
             // Uses complete, must be handled last
             if (parsedReminders.isNotEmpty()) {
-                AirUtils.handleExpiredReminders(parsedReminders, variables.databaseAdapter)
+                AirUtils.handleExpiredReminders(parsedReminders, variables.database)
             }
         } catch (e: Exception) {
             Sentry.captureException(e)

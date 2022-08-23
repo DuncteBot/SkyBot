@@ -25,7 +25,7 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.extensions.Time4JKt;
 import ml.duncte123.skybot.extensions.UserKt;
@@ -262,7 +262,7 @@ public class GuildMemberListener extends BaseListener {
         // if we have a type set it in the database
         // Type is set in the database here to prevent un-needed updates
         if (typeToSet.get() != null) {
-            variables.getDatabaseAdapter().createOrUpdatePatron(typeToSet.get(), userId, null);
+            variables.getDatabase().createOrUpdatePatron(typeToSet.get(), userId, null);
         }
     }
 
@@ -346,11 +346,11 @@ public class GuildMemberListener extends BaseListener {
 
         if (daysBetween < threshold && selfMember.hasPermission(Permission.BAN_MEMBERS) && selfMember.canInteract(member)) {
             final CompletableFuture<Boolean> booleanFuture = new CompletableFuture<>();
-            final DatabaseAdapter database = variables.getDatabaseAdapter();
+            final AbstractDatabase database = variables.getDatabase();
             final String humanTime = TimeFormat.RELATIVE.format(timeCreated);
 
             // we have to use futures since the callback runs on a different thread
-            database.getBanBypass(guild.getIdLong(), member.getIdLong(), (byPass) -> {
+            database.getBanBypass(guild.getIdLong(), member.getIdLong()).thenAccept((byPass) -> {
                 if (byPass != null) {
                     // delete the bypass as it is used
                     database.deleteBanBypass(byPass);
@@ -364,7 +364,7 @@ public class GuildMemberListener extends BaseListener {
                         ),
                         new DunctebotGuild(guild, this.variables)
                     );
-                    return null;
+                    return;
                 }
 
                 // return true, we did ban the user (prevents any welcome messages from displaying)
@@ -384,8 +384,6 @@ public class GuildMemberListener extends BaseListener {
                     null,
                     new DunctebotGuild(guild, this.variables)
                 );
-
-                return null;
             });
 
             try {
@@ -440,7 +438,7 @@ public class GuildMemberListener extends BaseListener {
 
         // If the main patron role is removed we can just remove the patron from the database
         if (hadNormalRank) {
-            variables.getDatabaseAdapter().removePatron(userId);
+            variables.getDatabase().removePatron(userId);
             return;
         }
 
@@ -481,25 +479,19 @@ public class GuildMemberListener extends BaseListener {
         if (newType != null) {
             final Patron patron = new Patron(newType, userId, null);
 
-            variables.getDatabaseAdapter().createOrUpdatePatron(patron);
+            variables.getDatabase().createOrUpdatePatron(patron);
             CommandUtils.addPatronsFromData(AllPatronsData.fromSinglePatron(patron));
         }
     }
 
     private void handleNewOneGuildPatron(long userId) {
-        variables.getDatabaseAdapter().getOneGuildPatron(userId,
-            (results) -> {
-                results.forEachEntry(
-                    (a, guildId) -> {
-                        CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
-
-                        return true;
-                    }
-                );
-
-                return null;
-            }
-        );
+        variables.getDatabase()
+            .getOneGuildPatron(userId)
+            .thenAccept((guildId) -> {
+                if (guildId != null) {
+                    CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
+                }
+            });
     }
 
     private void applyAutoRole(Guild guild, Member member, GuildSetting settings) {

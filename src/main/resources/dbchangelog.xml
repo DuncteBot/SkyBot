@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Skybot, a multipurpose discord bot
+  ~      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+		 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+    <changeSet id="1" author="duncte123">
+        <createTable tableName="guild_settings">
+            <column name="guild_id" type="bigserial"> <!-- only use serial for PKs -->
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="prefix" type="varchar(10)" defaultValue="db!">
+                <constraints nullable="false"/>
+            </column>
+            <column name="auto_role_id" type="bigint"/>
+            <column name="embed_color" type="int"/>
+
+            <column name="voice_leave_timeout_seconds" type="integer" defaultValueNumeric="1"/>
+            <column name="announce_track_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="allow_all_to_stop" type="boolean" defaultValueBoolean="false"/>
+
+            <!-- TODO: remove, guilds have descriptions build-in these days -->
+            <column name="server_description" type="varchar"/>
+
+            <!-- welcome (join)/leave messages -->
+            <column name="join_leave_channel_id" type="bigint"/>
+            <column name="join_message_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="leave_message_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="join_message" type="text"/>
+            <column name="leave_message" type="text"/>
+
+            <!-- moderation -->
+            <column name="log_channel_id" type="bigint"/>
+            <column name="mute_role_id" type="bigint"/>
+            <column name="swear_filter_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="swear_filter_type" type="varchar(255)" defaultValue="SEVERE_TOXICITY"/>
+            <column name="swear_sensitivity" type="real" defaultValue="0.8"/>
+
+            <column name="auto_dehoist_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="invite_filter_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="spam_filter_state" type="boolean" defaultValueBoolean="false"/>
+            <column name="kick_instead_state" type="boolean" defaultValueBoolean="false"/>
+            <column name="ratelimits" type="varchar(255)" defaultValue="20|45|60|120|240|2400"/>
+            <column name="spam_threshold" type="real" defaultValueNumeric="0.7"/>
+            <column name="ban_young_account_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="ban_young_account_threshold_days" type="integer" defaultValueNumeric="10"/>
+            <!-- _________________________________________________________________________ -->
+            <column name="ban_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="unban_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="mute_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="kick_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="warn_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="member_logging_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="invite_logging_enabled" type="boolean" defaultValueBoolean="false"/>
+            <column name="message_logging_enabled" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+
+        <createTable tableName="custom_commands">
+            <!-- https://stackoverflow.com/questions/54440479/liquibase-how-to-add-a-group-of-fields-like-primary-key -->
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_custom_command" />
+            </column>
+            <column name="invoke" type="varchar(25)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_custom_command" />
+            </column>
+            <column name="message" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="auto_response" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="duncte123">
+        <createTable tableName="tags">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="owner_id" type="bigint"/>
+            <column name="name" type="varchar(25)"/>
+            <column name="content" type="varchar(4000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="duncte123">
+        <createTable tableName="vc_autoroles">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+            <column name="voice_channel_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+            <column name="role_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_vc_autorole" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="duncte123">
+        <createTable tableName="blacklisted_words">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_guild_blacklist" />
+            </column>
+            <column name="word" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_guild_blacklist" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="duncte123">
+        <createTable tableName="warn_actions">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_warn_action" />
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_warn_action" />
+            </column>
+            <column name="threshold" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="duration" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="6" author="duncte123">
+        <createTable tableName="patrons">
+            <column name="user_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="duncte123">
+        <createTable tableName="temp_bans">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="unban_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createTable tableName="warnings">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="warn_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="reason" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createTable tableName="temp_mutes">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="mod_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="unmute_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8" author="duncte123">
+        <createTable tableName="ban_bypasses">
+            <column name="guild_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ban_bypass"/>
+            </column>
+            <column name="user_id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="PK_ban_bypass"/>
+            </column>
+        </createTable>
+        <addColumn tableName="tags">
+            <!-- For guild tags :) -->
+            <column name="guild_id" type="bigint" defaultValue="null">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="9" author="duncte123">
+        <createTable tableName="reminders">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="guild_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="channel_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="message_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="in_channel" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="reminder" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="remind_on" type="datetime">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="10" author="duncte123">
+        <addColumn tableName="reminders">
+            <column name="created_at" type="datetime" defaultValueDate="now()">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
@@ -44,19 +44,18 @@ public class AutoBanBypassCommand extends ModBaseCommand {
             return;
         }
 
-        final DatabaseAdapter database = ctx.getDatabaseAdapter();
+        final AbstractDatabase database = ctx.getDatabase();
         final long guildId = ctx.getGuild().getIdLong();
 
-        database.getBanBypass(guildId, checkId, (byPass) -> {
+        database.getBanBypass(guildId, checkId).thenAccept((byPass) -> {
             if (byPass == null) {
                 database.createBanBypass(guildId, checkId);
                 sendMsg(ctx, "Single use bypass created, please note that this bypass will expire after a week if unused." +
                     "\nPlease keep in mind that this has not unbanned any user, meaning that you will have to unban the user yourself if they are banned");
-                return null;
+                return;
             }
 
             sendMsg(ctx, "A bypass already exists for this user");
-            return null;
         });
     }
 }
