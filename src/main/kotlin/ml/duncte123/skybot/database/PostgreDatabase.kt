@@ -50,7 +50,8 @@ class PostgreDatabase : AbstractDatabase() {
 
     init {
         val config = HikariConfig()
-        config.jdbcUrl = "jdbc:postgresql://localhost:5432/skybot?user=skybot&password=password" // &ssl=true
+        // TODO: unhardcode
+        config.jdbcUrl = "jdbc:pgsql://localhost:5432/skybot?user=skybot&password=password" // &ssl=true
 
         this.ds = HikariDataSource(config)
 

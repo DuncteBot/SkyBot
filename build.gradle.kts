@@ -29,10 +29,10 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.7.10"
     id("org.liquibase.gradle") version "2.0.4"
 //    id("org.jmailen.kotlinter") version "3.9.0" // removes star imports :(
-    id("org.jmailen.kotlinter") version "3.6.0"
+    id("org.jmailen.kotlinter") version "3.11.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.github.breadmoirai.github-release") version "2.2.12"
 }
@@ -93,7 +93,7 @@ dependencies {
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
 
     //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "6.5.4")
+    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "7.2.0")
 
     // Youtube Cache
     implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2.1")
@@ -149,8 +149,9 @@ dependencies {
     implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
+    // TODO: replace with official? https://jdbc.postgresql.org/
     implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
-    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.5.0")
+    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.8.0")
     runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
 }
 
@@ -260,7 +261,6 @@ tasks.withType<Wrapper> {
 
 kotlinter {
     ignoreFailures = false
-    indentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = true
     disabledRules = arrayOf(
