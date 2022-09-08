@@ -29,14 +29,16 @@ public class DunctebotConfig {
     public final Sentry sentry;
     public final Websocket websocket;
     public final String useDatabase;
+    public final String jdbcURI;
 
-    public DunctebotConfig(Discord discord, Apis apis, Lavalink lavalink, Sentry sentry, Websocket websocket, String useDatabase) {
+    public DunctebotConfig(Discord discord, Apis apis, Lavalink lavalink, Sentry sentry, Websocket websocket, String useDatabase, String jdbcURI) {
         this.discord = discord;
         this.apis = apis;
         this.lavalink = lavalink;
         this.sentry = sentry;
         this.websocket = websocket;
         this.useDatabase = useDatabase;
+        this.jdbcURI = jdbcURI;
     }
 
     public static class Discord {
@@ -223,7 +225,8 @@ public class DunctebotConfig {
             lavalink,
             sentry,
             websocket,
-            System.getenv("USE_DATABASE")
+            System.getenv("USE_DATABASE"),
+            System.getenv("JDBC_URI")
         );
     }
 }

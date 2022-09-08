@@ -178,7 +178,7 @@ public final class Variables {
     public AbstractDatabase getDatabase() {
         if (this.database == null) {
             if ("psql".equals(this.config.useDatabase)) {
-                this.database = new PostgreDatabase();
+                this.database = new PostgreDatabase(this.config.jdbcURI);
             } else if ("web".equals(this.config.useDatabase)) {
                 this.database = new WebDatabase(this.getApis(), this.getJackson());
             } else {

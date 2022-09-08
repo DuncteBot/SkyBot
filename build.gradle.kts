@@ -264,10 +264,11 @@ kotlinter {
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = true
     disabledRules = arrayOf(
-        "no-wildcard-imports", "experimental:indent",
-        "experimental:argument-list-wrapping",
+        "filename", "no-wildcard-imports", "experimental:indent",
+        "argument-list-wrapping",
         "experimental:spacing-between-declarations-with-annotations",
-        "experimental:spacing-between-declarations-with-comments"
+        "experimental:spacing-between-declarations-with-comments",
+        "experimental:comment-wrapping"
     )
 }
 

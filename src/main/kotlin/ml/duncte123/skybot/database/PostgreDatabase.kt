@@ -41,7 +41,7 @@ import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
 
-class PostgreDatabase : AbstractDatabase() {
+class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
     private val ds: HikariDataSource
     private val connection: Connection
         get() {
@@ -50,11 +50,10 @@ class PostgreDatabase : AbstractDatabase() {
 
     init {
         val config = HikariConfig()
-        // TODO: unhardcode
-        config.jdbcUrl = "jdbc:pgsql://localhost:5432/skybot?user=skybot&password=password" // &ssl=true
+
+        config.jdbcUrl = jdbcURI // &ssl=true
 
         this.ds = HikariDataSource(config)
-
         this.connection.use { con ->
             Liquibase(
                 "/dbchangelog.xml",
