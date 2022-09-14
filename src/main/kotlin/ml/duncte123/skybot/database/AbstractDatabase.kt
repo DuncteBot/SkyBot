@@ -21,6 +21,7 @@ package ml.duncte123.skybot.database
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.sentry.Sentry
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -28,12 +29,34 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 abstract class AbstractDatabase(threads: Int = 2) {
     private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true
         t
+    } as ThreadPoolExecutor
+    private val databaseKiller = Executors.newScheduledThreadPool(threads) {
+        val t = Thread(it, "Database-kill-Thread")
+        t.isDaemon = true
+        t
+    }
+
+    // Monitor the thread, hopefully this can help us
+    init {
+        databaseKiller.scheduleAtFixedRate(
+            {
+                if (databaseThread.queue.size > 10) {
+                    SkyBot.getInstance().shardManager
+                        // #breaking-bots
+                        .getTextChannelById(387881926691782657L)
+                        ?.sendMessage("<@191231307290771456> Database thread queue is currently at ${databaseThread.queue.size} tasks! (active threads: ${databaseThread.activeCount})")
+                        ?.queue()
+                }
+            }, 1L, 1L, TimeUnit.DAYS
+        )
     }
 
     // ////////////////
@@ -208,7 +231,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     protected fun <T> runOnThread(r: () -> T): CompletableFuture<T> {
         val future = CompletableFuture<T>()
 
-        databaseThread.execute {
+        val runnableFuture = databaseThread.submit {
             try {
                 val result = r.invoke()
 
@@ -219,6 +242,11 @@ abstract class AbstractDatabase(threads: Int = 2) {
                 future.completeExceptionally(thr)
             }
         }
+
+        // Kill the thread after 20 seconds, hopefully this works
+        databaseKiller.schedule({
+            runnableFuture.cancel(true)
+        }, 20, TimeUnit.SECONDS)
 
         return future
     }
