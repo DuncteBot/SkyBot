@@ -22,8 +22,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.*;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.notfab.caching.client.CacheClient;
-import net.notfab.caching.shared.CacheResponse;
 
 import java.io.IOException;
 
@@ -31,15 +29,13 @@ import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
 import static ml.duncte123.skybot.utils.YoutubeUtils.videoToTrack;
 
 public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager {
-
-    private final CacheClient cacheClient;
     private final String ytApiKey;
 
-    public YoutubeAudioSourceManagerOverride(CacheClient cacheClient, String ytApiKey) {
+    public YoutubeAudioSourceManagerOverride(String ytApiKey) {
         super(
             true,
             new DefaultYoutubeTrackDetailsLoader(),
-            new YoutubeApiSearchProvider(ytApiKey, cacheClient),
+            new YoutubeApiSearchProvider(ytApiKey),
             new YoutubeSearchMusicProvider(),
             new YoutubeSignatureCipherManager(),
             new YoutubeApiPlaylistLoader(ytApiKey),
@@ -47,19 +43,11 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
             new YoutubeMixProvider()
         );
 
-        this.cacheClient = cacheClient;
         this.ytApiKey = ytApiKey;
     }
 
     @Override
     public AudioItem loadTrackWithVideoId(String videoId, boolean mustExist) {
-        final CacheResponse cacheResponse = this.cacheClient.get(videoId);
-
-        if (!cacheResponse.failure && cacheResponse.getTrack() != null) {
-            final AudioTrack track = cacheResponse.getTrack().toAudioTrack(this);
-            return new DoNotCache(track);
-        }
-
         if (mustExist) {
             return getFromYoutubeApi(videoId);
         }

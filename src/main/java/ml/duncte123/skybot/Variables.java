@@ -42,7 +42,6 @@ import ml.duncte123.skybot.utils.MapUtils;
 import net.jodah.expiringmap.EntryLoader;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
-import net.notfab.caching.client.CacheClient;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -67,7 +66,6 @@ public final class Variables {
     private final Alexflipnote alexflipnote;
     private final WeebApi weebApi;
     private final DunctebotConfig config;
-    private final CacheClient youtubeCache;
     private AbstractDatabase database;
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
@@ -90,16 +88,6 @@ public final class Variables {
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
-
-        // Audio Utils needs the client
-        final var ytcfg = this.config.apis.youtubeCache;
-        this.youtubeCache = new CacheClient(ytcfg.endpoint, ytcfg.token, Executors.newCachedThreadPool((r) -> {
-            final Thread thread = new Thread(r, "Cache-Thread");
-            thread.setDaemon(true);
-
-            return thread;
-        }));
-
         this.audioUtils = new AudioUtils(this.config.apis, this);
         this.alexflipnote = new Alexflipnote(this.mapper, this.config.apis.alexflipnote);
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
@@ -149,10 +137,6 @@ public final class Variables {
 
     public String getGoogleBaseUrl() {
         return this.googleBaseUrl;
-    }
-
-    public CacheClient getYoutubeCache() {
-        return this.youtubeCache;
     }
 
     public WeebApi getWeebApi() {

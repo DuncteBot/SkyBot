@@ -58,7 +58,6 @@ repositories {
     maven("https://m2.duncte123.dev/releases")
     maven("https://m2.duncte123.dev/snapshots")
     maven("https://m2.dv8tion.net/releases")
-    maven("https://maven.notfab.net/Hosted")
     maven("https://jitpack.io")
 }
 
@@ -94,9 +93,6 @@ dependencies {
 
     //Spotify API
     implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "7.2.0")
-
-    // Youtube Cache
-    implementation(group = "net.notfab.cache", name = "cache-client", version = "2.2.1")
 
     // Youtube api
     implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")

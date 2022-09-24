@@ -25,7 +25,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
@@ -64,8 +63,6 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        addToIndex(track);
-
         track.setUserData(new TrackUserData(this.requester));
 
         final TrackScheduler scheduler = this.mng.getScheduler();
@@ -125,7 +122,6 @@ public class AudioLoader implements AudioLoadResultHandler {
             }
 
             final List<AudioTrack> tracks = tracksRaw.stream().peek((track) -> {
-                addToIndex(track);
                 // don't store this externally since it will cause issues
                 track.setUserData(new TrackUserData(this.requester));
             }).toList();
@@ -194,12 +190,6 @@ public class AudioLoader implements AudioLoadResultHandler {
         sendEmbed(this.ctx, embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
             + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!"));
 
-    }
-
-    private void addToIndex(AudioTrack track) {
-        if (!(track instanceof YoutubeAudioSourceManagerOverride.DoNotCache)) {
-            this.ctx.getYoutubeCache().addToIndex(track);
-        }
     }
 
     private static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {

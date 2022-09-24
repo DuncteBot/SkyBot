@@ -54,10 +54,7 @@ public class AudioUtils {
         playerManager = new DefaultAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(
-            variables.getYoutubeCache(),
-            config.googl
-        );
+        final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(config.googl);
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
         playerManager.registerSourceManager(sourceManager);

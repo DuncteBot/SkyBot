@@ -25,12 +25,6 @@ import com.sedmelluq.discord.lavaplayer.tools.http.ExtendedHttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.sedmelluq.discord.lavaplayer.track.info.AudioTrackInfoBuilder;
-import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride.DoNotCache;
-import net.notfab.caching.client.CacheClient;
-import net.notfab.caching.shared.CacheResponse;
-import net.notfab.caching.shared.Track;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -39,11 +33,9 @@ import static ml.duncte123.skybot.utils.YoutubeUtils.*;
 
 public class YoutubeApiSearchProvider implements YoutubeSearchResultLoader {
     private final String apiKey;
-    private final CacheClient cacheClient;
 
-    public YoutubeApiSearchProvider(String apiKey, CacheClient cacheClient) {
+    public YoutubeApiSearchProvider(String apiKey) {
         this.apiKey = apiKey;
-        this.cacheClient = cacheClient;
     }
 
     @Override
@@ -65,23 +57,8 @@ public class YoutubeApiSearchProvider implements YoutubeSearchResultLoader {
             }
 
             final String videoId = searchResults.get(0).getId().getVideoId();
-            final Track fromCache = this.getTrackFromCache(videoId);
-
-            if (fromCache != null) {
-                final AudioTrackInfo info = AudioTrackInfoBuilder.empty()
-                    .setTitle(fromCache.getTitle())
-                    .setAuthor(fromCache.getAuthor())
-                    .setLength(fromCache.getLength())
-                    .setIdentifier(fromCache.getId())
-                    .setIsStream(fromCache.isStream())
-                    .setUri(fromCache.toURL())
-                    .build();
-
-                return new DoNotCache(trackFactory.apply(info));
-            }
-
             final AudioTrackInfo info = videoToTrackInfo(
-                getVideoById(searchResults.get(0).getId().getVideoId(), this.apiKey)
+                getVideoById(videoId, this.apiKey)
             );
 
             return trackFactory.apply(info);
@@ -89,15 +66,5 @@ public class YoutubeApiSearchProvider implements YoutubeSearchResultLoader {
         catch (IOException e) {
             throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
-    }
-
-    private Track getTrackFromCache(String videoId) {
-        final CacheResponse found = this.cacheClient.get(videoId);
-
-        if (found.isFailure()) {
-            return null;
-        }
-
-        return found.getTrack();
     }
 }

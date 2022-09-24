@@ -35,7 +35,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.notfab.caching.client.CacheClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,10 +66,6 @@ public class CommandContext implements ICommandContext {
 
     public Variables getVariables() {
         return this.variables;
-    }
-
-    public CacheClient getYoutubeCache() {
-        return this.variables.getYoutubeCache();
     }
 
     public CommandManager getCommandManager() {
