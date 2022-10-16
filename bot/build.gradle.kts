@@ -18,15 +18,12 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.math.min
 
 plugins {
     pmd
-    java
-    idea
     application
 
     kotlin("jvm")
@@ -48,51 +45,32 @@ java {
 }
 
 repositories {
-    mavenCentral()
-
-    // caches old bintray packages
-    maven("https://duncte123.jfrog.io/artifactory/bintray-maven")
-    maven("https://repo.jenkins-ci.org/releases")
-    maven("https://duncte123.jfrog.io/artifactory/maven")
-    maven("https://m2.duncte123.dev/releases")
-    maven("https://m2.duncte123.dev/snapshots")
-    maven("https://m2.dv8tion.net/releases")
-    maven("https://jitpack.io")
+    // Empty
 }
 
 dependencies {
-    // TODO: include in project
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
+    implementation(libs.bundles.soonIncluded)
 
-    implementation(libs.bundles.weirdLibs)
-
-    // botCommons
-    // TODO: include in project
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.11")
-
-    // JDA (java discord api)
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-
     implementation(libs.sourceManagers)
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     implementation(libs.lavaplayer)
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
+    implementation(libs.lavalink.client) {
         exclude(module = "lavaplayer")
     }
-
     implementation(libs.groovy)
     implementation(libs.logback)
     implementation(libs.spotify)
     implementation(libs.youtube)
 
-    // kotlin
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(libs.bundles.featureLibs)
 
-    // JDA utils
+    // kotlin (do we need this?)
+    // implementation(kotlin("stdlib-jdk8"))
+
     // TODO: see if we can remove this
-    implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
+    implementation(libs.jda.utils) {
         // This is fine
         exclude(module = "jda-utilities-examples")
         exclude(module = "jda-utilities-doc")
@@ -100,47 +78,18 @@ dependencies {
         exclude(module = "jda-utilities-menu")
         exclude(module = "jda-utilities-oauth2")
     }
-
-    // jagtag
-    implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
-
-    //Wolfaram alpha
-    implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
-
-    // time parsing
-    // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
-
-    //Sentry
     implementation(libs.sentry)
-
-    // durationParser
-    implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
-
-    // ExpiringMap
-    implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
+    implementation(libs.expiringmap)
 
     // okhttp
     // TODO: this is gonna be upgraded to v4
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
 
-    // trove maps
     implementation(libs.trove)
 
-    // emoji-java
-    implementation(group = "com.github.minndevelopment", name = "emoji-java", version = "master-SNAPSHOT")
-
-    // jackson
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
-    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
-
-    // redis
-    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
-
-    implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
-    // TODO: replace with official? https://jdbc.postgresql.org/
-    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
-    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.8.0")
-    runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
+    implementation(libs.bundles.json)
+    implementation(libs.redis)
+    implementation(libs.bundles.database)
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -242,11 +191,6 @@ shadowJar.apply {
     archiveClassifier.set("prod")
 }
 
-tasks.withType<Wrapper> {
-    gradleVersion = "7.5"
-    distributionType = DistributionType.ALL
-}
-
 kotlinter {
     ignoreFailures = false
     reporters = arrayOf("checkstyle", "plain")
@@ -269,8 +213,8 @@ pmd {
 }
 
 task<Task>("lintAll") {
-//    dependsOn(tasks.lintKotlin)
-//    dependsOn(tasks.pmdMain)
+    dependsOn(tasks.lintKotlin)
+    dependsOn(tasks.pmdMain)
 }
 
 githubRelease {
@@ -287,6 +231,12 @@ githubRelease {
 }
 
 fun getGitHash(): String {
+    val envHash = System.getenv("GIT_HASH")
+
+    if (envHash != null) {
+        return envHash.substring(0, min(8, envHash.length))
+    }
+
     return try {
         val stdout = ByteArrayOutputStream()
 
@@ -298,10 +248,6 @@ fun getGitHash(): String {
         stdout.toString().trim()
     } catch (ignored: Throwable) {
         // Ugly hacks 101 :D
-        val hash = System.getenv("GIT_HASH") ?: "dev"
-
-        return hash.substring(0, min(8, hash.length))
+        return "dev";
     }
 }
-
-class DependencyInfo(val group: String, val name: String, val version: String)

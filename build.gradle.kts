@@ -19,6 +19,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    java
+    idea
+
     kotlin("jvm") version "1.7.20" apply false
     id("org.liquibase.gradle") version "2.0.4" apply false
     id("org.jmailen.kotlinter") version "3.11.1" apply false
@@ -34,24 +37,20 @@ allprojects {
 
         // caches old bintray packages
         maven("https://m2.dv8tion.net/releases")
-        maven("https://repo.jenkins-ci.org/releases")
-        maven("https://duncte123.jfrog.io/artifactory/maven")
         maven("https://m2.duncte123.dev/releases")
+        maven("https://repo.jenkins-ci.org/releases")
         maven("https://m2.duncte123.dev/snapshots")
+        maven("https://duncte123.jfrog.io/artifactory/maven")
         maven("https://jitpack.io")
     }
 
-    /*java {
-        sourceCompatibility = JavaVersion.VERSION_16
-        targetCompatibility = JavaVersion.VERSION_16
-    }*/
+    tasks.withType<Wrapper> {
+        gradleVersion = "7.5"
+        distributionType = Wrapper.DistributionType.ALL
+    }
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "idea")
-    apply(plugin = "pmd")
-
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "16"
     }
