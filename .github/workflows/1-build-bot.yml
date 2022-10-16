@@ -23,8 +23,8 @@ jobs:
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
             - name: dependencies
-              run: ./gradlew --no-daemon dependencies --warning-mode=summary
+              run: ./gradlew --no-daemon :bot:dependencies --warning-mode=summary
             - name: build
-              run: ./gradlew --no-daemon build --warning-mode=summary
+              run: ./gradlew --no-daemon :bot:build --warning-mode=summary
             - name: lint
-              run: ./gradlew --no-daemon lintAll --warning-mode=summary
+              run: ./gradlew --no-daemon :bot:lintAll --warning-mode=summary

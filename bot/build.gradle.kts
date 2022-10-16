@@ -29,15 +29,12 @@ plugins {
     idea
     application
 
-//    kotlin("jvm") version "1.7.10"
-    id("org.liquibase.gradle") version "2.0.4"
-//    id("org.jmailen.kotlinter") version "3.9.0" // removes star imports :(
-    id("org.jmailen.kotlinter") version "3.11.1"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.github.breadmoirai.github-release") version "2.2.12"
+    kotlin("jvm")
+    id("org.liquibase.gradle")
+    id("org.jmailen.kotlinter")
+    id("com.github.johnrengelman.shadow")
+    id("com.github.breadmoirai.github-release")
 }
-
-apply(plugin = "kotlin")
 
 val numberVersion = "3.106.9"
 
@@ -64,45 +61,37 @@ repositories {
 }
 
 dependencies {
+    // TODO: include in project
     implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
 
-    // loadingbar
-    implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
-
-    // Weeb api
-    implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
+    implementation(libs.bundles.weirdLibs)
 
     // botCommons
+    // TODO: include in project
     implementation(group = "me.duncte123", name = "botCommons", version = "2.3.11")
 
     // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
+    implementation(libs.jda) {
         exclude(module = "opus-java")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.8.0")
+    implementation(libs.sourceManagers)
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
+    implementation(libs.lavaplayer)
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
         exclude(module = "lavaplayer")
     }
 
-    //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.7")
-
-    // Logback classic
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
-
-    //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "7.2.0")
-
-    // Youtube api
-    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")
+    implementation(libs.groovy)
+    implementation(libs.logback)
+    implementation(libs.spotify)
+    implementation(libs.youtube)
 
     // kotlin
     implementation(kotlin("stdlib-jdk8"))
 
     // JDA utils
+    // TODO: see if we can remove this
     implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
         // This is fine
         exclude(module = "jda-utilities-examples")
@@ -122,7 +111,7 @@ dependencies {
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
     //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.4.0")
+    implementation(libs.sentry)
 
     // durationParser
     implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
@@ -131,10 +120,11 @@ dependencies {
     implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
 
     // okhttp
+    // TODO: this is gonna be upgraded to v4
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
 
     // trove maps
-    implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
+    implementation(libs.trove)
 
     // emoji-java
     implementation(group = "com.github.minndevelopment", name = "emoji-java", version = "master-SNAPSHOT")

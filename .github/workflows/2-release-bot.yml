@@ -29,7 +29,7 @@ jobs:
             - name: Grant execute permission for sentry
               run: chmod +x ./.github/sentry.sh
             - name: Build with Gradle
-              run: ./gradlew --no-daemon lintAll build
+              run: ./gradlew --no-daemon :bot:lintAll :bot:build
             - name: Release sentry
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
             - name: Release bot
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: ./gradlew --no-daemon shadowJar githubRelease
+              run: ./gradlew --no-daemon :bot:shadowJar :bot:githubRelease
 
     build_docker:
         runs-on: ubuntu-latest
@@ -63,7 +63,7 @@ jobs:
               id: docker_build
               uses: docker/build-push-action@v2
               with:
-                  context: .
+                  context: ./bot/
                   push: true
                   tags: dunctebot/skybot:latest
                   cache-from: type=local,src=/tmp/.buildx-cache

@@ -18,19 +18,12 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        mavenLocal()
-        maven("https://m2.dv8tion.net/releases")
-        maven("https://plugins.gradle.org/m2/")
-        maven("https://repo.spring.io/plugins-release")
-        maven("https://jitpack.io")
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
-        classpath("org.jetbrains.kotlin:kotlin-allopen:1.3.61")
-    }
+plugins {
+    kotlin("jvm") version "1.7.20" apply false
+    id("org.liquibase.gradle") version "2.0.4" apply false
+    id("org.jmailen.kotlinter") version "3.11.1" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("com.github.breadmoirai.github-release") version "2.2.12" apply false
 }
 
 allprojects {
@@ -57,6 +50,7 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "idea")
+    apply(plugin = "pmd")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "16"
