@@ -44,10 +44,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_16
 }
 
-repositories {
-    // Empty
-}
-
 dependencies {
     implementation(libs.bundles.soonIncluded)
 
@@ -63,7 +59,6 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.spotify)
     implementation(libs.youtube)
-
     implementation(libs.bundles.featureLibs)
 
     // kotlin (do we need this?)
@@ -80,13 +75,8 @@ dependencies {
     }
     implementation(libs.sentry)
     implementation(libs.expiringmap)
-
-    // okhttp
-    // TODO: this is gonna be upgraded to v4
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
-
+    implementation(libs.okhttp)
     implementation(libs.trove)
-
     implementation(libs.bundles.json)
     implementation(libs.redis)
     implementation(libs.bundles.database)
@@ -117,6 +107,7 @@ build.apply {
     jar.mustRunAfter(clean)
 }
 
+// TODO: remove, should be done from main build file
 compileKotlin.apply {
     kotlinOptions {
         jvmTarget = "16"
@@ -248,6 +239,6 @@ fun getGitHash(): String {
         stdout.toString().trim()
     } catch (ignored: Throwable) {
         // Ugly hacks 101 :D
-        return "dev";
+        return "dev"
     }
 }

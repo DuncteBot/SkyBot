@@ -51,6 +51,9 @@ fun VersionCatalogBuilder.common() {
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
+    // TODO: this is gonna be upgraded to v4
+    library("okhttp", "com.squareup.okhttp3", "okhttp").version("3.14.9")
+
     version("jackson", "2.12.3")
 
     library("jackson-core", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
