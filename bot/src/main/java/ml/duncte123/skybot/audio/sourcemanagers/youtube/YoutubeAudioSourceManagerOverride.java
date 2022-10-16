@@ -34,6 +34,8 @@ public class YoutubeAudioSourceManagerOverride extends YoutubeAudioSourceManager
     public YoutubeAudioSourceManagerOverride(String ytApiKey) {
         super(
             true,
+            null,
+            null,
             new DefaultYoutubeTrackDetailsLoader(),
             new YoutubeApiSearchProvider(ytApiKey),
             new YoutubeSearchMusicProvider(),
