@@ -19,6 +19,7 @@
 rootProject.name = "skybot"
 
 include("bot")
+include("shared")
 
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -37,10 +38,10 @@ dependencyResolutionManagement {
 
 // TODO: include in project
 fun VersionCatalogBuilder.futureIncluded() {
-    library("models", "com.dunctebot", "dunctebot-models").version("0.1.22")
+//    library("models", "com.dunctebot", "dunctebot-models").version("0.1.22")
     library("botCommons", "me.duncte123", "botCommons").version("2.3.11")
 
-    bundle("soonIncluded", listOf("models", "botCommons"))
+    bundle("soonIncluded", listOf("botCommons"))
 }
 
 fun VersionCatalogBuilder.common() {
