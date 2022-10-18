@@ -29,6 +29,7 @@ plugins {
     `java-library`
     `maven-publish`
 
+    kotlin("jvm")
     id("com.github.breadmoirai.github-release")
 }
 
@@ -36,9 +37,20 @@ group = "com.dunctebot"
 version = "1.0.${getBuildNum()}"
 val archivesBaseName = "dunctebot-models"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}
+
 dependencies {
-    implementation(libs.logback)
-    implementation(libs.bundles.json)
+    implementation(libs.bundles.database)
+    compileOnly(libs.jda)
+    compileOnly(libs.weebjava) // lmao wtf
+    compileOnly(libs.botCommons)
+    compileOnly(libs.sentry)
+    compileOnly(libs.logback)
+    compileOnly(libs.duration.parser)
+    compileOnly(libs.bundles.json)
     implementation(libs.findbugs)
 }
 

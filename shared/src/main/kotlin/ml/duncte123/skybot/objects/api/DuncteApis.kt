@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.api
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.Utils
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -31,10 +32,8 @@ import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.urlEncodeString
 import me.duncte123.weebJava.helpers.IOHelper
-import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
-import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -76,6 +75,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return executeRequest(request)["success"].asBoolean()
     }
 
+    // TODO: WHY THE FUCK DID I DO THIS
     fun restoreCustomCommand(commandId: Int, variables: Variables): Boolean {
         val request = defaultRequest("customcommands/$commandId")
             .put(RequestBody.create(null, "{}"))
@@ -665,7 +665,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
             .put("in_channel", inChannel)
             .put("reminder", reminder)
             .put("remind_date", expireDate)
-            .put("remind_create_date", AirUtils.getDatabaseDateFormat(OffsetDateTime.now(ZoneOffset.UTC)))
+            .put("remind_create_date", Utils.getDatabaseDateFormat(OffsetDateTime.now(ZoneOffset.UTC)))
 
         val response = postJSON("reminders", obj)
 

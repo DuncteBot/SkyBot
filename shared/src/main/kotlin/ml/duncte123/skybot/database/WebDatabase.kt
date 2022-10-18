@@ -20,13 +20,13 @@ package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.Utils
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CustomCommand
-import ml.duncte123.skybot.utils.AirUtils
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -289,7 +289,7 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         guildId: Long,
         inChannel: Boolean
     ) = runOnThread {
-        val date = AirUtils.getDatabaseDateFormat(expireDate)
+        val date = Utils.getDatabaseDateFormat(expireDate)
         val (res, reminderId) = apis.createReminder(
             userId,
             reminder,

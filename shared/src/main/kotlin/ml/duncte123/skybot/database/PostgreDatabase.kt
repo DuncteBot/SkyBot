@@ -28,7 +28,6 @@ import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.extensions.toReminder
 import ml.duncte123.skybot.extensions.toSQL
@@ -336,7 +335,7 @@ class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
                 """.trimMargin()
             ).use { smt ->
                 smt.setLong(1, guildSettings.guildId)
-                smt.setString(2, Settings.PREFIX)
+                smt.setString(2, "db!") // TODO: bla bla hardcoded
                 smt.setString(3, guildSettings.customJoinMessage)
                 smt.setString(4, guildSettings.customLeaveMessage)
 

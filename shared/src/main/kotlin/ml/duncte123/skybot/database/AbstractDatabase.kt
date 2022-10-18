@@ -48,6 +48,7 @@ abstract class AbstractDatabase(threads: Int = 2) {
     init {
         databaseKiller.scheduleAtFixedRate(
             {
+                // TODO: AAAAAAAA
                 if (databaseThread.queue.size > 10) {
                     SkyBot.getInstance().shardManager
                         // #breaking-bots

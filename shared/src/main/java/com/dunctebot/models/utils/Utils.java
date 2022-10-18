@@ -25,8 +25,16 @@
 
 package com.dunctebot.models.utils;
 
+import me.duncte123.durationparser.ParsedDuration;
+import net.dv8tion.jda.api.utils.TimeFormat;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -98,5 +106,33 @@ public final class Utils {
 
     public static int colorToInt(String hex) {
         return Integer.parseInt(hex.substring(1), 16);
+    }
+
+    // TODO: DateUtils
+    public static String makeDatePretty(TemporalAccessor accessor) {
+        return TimeFormat.DATE_TIME_LONG.format(accessor);
+    }
+
+    public static OffsetDateTime fromDatabaseFormat(String date) {
+        try {
+            return OffsetDateTime.parse(date);
+        }
+        catch (DateTimeParseException e) {
+            e.printStackTrace();
+
+            return OffsetDateTime.now(ZoneOffset.UTC);
+        }
+    }
+
+    public static String getDatabaseDateFormat(ParsedDuration duration) {
+        return getDatabaseDateFormat(getDatabaseDate(duration));
+    }
+
+    public static String getDatabaseDateFormat(OffsetDateTime date) {
+        return date.truncatedTo(ChronoUnit.MILLIS).toString();
+    }
+
+    public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
+        return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 }

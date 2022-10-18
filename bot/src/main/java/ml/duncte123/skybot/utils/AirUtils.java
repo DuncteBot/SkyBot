@@ -234,14 +234,17 @@ public class AirUtils {
         return foundMembers.get(0);
     }
 
+    @Deprecated(forRemoval = true)
     public static String getDatabaseDateFormat(ParsedDuration duration) {
         return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
+    @Deprecated(forRemoval = true)
     public static String getDatabaseDateFormat(OffsetDateTime date) {
         return date.truncatedTo(ChronoUnit.MILLIS).toString();
     }
 
+    @Deprecated(forRemoval = true)
     public static OffsetDateTime fromDatabaseFormat(String date) {
         try {
             return OffsetDateTime.parse(date);
@@ -253,10 +256,12 @@ public class AirUtils {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public static String makeDatePretty(TemporalAccessor accessor) {
         return TimeFormat.DATE_TIME_LONG.format(accessor);
     }
 
+    @Deprecated(forRemoval = true)
     public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
         return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }

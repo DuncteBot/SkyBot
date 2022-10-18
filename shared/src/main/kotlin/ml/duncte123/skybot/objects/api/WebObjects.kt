@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.objects.api
 
+import com.dunctebot.models.utils.Utils
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.OffsetDateTime
 
@@ -87,12 +87,12 @@ data class Reminder(
         @JsonProperty("in_channel") in_channel: Boolean
     ) :
         this(
-            id, user_id, reminder, AirUtils.fromDatabaseFormat(create_date),
-            AirUtils.fromDatabaseFormat(reminder_date), channel_id, message_id, guild_id, in_channel
+            id, user_id, reminder, Utils.fromDatabaseFormat(create_date),
+            Utils.fromDatabaseFormat(reminder_date), channel_id, message_id, guild_id, in_channel
         )
 
-    val reminderDateDate: String = AirUtils.makeDatePretty(reminder_date)
-    val reminderCreateDateDate: String = AirUtils.makeDatePretty(create_date)
+    val reminderDateDate: String = Utils.makeDatePretty(reminder_date)
+    val reminderCreateDateDate: String = Utils.makeDatePretty(create_date)
 
     val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
