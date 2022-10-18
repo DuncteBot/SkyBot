@@ -61,6 +61,8 @@ fun VersionCatalogBuilder.common() {
     library("jackson-datatype", "com.fasterxml.jackson.datatype", "jackson-datatype-jsr310").versionRef("jackson")
 
     bundle("json", listOf("jackson-core", "jackson-datatype"))
+
+    library("findbugs", "com.google.code.findbugs", "jsr305").version("3.0.2")
 }
 
 fun VersionCatalogBuilder.bot() {

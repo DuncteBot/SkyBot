@@ -39,8 +39,7 @@ val archivesBaseName = "dunctebot-models"
 dependencies {
     implementation(libs.logback)
     implementation(libs.bundles.json)
-    implementation(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2")
-
+    implementation(libs.findbugs)
 }
 
 fun getBuildNum(): String {
@@ -67,6 +66,7 @@ val javadocJar = task<Jar>("javadocJar") {
     from(javadoc.destinationDir)
 }
 
+// TODO: remove!!!
 publishing {
     repositories {
         maven {
