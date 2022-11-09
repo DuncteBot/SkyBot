@@ -52,9 +52,6 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         // IT IS pgsql:// NOT postgresql://
         config.jdbcUrl = jdbcURI // &ssl=true
-        // config.dataSourceClassName = "com.impossibl.postgres.jdbc.PGDataSource"
-
-        println(config)
 
         this.ds = HikariDataSource(config)
         this.connection.use { con ->

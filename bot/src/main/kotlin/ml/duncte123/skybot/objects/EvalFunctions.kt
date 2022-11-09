@@ -87,6 +87,7 @@ object EvalFunctions {
 
     @JvmStatic
     fun restoreCustomCommand(commandId: Int, variables: Variables): String {
+        // TODO: db support?
         val (bool, customCommand) = variables.apis.restoreCustomCommand(commandId)
 
         if (bool) {

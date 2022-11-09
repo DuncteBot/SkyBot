@@ -75,7 +75,6 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
         return executeRequest(request)["success"].asBoolean()
     }
 
-    // TODO: WHY THE FUCK DID I DO THIS
     fun restoreCustomCommand(commandId: Int): Pair<Boolean, CustomCommand?> {
         val request = defaultRequest("customcommands/$commandId")
             .put(RequestBody.create(null, "{}"))
