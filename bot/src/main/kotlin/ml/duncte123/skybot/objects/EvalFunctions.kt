@@ -87,11 +87,12 @@ object EvalFunctions {
 
     @JvmStatic
     fun restoreCustomCommand(commandId: Int, variables: Variables): String {
-        /*val bool = variables.apis.restoreCustomCommand(commandId, variables)
+        val (bool, customCommand) = variables.apis.restoreCustomCommand(commandId)
 
         if (bool) {
+            variables.commandManager.customCommands.add(customCommand!!) // cc is never null here
             return "Command Restored"
-        }*/
+        }
 
         return "Could not restore command"
     }

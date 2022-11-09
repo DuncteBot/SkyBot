@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -78,7 +79,7 @@ public class HelpEmbeds {
 
             try {
                 final List<String> cmds = new ArrayList<>();
-                final List<ICommand> foundCommands = manager.getCommands(category);
+                final List<ICommand<CommandContext>> foundCommands = manager.getCommands(category);
 
                 for (final ICommand command : foundCommands) {
                     cmds.add(command.getName());

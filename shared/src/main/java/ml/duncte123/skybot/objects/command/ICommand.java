@@ -20,10 +20,10 @@ package ml.duncte123.skybot.objects.command;
 
 import javax.annotation.Nonnull;
 
-public interface ICommand {
+public interface ICommand<CTX> {
 
     // TODO: generics with custom command context
-    void executeCommand(@Nonnull CommandContext ctx);
+    void executeCommand(@Nonnull CTX ctx);
 
     @Nonnull
     String getName();

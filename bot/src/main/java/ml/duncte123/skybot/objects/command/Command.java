@@ -38,7 +38,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
-public abstract class Command implements ICommand {
+public abstract class Command implements ICommand<CommandContext> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(3,

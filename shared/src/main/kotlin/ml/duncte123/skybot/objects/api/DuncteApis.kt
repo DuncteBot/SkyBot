@@ -76,29 +76,24 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     // TODO: WHY THE FUCK DID I DO THIS
-    /*fun restoreCustomCommand(commandId: Int, variables: Variables): Boolean {
+    fun restoreCustomCommand(commandId: Int): Pair<Boolean, CustomCommand?> {
         val request = defaultRequest("customcommands/$commandId")
             .put(RequestBody.create(null, "{}"))
         val response = executeRequest(request)
 
         if (!response["success"].asBoolean()) {
-            return false
+            return false to null
         }
 
         val command = response["data"]
-        val commandManager = variables.commandManager
 
-        commandManager.customCommands.add(
-            CustomCommand(
-                command["invoke"].asText(),
-                command["message"].asText(),
-                command["guildId"].asLong(),
-                command["autoresponse"].asBoolean()
-            )
+        return true to CustomCommand(
+            command["invoke"].asText(),
+            command["message"].asText(),
+            command["guildId"].asLong(),
+            command["autoresponse"].asBoolean()
         )
-
-        return true
-    }*/
+    }
 
     fun getGuildSettings(): ArrayNode {
         return paginateData("guildsettings")

@@ -102,7 +102,7 @@ public class CommandManager {
         thread.setDaemon(true);
         return thread;
     });
-    private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
+    private final Map<String, ICommand<CommandContext>> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
     private final Variables variables;
@@ -321,11 +321,11 @@ public class CommandManager {
     // Why is this called getCommandsList?
     // Because groovy eval won't allow me to access the commands property otherwise
     // Thanks groovy <3
-    public Collection<ICommand> getCommandsList() {
+    public Collection<ICommand<CommandContext>> getCommandsList() {
         return this.commands.values();
     }
 
-    public List<ICommand> getCommands(CommandCategory category) {
+    public List<ICommand<CommandContext>> getCommands(CommandCategory category) {
         return this.commands.values()
             .stream()
             .filter((c) -> c.getCategory().equals(category))
@@ -341,9 +341,9 @@ public class CommandManager {
     }
 
     @Nullable
-    public ICommand getCommand(String name) {
+    public ICommand<CommandContext> getCommand(String name) {
 
-        ICommand found = this.commands.get(name);
+        ICommand<CommandContext> found = this.commands.get(name);
 
         if (found == null) {
             final String forAlias = this.aliases.get(name);
@@ -438,7 +438,7 @@ public class CommandManager {
     }
 
     private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
-        ICommand cmd = getCommand(invokeLower);
+        ICommand<?> cmd = getCommand(invokeLower);
 
         if (cmd == null) {
             cmd = getCustomCommand(invokeLower, event.getGuild().getIdLong());
@@ -496,7 +496,7 @@ public class CommandManager {
         return nsfwLevel == Guild.NSFWLevel.DEFAULT || nsfwLevel == Guild.NSFWLevel.SAFE;
     }
 
-    private void runNormalCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void runNormalCommand(ICommand<CommandContext> cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
         if (cmd.getCategory() == CommandCategory.NSFW && this.isSafeForWork(event)) {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Woops, this channel is not marked as NSFW.\n" +
@@ -514,7 +514,7 @@ public class CommandManager {
         );
     }
 
-    private void runCustomCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void runCustomCommand(ICommand<Object> cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
         final CustomCommand cusomCommand = (CustomCommand) cmd;
 
         if (cusomCommand.getGuildId() != event.getGuild().getIdLong()) {
@@ -656,7 +656,7 @@ public class CommandManager {
         }
     }
 
-    private void addCommand(ICommand command) {
+    private void addCommand(ICommand<CommandContext> command) {
         final String name = command.getName();
 
         if (name.contains(" ")) {

@@ -161,9 +161,17 @@ public final class Variables {
     public AbstractDatabase getDatabase() {
         if (this.database == null) {
             if ("psql".equals(this.config.useDatabase)) {
-                this.database = new PostgreDatabase(this.config.jdbcURI);
+                this.database = new PostgreDatabase(this.config.jdbcURI, (queueSize, activeCount) -> {
+                    SkyBot.getInstance().getShardManager()
+                        // #breaking-bots
+                        .getTextChannelById(387881926691782657L)
+                        .sendMessage("<@191231307290771456> Database thread queue is currently at "+queueSize+" tasks! (active threads: "+activeCount+')')
+                        .queue();
+
+                    return null;
+                });
             } else if ("web".equals(this.config.useDatabase)) {
-                this.database = new WebDatabase(this.getApis(), this.getJackson());
+                this.database = new WebDatabase(this.getApis(), this.getJackson(), (a, b) -> null);
             } else {
                 throw new IllegalArgumentException("Unknown database engine: " + this.config.useDatabase);
             }

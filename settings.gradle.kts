@@ -90,7 +90,7 @@ fun VersionCatalogBuilder.bot() {
 fun VersionCatalogBuilder.database() {
     library("redis", "redis.clients", "jedis").version("3.7.0")
 
-    library("hikari", "com.zaxxer", "HikariCP").version("5.0.0")
+    library("hikari", "com.zaxxer", "HikariCP").version("5.0.1")
     // TODO: replace with official? https://jdbc.postgresql.org/
     library("psql", "com.impossibl.pgjdbc-ng", "pgjdbc-ng").version("0.8.9")
     library("liquibase", "org.liquibase", "liquibase-core").version("4.8.0")

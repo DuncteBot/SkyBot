@@ -59,6 +59,7 @@ public class SettingsCommand extends Command {
 
     private final Map<String, TriConsumer<CommandContext, String, Boolean>> settingsMap = new ConcurrentHashMap<>();
 
+    // TODO: make this a slash command
     public SettingsCommand() {
         this.displayAliasesInHelp = true;
         // Override category here to make sure that we can hide all the other settings commands
@@ -243,7 +244,7 @@ public class SettingsCommand extends Command {
         final DunctebotGuild guild = ctx.getGuild();
 
         if (!setValue) {
-            final String msg = String.format("Current embed color is `%s`", colorToHex(guild.getColor()));
+            final String msg = String.format("Current embed color is `%s`", colorToHex(guild.getSettings().getEmbedColor()));
 
             sendEmbed(ctx, EmbedUtils.embedMessage(msg));
             return;
@@ -260,7 +261,7 @@ public class SettingsCommand extends Command {
 
         final int colorInt = colorToInt(colorString);
 
-        guild.setColor(colorInt);
+        guild.setSettings(guild.getSettings().setEmbedColor(colorInt));
 
         final String msg = String.format("Embed color has been set to `%s`", colorString);
 

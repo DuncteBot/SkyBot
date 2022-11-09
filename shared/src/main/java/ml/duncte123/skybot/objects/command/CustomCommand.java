@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
 
-public class CustomCommand implements ICommand {
+public class CustomCommand implements ICommand<Object> {
 
     private final String invoke;
     private final String message;
@@ -74,7 +74,7 @@ public class CustomCommand implements ICommand {
 
     //Override some methods that are not needed
     @Override
-    public void executeCommand(@Nonnull CommandContext ctx) {
+    public void executeCommand(@Nonnull Object ctx) {
         // Custom commands are executed in a different way
     }
 

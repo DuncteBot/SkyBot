@@ -30,7 +30,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 
-class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMapper) : AbstractDatabase() {
+class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMapper, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
 
     override fun getCustomCommands() = runOnThread {
         val array = apis.getCustomCommands()

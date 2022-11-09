@@ -40,7 +40,7 @@ import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
 
-class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
+class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
     private val ds: HikariDataSource
     private val connection: Connection
         get() {
@@ -50,7 +50,11 @@ class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
     init {
         val config = HikariConfig()
 
+        // IT IS pgsql:// NOT postgresql://
         config.jdbcUrl = jdbcURI // &ssl=true
+        // config.dataSourceClassName = "com.impossibl.postgres.jdbc.PGDataSource"
+
+        println(config)
 
         this.ds = HikariDataSource(config)
         this.connection.use { con ->

@@ -32,7 +32,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-abstract class AbstractDatabase(threads: Int = 2) {
+abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, Int) -> Unit) {
     private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true
@@ -48,13 +48,8 @@ abstract class AbstractDatabase(threads: Int = 2) {
     init {
         databaseKiller.scheduleAtFixedRate(
             {
-                // TODO: AAAAAAAA
                 if (databaseThread.queue.size > 10) {
-                    /*SkyBot.getInstance().shardManager
-                        // #breaking-bots
-                        .getTextChannelById(387881926691782657L)
-                        ?.sendMessage("<@191231307290771456> Database thread queue is currently at ${databaseThread.queue.size} tasks! (active threads: ${databaseThread.activeCount})")
-                        ?.queue()*/
+                    this.ohShitFn(databaseThread.queue.size, databaseThread.activeCount)
                 }
             }, 1L, 1L, TimeUnit.DAYS
         )
