@@ -21,7 +21,7 @@ package ml.duncte123.skybot.database
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.sentry.Sentry
-import ml.duncte123.skybot.SkyBot
+// import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -50,11 +50,11 @@ abstract class AbstractDatabase(threads: Int = 2) {
             {
                 // TODO: AAAAAAAA
                 if (databaseThread.queue.size > 10) {
-                    SkyBot.getInstance().shardManager
+                    /*SkyBot.getInstance().shardManager
                         // #breaking-bots
                         .getTextChannelById(387881926691782657L)
                         ?.sendMessage("<@191231307290771456> Database thread queue is currently at ${databaseThread.queue.size} tasks! (active threads: ${databaseThread.activeCount})")
-                        ?.queue()
+                        ?.queue()*/
                 }
             }, 1L, 1L, TimeUnit.DAYS
         )
