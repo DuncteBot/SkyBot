@@ -51,7 +51,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         val config = HikariConfig()
 
         // IT IS pgsql:// NOT postgresql://
-        config.jdbcUrl = jdbcURI // &ssl=true
+        config.jdbcUrl = jdbcURI // &ssl.mode=require
 
         this.ds = HikariDataSource(config)
         this.connection.use { con ->
@@ -391,6 +391,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread
     }
 
+    @Deprecated("Stored in guild settings")
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
         TODO("Not yet implemented")
         return@runOnThread

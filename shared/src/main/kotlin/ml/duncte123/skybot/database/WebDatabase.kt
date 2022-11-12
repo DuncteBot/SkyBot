@@ -94,6 +94,7 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         apis.clearBlacklist(guildId)
     }
 
+    @Deprecated("Stored in guild settings")
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
         apis.updateOrCreateEmbedColor(guildId, color)
     }

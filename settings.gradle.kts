@@ -92,7 +92,8 @@ fun VersionCatalogBuilder.database() {
 
     library("hikari", "com.zaxxer", "HikariCP").version("5.0.1")
     // TODO: replace with official? https://jdbc.postgresql.org/
-    library("psql", "com.impossibl.pgjdbc-ng", "pgjdbc-ng").version("0.8.9")
+//    library("psql", "com.impossibl.pgjdbc-ng", "pgjdbc-ng").version("0.8.9")
+    library("psql", "org.postgresql", "postgresql").version("42.5.0")
     library("liquibase", "org.liquibase", "liquibase-core").version("4.8.0")
     library("liquibase-slf4j", "com.mattbertolini", "liquibase-slf4j").version("4.1.0") // TODO: make this runtime only
 
