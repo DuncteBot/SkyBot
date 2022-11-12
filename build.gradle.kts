@@ -35,7 +35,6 @@ allprojects {
     repositories {
         mavenCentral()
 
-        // caches old bintray packages
         maven("https://m2.dv8tion.net/releases")
         maven("https://m2.duncte123.dev/releases")
         maven("https://repo.jenkins-ci.org/releases")
@@ -45,8 +44,8 @@ allprojects {
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "7.5"
-        distributionType = Wrapper.DistributionType.ALL
+        gradleVersion = "7.5.1"
+        distributionType = Wrapper.DistributionType.BIN
     }
 }
 
