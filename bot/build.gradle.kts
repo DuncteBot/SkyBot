@@ -45,8 +45,6 @@ java {
 }
 
 dependencies {
-    implementation(libs.bundles.soonIncluded)
-
     implementation(projects.shared)
     implementation(libs.jda) {
         exclude(module = "opus-java")

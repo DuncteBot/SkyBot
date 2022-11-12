@@ -27,21 +27,12 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            futureIncluded()
             common()
             bot()
             database()
             voice()
         }
     }
-}
-
-// TODO: include in project
-fun VersionCatalogBuilder.futureIncluded() {
-//    library("models", "com.dunctebot", "dunctebot-models").version("0.1.22")
-    library("botCommons", "me.duncte123", "botCommons").version("2.3.11")
-
-    bundle("soonIncluded", listOf("botCommons"))
 }
 
 fun VersionCatalogBuilder.common() {
@@ -83,8 +74,9 @@ fun VersionCatalogBuilder.bot() {
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
     library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
+    library("botCommons", "me.duncte123", "botCommons").version("2.3.11")
 
-    bundle("featureLibs", listOf("weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
+    bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
 }
 
 fun VersionCatalogBuilder.database() {
