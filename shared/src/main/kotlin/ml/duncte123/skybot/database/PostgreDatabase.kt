@@ -50,7 +50,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     init {
         val config = HikariConfig()
 
-        // IT IS pgsql:// NOT postgresql://
+        // IT IS postgresql:// NOT psql://
         config.jdbcUrl = jdbcURI // &ssl.mode=require
 
         this.ds = HikariDataSource(config)
