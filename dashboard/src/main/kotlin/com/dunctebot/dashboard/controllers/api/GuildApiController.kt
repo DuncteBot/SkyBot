@@ -55,7 +55,7 @@ object GuildApiController {
         }
 
         val user: User? = try {
-            restJDA.retrieveUserById(data["user_id"].asText()).complete()
+            restJDA.jda.retrieveUserById(data["user_id"].asText()).complete()
         } catch (e: Exception) {
             e.printStackTrace()
             null

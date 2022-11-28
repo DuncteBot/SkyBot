@@ -100,7 +100,7 @@ object GuildController {
         val guild = try {
             // TODO: do we want to do this?
             // Maybe only cache for a short time as it will get outdated data
-            restJDA.fakeJDA.getGuildById(guildId) ?: restJDA.retrieveGuildById(guildId.toString()).complete()
+            restJDA.jda.getGuildById(guildId) ?: restJDA.retrieveGuildById(guildId.toString()).complete()
         } catch (e: ErrorResponseException) {
             e.printStackTrace()
             throw NotFoundResponse()

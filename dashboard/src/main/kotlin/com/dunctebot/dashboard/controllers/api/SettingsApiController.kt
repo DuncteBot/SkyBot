@@ -10,7 +10,7 @@ import com.dunctebot.jda.json.JsonRole
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.javalin.http.Context
-import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.utils.TimeUtil.DISCORD_EPOCH
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors

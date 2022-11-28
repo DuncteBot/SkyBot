@@ -27,9 +27,7 @@ import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
 import java.util.regex.Pattern
-import kotlin.streams.toList
 
-@Suppress("HasPlatformType")
 object FinderUtils {
     private val logger = LoggerFactory.getLogger(FinderUtils::class.java)
 
@@ -45,7 +43,7 @@ object FinderUtils {
         if (userMention.matches()) {
             searchId = userMention.group(1)
 
-            val mentioned = ctx.message.mentionedUsers.find { it.id == searchId }
+            val mentioned = ctx.message.mentions.users.find { it.id == searchId }
 
             if (mentioned != null) {
                 return listOf(mentioned)
@@ -113,7 +111,7 @@ object FinderUtils {
             searchId = mentionMatcher.group(1)
 
             // Don't use ctx.mentionedMembers as it calls this function
-            val mentioned = ctx.message.mentionedMembers.find { it.id == searchId }
+            val mentioned = ctx.message.mentions.members.find { it.id == searchId }
 
             if (mentioned != null) {
                 return listOf(mentioned)
@@ -150,7 +148,7 @@ object FinderUtils {
             } else {
                 val retrieveFuture = CompletableFuture<List<Member>>()
 
-                guild.retrieveMemberById(searchId, false)
+                guild.retrieveMemberById(searchId)
                     .queue(
                         { retrieveFuture.complete(listOf(it)) },
                         {

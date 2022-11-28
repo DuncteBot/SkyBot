@@ -162,7 +162,7 @@ class DuncteApi(val apiKey: String) {
     private fun executeRequest(request: Request.Builder): JsonNode {
         httpClient.newCall(request.build())
             .execute().use {
-                return jsonMapper.readTree(it.body()!!.byteStream())
+                return jsonMapper.readTree(it.body!!.byteStream())
             }
     }
 
@@ -175,7 +175,7 @@ class DuncteApi(val apiKey: String) {
 
                 override fun onResponse(call: Call, response: Response) {
                     response.use {
-                        callback(jsonMapper.readTree(it.body()!!.byteStream()))
+                        callback(jsonMapper.readTree(it.body!!.byteStream()))
                     }
                 }
 

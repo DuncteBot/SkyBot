@@ -41,12 +41,11 @@ fun VersionCatalogBuilder.common() {
     library("logback", "ch.qos.logback", "logback-classic").version("1.2.10")
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
 
-    library("jda", "net.dv8tion", "JDA").version("4.4.0_350")
+    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.1")
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
-    // TODO: this is gonna be upgraded to v4
-    library("okhttp", "com.squareup.okhttp3", "okhttp").version("3.14.9")
+    library("okhttp", "com.squareup.okhttp3", "okhttp").version("4.9.3")
 
     version("jackson", "2.12.3")
 
@@ -77,7 +76,7 @@ fun VersionCatalogBuilder.bot() {
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
     library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
-    library("botCommons", "me.duncte123", "botCommons").version("2.3.11")
+    library("botCommons", "me.duncte123", "botCommons").version("beta_3.0.4")
 
     bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
 }

@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot
 
-import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
+
 
 data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
     override fun equals(other: Any?): Boolean {
@@ -26,7 +27,7 @@ data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
             return false
         }
 
-        if (other is SelectionMenuEvent) {
+        if (other is StringSelectInteractionEvent) {
             return other.user.idLong == this.authorId
         }
 

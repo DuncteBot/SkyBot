@@ -36,7 +36,7 @@ class JDARestClient(token: String) {
         .expiration(30, TimeUnit.MINUTES)
         .build<String, Guild>()
 
-    private val jda: JDAImpl
+    val jda: JDAImpl
 
     init {
         val authConfig = AuthorizationConfig(token)
@@ -54,9 +54,6 @@ class JDARestClient(token: String) {
 
         retrieveSelfUser().queue(jda::setSelfUser)
     }
-
-    // is public for JDA utils
-    val fakeJDA = FakeJDA(this, jda)
 
     fun invalidateGuild(guildId: Long) {
         jda.guildsView.remove(guildId)

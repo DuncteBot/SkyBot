@@ -23,6 +23,10 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.channel.*
+import net.dv8tion.jda.api.entities.channel.attribute.*
+import net.dv8tion.jda.api.entities.channel.middleman.*
+import net.dv8tion.jda.api.entities.channel.concrete.*
 import java.awt.Color
 import java.time.OffsetDateTime
 import java.util.*

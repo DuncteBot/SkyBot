@@ -37,6 +37,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import net.dv8tion.jda.api.sharding.ShardManager
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.slf4j.LoggerFactory
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -77,7 +78,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
 
     fun restoreCustomCommand(commandId: Int): Pair<Boolean, CustomCommand?> {
         val request = defaultRequest("customcommands/$commandId")
-            .put(RequestBody.create(null, "{}"))
+            .put("{}".toRequestBody(null))
         val response = executeRequest(request)
 
         if (!response["success"].asBoolean()) {
@@ -862,14 +863,14 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun postJSONBytes(path: String, json: JsonNode): Pair<ByteArray?, JsonNode?> {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody(null)
         val request = defaultRequest(path, false)
             .post(body).addHeader("Content-Type", JSON.type)
 
         return WebUtils.ins.prepareBuilder(request, { it.setRateLimiter(RateLimiter.directLimiter()) }, null)
             .build({
                 if (it.header("Content-Type") == "application/json") {
-                    return@build null to mapper.readTree(it.body()!!.byteStream())
+                    return@build null to mapper.readTree(it.body!!.byteStream())
                 }
 
                 return@build IOHelper.read(it) to null
@@ -909,7 +910,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun patchJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody(null)
         val request = defaultRequest(path, prefixBot)
             .patch(body).addHeader("Content-Type", JSON.type)
 
@@ -917,7 +918,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun postJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody(null)
         val request = defaultRequest(path, prefixBot)
             .post(body).addHeader("Content-Type", JSON.type)
 
@@ -925,7 +926,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
     }
 
     private fun deleteJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody(null)
         val request = defaultRequest(path, prefixBot)
             .delete(body).addHeader("Content-Type", JSON.type)
 
@@ -940,7 +941,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
             },
             null
         )
-            .build({ mapper.readTree(it.body()!!.byteStream()) }, WebParserUtils::handleError)
+            .build({ mapper.readTree(it.body!!.byteStream()) }, WebParserUtils::handleError)
             .execute()
     }
 

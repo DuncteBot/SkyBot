@@ -22,7 +22,7 @@ import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;

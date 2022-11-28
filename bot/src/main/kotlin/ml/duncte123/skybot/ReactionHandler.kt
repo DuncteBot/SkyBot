@@ -22,9 +22,9 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE
@@ -40,13 +40,14 @@ class ReactionHandler : EventListener {
         return@newScheduledThreadPool t
     }
 
-    private fun TextChannel.editMsg(id: Long, msg: String) = this.editMessageById(id, msg)
-        .override(true)
+    private fun MessageChannelUnion.editMsg(id: Long, msg: String) = this.asTextChannel()
+        .editMessageById(id, msg)
+        .setReplace(true)
         .queue()
 
     private fun CommandContext.editMsg(msg: String) = this.selectionEvent.channel
         .editMessageById(this.selectionEvent.messageIdLong, msg)
-        .override(true)
+        .setReplace(true)
         .queue()
 
     private fun handleUserInput(ctx: CommandContext) {
@@ -69,14 +70,6 @@ class ReactionHandler : EventListener {
             requirementsCache.remove(cacheElement)
 
             val event = ctx.selectionEvent
-            val menu = event.component
-
-            // should not happen, just to be safe
-            if (menu == null) {
-                ctx.editMsg("$SEARCH_EMOTE Missing component?")
-                return
-            }
-
             val channel = ctx.channel
             val selected = event.values
 
@@ -122,7 +115,7 @@ class ReactionHandler : EventListener {
     }
 
     override fun onEvent(event: GenericEvent) {
-        if (event !is SelectionMenuEvent) {
+        if (event !is StringSelectInteractionEvent) {
             return
         }
 
