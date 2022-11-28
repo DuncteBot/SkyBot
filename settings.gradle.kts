@@ -20,6 +20,7 @@ rootProject.name = "skybot"
 
 include("bot")
 include("shared")
+include("dashboard")
 
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -31,6 +32,7 @@ dependencyResolutionManagement {
             bot()
             database()
             voice()
+            dashboard()
         }
     }
 }
@@ -50,8 +52,9 @@ fun VersionCatalogBuilder.common() {
 
     library("jackson-core", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
     library("jackson-datatype", "com.fasterxml.jackson.datatype", "jackson-datatype-jsr310").versionRef("jackson")
+    library("jackson-kotlin", "com.fasterxml.jackson.module", "jackson-module-kotlin").versionRef("jackson")
 
-    bundle("json", listOf("jackson-core", "jackson-datatype"))
+    bundle("json", listOf("jackson-core", "jackson-datatype", "jackson-kotlin"))
 
     library("findbugs", "com.google.code.findbugs", "jsr305").version("3.0.2")
 }
@@ -97,4 +100,12 @@ fun VersionCatalogBuilder.voice() {
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.3.98.4")
     library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
+}
+
+fun VersionCatalogBuilder.dashboard() {
+    library("webjar-vue", "org.webjars.npm", "vue").version("2.6.14")
+
+    library("javalin", "io.javalin", "javalin").version("4.6.1")
+
+    bundle("dashWeb", listOf("javalin", "webjar-vue"))
 }

@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+    dunctebot-dashboard:
+        container_name: dunctebot-dashboard
+        build:
+            context: .
+        ports:
+            - "2000:4567"
+        environment:
+            - IS_LOCAL=false
+            - WS_URL=ws://localhost:3748/
+            - BOT_TOKEN=
+            - OAUTH_CLIENT_ID=
+            - OAUTH_CLIENT_SECRET=
+            - OAUTH_REDIRECT_URI=
+            - CAPTCHA_SITEKEY=
+            - CAPTCHA_SECRET=
