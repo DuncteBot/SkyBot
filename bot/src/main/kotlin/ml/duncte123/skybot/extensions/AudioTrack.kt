@@ -120,7 +120,7 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
             val elems = page.select("meta[property=og:image]")
 
             if (!elems.isEmpty()) {
-                return elems.first().attr("content")
+                return elems.first()!!.attr("content")
             }
         }
     }

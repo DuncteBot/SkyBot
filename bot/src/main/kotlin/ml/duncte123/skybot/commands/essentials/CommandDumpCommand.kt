@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.CommandUtils.isDev
+import net.dv8tion.jda.api.utils.FileUpload
 
 class CommandDumpCommand : Command() {
     init {
@@ -41,7 +42,7 @@ class CommandDumpCommand : Command() {
         val jackson = ctx.variables.jackson
         val data = parseCommandsToJson(ctx.commandManager, jackson)
 
-        ctx.channel.sendFile(data, "commands.json").queue()
+        ctx.channel.sendFiles(FileUpload.fromData(data, "commands.json")).queue()
     }
 
     private fun parseCommandsToJson(commandManager: CommandManager, mapper: JsonMapper): ByteArray {

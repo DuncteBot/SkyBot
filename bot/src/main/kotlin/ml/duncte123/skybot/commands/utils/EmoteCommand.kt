@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 import ml.duncte123.skybot.utils.TwemojiParser
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
-import net.dv8tion.jda.api.entities.Emote
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji
 
 class EmoteCommand : Command() {
     init {
@@ -45,7 +45,7 @@ class EmoteCommand : Command() {
             return
         }
 
-        val mentionedEmotes = ctx.message.emotes
+        val mentionedEmotes = ctx.message.mentions.customEmojis
 
         if (mentionedEmotes.isNotEmpty()) {
             customEmoteMentioned(ctx, mentionedEmotes[0])
@@ -63,10 +63,9 @@ class EmoteCommand : Command() {
         normalEmoteMentioned(ctx, stripVariants(arg))
     }
 
-    private fun customEmoteMentioned(ctx: CommandContext, emote: Emote) {
+    private fun customEmoteMentioned(ctx: CommandContext, emote: CustomEmoji) {
         val name = emote.name
         val id = emote.id
-        val guild = if (emote.guild == null) "Unknown" else emote.guild!!.name
         val url = emote.imageUrl
         val markdownStr = "< :${emote.name}:${emote.idLong}>"
 
@@ -74,7 +73,6 @@ class EmoteCommand : Command() {
             ctx,
             """**Emote:** $name
             |**Id:** $id
-            |**Guild:** $guild
             |**Markdown:** `$markdownStr`
             |**Url:** $url
             """.trimMargin()

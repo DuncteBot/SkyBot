@@ -36,7 +36,8 @@ import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.User.UserFlag
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.utils.FileUpload
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
@@ -175,7 +176,7 @@ class UserinfoCommand : Command() {
             }.count() + 1
     }
 
-    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, member: Member, ctx: CommandContext) {
+    private fun renderMemberEmbed(event: MessageReceivedEvent, member: Member, ctx: CommandContext) {
         val user = member.user
         val profile = user.retrieveProfile().complete() // Don't tell the JDA guild
 
@@ -220,7 +221,7 @@ class UserinfoCommand : Command() {
             )
 
         // If we don't have permission to send files or our weebSh key is null
-        if (!ctx.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) ||
+        if (!ctx.selfMember.hasPermission(event.channel.asTextChannel(), Permission.MESSAGE_ATTACH_FILES) ||
             ctx.config.apis.weebSh == null
         ) {
             sendEmbed(ctx, embed, true)
@@ -231,7 +232,7 @@ class UserinfoCommand : Command() {
             StatusType.values().random(),
             user.getStaticAvatarUrl() + "?size=256"
         ).async {
-            event.channel.sendFile(it, "stat.png")
+            event.channel.sendFiles(FileUpload.fromData(it, "stat.png"))
                 .setEmbeds(embed.setThumbnail("attachment://stat.png").build())
                 .queue(null) {
                     sendEmbed(ctx, embed.setThumbnail(user.effectiveAvatarUrl), true)

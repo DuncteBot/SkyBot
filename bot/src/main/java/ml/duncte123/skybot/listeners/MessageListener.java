@@ -49,6 +49,7 @@ import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -234,7 +235,7 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    protected void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    protected void onGuildMessageReceived(MessageReceivedEvent event) {
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -305,12 +306,12 @@ public abstract class MessageListener extends BaseListener {
         return false;
     }
 
-    private void handleMessageEventChecked(String raw, Guild guild, GuildMessageReceivedEvent event) {
+    private void handleMessageEventChecked(String raw, Guild guild, MessageReceivedEvent event) {
         final GuildSetting settings = GuildSettingsUtils.getGuild(guild.getIdLong(), this.variables);
         final String customPrefix = settings.getCustomPrefix();
         final Message message = event.getMessage();
 
-        if (settings.isMessageLogging()){
+        if (settings.isMessageLogging()) {
             final MessageData data = MessageData.from(message);
 
             this.redis.storeMessage(data, isGuildPatron(guild));

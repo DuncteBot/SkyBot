@@ -116,7 +116,7 @@ class EvalCommand : Command() {
 
         engine.put("commandManager", ctx.commandManager)
         engine.put("message", ctx.message)
-        engine.put("channel", ctx.message.textChannel)
+        engine.put("channel", ctx.message.channel)
         engine.put("guild", ctx.guild)
         engine.put("member", ctx.member)
         engine.put("author", ctx.author)
@@ -217,7 +217,7 @@ class EvalCommand : Command() {
             .setRateLimiter(RateLimiter.directLimiter())
             .build(
                 {
-                    return@build base + it.request().url().url().path
+                    return@build base + it.request.url.toUrl().path
                 },
                 WebParserUtils::handleError
             )

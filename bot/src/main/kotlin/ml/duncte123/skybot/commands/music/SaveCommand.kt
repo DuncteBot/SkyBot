@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.utils.FileUpload
 import java.time.OffsetDateTime
 
 class SaveCommand : MusicCommand() {
@@ -37,9 +38,11 @@ class SaveCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         ctx.channel.sendMessage("${ctx.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")
-            .addFile(
-                toByteArray(ctx.guild, ctx.audioUtils, ctx.variables.jackson),
-                "playlist-${getDatabaseDateFormat(OffsetDateTime.now())}.json"
+            .addFiles(
+                FileUpload.fromData(
+                    toByteArray(ctx.guild, ctx.audioUtils, ctx.variables.jackson),
+                    "playlist-${getDatabaseDateFormat(OffsetDateTime.now())}.json"
+                )
             )
             .queue()
     }

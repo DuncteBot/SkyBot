@@ -46,13 +46,11 @@ class RestartShardCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val event = ctx.event
-
-        if (!isDev(event.author)) {
+        if (!isDev(ctx.author)) {
             return
         }
 
-        val shardManager = event.jda.shardManager!!
+        val shardManager = ctx.jda.shardManager!!
 
         try {
             when (ctx.args.size) {
@@ -89,10 +87,10 @@ class RestartShardCommand : Command() {
                         EventManager.shouldFakeBlock = false
                     }
                 }
-                else -> MessageUtils.sendError(event.message)
+                else -> MessageUtils.sendError(ctx.message)
             }
         } catch (ex: NumberFormatException) {
-            MessageUtils.sendError(event.message)
+            MessageUtils.sendError(ctx.message)
             Sentry.captureException(ex)
         }
     }

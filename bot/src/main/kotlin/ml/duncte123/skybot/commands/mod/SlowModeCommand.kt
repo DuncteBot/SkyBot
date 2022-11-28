@@ -39,8 +39,10 @@ class SlowModeCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
+        val txtChan = ctx.channel.asTextChannel()
+
         if (ctx.args.isEmpty()) {
-            val currentMode = ctx.channel.slowmode
+            val currentMode = txtChan.slowmode
             val currentModeString = if (currentMode == 0) "disabled" else "$currentMode seconds"
 
             sendMsg(ctx, "Current slowmode is `$currentModeString`")
@@ -50,7 +52,7 @@ class SlowModeCommand : ModBaseCommand() {
         val delay = ctx.args[0]
 
         if (delay == "off") {
-            ctx.channel.manager.setSlowmode(0).reason("Requested by ${ctx.author.asTag}").queue()
+            txtChan.manager.setSlowmode(0).reason("Requested by ${ctx.author.asTag}").queue()
             sendSuccess(ctx.message)
             return
         }
@@ -73,7 +75,7 @@ class SlowModeCommand : ModBaseCommand() {
             return
         }
 
-        ctx.channel.manager.setSlowmode(intDelay.toInt()).reason("Requested by ${ctx.author.asTag}").queue()
+        txtChan.manager.setSlowmode(intDelay.toInt()).reason("Requested by ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
     }
 }

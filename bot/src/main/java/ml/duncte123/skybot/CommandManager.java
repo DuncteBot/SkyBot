@@ -63,7 +63,7 @@ import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
@@ -389,7 +389,7 @@ public class CommandManager {
             .collect(Collectors.toList());
     }
 
-    public void runCommand(GuildMessageReceivedEvent event, String customPrefix) {
+    public void runCommand(MessageReceivedEvent event, String customPrefix) {
         final String[] split = event.getMessage()
             .getContentRaw()
             .replaceFirst(
@@ -437,7 +437,7 @@ public class CommandManager {
         return timeLeft;
     }
 
-    private void dispatchCommand(String invoke, String invokeLower, List<String> args, GuildMessageReceivedEvent event) {
+    private void dispatchCommand(String invoke, String invokeLower, List<String> args, MessageReceivedEvent event) {
         ICommand<?> cmd = getCommand(invokeLower);
 
         if (cmd == null) {
@@ -451,7 +451,7 @@ public class CommandManager {
         dispatchCommand(cmd, invoke, args, event);
     }
 
-    public void dispatchCommand(@Nonnull ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    public void dispatchCommand(@Nonnull ICommand cmd, String invoke, List<String> args, MessageReceivedEvent event) {
         this.commandThread.submit(() -> {
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
@@ -460,7 +460,7 @@ public class CommandManager {
             MDC.put("guild", event.getGuild().toString());
             setJDAContext(event.getJDA());
 
-            final TextChannel channel = event.getChannel();
+            final TextChannel channel = event.getChannel().asTextChannel();
 
             if (!channel.canTalk()) {
                 return;
@@ -486,8 +486,8 @@ public class CommandManager {
         });
     }
 
-    private boolean isSafeForWork(GuildMessageReceivedEvent event) {
-        if (event.getChannel().isNSFW()) {
+    private boolean isSafeForWork(MessageReceivedEvent event) {
+        if (event.getChannel().asTextChannel().isNSFW()) {
             return false;
         }
 
@@ -496,7 +496,7 @@ public class CommandManager {
         return nsfwLevel == Guild.NSFWLevel.DEFAULT || nsfwLevel == Guild.NSFWLevel.SAFE;
     }
 
-    private void runNormalCommand(ICommand<CommandContext> cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void runNormalCommand(ICommand<CommandContext> cmd, String invoke, List<String> args, MessageReceivedEvent event) {
         if (cmd.getCategory() == CommandCategory.NSFW && this.isSafeForWork(event)) {
             sendMsg(MessageConfig.Builder.fromEvent(event)
                 .setMessage("Woops, this channel is not marked as NSFW.\n" +
@@ -514,7 +514,7 @@ public class CommandManager {
         );
     }
 
-    private void runCustomCommand(ICommand<Object> cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void runCustomCommand(ICommand<Object> cmd, String invoke, List<String> args, MessageReceivedEvent event) {
         final CustomCommand cusomCommand = (CustomCommand) cmd;
 
         if (cusomCommand.getGuildId() != event.getGuild().getIdLong()) {

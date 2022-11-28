@@ -57,8 +57,8 @@ class WeebCommand : WeebCommandBase() {
             sendMsg(
                 MessageConfig.Builder.fromCtx(ctx)
                     .configureMessageBuilder {
-                        it.append("Here is a list of all the valid categories")
-                            .appendCodeBlock(weebTags.joinToString(), "LDIF")
+                        it.addContent("Here is a list of all the valid categories")
+                            .addContent("```\nLDIF\n${weebTags.joinToString()}\n```")
                     }
                     .build()
             )

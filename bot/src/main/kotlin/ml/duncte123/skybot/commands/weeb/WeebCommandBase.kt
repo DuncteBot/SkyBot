@@ -65,11 +65,13 @@ abstract class WeebCommandBase : Command() {
                 return@async
             }
 
-            if (ctx.message.mentionedMembers.isNotEmpty()) {
+            val mentionedMembers = ctx.message.mentions.members
+
+            if (mentionedMembers.isNotEmpty()) {
                 sendEmbed(
                     ctx,
                     getWeebEmbedImageAndDesc(
-                        "${ctx.message.mentionedMembers[0].asMention} $thing",
+                        "${mentionedMembers[0].asMention} $thing",
                         imageUrl
                     )
                 )
@@ -101,11 +103,14 @@ abstract class WeebCommandBase : Command() {
                 )
                 return@async
             }
-            if (ctx.message.mentionedMembers.isNotEmpty()) {
+
+            val mentionedMembers = ctx.message.mentions.members
+
+            if (mentionedMembers.isNotEmpty()) {
                 sendEmbed(
                     ctx,
                     getWeebEmbedImageAndDesc(
-                        "${ctx.member!!.asMention} $thing ${ctx.message.mentionedMembers[0].asMention}",
+                        "${ctx.member!!.asMention} $thing ${mentionedMembers[0].asMention}",
                         imageUrl
                     )
                 )

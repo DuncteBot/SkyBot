@@ -23,10 +23,10 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.entities.channel.*
 import net.dv8tion.jda.api.entities.channel.attribute.*
 import net.dv8tion.jda.api.entities.channel.middleman.*
-import net.dv8tion.jda.api.entities.channel.concrete.*
+import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import java.awt.Color
 import java.time.OffsetDateTime
 import java.util.*
@@ -39,18 +39,6 @@ class FakeMember(private val name: String) : Member {
     override fun getUser() = internalUser
 
     override fun getAvatarId() = internalUser.avatarId
-
-    override fun canInteract(member: Member): Boolean {
-        throw NotImplementedError("An operation is not implemented: not implemented")
-    }
-
-    override fun canInteract(role: Role): Boolean {
-        throw NotImplementedError("An operation is not implemented: not implemented")
-    }
-
-    override fun canInteract(emote: Emote): Boolean {
-        throw NotImplementedError("An operation is not implemented: not implemented")
-    }
 
     override fun getTimeJoined(): OffsetDateTime {
         throw NotImplementedError("An operation is not implemented: not implemented")
@@ -89,10 +77,6 @@ class FakeMember(private val name: String) : Member {
     }
 
     override fun getAsMention(): String {
-        throw NotImplementedError("An operation is not implemented: not implemented")
-    }
-
-    override fun getDefaultChannel(): TextChannel? {
         throw NotImplementedError("An operation is not implemented: not implemented")
     }
 
@@ -153,10 +137,31 @@ class FakeMember(private val name: String) : Member {
     }
 
     override fun hasTimeJoined() = false
-
-    override fun canSync(targetChannel: GuildChannel, syncSource: GuildChannel) = false
-
-    override fun canSync(channel: GuildChannel) = false
-
     override fun isPending() = false
+
+    override fun canSync(targetChannel: IPermissionContainer, syncSource: IPermissionContainer) = false
+
+    override fun canSync(channel: IPermissionContainer) = false
+
+    override fun isBoosting() = false
+
+    override fun getTimeOutEnd(): OffsetDateTime? {
+        TODO("Not yet implemented")
+    }
+
+    override fun canInteract(member: Member): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun canInteract(role: Role): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun canInteract(emoji: RichCustomEmoji): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDefaultChannel(): DefaultGuildChannelUnion? {
+        TODO("Not yet implemented")
+    }
 }

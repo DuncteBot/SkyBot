@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
+import java.util.concurrent.TimeUnit
 
 class WarnCommand : ModBaseCommand() {
 
@@ -73,7 +74,7 @@ class WarnCommand : ModBaseCommand() {
 
         val guild = ctx.guild
         val moderator = ctx.member
-        val channel = ctx.channel
+        val channel = ctx.channel.asTextChannel()
         val modUser = ctx.author
 
         // Check if we can interact
@@ -193,11 +194,13 @@ class WarnCommand : ModBaseCommand() {
                     guild.idLong
                 )
 
-                ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
+                ctx.jdaGuild.ban(target, 0, TimeUnit.DAYS)
+                    .reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "banned", "Reached $warnings warnings", dur, guild)
             }
             WarnAction.Type.BAN -> {
-                ctx.jdaGuild.ban(target, 0).reason("Reached $warnings warnings").queue()
+                ctx.jdaGuild.ban(target, 0, TimeUnit.DAYS)
+                    .reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "banned", "Reached $warnings warnings", null, guild)
             }
         }

@@ -66,8 +66,8 @@ class IssueCommand : Command() {
 
                     var invite = issue.inv
 
-                    if (issue.inv.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel, Permission.CREATE_INSTANT_INVITE)) {
-                        invite = event.channel.createInvite().complete().url
+                    if (invite.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel.asTextChannel(), Permission.CREATE_INSTANT_INVITE)) {
+                        invite = event.channel.asTextChannel().createInvite().complete().url
                     }
 
                     val embed = EmbedUtils.getDefaultEmbed()
@@ -79,7 +79,7 @@ class IssueCommand : Command() {
                             |Detailed report: ${issue.detailedReport}
                             """.trimMargin()
                         )
-                        .addField("Invite:", invite, false)
+                        .addField("Invite:", invite.toString(), false)
                         .addField("List of recent run commands:", cmds, false)
 
                     sendMsg(

@@ -129,7 +129,7 @@ class LyricsCommand : MusicCommand() {
         WebUtils.ins.scrapeWebPage("https://genius.com/amp$path") { it.setRateLimiter(RateLimiter.directLimiter()) }
             .async({
                 val lyricsContainer = it.select("div.lyrics")
-                val text = lyricsContainer.first()
+                val text = lyricsContainer.first()!!
                     .wholeText()
                     .replace("<br>", "\n")
                     .replace("\n\n\n", "\n\n")

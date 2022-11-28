@@ -42,12 +42,14 @@ class DeHoistCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (ctx.message.mentionedMembers.size == 0) {
+        val mentionedMembers = ctx.message.mentions.members
+
+        if (mentionedMembers.size == 0) {
             this.sendUsageInstructions(ctx)
             return
         }
 
-        val toDehoist = ctx.message.mentionedMembers[0]
+        val toDehoist = mentionedMembers[0]
         val selfMember = ctx.guild.selfMember
         val member = ctx.member
 

@@ -61,7 +61,7 @@ object EarthUtils {
         WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort") { it.setRateLimiter(RateLimiter.directLimiter()) }
             .async {
                 val posts = it["data"]["children"].filter { filter ->
-                    ctx.channel.isNSFW || !filter["data"]["over_18"].asBoolean()
+                    ctx.channel.asTextChannel().isNSFW || !filter["data"]["over_18"].asBoolean()
                 }.filter { filter ->
                     filter["data"]["selftext"].asText().length <= 550 &&
                         filter["data"]["title"].asText().length <= 256

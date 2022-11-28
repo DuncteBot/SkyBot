@@ -30,7 +30,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.InputStream
 import java.util.*
@@ -149,18 +149,20 @@ class ChatCommand : Command() {
         return response1
     }
 
-    private fun replaceStuff(event: GuildMessageReceivedEvent, m: String): String {
+    private fun replaceStuff(event: MessageReceivedEvent, m: String): String {
         var message = m
-        for (it in event.message.mentionedChannels) {
+        val mentions = event.message.mentions
+
+        for (it in mentions.channels) {
             message = message.replace(it.asMention, it.name)
         }
-        for (it in event.message.mentionedRoles) {
+        for (it in mentions.roles) {
             message = message.replace(it.asMention, it.name)
         }
-        for (it in event.message.mentionedUsers) {
+        for (it in mentions.users) {
             message = message.replace(it.asMention, it.name)
         }
-        for (it in event.message.emotes) {
+        for (it in mentions.customEmojis) {
             message = message.replace(it.asMention, it.name)
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
@@ -181,7 +183,7 @@ class ChatSession(userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         body.append("input", text)
         WebUtils.ins.postRequest("https://www.pandorabots.com/pandora/talk-xml", body)
-            .build({ it.body()!!.byteStream() }, WebParserUtils::handleError)
+            .build({ it.body!!.byteStream() }, WebParserUtils::handleError)
             .async {
                 try {
                     response.invoke(xPathSearch(it, "//result/that/text()"))

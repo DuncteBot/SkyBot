@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.utils.FileUpload
 
 class ScreenshotCommand : Command() {
 
@@ -55,7 +56,7 @@ class ScreenshotCommand : Command() {
         // decode base64 to byte array
         val base64 = ctx.apis.screenshotWebsite(url)
 
-        ctx.channel.sendFile(base64, "screenshot.png")
+        ctx.channel.sendFiles(FileUpload.fromData(base64, "screenshot.png"))
             .append("><").append(url).append('>')
             .queue()
     }

@@ -40,7 +40,7 @@ class JoinCommand : MusicCommand() {
         val member = ctx.member
         val voiceState = member.voiceState!!
 
-        if (!voiceState.inVoiceChannel()) {
+        if (!voiceState.inAudioChannel()) {
             sendMsg(ctx, "Please join a voice channel first.")
             return
         }

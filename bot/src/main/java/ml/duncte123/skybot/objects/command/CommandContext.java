@@ -33,9 +33,8 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +46,7 @@ import java.util.stream.Collectors;
 public class CommandContext implements ICommandContext {
     private final String invoke;
     private final List<String> args;
-    private final GuildMessageReceivedEvent event;
+    private final MessageReceivedEvent event;
     private final Variables variables;
     private final DunctebotGuild duncteBotGuild;
     private List<String> argsWithoutQuotes;
@@ -55,7 +54,7 @@ public class CommandContext implements ICommandContext {
     private StringSelectInteractionEvent selectionEvent = null;
     private long replyId = 0L;
 
-    public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
+    public CommandContext(String invoke, List<String> args, MessageReceivedEvent event, Variables variables) {
         this.invoke = invoke;
         this.args = Collections.unmodifiableList(args);
         this.event = event;
@@ -162,7 +161,7 @@ public class CommandContext implements ICommandContext {
     }
 
     @Override
-    public GuildMessageReceivedEvent getEvent() {
+    public MessageReceivedEvent getEvent() {
         return this.event;
     }
 

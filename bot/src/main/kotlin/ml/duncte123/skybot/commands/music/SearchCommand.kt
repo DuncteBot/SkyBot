@@ -27,8 +27,7 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import ml.duncte123.skybot.utils.YoutubeUtils
-import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
@@ -78,7 +77,7 @@ class SearchCommand : MusicCommand() {
 
         val componentId = "search-menu:${UUID.randomUUID()}:$userId"
 
-        val menu = SelectionMenu.create(componentId)
+        val menu = StringSelectMenu.create(componentId)
             .setPlaceholder("Select a song to play")
 
         res.forEachIndexed { index, searchResult ->
@@ -98,7 +97,7 @@ class SearchCommand : MusicCommand() {
                 .setChannel(ctx.channel)
                 .addEmbed(EmbedUtils.embedMessage(string))
                 .configureMessageBuilder {
-                    it.setActionRows(ActionRow.of(menu.build()))
+                    it.addActionRow(menu.build())
                 }
                 .setSuccessAction {
                     handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, componentId, userId, ctx)
