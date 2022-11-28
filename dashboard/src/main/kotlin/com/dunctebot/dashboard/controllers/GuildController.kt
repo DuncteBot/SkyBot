@@ -5,7 +5,6 @@ import com.dunctebot.dashboard.WebServer.Companion.GUILD_ID
 import com.dunctebot.dashboard.bodies.PatronBody
 import com.dunctebot.jda.json.JsonRole
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.github.benmanes.caffeine.cache.Caffeine
 import io.javalin.http.Context
 import io.javalin.http.HttpCode
 import io.javalin.http.NotFoundResponse
@@ -13,16 +12,20 @@ import io.javalin.plugin.rendering.vue.VueComponent
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import net.jodah.expiringmap.ExpirationPolicy
+import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
 
 object GuildController {
     // some hash -> "$userId-$guildId"
     val securityKeys = mutableMapOf<String, String>()
-    val guildHashes = Caffeine.newBuilder()
-        .expireAfterWrite(2, TimeUnit.HOURS)
+    val guildHashes = ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.CREATED)
+        .expiration(2, TimeUnit.HOURS)
         .build<String, Long>()
-    val guildRoleCache = Caffeine.newBuilder()
-        .expireAfterWrite(1, TimeUnit.HOURS)
+    val guildRoleCache = ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.CREATED)
+        .expiration(1, TimeUnit.HOURS)
         .build<Long, CustomRoleList>()
 
     fun handleOneGuildRegister(ctx: Context) {
@@ -93,7 +96,7 @@ object GuildController {
 
     fun showGuildRoles(ctx: Context) {
         val hash = ctx.pathParam("hash")
-        val guildId = guildHashes.getIfPresent(hash) ?: throw NotFoundResponse()
+        val guildId = guildHashes[hash] ?: throw NotFoundResponse()
         val guild = try {
             // TODO: do we want to do this?
             // Maybe only cache for a short time as it will get outdated data
@@ -103,12 +106,11 @@ object GuildController {
             throw NotFoundResponse()
         }
 
-        // populate the cache if needed
-        guildRoleCache.get(guild.idLong) {
+        if (!guildRoleCache.containsKey(guild.idLong)) {
             val members = restJDA.retrieveAllMembers(guild).stream().toList()
 
-            CustomRoleList(guild.name, guild.roles.map { CustomRole(it, members) })
-        }!!
+            guildRoleCache[guild.idLong] = CustomRoleList(guild.name, guild.roles.map { CustomRole(it, members) })
+        }
 
         // terrible way of doing this, but it works well enough
         // we're sending the decoded guild id into the state of javalin
@@ -118,7 +120,7 @@ object GuildController {
     fun guildRolesApiHandler(ctx: Context) {
         val guildId = ctx.pathParam(GUILD_ID).toLong()
         // will ensure that the cache is validated and we can't randomly request guilds
-        val cache = guildRoleCache.getIfPresent(guildId) ?: throw NotFoundResponse()
+        val cache = guildRoleCache[guildId] ?: throw NotFoundResponse()
 
         ctx.json(cache)
     }

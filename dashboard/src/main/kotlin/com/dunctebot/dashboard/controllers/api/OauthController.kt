@@ -3,18 +3,20 @@ package com.dunctebot.dashboard.controllers.api
 import com.dunctebot.dashboard.*
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import io.javalin.http.Context
 import io.javalin.http.HttpCode
 import net.dv8tion.jda.api.Permission
+import net.jodah.expiringmap.ExpirationPolicy
+import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 
-val guildsRequests = Caffeine.newBuilder()
-    .expireAfterWrite(5, TimeUnit.MINUTES)
+val guildsRequests = ExpiringMap.builder()
+    .expirationPolicy(ExpirationPolicy.CREATED)
+    .expiration(5, TimeUnit.MINUTES)
     .build<String, List<OAuth2Guild>>()
 
 fun fetchGuildsOfUser(ctx: Context, oAuth2Client: OAuth2Client) {
@@ -38,11 +40,15 @@ fun fetchGuildsOfUser(ctx: Context, oAuth2Client: OAuth2Client) {
 
     val guilds = jsonMapper.createArrayNode()
 
+    if (!guildsRequests.contains(ctx.userId)) {
+        val guildRes = oAuth2Client.getGuilds(ctx.getSession(oAuth2Client)).complete()
+
+        guildsRequests[ctx.userId] = guildRes
+    }
+
     // Attempt to get all guilds from the cache
     // We are using a cache here to make sure we don't rate limit our application
-    val guildsRequest = guildsRequests.get(ctx.userId) {
-        return@get oAuth2Client.getGuilds(ctx.getSession(oAuth2Client)).complete()
-    }!!
+    val guildsRequest = guildsRequests[ctx.userId]!!
 
     // Only add the servers where the user has the MANAGE_SERVER
     // perms to the list

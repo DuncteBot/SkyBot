@@ -14,9 +14,6 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.bundles.json)
     implementation(libs.bundles.dashWeb)
-
-    // TODO: replace with expiringmap
-    implementation(group = "com.github.ben-manes.caffeine", name = "caffeine", version = "2.8.5")
     implementation(libs.expiringmap)
     implementation(libs.trove)
     // TODO: remove jda-utils and just pull in oauth impl

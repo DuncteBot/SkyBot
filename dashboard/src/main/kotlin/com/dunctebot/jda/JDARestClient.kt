@@ -1,7 +1,6 @@
 package com.dunctebot.jda
 
 import com.dunctebot.jda.impl.MemberPaginationActionImpl
-import com.github.benmanes.caffeine.cache.Caffeine
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.SelfUser
@@ -18,6 +17,8 @@ import net.dv8tion.jda.internal.utils.config.AuthorizationConfig
 import net.dv8tion.jda.internal.utils.config.MetaConfig
 import net.dv8tion.jda.internal.utils.config.SessionConfig
 import net.dv8tion.jda.internal.utils.config.ThreadingConfig
+import net.jodah.expiringmap.ExpirationPolicy
+import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -30,8 +31,9 @@ import java.util.concurrent.TimeUnit
 class JDARestClient(token: String) {
     // create a guild cache that keeps the guilds in cache for 30 minutes
     // When we stop accessing the guild it will be removed from the cache
-    private val guildCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, TimeUnit.MINUTES)
+    private val guildCache = ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.ACCESSED)
+        .expiration(30, TimeUnit.MINUTES)
         .build<String, Guild>()
 
     private val jda: JDAImpl
@@ -58,7 +60,7 @@ class JDARestClient(token: String) {
 
     fun invalidateGuild(guildId: Long) {
         jda.guildsView.remove(guildId)
-        guildCache.invalidate(guildId.toString())
+        guildCache.remove(guildId.toString())
     }
 
     fun retrieveUserById(id: String): RestAction<User> {
@@ -105,7 +107,7 @@ class JDARestClient(token: String) {
         }*/
 
         // Temp cache
-        val cachedGuild = guildCache.getIfPresent(id)
+        val cachedGuild = guildCache[id]
 
         if (cachedGuild != null && !cachedGuild.textChannelCache.isEmpty) {
             return CompletedRestAction(jda, cachedGuild)
@@ -130,7 +132,7 @@ class JDARestClient(token: String) {
                     guild.membersView.map.put(jda.selfUser.idLong, selfMember)
                 }
 
-                guildCache.put(id, guild)
+                guildCache[id] = guild
 
                 guild
             }

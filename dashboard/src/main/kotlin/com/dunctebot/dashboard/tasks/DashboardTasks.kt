@@ -1,7 +1,6 @@
 package com.dunctebot.dashboard.tasks
 
 import com.dunctebot.dashboard.controllers.GuildController
-import com.dunctebot.dashboard.controllers.api.guildsRequests
 import com.dunctebot.dashboard.server
 import com.dunctebot.jda.oauth.OauthSessionController
 import java.time.OffsetDateTime
@@ -9,7 +8,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class DashboardTasks {
-    private val threadPool = Executors.newScheduledThreadPool(4) {
+    private val threadPool = Executors.newScheduledThreadPool(1) {
         val t = Thread(it, "DashboardTasksThread")
         t.isDaemon = true
         return@newScheduledThreadPool t
@@ -18,25 +17,26 @@ class DashboardTasks {
     init {
         // start cleaners
         // clean the hashes pool every hour
-        threadPool.scheduleAtFixedRate(
-            GuildController.guildHashes::cleanUp,
+        // TODO: do we need this?
+        /*threadPool.scheduleAtFixedRate(
+            GuildController.guildHashes::clear,
             1,
             1,
             TimeUnit.HOURS
         )
         threadPool.scheduleAtFixedRate(
-            GuildController.guildRoleCache::cleanUp,
+            GuildController.guildRoleCache::clear,
             1,
             1,
             TimeUnit.HOURS
         )
         // Clean the guilds pool every 30 minutes
         threadPool.scheduleAtFixedRate(
-            guildsRequests::cleanUp,
+            guildsRequests::clear,
             30,
             30,
             TimeUnit.MINUTES
-        )
+        )*/
         // Clean the security keys on a daily basis
         threadPool.scheduleAtFixedRate(
             GuildController.securityKeys::clear,
