@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -91,7 +92,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        final VoiceChannel connectedChannel = lavalinkManager.getConnectedChannel(guild);
+        final AudioChannelUnion connectedChannel = lavalinkManager.getConnectedChannel(guild);
 
         if (connectedChannel != null && !connectedChannel.getMembers().contains(ctx.getMember())) {
             sendMsg(ctx, "I'm sorry, but you have to be in the same channel as me to use any music related commands");

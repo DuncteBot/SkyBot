@@ -18,7 +18,6 @@
 
 package fredboat.audio.player;
 
-import lavalink.client.io.LavalinkRegion;
 import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.LavalinkPlayer;
@@ -27,7 +26,8 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
@@ -99,7 +99,7 @@ public final class LavalinkManager {
         return lavalink.getLink(String.valueOf(guildId)).getPlayer();
     }
 
-    public void openConnection(VoiceChannel channel) {
+    public void openConnection(AudioChannel channel) {
         if (isEnabled()) {
             final AudioManager audioManager = channel.getGuild().getAudioManager();
 
@@ -133,7 +133,7 @@ public final class LavalinkManager {
     }
 
     @SuppressWarnings("ConstantConditions") // cache is enabled
-    public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
+    public AudioChannelUnion getConnectedChannel(@Nonnull Guild guild) {
         // NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the
@@ -155,7 +155,7 @@ public final class LavalinkManager {
         final JdaLavalink lavalink = getLavalink();
 
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
-            lavalink.addNode(URI.create(node.wsurl), node.pass, LavalinkRegion.valueOf(node.region));
+            lavalink.addNode(URI.create(node.wsurl), node.pass);
         }
     }
 

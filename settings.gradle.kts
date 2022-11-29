@@ -98,7 +98,8 @@ fun VersionCatalogBuilder.voice() {
     library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.3.98.4")
-    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
+//    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
+    library("lavalink-client", "com.github.freyacodes", "Lavalink-Client").version("cde746afc")
 }
 
 fun VersionCatalogBuilder.dashboard() {

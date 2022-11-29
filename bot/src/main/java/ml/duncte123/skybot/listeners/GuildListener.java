@@ -40,6 +40,7 @@ import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -133,7 +134,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        final VoiceChannel channel = manager.getConnectedChannel(guild);
+        final AudioChannelUnion channel = manager.getConnectedChannel(guild);
 
         if (channel == null) {
             return;
@@ -173,7 +174,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        final VoiceChannel connected = manager.getConnectedChannel(guild);
+        final AudioChannelUnion connected = manager.getConnectedChannel(guild);
 
         if (connected == null) {
             return;
