@@ -347,6 +347,6 @@ public class ModerationUtils {
             return;
         }
         final String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
-        guild.kick(member, reason).reason(reason).queue();
+        guild.kick(member).reason(reason).queue();
     }
 }

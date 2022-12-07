@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -100,7 +102,7 @@ public class HackbanCommand extends ModBaseCommand {
             try {
                 final String finalId = userId;
 
-                ctx.getGuild().ban(finalId, 0, reason)
+                ctx.getGuild().ban(UserSnowflake.fromId(finalId), 0, TimeUnit.DAYS)
                     .reason(reason)
                     .queue(null, (thr) -> {
                         if (thr instanceof ErrorResponseException err) {

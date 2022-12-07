@@ -29,11 +29,13 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicReference;
@@ -143,32 +145,34 @@ public class WolframAlphaCommand extends Command {
             result = engine.performQuery(query);
         }
         catch (WAException e) {
-            editMsg(message, ctx.getChannel(), new MessageBuilder()
-                .append(":x: Error: ")
-                .append(e.getClass().getSimpleName())
-                .append(": ")
-                .append(e.getMessage())
+            editMsg(message, ctx.getChannel(), new MessageEditBuilder()
+                .setContent(
+                    ":x: Error: " +
+                        e.getClass().getSimpleName() +
+                        ": " +
+                        e.getMessage()
+                )
                 .build());
             e.printStackTrace();
             return;
         }
 
-        editMsg(message, ctx.getChannel(), new MessageBuilder().append("Result:")
+        editMsg(message, ctx.getChannel(), new MessageEditBuilder().setContent("Result:")
             .setEmbeds(
                 generateEmbed(ctx, result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
             ).build());
     }
 
-    private void editMsg(AtomicReference<Message> ref, TextChannel channel, Message message) {
+    private void editMsg(AtomicReference<Message> ref, MessageChannelUnion channel, MessageEditData message) {
         final Message fromRef = ref.get();
 
         if (fromRef == null) {
-            channel.sendMessage(message).queue();
+            channel.sendMessage(MessageCreateData.fromEditData(message)).queue();
 
             return;
         }
 
-        fromRef.editMessage(message).override(true).queue();
+        fromRef.editMessage(message).setReplace(true).queue();
     }
 
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")

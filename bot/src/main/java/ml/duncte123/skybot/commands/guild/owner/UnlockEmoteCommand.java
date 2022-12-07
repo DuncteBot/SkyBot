@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class UnlockEmoteCommand extends Command {
             Permission.ADMINISTRATOR,
         };
         this.botPermissions = new Permission[]{
-            Permission.MANAGE_EMOTES,
+            Permission.MANAGE_EMOJIS_AND_STICKERS,
         };
     }
 
@@ -54,14 +54,15 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        final List<Emote> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
+        // TODO: this will fail, just so it compiles for now
+        final List<RichCustomEmoji> foundEmotes = (List<RichCustomEmoji>) ((Object) FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA()));
 
         if (foundEmotes.isEmpty()) {
             sendMsg(ctx, "No emotes found");
             return;
         }
 
-        final Emote emote = foundEmotes.get(0);
+        final RichCustomEmoji emote = foundEmotes.get(0);
 
         if (cannotInteractWithEmote(ctx, emote)) {
             return;
@@ -72,14 +73,14 @@ public class UnlockEmoteCommand extends Command {
         sendMsg(ctx, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
-    /* package */ static boolean cannotInteractWithEmote(CommandContext ctx, Emote emote) {
+    /* package */ static boolean cannotInteractWithEmote(CommandContext ctx, RichCustomEmoji emote) {
         if (emote == null) {
             sendMsg(ctx, "I cannot access that emote");
 
             return true;
         }
 
-        if (emote.getGuild() == null || !emote.getGuild().equals(ctx.getJDAGuild())) {
+        if (!emote.getGuild().equals(ctx.getJDAGuild())) {
             sendMsg(ctx, "That emote does not exist on this server");
             return true;
         }

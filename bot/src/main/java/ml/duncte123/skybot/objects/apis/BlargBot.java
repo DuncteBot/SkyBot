@@ -77,7 +77,7 @@ public class BlargBot {
             defaultRequest()
                 .url("https://api.blargbot.xyz/api/v1/" + path)
                 .header("Content-Type", ContentType.JSON.getType())
-                .post(RequestBody.create(null, jsonToString(body)))
+                .post(RequestBody.create(jsonToString(body)))
                 .addHeader("Authorization", token),
             (it) -> it.setRateLimiter(RateLimiter.directLimiter()),
             null

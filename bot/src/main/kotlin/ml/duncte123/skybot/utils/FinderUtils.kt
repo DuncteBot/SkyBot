@@ -22,8 +22,11 @@ import ml.duncte123.skybot.extensions.sync
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView
+import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
 import java.util.regex.Pattern
@@ -34,6 +37,63 @@ object FinderUtils {
     private val DISCORD_ID = Pattern.compile("\\d{17,20}") // ID
     private val FULL_USER_REF = Pattern.compile("(\\S.{0,30}\\S)\\s*#(\\d{4})") // $1 -> username, $2 -> discriminator
     private val USER_MENTION = Pattern.compile("<@!?(\\d{17,20})>") // $1 -> ID
+
+    @JvmStatic
+    fun searchAudioChannels(input: String, ctx: CommandContext): List<AudioChannel> {
+        if (DISCORD_ID.matcher(input).matches()) {
+            val channel: AudioChannel? = ctx.guild.getChannelById(AudioChannel::class.java, input)
+
+            if (channel != null) {
+                return listOf(channel)
+            }
+        }
+
+        val vcs = internalAudioChannelSearch(input, ctx.guild.voiceChannelCache)
+
+        if (vcs.isNotEmpty()) {
+            return vcs
+        }
+
+        return internalAudioChannelSearch(input, ctx.guild.stageChannelCache)
+    }
+
+    @JvmStatic
+    private fun internalAudioChannelSearch(input: String, cache: SortedSnowflakeCacheView<out AudioChannel>): List<AudioChannel> {
+        val exact = mutableListOf<AudioChannel>()
+        val wrongCase = mutableListOf<AudioChannel>()
+        val startsWith = mutableListOf<AudioChannel>()
+        val contains = mutableListOf<AudioChannel>()
+
+        val inputLower = input.lowercase()
+
+        cache.forEach {
+            val name = it.name
+
+            if (name == input) {
+                exact.add(it)
+            } else if (exact.isEmpty() && name.equals(input, true)) {
+                wrongCase.add(it)
+            } else if (wrongCase.isEmpty() && name.startsWith(inputLower, ignoreCase = true)) {
+                startsWith.add(it)
+            } else if (startsWith.isEmpty() && name.contains(inputLower, ignoreCase = true)) {
+                contains.add(it)
+            }
+        }
+
+        if (exact.isNotEmpty()) {
+            return exact
+        }
+
+        if (wrongCase.isNotEmpty()) {
+            return wrongCase
+        }
+
+        if (startsWith.isNotEmpty()) {
+            return startsWith
+        }
+
+        return contains
+    }
 
     @JvmStatic
     fun searchUsers(input: String, ctx: CommandContext): List<User> {

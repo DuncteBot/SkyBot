@@ -57,7 +57,7 @@ class ScreenshotCommand : Command() {
         val base64 = ctx.apis.screenshotWebsite(url)
 
         ctx.channel.sendFiles(FileUpload.fromData(base64, "screenshot.png"))
-            .append("><").append(url).append('>')
+            .addContent("><").addContent(url).addContent(">")
             .queue()
     }
 }

@@ -131,8 +131,7 @@ class StatsCommand : Command() {
 
             embed.addField(
                 "Lavalink node #$index",
-                """**Region:** ${node.region.name}
-                    |**Uptime:** ${AirUtils.getUptime(stats.uptime)}
+                """**Uptime:** ${AirUtils.getUptime(stats.uptime)}
                     |**CPU cores:** ${stats.cpuCores}
                     |**System Load:** ${stats.systemLoad}%
                     |**Used memory:** ${stats.memUsed shr 20}MB

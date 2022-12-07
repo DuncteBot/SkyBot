@@ -33,12 +33,12 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public final class SkyBot {
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_INVITES,
                 GatewayIntent.GUILD_BANS,
-                GatewayIntent.GUILD_EMOJIS,
+                GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
                 GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES
             )
@@ -123,7 +123,7 @@ public final class SkyBot {
             // Not using this because it overrides the member cache policy
             // we're calling loadMembers once the guild is ready
 //            .setChunkingFilter((guildId) -> guildId == Settings.SUPPORT_GUILD_ID)
-            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
+            .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
@@ -161,13 +161,13 @@ public final class SkyBot {
             (guildId) -> GuildSettingsUtils.getGuild(guildId, variables).getEmbedColor()
         );
 
-        MessageAction.setDefaultMentions(List.of(
+        MessageRequest.setDefaultMentions(List.of(
             Message.MentionType.USER
             // These two don't get parsed
             // Message.MentionType.CHANNEL,
             // Message.MentionType.EMOTE
         ));
-        MessageAction.setDefaultMentionRepliedUser(false);
+        MessageRequest.setDefaultMentionRepliedUser(false);
         // Set some defaults for rest-actions
         RestAction.setPassContext(true);
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));

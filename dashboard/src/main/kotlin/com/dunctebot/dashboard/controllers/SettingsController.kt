@@ -87,8 +87,8 @@ object SettingsController {
         val youngAccountThreshold = params["young_account_threshold"]?.firstOrNull()?.toIntOrNull() ?: 10
         val youngAccountBanEnable = params["young_account_ban_enabled"]?.firstOrNull().toCBBool()
 
-        val guildId = settings.guildId
-        val warnActionsList = parseWarnActions(guildId, params, isGuildPatron)
+        // val guildId = settings.guildId
+        val warnActionsList = parseWarnActions(params, isGuildPatron)
 
         settings
             .setLogChannel(modLogChannel)
@@ -160,7 +160,7 @@ object SettingsController {
         return rateLimits
     }
 
-    private fun parseWarnActions(guildId: Long, params: Map<String, List<String>>, isGuildPatron: Boolean): List<WarnAction> {
+    private fun parseWarnActions(params: Map<String, List<String>>, isGuildPatron: Boolean): List<WarnAction> {
         val warnActionsList = arrayListOf<WarnAction>()
         val maxWarningActionCount = if(isGuildPatron) WarnAction.PATRON_MAX_ACTIONS else 1
 

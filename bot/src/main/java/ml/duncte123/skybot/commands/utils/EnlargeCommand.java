@@ -25,11 +25,15 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.TwemojiParser;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageSticker;
-import net.dv8tion.jda.api.entities.MessageSticker.StickerFormat;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
+import net.dv8tion.jda.api.entities.sticker.Sticker.StickerFormat;
+import net.dv8tion.jda.api.entities.sticker.StickerItem;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -49,10 +53,10 @@ public class EnlargeCommand extends Command {
     @Override
     public void execute(@NotNull CommandContext ctx) {
         final Message message = ctx.getMessage();
-        final List<MessageSticker> stickers = message.getStickers();
+        final List<StickerItem> stickers = message.getStickers();
 
         if (!stickers.isEmpty()) {
-            final MessageSticker sticker = stickers.get(0);
+            final StickerItem sticker = stickers.get(0);
             final StickerFormat formatType = sticker.getFormatType();
 
             if (formatType == StickerFormat.UNKNOWN || formatType == StickerFormat.LOTTIE) {
@@ -64,17 +68,22 @@ public class EnlargeCommand extends Command {
             return;
         }
 
-        final List<Emote> emotes = message.getEmotes();
+        final List<CustomEmoji> emotes = message.getReactions()
+            .stream()
+            .map(MessageReaction::getEmoji)
+            .filter((it) -> it.getType() == Emoji.Type.CUSTOM)
+            .map(EmojiUnion::asCustom)
+            .toList();
 
         if (!emotes.isEmpty()) {
-            final Emote emote = emotes.get(0);
+            final CustomEmoji emote = emotes.get(0);
 
             this.uploadFile(emote.getImageUrl().replace("gif", "png"), ctx);
 
             return;
         }
 
-        final List<User> mentionedUsers = message.getMentionedUsers();
+        final List<User> mentionedUsers = message.getMentions().getUsers();
 
         if (!mentionedUsers.isEmpty()) {
             final User user = mentionedUsers.get(0);
@@ -112,8 +121,10 @@ public class EnlargeCommand extends Command {
                 final String fileName = split[split.length - 1];
 
                 ctx.getChannel()
-                    .sendFile(bytes, fileName)
-                    .reference(ctx.getMessage())
+                    .sendFiles(
+                        FileUpload.fromData(bytes, fileName)
+                    )
+                    .setMessageReference(ctx.getMessage())
                     .queue();
             },
             (error) -> {

@@ -8,6 +8,7 @@ import com.dunctebot.models.settings.WarnAction
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import okhttp3.*
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
@@ -118,7 +119,7 @@ class DuncteApi(val apiKey: String) {
     }
 
     private fun patchJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody()
         val request = defaultRequest(path, prefixBot)
             .patch(body).addHeader("Content-Type", JSON)
 
@@ -126,7 +127,7 @@ class DuncteApi(val apiKey: String) {
     }
 
     private fun patchJSONAsync(path: String, json: JsonNode, prefixBot: Boolean = true, callback: (JsonNode) -> Unit = {}) {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody()
         val request = defaultRequest(path, prefixBot)
             .patch(body).addHeader("Content-Type", JSON)
 
@@ -134,7 +135,7 @@ class DuncteApi(val apiKey: String) {
     }
 
     private fun postJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody()
         val request = defaultRequest(path, prefixBot)
             .post(body).addHeader("Content-Type", JSON)
 
@@ -142,7 +143,7 @@ class DuncteApi(val apiKey: String) {
     }
 
     private fun deleteJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {
-        val body = RequestBody.create(null, json.toJsonString())
+        val body = json.toJsonString().toRequestBody()
         val request = defaultRequest(path, prefixBot)
             .delete(body).addHeader("Content-Type", JSON)
 

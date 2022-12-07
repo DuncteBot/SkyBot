@@ -23,9 +23,13 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -42,15 +46,16 @@ public class LockEmoteCommand extends Command {
     public LockEmoteCommand() {
         this.category = CommandCategory.ADMINISTRATION;
         this.name = "lockemote";
-        this.help = "Lock an emote to some roles.\n" +
-            "_Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
-            "even if you have administrator permission_";
+        this.help = """
+            Lock an emote to some roles.
+            _Please note that you can't use the emote anymore if you don't have any of the specified roles,
+            even if you have administrator permission_""";
         this.usage = "<emote> <@role...>";
         this.userPermissions = new Permission[]{
             Permission.ADMINISTRATOR,
         };
         this.botPermissions = new Permission[]{
-            Permission.MANAGE_EMOTES,
+            Permission.MANAGE_EMOJIS_AND_STICKERS,
         };
     }
 
@@ -62,8 +67,13 @@ public class LockEmoteCommand extends Command {
         }
 
         final Message message = ctx.getMessage();
-        final List<Emote> mentionedEmotes = message.getEmotes();
-        final List<Role> mentionedRoles = new ArrayList<>(message.getMentionedRoles());
+        final List<CustomEmoji> mentionedEmotes = message.getReactions()
+            .stream()
+            .map(MessageReaction::getEmoji)
+            .filter((it) -> it.getType() == Emoji.Type.CUSTOM)
+            .map(EmojiUnion::asCustom)
+            .toList();
+        final List<Role> mentionedRoles = new ArrayList<>(message.getMentions().getRoles());
 
         if (mentionedRoles.isEmpty()) {
             // Loop over the args and check if there are roles found in text
@@ -77,7 +87,7 @@ public class LockEmoteCommand extends Command {
             return;
         }
 
-        final Emote emote = mentionedEmotes.get(0);
+        final RichCustomEmoji emote = (RichCustomEmoji) mentionedEmotes.get(0);
 
         if (cannotInteractWithEmote(ctx, emote)) {
             return;

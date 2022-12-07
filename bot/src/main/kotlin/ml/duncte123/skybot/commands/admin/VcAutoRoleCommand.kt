@@ -26,6 +26,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.FinderUtils
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import java.util.stream.Collectors
@@ -96,7 +97,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
         val cache = vcAutoRoleCache.get(guild.idLong) ?: vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
 
-        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
+        val foundVoiceChannels = FinderUtils.searchAudioChannels(args[1], ctx)
 
         if (foundVoiceChannels.isEmpty()) {
             sendMsg(
@@ -167,7 +168,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
                     "(excluding ones that are created after the command was ran)"
             )
         } else {
-            val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
+            val foundVoiceChannels = FinderUtils.searchAudioChannels(args[1], ctx)
 
             if (foundVoiceChannels.isEmpty()) {
                 sendMsg(

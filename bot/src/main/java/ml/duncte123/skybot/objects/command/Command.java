@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.objects.CooldownScope;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,9 @@ public abstract class Command implements ICommand<CommandContext> {
 
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
-        if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(ctx.getChannel(), this.userPermissions)) {
+        final GuildChannel channel = ctx.getEvent().getGuildChannel();
+
+        if (this.userPermissions.length > 0 && !ctx.getMember().hasPermission(channel, this.userPermissions)) {
             final String permissionsWord = "permission" + (this.userPermissions.length > 1 ? "s" : "");
 
             sendMsg(MessageConfig.Builder.fromCtx(ctx)
@@ -84,7 +87,7 @@ public abstract class Command implements ICommand<CommandContext> {
             return;
         }
 
-        if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(ctx.getChannel(), this.botPermissions)) {
+        if (this.botPermissions.length > 0 && !ctx.getSelfMember().hasPermission(channel, this.botPermissions)) {
             final String permissionsWord = "permission" + (this.botPermissions.length > 1 ? "s" : "");
 
             sendMsg(MessageConfig.Builder.fromCtx(ctx)

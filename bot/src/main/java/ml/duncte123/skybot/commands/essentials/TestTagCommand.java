@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.CommandUtils;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import javax.annotation.Nonnull;
 
@@ -59,13 +60,14 @@ public class TestTagCommand extends Command {
 
         final String output = CommandUtils.parseJagTag(ctx, input);
 
-        final String message = new MessageBuilder()
-            .append("**Input:**")
-            .appendCodeBlock(input, "pascal")
-            .append('\n')
-            .append("**Output:**\n")
-            .append(output)
-            .getStringBuilder().toString();
+        final String message = new MessageCreateBuilder()
+            .addContent("**Input:**")
+            .addContent("```pascal\n" + input + "\n```")
+            .addContent("\n")
+            .addContent("**Output:**\n")
+            .addContent(output)
+            .build()
+            .getContent();
 
         sendEmbed(ctx, EmbedUtils.embedMessage(message));
 

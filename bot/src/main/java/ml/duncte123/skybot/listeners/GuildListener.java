@@ -324,7 +324,7 @@ public class GuildListener extends BaseListener {
             guild.requestToSpeak();
         } else {
             final GuildMusicManager musicManager = this.variables.getAudioUtils().getMusicManager(guild.getIdLong());
-            final TextChannel textChan = musicManager.getLatestChannel();
+            final MessageChannel textChan = musicManager.getLatestChannel();
 
             if (textChan == null) {
                 return;

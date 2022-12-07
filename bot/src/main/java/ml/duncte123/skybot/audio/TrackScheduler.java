@@ -32,7 +32,7 @@ import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -67,7 +67,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) -> {
-            final TextChannel latestChannel = guildMusicManager.getLatestChannel();
+            final MessageChannel latestChannel = guildMusicManager.getLatestChannel();
 
             if (latestChannel == null) {
                 return;

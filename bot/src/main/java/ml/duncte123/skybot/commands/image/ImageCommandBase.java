@@ -30,8 +30,9 @@ import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,12 +53,10 @@ public abstract class ImageCommandBase extends Command {
     }
 
     private boolean canSendFile(CommandContext ctx) {
-        final TextChannel channel = ctx.getChannel();
-
-        if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
+        if (ctx.getGuild().getSelfMember().hasPermission(ctx.getChannel().asGuildMessageChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            sendMsg(channel, "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(ctx, "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }
@@ -76,7 +75,6 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public void handleBasicImage(CommandContext ctx, Pair<byte[], JsonNode> data) {
-        final TextChannel channel = ctx.getChannel();
         final byte[] image = data.getFirst();
 
         if (image == null) {
@@ -90,7 +88,7 @@ public abstract class ImageCommandBase extends Command {
                 message = json.get("error").get("message").asText();
             }
 
-            sendMsg(channel, "Error while generating image: " + message);
+            sendMsg(ctx, "Error while generating image: " + message);
             return;
         }
 
@@ -98,12 +96,12 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public void handleBasicImage(CommandContext ctx, byte[] image) {
-        final TextChannel channel = ctx.getChannel();
+        final GuildMessageChannel channel = ctx.getChannel().asGuildMessageChannel();
 
         if (ctx.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
-            channel.sendFile(image, getFileName()).reference(ctx.getMessage()).queue();
+            channel.sendFiles(FileUpload.fromData(image, getFileName())).setMessageReference(ctx.getMessage()).queue();
         } else {
-            sendMsg(channel, "I need permission to upload files in order for this command to work.");
+            sendMsg(ctx, "I need permission to upload files in order for this command to work.");
         }
     }
 
@@ -116,14 +114,15 @@ public abstract class ImageCommandBase extends Command {
     @Nullable
     protected String getImageFromCommand(CommandContext ctx) {
         final List<String> args = ctx.getArgs();
+        final List<User> mentionedUsers = ctx.getMessage().getMentions().getUsers();
         String url = null;
 
         // I hate this so much
         // But I won't change one pmd rule just for the sake of using !isEmpty here
         if (ctx.getMessage().getAttachments().size() > 0) {
             url = tryGetAttachment(ctx);
-        } else if (ctx.getMessage().getMentionedUsers().size() > 0) {
-            url = getAvatarUrl(ctx.getMessage().getMentionedUsers().get(0));
+        } else if (mentionedUsers.size() > 0) {
+            url = getAvatarUrl(mentionedUsers.get(0));
         } else if (!args.isEmpty()) {
             if (AirUtils.isURL(args.get(0))) {
                 url = tryGetUrl(ctx, args.get(0));
