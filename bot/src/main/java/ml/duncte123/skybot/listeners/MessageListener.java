@@ -44,18 +44,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
-import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.message.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 
 import javax.annotation.Nonnull;
@@ -92,7 +86,11 @@ public abstract class MessageListener extends BaseListener {
         super(variables);
     }
 
-    protected void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    protected void onGuildMessageUpdate(MessageUpdateEvent event) {
+        if (!event.isFromGuild()) {
+            return;
+        }
+
         // ignore bots
         final Message message = event.getMessage();
         final User author = message.getAuthor();
@@ -101,7 +99,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
+        if (topicContains(event.getChannel().asTextChannel(), PROFANITY_DISABLE)) {
             return;
         }
 
@@ -188,7 +186,7 @@ public abstract class MessageListener extends BaseListener {
                     }
                 }
 
-                final TextChannel channel = event.getChannel();
+                final TextChannel channel = event.getChannel().asTextChannel();
                 final EmbedBuilder embed = EmbedUtils.embedField(
                         "Bulk Delete",
                         "Bulk deleted messages from <#%s> are available in the attached file.".formatted(channel.getIdLong())
@@ -200,9 +198,11 @@ public abstract class MessageListener extends BaseListener {
                     new MessageConfig.Builder()
                         .addEmbed(true, embed)
                         .setActionConfig(
-                            (action) -> action.addFile(
-                                builder.toString().getBytes(),
-                                "bulk_delete_%s.txt".formatted(System.currentTimeMillis())
+                            (action) -> action.addFiles(
+                                FileUpload.fromData(
+                                    builder.toString().getBytes(),
+                                    "bulk_delete_%s.txt".formatted(System.currentTimeMillis())
+                                )
                             )
                         ),
                     guild
@@ -213,7 +213,11 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    protected void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
+    protected void onGuildMessageDelete(final MessageDeleteEvent event) {
+        if (!event.isFromGuild()) {
+            return;
+        }
+
         this.handlerThread.submit(() -> {
             try {
                 final DunctebotGuild guild = new DunctebotGuild(event.getGuild(), variables);
@@ -271,7 +275,7 @@ public abstract class MessageListener extends BaseListener {
 
             final ShardManager manager = Objects.requireNonNull(event.getJDA().getShardManager());
 
-            event.getMessage().addReaction(MessageUtils.getSuccessReaction()).queue(
+            event.getMessage().addReaction(Emoji.fromUnicode(MessageUtils.getSuccessReaction())).queue(
                 success -> shutdownBot(manager),
                 failure -> shutdownBot(manager)
             );
@@ -290,7 +294,7 @@ public abstract class MessageListener extends BaseListener {
         });
     }
 
-    private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, GuildMessageReceivedEvent event) {
+    private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, MessageReceivedEvent event) {
         final String stripped = event.getMessage().getContentStripped().toLowerCase();
 
         final Optional<CustomCommand> match = autoResponses.stream()
@@ -393,7 +397,7 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private boolean hasCorrectCategory(@Nonnull String raw, @Nonnull String categoryName, @Nonnull String customPrefix) {
-        final ICommand command = commandManager.getCommand(
+        final ICommand<?> command = commandManager.getCommand(
             getCommandName(customPrefix, raw).toLowerCase()
         );
 
@@ -414,14 +418,15 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean canRunCommands(String raw, String customPrefix, @Nonnull GuildMessageReceivedEvent event) {
-        final String topic = event.getChannel().getTopic();
+    private boolean canRunCommands(String raw, String customPrefix, @Nonnull MessageReceivedEvent event) {
+        final TextChannel textChannel = event.getChannel().asTextChannel();
+        final String topic = textChannel.getTopic();
 
         if (topic == null || topic.isEmpty()) {
             return true;
         }
 
-        if (topicContains(event.getChannel(), "-commands")) {
+        if (topicContains(textChannel, "-commands")) {
             return false;
         }
 
@@ -457,7 +462,7 @@ public abstract class MessageListener extends BaseListener {
     }
 
     /// <editor-fold desc="auto moderation" defaultstate="collapsed">
-    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSetting settings, String raw) {
+    private void checkMessageForInvites(Guild guild, MessageReceivedEvent event, GuildSetting settings, String raw) {
         if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
             final Matcher matcher = Message.INVITE_PATTERN.matcher(raw);
             if (matcher.find()) {
@@ -482,10 +487,10 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean checkSwearFilter(Message messageToCheck, GenericGuildMessageEvent event, DunctebotGuild guild) {
+    private boolean checkSwearFilter(Message messageToCheck, GenericMessageEvent event, DunctebotGuild guild) {
         final GuildSetting settings = guild.getSettings();
 
-        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_DISABLE)) {
+        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel().asTextChannel(), PROFANITY_DISABLE)) {
             final float score = PerspectiveApi.checkSwearFilter(
                 messageToCheck.getContentRaw(),
                 event.getChannel().getId(),
@@ -551,7 +556,7 @@ public abstract class MessageListener extends BaseListener {
                 ), dbG);
 
                 sendMsg(new MessageConfig.Builder()
-                    .setChannel((TextChannel) messageToCheck.getChannel())
+                    .setChannel(messageToCheck.getChannel())
                     .setMessageFormat(
                         "%s the word \"%s\" is blacklisted on this server",
                         messageToCheck.getMember(),
@@ -570,7 +575,7 @@ public abstract class MessageListener extends BaseListener {
         return false;
     }
 
-    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSetting settings, DunctebotGuild guild) {
+    private void checkSpamFilter(Message messageToCheck, MessageReceivedEvent event, GuildSetting settings, DunctebotGuild guild) {
         if (settings.isEnableSpamFilter()) {
             final long[] rates = settings.getRatelimits();
 
@@ -583,7 +588,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSetting settings, String raw) {
+    private boolean doAutoModChecks(@Nonnull MessageReceivedEvent event, GuildSetting settings, String raw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE)) {

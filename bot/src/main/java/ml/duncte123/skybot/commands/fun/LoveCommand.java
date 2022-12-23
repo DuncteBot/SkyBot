@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,7 +40,7 @@ import static ml.duncte123.skybot.Settings.PATREON;
 
 public class LoveCommand extends Command {
 //    private static final String EMPTY_BAR = " ";
-//    private static final String FILLED_BAR = "\u2588";
+//    private static final String FILLED_BAR = "█";
 
     public LoveCommand() {
         this.requiresArgs = true;
@@ -102,7 +103,7 @@ public class LoveCommand extends Command {
             )*/
             .addField(response.get("score").asText(), response.get("message").asText(), false);
 
-        final TextChannel channel = ctx.getChannel();
+        final TextChannel channel = ctx.getChannel().asTextChannel();
 
         if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS)) {
             ctx.getWeebApi().generateLoveship(
@@ -112,7 +113,9 @@ public class LoveCommand extends Command {
                 final String message = String.format("Shipping **%s** and **%s**", target1.getEffectiveName(), target2.getEffectiveName());
 
                 channel.sendMessage(message)
-                    .addFile(image, "love.png")
+                    .addFiles(FileUpload.fromData(
+                        image, "love.png"
+                    ))
                     .setEmbeds(embed.setImage("attachment://love.png").build())
                     .queue();
             });

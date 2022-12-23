@@ -77,7 +77,7 @@ public abstract class MusicCommand extends Command {
     }
 
     private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
-        if (!ctx.getMember().getVoiceState().inVoiceChannel()) {
+        if (!ctx.getMember().getVoiceState().inAudioChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
             return false;
         }
@@ -107,7 +107,7 @@ public abstract class MusicCommand extends Command {
 
     private boolean isAbleToJoinChannel(CommandContext ctx) {
         if (isUserOrGuildPatron(ctx, false)) {
-            return ctx.getMember().getVoiceState().inVoiceChannel() &&
+            return ctx.getMember().getVoiceState().inAudioChannel() &&
                 !getLavalinkManager().isConnected(ctx.getGuild());
         }
 

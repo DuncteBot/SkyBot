@@ -78,7 +78,7 @@ public class UnmuteCommand extends ModBaseCommand {
         final Member toMute = mentioned.get(0);
         final Member mod = ctx.getMember();
 
-        if (!canInteract(mod, toMute, "unmute", ctx.getChannel())) {
+        if (!canInteract(mod, toMute, "unmute", ctx.getChannel().asTextChannel())) {
             return;
         }
 

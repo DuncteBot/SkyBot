@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static com.dunctebot.models.utils.Utils.getDatabaseDateFormat;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration;
@@ -109,7 +110,7 @@ public class TempMuteCommand extends ModBaseCommand {
         }
 
         final String fReason = reason;
-        final String finalDate = AirUtils.getDatabaseDateFormat(duration);
+        final String finalDate = getDatabaseDateFormat(duration);
         final User mutee = toMute.getUser();
         final User author = ctx.getAuthor();
 
@@ -154,7 +155,7 @@ public class TempMuteCommand extends ModBaseCommand {
             return true;
         }
 
-        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
+        if (!canInteract(mod, toMute, "mute", ctx.getChannel().asTextChannel())) {
             return true;
         }
 

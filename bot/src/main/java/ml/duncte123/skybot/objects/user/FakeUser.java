@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,15 +95,15 @@ public class FakeUser implements User {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public RestAction<PrivateChannel> openPrivateChannel() {
+    public CacheRestAction<Profile> retrieveProfile() {
         return null;
     }
 
     @NotNull
     @Override
-    public RestAction<Profile> retrieveProfile() {
+    public CacheRestAction<PrivateChannel> openPrivateChannel() {
         return null;
     }
 

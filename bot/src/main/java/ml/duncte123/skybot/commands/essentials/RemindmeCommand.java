@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.utils.AirUtils;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.dunctebot.models.utils.Utils.getDatabaseDate;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class RemindmeCommand extends Command {
@@ -111,7 +111,7 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        final OffsetDateTime expireDate = AirUtils.getDatabaseDate(duration);
+        final OffsetDateTime expireDate = getDatabaseDate(duration);
 
         createReminder(ctx, expireDate, reminder, flags, duration);
     }

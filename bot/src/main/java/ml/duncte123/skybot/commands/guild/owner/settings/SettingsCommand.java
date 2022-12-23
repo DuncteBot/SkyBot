@@ -642,7 +642,7 @@ public class SettingsCommand extends Command {
 
     @Nullable
     private Role getFoundRoleOrNull(CommandContext ctx) {
-        final List<Role> mentionedRoles = ctx.getMessage().getMentionedRoles();
+        final List<Role> mentionedRoles = ctx.getMessage().getMentions().getRoles();
 
         final Role foundRole;
 

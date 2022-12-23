@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -209,7 +210,7 @@ public class TagCommand extends Command {
 
         final Permission perm = Permission.MESSAGE_ATTACH_FILES;
 
-        if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), perm)) {
+        if (!ctx.getSelfMember().hasPermission(ctx.getChannel().asTextChannel(), perm)) {
             sendMsg(ctx, "I need the `" + perm.getName() + "` permission for this command to work");
 
             return;
@@ -218,8 +219,10 @@ public class TagCommand extends Command {
         final byte[] tagContent = ("[\"" + String.join("\", \"", this.tagStore.keySet()) + "\"]").getBytes();
 
         ctx.getChannel()
-            .sendFile(tagContent, "tag_names.json")
-            .append("Here is the current list of tags")
+            .sendFiles(FileUpload.fromData(
+                tagContent, "tag_names.json"
+            ))
+            .setContent("Here is the current list of tags")
             .queue();
     }
 

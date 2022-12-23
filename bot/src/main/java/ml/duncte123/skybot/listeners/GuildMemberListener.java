@@ -62,6 +62,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -126,7 +127,11 @@ public class GuildMemberListener extends BaseListener {
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
             if (!msg.isEmpty() && !"".equals(msg.trim()) && channel != null) {
-                sendMsg(channel, msg);
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage(msg)
+                );
             }
         }
 
@@ -193,7 +198,11 @@ public class GuildMemberListener extends BaseListener {
 
             // If we have a message and the text channel is not null
             if (!msg.isEmpty() && !"".equals(msg.trim()) && channel != null) {
-                sendMsg(channel, msg);
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage(msg)
+                );
             }
         }
 
@@ -376,7 +385,7 @@ public class GuildMemberListener extends BaseListener {
 
                 final String reason = "Account is newer than " + threshold + " days (created " + humanTime + ')';
 
-                guild.ban(member, 0, reason)
+                guild.ban(member, 0, TimeUnit.DAYS)
                     .reason(reason)
                     .queue();
 

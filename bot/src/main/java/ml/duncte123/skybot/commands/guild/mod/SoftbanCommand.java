@@ -28,6 +28,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
@@ -66,7 +67,7 @@ public class SoftbanCommand extends ModBaseCommand {
 
         final Member toBanMember = mentioned.get(0);
 
-        if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel().asTextChannel())) {
             return;
         }
 
@@ -86,7 +87,7 @@ public class SoftbanCommand extends ModBaseCommand {
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBanMember, 1, String.format("%#s: %s", ctx.getAuthor(), fReason))
+        ctx.getGuild().ban(toBanMember, 1, TimeUnit.DAYS)
             .reason("Kicked by: " + String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(
                 nothing -> {
                     ModerationUtils.modLog(ctx.getAuthor(), toBan, "kicked", fReason, null, ctx.getGuild());

@@ -78,7 +78,7 @@ public class ColorCommand extends Command {
                 name, hex, integer, rgb, brightness, data.blackorwhite_text);
             embed.setDescription(desc);
 
-            sendEmbed(ctx.getChannel(), embed, true);
+            sendEmbed(ctx, embed, true);
         });
     }
 }

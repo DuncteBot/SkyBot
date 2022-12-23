@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
@@ -125,7 +124,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         if (nextTrack == null) {
             player.stopTrack();
-            sendMsg(guildMusicManager.getLatestChannel(), "Queue concluded");
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(guildMusicManager.getLatestChannel())
+                    .setMessage("Queue concluded")
+            );
         } else {
             // Make sure to cary over the skip state, we want to announce skipped tracks
             nextTrack.getUserData(TrackUserData.class).setWasFromSkip(wasFromSkip);
@@ -152,7 +155,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 false
             );
 
-            sendEmbed(this.guildMusicManager.getLatestChannel(), message, false);
+
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(guildMusicManager.getLatestChannel())
+                    .setEmbeds(false, message)
+            );
         }
     }
 

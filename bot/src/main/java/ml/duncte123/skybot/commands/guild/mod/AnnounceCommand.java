@@ -60,7 +60,7 @@ public class AnnounceCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final List<TextChannel> mentioned = ctx.getMessage().getMentionedChannels();
+        final List<TextChannel> mentioned = ctx.getMessage().getMentions().getChannels(TextChannel.class);
 
         if (mentioned.isEmpty()) {
             sendMsg(ctx, "You did not specify a channel, usage: " + this.getUsageInstructions(ctx));
@@ -90,7 +90,11 @@ public class AnnounceCommand extends ModBaseCommand {
         );
 
         if (flags.containsKey("noembed")) {
-            sendMsg(targetChannel, msg);
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(targetChannel)
+                    .setMessage(msg)
+            );
             sendSuccess(ctx.getMessage());
 
             return;

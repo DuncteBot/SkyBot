@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class LoadingBarCommand extends Command {
         this.help = "Displays a progress bar that shows how much of the year has passed";
         this.botPermissions = new Permission[]{
             Permission.MESSAGE_ATTACH_FILES,
-            Permission.MESSAGE_WRITE,
+            Permission.MESSAGE_SEND,
         };
     }
 
@@ -53,8 +54,12 @@ public class LoadingBarCommand extends Command {
         final int year = LocalDate.now().getYear();
 
         try {
-            ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")
-                .appendFormat("**%s** is **%s**%% complete.", year, progress).queue();
+            ctx.getChannel().sendFiles(FileUpload.fromData(
+                    LoadingBar.generateImage(progress), "bar.png"
+                ))
+                .setContent(String.format(
+                    "**%s** is **%s**%% complete.", year, progress
+                )).queue();
         }
         catch (IOException e) {
             sendMsg(ctx, "Something went wrong with generating the image.");

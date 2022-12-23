@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
@@ -71,7 +72,7 @@ public class BanCommand extends ModBaseCommand {
 
         final Member toBanMember = mentioned.get(0);
 
-        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel().asTextChannel())) {
             return;
         }
 
@@ -92,7 +93,7 @@ public class BanCommand extends ModBaseCommand {
         final int delDays = flags.containsKey("nodel") ? 0 : 1;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBan, delDays, String.format("%#s: %s", ctx.getAuthor(), fReason))
+        ctx.getGuild().ban(toBan, delDays, TimeUnit.DAYS)
             .reason(String.format("%#s: %s", ctx.getAuthor(), fReason))
             .queue(
             (m) -> {

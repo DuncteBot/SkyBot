@@ -30,9 +30,6 @@ import ml.duncte123.skybot.objects.user.ConsoleUser;
 import ml.duncte123.skybot.objects.user.FakeUser;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
@@ -71,19 +68,31 @@ public class ModerationUtils {
 
     public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
         if (mod.equals(target)) {
-            sendMsg(channel, PROFESSIONAL_RESPONSES[ThreadLocalRandom.current().nextInt(PROFESSIONAL_RESPONSES.length)]);
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(channel)
+                    .setMessage(PROFESSIONAL_RESPONSES[ThreadLocalRandom.current().nextInt(PROFESSIONAL_RESPONSES.length)])
+            );
             return false;
         }
 
         if (!mod.canInteract(target)) {
-            sendMsg(channel, "You cannot " + action + " this member");
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(channel)
+                    .setMessage("You cannot " + action + " this member")
+            );
             return false;
         }
 
         final Member self = mod.getGuild().getSelfMember();
 
         if (!self.canInteract(target)) {
-            sendMsg(channel, "I cannot " + action + " this member, are their roles above mine?");
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(channel)
+                    .setMessage("I cannot " + action + " this member, are their roles above mine?")
+            );
             return false;
         }
 
@@ -271,8 +280,12 @@ public class ModerationUtils {
 
         if (muteRoleId <= 0) {
             if (sendMessages) {
-                sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
-                    "We disabled your spam filter until you have set up a role.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("The role for the punished people is not configured. Please set it up." +
+                            "We disabled your spam filter until you have set up a role.")
+                );
             }
 
             guild.setSettings(guildSettings.setEnableSpamFilter(false));
@@ -283,7 +296,11 @@ public class ModerationUtils {
 
         if (muteRole == null) {
             if (sendMessages) {
-                sendMsg(channel, "The role for the punished people is nonexistent.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("The role for the punished people is nonexistent.")
+                );
             }
             return;
         }
@@ -292,14 +309,22 @@ public class ModerationUtils {
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
             if (sendMessages) {
-                sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("I don't have permissions for muting a person. Please give me role managing permissions.")
+                );
             }
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
             if (sendMessages) {
-                sendMsg(channel, "I can not access either the member or the role.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("I can not access either the member or the role.")
+                );
             }
             return;
         }
@@ -335,14 +360,22 @@ public class ModerationUtils {
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
             if (sendMessages) {
-                sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("I don't have permissions for kicking a person. Please give me kick members permissions.")
+                );
             }
             return;
         }
 
         if (!self.canInteract(member)) {
             if (sendMessages) {
-                sendMsg(channel, "I can not access the member.");
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("I can not access the member.")
+                );
             }
             return;
         }

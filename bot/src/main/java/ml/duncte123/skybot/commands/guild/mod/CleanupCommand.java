@@ -117,7 +117,7 @@ public class CleanupCommand extends ModBaseCommand {
             return;
         }
 
-        final TextChannel channel = ctx.getChannel();
+        final TextChannel channel = ctx.getChannel().asTextChannel();
         final var flags = ctx.getParsedFlags(this);
         final boolean keepPinned = flags.containsKey("keep-pinned");
         final boolean clearBots = flags.containsKey("bots-only");
@@ -161,7 +161,7 @@ public class CleanupCommand extends ModBaseCommand {
     }
 
     private int handleMessages(List<Message> msgs, boolean keepPinned, boolean clearBots, CommandContext ctx) {
-        final TextChannel channel = ctx.getChannel();
+        final TextChannel channel = ctx.getChannel().asTextChannel();
         Stream<Message> msgStream = msgs.stream();
 
         if (keepPinned) {

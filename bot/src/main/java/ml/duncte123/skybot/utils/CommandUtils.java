@@ -31,7 +31,6 @@ import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.utils.Checks;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.Settings.PATREON;
@@ -53,7 +51,7 @@ import static ml.duncte123.skybot.Settings.PATREON;
 /**
  * The {@link #parseInput(Flag[], List)} method has been rewritten in java from
  * JavaScript
- * The original method is available at https://github.com/blargbot/blargbot/
+ * The original method is available at <a href="https://github.com/blargbot/blargbot/">https://github.com/blargbot/blargbot/</a>
  */
 public class CommandUtils {
     public static final TLongSet PATRONS = MapUtils.newLongSet();
@@ -84,7 +82,7 @@ public class CommandUtils {
                     final String fWord = word;
                     final List<Flag> flags = Arrays.stream(map)
                         .filter((f) -> f.getWord() != null && f.getWord().equalsIgnoreCase(fWord.substring(2)))
-                        .collect(Collectors.toList());
+                        .toList();
 
                     if (flags.isEmpty()) {
                         currentFlag = word.substring(2);
@@ -147,7 +145,7 @@ public class CommandUtils {
         return parsed;
     }
 
-    private static boolean isPatron(@Nonnull User user, @Nullable TextChannel channel) {
+    private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx) {
         // Developers have access to paton features
         if (isDev(user) || PATRONS.contains(user.getIdLong())) {
             return true;
@@ -165,18 +163,22 @@ public class CommandUtils {
 
         // If the member is not in our guild we tell them to join it
         if (member == null) {
-            sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                "are not one of our patrons.\n" +
-                "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
-                "You will also need to join our discord server [here](https://duncte.bot/server)"), false);
+            if (ctx != null) {
+                sendEmbed(ctx, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+                    "are not one of our patrons.\n" +
+                    "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
+                    "You will also need to join our discord server [here](https://duncte.bot/server)"), false);
+            }
             return false;
         }
 
         // If the member is not a patron tell them to become one
         if (!member.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
-            sendEmbed(channel, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                "are not one of our patrons.\n" +
-                "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."), false);
+            if (ctx != null) {
+                sendEmbed(ctx, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+                    "are not one of our patrons.\n" +
+                    "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."), false);
+            }
             return false;
         }
 
@@ -189,8 +191,8 @@ public class CommandUtils {
         return TAG_PATRONS.contains(user.getIdLong()) || isDev(user);
     }
 
-    private static boolean isPatron(@Nonnull User user, @Nullable TextChannel channel, boolean reply) {
-        final TextChannel textChannel = reply ? channel : null;
+    private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx, boolean reply) {
+        final CommandContext textChannel = reply ? ctx : null;
         return isPatron(user, textChannel) || isUserTagPatron(user);
     }
 
@@ -230,7 +232,7 @@ public class CommandUtils {
 
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx, boolean reply) {
         final boolean isGuild = isGuildPatron(ctx.getAuthor(), ctx.getGuild());
-        return isGuild || isPatron(ctx.getAuthor(), ctx.getChannel(), reply);
+        return isGuild || isPatron(ctx.getAuthor(), ctx, reply);
     }
 
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx) {

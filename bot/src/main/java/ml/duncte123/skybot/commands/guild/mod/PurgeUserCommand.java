@@ -67,7 +67,7 @@ public class PurgeUserCommand extends ModBaseCommand {
 
         final Member targetMember = mentionedMembers.get(0);
         final User targetUser = targetMember.getUser();
-        final TextChannel channel = ctx.getChannel();
+        final TextChannel channel = ctx.getChannel().asTextChannel();
         final Message message = ctx.getMessage();
 
         channel.getIterableHistory()

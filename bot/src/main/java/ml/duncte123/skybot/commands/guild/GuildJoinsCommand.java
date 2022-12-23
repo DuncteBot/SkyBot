@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -98,8 +99,10 @@ public class GuildJoinsCommand extends Command {
                 ImageIO.write(bufferedImage, "png", stream);
 
                 ctx.getChannel()
-                    .sendFile(stream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
-                    .appendFormat("Here is the join graph for _%s_", ctx.getGuild().getName())
+                    .sendFiles(FileUpload.fromData(
+                        stream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png"
+                    ))
+                    .addContent(String.format("Here is the join graph for _%s_", ctx.getGuild().getName()))
                     .queue();
             }
             catch (IOException e) {

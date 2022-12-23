@@ -63,15 +63,6 @@ dependencies {
     // kotlin (do we need this?)
     // implementation(kotlin("stdlib-jdk8"))
 
-    // TODO: see if we can remove this
-    implementation(libs.jda.utils) {
-        // This is fine
-        exclude(module = "jda-utilities-examples")
-        exclude(module = "jda-utilities-doc")
-        exclude(module = "jda-utilities-command")
-        exclude(module = "jda-utilities-menu")
-        exclude(module = "jda-utilities-oauth2")
-    }
     implementation(libs.sentry)
     implementation(libs.expiringmap)
     implementation(libs.okhttp)

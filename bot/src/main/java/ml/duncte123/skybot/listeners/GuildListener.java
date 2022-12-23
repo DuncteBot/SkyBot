@@ -37,15 +37,11 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
-import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -65,11 +61,7 @@ public class GuildListener extends BaseListener {
             this.onGuildJoin(guildJoin);
         } else if (event instanceof GuildLeaveEvent guildLeave) {
             this.onGuildLeave(guildLeave);
-        } else if (event instanceof GuildVoiceLeaveEvent guildVoiceLeave) {
-            this.onGuildVoiceLeave(guildVoiceLeave);
-        } else if (event instanceof GuildVoiceJoinEvent guildVoiceJoin) {
-            this.onGuildVoiceJoin(guildVoiceJoin);
-        } else if (event instanceof GuildVoiceMoveEvent guildVoiceMove) {
+        } else if (event instanceof GuildVoiceUpdateEvent guildVoiceMove) {
             this.onGuildVoiceMove(guildVoiceMove);
         } else if (event instanceof GuildBanEvent guildBan) {
             this.onGuildBan(guildBan);
@@ -120,7 +112,8 @@ public class GuildListener extends BaseListener {
         );
     }
 
-    private void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+    // TODO: keep for reference
+    /*private void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         final Guild guild = event.getGuild();
         final LavalinkManager manager = LavalinkManager.INS;
 
@@ -164,30 +157,45 @@ public class GuildListener extends BaseListener {
         }
 
         handleVcAutoRole(guild, member, channel, false);
-    }
+    }*/
 
-    private void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+    private void onGuildVoiceMove(GuildVoiceUpdateEvent event) {
         final Guild guild = event.getGuild();
+        final AudioChannel channelLeft = event.getChannelLeft();
+        final AudioChannel channelJoined = event.getChannelJoined();
+        final Member member = event.getMember();
+
+        // Autorole
+        if (channelJoined != null) {
+            handleVcAutoRole(guild, member, channelJoined, false);
+        } else if (channelLeft != null) {
+            handleVcAutoRole(guild, member, channelLeft, true);
+        }
+
         final LavalinkManager manager = LavalinkManager.INS;
 
         if (!manager.isConnected(guild)) {
             return;
         }
 
-        final AudioChannelUnion connected = manager.getConnectedChannel(guild);
+        final AudioChannel connected = manager.getConnectedChannel(guild);
+        final Member self = guild.getSelfMember();
 
-        if (connected == null) {
+        if (member.equals(self)) {
+            if (channelJoined != null) {
+                if (channelJoined.getType() == ChannelType.STAGE) {
+                    requestToSpeak(guild, self, channelJoined);
+                    return;
+                }
+
+                channelCheckThing(guild, connected);
+            }
+
             return;
         }
 
-        if (event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
-            channelCheckThing(guild, connected);
-
-            return;
-        }
-
-        if (event.getChannelLeft().equals(connected)) {
-            channelCheckThing(guild, event.getChannelLeft());
+        if (connected != null && connected.equals(channelLeft)) {
+            channelCheckThing(guild, channelLeft);
         }
     }
 
@@ -251,7 +259,7 @@ public class GuildListener extends BaseListener {
             });
     }
 
-    private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
+    private void handleVcAutoRole(Guild guild, Member member, AudioChannel channel, boolean remove) {
         final long guildId = guild.getIdLong();
         final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
@@ -281,7 +289,7 @@ public class GuildListener extends BaseListener {
         }
     }
 
-    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel voiceChannel) {
+    private void channelCheckThing(@Nonnull Guild guild, @Nonnull AudioChannel voiceChannel) {
         this.handlerThread.submit(() -> {
             try {
                 // Run the disconnecting after timeout so we allow JDA to receive updates
@@ -317,7 +325,7 @@ public class GuildListener extends BaseListener {
         });
     }
 
-    private void requestToSpeak(Guild guild, Member self, VoiceChannel channel) {
+    private void requestToSpeak(Guild guild, Member self, AudioChannel channel) {
         // JDA handles all the logic for us :)
         if (self.hasPermission(channel, Permission.REQUEST_TO_SPEAK) ||
             self.hasPermission(channel, Permission.VOICE_MUTE_OTHERS)) {

@@ -27,12 +27,12 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
@@ -58,11 +58,11 @@ public class ReadyShutdownListener extends MessageListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildMessageUpdateEvent messageUpdate) {
+        if (event instanceof MessageUpdateEvent messageUpdate) {
             this.onGuildMessageUpdate(messageUpdate);
-        } else if (event instanceof GuildMessageReceivedEvent messageReceived) {
+        } else if (event instanceof MessageReceivedEvent messageReceived) {
             this.onGuildMessageReceived(messageReceived);
-        } else if (event instanceof GuildMessageDeleteEvent delete) {
+        } else if (event instanceof MessageDeleteEvent delete) {
             this.onGuildMessageDelete(delete);
         } else if (event instanceof MessageBulkDeleteEvent bulkDelete) {
             this.onMessageBulkDelete(bulkDelete);

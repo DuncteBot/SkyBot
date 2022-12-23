@@ -22,7 +22,6 @@ import me.duncte123.durationparser.DurationParser;
 import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -31,10 +30,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import static com.dunctebot.models.utils.Utils.getDatabaseDateFormat;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.utils.ModerationUtils.*;
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class TempBanCommand extends ModBaseCommand {
 
@@ -73,7 +75,7 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
-        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel().asTextChannel())) {
             return;
         }
 
@@ -96,11 +98,13 @@ public class TempBanCommand extends ModBaseCommand {
             sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag" + example);
         }
 
-        final String finalUnbanDate = AirUtils.getDatabaseDateFormat(duration);
+        final String finalUnbanDate = getDatabaseDateFormat(duration);
         final String fReason = reason;
         final User toBan = toBanMember.getUser();
 
-        ctx.getGuild().ban(toBan.getId(), 1, String.format("%#s: %s", ctx.getAuthor(), fReason)).queue(
+        ctx.getGuild().ban(toBan, 1, TimeUnit.DAYS)
+            .reason(String.format("%#s: %s", ctx.getAuthor(), fReason))
+            .queue(
             (ignored) -> {
                 if (duration.getSeconds() > 0) {
                     ctx.getDatabase().createBan(

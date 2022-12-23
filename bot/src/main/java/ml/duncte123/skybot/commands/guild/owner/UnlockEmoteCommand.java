@@ -55,7 +55,7 @@ public class UnlockEmoteCommand extends Command {
         }
 
         // TODO: this will fail, just so it compiles for now
-        final List<RichCustomEmoji> foundEmotes = (List<RichCustomEmoji>) ((Object) FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA()));
+        final List<RichCustomEmoji> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
 
         if (foundEmotes.isEmpty()) {
             sendMsg(ctx, "No emotes found");
