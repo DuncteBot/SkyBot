@@ -159,6 +159,7 @@ public class GuildListener extends BaseListener {
         handleVcAutoRole(guild, member, channel, false);
     }*/
 
+    @SuppressWarnings("PMD.ConfusingTernary")
     private void onGuildVoiceMove(GuildVoiceUpdateEvent event) {
         final Guild guild = event.getGuild();
         final AudioChannel channelLeft = event.getChannelLeft();

@@ -112,6 +112,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     @Nullable
+    @SuppressWarnings("PMD.ConfusingTernary")
     protected String getImageFromCommand(CommandContext ctx) {
         final List<String> args = ctx.getArgs();
         final List<User> mentionedUsers = ctx.getMessage().getMentions().getUsers();
@@ -121,7 +122,7 @@ public abstract class ImageCommandBase extends Command {
         // But I won't change one pmd rule just for the sake of using !isEmpty here
         if (ctx.getMessage().getAttachments().size() > 0) {
             url = tryGetAttachment(ctx);
-        } else if (mentionedUsers.size() > 0) {
+        } else if (!mentionedUsers.isEmpty()) {
             url = getAvatarUrl(mentionedUsers.get(0));
         } else if (!args.isEmpty()) {
             if (AirUtils.isURL(args.get(0))) {
@@ -145,25 +146,28 @@ public abstract class ImageCommandBase extends Command {
     @Nullable
     private String tryGetAttachment(CommandContext ctx) {
         final Attachment attachment = ctx.getMessage().getAttachments().get(0);
-        final File file = new File(attachment.getFileName());
 
-        String mimetype = null;
+        try (attachment) {
+            final File file = new File(attachment.getFileName());
 
-        try {
-            mimetype = Files.probeContentType(file.toPath());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+            String mimetype = null;
 
-        //mimetype should be something like "image/png"
+            try {
+                mimetype = Files.probeContentType(file.toPath());
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //mimetype should be something like "image/png"
 //        if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
-        if (mimetype == null || !mimetype.startsWith("image/")) {
-            sendMsg(ctx, "That file does not look like an image");
-            return null;
-        }
+            if (mimetype == null || !mimetype.startsWith("image/")) {
+                sendMsg(ctx, "That file does not look like an image");
+                return null;
+            }
 
-        return attachment.getUrl();
+            return attachment.getUrl();
+        }
     }
 
     @Nullable
