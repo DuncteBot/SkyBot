@@ -25,7 +25,6 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
-import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView
 import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
