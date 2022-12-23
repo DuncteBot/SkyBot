@@ -52,6 +52,7 @@ dependencies {
     compileOnly(libs.duration.parser)
     compileOnly(libs.bundles.json)
     implementation(libs.findbugs)
+    implementation(libs.org.json)
 }
 
 fun getBuildNum(): String {

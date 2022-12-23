@@ -16,14 +16,6 @@ dependencies {
     implementation(libs.bundles.dashWeb)
     implementation(libs.expiringmap)
     implementation(libs.trove)
-    // TODO: remove jda-utils and just pull in oauth impl
-    implementation(libs.jda.utils) {
-        // This is fine
-        exclude(module = "jda-utilities-examples")
-        exclude(module = "jda-utilities-doc")
-        exclude(module = "jda-utilities-command")
-        exclude(module = "jda-utilities-menu")
-    }
     implementation(libs.jda)  {
         exclude(module = "opus-java")
     }

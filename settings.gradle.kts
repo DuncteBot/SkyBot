@@ -40,6 +40,7 @@ dependencyResolutionManagement {
 fun VersionCatalogBuilder.common() {
     library("logback", "ch.qos.logback", "logback-classic").version("1.2.10")
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
+    library("org-json", "org.json", "json").version("20220924")
 
     library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.2")
 
@@ -67,8 +68,6 @@ fun VersionCatalogBuilder.bot() {
     // TODO: do we still need this?
     library("groovy", "org.codehaus.groovy", "groovy-jsr223").version("3.0.7")
     library("expiringmap", "net.jodah", "expiringmap").version("0.5.9")
-
-    library("jda-utils", "com.github.JDA-Applications", "JDA-Utilities").version("804d58a")
 
     library("weebjava", "me.duncte123", "weebJava").version("3.0.1_4")
     library("loadingBar", "me.duncte123", "loadingbar").version("1.4.1_7")
@@ -106,6 +105,7 @@ fun VersionCatalogBuilder.dashboard() {
     library("webjar-vue", "org.webjars.npm", "vue").version("2.6.14")
 
     library("javalin", "io.javalin", "javalin").version("4.6.1")
+
 
     bundle("dashWeb", listOf("javalin", "webjar-vue"))
 }
