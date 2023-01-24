@@ -104,7 +104,7 @@ fun VersionCatalogBuilder.voice() {
 fun VersionCatalogBuilder.dashboard() {
     library("webjar-vue", "org.webjars.npm", "vue").version("2.6.14")
 
-    library("javalin", "io.javalin", "javalin").version("4.6.1")
+    library("javalin", "io.javalin", "javalin").version("4.6.6")
 
 
     bundle("dashWeb", listOf("javalin", "webjar-vue"))

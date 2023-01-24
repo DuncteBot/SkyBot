@@ -27,6 +27,7 @@ import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import gnu.trove.map.TLongObjectMap;
 import lavalink.client.LavalinkUtil;
 import ml.duncte123.skybot.Variables;
@@ -34,7 +35,6 @@ import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
-import ml.duncte123.skybot.audio.sourcemanagers.youtube.YoutubeAudioSourceManagerOverride;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
@@ -54,10 +54,11 @@ public class AudioUtils {
         playerManager = new DefaultAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-        final YoutubeAudioSourceManagerOverride sourceManager = new YoutubeAudioSourceManagerOverride(config.googl);
+//        final YoutubeAudioSourceManagerOverride ytSourceMngr = new YoutubeAudioSourceManagerOverride(config.googl);
+        final YoutubeAudioSourceManager ytSourceMngr = new YoutubeAudioSourceManager();
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(sourceManager, config));
-        playerManager.registerSourceManager(sourceManager);
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(ytSourceMngr, config));
+        playerManager.registerSourceManager(ytSourceMngr);
 
         DuncteBotSources.registerDuncteBot(playerManager, "en-AU", 6);
         DuncteBotSources.registerDuncteBot(LavalinkUtil.getPlayerManager(), "en-AU", 6);
