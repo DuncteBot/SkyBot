@@ -16,300 +16,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.api.tasks.wrapper.Wrapper.DistributionType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
-import kotlin.math.min
 
 plugins {
-    pmd
     java
     idea
-    application
 
-    kotlin("jvm") version "1.7.10"
-    id("org.liquibase.gradle") version "2.0.4"
-//    id("org.jmailen.kotlinter") version "3.9.0" // removes star imports :(
-    id("org.jmailen.kotlinter") version "3.11.1"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.github.breadmoirai.github-release") version "2.2.12"
+    kotlin("jvm") version "1.7.20" apply false
+    id("org.liquibase.gradle") version "2.0.4" apply false
+    id("org.jmailen.kotlinter") version "3.11.1" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("com.github.breadmoirai.github-release") version "2.2.12" apply false
 }
 
-val numberVersion = "3.106.9"
+allprojects {
+    group = "skybot"
 
-project.group = "ml.duncte123.skybot"
-project.version = "${numberVersion}_${getGitHash()}"
+    repositories {
+        mavenCentral()
 
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
-}
-
-repositories {
-    mavenCentral()
-
-    // caches old bintray packages
-    maven("https://duncte123.jfrog.io/artifactory/bintray-maven")
-    maven("https://repo.jenkins-ci.org/releases")
-    maven("https://duncte123.jfrog.io/artifactory/maven")
-    maven("https://m2.duncte123.dev/releases")
-    maven("https://m2.duncte123.dev/snapshots")
-    maven("https://m2.dv8tion.net/releases")
-    maven("https://jitpack.io")
-}
-
-dependencies {
-    implementation(group = "com.dunctebot", name = "dunctebot-models", version = "0.1.22")
-
-    // loadingbar
-    implementation(group = "me.duncte123", name = "loadingbar", version = "1.4.1_7")
-
-    // Weeb api
-    implementation(group = "me.duncte123", name = "weebJava", version = "3.0.1_3")
-
-    // botCommons
-    implementation(group = "me.duncte123", name = "botCommons", version = "2.3.11")
-
-    // JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "4.4.0_350") {
-        exclude(module = "opus-java")
+        maven("https://m2.dv8tion.net/releases")
+        maven("https://m2.duncte123.dev/releases")
+        maven("https://repo.jenkins-ci.org/releases")
+        maven("https://m2.duncte123.dev/snapshots")
+        maven("https://duncte123.jfrog.io/artifactory/maven")
+        maven("https://jitpack.io")
     }
 
-    implementation(group = "com.dunctebot", name = "sourcemanagers", version = "1.8.0")
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    implementation(group = "com.github.walkyst", name = "lavaplayer-fork", version = "1.3.96")
-    implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c1d8b73") {
-        exclude(module = "lavaplayer")
-    }
-
-    //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "3.0.7")
-
-    // Logback classic
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
-
-    //Spotify API
-    implementation(group = "se.michaelthelin.spotify", name = "spotify-web-api-java", version = "7.2.0")
-
-    // Youtube api
-    implementation(group = "com.google.apis", name = "google-api-services-youtube", version = "v3-rev222-1.25.0")
-
-    // kotlin
-    implementation(kotlin("stdlib-jdk8"))
-
-    // JDA utils
-    implementation(group = "com.github.JDA-Applications", name = "JDA-Utilities", version = "804d58a") {
-        // This is fine
-        exclude(module = "jda-utilities-examples")
-        exclude(module = "jda-utilities-doc")
-        exclude(module = "jda-utilities-command")
-        exclude(module = "jda-utilities-menu")
-        exclude(module = "jda-utilities-oauth2")
-    }
-
-    // jagtag
-    implementation(group = "com.github.jagrosh", name = "JagTag", version = "6dbe1ba")
-
-    //Wolfaram alpha
-    implementation(group = "com.github.DuncteBot", name = "wolfram-alpha-java-binding", version = "5c123ae")
-
-    // time parsing
-    // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
-
-    //Sentry
-    implementation(group = "io.sentry", name = "sentry-logback", version = "5.4.0")
-
-    // durationParser
-    implementation(group = "me.duncte123", name = "durationParser", version = "1.1.3")
-
-    // ExpiringMap
-    implementation(group = "net.jodah", name = "expiringmap", version = "0.5.9")
-
-    // okhttp
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.9")
-
-    // trove maps
-    implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
-
-    // emoji-java
-    implementation(group = "com.github.minndevelopment", name = "emoji-java", version = "master-SNAPSHOT")
-
-    // jackson
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.12.3")
-    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.12.3")
-
-    // redis
-    implementation(group = "redis.clients", name = "jedis", version = "3.7.0")
-
-    implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.0")
-    // TODO: replace with official? https://jdbc.postgresql.org/
-    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = "0.8.9")
-    implementation(group = "org.liquibase", name = "liquibase-core", version = "4.8.0")
-    runtimeOnly(group = "com.mattbertolini", name = "liquibase-slf4j", version = "4.0.0")
-}
-
-val compileKotlin: KotlinCompile by tasks
-val compileJava: JavaCompile by tasks
-val shadowJar: ShadowJar by tasks
-val clean: Task by tasks
-val build: Task by tasks
-val jar: Jar by tasks
-
-val printVersion = task<Task>("printVersion") {
-    println("CI: ${System.getenv("CI")}")
-    println(project.version)
-}
-
-task<Exec>("botVersion") {
-    executable = "echo"
-    args("v:", numberVersion)
-}
-
-build.apply {
-    dependsOn(printVersion)
-    dependsOn(clean)
-    dependsOn(jar)
-
-    jar.mustRunAfter(clean)
-}
-
-compileKotlin.apply {
-    kotlinOptions {
-        jvmTarget = "16"
+    tasks.withType<Wrapper> {
+        gradleVersion = "7.5.1"
+        distributionType = Wrapper.DistributionType.BIN
     }
 }
 
-val sourcesForRelease = task<Copy>("sourcesForRelease") {
-    from("src/main/java") {
-        include("**/Settings.java")
-
-        val isCi = System.getenv("CI") == "true"
-
-        filter {
-            it.replaceFirst(
-                """public static final boolean IS_LOCAL = VERSION.startsWith("@versionObj");""",
-                """public static final boolean IS_LOCAL = ${!isCi};"""
-            )
-        }
-
-        if (isCi) {
-            val items = mapOf(
-//                "versionObj" to project.version
-                "versionObj" to numberVersion
-            )
-
-            filter<ReplaceTokens>(mapOf("tokens" to items))
-        }
+subprojects {
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "16"
     }
 
-    from("src/main/java") {
-        include("**/VoteCommand.java")
-
-        val regex = "\" \\+ link\\(\"(.*)\"\\)( \\+)?".toRegex()
-
-        filter {
-            it.replace(regex, "[\$1](\$1)\\\\n\"\$2")
-        }
-    }
-
-    into("build/filteredSrc")
-
-    includeEmptyDirs = false
-}
-
-val generateJavaSources = task<SourceTask>("generateJavaSources") {
-    val javaSources = sourceSets["main"].allJava.filter {
-        !arrayOf("Settings.java", "VoteCommand.java").contains(it.name)
-    }.asFileTree
-
-    source = javaSources + fileTree(sourcesForRelease.destinationDir)
-
-    dependsOn(sourcesForRelease)
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-    options.isIncremental = true
-    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
-}
-
-compileJava.apply {
-    source = generateJavaSources.source
-
-    dependsOn(generateJavaSources)
-}
-
-application {
-    mainClass.set("ml.duncte123.skybot.SkyBot")
-}
-
-shadowJar.apply {
-    archiveClassifier.set("prod")
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "7.5"
-    distributionType = DistributionType.ALL
-}
-
-kotlinter {
-    ignoreFailures = false
-    reporters = arrayOf("checkstyle", "plain")
-    experimentalRules = true
-    disabledRules = arrayOf(
-        "filename", "no-wildcard-imports", "experimental:indent",
-        "argument-list-wrapping",
-        "experimental:spacing-between-declarations-with-annotations",
-        "experimental:spacing-between-declarations-with-comments",
-        "experimental:comment-wrapping"
-    )
-}
-
-pmd {
-    isConsoleOutput = true
-    toolVersion = "6.34.0"
-    rulesMinimumPriority.set(5)
-    ruleSets = listOf()
-    ruleSetFiles(File("linters/pmd.xml"))
-}
-
-task<Task>("lintAll") {
-    dependsOn(tasks.lintKotlin)
-    dependsOn(tasks.pmdMain)
-}
-
-githubRelease {
-    token(System.getenv("GITHUB_TOKEN"))
-    owner("DuncteBot")
-    repo("SkyBot")
-    tagName("v$numberVersion")
-    targetCommitish("main")
-    releaseAssets(shadowJar.outputs.files.toList())
-    overwrite(false)
-    prerelease(false)
-    dryRun(false)
-    body(changelog())
-}
-
-fun getGitHash(): String {
-    return try {
-        val stdout = ByteArrayOutputStream()
-
-        exec {
-            commandLine("git", "rev-parse", "--short", "HEAD")
-            standardOutput = stdout
-        }
-
-        stdout.toString().trim()
-    } catch (ignored: Throwable) {
-        // Ugly hacks 101 :D
-        val hash = System.getenv("GIT_HASH") ?: "dev"
-
-        return hash.substring(0, min(8, hash.length))
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.compilerArgs.add("-Xlint:unchecked")
+        options.compilerArgs.add("-Xlint:deprecation")
     }
 }
-
-class DependencyInfo(val group: String, val name: String, val version: String)

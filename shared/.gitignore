@@ -1,0 +1,7 @@
+.gradle/
+build/
+out/
+.env
+!.idea/copyright/*
+!.idea/copyright/dasboard.xml
+!.idea/copyright/profiles_settings.xml

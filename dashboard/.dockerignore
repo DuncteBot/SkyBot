@@ -1,0 +1,6 @@
+Dockerfile
+.dockerignore
+.git/
+.gitattributes
+.gitignore
+build/
