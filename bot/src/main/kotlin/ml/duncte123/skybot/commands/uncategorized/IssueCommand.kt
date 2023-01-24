@@ -84,7 +84,7 @@ class IssueCommand : Command() {
 
                     sendMsg(
                         MessageConfig.Builder()
-                            // .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!) // TODO: MessageChannel
+                            .setChannel(ctx.shardManager.getTextChannelById(424146177626210305L)!!)
                             .addEmbed(embed)
                             .build()
                     )
