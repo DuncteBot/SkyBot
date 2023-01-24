@@ -91,6 +91,7 @@
         <exclude name="AvoidCatchingThrowable"/>
         <exclude name="CallSuperFirst"/>
         <exclude name="CallSuperLast"/>
+        <exclude name="CloseResource"/>
         <exclude name="DoNotCallGarbageCollectionExplicitly"/>
         <exclude name="DoNotTerminateVM"/>
         <exclude name="MissingSerialVersionUID"/>

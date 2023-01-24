@@ -48,6 +48,7 @@ public class ShardWatcher implements EventListener {
             -1, -1
         );
 
+        @SuppressWarnings("PMD.CloseResource")
         final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor((r) -> {
             final Thread thread = new Thread(r, "Shard-watcher");
             thread.setDaemon(true);
