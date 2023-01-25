@@ -39,6 +39,7 @@ dependencyResolutionManagement {
 
 fun VersionCatalogBuilder.common() {
     library("logback", "ch.qos.logback", "logback-classic").version("1.2.10")
+    library("logback-newSlf4j", "ch.qos.logback", "logback-classic").version("1.4.5")
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
     library("org-json", "org.json", "json").version("20220924")
 

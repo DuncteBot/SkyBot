@@ -11,6 +11,6 @@ val duncteApis = DuncteApi("Bot ${System.getenv("BOT_TOKEN")}")
 
 val httpClient = OkHttpClient()
 val jsonMapper = JsonMapper()
-val webSocket = WebsocketClient()
+lateinit var webSocket: WebsocketClient
 
 val server = WebServer()

@@ -13,6 +13,7 @@ import com.dunctebot.dashboard.websocket.handlers.base.SocketHandler
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.neovisionaries.ws.client.*
+import io.javalin.Javalin
 import io.javalin.websocket.WsMessageContext
 import net.dv8tion.jda.internal.utils.IOUtil
 import org.slf4j.LoggerFactory
@@ -20,9 +21,9 @@ import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class WebsocketClient : WebSocketAdapter(), WebSocketListener {
+class WebsocketClient(app: Javalin) : WebSocketAdapter(), WebSocketListener {
     private val logger = LoggerFactory.getLogger(WebsocketClient::class.java)
-    private val handlersMap = mutableMapOf<String, SocketHandler>()
+    val handlersMap = mutableMapOf<String, SocketHandler>()
 
     private val executor = Executors.newSingleThreadExecutor {
         val t = Thread(it, "WS-SendThread")
@@ -46,11 +47,17 @@ class WebsocketClient : WebSocketAdapter(), WebSocketListener {
     var reconnectsAttempted = 0
     val reconnectInterval: Int
         get() = reconnectsAttempted * 2000 - 2000
+    private var socketSendFn: (String) -> Unit = { socket.sendText(it) }
 
     init {
         setupHandlers()
 
-        if (System.getenv("WS_URL") != "disable") {
+        if (System.getenv("WS_URL") == "dash_is_server") {
+            // init socket server
+            val wsServer = WebsocketServer(app)
+
+            socketSendFn = wsServer::broadcast
+        } else {
             connect()
 
             reconnectThread.scheduleWithFixedDelay(
@@ -134,34 +141,6 @@ class WebsocketClient : WebSocketAdapter(), WebSocketListener {
         thread.name = "DuncteBotWS-$threadType"
     }
 
-    // Start javalin socket server
-
-    fun onJavalinWSMessage(ctx: WsMessageContext) {
-        try {
-            val raw = jsonMapper.readTree(ctx.message())
-
-            logger.debug("<- {}", raw)
-
-            if (!raw.has("t")) {
-                return
-            }
-
-            val type = raw["t"].asText()
-            val handler = handlersMap[type]
-
-            if (handler == null) {
-                logger.warn("Unknown event or missing handler for type $type")
-                return
-            }
-
-            handler.handle(raw)
-        } catch (e: IOException) {
-            logger.error("Failed to parse json", e)
-        }
-    }
-
-    // end javalin socket server
-
     fun requestData(data: JsonNode, callback: (JsonNode) -> Unit) {
         val hash = HashUtils.sha1(data.toString() + System.currentTimeMillis())
 
@@ -181,7 +160,8 @@ class WebsocketClient : WebSocketAdapter(), WebSocketListener {
             try {
                 logger.debug("-> {}", message)
 
-                socket.sendText(jsonMapper.writeValueAsString(message))
+                socketSendFn(jsonMapper.writeValueAsString(message))
+//                socket.sendText(jsonMapper.writeValueAsString(message))
             } catch (e: Exception) {
                 logger.error("Error with broadcast", e)
             }

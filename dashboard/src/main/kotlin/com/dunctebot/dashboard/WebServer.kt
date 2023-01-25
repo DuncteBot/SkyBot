@@ -4,6 +4,7 @@ import com.dunctebot.dashboard.controllers.DashboardController
 import com.dunctebot.dashboard.controllers.GuildController
 import com.dunctebot.dashboard.controllers.RootController
 import com.dunctebot.dashboard.controllers.api.*
+import com.dunctebot.dashboard.websocket.WebsocketClient
 import com.dunctebot.jda.oauth.OauthSessionController
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.ProfanityFilterType
@@ -53,6 +54,8 @@ class WebServer {
             }
         }
 
+        webSocket = WebsocketClient(this.app)
+
         // Non settings related routes
         this.app.get("roles/{hash}") { ctx -> GuildController.showGuildRoles(ctx) }
 
@@ -66,7 +69,6 @@ class WebServer {
         addDashboardRoutes()
         addAPIRoutes()
         mapErrorRoutes()
-        // mapWebSocketRoutes()
     }
 
     private fun addDashboardRoutes() {
@@ -161,20 +163,6 @@ class WebServer {
         // TODO: find a better solution, this is ugly (probably same thing with custom ex)
         this.app.exception(ForbiddenResponse::class.java) { _, _ ->
             //
-        }
-    }
-
-    private fun mapWebSocketRoutes() {
-        // TODO: figure out how to send data from javalin
-        this.app.ws("/socket") {
-            it.onConnect { ctx ->
-                val header = ctx.header("Authorization")
-
-                if (header == null || header != System.getenv("WS_SERVER_TOKEN")) {
-                    ctx.closeSession(401, "Unauthorized")
-                }
-            }
-            it.onMessage(webSocket::onJavalinWSMessage)
         }
     }
 

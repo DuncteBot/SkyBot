@@ -11,7 +11,7 @@ version = "1.0"
 
 dependencies {
     implementation(projects.shared)
-    implementation(libs.logback)
+    implementation(libs.logback.newSlf4j)
     implementation(libs.bundles.json)
     implementation(libs.bundles.dashWeb)
     implementation(libs.expiringmap)
