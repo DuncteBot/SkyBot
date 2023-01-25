@@ -45,4 +45,8 @@ public interface ICommand<CTX> {
 
     boolean shouldDisplayAliasesInHelp();
 
+    default String gerNameForLogger() {
+        return getClass().getSimpleName();
+    }
+
 }

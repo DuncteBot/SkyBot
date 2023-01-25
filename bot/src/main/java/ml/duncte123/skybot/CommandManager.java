@@ -508,7 +508,7 @@ public class CommandManager {
 
         MDC.put("command.class", cmd.getClass().getName());
 
-        LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.getClass().getSimpleName(), event.getGuild(), args);
+        LOGGER.info("Dispatching command \"{}\" in guild \"{}\" with {}", cmd.gerNameForLogger(), event.getGuild(), args);
 
         cmd.executeCommand(
             new CommandContext(invoke, args, event, variables)

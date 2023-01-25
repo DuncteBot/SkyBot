@@ -89,6 +89,11 @@ public class CustomCommand implements ICommand<Object> {
         return false;
     }
 
+    @Override
+    public String gerNameForLogger() {
+        return "Custom[name="+getName()+",guild="+getGuildId()+']';
+    }
+
     public JsonNode toJSONObject(ObjectMapper mapper) {
         return mapper.createObjectNode()
             .put("guildId", getGuildId())
