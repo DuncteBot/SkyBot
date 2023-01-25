@@ -9,7 +9,7 @@ import com.jagrosh.jdautilities.oauth2.session.Session
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
 import io.javalin.http.UnauthorizedResponse
-import io.javalin.plugin.rendering.vue.VueComponent
+import io.javalin.vue.VueComponent
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.internal.utils.IOUtil
 import okhttp3.FormBody

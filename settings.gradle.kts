@@ -96,7 +96,7 @@ fun VersionCatalogBuilder.database() {
 fun VersionCatalogBuilder.voice() {
     library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.3.98.4")
+    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.3.99.2")
 //    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
     library("lavalink-client", "com.github.freyacodes", "Lavalink-Client").version("cde746afc")
 }
@@ -104,7 +104,7 @@ fun VersionCatalogBuilder.voice() {
 fun VersionCatalogBuilder.dashboard() {
     library("webjar-vue", "org.webjars.npm", "vue").version("2.6.14")
 
-    library("javalin", "io.javalin", "javalin").version("4.6.6")
+    library("javalin", "io.javalin", "javalin").version("5.3.2")
 
 
     bundle("dashWeb", listOf("javalin", "webjar-vue"))

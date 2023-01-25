@@ -6,9 +6,9 @@ import com.dunctebot.dashboard.bodies.PatronBody
 import com.dunctebot.jda.json.JsonRole
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.javalin.http.Context
-import io.javalin.http.HttpCode
+import io.javalin.http.HttpStatus
 import io.javalin.http.NotFoundResponse
-import io.javalin.plugin.rendering.vue.VueComponent
+import io.javalin.vue.VueComponent
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
@@ -29,7 +29,7 @@ object GuildController {
         .build<Long, CustomRoleList>()
 
     fun handleOneGuildRegister(ctx: Context) {
-        val body = ctx.bodyValidator<PatronBody>()
+        val body = ctx.bodyValidator(PatronBody::class.java)
             .check(
                 "token",
                 { !it.token.isNullOrBlank() && securityKeys.containsKey(it.token) },
@@ -53,7 +53,7 @@ object GuildController {
         val theFormat = "$userId-$guildId"
 
         if (securityKeys[token] != theFormat) {
-            ctx.status(HttpCode.BAD_REQUEST)
+            ctx.status(HttpStatus.BAD_REQUEST)
 
             val obj = jsonMapper.createObjectNode()
                 .put("message", "Submitted token is not valid.")
@@ -66,7 +66,7 @@ object GuildController {
         securityKeys.remove(token)
 
         if (duncteApis.isOneGuildPatron(userId)) {
-            ctx.status(HttpCode.BAD_REQUEST)
+            ctx.status(HttpStatus.BAD_REQUEST)
 
             val obj = jsonMapper.createObjectNode()
                 .put("message", "You already registered yourself for these perks, please contact a bot admin to have it changed.")
@@ -85,7 +85,7 @@ object GuildController {
 
         webSocket.broadcast(sendData)
 
-        ctx.status(HttpCode.OK)
+        ctx.status(HttpStatus.OK)
 
         val obj = jsonMapper.createObjectNode()
             .put("message", "Server successfully registered.")

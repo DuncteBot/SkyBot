@@ -11,11 +11,9 @@ import com.dunctebot.models.settings.WarnAction
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
-import io.javalin.core.compression.CompressionStrategy
 import io.javalin.http.ForbiddenResponse
 import io.javalin.http.staticfiles.Location
-import io.javalin.plugin.rendering.vue.JavalinVue
-import io.javalin.plugin.rendering.vue.VueComponent
+import io.javalin.vue.VueComponent
 
 class WebServer {
     private val app: Javalin
@@ -29,30 +27,29 @@ class WebServer {
         val local = System.getenv("IS_LOCAL").toBoolean()
 
         this.app = Javalin.create { config ->
-            config.compressionStrategy(CompressionStrategy.GZIP)
-            config.autogenerateEtags = true
+            config.http.generateEtags = true
+            config.compression.gzipOnly()
             config.showJavalinBanner = false
-            config.enableWebjars()
+            config.staticFiles.enableWebjars()
 
             if (local) {
                 val projectDir = System.getProperty("user.dir")
                 val staticDir = "/src/main/resources/public"
-                config.addStaticFiles(projectDir + staticDir, Location.EXTERNAL)
-                config.enableDevLogging()
-                JavalinVue.optimizeDependencies = false
-                JavalinVue.rootDirectory {
-                    it.externalPath("$projectDir/src/main/resources/vue") // live reloading :)
-                }
+                config.staticFiles.add(projectDir + staticDir, Location.EXTERNAL)
+//                config.enableDevLogging()
+                config.plugins.enableDevLogging()
+                config.vue.optimizeDependencies = false
+                config.vue.rootDirectory("$projectDir/src/main/resources/vue") // live reloading :)
             } else {
-                config.addStaticFiles("/public", Location.CLASSPATH)
-                JavalinVue.optimizeDependencies = true
+                config.staticFiles.add("/public", Location.CLASSPATH)
+                config.vue.optimizeDependencies = false
             }
             // 191231307290771456
             // 191245668617158656
 
             // HACK: use a better solution.
-            config.contextResolvers { resolvers ->
-                resolvers.scheme = { _ -> if (local) "http" else "https" }
+            config.contextResolver.scheme = { _ ->
+                if (local) "http" else "https"
             }
         }
 
@@ -69,13 +66,14 @@ class WebServer {
         addDashboardRoutes()
         addAPIRoutes()
         mapErrorRoutes()
+        // mapWebSocketRoutes()
     }
 
     private fun addDashboardRoutes() {
         this.app.get("callback") { ctx -> RootController.callback(ctx, oAuth2Client) }
 
         this.app.get("logout") { ctx ->
-            ctx.req.session.invalidate()
+            ctx.req().session.invalidate()
 
             ctx.redirect("$HOMEPAGE?logout=true")
         }
@@ -161,8 +159,22 @@ class WebServer {
         }
 
         // TODO: find a better solution, this is ugly (probably same thing with custom ex)
-        this.app.exception(ForbiddenResponse::class.java) { ex, ctx ->
+        this.app.exception(ForbiddenResponse::class.java) { _, _ ->
             //
+        }
+    }
+
+    private fun mapWebSocketRoutes() {
+        // TODO: figure out how to send data from javalin
+        this.app.ws("/socket") {
+            it.onConnect { ctx ->
+                val header = ctx.header("Authorization")
+
+                if (header == null || header != System.getenv("WS_SERVER_TOKEN")) {
+                    ctx.closeSession(401, "Unauthorized")
+                }
+            }
+            it.onMessage(webSocket::onJavalinWSMessage)
         }
     }
 

@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 public interface ICommand<CTX> {
 
-    // TODO: generics with custom command context
+    // TODO: generics with custom command context and use this method for executing them
     void executeCommand(@Nonnull CTX ctx);
 
     @Nonnull

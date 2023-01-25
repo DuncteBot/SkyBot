@@ -451,7 +451,8 @@ public class CommandManager {
         dispatchCommand(cmd, invoke, args, event);
     }
 
-    public void dispatchCommand(@Nonnull ICommand cmd, String invoke, List<String> args, MessageReceivedEvent event) {
+    @SuppressWarnings("unchecked")
+    public void dispatchCommand(@Nonnull ICommand<?> cmd, String invoke, List<String> args, MessageReceivedEvent event) {
         this.commandThread.submit(() -> {
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
@@ -471,9 +472,9 @@ public class CommandManager {
 
             try {
                 if (cmd.isCustom()) {
-                    runCustomCommand(cmd, invoke, args, event);
+                    runCustomCommand((ICommand<Object>) cmd, invoke, args, event);
                 } else {
-                    runNormalCommand(cmd, invoke, args, event);
+                    runNormalCommand((ICommand<CommandContext>) cmd, invoke, args, event);
                 }
             }
             catch (Throwable ex) {

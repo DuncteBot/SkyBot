@@ -33,7 +33,7 @@ fun getSettings(ctx: Context) {
         return@supplyAsync data
     }, executor)
 
-    ctx.future(future)
+    ctx.future { future }
 }
 
 fun postSettings(ctx: Context) {
@@ -42,7 +42,7 @@ fun postSettings(ctx: Context) {
 
         // What don't we need to check?
         // - filterType: this will default to good setting
-        val body = ctx.bodyValidator<GuildSetting>()
+        val body = ctx.bodyValidator(GuildSetting::class.java)
             .check(
                 "prefix",
                 { it.customPrefix.length in 1..10},
@@ -98,7 +98,7 @@ fun postSettings(ctx: Context) {
         return@supplyAsync body
     }, executor)
 
-    ctx.future(future)
+    ctx.future { future }
 }
 
 private fun fetchData(ctx: Context): MutableMap<String, Any?> {

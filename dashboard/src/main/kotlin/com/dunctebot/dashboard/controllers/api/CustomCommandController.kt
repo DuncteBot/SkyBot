@@ -17,7 +17,7 @@ object CustomCommandController {
 
         if (!(attributes.contains(USER_ID) && attributes.contains(SESSION_ID))) {
             ctx.contentType(ContentType.JSON)
-            
+
             throw UnauthorizedResponse("Invalid session")
         }
     }
@@ -27,7 +27,7 @@ object CustomCommandController {
 
         val res = jsonMapper.createObjectNode()
             .put("success", true)
-            .put("code", ctx.status())
+            .put("code", ctx.status().code)
         val arr = res.putArray("commands")
 
         arr.addAll(commands)
@@ -43,7 +43,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Invalid data")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             throw BadRequestResponse()
@@ -64,7 +64,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Could not update command")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             throw BadRequestResponse()
@@ -85,7 +85,7 @@ object CustomCommandController {
         ctx.json(
             jsonMapper.createObjectNode()
                 .put("success", true)
-                .put("code", ctx.status())
+                .put("code", ctx.status().code)
         )
     }
 
@@ -97,7 +97,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Invalid data")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             throw BadRequestResponse()
@@ -110,7 +110,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Invoke is over 25 characters")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -123,7 +123,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Message is over 4000 characters")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -137,7 +137,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Command already exists")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -164,7 +164,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", true)
                     .put("message", "Command added")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -175,7 +175,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Command already exists")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -186,7 +186,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "You reached the limit of 50 custom commands for this server")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -196,7 +196,7 @@ object CustomCommandController {
             jsonMapper.createObjectNode()
                 .put("success", false)
                 .put("message", "Database error")
-                .put("code", ctx.status())
+                .put("code", ctx.status().code)
         )
     }
 
@@ -208,7 +208,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Invalid data")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -223,7 +223,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Command does not exists")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -236,7 +236,7 @@ object CustomCommandController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Could not delete command")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -256,7 +256,7 @@ object CustomCommandController {
             jsonMapper.createObjectNode()
                 .put("success", true)
                 .put("message", "Command deleted")
-                .put("code", ctx.status())
+                .put("code", ctx.status().code)
         )
     }
 

@@ -8,7 +8,7 @@ services:
             - "2000:4567"
         environment:
             - IS_LOCAL=false
-            - WS_URL=ws://localhost:3748/
+            - WS_URL=ws://localhost:3748/ # disable to disable
             - BOT_TOKEN=
             - OAUTH_CLIENT_ID=
             - OAUTH_CLIENT_SECRET=

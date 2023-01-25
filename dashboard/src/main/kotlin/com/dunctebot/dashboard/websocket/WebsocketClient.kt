@@ -13,6 +13,7 @@ import com.dunctebot.dashboard.websocket.handlers.base.SocketHandler
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.neovisionaries.ws.client.*
+import io.javalin.websocket.WsMessageContext
 import net.dv8tion.jda.internal.utils.IOUtil
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -48,21 +49,24 @@ class WebsocketClient : WebSocketAdapter(), WebSocketListener {
 
     init {
         setupHandlers()
-        connect()
 
-        reconnectThread.scheduleWithFixedDelay(
-            ReconnectTask(this),
-            0L,
-            500L,
-            TimeUnit.MILLISECONDS
-        )
+        if (System.getenv("WS_URL") != "disable") {
+            connect()
 
-        reconnectThread.scheduleWithFixedDelay(
-            WSPingTask(this),
-            1L,
-            1L,
-            TimeUnit.MINUTES
-        )
+            reconnectThread.scheduleWithFixedDelay(
+                ReconnectTask(this),
+                0L,
+                500L,
+                TimeUnit.MILLISECONDS
+            )
+
+            reconnectThread.scheduleWithFixedDelay(
+                WSPingTask(this),
+                1L,
+                1L,
+                TimeUnit.MINUTES
+            )
+        }
     }
 
     override fun onConnected(websocket: WebSocket, headers: MutableMap<String, MutableList<String>>) {
@@ -129,6 +133,34 @@ class WebsocketClient : WebSocketAdapter(), WebSocketListener {
     override fun onThreadCreated(websocket: WebSocket, threadType: ThreadType, thread: Thread) {
         thread.name = "DuncteBotWS-$threadType"
     }
+
+    // Start javalin socket server
+
+    fun onJavalinWSMessage(ctx: WsMessageContext) {
+        try {
+            val raw = jsonMapper.readTree(ctx.message())
+
+            logger.debug("<- {}", raw)
+
+            if (!raw.has("t")) {
+                return
+            }
+
+            val type = raw["t"].asText()
+            val handler = handlersMap[type]
+
+            if (handler == null) {
+                logger.warn("Unknown event or missing handler for type $type")
+                return
+            }
+
+            handler.handle(raw)
+        } catch (e: IOException) {
+            logger.error("Failed to parse json", e)
+        }
+    }
+
+    // end javalin socket server
 
     fun requestData(data: JsonNode, callback: (JsonNode) -> Unit) {
         val hash = HashUtils.sha1(data.toString() + System.currentTimeMillis())

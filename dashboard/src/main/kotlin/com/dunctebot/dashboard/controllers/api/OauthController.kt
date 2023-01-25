@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import io.javalin.http.Context
-import io.javalin.http.HttpCode
+import io.javalin.http.HttpStatus
 import net.dv8tion.jda.api.Permission
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
@@ -25,14 +25,14 @@ fun fetchGuildsOfUser(ctx: Context, oAuth2Client: OAuth2Client) {
     // We need to make sure that we are logged in and have a user id
     // If we don't have either of them we will return an error message
     if (!attributes.contains(WebServer.USER_ID) || !attributes.contains(WebServer.SESSION_ID)) {
-        ctx.req.session.invalidate()
+        ctx.req().session.invalidate()
 
-        ctx.status(HttpCode.FORBIDDEN)
+        ctx.status(HttpStatus.FORBIDDEN)
         ctx.json(
             jsonMapper.createObjectNode()
                 .put("success", false)
                 .put("message", "SESSION_INVALID")
-                .put("code", ctx.status())
+                .put("code", ctx.status().code)
         )
 
         return
@@ -71,7 +71,7 @@ fun fetchGuildsOfUser(ctx: Context, oAuth2Client: OAuth2Client) {
         jsonMapper.createObjectNode()
             .put("success", true)
             .put("total", guildsRequest.size)
-            .put("code", ctx.status())
+            .put("code", ctx.status().code)
             .set<ObjectNode>("guilds", guilds)
     )
 }

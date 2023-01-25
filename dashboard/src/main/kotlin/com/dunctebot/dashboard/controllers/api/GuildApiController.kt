@@ -20,7 +20,7 @@ object GuildApiController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "missing_input")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -32,7 +32,7 @@ object GuildApiController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Captcha missing")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -48,7 +48,7 @@ object GuildApiController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "Could not validate that you are a human")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -67,7 +67,7 @@ object GuildApiController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "no_user")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -105,7 +105,7 @@ object GuildApiController {
                 jsonMapper.createObjectNode()
                     .put("success", false)
                     .put("message", "no_guild")
-                    .put("code", ctx.status())
+                    .put("code", ctx.status().code)
             )
 
             return
@@ -129,7 +129,7 @@ object GuildApiController {
         val node = jsonMapper.createObjectNode()
             .put("success", true)
             .put("token", theHash)
-            .put("code", ctx.status())
+            .put("code", ctx.status().code)
 
         node.set<ObjectNode>("user", userJson)
         node.set<ObjectNode>("guild", guildJson)
