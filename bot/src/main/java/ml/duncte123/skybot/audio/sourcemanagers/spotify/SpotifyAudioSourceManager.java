@@ -73,11 +73,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private final SpotifyApi spotifyApi;
     /* package */ final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
-    private final DunctebotConfig.Apis config;
 
     public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager, DunctebotConfig.Apis config) {
-        this.config = config;
-
         final String clientId = config.spotify.clientId;
         final String clientSecret = config.spotify.clientSecret;
 
@@ -152,7 +149,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
         final String playListId = res.group(res.groupCount());
 
-        try {final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
+        try {
+            final Playlist spotifyPlaylist = this.spotifyApi.getPlaylist(playListId).build().execute();
             List<PlaylistTrack> playlistTracks = List.of(spotifyPlaylist.getTracks().getItems());
 
             if (playlistTracks.isEmpty()) {
@@ -229,7 +227,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
-        return new SpotifyAudioTrack(trackInfo, this.config.googl, this);
+        return new SpotifyAudioTrack(trackInfo, this);
     }
 
     @Override
@@ -237,7 +235,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         if (this.service != null) {
             this.service.shutdown();
         }
-
     }
 
     private void updateAccessToken() {
@@ -286,7 +283,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 track.getExternalUrls().get("spotify"),
                 getImageOrDefault(images)
             ),
-            this.config.googl,
             this
         );
     }
@@ -302,7 +298,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 track.getExternalUrls().get("spotify"),
                 getImageOrDefault(track.getAlbum().getImages())
             ),
-            this.config.googl,
             this
         );
     }

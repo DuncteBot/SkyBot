@@ -18,28 +18,21 @@
 
 package ml.duncte123.skybot.audio.sourcemanagers.spotify;
 
-import com.google.api.services.youtube.model.SearchResult;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import com.sedmelluq.discord.lavaplayer.track.*;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly;
-
 public class SpotifyAudioTrack extends YoutubeAudioTrack {
-    private final String apiKey;
     private final SpotifyAudioSourceManager sourceManager;
 
     private String youtubeId;
 
-    /* default */ SpotifyAudioTrack(AudioTrackInfo trackInfo, String apiKey, SpotifyAudioSourceManager sourceManager) {
+    /* default */ SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifyAudioSourceManager sourceManager) {
         super(trackInfo, sourceManager.youtubeAudioSourceManager);
-        this.apiKey = apiKey;
         this.sourceManager = sourceManager;
     }
 
@@ -48,24 +41,41 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
     public String getIdentifier() {
         if (this.youtubeId == null) {
             final AudioTrackInfo info = this.trackInfo;
-            try {
-                final List<SearchResult> results = searchYoutubeIdOnly(info.title + ' ' + info.author, this.apiKey, 1L);
+            final AudioItem audioItem = this.sourceManager.youtubeAudioSourceManager.loadItem(
+                null,
+                new AudioReference(
+                    "ytsearch:" + info.title + ' ' + info.author,
+                    null
+                )
+            );
 
-                if (results.isEmpty()) {
+            if (audioItem instanceof BasicAudioPlaylist results) {
+                final List<AudioTrack> tracks = results.getTracks();
+
+                if (tracks.isEmpty()) {
                     throw new FriendlyException("Failed to read info for " + info.uri, Severity.SUSPICIOUS, null);
                 }
 
-                this.youtubeId = results.get(0).getId().getVideoId();
+                final AudioTrack audioTrack = tracks.stream()
+                    // TODO: margin of 3 seconds?
+                    .filter((track) -> track.getDuration() == info.length)
+                    .findFirst()
+                    .orElseGet(() -> tracks.get(0));
+
+                // Identifier === youtube video id
+                this.youtubeId = audioTrack.getIdentifier();
+
                 // HACK: set the identifier on the trackInfo object
                 this.setIdentifier(this.youtubeId);
-            } catch (IOException e) {
-               throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);
+            } else {
+                throw new FriendlyException("Search results were not a playlist", Severity.FAULT, null);
             }
         }
 
         return this.youtubeId;
     }
 
+    // TODO: I could probably override the track info class with a custom one that has a setter for the identifier
     private void setIdentifier(String videoId) {
         final Class<AudioTrackInfo> infoCls = AudioTrackInfo.class;
 
@@ -75,14 +85,13 @@ public class SpotifyAudioTrack extends YoutubeAudioTrack {
             identifier.setAccessible(true);
 
             identifier.set(this.trackInfo, videoId);
-        }
-        catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new FriendlyException("Failed to look up youtube track", Severity.SUSPICIOUS, e);
         }
     }
 
     @Override
     protected AudioTrack makeShallowClone() {
-        return new SpotifyAudioTrack(trackInfo, this.apiKey, sourceManager);
+        return new SpotifyAudioTrack(trackInfo, sourceManager);
     }
 }

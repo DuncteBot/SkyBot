@@ -78,6 +78,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
+        // TODO: don't use youtube api
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
             val vidId = searchCache(toPlay, ctx)
 
