@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
-import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import java.util.*
 import java.util.concurrent.TimeUnit
