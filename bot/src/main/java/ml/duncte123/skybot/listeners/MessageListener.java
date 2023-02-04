@@ -29,7 +29,9 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.database.DummyRedisConnection;
 import ml.duncte123.skybot.database.RedisConnection;
+import ml.duncte123.skybot.database.RedisDB;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -75,7 +77,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 public abstract class MessageListener extends BaseListener {
 
-    protected final RedisConnection redis = new RedisConnection();
+    protected final RedisDB redis;
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
     protected final SpamFilter spamFilter = new SpamFilter(variables);
@@ -84,6 +86,12 @@ public abstract class MessageListener extends BaseListener {
 
     protected MessageListener(Variables variables) {
         super(variables);
+
+        if ("disabled".equalsIgnoreCase(System.getenv("REDIS_HOST"))) {
+            this.redis = new DummyRedisConnection();
+        } else {
+            this.redis = new RedisConnection();
+        }
     }
 
     protected void onGuildMessageUpdate(MessageUpdateEvent event) {

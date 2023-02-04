@@ -56,36 +56,40 @@ class SearchCommand : MusicCommand() {
             else -> 15L
         }
 
-        val searchLimit = if (isPatron) 15L else 5L
+        val searchLimit = if (isPatron) 20 else 5
 
         val toPlay = ctx.argsRaw
-        val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
+        val res = ctx.audioUtils.searchYoutube(toPlay)
 
-        if (res.isEmpty()) {
+        if (res == null || res.tracks.isEmpty()) {
             sendMsg(ctx, "$SEARCH_EMOTE No results found.")
             return
         }
 
+        val tracks = res.tracks.take(searchLimit)
+
         val string = buildString {
-            res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
+            tracks.map { it.info.title }.forEachIndexed { index: Int, s: String ->
                 append(index + 1).append(". ").append(s).append("\n")
             }
 
             append("\n\n")
             append("Click the button with the number of the song that you want to play, or click `cancel` to cancel your search")
+            if (!isPatron) {
+                append("\n(hint: patron supporters get access to more search results to pick from)")
+            }
         }
 
         val componentId = "search-menu:${UUID.randomUUID()}:$userId"
-
         val menu = StringSelectMenu.create(componentId)
             .setPlaceholder("Select a song to play")
 
-        res.forEachIndexed { index, searchResult ->
-            val title = searchResult.snippet.title
+        tracks.forEachIndexed { index, track ->
+            val title = track.info.title
 
             menu.addOption(
                 "${index + 1}) ${title.substring(0, min(title.length, 20)).trim()}",
-                searchResult.id.videoId,
+                track.info.identifier,
                 title.substring(0, min(title.length, 50)).trim() // TODO: full title or url?
             )
         }

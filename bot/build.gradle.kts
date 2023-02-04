@@ -55,7 +55,7 @@ dependencies {
         exclude(module = "lavaplayer")
     }
     implementation(libs.groovy)
-    implementation(libs.logback)
+    implementation(libs.logback.newSlf4j)
     implementation(libs.spotify)
     implementation(libs.youtube)
     implementation(libs.bundles.featureLibs)

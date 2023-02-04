@@ -28,6 +28,9 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioItem;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
+import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import gnu.trove.map.TLongObjectMap;
 import lavalink.client.LavalinkUtil;
 import ml.duncte123.skybot.Variables;
@@ -38,6 +41,7 @@ import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManage
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Future;
 
@@ -46,6 +50,7 @@ public class AudioUtils {
     private final TLongObjectMap<GuildMusicManager> musicManagers;
     private final Variables variables;
     private final AudioPlayerManager playerManager;
+    private final YoutubeAudioSourceManager youtubeManager;
 
     public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
         this.variables = variables;
@@ -54,11 +59,11 @@ public class AudioUtils {
         playerManager = new DefaultAudioPlayerManager();
         //playerManager.enableGcMonitoring();
 
-//        final YoutubeAudioSourceManagerOverride ytSourceMngr = new YoutubeAudioSourceManagerOverride(config.googl);
-        final YoutubeAudioSourceManager ytSourceMngr = new YoutubeAudioSourceManager();
+//        this.youtubeManager = new YoutubeAudioSourceManagerOverride(config.googl);
+        this.youtubeManager = new YoutubeAudioSourceManager();
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(ytSourceMngr, config));
-        playerManager.registerSourceManager(ytSourceMngr);
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(this.youtubeManager, config));
+        playerManager.registerSourceManager(this.youtubeManager);
 
         DuncteBotSources.registerDuncteBot(playerManager, "en-AU", 6);
         DuncteBotSources.registerDuncteBot(LavalinkUtil.getPlayerManager(), "en-AU", 6);
@@ -72,7 +77,18 @@ public class AudioUtils {
     }
 
     public AudioPlayerManager getPlayerManager() {
-        return playerManager;
+        return this.playerManager;
+    }
+
+    @Nullable("If the playlist is not a basic audio playlist")
+    public BasicAudioPlaylist searchYoutube(String query) {
+        final AudioItem audioItem = this.youtubeManager.loadItem(null, new AudioReference("ytsearch:" + query, null));
+
+        if (audioItem instanceof BasicAudioPlaylist playlist) {
+            return playlist;
+        }
+
+        return null;
     }
 
     public Future<Void> loadAndPlay(final CommandContext ctx, final String trackUrlRaw,

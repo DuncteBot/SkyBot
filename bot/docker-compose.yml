@@ -46,4 +46,6 @@ services:
 
             # Options are: psql, web
             - USE_DATABASE=psql
-            - REDIS_HOST=localhost
+            - JDBC_URI=jdbc:postgresql://localhost:5432/skybot?user=root&password=root
+#            - REDIS_HOST=localhost
+            - REDIS_HOST=disabled

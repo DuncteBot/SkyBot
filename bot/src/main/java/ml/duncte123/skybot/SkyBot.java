@@ -20,6 +20,7 @@ package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -101,6 +102,7 @@ public final class SkyBot {
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
+                GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_INVITES,
                 GatewayIntent.GUILD_BANS,
@@ -126,7 +128,7 @@ public final class SkyBot {
             .enableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES, CacheFlag.ROLE_TAGS)
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
-            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
+            .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.SCHEDULED_EVENTS)
             .setGatewayEncoding(GatewayEncoding.ETF);
 
         // If lavalink is enabled we will hook it into jda
@@ -173,6 +175,8 @@ public final class SkyBot {
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
         // If any rest-action doesn't get executed within 2 minutes we will mark it as failed
         RestAction.setDefaultTimeout(2L, TimeUnit.MINUTES);
+        // TODO: might wanna fix this in the lib
+        MessageConfig.setNonceSupplier((c) -> null);
     }
 
     public ShardManager getShardManager() {

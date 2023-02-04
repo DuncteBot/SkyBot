@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RedisConnection {
+public class RedisConnection implements RedisDB {
     /* seconds * minutes * hours * days */
     private static final long TWO_WEEKS_IN_SECONDS = 60L * 60L * 24L * 14L;
     private static final long ONE_MONTH_IN_SECONDS = 60L * 60L * 24L * 31L;
@@ -46,6 +46,7 @@ public class RedisConnection {
         this.pool = new JedisPool(new JedisPoolConfig(), host);
     }
 
+    @Override
     public void storeMessage(@NotNull MessageData data, boolean isPatron) {
         try (Jedis jedis = this.pool.getResource()) {
             // Long hset(String key, Map<String, String> hash);
@@ -59,6 +60,7 @@ public class RedisConnection {
         }
     }
 
+    @Override
     @Nullable
     public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron) {
         try (Jedis jedis = this.pool.getResource()) {
@@ -77,6 +79,7 @@ public class RedisConnection {
         }
     }
 
+    @Override
     @Nullable
     public MessageData getAndDeleteMessage(@NotNull String messageId) {
         try (Jedis jedis = this.pool.getResource()) {
@@ -92,6 +95,7 @@ public class RedisConnection {
         }
     }
 
+    @Override
     @NotNull
     public List<MessageData> getAndDeleteMessages(@NotNull List<String> messageIds) {
         try (Jedis jedis = this.pool.getResource()) {
@@ -116,12 +120,14 @@ public class RedisConnection {
         }
     }
 
+    @Override
     public void deleteMessage(@NotNull String messageId) {
         try (Jedis jedis = this.pool.getResource()) {
             jedis.del(messageId);
         }
     }
 
+    @Override
     public void deleteMessages(@NotNull List<String> messageIds) {
         try (Jedis jedis = this.pool.getResource()) {
             final String[] idArray = messageIds.toArray(String[]::new);
@@ -130,6 +136,7 @@ public class RedisConnection {
         }
     }
 
+    @Override
     public void shutdown() {
         this.pool.close();
     }

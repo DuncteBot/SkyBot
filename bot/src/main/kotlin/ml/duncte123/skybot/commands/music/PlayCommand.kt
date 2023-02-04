@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
-import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutubeIdOnly
 
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
     private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
@@ -78,9 +77,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
-        // TODO: don't use youtube api
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchCache(toPlay, ctx)
+            val vidId = searchYt(toPlay, ctx)
 
             if (vidId == null) {
                 MessageUtils.sendError(ctx.message)
@@ -113,14 +111,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return true
     }
 
-    private fun searchCache(search: String, ctx: CommandContext): String? {
-        val res = searchYoutubeIdOnly(search, ctx.config.apis.googl, 1L)
+    private fun searchYt(search: String, ctx: CommandContext): String? {
+        val playlist = ctx.audioUtils.searchYoutube(search)
 
-        if (res.isEmpty()) {
+        if (playlist == null || playlist.tracks.isEmpty()) {
             return null
         }
 
-        return res[0].id.videoId
+        return playlist.tracks[0].identifier
     }
 
     private fun handlePlay(toPlay: String, ctx: CommandContext) {
