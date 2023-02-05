@@ -19,7 +19,13 @@
                     ></settings-switch>
 
                     <settings-switch
-                        v-for="(item, i) in $javalin.state.loggingTypes.slice(1)"
+                        name="Message logging"
+                        id="message_log"
+                        v-model="settings.message_logging"
+                    ></settings-switch>
+
+                    <settings-switch
+                        v-for="(item, i) in $javalin.state.loggingTypes.slice(2)"
                         :key="i"
                         :name="`${item} logging`"
                         :id="`${item}_log`"
@@ -117,7 +123,7 @@
                 <p>The first time a member gets muted, they will be muted for {{ rateLimitArray[0] }} minutes.
                     If they keep spamming and get muted again it will go to the next interval.
                     This will keep incrementing until the last one.</p>
-                <p>The rate limits will only stick to these 7 numbers for duration.</p>
+                <p>The rate limits will only stick to these 6 numbers for duration.</p>
                 <br/>
 
                 <div class="input-field col s12 m2" v-for="(item, index) of rateLimitArray" :key="index">

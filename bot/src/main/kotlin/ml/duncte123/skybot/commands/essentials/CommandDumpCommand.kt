@@ -105,6 +105,6 @@ class CommandDumpCommand : Command() {
     }
 
     private fun CommandManager.getFilteredCommands(): List<Command> {
-        return this.commandsList.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
+        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
     }
 }

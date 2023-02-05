@@ -66,7 +66,7 @@ public interface OAuth2Guild extends ISnowflake
      *
      * @return The Session User's raw permission value for the Guild.
      */
-    int getPermissionsRaw();
+    long getPermissionsRaw();
 
     /**
      * Gets the Session User's {@link Permission Permissions} for the Guild.

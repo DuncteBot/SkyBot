@@ -1,6 +1,7 @@
 package com.dunctebot.jda
 
 import com.dunctebot.jda.impl.MemberPaginationActionImpl
+import gnu.trove.map.TLongObjectMap
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.SelfUser
@@ -8,6 +9,7 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.utils.MiscUtil
 import net.dv8tion.jda.api.utils.data.DataArray
+import net.dv8tion.jda.api.utils.data.DataObject
 import net.dv8tion.jda.internal.JDAImpl
 import net.dv8tion.jda.internal.entities.GuildImpl
 import net.dv8tion.jda.internal.requests.CompletedRestAction
@@ -92,6 +94,14 @@ class JDARestClient(token: String) {
         }
     }
 
+    fun retrieveRawMemberById(guildId: String, memberId: String): RestAction<DataObject> {
+        val route = Route.Guilds.GET_MEMBER.compile(guildId, memberId)
+
+        return RestActionImpl(jda, route) {
+            response, _ -> response.getObject()
+        }
+    }
+
     fun retrieveGuildById(id: String): RestAction<Guild> {
         // We're caching two events here, is that worth it?
         /*// Lookup the guild from the cache
@@ -120,14 +130,16 @@ class JDARestClient(token: String) {
                 // fake a bit of data
                 data.put("channels", channels)
                 data.put("voice_states", DataArray.empty())
+                data.put("threads", DataArray.empty())
+                data.put("guild_scheduled_events", DataArray.empty())
+
+                val members: TLongObjectMap<DataObject> = MiscUtil.newLongMap()
+
+                val selfMemberObj = retrieveRawMemberById(id, jda.selfUser.id).complete()
+                members.put(jda.selfUser.idLong, selfMemberObj)
 
                 val guild = jda.entityBuilder
-                    .createGuild(id.toLong(), data, MiscUtil.newLongMap(), data.getInt("approximate_member_count"))
-
-                val selfMember = retrieveMemberById(guild, jda.selfUser.id).complete()
-                guild.membersView.writeLock().use {
-                    guild.membersView.map.put(jda.selfUser.idLong, selfMember)
-                }
+                    .createGuild(id.toLong(), data, members, data.getInt("approximate_member_count"))
 
                 guildCache[id] = guild
 

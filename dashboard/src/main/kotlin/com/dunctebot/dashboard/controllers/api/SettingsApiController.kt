@@ -1,8 +1,6 @@
 package com.dunctebot.dashboard.controllers.api
 
-import com.dunctebot.dashboard.WebServer
-import com.dunctebot.dashboard.fetchGuild
-import com.dunctebot.dashboard.guildId
+import com.dunctebot.dashboard.*
 import com.dunctebot.dashboard.utils.fetchGuildData
 import com.dunctebot.jda.json.JsonChannel
 import com.dunctebot.jda.json.JsonGuild
@@ -30,7 +28,7 @@ fun getSettings(ctx: Context) {
             data["message"] = null
         }
 
-        return@supplyAsync data
+        ctx.json(data)
     }, executor)
 
     ctx.future { future }
@@ -90,15 +88,28 @@ fun postSettings(ctx: Context) {
             )
             .check(
                 "rateLimits",
-                { it.ratelimits.size == 7 && it.ratelimits.all { r -> r in 1..1000000 } },
+                { it.ratelimits.size == 6 && it.ratelimits.all { r -> r in 1..1000000 } },
                 "Rate limits are not valid"
             )
             .get()
 
-        return@supplyAsync body
+        sendSettingUpdate(body)
+
+        ctx.json(body)
     }, executor)
 
     ctx.future { future }
+}
+
+private fun sendSettingUpdate(setting: GuildSetting) {
+    val request = jsonMapper.createObjectNode()
+        .put("t", "GUILD_SETTINGS")
+
+    request.putObject("d")
+        .putArray("update")
+        .add(setting.toJson(jsonMapper))
+
+    webSocket.broadcast(request)
 }
 
 private fun fetchData(ctx: Context): MutableMap<String, Any?> {

@@ -66,8 +66,6 @@ fun VersionCatalogBuilder.bot() {
 
     library("spotify", "se.michaelthelin.spotify", "spotify-web-api-java").version("7.2.0")
     library("youtube", "com.google.apis", "google-api-services-youtube").version("v3-rev222-1.25.0")
-    // TODO: do we still need this?
-    library("groovy", "org.codehaus.groovy", "groovy-jsr223").version("3.0.7")
     library("expiringmap", "net.jodah", "expiringmap").version("0.5.9")
 
     library("weebjava", "me.duncte123", "weebJava").version("3.0.1_4")

@@ -87,7 +87,7 @@ public class DunctebotConfig {
         public static class Cache {
             public final String endpoint;
             public final String token;
-            
+
             public Cache(String endpoint, String token) {
                 this.endpoint = endpoint;
                 this.token = token;
@@ -139,10 +139,12 @@ public class DunctebotConfig {
 
     public static class Websocket {
         public final String url;
+        public final String password;
         public final boolean enable;
 
-        public Websocket(String url, boolean enable) {
+        public Websocket(String url, String password, boolean enable) {
             this.url = url;
+            this.password = password;
             this.enable = enable;
         }
     }
@@ -216,6 +218,7 @@ public class DunctebotConfig {
 
         final Websocket websocket = new Websocket(
             System.getenv("WEBSOCKET_URL"),
+            System.getenv("WEBSOCKET_PASSWORD"),
             Boolean.parseBoolean(System.getenv("WEBSOCKET_ENABLE"))
         );
 

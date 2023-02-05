@@ -15,6 +15,7 @@ import io.javalin.apibuilder.ApiBuilder.*
 import io.javalin.http.ForbiddenResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.vue.VueComponent
+import java.time.Duration
 
 class WebServer {
     private val app: Javalin
@@ -33,17 +34,21 @@ class WebServer {
             config.showJavalinBanner = false
             config.staticFiles.enableWebjars()
 
+            config.jetty.wsFactoryConfig { wsConfig ->
+                wsConfig.idleTimeout = Duration.ofMinutes(30)
+            }
+
             if (local) {
-                val projectDir = System.getProperty("user.dir")
+                val projectDir = System.getProperty("user.dir") + "/dashboard"
                 val staticDir = "/src/main/resources/public"
                 config.staticFiles.add(projectDir + staticDir, Location.EXTERNAL)
-//                config.enableDevLogging()
                 config.plugins.enableDevLogging()
                 config.vue.optimizeDependencies = false
-                config.vue.rootDirectory("$projectDir/src/main/resources/vue") // live reloading :)
+                config.vue.rootDirectory("$projectDir/src/main/resources/vue", Location.EXTERNAL) // live reloading :)
             } else {
                 config.staticFiles.add("/public", Location.CLASSPATH)
                 config.vue.optimizeDependencies = false
+                config.vue.enableCspAndNonces = true
             }
             // 191231307290771456
             // 191245668617158656

@@ -140,7 +140,6 @@ class WebSocketClient(
         if (!raw.has("t")) {
             return
         }
-
         val type = raw["t"].asText()
         val handler = handlersMap[type]
 
@@ -222,7 +221,7 @@ class WebSocketClient(
         socket.setDirectTextMessage(false)
             .addHeader("X-DuncteBot", "bot")
             .addHeader("Accept-Encoding", "gzip")
-            .addHeader("Authorization", variables.apis.apiKey)
+            .addHeader("Authorization", variables.config.websocket.password)
             .addListener(this)
 
         try {

@@ -54,14 +54,13 @@ dependencies {
     implementation(libs.lavalink.client) {
         exclude(module = "lavaplayer")
     }
-    implementation(libs.groovy)
     implementation(libs.logback.newSlf4j)
     implementation(libs.spotify)
     implementation(libs.youtube)
     implementation(libs.bundles.featureLibs)
 
-    // kotlin (do we need this?)
-    // implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("scripting-jsr223"))
 
     implementation(libs.sentry)
     implementation(libs.expiringmap)

@@ -21,6 +21,7 @@ package com.dunctebot.dashboard.websocket
 import com.dunctebot.dashboard.jsonMapper
 import com.dunctebot.dashboard.webSocket
 import io.javalin.Javalin
+import io.javalin.plugin.bundled.RouteOverviewUtil.metaInfo
 import io.javalin.websocket.WsContext
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -64,6 +65,12 @@ class WebsocketServer(app: Javalin) {
                     }
 
                     val type = raw["t"].asText()
+
+                    if (type == "PING") {
+                        ctx.send("""{"t":"PONG","d":{}}""")
+                        return@onMessage
+                    }
+
                     val handler = webSocket.handlersMap[type]
 
                     if (handler == null) {

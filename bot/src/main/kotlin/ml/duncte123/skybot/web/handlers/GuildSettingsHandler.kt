@@ -70,6 +70,8 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
                         tracker.clearInvites(setting.guildId)
                     }
                 }
+
+                variables.database.updateGuildSetting(setting)
             }
         }
     }

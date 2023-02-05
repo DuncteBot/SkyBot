@@ -21,7 +21,6 @@ services:
             - API_GOOGLE=
             - API_WEEBSH=
             - API_KSOFT=
-            - API_GENIUS=
             - API_SPOTIFY_CLIENT_ID=
             - API_SPOTIFY_CLIENT_SECRET=
             - API_BLARGBOT=
@@ -42,6 +41,7 @@ services:
 
             # Websocket settings
             - WEBSOCKET_URL=
+            - WEBSOCKET_PASSWORD=admin123
             - WEBSOCKET_ENABLE=false
 
             # Options are: psql, web

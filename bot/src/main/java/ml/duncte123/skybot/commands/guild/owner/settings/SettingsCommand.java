@@ -73,25 +73,25 @@ public class SettingsCommand extends Command {
         this.usage = "[item] [--set value]";
         this.extraInfo = """
             Available items are as follows:
-            \u2022 `autoRole`: Sets the role given to users on join, set value is a role
-            \u2022 `muteRole`: Sets the role given to users when they get muted, set value is a role
-            \u2022 `embedColor`: Sets the color of the embeds DuncteBot sends, set value is a valid hex color
-            \u2022 `description`: Sets the description in the server info command, set value is a piece of text
-            \u2022 `joinMessage`: Sets the message being send to `welcomeChannel` when a user joins, set value is the message
-            \u2022 `leaveMessage`: Sets the message being send to `welcomeChannel` when a user leaves, set value is the message
-            \u2022 `logChannel`: Sets the channel where moderation actions are logged, set value is a text channel
-            \u2022 `prefix`: Sets a custom prefix for the bot, set value is your desired prefix
-            \u2022 `rateLimits`: Sets the cooldown in minutes for un-muting your spammer of choice, set value is in the format `1|2|3|4|5|6` or `default`
-            \u2022 `welcomeChannel`: Sets the channel where the join and leave messages are send, set value is a text channel
-            \u2022 `announceTracks`: Toggles the announcing of the next playing track on or off, this item has no set value
-            \u2022 `autoDehoist`: Toggles the enabled state of auto de-hoisting, this item has no set value
-            \u2022 `filterInvites`: Toggles if the bot should filter discord invites for messages, this item has no set value
-            \u2022 `joinMessageState`: Toggles the join and leave messages on or off, this item has no set value
-            \u2022 `kickMode`: Toggles the kick mode for spammers between muting and kicking, this item has no set value
-            \u2022 `spamFilter`: Toggles the spam filter on or off, this item has no set value
-            \u2022 `swearFilter`: Toggles the swear filter on or off, this item has no set value
-            \u2022 `inviteLogging`: Toggles the logging of invite usage on or off, this item has no set value
-            \u2022 `memberLogging`: Toggles the logging of members joining and leaving on or off, this item has no set value
+            • `autoRole`: Sets the role given to users on join, set value is a role
+            • `muteRole`: Sets the role given to users when they get muted, set value is a role
+            • `embedColor`: Sets the color of the embeds DuncteBot sends, set value is a valid hex color
+            • `description`: Sets the description in the server info command, set value is a piece of text
+            • `joinMessage`: Sets the message being send to `welcomeChannel` when a user joins, set value is the message
+            • `leaveMessage`: Sets the message being send to `welcomeChannel` when a user leaves, set value is the message
+            • `logChannel`: Sets the channel where moderation actions are logged, set value is a text channel
+            • `prefix`: Sets a custom prefix for the bot, set value is your desired prefix
+            • `rateLimits`: Sets the cooldown in minutes for un-muting your spammer of choice, set value is in the format `1|2|3|4|5|6` or `default`
+            • `welcomeChannel`: Sets the channel where the join and leave messages are send, set value is a text channel
+            • `announceTracks`: Toggles the announcing of the next playing track on or off, this item has no set value
+            • `autoDehoist`: Toggles the enabled state of auto de-hoisting, this item has no set value
+            • `filterInvites`: Toggles if the bot should filter discord invites for messages, this item has no set value
+            • `joinMessageState`: Toggles the join and leave messages on or off, this item has no set value
+            • `kickMode`: Toggles the kick mode for spammers between muting and kicking, this item has no set value
+            • `spamFilter`: Toggles the spam filter on or off, this item has no set value
+            • `swearFilter`: Toggles the swear filter on or off, this item has no set value
+            • `inviteLogging`: Toggles the logging of invite usage on or off, this item has no set value
+            • `memberLogging`: Toggles the logging of members joining and leaving on or off, this item has no set value
             """;
         this.userPermissions = new Permission[]{
             Permission.MANAGE_SERVER,

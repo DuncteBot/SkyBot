@@ -318,10 +318,7 @@ public class CommandManager {
         loadCustomCommands();
     }
 
-    // Why is this called getCommandsList?
-    // Because groovy eval won't allow me to access the commands property otherwise
-    // Thanks groovy <3
-    public Collection<ICommand<CommandContext>> getCommandsList() {
+    public Collection<ICommand<CommandContext>> getCommands() {
         return this.commands.values();
     }
 

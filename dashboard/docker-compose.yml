@@ -10,7 +10,7 @@ services:
             - IS_LOCAL=false
             # set to dash_is_server to disable ws client and start ws server from dashboard
             - WS_URL=ws://localhost:3748/
-            - WS_SERVER_TOKEN=very_secure_password
+            - WS_SERVER_TOKEN=admin123
             - BOT_TOKEN=
             - OAUTH_CLIENT_ID=
             - OAUTH_CLIENT_SECRET=

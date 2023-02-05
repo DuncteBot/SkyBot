@@ -99,12 +99,12 @@ public class OAuth2ClientImpl implements OAuth2Client
 
         OAuth2URL oAuth2URL = OAuth2URL.TOKEN;
 
-        return new OAuth2Action<Session>(this, Method.POST, oAuth2URL.getRouteWithBaseUrl())
+        return new OAuth2Action<>(this, Method.POST, oAuth2URL.getRouteWithBaseUrl())
         {
             @Override
             protected Headers getHeaders()
             {
-                return Headers.of("Content-Type", "x-www-form-urlencoded");
+                return Headers.of("Content-Type", "application/x-www-form-urlencoded");
             }
 
             @Override
@@ -141,7 +141,7 @@ public class OAuth2ClientImpl implements OAuth2Client
     public OAuth2Action<OAuth2User> getUser(Session session)
     {
         Checks.notNull(session, "Session");
-        return new OAuth2Action<OAuth2User>(this, Method.GET, OAuth2URL.CURRENT_USER.compile()) {
+        return new OAuth2Action<>(this, Method.GET, OAuth2URL.CURRENT_USER.compileApiVersion()) {
 
             @Override
             protected Headers getHeaders()
@@ -169,7 +169,7 @@ public class OAuth2ClientImpl implements OAuth2Client
         Checks.notNull(session, "session");
         if(!Scope.contains(session.getScopes(), Scope.GUILDS))
             throw new MissingScopeException("get guilds for a Session", Scope.GUILDS);
-        return new OAuth2Action<List<OAuth2Guild>>(this, Method.GET, OAuth2URL.CURRENT_USER_GUILDS.compile()) {
+        return new OAuth2Action<>(this, Method.GET, OAuth2URL.CURRENT_USER_GUILDS.compileApiVersion()) {
             @Override
             protected Headers getHeaders()
             {
@@ -190,7 +190,7 @@ public class OAuth2ClientImpl implements OAuth2Client
                     obj = body.getJSONObject(i);
                     list.add(new OAuth2GuildImpl(OAuth2ClientImpl.this, obj.getLong("id"),
                         obj.getString("name"), obj.optString("icon", null), obj.getBoolean("owner"),
-                        obj.getInt("permissions")));
+                        obj.getLong("permissions")));
                 }
                 return list;
             }

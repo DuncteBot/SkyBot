@@ -44,11 +44,11 @@ public class CustomCommandCommand extends Command {
         };
         this.help = "Create, edit and delete custom commands";
         this.usage = "<list/new/edit/raw/delete> [name] [text]";
-        this.extraInfo = "\u2022 `{prefix}" + this.name + "list` => Shows a list of all the custom commands\n" +
-            "\u2022 `{prefix}" + this.name + " new <name> <text>` => Creates a new custom command\n" +
-            "\u2022 `{prefix}" + this.name + " edit <name> <text>` => Edits a custom command\n" +
-            "\u2022 `{prefix}" + this.name + " raw <name>` => Shows the raw value of a custom command\n" +
-            "\u2022 `{prefix}" + this.name + " delete <name>` => Deletes a custom command";
+        this.extraInfo = "• `{prefix}" + this.name + "list` => Shows a list of all the custom commands\n" +
+            "• `{prefix}" + this.name + " new <name> <text>` => Creates a new custom command\n" +
+            "• `{prefix}" + this.name + " edit <name> <text>` => Edits a custom command\n" +
+            "• `{prefix}" + this.name + " raw <name>` => Shows the raw value of a custom command\n" +
+            "• `{prefix}" + this.name + " delete <name>` => Deletes a custom command";
     }
 
 

@@ -46,49 +46,52 @@ class EvalCommand : Command() {
 
         return@newSingleThreadExecutor thread
     }
-    private val engine: ScriptEngine by lazy { ScriptEngineManager().getEngineByName("groovy") }
-    private val importString: String
+    private val engine: ScriptEngine by lazy {
+        ScriptEngineManager().getEngineByExtension("kts")!!.apply {
+            val packageImports = listOf(
+                "java.io",
+                "java.lang",
+                "java.math",
+                "java.time",
+                "java.util",
+                "java.util.concurrent",
+                "java.util.stream",
+                "net.dv8tion.jda.api",
+                "net.dv8tion.jda.internal.entities",
+                "net.dv8tion.jda.api.entities",
+                "net.dv8tion.jda.api.entities.channel",
+                "net.dv8tion.jda.api.entities.channel.attribute",
+                "net.dv8tion.jda.api.entities.channel.middleman",
+                "net.dv8tion.jda.api.entities.channel.concrete",
+                "net.dv8tion.jda.api.managers",
+                "net.dv8tion.jda.internal.managers",
+                "net.dv8tion.jda.api.utils",
+                "ml.duncte123.skybot.utils",
+                "ml.duncte123.skybot.entities",
+                "ml.duncte123.skybot",
+                "ml.duncte123.skybot.objects.command"
+            )
+
+            val classImports = listOf(
+                "fredboat.audio.player.LavalinkManager",
+                "ml.duncte123.skybot.objects.EvalFunctions",
+                "me.duncte123.botcommons.messaging.MessageUtils",
+                "me.duncte123.botcommons.messaging.EmbedUtils"
+            )
+
+            val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
+                classImports.joinToString(separator = "\nimport ", postfix = "\n")
+
+            this.eval(importString)
+        }
+    }
 
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "eval"
         this.aliases = arrayOf("eval™", "evaluate", "evan", "eva;")
-        this.help = "Evaluate groovy/java code on the bot"
-        this.usage = "<java/groovy code>"
-
-        val packageImports = listOf(
-            "java.io",
-            "java.lang",
-            "java.math",
-            "java.time",
-            "java.util",
-            "java.util.concurrent",
-            "java.util.stream",
-            "net.dv8tion.jda.api",
-            "net.dv8tion.jda.api.entities",
-            "net.dv8tion.jda.api.entities.impl",
-            "net.dv8tion.jda.api.managers",
-            "net.dv8tion.jda.api.managers.impl",
-            "net.dv8tion.jda.api.utils",
-            "ml.duncte123.skybot.utils",
-            "ml.duncte123.skybot.entities",
-            "ml.duncte123.skybot",
-            "ml.duncte123.skybot.objects.command"
-        )
-
-        val classImports = listOf(
-            "fredboat.audio.player.LavalinkManager"
-        )
-
-        val staticImports = listOf(
-            "ml.duncte123.skybot.objects.EvalFunctions.*",
-            "me.duncte123.botcommons.messaging.MessageUtils.*",
-            "me.duncte123.botcommons.messaging.EmbedUtils.*"
-        )
-
-        importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
-            classImports.joinToString(separator = "\nimport ", postfix = "\n") +
-            staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
+        this.help = "Evaluate kotlin code on the bot"
+        this.usage = "<kotlin code>"
     }
 
     override fun execute(ctx: CommandContext) {
@@ -112,8 +115,6 @@ class EvalCommand : Command() {
                 .replace("\n?```".toRegex(), "")
         }
 
-        val script = importString + userIn
-
         engine.put("commandManager", ctx.commandManager)
         engine.put("message", ctx.message)
         engine.put("channel", ctx.message.channel)
@@ -128,7 +129,7 @@ class EvalCommand : Command() {
         engine.put("ctx", ctx)
         engine.put("variables", ctx.variables)
 
-        eval(ctx, script)
+        eval(ctx, userIn)
     }
 
     private fun eval(ctx: CommandContext, script: String) {
@@ -156,7 +157,7 @@ class EvalCommand : Command() {
 
         LOGGER.info(
             "${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${ctx.author})" +
-                "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy").execute()})${TextColor.RESET}"
+                "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "kotlin").execute()})${TextColor.RESET}"
         )
     }
 
@@ -206,7 +207,7 @@ class EvalCommand : Command() {
 
     @Suppress("SameParameterValue")
     private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): PendingRequest<String> {
-        val base = "https://paste.menudocs.org"
+        val base = "https://spectre.duncte123.dev"
         val body = FormRequestBody()
 
         body.append("text", text)

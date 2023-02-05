@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,20 @@ public class RedisConnection implements RedisDB {
 
     public RedisConnection() {
         String host = System.getenv("REDIS_HOST");
+        int port = Protocol.DEFAULT_PORT;
 
         if (host == null) {
             host = "localhost";
         }
 
-        this.pool = new JedisPool(new JedisPoolConfig(), host);
+        if (host.contains(":")) {
+            final String[] split = host.split(":");
+            host = split[0];
+            port = Integer.parseInt(split[1]);
+        }
+
+        // TODO: can probably just use a URI here
+        this.pool = new JedisPool(new JedisPoolConfig(), host, port);
     }
 
     @Override
