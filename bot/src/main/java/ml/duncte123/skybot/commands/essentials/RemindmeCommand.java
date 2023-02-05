@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.dunctebot.models.utils.Utils.getDatabaseDate;
+import static com.dunctebot.models.utils.DateUtils.getDatabaseDate;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class RemindmeCommand extends Command {

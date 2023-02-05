@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.mod
 
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.DateUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -27,7 +28,6 @@ import ml.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.Flag
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
 import ml.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
@@ -221,7 +221,7 @@ class WarnCommand : ModBaseCommand() {
     private fun String.toDuration(): Pair<String, String> {
         val duration = getDuration(this, null, null, null)!!
 
-        return AirUtils.getDatabaseDateFormat(duration) to duration.toString()
+        return DateUtils.getDatabaseDateFormat(duration) to duration.toString()
     }
 
     private fun muteRoleCheck(guild: DunctebotGuild) = guild.settings.muteRoleId > 0

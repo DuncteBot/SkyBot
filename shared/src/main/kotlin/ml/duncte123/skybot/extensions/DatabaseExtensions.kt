@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.extensions
 
 import com.dunctebot.models.settings.GuildSetting
+import com.dunctebot.models.utils.DateUtils
 import com.dunctebot.models.utils.Utils
 import com.dunctebot.models.utils.Utils.ratelimmitChecks
 import com.dunctebot.models.utils.Utils.toLong
@@ -31,7 +32,7 @@ import java.time.temporal.TemporalAccessor
 
 fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
 fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
-fun String.toDate() = Utils.fromDatabaseFormat(this).toSQL()
+fun String.toDate() = DateUtils.fromDatabaseFormat(this).toSQL()
 
 fun ResultSet.toReminder() = Reminder(
     this.getInt("id"),

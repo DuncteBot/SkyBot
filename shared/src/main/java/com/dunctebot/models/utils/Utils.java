@@ -107,32 +107,4 @@ public final class Utils {
     public static int colorToInt(String hex) {
         return Integer.parseInt(hex.substring(1), 16);
     }
-
-    // TODO: DateUtils
-    public static String makeDatePretty(TemporalAccessor accessor) {
-        return TimeFormat.DATE_TIME_LONG.format(accessor);
-    }
-
-    public static OffsetDateTime fromDatabaseFormat(String date) {
-        try {
-            return OffsetDateTime.parse(date);
-        }
-        catch (DateTimeParseException e) {
-            e.printStackTrace();
-
-            return OffsetDateTime.now(ZoneOffset.UTC);
-        }
-    }
-
-    public static String getDatabaseDateFormat(ParsedDuration duration) {
-        return getDatabaseDateFormat(getDatabaseDate(duration));
-    }
-
-    public static String getDatabaseDateFormat(OffsetDateTime date) {
-        return date.truncatedTo(ChronoUnit.MILLIS).toString();
-    }
-
-    public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
-        return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
-    }
 }

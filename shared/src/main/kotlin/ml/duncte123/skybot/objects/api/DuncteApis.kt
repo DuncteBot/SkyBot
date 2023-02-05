@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.api
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.DateUtils
 import com.dunctebot.models.utils.Utils
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -660,7 +661,7 @@ class DuncteApis(val apiKey: String, private val mapper: ObjectMapper) {
             .put("in_channel", inChannel)
             .put("reminder", reminder)
             .put("remind_date", expireDate)
-            .put("remind_create_date", Utils.getDatabaseDateFormat(OffsetDateTime.now(ZoneOffset.UTC)))
+            .put("remind_create_date", DateUtils.getDatabaseDateFormat(OffsetDateTime.now(ZoneOffset.UTC)))
 
         val response = postJSON("reminders", obj)
 

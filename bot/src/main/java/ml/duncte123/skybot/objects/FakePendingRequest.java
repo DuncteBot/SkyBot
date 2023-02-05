@@ -49,7 +49,7 @@ public class FakePendingRequest<T> extends PendingRequest<T> {
     @Nullable
     @Override
     protected T onSuccess(@Nonnull Response response) {
-        return null;
+        return this.resp;
     }
 
     @Override

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.extensions
 
-import ml.duncte123.skybot.utils.AirUtils
+import com.dunctebot.models.utils.DateUtils
 import net.dv8tion.jda.api.entities.ISnowflake
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.utils.TimeFormat
@@ -33,7 +33,7 @@ fun Member.parseTimeJoined(): Pair<String, String> {
 }
 
 fun OffsetDateTime.parseTimes(timeFormat: TimeFormat = TimeFormat.RELATIVE): Pair<String, String> {
-    val createTimeFormat = AirUtils.makeDatePretty(this)
+    val createTimeFormat = DateUtils.makeDatePretty(this)
     val createTimeHuman: String = this.humanize(timeFormat)
 
     return createTimeFormat to createTimeHuman

@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
+import com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat
 import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils.getDatabaseDateFormat
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.utils.FileUpload

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.dunctebot.models.utils.Utils.getDatabaseDateFormat;
+import static com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;

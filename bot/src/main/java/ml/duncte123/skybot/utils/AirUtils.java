@@ -33,10 +33,9 @@ import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
-import me.duncte123.durationparser.ParsedDuration;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.FakePendingRequest;
 import ml.duncte123.skybot.objects.api.Reminder;
@@ -45,8 +44,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -57,9 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +96,7 @@ public class AirUtils {
         /*
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
          */
-        //Like it's ever gonna be up for more then a week
+        //Like it's ever gonna be up for more than a week
         final int years = longToInt(time / 31104000000L);
         final int months = longToInt(time / 2592000000L % 12);
         final int days = longToInt(time / 86400000L % 30);
@@ -232,38 +229,6 @@ public class AirUtils {
         }
 
         return foundMembers.get(0);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static String getDatabaseDateFormat(ParsedDuration duration) {
-        return getDatabaseDateFormat(getDatabaseDate(duration));
-    }
-
-    @Deprecated(forRemoval = true)
-    public static String getDatabaseDateFormat(OffsetDateTime date) {
-        return date.truncatedTo(ChronoUnit.MILLIS).toString();
-    }
-
-    @Deprecated(forRemoval = true)
-    public static OffsetDateTime fromDatabaseFormat(String date) {
-        try {
-            return OffsetDateTime.parse(date);
-        }
-        catch (DateTimeParseException e) {
-            e.printStackTrace();
-
-            return OffsetDateTime.now(ZoneOffset.UTC);
-        }
-    }
-
-    @Deprecated(forRemoval = true)
-    public static String makeDatePretty(TemporalAccessor accessor) {
-        return TimeFormat.DATE_TIME_LONG.format(accessor);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
-        return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 
     public static void handleExpiredReminders(List<Reminder> reminders, AbstractDatabase database) throws ExecutionException, InterruptedException {
