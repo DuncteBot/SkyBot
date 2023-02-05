@@ -2,7 +2,7 @@
 .gradle/
 build/
 out/
-docker-compose.override.yml
+../docker-compose.override.yml
 !.idea/copyright/*
 !.idea/copyright/dasboard.xml
 !.idea/copyright/profiles_settings.xml

@@ -28,7 +28,8 @@ jobs:
               id: docker_build
               uses: docker/build-push-action@v3
               with:
-                  context: ./dashboard/
+                  file: ./dashboard/Dockerfile
+                  context: ./
                   push: true
                   tags: dunctebot/dashboard:latest
                   cache-from: type=local,src=/tmp/.buildx-cache-dash
