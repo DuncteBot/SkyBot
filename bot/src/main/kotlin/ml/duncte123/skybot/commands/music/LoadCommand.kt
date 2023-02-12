@@ -51,7 +51,7 @@ class LoadCommand : MusicCommand() {
 
         val attachment = attachments[0]
 
-        attachment.retrieveInputStream().thenAcceptAsync {
+        attachment.proxy.download().thenAcceptAsync {
             try {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream

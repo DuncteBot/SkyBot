@@ -449,6 +449,10 @@ public abstract class MessageListener extends BaseListener {
 
         final String[] blocked = topic.split("-");
 
+        return isCommandOrCategoryNotBlocked(raw, customPrefix, blocked);
+    }
+
+    private boolean isCommandOrCategoryNotBlocked(String raw, String customPrefix, String[] blocked) {
         for (final String item : blocked) {
             if (item.isBlank()) {
                 continue;
