@@ -42,9 +42,9 @@ class StopCommand : MusicCommand() {
             return
         }
 
-        val trackData = track.getUserData(TrackUserData::class.java)
+        val trackData: TrackUserData? = track.getUserData(TrackUserData::class.java)
 
-        if (ctx.guild.settings.isAllowAllToStop || trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+        if (ctx.guild.settings.isAllowAllToStop || trackData?.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
             mng.scheduler.queue.clear()
             player.stopTrack()
             player.isPaused = false
@@ -57,7 +57,8 @@ class StopCommand : MusicCommand() {
         sendMsg(
             ctx,
             "Only the person that started this track " +
-                "or people with the `Manage Server` permission can stop this track"
+                "or people with the `Manage Server` permission can stop this track\n" +
+                "(this behaviour can be altered in the dashboard)"
         )
     }
 }
