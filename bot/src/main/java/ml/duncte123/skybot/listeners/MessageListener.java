@@ -46,7 +46,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -107,7 +110,7 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (topicContains(event.getChannel().asTextChannel(), PROFANITY_DISABLE)) {
+        if (topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             return;
         }
 
@@ -194,7 +197,7 @@ public abstract class MessageListener extends BaseListener {
                     }
                 }
 
-                final TextChannel channel = event.getChannel().asTextChannel();
+                final MessageChannel channel = event.getChannel();
                 final EmbedBuilder embed = EmbedUtils.embedField(
                         "Bulk Delete",
                         "Bulk deleted messages from <#%s> are available in the attached file.".formatted(channel.getIdLong())
@@ -427,7 +430,13 @@ public abstract class MessageListener extends BaseListener {
     }
 
     private boolean canRunCommands(String raw, String customPrefix, @Nonnull MessageReceivedEvent event) {
-        final TextChannel textChannel = event.getChannel().asTextChannel();
+        final MessageChannelUnion channel = event.getChannel();
+
+        if (channel.getType() != ChannelType.TEXT) {
+            return true; // We allow commands in thread channels
+        }
+
+        final TextChannel textChannel = channel.asTextChannel();
         final String topic = textChannel.getTopic();
 
         if (topic == null || topic.isEmpty()) {
@@ -498,7 +507,7 @@ public abstract class MessageListener extends BaseListener {
     private boolean checkSwearFilter(Message messageToCheck, GenericMessageEvent event, DunctebotGuild guild) {
         final GuildSetting settings = guild.getSettings();
 
-        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel().asTextChannel(), PROFANITY_DISABLE)) {
+        if (settings.isEnableSwearFilter() && !topicContains(event.getChannel(), PROFANITY_DISABLE)) {
             final float score = PerspectiveApi.checkSwearFilter(
                 messageToCheck.getContentRaw(),
                 event.getChannel().getId(),
@@ -621,14 +630,18 @@ public abstract class MessageListener extends BaseListener {
     }
     /// </editor-fold>
 
-    private boolean topicContains(TextChannel channel, String search) {
-        final String topic = channel.getTopic();
+    private boolean topicContains(MessageChannel msgChannel, String search) {
+        if (msgChannel instanceof TextChannel channel) {
+            final String topic = channel.getTopic();
 
-        if (topic == null || topic.isBlank()) {
-            return false;
+            if (topic == null || topic.isBlank()) {
+                return false;
+            }
+
+            return topic.contains(search);
         }
 
-        return topic.contains(search);
+        return false;
     }
 
     public void shutdownBot(@Nullable ShardManager manager) {
