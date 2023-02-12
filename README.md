@@ -16,7 +16,7 @@ SkyBot is an LGBT-friendly multipurpose discord bot with features such as music 
 
 # Support
 If you need any support please join our [Discord server][discordLink] <br />
-If you want to support development of the bot [consider to be come a patron][patronLink]
+If you want to support development of the bot [consider to become a patron][patronLink]
 
 
 # How to invite the bot to a server?
@@ -34,12 +34,11 @@ The code of this bot was made public for people who want to see how the bot work
 # Sponsors
 All our patrons listed on [this page](https://www.duncte.bot/donate)
 
-The tools that we use are kindly provided by JetBrains
+We use Jetbrains IDEs to code the bot and all the other projects in the organisation.
 
 ![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 
-<small>Copyright © 2000-2021 JetBrains s.r.o. JetBrains and the JetBrains logo are registered trademarks of JetBrains s.r.o.</small>
+<small>Copyright © 2000-2023 JetBrains s.r.o. JetBrains and the JetBrains logo are registered trademarks of JetBrains s.r.o.</small>
 
 # Widgets from botlists
 [![Bots for discord](https://botsfordiscord.com/api/bot/210363111729790977/widget)](https://botsfordiscord.com/bots/210363111729790977)
-[![Discord Boats](https://discord.boats/api/widget/dunctebot)](https://discord.boats/bot/dunctebot)
