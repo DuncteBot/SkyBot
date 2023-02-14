@@ -144,7 +144,7 @@ public abstract class Command implements ICommand<CommandContext> {
 
     @Nonnull
     @Override
-    public final String[] getAliases() {
+    public String[] getAliases() {
         return this.aliases;
     }
 

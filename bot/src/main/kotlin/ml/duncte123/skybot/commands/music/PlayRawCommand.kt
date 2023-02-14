@@ -19,5 +19,11 @@
 package ml.duncte123.skybot.commands.music
 
 class PlayRawCommand : PlayCommand(skipParsing = true) {
+    init {
+        this.displayAliasesInHelp = false
+    }
+
     override fun getName(): String = "playrw"
+
+    override fun getAliases() = arrayOf("prw")
 }

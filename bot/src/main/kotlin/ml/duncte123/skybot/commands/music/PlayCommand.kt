@@ -32,6 +32,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     init {
         this.mayAutoJoin = true
         this.name = "play"
+        this.aliases = arrayOf("p")
         this.help = "Plays a song on the bot or adds it to the queue"
         this.usage = "[url/search term]"
     }
