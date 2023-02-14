@@ -52,6 +52,10 @@ public class PerspectiveApi {
                     return 0f;
                 }
 
+                if (error.contains("does not support request languages")) {
+                    return 0f;
+                }
+
                 throw new HttpException("Error while handling perspective api request: " + json);
             }
 
