@@ -33,6 +33,7 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.FinderUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -201,6 +202,14 @@ public class CommandContext implements ICommandContext {
 
     public long getSendId() {
         return this.replyId;
+    }
+
+    public boolean isChannelNSFW() {
+        if (getChannel() instanceof IAgeRestrictedChannel channel) {
+            return channel.isNSFW();
+        }
+
+        return false;
     }
 
     // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //

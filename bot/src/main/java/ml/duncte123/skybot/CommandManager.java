@@ -62,7 +62,9 @@ import ml.duncte123.skybot.utils.CommandUtils;
 import ml.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -458,7 +460,7 @@ public class CommandManager {
             MDC.put("guild", event.getGuild().toString());
             setJDAContext(event.getJDA());
 
-            final TextChannel channel = event.getChannel().asTextChannel();
+            final MessageChannel channel = event.getChannel();
 
             if (!channel.canTalk()) {
                 return;
@@ -485,8 +487,12 @@ public class CommandManager {
     }
 
     private boolean isSafeForWork(MessageReceivedEvent event) {
-        if (event.getChannel().asTextChannel().isNSFW()) {
-            return false;
+        final MessageChannelUnion channel = event.getChannel();
+
+        if (channel instanceof IAgeRestrictedChannel nsfwChannel) {
+            if (nsfwChannel.isNSFW()) {
+                return false;
+            }
         }
 
         final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();

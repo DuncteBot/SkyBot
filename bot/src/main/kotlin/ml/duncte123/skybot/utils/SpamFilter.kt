@@ -150,7 +150,7 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                     "Spam"
                 )
 
-                val textChannel = msg.channel.asTextChannel()
+                val textChannel = msg.channel.asGuildMessageChannel()
 
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, textChannel, "Spam", false)

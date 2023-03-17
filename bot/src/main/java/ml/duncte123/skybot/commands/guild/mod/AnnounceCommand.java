@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -60,7 +60,7 @@ public class AnnounceCommand extends ModBaseCommand {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        final List<TextChannel> mentioned = ctx.getMessage().getMentions().getChannels(TextChannel.class);
+        final List<GuildMessageChannel> mentioned = ctx.getMessage().getMentions().getChannels(GuildMessageChannel.class);
 
         if (mentioned.isEmpty()) {
             sendMsg(ctx, "You did not specify a channel, usage: " + this.getUsageInstructions(ctx));
@@ -68,7 +68,7 @@ public class AnnounceCommand extends ModBaseCommand {
             return;
         }
 
-        final TextChannel targetChannel = mentioned.get(0);
+        final GuildMessageChannel targetChannel = mentioned.get(0);
 
         if (!targetChannel.canTalk()) {
             sendErrorWithMessage(ctx.getMessage(), "I can not talk in " + targetChannel.getAsMention());

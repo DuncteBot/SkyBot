@@ -47,7 +47,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -56,6 +55,7 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
+import net.dv8tion.jda.internal.entities.channel.mixin.attribute.ITopicChannelMixin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -436,20 +436,24 @@ public abstract class MessageListener extends BaseListener {
             return true; // We allow commands in thread channels
         }
 
-        final TextChannel textChannel = channel.asTextChannel();
-        final String topic = textChannel.getTopic();
+        if (channel instanceof ITopicChannelMixin<?> topicChannel) {
+            final String topic = topicChannel.getTopic();
 
-        if (topic == null || topic.isEmpty()) {
-            return true;
+            if (topic == null || topic.isEmpty()) {
+                return true;
+            }
+
+            if (topicContains(channel, "-commands")) {
+                return false;
+            }
+
+            final String[] blocked = topic.split("-");
+
+            return isCommandOrCategoryNotBlocked(raw, customPrefix, blocked);
+
         }
 
-        if (topicContains(textChannel, "-commands")) {
-            return false;
-        }
-
-        final String[] blocked = topic.split("-");
-
-        return isCommandOrCategoryNotBlocked(raw, customPrefix, blocked);
+        return true;
     }
 
     private boolean isCommandOrCategoryNotBlocked(String raw, String customPrefix, String[] blocked) {
@@ -635,7 +639,7 @@ public abstract class MessageListener extends BaseListener {
     /// </editor-fold>
 
     private boolean topicContains(MessageChannel msgChannel, String search) {
-        if (msgChannel instanceof TextChannel channel) {
+        if (msgChannel instanceof ITopicChannelMixin<?> channel) {
             final String topic = channel.getTopic();
 
             if (topic == null || topic.isBlank()) {

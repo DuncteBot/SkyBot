@@ -31,6 +31,7 @@ import ml.duncte123.skybot.objects.user.FakeUser;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -66,7 +67,7 @@ public class ModerationUtils {
 
     private ModerationUtils() {}
 
-    public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
+    public static boolean canInteract(Member mod, Member target, String action, MessageChannel channel) {
         if (mod.equals(target)) {
             sendMsg(
                 new MessageConfig.Builder()
@@ -274,7 +275,7 @@ public class ModerationUtils {
         }
     }
 
-    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minuteDuration, boolean sendMessages) {
+    public static void muteUser(DunctebotGuild guild, Member member, MessageChannel channel, String cause, long minuteDuration, boolean sendMessages) {
         final GuildSetting guildSettings = guild.getSettings();
         final long muteRoleId = guildSettings.getMuteRoleId();
 
@@ -355,7 +356,7 @@ public class ModerationUtils {
             });
     }
 
-    public static void kickUser(Guild guild, Member member, TextChannel channel, String cause, boolean sendMessages) {
+    public static void kickUser(Guild guild, Member member, MessageChannel channel, String cause, boolean sendMessages) {
         final Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {

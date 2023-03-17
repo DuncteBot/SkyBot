@@ -192,8 +192,8 @@ public class CommandUtils {
     }
 
     private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx, boolean reply) {
-        final CommandContext textChannel = reply ? ctx : null;
-        return isPatron(user, textChannel) || isUserTagPatron(user);
+        final CommandContext context = reply ? ctx : null;
+        return isPatron(user, context) || isUserTagPatron(user);
     }
 
     public static boolean isGuildPatron(@Nonnull Guild guild) {

@@ -25,6 +25,7 @@ import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 
 class SlowModeCommand : ModBaseCommand() {
@@ -39,7 +40,12 @@ class SlowModeCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val txtChan = ctx.channel.asTextChannel()
+        val txtChan = ctx.channel
+
+        if (txtChan !is ISlowmodeChannel) {
+            sendMsg(ctx, "This channel does not accept slowmode")
+            return
+        }
 
         if (ctx.args.isEmpty()) {
             val currentMode = txtChan.slowmode

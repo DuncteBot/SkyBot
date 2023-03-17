@@ -23,8 +23,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -67,7 +67,7 @@ public class PurgeUserCommand extends ModBaseCommand {
 
         final Member targetMember = mentionedMembers.get(0);
         final User targetUser = targetMember.getUser();
-        final TextChannel channel = ctx.getChannel().asTextChannel();
+        final GuildMessageChannel channel = ctx.getChannel().asGuildMessageChannel();
         final Message message = ctx.getMessage();
 
         channel.getIterableHistory()

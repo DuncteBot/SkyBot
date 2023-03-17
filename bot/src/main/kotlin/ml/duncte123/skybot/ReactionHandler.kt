@@ -40,7 +40,7 @@ class ReactionHandler : EventListener {
         return@newScheduledThreadPool t
     }
 
-    private fun MessageChannelUnion.editMsg(id: Long, msg: String) = this.asTextChannel()
+    private fun MessageChannelUnion.editMsg(id: Long, msg: String) = this.asGuildMessageChannel()
         .editMessageById(id, msg)
         .setReplace(true)
         .queue()

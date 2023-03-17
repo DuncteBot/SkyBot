@@ -67,7 +67,7 @@ public class SoftbanCommand extends ModBaseCommand {
 
         final Member toBanMember = mentioned.get(0);
 
-        if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel().asTextChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel())) {
             return;
         }
 

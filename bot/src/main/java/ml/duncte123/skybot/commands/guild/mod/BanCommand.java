@@ -72,7 +72,7 @@ public class BanCommand extends ModBaseCommand {
 
         final Member toBanMember = mentioned.get(0);
 
-        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel().asTextChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
             return;
         }
 

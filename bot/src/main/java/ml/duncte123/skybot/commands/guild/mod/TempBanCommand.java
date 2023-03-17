@@ -75,7 +75,7 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
-        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel().asTextChannel())) {
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
             return;
         }
 

@@ -25,6 +25,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.exceptions.ParsingException;
 import net.dv8tion.jda.api.utils.TimeUtil;
@@ -142,7 +143,7 @@ public class DiscordMethods {
             }),
 
             new Method("channel", (env) -> {
-                final TextChannel channel = env.get("channel");
+                final MessageChannel channel = env.get("channel");
 
                 if (channel == null) {
                     return "";
@@ -158,7 +159,7 @@ public class DiscordMethods {
             }),
 
             new Method("channelid", (env) -> {
-                final TextChannel channel = env.get("channel");
+                final MessageChannel channel = env.get("channel");
 
                 if (channel == null) {
                     return "";
@@ -204,7 +205,7 @@ public class DiscordMethods {
 
             new Method("deleteinvoke", (env) -> {
                 if (env.containsKey("messageId")) {
-                    final TextChannel channel = env.get("channel");
+                    final MessageChannel channel = env.get("channel");
 
                     if (channel != null) {
                         final String messageId = env.get("messageId");

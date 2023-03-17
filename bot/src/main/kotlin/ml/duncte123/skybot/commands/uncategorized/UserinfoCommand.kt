@@ -221,7 +221,7 @@ class UserinfoCommand : Command() {
             )
 
         // If we don't have permission to send files or our weebSh key is null
-        if (!ctx.selfMember.hasPermission(event.channel.asTextChannel(), Permission.MESSAGE_ATTACH_FILES) ||
+        if (!ctx.selfMember.hasPermission(event.channel.asGuildMessageChannel(), Permission.MESSAGE_ATTACH_FILES) ||
             ctx.config.apis.weebSh == null
         ) {
             sendEmbed(ctx, embed, true)

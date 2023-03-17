@@ -28,7 +28,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
@@ -103,7 +103,7 @@ public class LoveCommand extends Command {
             )*/
             .addField(response.get("score").asText(), response.get("message").asText(), false);
 
-        final TextChannel channel = ctx.getChannel().asTextChannel();
+        final GuildMessageChannel channel = ctx.getChannel().asGuildMessageChannel();
 
         if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS)) {
             ctx.getWeebApi().generateLoveship(

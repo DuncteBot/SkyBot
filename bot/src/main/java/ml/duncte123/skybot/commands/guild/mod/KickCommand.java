@@ -68,7 +68,7 @@ public class KickCommand extends ModBaseCommand {
         final Member toKickMember = mentioned.get(0);
         final Member member = ctx.getMember();
 
-        if (!canInteract(member, toKickMember, "kick", ctx.getChannel().asTextChannel())) {
+        if (!canInteract(member, toKickMember, "kick", ctx.getChannel())) {
             return;
         }
 

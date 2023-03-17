@@ -21,10 +21,12 @@ package ml.duncte123.skybot.commands.uncategorized
 import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageConfig
-import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer
 
 class IssueCommand : Command() {
 
@@ -66,8 +68,12 @@ class IssueCommand : Command() {
 
                     var invite = issue.inv
 
-                    if (invite.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel.asTextChannel(), Permission.CREATE_INSTANT_INVITE)) {
-                        invite = event.channel.asTextChannel().createInvite().complete().url
+                    if (invite.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.CREATE_INSTANT_INVITE)) {
+                        val chan = event.channel
+
+                        if (chan is IInviteContainer) {
+                            invite = chan.createInvite().complete().url
+                        }
                     }
 
                     val embed = EmbedUtils.getDefaultEmbed()

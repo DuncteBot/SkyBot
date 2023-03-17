@@ -210,7 +210,7 @@ public class TagCommand extends Command {
 
         final Permission perm = Permission.MESSAGE_ATTACH_FILES;
 
-        if (!ctx.getSelfMember().hasPermission(ctx.getChannel().asTextChannel(), perm)) {
+        if (!ctx.getSelfMember().hasPermission(ctx.getChannel().asGuildMessageChannel(), perm)) {
             sendMsg(ctx, "I need the `" + perm.getName() + "` permission for this command to work");
 
             return;

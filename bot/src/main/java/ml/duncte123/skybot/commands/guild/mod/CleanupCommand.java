@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Flag;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.Request;
@@ -117,7 +117,7 @@ public class CleanupCommand extends ModBaseCommand {
             return;
         }
 
-        final TextChannel channel = ctx.getChannel().asTextChannel();
+        final MessageChannel channel = ctx.getChannel();
         final var flags = ctx.getParsedFlags(this);
         final boolean keepPinned = flags.containsKey("keep-pinned");
         final boolean clearBots = flags.containsKey("bots-only");
@@ -161,7 +161,7 @@ public class CleanupCommand extends ModBaseCommand {
     }
 
     private int handleMessages(List<Message> msgs, boolean keepPinned, boolean clearBots, CommandContext ctx) {
-        final TextChannel channel = ctx.getChannel().asTextChannel();
+        final MessageChannel channel = ctx.getChannel();
         Stream<Message> msgStream = msgs.stream();
 
         if (keepPinned) {
@@ -299,7 +299,7 @@ public class CleanupCommand extends ModBaseCommand {
         return future;
     }
 
-    private void removeMessage(CommandContext ctx, TextChannel channel, CompletableFuture<Message> hack) {
+    private void removeMessage(CommandContext ctx, MessageChannel channel, CompletableFuture<Message> hack) {
         try {
             final Message hacked = hack.get();
 

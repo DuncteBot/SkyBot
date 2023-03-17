@@ -74,7 +74,7 @@ class WarnCommand : ModBaseCommand() {
 
         val guild = ctx.guild
         val moderator = ctx.member
-        val channel = ctx.channel.asTextChannel()
+        val channel = ctx.channel
         val modUser = ctx.author
 
         // Check if we can interact

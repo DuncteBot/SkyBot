@@ -154,7 +154,7 @@ public class TempMuteCommand extends ModBaseCommand {
             return true;
         }
 
-        if (!canInteract(mod, toMute, "mute", ctx.getChannel().asTextChannel())) {
+        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
             return true;
         }
 

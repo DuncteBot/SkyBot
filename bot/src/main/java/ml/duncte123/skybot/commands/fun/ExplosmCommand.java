@@ -45,7 +45,7 @@ public class ExplosmCommand extends Command {
 
     @Override
     public void execute(@NotNull CommandContext ctx) {
-        if (!ctx.getChannel().asTextChannel().isNSFW()) {
+        if (!ctx.isChannelNSFW()) {
             sendMsg(ctx, "Due to the nature of explosm comics this command is restricted to nsfw channels");
             return;
         }
