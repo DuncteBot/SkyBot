@@ -49,8 +49,27 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.ds = HikariDataSource(config)
     }
 
-    override fun getCustomCommands(): CompletableFuture<List<CustomCommand>> {
-        TODO("Not yet implemented")
+    override fun getCustomCommands() = runOnThread {
+        val customCommands = arrayListOf<CustomCommand>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM customCommands").use { res ->
+                    while (res.next()) {
+                        customCommands.add(
+                            CustomCommand(
+                                res.getString("invoke"),
+                                res.getString("message"),
+                                res.getString("guildId").toLong(),
+                                res.getBoolean("autoresponse")
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread customCommands.toList()
     }
 
     override fun createCustomCommand(guildId: Long, invoke: String, message: String): CompletableFuture<CommandResult> {
