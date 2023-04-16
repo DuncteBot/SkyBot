@@ -489,10 +489,8 @@ public class CommandManager {
     private boolean isSafeForWork(MessageReceivedEvent event) {
         final MessageChannelUnion channel = event.getChannel();
 
-        if (channel instanceof IAgeRestrictedChannel nsfwChannel) {
-            if (nsfwChannel.isNSFW()) {
-                return false;
-            }
+        if (channel instanceof IAgeRestrictedChannel nsfwChannel && nsfwChannel.isNSFW()) {
+            return false;
         }
 
         final Guild.NSFWLevel nsfwLevel = event.getGuild().getNSFWLevel();
