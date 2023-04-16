@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.SelfUser
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.requests.RestAction
+import net.dv8tion.jda.api.requests.Route
 import net.dv8tion.jda.api.utils.MiscUtil
 import net.dv8tion.jda.api.utils.data.DataArray
 import net.dv8tion.jda.api.utils.data.DataObject
@@ -14,7 +15,6 @@ import net.dv8tion.jda.internal.JDAImpl
 import net.dv8tion.jda.internal.entities.GuildImpl
 import net.dv8tion.jda.internal.requests.CompletedRestAction
 import net.dv8tion.jda.internal.requests.RestActionImpl
-import net.dv8tion.jda.internal.requests.Route
 import net.dv8tion.jda.internal.utils.config.AuthorizationConfig
 import net.dv8tion.jda.internal.utils.config.MetaConfig
 import net.dv8tion.jda.internal.utils.config.SessionConfig
@@ -52,7 +52,7 @@ class JDARestClient(token: String) {
             return@newScheduledThreadPool t
         }, true)
 
-        jda = JDAImpl(authConfig, sessionConfig, threadConfig, metaConfig)
+        jda = JDAImpl(authConfig, sessionConfig, threadConfig, metaConfig, null)
 
         retrieveSelfUser().queue(jda::setSelfUser)
     }

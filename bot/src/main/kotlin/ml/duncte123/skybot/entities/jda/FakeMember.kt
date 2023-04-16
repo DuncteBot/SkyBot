@@ -164,4 +164,6 @@ class FakeMember(private val name: String) : Member {
     override fun getDefaultChannel(): DefaultGuildChannelUnion? {
         TODO("Not yet implemented")
     }
+
+    override fun getFlagsRaw() = 0
 }

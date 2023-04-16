@@ -6,8 +6,8 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.exceptions.ParsingException
 import net.dv8tion.jda.api.requests.Request
 import net.dv8tion.jda.api.requests.Response
+import net.dv8tion.jda.api.requests.Route
 import net.dv8tion.jda.internal.entities.GuildImpl
-import net.dv8tion.jda.internal.requests.Route
 import net.dv8tion.jda.internal.requests.restaction.pagination.PaginationActionImpl
 
 class MemberPaginationActionImpl(override val guild: Guild) :
