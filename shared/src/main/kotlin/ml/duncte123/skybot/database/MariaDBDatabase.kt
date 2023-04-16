@@ -22,15 +22,19 @@ import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.sentry.Sentry
 import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
+import ml.duncte123.skybot.extensions.toGuildSetting
+import ml.duncte123.skybot.extensions.toGuildSettingMySQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
+import java.sql.SQLException
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -72,8 +76,55 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread customCommands.toList()
     }
 
-    override fun createCustomCommand(guildId: Long, invoke: String, message: String): CompletableFuture<CommandResult> {
-        TODO("Not yet implemented")
+    override fun createCustomCommand(
+        guildId: Long,
+        invoke: String,
+        message: String
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "SELECT COUNT(guildId) as cmd_count FROM customCommands WHERE guildId = ?"
+            ).use { smt ->
+                smt.setString(1, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next() && res.getInt("cmd_count") >= MAX_CUSTOM_COMMANDS) {
+                        return@runOnThread CommandResult.LIMIT_REACHED
+                    }
+                }
+            }
+
+            con.prepareStatement(
+                "SELECT COUNT(invoke) AS cmd_count FROM customCommands WHERE invoke = ? AND guildId = ?"
+            ).use { smt ->
+                smt.setString(1, invoke)
+                smt.setString(2, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    // Would be funny to see more than one command with the same invoke here.
+                    if (res.next() && res.getInt("cmd_count") >= 1) {
+                        return@runOnThread CommandResult.COMMAND_EXISTS
+                    }
+                }
+            }
+
+            con.prepareStatement(
+                "INSERT INTO customCommands (guildId, invoke, message, autoresponse) VALUES (?,?,?,?)"
+            ).use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, invoke)
+                smt.setString(3, message)
+                smt.setBoolean(4, false)
+
+                try {
+                    smt.execute()
+                    return@runOnThread CommandResult.SUCCESS
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    return@runOnThread CommandResult.UNKNOWN
+                }
+            }
+        }
     }
 
     override fun updateCustomCommand(
@@ -81,16 +132,64 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         invoke: String,
         message: String,
         autoresponse: Boolean
-    ): CompletableFuture<CommandResult> {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "UPDATE customCommands SET message = ?, autoresponse = ? WHERE guildId = ? AND invoke = ?"
+            ).use { smt ->
+                smt.setString(1, message)
+                smt.setBoolean(2, autoresponse)
+                smt.setString(3, guildId.toString())
+                smt.setString(4, invoke)
+
+                try {
+                    smt.executeUpdate()
+                    return@runOnThread CommandResult.SUCCESS
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    return@runOnThread CommandResult.UNKNOWN
+                }
+            }
+        }
     }
 
-    override fun deleteCustomCommand(guildId: Long, invoke: String): CompletableFuture<Boolean> {
-        TODO("Not yet implemented")
+    override fun deleteCustomCommand(guildId: Long, invoke: String) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM customCommands WHERE guildId = ? AND invoke = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, invoke)
+
+                try {
+                    smt.execute()
+                    return@runOnThread true
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    return@runOnThread false
+                }
+            }
+        }
     }
 
-    override fun getGuildSettings(): CompletableFuture<List<GuildSetting>> {
-        TODO("Not yet implemented")
+    override fun getGuildSettings() = runOnThread {
+        val settings = arrayListOf<GuildSetting>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM guildSettings").use { res ->
+                    while (res.next()) {
+                        val guildId = res.getLong("guildId")
+                        settings.add(
+                            res.toGuildSettingMySQL() // TODO: update fields
+                                // be smart and re-use the connection we already have
+                                .setBlacklistedWords(getBlackListsForGuild(guildId, con))
+                                .setWarnActions(getWarnActionsForGuild(guildId, con))
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread settings.toList()
     }
 
     override fun loadGuildSetting(guildId: Long): CompletableFuture<GuildSetting?> {
@@ -273,5 +372,43 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>): CompletableFuture<Unit> {
         TODO("Not yet implemented")
+    }
+
+    private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
+        val list = arrayListOf<String>()
+
+        con.prepareStatement("SELECT word FROM guild_blacklists WHERE guild_id = ?").use { smt ->
+            smt.setString(1, guildId.toString())
+
+            smt.executeQuery().use { res ->
+                while (res.next()) {
+                    list.add(res.getString("word"))
+                }
+            }
+        }
+
+        return list
+    }
+
+    private fun getWarnActionsForGuild(guildId: Long, con: Connection): List<WarnAction> {
+        val list = arrayListOf<WarnAction>()
+
+        con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
+            smt.setString(1, guildId.toString())
+
+            smt.executeQuery().use { res ->
+                while (res.next()) {
+                    list.add(
+                        WarnAction(
+                            WarnAction.Type.valueOf(res.getString("type")),
+                            res.getInt("threshold"),
+                            res.getInt("duration")
+                        )
+                    )
+                }
+            }
+        }
+
+        return list
     }
 }

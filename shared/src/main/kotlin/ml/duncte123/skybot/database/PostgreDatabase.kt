@@ -101,12 +101,25 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                     smt.setLong(1, guildId)
 
                     smt.executeQuery().use { res ->
-                        // TODO: make count constant
-                        if (res.next() && res.getInt("cmd_count") >= 50) {
+                        if (res.next() && res.getInt("cmd_count") >= MAX_CUSTOM_COMMANDS) {
                             return@runOnThread CommandResult.LIMIT_REACHED
                         }
                     }
                 }
+
+            con.prepareStatement(
+                "SELECT COUNT(invoke) AS cmd_count FROM root.public.custom_commands WHERE invoke = ? AND guild_id = ?"
+            ).use { smt ->
+                smt.setString(1, invoke)
+                smt.setLong(2, guildId)
+
+                smt.executeQuery().use { res ->
+                    // Would be funny to see more than one command with the same invoke here.
+                    if (res.next() && res.getInt("cmd_count") >= 1) {
+                        return@runOnThread CommandResult.COMMAND_EXISTS
+                    }
+                }
+            }
 
             con.prepareStatement("INSERT INTO custom_commands(guild_id, invoke, message, auto_response) VALUES (?, ?, ?, ?)")
                 .use { smt ->

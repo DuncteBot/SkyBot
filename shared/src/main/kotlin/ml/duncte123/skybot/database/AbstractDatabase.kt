@@ -246,4 +246,8 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
         return future
     }
+
+    companion object {
+        const val MAX_CUSTOM_COMMANDS = 50
+    }
 }
