@@ -16,8 +16,6 @@ import net.dv8tion.jda.internal.entities.GuildImpl
 import net.dv8tion.jda.internal.requests.CompletedRestAction
 import net.dv8tion.jda.internal.requests.RestActionImpl
 import net.dv8tion.jda.internal.utils.config.AuthorizationConfig
-import net.dv8tion.jda.internal.utils.config.MetaConfig
-import net.dv8tion.jda.internal.utils.config.SessionConfig
 import net.dv8tion.jda.internal.utils.config.ThreadingConfig
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
@@ -42,9 +40,7 @@ class JDARestClient(token: String) {
 
     init {
         val authConfig = AuthorizationConfig(token)
-        val sessionConfig = SessionConfig.getDefault()
         val threadConfig = ThreadingConfig.getDefault()
-        val metaConfig = MetaConfig.getDefault()
 
         threadConfig.setRateLimitPool(Executors.newScheduledThreadPool(5) {
             val t = Thread(it, "dunctebot-rest-thread")
@@ -52,7 +48,9 @@ class JDARestClient(token: String) {
             return@newScheduledThreadPool t
         }, true)
 
-        jda = JDAImpl(authConfig, sessionConfig, threadConfig, metaConfig, null)
+        jda = JDAImpl(authConfig, null, threadConfig, null, null)
+
+        jda.initRequester()
 
         retrieveSelfUser().queue(jda::setSelfUser)
     }
