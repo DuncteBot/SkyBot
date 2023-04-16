@@ -44,7 +44,7 @@ jobs:
             - name: Move cache
               run: |
                   rm -rf /tmp/.buildx-dash-cache
-                  mv /tmp/.buildx-cache-new /tmp/.buildx-dash-cache
+                  mv /tmp/.buildx-cache-dash-new /tmp/.buildx-dash-cache
 
             - name: Image digest
               run: echo ${{ steps.docker_build.outputs.digest }}
