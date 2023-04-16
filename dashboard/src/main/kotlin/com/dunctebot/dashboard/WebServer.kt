@@ -48,7 +48,7 @@ class WebServer {
             } else {
                 config.staticFiles.add("/public", Location.CLASSPATH)
                 config.vue.optimizeDependencies = false
-                config.vue.enableCspAndNonces = true
+                config.vue.enableCspAndNonces = false // sucks to not have nonces, but CSP sucks.
             }
             // 191231307290771456
             // 191245668617158656
