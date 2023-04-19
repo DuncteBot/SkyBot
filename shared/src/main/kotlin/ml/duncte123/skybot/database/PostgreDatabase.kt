@@ -411,10 +411,10 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     }
 
     override fun loadAllPatrons() = runOnThread {
-        val patrons = arrayListOf<Patron>()
-        val tagPatrons = arrayListOf<Patron>()
-        val oneGuildPatrons = arrayListOf<Patron>()
-        val guildPatrons = arrayListOf<Patron>()
+        val patrons = mutableListOf<Patron>()
+        val tagPatrons = mutableListOf<Patron>()
+        val oneGuildPatrons = mutableListOf<Patron>()
+        val guildPatrons = mutableListOf<Patron>()
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
@@ -784,7 +784,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     }
 
     override fun getVcAutoRoles() = runOnThread {
-        val roles = arrayListOf<VcAutoRole>()
+        val roles = mutableListOf<VcAutoRole>()
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
@@ -853,7 +853,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     }
 
     override fun loadTags() = runOnThread {
-        val tags = arrayListOf<Tag>()
+        val tags = mutableListOf<Tag>()
 
         this.connection.use { con ->
             con.createStatement().use { smt ->

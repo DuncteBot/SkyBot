@@ -143,7 +143,7 @@ public class ReadyShutdownListener extends MessageListener {
         try {
             this.variables.getDatabase().close();
         } catch (Exception e) {
-            throw new RuntimeException(e); // hack ;)
+            LOGGER.error("Failed to close database", e);
         }
 
         LOGGER.info("Bot and JDA shutdown cleanly");

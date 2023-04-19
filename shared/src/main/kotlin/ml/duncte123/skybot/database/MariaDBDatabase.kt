@@ -249,8 +249,36 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         TODO("Not yet implemented")
     }
 
-    override fun loadAllPatrons(): CompletableFuture<AllPatronsData> {
-        TODO("Not yet implemented")
+    override fun loadAllPatrons() = runOnThread {
+        val patrons = mutableListOf<Patron>()
+        val tagPatrons = mutableListOf<Patron>()
+        val oneGuildPatrons = mutableListOf<Patron>()
+        val guildPatrons = mutableListOf<Patron>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM patrons").use { res ->
+                    while (res.next()) {
+                        val idRes = res.getString("guild_id").toLong()
+                        val guildId = if (idRes == 0L) null else idRes
+                        val patron = Patron(
+                            Patron.Type.valueOf(res.getString("type").uppercase()),
+                            res.getString("user_id").toLong(),
+                            guildId
+                        )
+
+                        when (patron.type) {
+                            Patron.Type.NORMAL -> patrons.add(patron)
+                            Patron.Type.TAG -> tagPatrons.add(patron)
+                            Patron.Type.ONE_GUILD -> oneGuildPatrons.add(patron)
+                            Patron.Type.ALL_GUILD -> guildPatrons.add(patron)
+                        }
+                    }
+                }
+            }
+        }
+
+        return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
     }
 
     override fun removePatron(userId: Long): CompletableFuture<Unit> {
@@ -323,8 +351,26 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         TODO("Not yet implemented")
     }
 
-    override fun getVcAutoRoles(): CompletableFuture<List<VcAutoRole>> {
-        TODO("Not yet implemented")
+    override fun getVcAutoRoles() = runOnThread {
+        val roles = mutableListOf<VcAutoRole>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM vc_auto_roles").use { res ->
+                    while (res.next()) {
+                        roles.add(
+                            VcAutoRole(
+                                res.getString("guild_id").toLong(),
+                                res.getString("voice_channel_id").toLong(),
+                                res.getString("role_id").toLong()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread roles.toList()
     }
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long): CompletableFuture<Unit> {
@@ -343,8 +389,27 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         TODO("Not yet implemented")
     }
 
-    override fun loadTags(): CompletableFuture<List<Tag>> {
-        TODO("Not yet implemented")
+    override fun loadTags() = runOnThread {
+        val tags = mutableListOf<Tag>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM tags").use { res ->
+                    while (res.next()) {
+                        tags.add(
+                            Tag(
+                                res.getInt("id"),
+                                res.getString("name"),
+                                res.getString("content"),
+                                res.getString("owner_id").toLong()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread tags.toList()
     }
 
     override fun createTag(tag: Tag): CompletableFuture<Pair<Boolean, String>> {
