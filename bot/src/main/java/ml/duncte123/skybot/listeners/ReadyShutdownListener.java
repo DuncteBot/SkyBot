@@ -91,6 +91,7 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.DAYS
             );
 
+            // TODO: mariadb support
             if ("psql".equals(this.variables.getConfig().useDatabase)) {
                 DataTimers.startReminderTimer(this.variables, LOGGER);
                 DataTimers.startUnbanTimer(this.variables, LOGGER);
@@ -138,6 +139,13 @@ public class ReadyShutdownListener extends MessageListener {
         // shut down weeb.java
         this.variables.getWeebApi().shutdown();
         LOGGER.info("Weeb.java shutdown");
+
+        try {
+            this.variables.getDatabase().close();
+        } catch (Exception e) {
+            throw new RuntimeException(e); // hack ;)
+        }
+
         LOGGER.info("Bot and JDA shutdown cleanly");
     }
 }

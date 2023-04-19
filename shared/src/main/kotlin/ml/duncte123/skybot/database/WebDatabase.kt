@@ -348,4 +348,8 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         apis.deleteBanBypass(banBypass.guildId, banBypass.userId)
         return@runOnThread
     }
+
+    override fun close() {
+        // Nothing to close
+    }
 }

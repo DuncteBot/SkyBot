@@ -179,8 +179,9 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                     while (res.next()) {
                         val guildId = res.getLong("guildId")
                         settings.add(
-                            res.toGuildSettingMySQL() // TODO: update fields
+                            res.toGuildSettingMySQL()
                                 // be smart and re-use the connection we already have
+                                .setEmbedColor(getEmbedColorForGuild(guildId, con))
                                 .setBlacklistedWords(getBlackListsForGuild(guildId, con))
                                 .setWarnActions(getWarnActionsForGuild(guildId, con))
                         )
@@ -192,8 +193,24 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread settings.toList()
     }
 
-    override fun loadGuildSetting(guildId: Long): CompletableFuture<GuildSetting?> {
-        TODO("Not yet implemented")
+    override fun loadGuildSetting(guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM guildSettings WHERE guildId = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        return@runOnThread res.toGuildSettingMySQL()
+                            // be smart and re-use the connection we already have
+                            .setEmbedColor(getEmbedColorForGuild(guildId, con))
+                            .setBlacklistedWords(getBlackListsForGuild(guildId, con))
+                            .setWarnActions(getWarnActionsForGuild(guildId, con))
+                    }
+                }
+            }
+        }
+
+        return@runOnThread null
     }
 
     override fun deleteGuildSetting(guildId: Long): CompletableFuture<Unit> {
@@ -372,6 +389,25 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>): CompletableFuture<Unit> {
         TODO("Not yet implemented")
+    }
+
+    override fun close() {
+        this.ds.close()
+    }
+
+    private fun getEmbedColorForGuild(guildId: Long, con: Connection): Int {
+        con.prepareStatement("SELECT embed_color FROM embedSettings WHERE guild_id =?").use { smt ->
+            smt.setString(1, guildId.toString())
+
+            smt.executeQuery().use { res ->
+                if (res.next()) {
+                    return res.getInt("embed_color")
+                }
+            }
+        }
+
+
+        return -1
     }
 
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {

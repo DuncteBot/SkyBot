@@ -44,6 +44,7 @@ java {
 
 dependencies {
     implementation(libs.bundles.database)
+    implementation(libs.mariadb)
     compileOnly(libs.jda)
     compileOnly(libs.weebjava) // lmao wtf
     compileOnly(libs.botCommons)

@@ -216,11 +216,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                             .setBlacklistedWords(getBlackListsForGuild(guildId, con))
                             .setWarnActions(getWarnActionsForGuild(guildId, con))
                     }
-
-                    return@runOnThread null
                 }
             }
         }
+
+        return@runOnThread null
     }
 
     override fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
@@ -1040,6 +1040,10 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         }
 
         return@runOnThread
+    }
+
+    override fun close() {
+        this.ds.close()
     }
 
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
