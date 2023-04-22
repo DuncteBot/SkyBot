@@ -94,7 +94,7 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun loadGuildSetting(guildId: Long): CompletableFuture<GuildSetting?>
 
-    abstract fun deleteGuildSetting(guildId: Long): CompletableFuture<Unit>
+    open fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
 
     abstract fun purgeGuildSettings(guildIds: List<Long>): CompletableFuture<Unit>
 
@@ -102,7 +102,7 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun registerNewGuild(guildSettings: GuildSetting): CompletableFuture<Boolean>
 
-    abstract fun addWordToBlacklist(guildId: Long, word: String): CompletableFuture<Unit>
+    open fun addWordToBlacklist(guildId: Long, word: String) = addWordsToBlacklist(guildId, listOf(word))
 
     abstract fun addWordsToBlacklist(guildId: Long, words: List<String>): CompletableFuture<Unit>
 

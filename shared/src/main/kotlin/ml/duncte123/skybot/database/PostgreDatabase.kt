@@ -223,8 +223,6 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread null
     }
 
-    override fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
-
     override fun purgeGuildSettings(guildIds: List<Long>) = runOnThread {
         val queries = arrayOf(
             "DELETE FROM guild_settings WHERE guild_id IN",
@@ -349,7 +347,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 """.trimMargin()
             ).use { smt ->
                 smt.setLong(1, guildSettings.guildId)
-                smt.setString(2, "db!") // TODO: bla bla hardcoded
+                smt.setString(2, guildSettings.customPrefix)
                 smt.setString(3, guildSettings.customJoinMessage)
                 smt.setString(4, guildSettings.customLeaveMessage)
 
@@ -357,8 +355,6 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
             }
         }
     }
-
-    override fun addWordToBlacklist(guildId: Long, word: String) = addWordsToBlacklist(guildId, listOf(word))
 
     override fun addWordsToBlacklist(guildId: Long, words: List<String>) = runOnThread {
         val vals = words.joinToString(", ") { "(?, ?)" }

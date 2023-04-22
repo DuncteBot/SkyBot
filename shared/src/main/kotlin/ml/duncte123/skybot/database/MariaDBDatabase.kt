@@ -20,14 +20,10 @@ package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
+import com.dunctebot.models.utils.Utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
-import liquibase.Contexts
-import liquibase.Liquibase
-import liquibase.database.jvm.JdbcConnection
-import liquibase.resource.ClassLoaderResourceAccessor
-import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.extensions.toGuildSettingMySQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
@@ -213,28 +209,165 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread null
     }
 
-    override fun deleteGuildSetting(guildId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun purgeGuildSettings(guildIds: List<Long>) = runOnThread {
+        val queries = arrayOf(
+            // language=MariaDB
+            "DELETE FROM guildSettings WHERE guildId IN",
+            // language=MariaDB
+            "DELETE FROM vc_auto_roles WHERE guild_id IN",
+            // language=MariaDB
+            "DELETE FROM guild_blacklists WHERE guild_id IN",
+            // language=MariaDB
+            "DELETE FROM warn_actions WHERE guild_id IN",
+            // language=MariaDB
+            "DELETE FROM customCommands WHERE guildId IN"
+        )
+
+        val questions = guildIds.joinToString(", ") { "?" }
+
+        this.connection.use { con ->
+            queries.forEach { q ->
+                // language=MariaDB
+                con.prepareStatement("$q ($questions)").use { smt ->
+                    guildIds.forEachIndexed { index, id ->
+                        smt.setString(index + 1, id.toString())
+                    }
+
+                    smt.execute()
+                }
+            }
+        }
     }
 
-    override fun purgeGuildSettings(guildIds: List<Long>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun updateGuildSetting(guildSettings: GuildSetting) = runOnThread {
+        this.connection.use { con ->
+            updateEmbedColor(guildSettings.guildId, guildSettings.embedColor, con)
+
+            // TODO: remove server_description, discord has this feature now
+            con.prepareStatement(
+                """UPDATE guildSettings SET
+                    |prefix = ?,
+                    |autoRole = ?,
+                    |leave_timeout = ?,
+                    |announceNextTrack = ?,
+                    |allowAllToStop = ?,
+                    |serverDesc = ?,
+                    |
+                    |welcomeLeaveChannel = ?,
+                    |enableJoinMessage = ?,
+                    |enableLeaveMessage = ?,
+                    |enableJoinMessage = ?,
+                    |customLeaveMessage = ?,
+                    |
+                    |logChannelId = ?,
+                    |muteRoleId = ?,
+                    |enableSwearFilter = ?,
+                    |filterType = ?,
+                    |aiSensitivity = ?,
+                    |
+                    |autoDeHoist = ?,
+                    |filterInvites = ?,
+                    |spamFilterState = ?,
+                    |kickInsteadState = ?,
+                    |ratelimits = ?,
+                    |spam_threshold = ?,
+                    |young_account_ban_enabled = ?,
+                    |young_account_threshold = ?,
+                    |
+                    |banLogging = ?,
+                    |unbanLogging = ?,
+                    |muteLogging = ?,
+                    |warnLogging = ?,
+                    |memberLogging = ?,
+                    |invite_logging = ?,
+                    |message_logging = ?
+                    |
+                    |WHERE guildId = ?
+                """.trimMargin()
+            ).use { smt ->
+                /// <editor-fold defaultstate="collapsed" desc="guild settings">
+                smt.setString(1, guildSettings.customPrefix)
+                smt.setLong(2, guildSettings.autoroleRole)
+                smt.setInt(3, guildSettings.leaveTimeout)
+                smt.setBoolean(4, guildSettings.isAnnounceTracks)
+                smt.setBoolean(5, guildSettings.isAllowAllToStop)
+                // TODO: remove, discord has this feature
+                smt.setString(6, guildSettings.serverDesc)
+
+                smt.setLong(7, guildSettings.welcomeLeaveChannel)
+                smt.setBoolean(8, guildSettings.isEnableJoinMessage)
+                smt.setBoolean(9, guildSettings.isEnableLeaveMessage)
+                smt.setString(10, guildSettings.customJoinMessage)
+                smt.setString(11, guildSettings.customLeaveMessage)
+
+                smt.setLong(12, guildSettings.logChannel)
+                smt.setLong(13, guildSettings.muteRoleId)
+                smt.setBoolean(14, guildSettings.isEnableSwearFilter)
+                smt.setString(15, guildSettings.filterType.type)
+                smt.setFloat(16, guildSettings.aiSensitivity)
+
+                smt.setBoolean(17, guildSettings.isAutoDeHoist)
+                smt.setBoolean(18, guildSettings.isFilterInvites)
+                smt.setBoolean(19, guildSettings.isEnableSpamFilter)
+                smt.setBoolean(20, guildSettings.kickState)
+                smt.setString(21, Utils.convertJ2S(guildSettings.ratelimits))
+                smt.setInt(22, guildSettings.spamThreshold)
+                smt.setBoolean(23, guildSettings.isYoungAccountBanEnabled)
+                smt.setInt(24, guildSettings.youngAccountThreshold)
+
+                // Logging :)
+                smt.setBoolean(25, guildSettings.isBanLogging)
+                smt.setBoolean(26, guildSettings.isUnbanLogging)
+                smt.setBoolean(27, guildSettings.isMuteLogging)
+                smt.setBoolean(28, guildSettings.isWarnLogging)
+                smt.setBoolean(29, guildSettings.isMemberLogging)
+                smt.setBoolean(30, guildSettings.isInviteLogging)
+                smt.setBoolean(31, guildSettings.isMessageLogging)
+
+                // What guild?
+                smt.setString(32, guildSettings.guildId.toString())
+                /// </editor-fold>
+
+                return@runOnThread smt.execute()
+            }
+        }
     }
 
-    override fun updateGuildSetting(guildSettings: GuildSetting): CompletableFuture<Boolean> {
-        TODO("Not yet implemented")
+    override fun registerNewGuild(guildSettings: GuildSetting) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                """INSERT IGNORE INTO guildSettings(guildId, prefix, customWelcomeMessage, customLeaveMessage) 
+                |VALUES (?, ?, ?, ?);
+                """.trimMargin()
+            ).use { smt ->
+                smt.setLong(1, guildSettings.guildId)
+                smt.setString(2, guildSettings.customPrefix)
+                smt.setString(3, guildSettings.customJoinMessage)
+                smt.setString(4, guildSettings.customLeaveMessage)
+
+                return@runOnThread smt.execute()
+            }
+        }
     }
 
-    override fun registerNewGuild(guildSettings: GuildSetting): CompletableFuture<Boolean> {
-        TODO("Not yet implemented")
-    }
+    override fun addWordsToBlacklist(guildId: Long, words: List<String>) = runOnThread {
+        val vals = words.joinToString(", ") { "(?, ?)" }
 
-    override fun addWordToBlacklist(guildId: Long, word: String): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
-    }
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT IGNORE INTO guild_blacklists(guild_id, word) VALUES $vals"
+            ).use { smt ->
+                var paramIndex = 0
+                words.forEach { word ->
+                    smt.setString(++paramIndex, guildId.toString())
+                    smt.setString(++paramIndex, word)
+                }
 
-    override fun addWordsToBlacklist(guildId: Long, words: List<String>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
     override fun removeWordFromBlacklist(guildId: Long, word: String): CompletableFuture<Unit> {
@@ -245,6 +378,7 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         TODO("Not yet implemented")
     }
 
+    @Deprecated("Stored in guild settings")
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int): CompletableFuture<Unit> {
         TODO("Not yet implemented")
     }
@@ -473,6 +607,18 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
 
         return -1
+    }
+
+    private fun updateEmbedColor(guildId: Long, color: Int, con: Connection) {
+        con.prepareStatement(
+            "INSERT INTO embedSettings (guild_id, embed_color) VALUES(?, ?) ON DUPLICATE KEY UPDATE embed_color = ?"
+        ).use { smt ->
+            smt.setString(1, guildId.toString())
+            smt.setInt(2, color)
+            smt.setInt(3, color)
+
+            smt.executeUpdate()
+        }
     }
 
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
