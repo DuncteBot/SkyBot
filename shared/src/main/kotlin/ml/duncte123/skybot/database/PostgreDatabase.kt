@@ -39,6 +39,7 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
 
 class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
     private val ds: HikariDataSource
@@ -494,12 +495,12 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
                         return@runOnThread res.getLong("guild_id")
-                    } else {
-                        return@runOnThread null
                     }
                 }
             }
         }
+
+        return@runOnThread null
     }
 
     override fun createBan(
@@ -507,7 +508,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         userId: Long,
         unbanDate: String,
         guildId: Long
-    ) = runOnThread {
+    ): CompletableFuture<Unit> = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
                 "INSERT INTO temp_bans (user_id, mod_id, guild_id, unban_date) VALUES (?, ?, ?, ?)"
@@ -520,11 +521,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.execute()
             }
         }
-
-        return@runOnThread
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) = runOnThread {
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit> = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
                 "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason) VALUES (?, ?, ?, now(), ?)"
@@ -535,8 +534,6 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.setString(4, reason)
                 smt.execute()
             }
-
-            return@runOnThread
         }
     }
 

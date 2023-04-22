@@ -42,8 +42,8 @@ data class Ban
     @JsonProperty("id") val id: Int,
     @JsonProperty("modUserId") val modId: String,
     @JsonProperty("userId") val userId: Long,
-    @JsonProperty("Username") val userName: String,
-    @JsonProperty("discriminator") val discriminator: String,
+    @Deprecated("Useless") @JsonProperty("Username") val userName: String,
+    @Deprecated("Useless") @JsonProperty("discriminator") val discriminator: String,
     @JsonProperty("guildId") val guildId: String
 )
 
@@ -58,7 +58,7 @@ data class Mute
     @JsonProperty("id") val id: Int,
     @JsonProperty("mod_id") val modId: Long,
     @JsonProperty("user_id") val userId: Long,
-    @JsonProperty("user_tag") val userTag: String,
+    @Deprecated("Useless") @JsonProperty("user_tag") val userTag: String,
     @JsonProperty("guild_id") val guildId: Long
 )
 

@@ -197,7 +197,7 @@ public class ModerationUtils {
 
             final User targetUser = target.getUser();
 
-            LOG.debug("Unmuting " + mute.getUserTag());
+            LOG.debug("Unmuting " + mute.getId());
 
             final DunctebotGuild dbGuild = new DunctebotGuild(guild, variables);
             final long muteRoleId = dbGuild.getSettings().getMuteRoleId();

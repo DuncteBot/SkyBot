@@ -31,6 +31,7 @@ import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.sql.SQLException
+import java.sql.Types
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -370,17 +371,34 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread
     }
 
-    override fun removeWordFromBlacklist(guildId: Long, word: String): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun removeWordFromBlacklist(guildId: Long, word: String) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM guild_blacklists WHERE guild_id = ? AND word = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, word)
+
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun clearBlacklist(guildId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun clearBlacklist(guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM guild_blacklists WHERE guild_id = ?").use { smt ->
+                smt.setLong(1, guildId)
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
     @Deprecated("Stored in guild settings")
-    override fun updateOrCreateEmbedColor(guildId: Long, color: Int): CompletableFuture<Unit> {
+    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
         TODO("Not yet implemented")
+        return@runOnThread
     }
 
     override fun loadAllPatrons() = runOnThread {
@@ -415,28 +433,102 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
     }
 
-    override fun removePatron(userId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun removePatron(userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM patrons WHERE user_id = ?").use { smt ->
+                smt.setLong(1, userId)
+
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun createOrUpdatePatron(patron: Patron): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun createOrUpdatePatron(patron: Patron) = runOnThread {
+        this.createOrUpdatePatronSync(patron)
     }
 
-    override fun addOneGuildPatrons(userId: Long, guildId: Long): CompletableFuture<Pair<Long, Long>> {
-        TODO("Not yet implemented")
+    override fun addOneGuildPatrons(userId: Long, guildId: Long) = runOnThread {
+        this.createOrUpdatePatronSync(Patron(Patron.Type.ONE_GUILD, userId, guildId))
+
+        return@runOnThread userId to guildId
     }
 
-    override fun getOneGuildPatron(userId: Long): CompletableFuture<Long?> {
-        TODO("Not yet implemented")
+    private fun createOrUpdatePatronSync(patron: Patron) {
+        this.connection.use { con ->
+            con.prepareStatement(
+                """INSERT INTO patrons(user_id, type, guild_id)
+                    |VALUES (?, ?, ?) ON DUPLICATE KEY
+                    |UPDATE type = ?, guild_id = ?
+                """.trimMargin()
+            ).use { smt ->
+                smt.setString(1, patron.userId.toString())
+                smt.setString(2, patron.type.name)
+                smt.setString(4, patron.type.name)
+
+                if (patron.guildId == null) {
+                    smt.setNull(3, Types.CHAR)
+                    smt.setNull(5, Types.CHAR)
+                } else {
+                    smt.setString(3, patron.guildId.toString())
+                    smt.setString(5, patron.guildId.toString())
+                }
+
+                smt.execute()
+            }
+        }
     }
 
-    override fun createBan(modId: Long, userId: Long, unbanDate: String, guildId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun getOneGuildPatron(userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT guild_id FROM patrons WHERE user_id = ? AND type = ?").use { smt ->
+                smt.setLong(1, userId)
+                smt.setString(2, Patron.Type.ONE_GUILD.name)
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        return@runOnThread res.getLong("guild_id")
+                    } else {
+                        return@runOnThread null
+                    }
+                }
+            }
+        }
     }
 
-    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun createBan(
+        modId: Long,
+        userId: Long,
+        unbanDate: String,
+        guildId: Long
+    ): CompletableFuture<Unit> = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO bans (userId, modUserId, guildId, unban_date, ban_date, Username, discriminator) VALUES (?, ?, ?, ?, now(), 'UNUSED', '0000')"
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, modId.toString())
+                smt.setString(3, guildId.toString())
+                // TODO: this should be a date datatype
+                smt.setString(4, unbanDate)
+                smt.execute()
+            }
+        }
+    }
+
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit> = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason, expire_date) VALUES (?, ?, ?, now(), ?, now() + interval 6 DAY)"
+            ).use { smt ->
+                smt.setLong(1, userId)
+                smt.setLong(2, modId)
+                smt.setLong(3, guildId)
+                smt.setString(4, reason)
+                smt.execute()
+            }
+        }
     }
 
     override fun createMute(
@@ -445,8 +537,46 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         userTag: String,
         unmuteDate: String,
         guildId: Long
-    ): CompletableFuture<Mute?> {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            var oldMute: Mute? = null
+
+            con.prepareStatement("SELECT * FROM mutes WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        oldMute = Mute(
+                            res.getInt("id"),
+                            res.getString("mod_id").toLong(),
+                            res.getString("user_id").toLong(),
+                            "",
+                            res.getString("guild_id").toLong()
+                        )
+                    }
+                }
+            }
+
+            if (oldMute != null) {
+                con.prepareStatement("DELETE FROM mutes WHERE id = ?").use { smt ->
+                    smt.setInt(1, oldMute!!.id)
+                    smt.execute()
+                }
+            }
+
+            con.prepareStatement(
+                "INSERT INTO mutes(user_id, mod_id, guild_id, unmute_date, user_tag) VALUES (?, ?, ?, ?, 'UNKNOWN#0000')"
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, modId.toString())
+                smt.setString(3, guildId.toString())
+                smt.setString(4, unmuteDate)
+                smt.execute()
+            }
+
+            return@runOnThread oldMute
+        }
     }
 
     override fun getWarningsForUser(userId: Long, guildId: Long): CompletableFuture<List<Warning>> {
