@@ -37,6 +37,7 @@ data class Warning(
     val guildId: Long
 )
 
+// TODO: make sure id props are longs
 data class Ban
 @JsonCreator constructor(
     @JsonProperty("id") val id: Int,

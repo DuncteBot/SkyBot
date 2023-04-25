@@ -579,40 +579,198 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         }
     }
 
-    override fun getWarningsForUser(userId: Long, guildId: Long): CompletableFuture<List<Warning>> {
-        TODO("Not yet implemented")
+    override fun getWarningsForUser(userId: Long, guildId: Long) = runOnThread {
+        val warnings = mutableListOf<Warning>()
+
+        this.connection.use { con ->
+            con.prepareStatement(
+                "SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - INTERVAL 6 DAY))"
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        warnings.add(
+                            Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getString("mod_id").toLong(),
+                                res.getString("reason"),
+                                res.getString("guild_id").toLong()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread warnings.toList()
     }
 
-    override fun getWarningCountForUser(userId: Long, guildId: Long): CompletableFuture<Int> {
-        TODO("Not yet implemented")
+    override fun getWarningCountForUser(userId: Long, guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "SELECT COUNT(id) as amount FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - INTERVAL 6 DAY))"
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        return@runOnThread res.getInt("amount")
+                    }
+                }
+            }
+        }
+
+        return@runOnThread 0
     }
 
-    override fun deleteLatestWarningForUser(userId: Long, guildId: Long): CompletableFuture<Warning?> {
-        TODO("Not yet implemented")
+    override fun deleteLatestWarningForUser(userId: Long, guildId: Long) = runOnThread {
+        var oldWarning: Warning? = null
+
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? ORDER BY id DESC LIMIT 1")
+                .use { smt ->
+                    smt.setLong(1, userId)
+                    smt.setLong(2, guildId)
+
+                    smt.executeQuery().use { res ->
+                        if (res.next()) {
+                            oldWarning = Warning(
+                                res.getInt("id"),
+                                res.getString("warn_date"),
+                                res.getString("mod_id").toLong(),
+                                res.getString("reason"),
+                                res.getString("guild_id").toLong()
+                            )
+                        }
+                    }
+                }
+
+            if (oldWarning != null) {
+                con.prepareStatement("DELETE FROM warnings WHERE id = ?").use { smt ->
+                    smt.setInt(1, oldWarning!!.id)
+                    smt.executeUpdate()
+                }
+            }
+        }
+
+        return@runOnThread oldWarning
     }
 
-    override fun getExpiredBansAndMutes(): CompletableFuture<Pair<List<Ban>, List<Mute>>> {
-        TODO("Not yet implemented")
+    override fun getExpiredBansAndMutes() = runOnThread {
+        val bans = mutableListOf<Ban>()
+        val mutes = mutableListOf<Mute>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM bans WHERE unban_date <= now()").use { res ->
+                    while (res.next()) {
+                        bans.add(
+                            Ban(
+                                res.getInt("id"),
+                                res.getString("modUserId"),
+                                res.getString("userId").toLong(),
+                                "Deleted User",
+                                "0000",
+                                res.getString("guildId")
+                            )
+                        )
+                    }
+                }
+            }
+
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= now()").use { res ->
+                    while (res.next()) {
+                        mutes.add(
+                            Mute(
+                                res.getInt("id"),
+                                res.getString("mod_id").toLong(),
+                                res.getString("user_id").toLong(),
+                                "Deleted User#0000",
+                                res.getString("guild_id").toLong()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return@runOnThread bans.toList() to mutes.toList()
     }
 
-    override fun purgeBans(ids: List<Int>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun purgeBans(ids: List<Int>) = runOnThread {
+        this.connection.use { con ->
+            val values = ids.joinToString(", ") { "?" }
+            con.prepareStatement("DELETE FROM bans WHERE id IN ($values)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun purgeMutes(ids: List<Int>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun purgeMutes(ids: List<Int>) = runOnThread {
+        this.connection.use { con ->
+            val values = ids.joinToString(", ") { "?" }
+            con.prepareStatement("DELETE FROM mutes WHERE id IN ($values)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun createBanBypass(guildId: Long, userId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun createBanBypass(guildId: Long, userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT IGNORE INTO ban_bypasses(guild_id, user_id) VALUES (?, ?)"
+            ).use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun getBanBypass(guildId: Long, userId: Long): CompletableFuture<BanBypas?> {
-        TODO("Not yet implemented")
+    override fun getBanBypass(guildId: Long, userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        return@runOnThread BanBypas(res.getLong("guild_id"), res.getLong("user_id"))
+                    }
+                }
+            }
+        }
+
+        return@runOnThread null
     }
 
-    override fun deleteBanBypass(banBypass: BanBypas): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun deleteBanBypass(banBypass: BanBypas) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setString(1, banBypass.guildId.toString())
+                smt.setString(2, banBypass.userId.toString())
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
     override fun getVcAutoRoles() = runOnThread {
@@ -637,6 +795,7 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread roles.toList()
     }
 
+    // TODO: constraint in database
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long): CompletableFuture<Unit> {
         TODO("Not yet implemented")
     }
