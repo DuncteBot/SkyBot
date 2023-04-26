@@ -25,7 +25,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
 import ml.duncte123.skybot.extensions.toGuildSettingMySQL
-import ml.duncte123.skybot.extensions.toReminder
 import ml.duncte123.skybot.extensions.toReminderMySQL
 import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
@@ -395,12 +394,6 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
             }
         }
 
-        return@runOnThread
-    }
-
-    @Deprecated("Stored in guild settings")
-    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
-        TODO("Not yet implemented")
         return@runOnThread
     }
 

@@ -401,12 +401,6 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread
     }
 
-    @Deprecated("Stored in guild settings")
-    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) = runOnThread {
-        TODO("Not yet implemented")
-        return@runOnThread
-    }
-
     override fun loadAllPatrons() = runOnThread {
         val patrons = mutableListOf<Patron>()
         val tagPatrons = mutableListOf<Patron>()

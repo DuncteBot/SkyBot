@@ -110,12 +110,6 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun clearBlacklist(guildId: Long): CompletableFuture<Unit>
 
-    // ///////////////
-    // Embed settings
-
-    @Deprecated("Stored in guild settings")
-    abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int): CompletableFuture<Unit>
-
     // /////////////
     // Patron stuff
 
