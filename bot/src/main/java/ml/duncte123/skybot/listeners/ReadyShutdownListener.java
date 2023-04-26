@@ -91,9 +91,12 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.DAYS
             );
 
-            // TODO: mariadb support
-            if ("psql".equals(this.variables.getConfig().useDatabase)) {
+            if (
+                "psql".equals(this.variables.getConfig().useDatabase) ||
+                    "mysql".equals(this.variables.getConfig().useDatabase)
+            ) {
                 DataTimers.startReminderTimer(this.variables, LOGGER);
+                DataTimers.startWarningTimer(this.variables, LOGGER);
                 DataTimers.startUnbanTimer(this.variables, LOGGER);
             }
 

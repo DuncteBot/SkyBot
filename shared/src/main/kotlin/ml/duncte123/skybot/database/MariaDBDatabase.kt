@@ -25,6 +25,9 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
 import ml.duncte123.skybot.extensions.toGuildSettingMySQL
+import ml.duncte123.skybot.extensions.toReminder
+import ml.duncte123.skybot.extensions.toReminderMySQL
+import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -660,6 +663,31 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread oldWarning
     }
 
+    override fun purgeExpiredWarnings() = runOnThread {
+        val warningIds = mutableListOf<Int>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM warnings WHERE now() > (warn_date - INTERVAL 6 DAY)").use { res ->
+                    while (res.next()) {
+                        warningIds.add(res.getInt("id"))
+                    }
+                }
+            }
+
+            val values = warningIds.joinToString(", ") { "?" }
+
+            con.prepareStatement("DELETE FROM warnings WHERE id in ($values)").use { smt ->
+                warningIds.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
+    }
+
     override fun getExpiredBansAndMutes() = runOnThread {
         val bans = mutableListOf<Ban>()
         val mutes = mutableListOf<Mute>()
@@ -795,21 +823,50 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread roles.toList()
     }
 
-    // TODO: constraint in database
-    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) =
+        setVcAutoRoleBatch(guildId, listOf(voiceChannelId), roleId)
+
+    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long) = runOnThread {
+        val values = voiceChannelIds.joinToString(", ") { "(?, ?, ?)" }
+
+        this.connection.use { con ->
+            con.prepareStatement(
+                """INSERT IGNORE INTO vc_auto_roles (guild_id, voice_channel_id, role_id)
+                    |VALUES $values
+                """.trimMargin()
+            ).use { smt ->
+                var paramIndex = 0
+                voiceChannelIds.forEach { voiceChannelId ->
+                    smt.setString(++paramIndex, guildId.toString())
+                    smt.setString(++paramIndex, voiceChannelId.toString())
+                    smt.setString(++paramIndex, roleId.toString())
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun setVcAutoRoleBatch(guildId: Long, voiceChannelIds: List<Long>, roleId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun removeVcAutoRole(voiceChannelId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM vc_auto_roles WHERE voice_channel_id = ?").use { smt ->
+                smt.setString(1, voiceChannelId.toString())
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun removeVcAutoRole(voiceChannelId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeVcAutoRoleForGuild(guildId: Long): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun removeVcAutoRoleForGuild(guildId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM vc_auto_roles WHERE guild_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.execute()
+            }
+        }
+        return@runOnThread
     }
 
     override fun loadTags() = runOnThread {
@@ -835,12 +892,36 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread tags.toList()
     }
 
-    override fun createTag(tag: Tag): CompletableFuture<Pair<Boolean, String>> {
-        TODO("Not yet implemented")
+    override fun createTag(tag: Tag) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)").use { smt ->
+                smt.setString(1, tag.ownerId.toString())
+                smt.setString(2, tag.name)
+                smt.setString(3, tag.content)
+
+                try {
+                    smt.execute()
+                    return@runOnThread true to ""
+                } catch (e: SQLException) {
+                    return@runOnThread false to (e.message ?: "Unknown failure")
+                }
+            }
+        }
     }
 
-    override fun deleteTag(tag: Tag): CompletableFuture<Pair<Boolean, String>> {
-        TODO("Not yet implemented")
+    override fun deleteTag(tag: Tag) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM tags WHERE id = ?").use { smt ->
+                smt.setInt(1, tag.id)
+
+                try {
+                    smt.execute()
+                    return@runOnThread true to ""
+                } catch (e: SQLException) {
+                    return@runOnThread false to (e.message ?: "Unknown failure")
+                }
+            }
+        }
     }
 
     override fun createReminder(
@@ -851,32 +932,135 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         messageId: Long,
         guildId: Long,
         inChannel: Boolean
-    ): CompletableFuture<Pair<Boolean, Int>> {
-        TODO("Not yet implemented")
+    ) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement(
+                "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                arrayOf("id") // cols to return
+            ).use { smt ->
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                smt.setString(3, channelId.toString())
+                smt.setString(4, messageId.toString())
+                smt.setBoolean(5, inChannel)
+                smt.setString(6, reminder)
+                smt.setDate(7, expireDate.toSQL())
+
+                try {
+                    smt.execute()
+
+                    smt.generatedKeys.use { res ->
+                        if (res.next()) {
+                            return@runOnThread true to res.getInt("id")
+                        }
+                    }
+                } catch (ex: SQLException) {
+                    Sentry.captureException(ex)
+                }
+            }
+        }
+
+        return@runOnThread false to -1
     }
 
-    override fun removeReminder(reminderId: Int, userId: Long): CompletableFuture<Boolean> {
-        TODO("Not yet implemented")
+    override fun removeReminder(reminderId: Int, userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
+                smt.setInt(1, reminderId)
+                smt.setString(2, userId.toString())
+                smt.execute()
+            }
+        }
+
+        return@runOnThread true
     }
 
-    override fun showReminder(reminderId: Int, userId: Long): CompletableFuture<Reminder?> {
-        TODO("Not yet implemented")
+    override fun showReminder(reminderId: Int, userId: Long) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
+                smt.setInt(1, reminderId)
+                smt.setString(2, userId.toString())
+
+                smt.executeQuery().use { res ->
+                    if (res.next()) {
+                        return@runOnThread res.toReminderMySQL()
+                    }
+                }
+            }
+        }
+
+        return@runOnThread null
     }
 
-    override fun listReminders(userId: Long): CompletableFuture<List<Reminder>> {
-        TODO("Not yet implemented")
+    override fun listReminders(userId: Long) = runOnThread {
+        val reminders = arrayListOf<Reminder>()
+        this.connection.use { con ->
+            con.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use { smt ->
+                smt.setString(1, userId.toString())
+                smt.executeQuery().use { res ->
+                    while (res.next()) {
+                        reminders.add(res.toReminderMySQL())
+                    }
+                }
+            }
+        }
+
+        return@runOnThread reminders.toList()
     }
 
-    override fun getExpiredReminders(): CompletableFuture<List<Reminder>> {
-        TODO("Not yet implemented")
+    override fun getExpiredReminders() = runOnThread {
+        val reminders = mutableListOf<Reminder>()
+
+        this.connection.use { con ->
+            con.createStatement().executeQuery("SELECT * FROM reminders WHERE now() >= remind_date").use { res ->
+                while (res.next()) {
+                    reminders.add(res.toReminderMySQL())
+                }
+            }
+        }
+
+        return@runOnThread reminders.toList()
     }
 
-    override fun purgeReminders(ids: List<Int>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun purgeReminders(ids: List<Int>) = runOnThread {
+        val question = ids.joinToString(", ") { "?" }
+
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM reminders WHERE id IN ($question)").use { smt ->
+                ids.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
     }
 
-    override fun setWarnActions(guildId: Long, actions: List<WarnAction>): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
+    override fun setWarnActions(guildId: Long, actions: List<WarnAction>) = runOnThread {
+        this.connection.use { con ->
+            con.prepareStatement("DELETE FROM warn_actions WHERE guild_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.execute()
+            }
+
+            val spots = actions.joinToString(", ") { "(?, ?, ?, ?)" }
+            con.prepareStatement("INSERT INTO warn_actions(guild_id, type, threshold, duration) VALUES $spots")
+                .use { smt ->
+                    var paramIndex = 0
+
+                    actions.forEach {
+                        smt.setString(++paramIndex, guildId.toString())
+                        smt.setString(++paramIndex, it.type.name)
+                        smt.setInt(++paramIndex, it.threshold)
+                        smt.setInt(++paramIndex, it.duration)
+                    }
+
+                    smt.execute()
+                }
+        }
+
+        return@runOnThread
     }
 
     override fun close() {

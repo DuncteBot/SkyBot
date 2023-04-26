@@ -664,6 +664,31 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         return@runOnThread oldWarning
     }
 
+    override fun purgeExpiredWarnings() = runOnThread {
+        val warningIds = mutableListOf<Int>()
+
+        this.connection.use { con ->
+            con.createStatement().use { smt ->
+                smt.executeQuery("SELECT * FROM warnings WHERE now() > (warn_date - '6 day'::interval)").use { res ->
+                    while (res.next()) {
+                        warningIds.add(res.getInt("id"))
+                    }
+                }
+            }
+
+            val values = warningIds.joinToString(", ") { "?" }
+
+            con.prepareStatement("DELETE FROM warnings WHERE id in ($values)").use { smt ->
+                warningIds.forEachIndexed { index, id ->
+                    smt.setInt(index + 1, id)
+                }
+                smt.execute()
+            }
+        }
+
+        return@runOnThread
+    }
+
     override fun getExpiredBansAndMutes() = runOnThread {
         val bans = mutableListOf<Ban>()
         val mutes = mutableListOf<Mute>()
@@ -893,6 +918,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
             }
         }
 
+        // TODO: figure out what I meant by the statement below
         // TODO: failures to not work
         return@runOnThread true to ""
     }

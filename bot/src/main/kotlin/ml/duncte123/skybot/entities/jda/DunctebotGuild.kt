@@ -30,10 +30,10 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
         get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
         set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
 
-    @Deprecated("Stored in settings now")
-    var color: Int
+    // @Deprecated("Stored in settings now")
+    val color: Int
         get() = EmbedUtils.getColorOrDefault(this.idLong) // TODO: have something that returns default
-        set(color) = GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
+        // set(color) = GuildSettingsUtils.updateEmbedColor(this.idLong, color, this.variables)
 
     val hexColor = AirUtils.colorToHex(color)
 

@@ -163,6 +163,8 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long): CompletableFuture<Warning?>
 
+    abstract fun purgeExpiredWarnings(): CompletableFuture<Unit>
+
     abstract fun getExpiredBansAndMutes(): CompletableFuture<Pair<List<Ban>, List<Mute>>>
 
     abstract fun purgeBans(ids: List<Int>): CompletableFuture<Unit>
@@ -241,7 +243,12 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
         // Kill the thread after 20 seconds, hopefully this works
         databaseKiller.schedule({
-            runnableFuture.cancel(true)
+            try {
+                runnableFuture.cancel(true)
+            } catch (ex: Throwable) {
+                Sentry.captureException(ex)
+                ex.printStackTrace()
+            }
         }, 20, TimeUnit.SECONDS)
 
         return future

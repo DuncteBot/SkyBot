@@ -46,6 +46,18 @@ fun ResultSet.toReminder() = Reminder(
     this.getBoolean("in_channel")
 )
 
+fun ResultSet.toReminderMySQL() = Reminder(
+    this.getInt("id"),
+    this.getString("user_id").toLong(),
+    this.getString("reminder"),
+    this.getDate("remind_create_date").asInstant(),
+    this.getDate("remind_date").asInstant(),
+    this.getString("channel_id").toLong(),
+    this.getString("message_id").toLong(),
+    this.getString("guild_id").toLong(),
+    this.getBoolean("in_channel")
+)
+
 fun ResultSet.toGuildSettingMySQL() = GuildSetting(this.getString("guildId").toLong())
     .setCustomPrefix(this.getString("prefix"))
     .setAutoroleRole(toLong(this.getString("autoRole")))

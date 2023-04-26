@@ -349,6 +349,10 @@ class WebDatabase(private val apis: DuncteApis, private val jackson: ObjectMappe
         return@runOnThread
     }
 
+    override fun purgeExpiredWarnings(): CompletableFuture<Unit> {
+        TODO("Not Supported")
+    }
+
     override fun close() {
         // Nothing to close
     }
