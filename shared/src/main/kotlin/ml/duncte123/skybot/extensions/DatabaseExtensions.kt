@@ -20,7 +20,6 @@ package ml.duncte123.skybot.extensions
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.utils.DateUtils
-import com.dunctebot.models.utils.Utils
 import com.dunctebot.models.utils.Utils.ratelimmitChecks
 import com.dunctebot.models.utils.Utils.toLong
 import ml.duncte123.skybot.objects.api.Reminder
@@ -31,15 +30,17 @@ import java.time.ZoneOffset
 import java.time.temporal.TemporalAccessor
 
 fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
+fun TemporalAccessor.toSQLTimestamp() = java.sql.Timestamp(Instant.from(this).toEpochMilli())
 fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
-fun String.toDate() = DateUtils.fromDatabaseFormat(this).toSQL()
+fun java.sql.Timestamp.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
+fun String.toDate() = DateUtils.fromMysqlFormat(this).toSQL()
 
 fun ResultSet.toReminder() = Reminder(
     this.getInt("id"),
     this.getLong("user_id"),
     this.getString("reminder"),
-    this.getDate("created_at").asInstant(),
-    this.getDate("remind_on").asInstant(),
+    this.getTimestamp("created_at").asInstant(),
+    this.getTimestamp("remind_on").asInstant(),
     this.getLong("channel_id"),
     this.getLong("message_id"),
     this.getLong("guild_id"),
@@ -50,8 +51,8 @@ fun ResultSet.toReminderMySQL() = Reminder(
     this.getInt("id"),
     this.getString("user_id").toLong(),
     this.getString("reminder"),
-    this.getDate("remind_create_date").asInstant(),
-    this.getDate("remind_date").asInstant(),
+    this.getTimestamp("remind_create_date").asInstant(),
+    this.getTimestamp("remind_date").asInstant(),
     this.getString("channel_id").toLong(),
     this.getString("message_id").toLong(),
     this.getString("guild_id").toLong(),

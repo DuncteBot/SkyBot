@@ -237,6 +237,7 @@ public class AirUtils {
         final List<Integer> toPurge = new ArrayList<>();
 
         for (final Reminder reminder : reminders) {
+            System.out.println("Expire date " + reminder.getReminder_date());
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",
@@ -285,7 +286,9 @@ public class AirUtils {
                         // we cannot dm this user (has dms blocked?)
                         errorResponse == ErrorResponse.CANNOT_SEND_TO_USER
                 ) {
-                    toPurge.add(reminder.getId());
+                    // toPurge.add(reminder.getId());
+                } else {
+                    errorResponseEx.printStackTrace();
                 }
             }
             catch (Exception e) {

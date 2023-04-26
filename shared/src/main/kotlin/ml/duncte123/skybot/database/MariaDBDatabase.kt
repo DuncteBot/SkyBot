@@ -24,9 +24,7 @@ import com.dunctebot.models.utils.Utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
-import ml.duncte123.skybot.extensions.toGuildSettingMySQL
-import ml.duncte123.skybot.extensions.toReminderMySQL
-import ml.duncte123.skybot.extensions.toSQL
+import ml.duncte123.skybot.extensions.*
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -35,6 +33,7 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.CompletableFuture
 
 class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
@@ -668,13 +667,15 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 }
             }
 
-            val values = warningIds.joinToString(", ") { "?" }
+            if (warningIds.isNotEmpty()) {
+                val values = warningIds.joinToString(", ") { "?" }
 
-            con.prepareStatement("DELETE FROM warnings WHERE id in ($values)").use { smt ->
-                warningIds.forEachIndexed { index, id ->
-                    smt.setInt(index + 1, id)
+                con.prepareStatement("DELETE FROM warnings WHERE id in ($values)").use { smt ->
+                    warningIds.forEachIndexed { index, id ->
+                        smt.setInt(index + 1, id)
+                    }
+                    smt.execute()
                 }
-                smt.execute()
             }
         }
 
@@ -929,7 +930,7 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             con.prepareStatement(
                 "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                arrayOf("id") // cols to return
+                arrayOf("insert_id") // cols to return
             ).use { smt ->
                 smt.setString(1, userId.toString())
                 smt.setString(2, guildId.toString())
@@ -937,18 +938,19 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.setString(4, messageId.toString())
                 smt.setBoolean(5, inChannel)
                 smt.setString(6, reminder)
-                smt.setDate(7, expireDate.toSQL())
+                smt.setTimestamp(7, expireDate.toSQLTimestamp())
 
                 try {
                     smt.execute()
 
                     smt.generatedKeys.use { res ->
                         if (res.next()) {
-                            return@runOnThread true to res.getInt("id")
+                            return@runOnThread true to res.getInt("insert_id")
                         }
                     }
                 } catch (ex: SQLException) {
                     Sentry.captureException(ex)
+                    ex.printStackTrace()
                 }
             }
         }
