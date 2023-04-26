@@ -28,26 +28,40 @@ package com.dunctebot.models.utils;
 import me.duncte123.durationparser.ParsedDuration;
 import net.dv8tion.jda.api.utils.TimeFormat;
 
+import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 
 public class DateUtils {
+    public static final ZoneId DB_ZONE_ID = ZoneId.of("Europe/London");
+
     public static String makeDatePretty(TemporalAccessor accessor) {
         return TimeFormat.DATE_TIME_LONG.format(accessor);
     }
 
     public static OffsetDateTime fromMysqlFormat(String date) {
         try {
-            System.out.println(date.replace(" ", "T") + ZoneOffset.UTC.getId());
-            return OffsetDateTime.parse(date.replace(" ", "T") + ZoneOffset.UTC.getId());
+            System.out.println(date.replace(" ", "T") + DB_ZONE_ID.getId());
+            return OffsetDateTime.parse(date.replace(" ", "T") + DB_ZONE_ID.getId());
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return OffsetDateTime.now(ZoneOffset.UTC);
+            return OffsetDateTime.now(DB_ZONE_ID);
         }
+    }
+
+    // TODO: use UTC in the future
+    public static Timestamp getSqlTimestamp(OffsetDateTime date) {
+        final var zonedDate = date.toZonedDateTime().withZoneSameInstant(DB_ZONE_ID);
+        final var shouldWork = zonedDate.toString()
+            .replace("Z", "")
+            .replace("T", " ")
+            .split("\\+")[0];
+
+        return Timestamp.valueOf(shouldWork);
     }
 
     public static OffsetDateTime fromDatabaseFormat(String date) {
@@ -57,7 +71,7 @@ public class DateUtils {
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return OffsetDateTime.now(ZoneOffset.UTC);
+            return OffsetDateTime.now(DB_ZONE_ID);
         }
     }
 
@@ -70,6 +84,6 @@ public class DateUtils {
     }
 
     public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
-        return OffsetDateTime.now(ZoneId.of("+00:00")).plus(duration.getMilis(), ChronoUnit.MILLIS);
+        return OffsetDateTime.now(DB_ZONE_ID).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 }

@@ -20,19 +20,18 @@ package ml.duncte123.skybot.extensions
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.utils.DateUtils
+import com.dunctebot.models.utils.DateUtils.DB_ZONE_ID
+import com.dunctebot.models.utils.DateUtils.getSqlTimestamp
 import com.dunctebot.models.utils.Utils.ratelimmitChecks
 import com.dunctebot.models.utils.Utils.toLong
 import ml.duncte123.skybot.objects.api.Reminder
 import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.time.temporal.TemporalAccessor
 
-fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
-fun TemporalAccessor.toSQLTimestamp() = java.sql.Timestamp(Instant.from(this).toEpochMilli())
-fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
-fun java.sql.Timestamp.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
+fun OffsetDateTime.toSQL() = getSqlTimestamp(this)
+// TODO: still an hour in the past?
+fun java.sql.Timestamp.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
 fun String.toDate() = DateUtils.fromMysqlFormat(this).toSQL()
 
 fun ResultSet.toReminder() = Reminder(

@@ -33,7 +33,6 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.util.concurrent.CompletableFuture
 
 class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
@@ -932,13 +931,14 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 arrayOf("insert_id") // cols to return
             ).use { smt ->
+                println(expireDate.toSQL())
                 smt.setString(1, userId.toString())
                 smt.setString(2, guildId.toString())
                 smt.setString(3, channelId.toString())
                 smt.setString(4, messageId.toString())
                 smt.setBoolean(5, inChannel)
                 smt.setString(6, reminder)
-                smt.setTimestamp(7, expireDate.toSQLTimestamp())
+                smt.setTimestamp(7, expireDate.toSQL())
 
                 try {
                     smt.execute()

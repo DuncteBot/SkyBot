@@ -238,6 +238,7 @@ public class AirUtils {
 
         for (final Reminder reminder : reminders) {
             System.out.println("Expire date " + reminder.getReminder_date());
+            System.out.println("Crate date " + reminder.getCreate_date());
             // The reminder message template
             final String message = String.format(
                 "%s you asked me to remind you about \"%s\"",

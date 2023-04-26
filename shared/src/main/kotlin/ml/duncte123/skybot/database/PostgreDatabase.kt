@@ -30,7 +30,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.ClassLoaderResourceAccessor
 import ml.duncte123.skybot.extensions.toGuildSetting
 import ml.duncte123.skybot.extensions.toReminder
-import ml.duncte123.skybot.extensions.toSQLTimestamp
+import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -939,7 +939,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.setLong(4, messageId)
                 smt.setBoolean(5, inChannel)
                 smt.setString(6, reminder)
-                smt.setTimestamp(7, expireDate.toSQLTimestamp())
+                smt.setTimestamp(7, expireDate.toSQL())
 
                 try {
                     smt.execute()
