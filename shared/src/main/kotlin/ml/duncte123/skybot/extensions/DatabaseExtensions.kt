@@ -28,11 +28,13 @@ import ml.duncte123.skybot.objects.api.Reminder
 import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 fun OffsetDateTime.toSQL() = getSqlTimestamp(this)
 // TODO: still an hour in the past?
 fun java.sql.Timestamp.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
 fun String.toDate() = DateUtils.fromMysqlFormat(this).toSQL()
+fun String.toJavaDate() = DateUtils.fromMysqlFormat(this)
 
 fun ResultSet.toReminder() = Reminder(
     this.getInt("id"),
@@ -50,8 +52,8 @@ fun ResultSet.toReminderMySQL() = Reminder(
     this.getInt("id"),
     this.getString("user_id").toLong(),
     this.getString("reminder"),
-    this.getTimestamp("remind_create_date").asInstant(),
-    this.getTimestamp("remind_date").asInstant(),
+    this.getString("remind_create_date").toJavaDate(),
+    this.getString("remind_date").toJavaDate(),
     this.getString("channel_id").toLong(),
     this.getString("message_id").toLong(),
     this.getString("guild_id").toLong(),

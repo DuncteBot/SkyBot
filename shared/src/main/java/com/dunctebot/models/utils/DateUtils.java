@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.utils.TimeFormat;
 
 import java.sql.Timestamp;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
@@ -44,7 +45,9 @@ public class DateUtils {
     public static OffsetDateTime fromMysqlFormat(String date) {
         try {
             System.out.println(date.replace(" ", "T") + DB_ZONE_ID.getId());
-            return OffsetDateTime.parse(date.replace(" ", "T") + DB_ZONE_ID.getId());
+            return LocalDateTime.parse(date.replace(" ", "T"), DateTimeFormatter.ISO_DATE_TIME)
+                .atZone(DB_ZONE_ID)
+                .toOffsetDateTime();
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
