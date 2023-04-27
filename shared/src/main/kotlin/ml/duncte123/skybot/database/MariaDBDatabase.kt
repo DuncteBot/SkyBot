@@ -24,7 +24,9 @@ import com.dunctebot.models.utils.Utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
-import ml.duncte123.skybot.extensions.*
+import ml.duncte123.skybot.extensions.toGuildSettingMySQL
+import ml.duncte123.skybot.extensions.toReminderMySQL
+import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
@@ -32,7 +34,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 
 class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
@@ -920,7 +922,7 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun createReminder(
         userId: Long,
         reminder: String,
-        expireDate: OffsetDateTime,
+        expireDate: ZonedDateTime,
         channelId: Long,
         messageId: Long,
         guildId: Long,

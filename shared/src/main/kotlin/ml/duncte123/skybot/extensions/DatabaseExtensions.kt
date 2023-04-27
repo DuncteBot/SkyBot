@@ -27,14 +27,13 @@ import com.dunctebot.models.utils.Utils.toLong
 import ml.duncte123.skybot.objects.api.Reminder
 import java.sql.ResultSet
 import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
-fun OffsetDateTime.toSQL() = getSqlTimestamp(this)
+fun ZonedDateTime.toSQL() = getSqlTimestamp(this)
 // TODO: still an hour in the past?
-fun java.sql.Timestamp.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
-fun String.toDate() = DateUtils.fromMysqlFormat(this).toSQL()
+fun java.sql.Timestamp.asInstant() = ZonedDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
 fun String.toJavaDate() = DateUtils.fromMysqlFormat(this)
+fun String.toDate() = this.toJavaDate().toSQL()
 
 fun ResultSet.toReminder() = Reminder(
     this.getInt("id"),

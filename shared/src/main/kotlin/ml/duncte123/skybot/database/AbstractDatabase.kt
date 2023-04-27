@@ -21,12 +21,11 @@ package ml.duncte123.skybot.database
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.sentry.Sentry
-// import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
@@ -198,7 +197,7 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
     abstract fun createReminder(
         userId: Long,
         reminder: String,
-        expireDate: OffsetDateTime,
+        expireDate: ZonedDateTime,
         channelId: Long,
         messageId: Long,
         guildId: Long,

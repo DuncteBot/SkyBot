@@ -38,7 +38,7 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Types
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 
 class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
@@ -922,7 +922,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun createReminder(
         userId: Long,
         reminder: String,
-        expireDate: OffsetDateTime,
+        expireDate: ZonedDateTime,
         channelId: Long,
         messageId: Long,
         guildId: Long,

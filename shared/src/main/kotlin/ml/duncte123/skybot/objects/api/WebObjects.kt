@@ -19,11 +19,10 @@
 package ml.duncte123.skybot.objects.api
 
 import com.dunctebot.models.utils.DateUtils
-import com.dunctebot.models.utils.Utils
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import net.dv8tion.jda.api.utils.TimeFormat
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
@@ -69,8 +68,8 @@ data class Reminder(
     val id: Int,
     val user_id: Long,
     val reminder: String,
-    val create_date: OffsetDateTime,
-    val reminder_date: OffsetDateTime,
+    val create_date: ZonedDateTime,
+    val reminder_date: ZonedDateTime,
     val channel_id: Long,
     val message_id: Long,
     val guild_id: Long,
