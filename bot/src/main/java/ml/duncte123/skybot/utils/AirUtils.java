@@ -285,7 +285,7 @@ public class AirUtils {
                         // we cannot dm this user (has dms blocked?)
                         errorResponse == ErrorResponse.CANNOT_SEND_TO_USER
                 ) {
-                    // toPurge.add(reminder.getId());
+                    toPurge.add(reminder.getId());
                 } else {
                     errorResponseEx.printStackTrace();
                 }
