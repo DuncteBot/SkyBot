@@ -113,8 +113,6 @@ public class RemindmeCommand extends Command {
 
         final ZonedDateTime expireDate = getDatabaseDate(duration);
 
-        System.out.println(expireDate);
-
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
 

@@ -46,7 +46,6 @@ public class DateUtils {
 
     public static ZonedDateTime fromMysqlFormat(String date) {
         try {
-            System.out.println(date.replace(" ", "T") + DB_ZONE_ID.getId());
             return LocalDateTime.parse(date.replace(" ", "T"), DateTimeFormatter.ISO_DATE_TIME)
                 .atZone(DB_ZONE_ID);
         }

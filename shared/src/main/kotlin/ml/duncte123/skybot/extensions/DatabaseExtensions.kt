@@ -30,7 +30,6 @@ import java.time.Instant
 import java.time.ZonedDateTime
 
 fun ZonedDateTime.toSQL() = getSqlTimestamp(this)
-// TODO: still an hour in the past?
 fun java.sql.Timestamp.asInstant() = ZonedDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
 fun String.toJavaDate() = DateUtils.fromMysqlFormat(this)
 fun String.toDate() = this.toJavaDate().toSQL()
