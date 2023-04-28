@@ -283,7 +283,7 @@ public class CommandManager {
         this.addCommand(new TagCommand(variables));
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
-        this.addCommand(new TestFilterCommand());
+//        this.addCommand(new TestFilterCommand());
         this.addCommand(new TestTagCommand());
         this.addCommand(new TheSearchCommand());
         this.addCommand(new ToggleAnnounceTracksCommand());
