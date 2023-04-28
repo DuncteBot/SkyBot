@@ -933,7 +933,6 @@ class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 arrayOf("insert_id") // cols to return
             ).use { smt ->
-                println(expireDate.toSQL())
                 smt.setString(1, userId.toString())
                 smt.setString(2, guildId.toString())
                 smt.setString(3, channelId.toString())
