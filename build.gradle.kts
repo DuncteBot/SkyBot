@@ -24,8 +24,8 @@ plugins {
 
     kotlin("jvm") version "1.7.20" apply false
     id("org.liquibase.gradle") version "2.0.4" apply false
-    id("org.jmailen.kotlinter") version "3.11.1" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("org.jmailen.kotlinter") version "3.13.0" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false // TODO: upgrade to 8.1.1 after updating to gradle 8
     id("com.github.breadmoirai.github-release") version "2.2.12" apply false
 }
 

@@ -64,7 +64,7 @@ fun VersionCatalogBuilder.bot() {
     // time parsing
     // implementation(group = "net.time4j", name = "time4j-base", version = "5.8")
 
-    library("spotify", "se.michaelthelin.spotify", "spotify-web-api-java").version("7.2.0")
+    library("spotify", "se.michaelthelin.spotify", "spotify-web-api-java").version("8.0.0")
     library("youtube", "com.google.apis", "google-api-services-youtube").version("v3-rev222-1.25.0")
     library("expiringmap", "net.jodah", "expiringmap").version("0.5.9")
 
