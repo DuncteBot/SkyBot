@@ -33,7 +33,7 @@ plugins {
     id("com.github.breadmoirai.github-release")
 }
 
-val numberVersion = "3.107.1"
+val numberVersion = "3.107.2"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
@@ -68,8 +68,8 @@ dependencies {
     implementation(libs.trove)
     implementation(libs.bundles.json)
     implementation(libs.redis)
-    implementation(libs.bundles.database)
     implementation(libs.mariadb)
+    implementation(libs.bundles.database)
 }
 
 val compileKotlin: KotlinCompile by tasks
