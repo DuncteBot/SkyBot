@@ -95,17 +95,19 @@ public class CustomCommandCommand extends Command {
 
         //Check for deleting
         if ("raw".equalsIgnoreCase(args.get(0))) {
-            if (!commandExists(commandName, guildId, manager)) {
+            final var cmd = manager.getCustomCommand(name, guildId);
+
+            if (cmd == null) {
                 sendMsg(ctx, "No command was found for this name");
                 return;
             }
 
-            final CustomCommand cmd = manager.getCustomCommand(commandName, guildId);
             final String escaped = cmd.getMessage().replaceAll("`", "");
             sendMsg(ctx, "Raw data for `" + commandName + "`:```pascal\n" + escaped + "\n```");
         } else if ("delete".equalsIgnoreCase(args.get(0)) || "remove".equalsIgnoreCase(args.get(0))) {
+            final var cmd = manager.getCustomCommand(name, guildId);
 
-            if (!commandExists(commandName, guildId, manager)) {
+            if (cmd == null) {
                 sendMsg(ctx, "No command was found for this name");
                 return;
             }
@@ -138,9 +140,10 @@ public class CustomCommandCommand extends Command {
 
         final String commandAction = String.join(" ", args.subList(2, args.size()));
         final long guildId = ctx.getGuild().getIdLong();
+        final var cmd = manager.getCustomCommand(name, guildId);
 
-        if (commandExists(commandName, guildId, manager)) {
-            editCustomCommand(args, ctx, manager, commandName, commandAction, guildId);
+        if (cmd != null) {
+            editCustomCommand(args, ctx, manager, cmd, commandAction);
 
             return;
         }
@@ -150,7 +153,7 @@ public class CustomCommandCommand extends Command {
 
     private void createCustomCommand(CommandContext ctx, CommandManager manager, String commandName, String commandAction, long guildId) {
         try {
-            final CommandResult result = registerCustomCommand(commandName, commandAction, guildId, manager);
+            final CommandResult result = manager.registerCustomCommand(new CustomCommand(commandName, commandAction, guildId, false));
 
             if (result == CommandResult.SUCCESS) {
                 sendMsg(ctx, "Command added.");
@@ -176,20 +179,16 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private void editCustomCommand(List<String> args, CommandContext ctx, CommandManager manager, String commandName, String commandAction, long guildId) {
+    private void editCustomCommand(List<String> args, CommandContext ctx, CommandManager manager, CustomCommand cmd, String newAction) {
         if (!"edit".equalsIgnoreCase(args.get(0)) && !"change".equalsIgnoreCase(args.get(0))) {
-            sendMsg(ctx, "A command already exists for this server.");
+            sendMsg(ctx, "A command with this name already exists for this server.");
 
             return;
         }
 
-        if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
+        if (editCustomCommand(cmd, newAction, manager)) {
             sendMsg(ctx, "The command has been updated.");
         }
-    }
-
-    private CommandResult registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return manager.registerCustomCommand(new CustomCommand(name, action, guildId, false));
     }
 
     private boolean editCustomCommand(@Nullable CustomCommand customCommand, String newMessage, CommandManager manager) {
@@ -205,9 +204,5 @@ public class CustomCommandCommand extends Command {
         );
 
         return manager.editCustomCommand(cmd);
-    }
-
-    private boolean commandExists(String name, long guild, CommandManager manager) {
-        return manager.getCustomCommand(name, guild) != null;
     }
 }

@@ -28,25 +28,53 @@ package com.dunctebot.models.utils;
 import me.duncte123.durationparser.ParsedDuration;
 import net.dv8tion.jda.api.utils.TimeFormat;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 
 public class DateUtils {
+    public static final ZoneId DB_ZONE_ID = ZoneId.of("Europe/London");
+
     public static String makeDatePretty(TemporalAccessor accessor) {
         return TimeFormat.DATE_TIME_LONG.format(accessor);
     }
 
-    public static OffsetDateTime fromDatabaseFormat(String date) {
+    public static ZonedDateTime fromMysqlFormat(String date) {
         try {
-            return OffsetDateTime.parse(date);
+            return LocalDateTime.parse(date.replace(" ", "T"), DateTimeFormatter.ISO_DATE_TIME)
+                .atZone(DB_ZONE_ID);
         }
         catch (DateTimeParseException e) {
             e.printStackTrace();
 
-            return OffsetDateTime.now(ZoneOffset.UTC);
+            return ZonedDateTime.now(DB_ZONE_ID);
+        }
+    }
+
+    // TODO: use UTC in the future
+    public static Timestamp getSqlTimestamp(ZonedDateTime date) {
+        final var zonedDate = date.withZoneSameInstant(DB_ZONE_ID);
+        final var shouldWork = zonedDate.toString()
+            .replace("Z", "")
+            .replace("T", " ")
+            .split("\\+")[0];
+
+        return Timestamp.valueOf(shouldWork);
+    }
+
+    public static ZonedDateTime fromDatabaseFormat(String date) {
+        try {
+            return ZonedDateTime.parse(date);
+        }
+        catch (DateTimeParseException e) {
+            e.printStackTrace();
+
+            return ZonedDateTime.now(DB_ZONE_ID);
         }
     }
 
@@ -54,11 +82,11 @@ public class DateUtils {
         return getDatabaseDateFormat(getDatabaseDate(duration));
     }
 
-    public static String getDatabaseDateFormat(OffsetDateTime date) {
+    public static String getDatabaseDateFormat(ZonedDateTime date) {
         return date.truncatedTo(ChronoUnit.MILLIS).toString();
     }
 
-    public static OffsetDateTime getDatabaseDate(ParsedDuration duration) {
-        return OffsetDateTime.now(ZoneOffset.UTC).plus(duration.getMilis(), ChronoUnit.MILLIS);
+    public static ZonedDateTime getDatabaseDate(ParsedDuration duration) {
+        return ZonedDateTime.now(DB_ZONE_ID).plus(duration.getMilis(), ChronoUnit.MILLIS);
     }
 }

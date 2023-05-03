@@ -21,18 +21,17 @@ package ml.duncte123.skybot.database
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.sentry.Sentry
-// import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, Int) -> Unit) {
+abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, Int) -> Unit) : AutoCloseable {
     private val databaseThread = Executors.newFixedThreadPool(threads) {
         val t = Thread(it, "DatabaseThread")
         t.isDaemon = true
@@ -94,7 +93,7 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun loadGuildSetting(guildId: Long): CompletableFuture<GuildSetting?>
 
-    abstract fun deleteGuildSetting(guildId: Long): CompletableFuture<Unit>
+    open fun deleteGuildSetting(guildId: Long) = purgeGuildSettings(listOf(guildId))
 
     abstract fun purgeGuildSettings(guildIds: List<Long>): CompletableFuture<Unit>
 
@@ -102,19 +101,13 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun registerNewGuild(guildSettings: GuildSetting): CompletableFuture<Boolean>
 
-    abstract fun addWordToBlacklist(guildId: Long, word: String): CompletableFuture<Unit>
+    open fun addWordToBlacklist(guildId: Long, word: String) = addWordsToBlacklist(guildId, listOf(word))
 
     abstract fun addWordsToBlacklist(guildId: Long, words: List<String>): CompletableFuture<Unit>
 
     abstract fun removeWordFromBlacklist(guildId: Long, word: String): CompletableFuture<Unit>
 
     abstract fun clearBlacklist(guildId: Long): CompletableFuture<Unit>
-
-    // ///////////////
-    // Embed settings
-
-    @Deprecated("Stored in guild settings")
-    abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int): CompletableFuture<Unit>
 
     // /////////////
     // Patron stuff
@@ -163,6 +156,8 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
     abstract fun deleteLatestWarningForUser(userId: Long, guildId: Long): CompletableFuture<Warning?>
 
+    abstract fun purgeExpiredWarnings(): CompletableFuture<Unit>
+
     abstract fun getExpiredBansAndMutes(): CompletableFuture<Pair<List<Ban>, List<Mute>>>
 
     abstract fun purgeBans(ids: List<Int>): CompletableFuture<Unit>
@@ -202,7 +197,7 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
     abstract fun createReminder(
         userId: Long,
         reminder: String,
-        expireDate: OffsetDateTime,
+        expireDate: ZonedDateTime,
         channelId: Long,
         messageId: Long,
         guildId: Long,
@@ -241,9 +236,18 @@ abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, In
 
         // Kill the thread after 20 seconds, hopefully this works
         databaseKiller.schedule({
-            runnableFuture.cancel(true)
+            try {
+                runnableFuture.cancel(true)
+            } catch (ex: Throwable) {
+                Sentry.captureException(ex)
+                ex.printStackTrace()
+            }
         }, 20, TimeUnit.SECONDS)
 
         return future
+    }
+
+    companion object {
+        const val MAX_CUSTOM_COMMANDS = 50
     }
 }

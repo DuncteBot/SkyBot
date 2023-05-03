@@ -20,16 +20,12 @@ package ml.duncte123.skybot.database
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
-import com.dunctebot.models.utils.Utils.convertJ2S
+import com.dunctebot.models.utils.Utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.sentry.Sentry
-import liquibase.Contexts
-import liquibase.Liquibase
-import liquibase.database.jvm.JdbcConnection
-import liquibase.resource.ClassLoaderResourceAccessor
-import ml.duncte123.skybot.extensions.toGuildSetting
-import ml.duncte123.skybot.extensions.toReminder
+import ml.duncte123.skybot.extensions.toGuildSettingMySQL
+import ml.duncte123.skybot.extensions.toReminderMySQL
 import ml.duncte123.skybot.extensions.toSQL
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
@@ -41,7 +37,7 @@ import java.sql.Types
 import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 
-class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
+class MariaDBDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
     private val ds: HikariDataSource
     private val connection: Connection
         get() {
@@ -51,19 +47,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     init {
         val config = HikariConfig()
 
-        // IT IS postgresql:// NOT psql://
-        config.jdbcUrl = jdbcURI // &ssl.mode=require
+        config.jdbcUrl = jdbcURI
 
         this.ds = HikariDataSource(config)
-        this.connection.use { con ->
-            Liquibase(
-                "/dbchangelog.xml",
-                ClassLoaderResourceAccessor(),
-                JdbcConnection(con)
-            ).use { lb ->
-                lb.update(Contexts())
-            }
-        }
     }
 
     override fun getCustomCommands() = runOnThread {
@@ -71,18 +57,16 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM custom_commands").use { res ->
-                    res.use {
-                        while (res.next()) {
-                            customCommands.add(
-                                CustomCommand(
-                                    res.getString("invoke"),
-                                    res.getString("message"),
-                                    res.getLong("guild_id"),
-                                    res.getBoolean("auto_response")
-                                )
+                smt.executeQuery("SELECT * FROM customCommands").use { res ->
+                    while (res.next()) {
+                        customCommands.add(
+                            CustomCommand(
+                                res.getString("invoke"),
+                                res.getString("message"),
+                                res.getString("guildId").toLong(),
+                                res.getBoolean("autoresponse")
                             )
-                        }
+                        )
                     }
                 }
             }
@@ -97,22 +81,23 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         message: String
     ) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("SELECT COUNT(guild_id) AS cmd_count FROM custom_commands WHERE guild_id = ?")
-                .use { smt ->
-                    smt.setLong(1, guildId)
+            con.prepareStatement(
+                "SELECT COUNT(guildId) as cmd_count FROM customCommands WHERE guildId = ?"
+            ).use { smt ->
+                smt.setString(1, guildId.toString())
 
-                    smt.executeQuery().use { res ->
-                        if (res.next() && res.getInt("cmd_count") >= MAX_CUSTOM_COMMANDS) {
-                            return@runOnThread CommandResult.LIMIT_REACHED
-                        }
+                smt.executeQuery().use { res ->
+                    if (res.next() && res.getInt("cmd_count") >= MAX_CUSTOM_COMMANDS) {
+                        return@runOnThread CommandResult.LIMIT_REACHED
                     }
                 }
+            }
 
             con.prepareStatement(
-                "SELECT COUNT(invoke) AS cmd_count FROM root.public.custom_commands WHERE invoke = ? AND guild_id = ?"
+                "SELECT COUNT(invoke) AS cmd_count FROM customCommands WHERE invoke = ? AND guildId = ?"
             ).use { smt ->
                 smt.setString(1, invoke)
-                smt.setLong(2, guildId)
+                smt.setString(2, guildId.toString())
 
                 smt.executeQuery().use { res ->
                     // Would be funny to see more than one command with the same invoke here.
@@ -122,21 +107,22 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 }
             }
 
-            con.prepareStatement("INSERT INTO custom_commands(guild_id, invoke, message, auto_response) VALUES (?, ?, ?, ?)")
-                .use { smt ->
-                    smt.setLong(1, guildId)
-                    smt.setString(2, invoke)
-                    smt.setString(3, message)
-                    smt.setBoolean(4, false)
+            con.prepareStatement(
+                "INSERT INTO customCommands (guildId, invoke, message, autoresponse) VALUES (?,?,?,?)"
+            ).use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, invoke)
+                smt.setString(3, message)
+                smt.setBoolean(4, false)
 
-                    try {
-                        smt.execute()
-                        return@runOnThread CommandResult.SUCCESS
-                    } catch (e: SQLException) {
-                        Sentry.captureException(e)
-                        return@runOnThread CommandResult.UNKNOWN
-                    }
+                try {
+                    smt.execute()
+                    return@runOnThread CommandResult.SUCCESS
+                } catch (e: SQLException) {
+                    Sentry.captureException(e)
+                    return@runOnThread CommandResult.UNKNOWN
                 }
+            }
         }
     }
 
@@ -148,11 +134,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     ) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "UPDATE custom_commands SET message = ?, auto_response = ? WHERE guild_id = ? AND invoke = ?"
+                "UPDATE customCommands SET message = ?, autoresponse = ? WHERE guildId = ? AND invoke = ?"
             ).use { smt ->
                 smt.setString(1, message)
                 smt.setBoolean(2, autoresponse)
-                smt.setLong(3, guildId)
+                smt.setString(3, guildId.toString())
                 smt.setString(4, invoke)
 
                 try {
@@ -168,8 +154,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun deleteCustomCommand(guildId: Long, invoke: String) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("DELETE FROM custom_commands WHERE guild_id = ? AND invoke = ?").use { smt ->
-                smt.setLong(1, guildId)
+            con.prepareStatement("DELETE FROM customCommands WHERE guildId = ? AND invoke = ?").use { smt ->
+                smt.setString(1, guildId.toString())
                 smt.setString(2, invoke)
 
                 try {
@@ -188,12 +174,13 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM guild_settings").use { res ->
+                smt.executeQuery("SELECT * FROM guildSettings").use { res ->
                     while (res.next()) {
-                        val guildId = res.getLong("guild_id")
+                        val guildId = res.getLong("guildId")
                         settings.add(
-                            res.toGuildSetting()
+                            res.toGuildSettingMySQL()
                                 // be smart and re-use the connection we already have
+                                .setEmbedColor(getEmbedColorForGuild(guildId, con))
                                 .setBlacklistedWords(getBlackListsForGuild(guildId, con))
                                 .setWarnActions(getWarnActionsForGuild(guildId, con))
                         )
@@ -207,13 +194,14 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun loadGuildSetting(guildId: Long) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("SELECT * FROM guild_settings WHERE guild_id = ?").use { smt ->
-                smt.setLong(1, guildId)
+            con.prepareStatement("SELECT * FROM guildSettings WHERE guildId = ?").use { smt ->
+                smt.setString(1, guildId.toString())
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        return@runOnThread res.toGuildSetting()
+                        return@runOnThread res.toGuildSettingMySQL()
                             // be smart and re-use the connection we already have
+                            .setEmbedColor(getEmbedColorForGuild(guildId, con))
                             .setBlacklistedWords(getBlackListsForGuild(guildId, con))
                             .setWarnActions(getWarnActionsForGuild(guildId, con))
                     }
@@ -226,19 +214,26 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun purgeGuildSettings(guildIds: List<Long>) = runOnThread {
         val queries = arrayOf(
-            "DELETE FROM guild_settings WHERE guild_id IN",
-            "DELETE FROM vc_autoroles WHERE guild_id IN",
-            "DELETE FROM blacklisted_words WHERE guild_id IN",
+            // language=MariaDB
+            "DELETE FROM guildSettings WHERE guildId IN",
+            // language=MariaDB
+            "DELETE FROM vc_auto_roles WHERE guild_id IN",
+            // language=MariaDB
+            "DELETE FROM guild_blacklists WHERE guild_id IN",
+            // language=MariaDB
             "DELETE FROM warn_actions WHERE guild_id IN",
-            "DELETE FROM custom_commands WHERE guild_id IN"
+            // language=MariaDB
+            "DELETE FROM customCommands WHERE guildId IN"
         )
+
         val questions = guildIds.joinToString(", ") { "?" }
 
         this.connection.use { con ->
             queries.forEach { q ->
+                // language=MariaDB
                 con.prepareStatement("$q ($questions)").use { smt ->
                     guildIds.forEachIndexed { index, id ->
-                        smt.setLong(index + 1, id)
+                        smt.setString(index + 1, id.toString())
                     }
 
                     smt.execute()
@@ -249,90 +244,92 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun updateGuildSetting(guildSettings: GuildSetting) = runOnThread {
         this.connection.use { con ->
+            updateEmbedColor(guildSettings.guildId, guildSettings.embedColor, con)
+
             // TODO: remove server_description, discord has this feature now
             con.prepareStatement(
-                """UPDATE guild_settings SET
+                """UPDATE guildSettings SET
                     |prefix = ?,
-                    |auto_role_id = ?,
-                    |embed_color = ?,
-                    |voice_leave_timeout_seconds = ?,
-                    |announce_track_enabled = ?,
-                    |allow_all_to_stop = ?,
-                    |server_description = ?,
+                    |autoRole = ?,
+                    |leave_timeout = ?,
+                    |announceNextTrack = ?,
+                    |allowAllToStop = ?,
+                    |serverDesc = ?,
                     |
-                    |join_leave_channel_id = ?,
-                    |join_message_enabled = ?,
-                    |leave_message_enabled = ?,
-                    |join_message = ?,
-                    |leave_message = ?,
+                    |welcomeLeaveChannel = ?,
+                    |enableJoinMessage = ?,
+                    |enableLeaveMessage = ?,
+                    |enableJoinMessage = ?,
+                    |customLeaveMessage = ?,
                     |
-                    |log_channel_id = ?,
-                    |mute_role_id = ?,
-                    |swear_filter_enabled = ?,
-                    |swear_filter_type = ?,
-                    |swear_sensitivity = ?,
+                    |logChannelId = ?,
+                    |muteRoleId = ?,
+                    |enableSwearFilter = ?,
+                    |filterType = ?,
+                    |aiSensitivity = ?,
                     |
-                    |auto_dehoist_enabled = ?,
-                    |invite_filter_enabled = ?,
-                    |spam_filter_state = ?,
-                    |kick_instead_state = ?,
+                    |autoDeHoist = ?,
+                    |filterInvites = ?,
+                    |spamFilterState = ?,
+                    |kickInsteadState = ?,
                     |ratelimits = ?,
                     |spam_threshold = ?,
-                    |ban_young_account_enabled = ?,
-                    |ban_young_account_threshold_days = ?,
+                    |young_account_ban_enabled = ?,
+                    |young_account_threshold = ?,
                     |
-                    |ban_logging_enabled = ?,
-                    |unban_logging_enabled = ?,
-                    |mute_logging_enabled = ?,
-                    |warn_logging_enabled = ?,
-                    |member_logging_enabled = ?,
-                    |invite_logging_enabled = ?,
-                    |message_logging_enabled = ?
+                    |banLogging = ?,
+                    |unbanLogging = ?,
+                    |muteLogging = ?,
+                    |warnLogging = ?,
+                    |memberLogging = ?,
+                    |invite_logging = ?,
+                    |message_logging = ?
                     |
-                    |WHERE guild_id = ?
+                    |WHERE guildId = ?
                 """.trimMargin()
             ).use { smt ->
+                /// <editor-fold defaultstate="collapsed" desc="guild settings">
                 smt.setString(1, guildSettings.customPrefix)
                 smt.setLong(2, guildSettings.autoroleRole)
-                smt.setInt(3, guildSettings.embedColor)
-                smt.setInt(4, guildSettings.leaveTimeout)
-                smt.setBoolean(5, guildSettings.isAnnounceTracks)
-                smt.setBoolean(6, guildSettings.isAllowAllToStop)
+                smt.setInt(3, guildSettings.leaveTimeout)
+                smt.setBoolean(4, guildSettings.isAnnounceTracks)
+                smt.setBoolean(5, guildSettings.isAllowAllToStop)
                 // TODO: remove, discord has this feature
-                smt.setString(7, guildSettings.serverDesc)
+                smt.setString(6, guildSettings.serverDesc)
 
-                smt.setLong(8, guildSettings.welcomeLeaveChannel)
-                smt.setBoolean(9, guildSettings.isEnableJoinMessage)
-                smt.setBoolean(10, guildSettings.isEnableLeaveMessage)
-                smt.setString(11, guildSettings.customJoinMessage)
-                smt.setString(12, guildSettings.customLeaveMessage)
+                smt.setLong(7, guildSettings.welcomeLeaveChannel)
+                smt.setBoolean(8, guildSettings.isEnableJoinMessage)
+                smt.setBoolean(9, guildSettings.isEnableLeaveMessage)
+                smt.setString(10, guildSettings.customJoinMessage)
+                smt.setString(11, guildSettings.customLeaveMessage)
 
-                smt.setLong(13, guildSettings.logChannel)
-                smt.setLong(14, guildSettings.muteRoleId)
-                smt.setBoolean(15, guildSettings.isEnableSwearFilter)
-                smt.setString(16, guildSettings.filterType.type)
-                smt.setFloat(17, guildSettings.aiSensitivity)
+                smt.setLong(12, guildSettings.logChannel)
+                smt.setLong(13, guildSettings.muteRoleId)
+                smt.setBoolean(14, guildSettings.isEnableSwearFilter)
+                smt.setString(15, guildSettings.filterType.type)
+                smt.setFloat(16, guildSettings.aiSensitivity)
 
-                smt.setBoolean(18, guildSettings.isAutoDeHoist)
-                smt.setBoolean(19, guildSettings.isFilterInvites)
-                smt.setBoolean(20, guildSettings.isEnableSpamFilter)
-                smt.setBoolean(21, guildSettings.kickState)
-                smt.setString(22, convertJ2S(guildSettings.ratelimits))
-                smt.setInt(23, guildSettings.spamThreshold)
-                smt.setBoolean(24, guildSettings.isYoungAccountBanEnabled)
-                smt.setInt(25, guildSettings.youngAccountThreshold)
+                smt.setBoolean(17, guildSettings.isAutoDeHoist)
+                smt.setBoolean(18, guildSettings.isFilterInvites)
+                smt.setBoolean(19, guildSettings.isEnableSpamFilter)
+                smt.setBoolean(20, guildSettings.kickState)
+                smt.setString(21, Utils.convertJ2S(guildSettings.ratelimits))
+                smt.setInt(22, guildSettings.spamThreshold)
+                smt.setBoolean(23, guildSettings.isYoungAccountBanEnabled)
+                smt.setInt(24, guildSettings.youngAccountThreshold)
 
                 // Logging :)
-                smt.setBoolean(26, guildSettings.isBanLogging)
-                smt.setBoolean(27, guildSettings.isUnbanLogging)
-                smt.setBoolean(28, guildSettings.isMuteLogging)
-                smt.setBoolean(29, guildSettings.isWarnLogging)
-                smt.setBoolean(30, guildSettings.isMemberLogging)
-                smt.setBoolean(31, guildSettings.isInviteLogging)
-                smt.setBoolean(32, guildSettings.isMessageLogging)
+                smt.setBoolean(25, guildSettings.isBanLogging)
+                smt.setBoolean(26, guildSettings.isUnbanLogging)
+                smt.setBoolean(27, guildSettings.isMuteLogging)
+                smt.setBoolean(28, guildSettings.isWarnLogging)
+                smt.setBoolean(29, guildSettings.isMemberLogging)
+                smt.setBoolean(30, guildSettings.isInviteLogging)
+                smt.setBoolean(31, guildSettings.isMessageLogging)
 
                 // What guild?
-                smt.setLong(33, guildSettings.guildId)
+                smt.setString(32, guildSettings.guildId.toString())
+                /// </editor-fold>
 
                 return@runOnThread smt.execute()
             }
@@ -342,9 +339,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun registerNewGuild(guildSettings: GuildSetting) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                """INSERT INTO guild_settings(guild_id, prefix, join_message, leave_message) 
-                |VALUES (?, ?, ?, ?) 
-                |ON CONFLICT (guild_id) DO NOTHING;
+                """INSERT IGNORE INTO guildSettings(guildId, prefix, customWelcomeMessage, customLeaveMessage) 
+                |VALUES (?, ?, ?, ?);
                 """.trimMargin()
             ).use { smt ->
                 smt.setLong(1, guildSettings.guildId)
@@ -362,11 +358,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.prepareStatement(
-                "INSERT INTO blacklisted_words(guild_id, word) VALUES $vals ON CONFLICT (guild_id, word) DO NOTHING /* LOL */"
+                "INSERT IGNORE INTO guild_blacklists(guild_id, word) VALUES $vals"
             ).use { smt ->
                 var paramIndex = 0
                 words.forEach { word ->
-                    smt.setLong(++paramIndex, guildId)
+                    smt.setString(++paramIndex, guildId.toString())
                     smt.setString(++paramIndex, word)
                 }
 
@@ -379,8 +375,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun removeWordFromBlacklist(guildId: Long, word: String) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("DELETE FROM blacklisted_words WHERE guild_id = ? AND word = ?").use { smt ->
-                smt.setLong(1, guildId)
+            con.prepareStatement("DELETE FROM guild_blacklists WHERE guild_id = ? AND word = ?").use { smt ->
+                smt.setString(1, guildId.toString())
                 smt.setString(2, word)
 
                 smt.execute()
@@ -392,7 +388,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun clearBlacklist(guildId: Long) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("DELETE FROM blacklisted_words WHERE guild_id = ?").use { smt ->
+            con.prepareStatement("DELETE FROM guild_blacklists WHERE guild_id = ?").use { smt ->
                 smt.setLong(1, guildId)
                 smt.execute()
             }
@@ -411,11 +407,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
             con.createStatement().use { smt ->
                 smt.executeQuery("SELECT * FROM patrons").use { res ->
                     while (res.next()) {
-                        val idRes = res.getLong("guild_id")
+                        val idRes = res.getString("guild_id").toLong()
                         val guildId = if (idRes == 0L) null else idRes
                         val patron = Patron(
                             Patron.Type.valueOf(res.getString("type").uppercase()),
-                            res.getLong("user_id"),
+                            res.getString("user_id").toLong(),
                             guildId
                         )
 
@@ -428,9 +424,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                     }
                 }
             }
-
-            return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
         }
+
+        return@runOnThread AllPatronsData(patrons, tagPatrons, oneGuildPatrons, guildPatrons)
     }
 
     override fun removePatron(userId: Long) = runOnThread {
@@ -459,20 +455,20 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             con.prepareStatement(
                 """INSERT INTO patrons(user_id, type, guild_id)
-                    |VALUES (?, ?, ?) ON CONFLICT (user_id)
-                    |DO UPDATE SET type = ?, guild_id = ?
+                    |VALUES (?, ?, ?) ON DUPLICATE KEY
+                    |UPDATE type = ?, guild_id = ?
                 """.trimMargin()
             ).use { smt ->
-                smt.setLong(1, patron.userId)
+                smt.setString(1, patron.userId.toString())
                 smt.setString(2, patron.type.name)
                 smt.setString(4, patron.type.name)
 
                 if (patron.guildId == null) {
-                    smt.setNull(3, Types.BIGINT)
-                    smt.setNull(5, Types.BIGINT)
+                    smt.setNull(3, Types.CHAR)
+                    smt.setNull(5, Types.CHAR)
                 } else {
-                    smt.setLong(3, patron.guildId)
-                    smt.setLong(5, patron.guildId)
+                    smt.setString(3, patron.guildId.toString())
+                    smt.setString(5, patron.guildId.toString())
                 }
 
                 smt.execute()
@@ -489,12 +485,12 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
                         return@runOnThread res.getLong("guild_id")
+                    } else {
+                        return@runOnThread null
                     }
                 }
             }
         }
-
-        return@runOnThread null
     }
 
     override fun createBan(
@@ -505,11 +501,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     ): CompletableFuture<Unit> = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "INSERT INTO temp_bans (user_id, mod_id, guild_id, unban_date) VALUES (?, ?, ?, ?)"
+                "INSERT INTO bans (userId, modUserId, guildId, unban_date, ban_date, Username, discriminator) VALUES (?, ?, ?, ?, now(), 'UNUSED', '0000')"
             ).use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, modId)
-                smt.setLong(3, guildId)
+                smt.setString(1, userId.toString())
+                smt.setString(2, modId.toString())
+                smt.setString(3, guildId.toString())
                 // TODO: this should be a date datatype
                 smt.setString(4, unbanDate)
                 smt.execute()
@@ -520,7 +516,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String): CompletableFuture<Unit> = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason) VALUES (?, ?, ?, now(), ?)"
+                "INSERT INTO warnings(user_id, mod_id, guild_id, warn_date, reason, expire_date) VALUES (?, ?, ?, now(), ?, now() + interval 6 DAY)"
             ).use { smt ->
                 smt.setLong(1, userId)
                 smt.setLong(2, modId)
@@ -541,36 +537,36 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             var oldMute: Mute? = null
 
-            con.prepareStatement("SELECT * FROM temp_mutes WHERE guild_id = ? AND user_id = ?").use { smt ->
-                smt.setLong(1, guildId)
-                smt.setLong(2, userId)
+            con.prepareStatement("SELECT * FROM mutes WHERE guild_id = ? AND user_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
                         oldMute = Mute(
                             res.getInt("id"),
-                            res.getLong("mod_id"),
-                            res.getLong("user_id"),
+                            res.getString("mod_id").toLong(),
+                            res.getString("user_id").toLong(),
                             "",
-                            res.getLong("guild_id")
+                            res.getString("guild_id").toLong()
                         )
                     }
                 }
             }
 
             if (oldMute != null) {
-                con.prepareStatement("DELETE FROM temp_mutes WHERE id = ?").use { smt ->
+                con.prepareStatement("DELETE FROM mutes WHERE id = ?").use { smt ->
                     smt.setInt(1, oldMute!!.id)
                     smt.execute()
                 }
             }
 
             con.prepareStatement(
-                "INSERT INTO temp_mutes(user_id, mod_id, guild_id, unmute_date) VALUES (?, ?, ?, ?)"
+                "INSERT INTO mutes(user_id, mod_id, guild_id, unmute_date, user_tag) VALUES (?, ?, ?, ?, 'UNKNOWN#0000')"
             ).use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, modId)
-                smt.setLong(3, guildId)
+                smt.setString(1, userId.toString())
+                smt.setString(2, modId.toString())
+                smt.setString(3, guildId.toString())
                 smt.setString(4, unmuteDate)
                 smt.execute()
             }
@@ -584,19 +580,20 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.prepareStatement(
-                "SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - '6 day'::interval))"
+                "SELECT * FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - INTERVAL 6 DAY))"
             ).use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, guildId)
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+
                 smt.executeQuery().use { res ->
                     while (res.next()) {
                         warnings.add(
                             Warning(
                                 res.getInt("id"),
                                 res.getString("warn_date"),
-                                res.getLong("mod_id"),
+                                res.getString("mod_id").toLong(),
                                 res.getString("reason"),
-                                res.getLong("guild_id")
+                                res.getString("guild_id").toLong()
                             )
                         )
                     }
@@ -610,10 +607,10 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun getWarningCountForUser(userId: Long, guildId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "SELECT COUNT(id) as amount FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - '6 day'::interval))"
+                "SELECT COUNT(id) as amount FROM warnings WHERE user_id = ? AND guild_id = ? AND (now() > (warn_date - INTERVAL 6 DAY))"
             ).use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, guildId)
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
 
                 smt.executeQuery().use { res ->
                     if (res.next()) {
@@ -634,14 +631,15 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                 .use { smt ->
                     smt.setLong(1, userId)
                     smt.setLong(2, guildId)
+
                     smt.executeQuery().use { res ->
                         if (res.next()) {
                             oldWarning = Warning(
                                 res.getInt("id"),
                                 res.getString("warn_date"),
-                                res.getLong("mod_id"),
+                                res.getString("mod_id").toLong(),
                                 res.getString("reason"),
-                                res.getLong("guild_id")
+                                res.getString("guild_id").toLong()
                             )
                         }
                     }
@@ -663,7 +661,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM warnings WHERE now() > (warn_date - '6 day'::interval)").use { res ->
+                smt.executeQuery("SELECT * FROM warnings WHERE now() > (warn_date - INTERVAL 6 DAY)").use { res ->
                     while (res.next()) {
                         warningIds.add(res.getInt("id"))
                     }
@@ -691,16 +689,16 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM temp_bans WHERE unban_date <= now()").use { res ->
+                smt.executeQuery("SELECT * FROM bans WHERE unban_date <= now()").use { res ->
                     while (res.next()) {
                         bans.add(
                             Ban(
                                 res.getInt("id"),
-                                res.getString("mod_id"),
-                                res.getLong("user_id"),
+                                res.getString("modUserId"),
+                                res.getString("userId").toLong(),
                                 "Deleted User",
                                 "0000",
-                                res.getString("guild_id")
+                                res.getString("guildId")
                             )
                         )
                     }
@@ -708,15 +706,15 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
             }
 
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM temp_mutes WHERE unmute_date <= now()").use { res ->
+                smt.executeQuery("SELECT * FROM mutes WHERE unmute_date <= now()").use { res ->
                     while (res.next()) {
                         mutes.add(
                             Mute(
                                 res.getInt("id"),
-                                res.getLong("mod_id"),
-                                res.getLong("user_id"),
+                                res.getString("mod_id").toLong(),
+                                res.getString("user_id").toLong(),
                                 "Deleted User#0000",
-                                res.getLong("guild_id")
+                                res.getString("guild_id").toLong()
                             )
                         )
                     }
@@ -730,7 +728,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun purgeBans(ids: List<Int>) = runOnThread {
         this.connection.use { con ->
             val values = ids.joinToString(", ") { "?" }
-            con.prepareStatement("DELETE FROM temp_bans WHERE id IN ($values)").use { smt ->
+            con.prepareStatement("DELETE FROM bans WHERE id IN ($values)").use { smt ->
                 ids.forEachIndexed { index, id ->
                     smt.setInt(index + 1, id)
                 }
@@ -744,7 +742,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun purgeMutes(ids: List<Int>) = runOnThread {
         this.connection.use { con ->
             val values = ids.joinToString(", ") { "?" }
-            con.prepareStatement("DELETE FROM temp_mutes WHERE id IN ($values)").use { smt ->
+            con.prepareStatement("DELETE FROM mutes WHERE id IN ($values)").use { smt ->
                 ids.forEachIndexed { index, id ->
                     smt.setInt(index + 1, id)
                 }
@@ -758,10 +756,10 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun createBanBypass(guildId: Long, userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "INSERT INTO ban_bypasses(guild_id, user_id) VALUES (?, ?) ON CONFLICT (guild_id, user_id) DO NOTHING"
+                "INSERT IGNORE INTO ban_bypasses(guild_id, user_id) VALUES (?, ?)"
             ).use { smt ->
-                smt.setLong(1, guildId)
-                smt.setLong(2, userId)
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
                 smt.execute()
             }
         }
@@ -772,8 +770,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun getBanBypass(guildId: Long, userId: Long) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
-                smt.setLong(1, guildId)
-                smt.setLong(2, userId)
+                smt.setString(1, guildId.toString())
+                smt.setString(2, userId.toString())
+
                 smt.executeQuery().use { res ->
                     if (res.next()) {
                         return@runOnThread BanBypas(res.getLong("guild_id"), res.getLong("user_id"))
@@ -788,8 +787,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun deleteBanBypass(banBypass: BanBypas) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM ban_bypasses WHERE guild_id = ? AND user_id = ?").use { smt ->
-                smt.setLong(1, banBypass.guildId)
-                smt.setLong(2, banBypass.userId)
+                smt.setString(1, banBypass.guildId.toString())
+                smt.setString(2, banBypass.userId.toString())
                 smt.execute()
             }
         }
@@ -802,13 +801,13 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.createStatement().use { smt ->
-                smt.executeQuery("SELECT * FROM vc_autoroles").use { res ->
+                smt.executeQuery("SELECT * FROM vc_auto_roles").use { res ->
                     while (res.next()) {
                         roles.add(
                             VcAutoRole(
-                                res.getLong("guild_id"),
-                                res.getLong("voice_channel_id"),
-                                res.getLong("role_id")
+                                res.getString("guild_id").toLong(),
+                                res.getString("voice_channel_id").toLong(),
+                                res.getString("role_id").toLong()
                             )
                         )
                     }
@@ -827,16 +826,15 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
         this.connection.use { con ->
             con.prepareStatement(
-                """INSERT INTO vc_autoroles (guild_id, voice_channel_id, role_id)
+                """INSERT IGNORE INTO vc_auto_roles (guild_id, voice_channel_id, role_id)
                     |VALUES $values
-                    |ON CONFLICT (guild_id, voice_channel_id, role_id) DO NOTHING
                 """.trimMargin()
             ).use { smt ->
                 var paramIndex = 0
                 voiceChannelIds.forEach { voiceChannelId ->
-                    smt.setLong(++paramIndex, guildId)
-                    smt.setLong(++paramIndex, voiceChannelId)
-                    smt.setLong(++paramIndex, roleId)
+                    smt.setString(++paramIndex, guildId.toString())
+                    smt.setString(++paramIndex, voiceChannelId.toString())
+                    smt.setString(++paramIndex, roleId.toString())
                 }
                 smt.execute()
             }
@@ -847,8 +845,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun removeVcAutoRole(voiceChannelId: Long) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("DELETE FROM vc_autoroles WHERE voice_channel_id = ?").use { smt ->
-                smt.setLong(1, voiceChannelId)
+            con.prepareStatement("DELETE FROM vc_auto_roles WHERE voice_channel_id = ?").use { smt ->
+                smt.setString(1, voiceChannelId.toString())
                 smt.execute()
             }
         }
@@ -858,8 +856,8 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
     override fun removeVcAutoRoleForGuild(guildId: Long) = runOnThread {
         this.connection.use { con ->
-            con.prepareStatement("DELETE FROM vc_autoroles WHERE guild_id = ?").use { smt ->
-                smt.setLong(1, guildId)
+            con.prepareStatement("DELETE FROM vc_auto_roles WHERE guild_id = ?").use { smt ->
+                smt.setString(1, guildId.toString())
                 smt.execute()
             }
         }
@@ -878,7 +876,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                                 res.getInt("id"),
                                 res.getString("name"),
                                 res.getString("content"),
-                                res.getLong("owner_id")
+                                res.getString("owner_id").toLong()
                             )
                         )
                     }
@@ -892,7 +890,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun createTag(tag: Tag) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)").use { smt ->
-                smt.setLong(1, tag.ownerId)
+                smt.setString(1, tag.ownerId.toString())
                 smt.setString(2, tag.name)
                 smt.setString(3, tag.content)
 
@@ -910,13 +908,15 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM tags WHERE id = ?").use { smt ->
                 smt.setInt(1, tag.id)
-                smt.execute()
+
+                try {
+                    smt.execute()
+                    return@runOnThread true to ""
+                } catch (e: SQLException) {
+                    return@runOnThread false to (e.message ?: "Unknown failure")
+                }
             }
         }
-
-        // TODO: figure out what I meant by the statement below
-        // TODO: failures to not work
-        return@runOnThread true to ""
     }
 
     override fun createReminder(
@@ -930,13 +930,13 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     ) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement(
-                "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_on) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                arrayOf("id") // cols to return
+                "INSERT INTO reminders(user_id, guild_id, channel_id, message_id, in_channel, reminder, remind_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                arrayOf("insert_id") // cols to return
             ).use { smt ->
-                smt.setLong(1, userId)
-                smt.setLong(2, guildId)
-                smt.setLong(3, channelId)
-                smt.setLong(4, messageId)
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                smt.setString(3, channelId.toString())
+                smt.setString(4, messageId.toString())
                 smt.setBoolean(5, inChannel)
                 smt.setString(6, reminder)
                 smt.setTimestamp(7, expireDate.toSQL())
@@ -946,11 +946,12 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
 
                     smt.generatedKeys.use { res ->
                         if (res.next()) {
-                            return@runOnThread true to res.getInt("id")
+                            return@runOnThread true to res.getInt("insert_id")
                         }
                     }
                 } catch (ex: SQLException) {
                     Sentry.captureException(ex)
+                    ex.printStackTrace()
                 }
             }
         }
@@ -962,7 +963,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
                 smt.setInt(1, reminderId)
-                smt.setLong(2, userId)
+                smt.setString(2, userId.toString())
                 smt.execute()
             }
         }
@@ -974,10 +975,11 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM reminders WHERE id = ? AND user_id = ?").use { smt ->
                 smt.setInt(1, reminderId)
-                smt.setLong(2, userId)
+                smt.setString(2, userId.toString())
+
                 smt.executeQuery().use { res ->
                     if (res.next()) {
-                        return@runOnThread res.toReminder()
+                        return@runOnThread res.toReminderMySQL()
                     }
                 }
             }
@@ -990,10 +992,10 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         val reminders = arrayListOf<Reminder>()
         this.connection.use { con ->
             con.prepareStatement("SELECT * FROM reminders WHERE user_id = ?").use { smt ->
-                smt.setLong(1, userId)
+                smt.setString(1, userId.toString())
                 smt.executeQuery().use { res ->
                     while (res.next()) {
-                        reminders.add(res.toReminder())
+                        reminders.add(res.toReminderMySQL())
                     }
                 }
             }
@@ -1006,9 +1008,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         val reminders = mutableListOf<Reminder>()
 
         this.connection.use { con ->
-            con.createStatement().executeQuery("SELECT * FROM reminders WHERE now() >= remind_on").use { res ->
+            con.createStatement().executeQuery("SELECT * FROM reminders WHERE now() >= remind_date").use { res ->
                 while (res.next()) {
-                    reminders.add(res.toReminder())
+                    reminders.add(res.toReminderMySQL())
                 }
             }
         }
@@ -1034,7 +1036,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
     override fun setWarnActions(guildId: Long, actions: List<WarnAction>) = runOnThread {
         this.connection.use { con ->
             con.prepareStatement("DELETE FROM warn_actions WHERE guild_id = ?").use { smt ->
-                smt.setLong(1, guildId)
+                smt.setString(1, guildId.toString())
                 smt.execute()
             }
 
@@ -1044,7 +1046,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
                     var paramIndex = 0
 
                     actions.forEach {
-                        smt.setLong(++paramIndex, guildId)
+                        smt.setString(++paramIndex, guildId.toString())
                         smt.setString(++paramIndex, it.type.name)
                         smt.setInt(++paramIndex, it.threshold)
                         smt.setInt(++paramIndex, it.duration)
@@ -1061,11 +1063,38 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         this.ds.close()
     }
 
+    private fun getEmbedColorForGuild(guildId: Long, con: Connection): Int {
+        con.prepareStatement("SELECT embed_color FROM embedSettings WHERE guild_id =?").use { smt ->
+            smt.setString(1, guildId.toString())
+
+            smt.executeQuery().use { res ->
+                if (res.next()) {
+                    return res.getInt("embed_color")
+                }
+            }
+        }
+
+
+        return -1
+    }
+
+    private fun updateEmbedColor(guildId: Long, color: Int, con: Connection) {
+        con.prepareStatement(
+            "INSERT INTO embedSettings (guild_id, embed_color) VALUES(?, ?) ON DUPLICATE KEY UPDATE embed_color = ?"
+        ).use { smt ->
+            smt.setString(1, guildId.toString())
+            smt.setInt(2, color)
+            smt.setInt(3, color)
+
+            smt.executeUpdate()
+        }
+    }
+
     private fun getBlackListsForGuild(guildId: Long, con: Connection): List<String> {
         val list = arrayListOf<String>()
 
-        con.prepareStatement("SELECT word FROM blacklisted_words WHERE guild_id = ?").use { smt ->
-            smt.setLong(1, guildId)
+        con.prepareStatement("SELECT word FROM guild_blacklists WHERE guild_id = ?").use { smt ->
+            smt.setString(1, guildId.toString())
 
             smt.executeQuery().use { res ->
                 while (res.next()) {
@@ -1081,7 +1110,7 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         val list = arrayListOf<WarnAction>()
 
         con.prepareStatement("SELECT * FROM warn_actions WHERE guild_id = ?").use { smt ->
-            smt.setLong(1, guildId)
+            smt.setString(1, guildId.toString())
 
             smt.executeQuery().use { res ->
                 while (res.next()) {

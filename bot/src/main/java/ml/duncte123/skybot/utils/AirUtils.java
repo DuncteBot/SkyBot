@@ -54,8 +54,8 @@ import net.dv8tion.jda.internal.JDAImpl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -286,6 +286,8 @@ public class AirUtils {
                         errorResponse == ErrorResponse.CANNOT_SEND_TO_USER
                 ) {
                     toPurge.add(reminder.getId());
+                } else {
+                    errorResponseEx.printStackTrace();
                 }
             }
             catch (Exception e) {
@@ -294,7 +296,7 @@ public class AirUtils {
         }
 
         // get a date that is 2 days in the future
-        final OffsetDateTime plusTwoDays = OffsetDateTime.now(ZoneOffset.UTC).plus(2L, ChronoUnit.DAYS);
+        final ZonedDateTime plusTwoDays = ZonedDateTime.now(ZoneOffset.UTC).plus(2L, ChronoUnit.DAYS);
 
         // Remove any reminders that have not been removed after 2 days
         final List<Integer> extraRemoval = reminders.stream()

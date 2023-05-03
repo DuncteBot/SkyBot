@@ -76,8 +76,8 @@ import org.slf4j.MDC;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
@@ -283,6 +283,7 @@ public class CommandManager {
         this.addCommand(new TagCommand(variables));
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
+//        this.addCommand(new TestFilterCommand());
         this.addCommand(new TestTagCommand());
         this.addCommand(new TheSearchCommand());
         this.addCommand(new ToggleAnnounceTracksCommand());
@@ -413,7 +414,7 @@ public class CommandManager {
     }
 
     public void setCooldown(String key, int seconds) {
-        COOLDOWNS.put(key, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
+        COOLDOWNS.put(key, ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(seconds).toEpochSecond());
     }
 
     public long getRemainingCooldown(String key) {
@@ -703,9 +704,9 @@ public class CommandManager {
     }
 
     private static long calcTimeRemaining(long startTime) {
-        // Get the start time as an OffsetDateTime
-        final OffsetDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atOffset(ZoneOffset.UTC);
+        // Get the start time as an ZonedDateTime
+        final ZonedDateTime startTimeOffset = Instant.ofEpochSecond(startTime).atZone(ZoneOffset.UTC);
         // get the time that is left for the cooldown
-        return OffsetDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
+        return ZonedDateTime.now(ZoneOffset.UTC).until(startTimeOffset, ChronoUnit.SECONDS);
     }
 }

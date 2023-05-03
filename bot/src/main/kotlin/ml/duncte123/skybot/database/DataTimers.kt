@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object DataTimers {
-    private val pool = Executors.newScheduledThreadPool(2)
+    private val pool = Executors.newSingleThreadScheduledExecutor()
 
     @JvmStatic
     fun startUnbanTimer(variables: Variables, logger: Logger) {
@@ -61,6 +61,22 @@ object DataTimers {
             0L,
             30L,
             TimeUnit.SECONDS
+        )
+    }
+
+    @JvmStatic
+    fun startWarningTimer(variables: Variables, logger: Logger) {
+        logger.info("Starting warning timer")
+
+        pool.scheduleAtFixedRate(
+            {
+                val db = variables.database
+
+                db.purgeExpiredWarnings()
+            },
+            0L,
+            1L,
+            TimeUnit.DAYS
         )
     }
 

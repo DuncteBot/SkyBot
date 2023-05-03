@@ -100,10 +100,4 @@ public class GuildSettingsUtils {
 
         return newGuildSettings;
     }
-
-    public static void updateEmbedColor(long guildId, int color, Variables variables) {
-        getGuild(guildId, variables).setEmbedColor(color);
-        // TODO: save guild setting instead, we've deprecated this
-        variables.getDatabase().updateOrCreateEmbedColor(guildId, color);
-    }
 }

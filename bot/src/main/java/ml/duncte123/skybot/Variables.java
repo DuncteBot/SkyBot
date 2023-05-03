@@ -32,8 +32,8 @@ import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.database.AbstractDatabase;
+import ml.duncte123.skybot.database.MariaDBDatabase;
 import ml.duncte123.skybot.database.PostgreDatabase;
-import ml.duncte123.skybot.database.WebDatabase;
 import ml.duncte123.skybot.objects.DBMap;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
@@ -172,13 +172,11 @@ public final class Variables {
                 return null;
             };
 
-            if ("psql".equals(this.config.useDatabase)) {
-                this.database = new PostgreDatabase(this.config.jdbcURI, ohShitFn);
-            } else if ("web".equals(this.config.useDatabase)) {
-                this.database = new WebDatabase(this.getApis(), this.getJackson(), ohShitFn);
-            } else {
-                throw new IllegalArgumentException("Unknown database engine: " + this.config.useDatabase);
-            }
+            this.database = switch (this.config.useDatabase) {
+                case "psql" -> new PostgreDatabase(this.config.jdbcURI, ohShitFn);
+                case "mysql" -> new MariaDBDatabase(this.config.jdbcURI, ohShitFn);
+                default -> throw new IllegalArgumentException("Unknown database engine: " + this.config.useDatabase);
+            };
         }
 
         return this.database;

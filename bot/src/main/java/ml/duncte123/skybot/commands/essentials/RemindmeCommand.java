@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.Flag;
 
 import javax.annotation.Nonnull;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -111,7 +111,7 @@ public class RemindmeCommand extends Command {
             return;
         }
 
-        final OffsetDateTime expireDate = getDatabaseDate(duration);
+        final ZonedDateTime expireDate = getDatabaseDate(duration);
 
         createReminder(ctx, expireDate, reminder, flags, duration);
     }
@@ -125,7 +125,7 @@ public class RemindmeCommand extends Command {
         }
     }
 
-    private void createReminder(CommandContext ctx, OffsetDateTime expireDate, String reminder, Map<String, List<String>> flags, ParsedDuration duration) {
+    private void createReminder(CommandContext ctx, ZonedDateTime expireDate, String reminder, Map<String, List<String>> flags, ParsedDuration duration) {
         final boolean inChannel = flags.containsKey("c");
         final String where = inChannel ? " here" : "";
 

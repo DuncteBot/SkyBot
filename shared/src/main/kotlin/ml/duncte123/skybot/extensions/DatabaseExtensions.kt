@@ -20,31 +20,81 @@ package ml.duncte123.skybot.extensions
 
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.utils.DateUtils
-import com.dunctebot.models.utils.Utils
+import com.dunctebot.models.utils.DateUtils.DB_ZONE_ID
+import com.dunctebot.models.utils.DateUtils.getSqlTimestamp
 import com.dunctebot.models.utils.Utils.ratelimmitChecks
 import com.dunctebot.models.utils.Utils.toLong
 import ml.duncte123.skybot.objects.api.Reminder
 import java.sql.ResultSet
 import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
-import java.time.temporal.TemporalAccessor
+import java.time.ZonedDateTime
 
-fun TemporalAccessor.toSQL() = java.sql.Date(Instant.from(this).toEpochMilli())
-fun java.sql.Date.asInstant() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneOffset.UTC)
-fun String.toDate() = DateUtils.fromDatabaseFormat(this).toSQL()
+fun ZonedDateTime.toSQL() = getSqlTimestamp(this)
+fun java.sql.Timestamp.asInstant() = ZonedDateTime.ofInstant(Instant.ofEpochMilli(this.time), DB_ZONE_ID)
+fun String.toJavaDate() = DateUtils.fromMysqlFormat(this)
+fun String.toDate() = this.toJavaDate().toSQL()
 
 fun ResultSet.toReminder() = Reminder(
     this.getInt("id"),
     this.getLong("user_id"),
     this.getString("reminder"),
-    this.getDate("created_at").asInstant(),
-    this.getDate("remind_on").asInstant(),
+    this.getTimestamp("created_at").asInstant(),
+    this.getTimestamp("remind_on").asInstant(),
     this.getLong("channel_id"),
     this.getLong("message_id"),
     this.getLong("guild_id"),
     this.getBoolean("in_channel")
 )
+
+fun ResultSet.toReminderMySQL() = Reminder(
+    this.getInt("id"),
+    this.getString("user_id").toLong(),
+    this.getString("reminder"),
+    this.getString("remind_create_date").toJavaDate(),
+    this.getString("remind_date").toJavaDate(),
+    this.getString("channel_id").toLong(),
+    this.getString("message_id").toLong(),
+    this.getString("guild_id").toLong(),
+    this.getBoolean("in_channel")
+)
+
+fun ResultSet.toGuildSettingMySQL() = GuildSetting(this.getString("guildId").toLong())
+    .setCustomPrefix(this.getString("prefix"))
+    .setAutoroleRole(toLong(this.getString("autoRole")))
+    // .setEmbedColor(this.getInt("embed_color")) // NOTE: this is in a different table
+    .setLeaveTimeout(this.getInt("leave_timeout"))
+    .setAnnounceTracks(this.getBoolean("announceNextTrack"))
+    .setAllowAllToStop(this.getBoolean("allowAllToStop"))
+    .setServerDesc(this.getString("serverDesc"))
+    // Join/leave
+    .setWelcomeLeaveChannel(toLong(this.getString("welcomeLeaveChannel")))
+    .setEnableJoinMessage(this.getBoolean("enableJoinMessage"))
+    .setEnableLeaveMessage(this.getBoolean("enableLeaveMessage"))
+    .setCustomJoinMessage(this.getString("customWelcomeMessage"))
+    .setCustomLeaveMessage(this.getString("customLeaveMessage"))
+    // moderation
+    .setLogChannel(toLong(this.getString("logChannelId")))
+    .setMuteRoleId(toLong(this.getString("muteRoleId")))
+    .setEnableSwearFilter(this.getBoolean("enableSwearFilter"))
+    .setFilterType(this.getString("filterType"))
+    .setAiSensitivity(this.getFloat("aiSensitivity"))
+    .setAutoDeHoist(this.getBoolean("autoDeHoist"))
+    .setFilterInvites(this.getBoolean("filterInvites"))
+    .setEnableSpamFilter(this.getBoolean("spamFilterState"))
+    .setKickState(this.getBoolean("kickInsteadState"))
+    .setRatelimits(ratelimmitChecks(this.getString("ratelimits")))
+    .setSpamThreshold(this.getInt("spam_threshold"))
+    .setYoungAccountBanEnabled(this.getBoolean("young_account_ban_enabled"))
+    .setYoungAccountThreshold(this.getInt("young_account_threshold"))
+    // logging
+    .setBanLogging(this.getBoolean("banLogging"))
+    .setUnbanLogging(this.getBoolean("unbanLogging"))
+    .setMuteLogging(this.getBoolean("muteLogging"))
+    .setKickLogging(this.getBoolean("kickLogging"))
+    .setWarnLogging(this.getBoolean("warnLogging"))
+    .setMemberLogging(this.getBoolean("memberLogging"))
+    .setInviteLogging(this.getBoolean("invite_logging"))
+    .setMessageLogging(this.getBoolean("message_logging"))
 
 fun ResultSet.toGuildSetting() = GuildSetting(this.getLong("guild_id"))
     .setCustomPrefix(this.getString("prefix"))

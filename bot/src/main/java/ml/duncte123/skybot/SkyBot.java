@@ -78,8 +78,8 @@ public final class SkyBot {
 
         if ("psql".equals(useDatabase)) {
             logger.info("Using PostgreSQL as database impl");
-        } else if ("web".equals(useDatabase)) {
-            logger.warn("Using web api for all connections, please migrate to PostgreSQL");
+        } else if ("mysql".equals(useDatabase)) {
+            logger.warn("Using native MariaDB connection, please migrate to PostgreSQL");
         } else {
             shardManager = null; // for compiling n' stuff
             logger.error("Unknown database driver \"{}\", exiting!", useDatabase);

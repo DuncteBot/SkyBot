@@ -16,24 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.entities.jda
+package ml.duncte123.skybot.commands.music
 
-import com.dunctebot.models.settings.GuildSetting
-import me.duncte123.botcommons.messaging.EmbedUtils
-import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.GuildSettingsUtils
-import net.dv8tion.jda.api.entities.Guild
+import lavalink.client.io.filters.Karaoke
+import lavalink.client.io.filters.Rotation
+import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.objects.command.MusicCommand
 
-class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
-    var settings: GuildSetting
-        get() = GuildSettingsUtils.getGuild(this.idLong, this.variables)
-        set(settings) = GuildSettingsUtils.updateGuildSettings(this.idLong, settings, this.variables)
+class TestFilterCommand : MusicCommand() {
+    init {
+        this.displayAliasesInHelp = false
+    }
 
-    val color: Int
-        get() = EmbedUtils.getColorOrDefault(this.idLong)
+    override fun run(ctx: CommandContext) {
+        val player = getLavalinkManager().lavalink.getLink(ctx.guild).player
 
-    val hexColor = AirUtils.colorToHex(color)
+        player.filters.rotation = Rotation()
+        player.filters.karaoke = Karaoke().apply {
+            level = 3f
+        }
 
-    override fun toString() = this.guild.toString()
+        player.filters.commit()
+    }
+
+    override fun getName(): String = "testfilter"
 }

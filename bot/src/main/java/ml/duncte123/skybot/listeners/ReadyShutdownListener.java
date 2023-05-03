@@ -91,8 +91,12 @@ public class ReadyShutdownListener extends MessageListener {
                 TimeUnit.DAYS
             );
 
-            if ("psql".equals(this.variables.getConfig().useDatabase)) {
+            if (
+                "psql".equals(this.variables.getConfig().useDatabase) ||
+                    "mysql".equals(this.variables.getConfig().useDatabase)
+            ) {
                 DataTimers.startReminderTimer(this.variables, LOGGER);
+                DataTimers.startWarningTimer(this.variables, LOGGER);
                 DataTimers.startUnbanTimer(this.variables, LOGGER);
             }
 
@@ -138,6 +142,13 @@ public class ReadyShutdownListener extends MessageListener {
         // shut down weeb.java
         this.variables.getWeebApi().shutdown();
         LOGGER.info("Weeb.java shutdown");
+
+        try {
+            this.variables.getDatabase().close();
+        } catch (Exception e) {
+            LOGGER.error("Failed to close database", e);
+        }
+
         LOGGER.info("Bot and JDA shutdown cleanly");
     }
 }
