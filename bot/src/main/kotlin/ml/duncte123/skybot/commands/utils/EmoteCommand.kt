@@ -125,5 +125,5 @@ class EmoteCommand : Command() {
     private fun Int.toHex() = Integer.toHexString(this).uppercase()
     private fun Int.getName() = Character.getName(this)
     private fun Char.toHex() = this.code.toHex()
-    private fun String.ensureFourHex() = "0000$this".substring(this.length)
+    private fun String.ensureFourHex() = "0000$this".substring(this.length.coerceAtMost(4))
 }
