@@ -50,20 +50,6 @@ class DuncteApi(val apiKey: String) {
         }
     }
 
-    fun updateWarnActions(guildId: Long, actions: List<WarnAction>) {
-        val json = jsonMapper.createObjectNode()
-
-        json.putArray("warn_actions")
-            .addAll(jsonMapper.valueToTree<ArrayNode>(actions))
-
-        val response = postJSON("guildsettings/$guildId/warn-actions", json)
-
-        if (!response["success"].asBoolean()) {
-            logger.error("Failed to set warn actions for $guildId\n" +
-                "Response: {}", response["error"].toString())
-        }
-    }
-
     fun fetchGuildSetting(guildId: Long): JsonNode {
         return executeRequest(defaultRequest("guildsettings/$guildId"))["data"]
     }
@@ -107,15 +93,6 @@ class DuncteApi(val apiKey: String) {
         val response = executeRequest(defaultRequest("customcommands/$guildId/$invoke").delete())
 
         return parseTripleResponse(response)
-    }
-
-    fun isPatreon(userId: String): Boolean {
-        val request = defaultRequest("")
-            .url("https://apis.beta.duncte123.me/bot/patrons/$userId")
-
-        val response = executeRequest(request)
-
-        return response.get("success").asBoolean();
     }
 
     private fun patchJSON(path: String, json: JsonNode, prefixBot: Boolean = true): JsonNode {

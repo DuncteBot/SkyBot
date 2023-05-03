@@ -82,15 +82,6 @@ public class ReadyShutdownListener extends MessageListener {
             LOGGER.info("Starting spam-cache-cleaner!");
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
 
-            // auto poster for guild info (post every day)
-            //noinspection ConstantConditions
-            systemPool.scheduleAtFixedRate(
-                () -> variables.getApis().sendServerCountToLists(jda.getShardManager()),
-                1,
-                1,
-                TimeUnit.DAYS
-            );
-
             if (
                 "psql".equals(this.variables.getConfig().useDatabase) ||
                     "mysql".equals(this.variables.getConfig().useDatabase)
