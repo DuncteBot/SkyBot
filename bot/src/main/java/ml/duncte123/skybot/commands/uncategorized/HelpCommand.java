@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -70,19 +69,20 @@ public class HelpCommand extends Command {
         sendHelp(ctx, HelpEmbeds.generateCommandEmbed(prefix, null));
     }
 
-    @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
         try {
-            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> name
-                .equalsIgnoreCase(it.getSearch())).collect(Collectors.toList());
+            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values())
+                .filter(it -> name.equalsIgnoreCase(it.getSearch()))
+                .toList();
 
             if (!categoryList.isEmpty()) {
                 return true;
             }
 
-            return CommandCategory.valueOf(name.toUpperCase()) != null;
-        }
-        catch (IllegalArgumentException ignored) {
+            // throws exception if not found
+            CommandCategory.valueOf(name.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException ignored) {
             return false;
         }
     }
@@ -100,7 +100,7 @@ public class HelpCommand extends Command {
 
     private void sendCommandHelp(CommandContext ctx, String toSearch, CommandManager manager, String prefix) {
 
-        final ICommand cmd = manager.getCommand(toSearch);
+        final ICommand<CommandContext> cmd = manager.getCommand(toSearch);
 
         if (cmd != null) {
             sendCommandHelpMessage(ctx, (Command) cmd, prefix, toSearch);
@@ -117,7 +117,7 @@ public class HelpCommand extends Command {
         final boolean isKotlin = isKotlin(commandClass);
         final String extension = isKotlin ? ".kt" : ".java";
         final String type = isKotlin ? "kotlin" : "java";
-        final String url = String.format("https://github.com/DuncteBot/SkyBot/blob/master/src/main/%s/%s%s", type, clsPath, extension);
+        final String url = String.format("https://github.com/DuncteBot/SkyBot/blob/main/bot/src/main/%s/%s%s", type, clsPath, extension);
 
         final EmbedBuilder builder = EmbedUtils
             .getDefaultEmbed()

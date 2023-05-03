@@ -68,7 +68,7 @@ public class HelpEmbeds {
                 "Privacy policy: [duncte.bot/privacy](https://duncte.bot/privacy)", false);
     }
 
-    /// <editor-fold desc="Reflection magic" defaultstate="collapsed">
+    /// <editor-fold desc="Init junk" defaultstate="collapsed">
     public static void init(final CommandManager manager) {
         final CommandCategory[] categories = CommandCategory.values();
 
@@ -81,7 +81,7 @@ public class HelpEmbeds {
                 final List<String> cmds = new ArrayList<>();
                 final List<ICommand<CommandContext>> foundCommands = manager.getCommands(category);
 
-                for (final ICommand command : foundCommands) {
+                for (final ICommand<?> command : foundCommands) {
                     cmds.add(command.getName());
 
                     if (command.shouldDisplayAliasesInHelp()) {
@@ -150,9 +150,9 @@ public class HelpEmbeds {
             INLINE
         );
     }
-    /// </editor-fold>
 
     private static String joinCommands(List<String> cmdNames) {
         return "`" + String.join("` | `", cmdNames) + "`";
     }
+    /// </editor-fold>
 }
