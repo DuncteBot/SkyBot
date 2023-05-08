@@ -58,7 +58,7 @@ public class LoadingBarCommand extends Command {
                     LoadingBar.generateImage(progress), "bar.png"
                 ))
                 .setContent(String.format(
-                    "**%s** is **%s**%% complete.", year, progress
+                    "**%s** is **%s**%% complete.", year, Math.floor(progress * 100) / 100;
                 )).queue();
         }
         catch (IOException e) {
