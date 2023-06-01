@@ -18,17 +18,22 @@
 
 package ml.duncte123.skybot.commands.utils
 
+import me.duncte123.botcommons.commands.ICommandContext
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.escapeMarkDown
-import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.SlashCommandContext
+import ml.duncte123.skybot.objects.SlashSupport
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 import ml.duncte123.skybot.utils.TwemojiParser
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-class EmoteCommand : Command() {
+class EmoteCommand : SlashSupport() {
     init {
         this.category = CommandCategory.UTILS
         this.name = "emote"
@@ -60,10 +65,10 @@ class EmoteCommand : Command() {
             return
         }
 
-        normalEmoteMentioned(ctx, stripVariants(arg))
+        normalEmoteMentioned(ctx, ctx.variables, stripVariants(arg))
     }
 
-    private fun customEmoteMentioned(ctx: CommandContext, emote: CustomEmoji) {
+    private fun customEmoteMentioned(ctx: ICommandContext, emote: CustomEmoji) {
         val name = emote.name
         val id = emote.id
         val url = emote.imageUrl
@@ -79,7 +84,7 @@ class EmoteCommand : Command() {
         )
     }
 
-    private fun normalEmoteMentioned(ctx: CommandContext, emote: String) {
+    private fun normalEmoteMentioned(ctx: ICommandContext, variables: Variables, emote: String) {
         val joinedHex = StringBuilder()
         val message = buildString {
             appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
@@ -109,7 +114,7 @@ class EmoteCommand : Command() {
             val emojiUrl = TwemojiParser.parseOne(emote)
 
             if (emojiUrl != null) {
-                val shortUrl = shortenUrl(emojiUrl, ctx.config.apis.googl, ctx.variables.jackson).execute()
+                val shortUrl = shortenUrl(emojiUrl, variables.config.apis.googl, variables.jackson).execute()
 
                 appendLine("Image url (shortened): <$shortUrl>")
             }
@@ -126,4 +131,34 @@ class EmoteCommand : Command() {
     private fun Int.getName() = Character.getName(this)
     private fun Char.toHex() = this.code.toHex()
     private fun String.ensureFourHex() = "0000$this".substring(this.length.coerceAtMost(4))
+
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addOption(
+            OptionType.STRING,
+            "emote",
+            "The emote to show information about",
+            true
+        )
+    }
+
+    override fun handleSlash(ctx: SlashCommandContext) {
+        val emote = ctx.event.getOption("emote")!!
+
+        val mentionedEmotes = emote.mentions.customEmojis
+
+        if (mentionedEmotes.isNotEmpty()) {
+            customEmoteMentioned(ctx, mentionedEmotes[0])
+            return
+        }
+
+        val arg = emote.asString
+
+        // ¯\_(ツ)_/¯
+        if (arg.codePoints().count() > 10) {
+            sendMsg(ctx, "Invalid emote or input is too long")
+            return
+        }
+
+        normalEmoteMentioned(ctx, ctx.variables, stripVariants(arg))
+    }
 }

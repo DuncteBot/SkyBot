@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -62,6 +63,8 @@ public class ReadyShutdownListener extends MessageListener {
             this.onGuildMessageUpdate(messageUpdate);
         } else if (event instanceof MessageReceivedEvent messageReceived) {
             this.onGuildMessageReceived(messageReceived);
+        } else if (event instanceof SlashCommandInteractionEvent slashEvent) {
+            this.onSlashCommandInteraction(slashEvent);
         } else if (event instanceof MessageDeleteEvent delete) {
             this.onGuildMessageDelete(delete);
         } else if (event instanceof MessageBulkDeleteEvent bulkDelete) {
@@ -95,6 +98,12 @@ public class ReadyShutdownListener extends MessageListener {
 
             // Load the patrons here so that they are loaded once
             GuildUtils.loadAllPatrons(variables.getDatabase());
+
+            // Nice first attempt :)
+            /*jda.getGuildById(191245668617158656L)
+                .updateCommands()
+                .addCommands(this.commandManager.getAllSlashCommands())
+                .queue();*/
         }
     }
 

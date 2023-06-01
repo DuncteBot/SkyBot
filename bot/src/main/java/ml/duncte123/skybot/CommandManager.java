@@ -56,6 +56,7 @@ import ml.duncte123.skybot.commands.utils.EmoteCommand;
 import ml.duncte123.skybot.commands.utils.EnlargeCommand;
 import ml.duncte123.skybot.commands.utils.RoleInfoCommand;
 import ml.duncte123.skybot.commands.weeb.*;
+import ml.duncte123.skybot.objects.SlashSupport;
 import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.objects.pairs.LongLongPair;
 import ml.duncte123.skybot.utils.CommandUtils;
@@ -65,8 +66,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.slf4j.Logger;
@@ -701,6 +704,20 @@ public class CommandManager {
         }
 
         this.commands.put(cmdName, command);
+    }
+
+    public List<SlashCommandData> getAllSlashCommands() {
+        return this.commands.values().stream()
+            .filter((cmd) -> cmd instanceof SlashSupport)
+            .map((cmd) -> (SlashSupport) cmd)
+            .map(SlashSupport::getSlashData)
+            .toList();
+    }
+
+    public void executeSlashCommand(SlashCommandInteractionEvent event) {
+        final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
+
+        command.handleEvent(event, variables);
     }
 
     private static long calcTimeRemaining(long startTime) {

@@ -50,6 +50,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -303,6 +304,10 @@ public abstract class MessageListener extends BaseListener {
                 e.printStackTrace();
             }
         });
+    }
+
+    protected void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        this.commandManager.executeSlashCommand(event);
     }
 
     private boolean invokeAutoResponse(List<CustomCommand> autoResponses, String[] split, MessageReceivedEvent event) {
