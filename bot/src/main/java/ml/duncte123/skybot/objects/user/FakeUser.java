@@ -23,8 +23,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
+import net.dv8tion.jda.api.utils.ImageProxy;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -47,6 +49,12 @@ public class FakeUser implements User {
     @Nonnull
     @Override
     public String getName() {
+        return this.name;
+    }
+
+    @Nullable
+    @Override
+    public String getGlobalName() {
         return this.name;
     }
 

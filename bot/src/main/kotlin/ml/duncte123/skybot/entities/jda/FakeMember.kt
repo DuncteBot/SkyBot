@@ -166,4 +166,8 @@ class FakeMember(private val name: String) : Member {
     }
 
     override fun getFlagsRaw() = 0
+
+    override fun getDefaultAvatarId(): String {
+        TODO("Not yet implemented")
+    }
 }
