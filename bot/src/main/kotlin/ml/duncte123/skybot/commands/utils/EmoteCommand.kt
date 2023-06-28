@@ -83,7 +83,7 @@ class EmoteCommand : SlashSupport() {
             |**Id:** $id
             |**Markdown:** `$markdownStr`
             |**Url:** $url
-            """.trimMargin()
+        """.trimMargin()
     }
 
     private fun normalEmoteMentioned(variables: Variables, emote: String) = buildString {

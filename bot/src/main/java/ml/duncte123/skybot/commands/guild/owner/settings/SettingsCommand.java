@@ -23,7 +23,6 @@ import com.google.common.base.CaseFormat;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -70,24 +69,22 @@ public class SettingsCommand extends SlashSupport {
 
     private final Map<String, SettingData> settingsMap = new ConcurrentHashMap<>();
 
-    // MessageHandler
-    interface MH {
+    private interface MessageHandler {
         void accept(String message);
         void accept(EmbedBuilder message);
     }
 
-    // SettingsConsumer
     @FunctionalInterface
-    interface SC {
-        void accept(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler);
+    private interface SettingsConsumer {
+        void accept(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler);
     }
 
     /**
      * @param handler
      *     Guild, Item name, setValue, value, messageHandler
      */
-    private record SettingData(String help, SC handler, boolean hasSetter) {
-        SettingData(String help, SC handler) {
+    private record SettingData(String help, SettingsConsumer handler, boolean hasSetter) {
+        SettingData(String help, SettingsConsumer handler) {
             this(help, handler, true);
         }
     }
@@ -168,7 +165,7 @@ public class SettingsCommand extends SlashSupport {
         final var settingsFn = this.settingsMap.get(item);
         final boolean shouldSetValue = args.size() >= 3 && "--set".equals(args.get(1));
         final String value = shouldSetValue ? getSetValue(ctx) : "";
-        final var messageHandler = new MH() {
+        final var messageHandler = new MessageHandler() {
             @Override
             public void accept(String message) {
                 sendMsg(ctx, message);
@@ -229,7 +226,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="autoRoleSetting" defaultstate="collapsed">
-    private void autoRoleSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void autoRoleSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -261,7 +258,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="muteRoleSetting" defaultstate="collapsed">
-    private void muteRoleSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void muteRoleSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -293,7 +290,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="embedColorSetting" defaultstate="collapsed">
-    private void embedColorSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void embedColorSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         if (!setValue) {
             final String msg = String.format("Current embed color is `%s`", colorToHex(guild.getSettings().getEmbedColor()));
 
@@ -320,7 +317,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="descriptionSetting" defaultstate="collapsed">
-    private void descriptionSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void descriptionSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -348,7 +345,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="joinMessageSetting" defaultstate="collapsed">
-    private void joinMessageSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void joinMessageSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         if (!setValue) {
             messageHandler.accept("The join message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
@@ -366,7 +363,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="leaveMessageSetting" defaultstate="collapsed">
-    private void leaveMessageSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void leaveMessageSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         if (!setValue) {
             messageHandler.accept("The leave message can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
@@ -384,7 +381,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="logChannelSetting" defaultstate="collapsed">
-    private void logChannelSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void logChannelSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -415,7 +412,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="prefixSetting" defaultstate="collapsed">
-    private void prefixSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void prefixSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -427,7 +424,7 @@ public class SettingsCommand extends SlashSupport {
         }
 
         if (value.length() > 10) {
-            messageHandler.accept(MessageUtils.getErrorReaction() + " The length of the prefix must not exceed 10 characters");
+            messageHandler.accept(getErrorReaction() + " The length of the prefix must not exceed 10 characters");
             return;
         }
 
@@ -437,7 +434,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="rateLimitSetting" defaultstate="collapsed">
-    private void rateLimitSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void rateLimitSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         if (!setValue) {
             messageHandler.accept("The rate limits can only be previewed on the dashboard <https://dashboard.duncte.bot/>");
             return;
@@ -467,7 +464,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="welcomeChannelSetting" defaultstate="collapsed">
-    private void welcomeChannelSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void welcomeChannelSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
 
         if (!setValue) {
@@ -492,7 +489,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="announceTracksSetting" defaultstate="collapsed">
-    private void announceTracksSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void announceTracksSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean shouldAnnounce = !settings.isAnnounceTracks();
 
@@ -503,7 +500,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="autoDehoistSetting" defaultstate="collapsed">
-    private void autoDehoistSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void autoDehoistSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
 
@@ -514,7 +511,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="filterInvitesSetting" defaultstate="collapsed">
-    private void filterInvitesSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void filterInvitesSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean shouldFilter = !settings.isFilterInvites();
 
@@ -525,7 +522,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="joinMessageStateSetting" defaultstate="collapsed">
-    private void joinMessageStateSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void joinMessageStateSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isEnableJoinMessage();
 
@@ -538,7 +535,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="kickModeSetting" defaultstate="collapsed">
-    private void kickModeSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void kickModeSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean kickState = !settings.getKickState();
 
@@ -549,7 +546,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="spamFilterSetting" defaultstate="collapsed">
-    private void spamFilterSetting(DunctebotGuild guild, Supplier<Message> __, String name, boolean setValue, String value, MH messageHandler) {
+    private void spamFilterSetting(DunctebotGuild guild, Supplier<Message> msgSub, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final long muteRoleId = settings.getMuteRoleId();
         final String prefix = settings.getCustomPrefix();
@@ -580,7 +577,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="swearFilterSetting" defaultstate="collapsed">
-    private void swearFilterSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void swearFilterSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isEnableSwearFilter();
 
@@ -593,7 +590,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="inviteLoggingSetting" defaultstate="collapsed">
-    private void inviteLoggingSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void inviteLoggingSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final boolean isEnabled = !settings.isFilterInvites();
 
@@ -611,7 +608,7 @@ public class SettingsCommand extends SlashSupport {
     /// </editor-fold>
 
     /// <editor-fold desc="memberLoggingSetting" defaultstate="collapsed">
-    private void memberLoggingSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MH messageHandler) {
+    private void memberLoggingSetting(DunctebotGuild guild, Supplier<Message> message, String name, boolean setValue, String value, MessageHandler messageHandler) {
         final GuildSetting settings = guild.getSettings();
         final long logChannel = settings.getLogChannel();
 
@@ -644,63 +641,63 @@ public class SettingsCommand extends SlashSupport {
                 "Sets the role given to users when they get muted",
                 this::muteRoleSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "embedColor",
             new SettingData(
                 "Sets the color of the embeds DuncteBot sends",
                 this::embedColorSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "description",
             new SettingData(
                 "(Deprecated) Sets the description in the server info command",
                 this::descriptionSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "joinMessage",
             new SettingData(
                 "Sets the message being send to `welcomeChannel` when a user joins",
                 this::joinMessageSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "leaveMessage",
             new SettingData(
                 "Sets the message being send to `welcomeChannel` when a user leaves",
                 this::leaveMessageSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "logChannel",
             new SettingData(
                 "Sets the channel where moderation actions are logged",
                 this::logChannelSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "prefix",
             new SettingData(
                 "Sets a custom prefix for the bot",
                 this::prefixSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "rateLimits",
             new SettingData(
                 "Sets the cooldown in minutes for un-muting your spammer of choice",
                 this::rateLimitSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "welcomeChannel",
             new SettingData(
                 "Sets the channel where the join and leave messages are send",
                 this::welcomeChannelSetting
             )
-        );;
+        );
         this.settingsMap.put(
             "announceTracks",
             new SettingData(
@@ -708,7 +705,7 @@ public class SettingsCommand extends SlashSupport {
                 this::announceTracksSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "autoDehoist",
             new SettingData(
@@ -716,7 +713,7 @@ public class SettingsCommand extends SlashSupport {
                 this::autoDehoistSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "filterInvites",
             new SettingData(
@@ -724,7 +721,7 @@ public class SettingsCommand extends SlashSupport {
                 this::filterInvitesSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "joinMessageState",
             new SettingData(
@@ -732,7 +729,7 @@ public class SettingsCommand extends SlashSupport {
                 this::joinMessageStateSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "kickMode",
             new SettingData(
@@ -740,7 +737,7 @@ public class SettingsCommand extends SlashSupport {
                 this::kickModeSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "spamFilter",
             new SettingData(
@@ -748,7 +745,7 @@ public class SettingsCommand extends SlashSupport {
                 this::spamFilterSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "swearFilter",
             new SettingData(
@@ -756,7 +753,7 @@ public class SettingsCommand extends SlashSupport {
                 this::swearFilterSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "inviteLogging",
             new SettingData(
@@ -764,7 +761,7 @@ public class SettingsCommand extends SlashSupport {
                 this::inviteLoggingSetting,
                 false
             )
-        );;
+        );
         this.settingsMap.put(
             "memberLogging",
             new SettingData(
@@ -772,11 +769,11 @@ public class SettingsCommand extends SlashSupport {
                 this::memberLoggingSetting,
                 false
             )
-        );;
+        );
     }
 
     @Nullable
-    private Role fetchRoleWithChecks(Guild guild, Message message, String value, MH messageHandler) {
+    private Role fetchRoleWithChecks(Guild guild, Message message, String value, MessageHandler messageHandler) {
         if (doesNotPassRolePermCheck(guild.getSelfMember(), messageHandler)) {
             return null;
         }
@@ -785,7 +782,7 @@ public class SettingsCommand extends SlashSupport {
     }
 
     @Nullable
-    private Role getFoundRoleOrNull(Guild guild, Message message, String query, MH messageHandler) {
+    private Role getFoundRoleOrNull(Guild guild, Message message, String query, MessageHandler messageHandler) {
         final List<Role> mentionedRoles = message.getMentions().getRoles();
 
         final Role foundRole;
@@ -857,7 +854,7 @@ public class SettingsCommand extends SlashSupport {
         ).contains(query);
     }
 
-    private boolean doesNotPassRolePermCheck(Member selfMember, MH messageHandler) {
+    private boolean doesNotPassRolePermCheck(Member selfMember, MessageHandler messageHandler) {
         if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) {
             messageHandler.accept("I need the _Manage Roles_ permission in order for this feature to work.");
 
@@ -919,7 +916,6 @@ public class SettingsCommand extends SlashSupport {
             return;
         }
 
-        final var guild = new DunctebotGuild(jdaGuild, variables);
         final String key = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, subcommandName);
 
         if (!this.settingsMap.containsKey(key)) {
@@ -929,8 +925,9 @@ public class SettingsCommand extends SlashSupport {
 
         final OptionMapping option = event.getOption("set");
         final boolean shouldSet = option != null;
+        final var guild = new DunctebotGuild(jdaGuild, variables);
 
-        final var messageHandler = new MH() {
+        final var messageHandler = new MessageHandler() {
             @Override
             public void accept(String message) {
                 event.reply(message).queue();
