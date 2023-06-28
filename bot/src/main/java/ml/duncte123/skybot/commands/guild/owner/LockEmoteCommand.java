@@ -55,7 +55,7 @@ public class LockEmoteCommand extends Command {
             Permission.ADMINISTRATOR,
         };
         this.botPermissions = new Permission[]{
-            Permission.MANAGE_EMOJIS_AND_STICKERS,
+            Permission.MANAGE_GUILD_EXPRESSIONS,
         };
     }
 

@@ -100,10 +100,10 @@ public class ReadyShutdownListener extends MessageListener {
             GuildUtils.loadAllPatrons(variables.getDatabase());
 
             // Nice first attempt :)
-            /*jda.getGuildById(191245668617158656L)
+            jda.getGuildById(191245668617158656L)
                 .updateCommands()
                 .addCommands(this.commandManager.getAllSlashCommands())
-                .queue();*/
+                .queue();
         }
     }
 

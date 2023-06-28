@@ -460,6 +460,7 @@ public class CommandManager {
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
             MDC.put("user.tag", event.getAuthor().getAsTag());
+            MDC.put("user.name", event.getAuthor().getEffectiveName());
             MDC.put("user.id", event.getAuthor().getId());
             MDC.put("guild", event.getGuild().toString());
             setJDAContext(event.getJDA());
@@ -707,6 +708,30 @@ public class CommandManager {
     }
 
     public List<SlashCommandData> getAllSlashCommands() {
+        /*return this.commands.values().stream()
+            .filter((cmd) -> cmd instanceof SlashSupport)
+            .map((cmd) -> (SlashSupport) cmd)
+//            .map(SlashSupport::getSlashData)
+            .collect(
+                Collectors.groupingBy((Command::getCategory))
+            )
+            .entrySet()
+            .stream()
+            .map((cmd) -> {
+                final String name = cmd.getKey().getSearch();
+
+                final var subCmds = cmd.getValue()
+                    .stream()
+                    .map(SlashSupport::getSlashData)
+                    .toList();
+
+                return Commands.slash(name, "All commands under the " + name + " category.")
+                    .addSubcommands(subCmds)
+                    .setGuildOnly(true)
+                    .setNSFW(cmd.getKey() == CommandCategory.NSFW);
+            })
+            .toList();*/
+
         return this.commands.values().stream()
             .filter((cmd) -> cmd instanceof SlashSupport)
             .map((cmd) -> (SlashSupport) cmd)
@@ -717,7 +742,9 @@ public class CommandManager {
     public void executeSlashCommand(SlashCommandInteractionEvent event) {
         final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
 
-        command.handleEvent(event, variables);
+        if (command != null) {
+            command.handleEvent(event, variables);
+        }
     }
 
     private static long calcTimeRemaining(long startTime) {

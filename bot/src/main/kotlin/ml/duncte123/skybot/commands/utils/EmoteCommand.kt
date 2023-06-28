@@ -18,11 +18,9 @@
 
 package ml.duncte123.skybot.commands.utils
 
-import me.duncte123.botcommons.commands.ICommandContext
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.escapeMarkDown
-import ml.duncte123.skybot.objects.SlashCommandContext
 import ml.duncte123.skybot.objects.SlashSupport
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -30,8 +28,10 @@ import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 import ml.duncte123.skybot.utils.TwemojiParser
 import ml.duncte123.skybot.utils.TwemojiParser.stripVariants
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class EmoteCommand : SlashSupport() {
     init {
@@ -53,7 +53,10 @@ class EmoteCommand : SlashSupport() {
         val mentionedEmotes = ctx.message.mentions.customEmojis
 
         if (mentionedEmotes.isNotEmpty()) {
-            customEmoteMentioned(ctx, mentionedEmotes[0])
+            sendMsg(
+                ctx,
+                customEmoteMentioned(mentionedEmotes[0])
+            )
             return
         }
 
@@ -65,66 +68,62 @@ class EmoteCommand : SlashSupport() {
             return
         }
 
-        normalEmoteMentioned(ctx, ctx.variables, stripVariants(arg))
+        sendMsg(
+            ctx,
+            normalEmoteMentioned(ctx.variables, stripVariants(arg))
+        )
     }
 
-    private fun customEmoteMentioned(ctx: ICommandContext, emote: CustomEmoji) {
+    private fun customEmoteMentioned(emote: CustomEmoji): String {
         val name = emote.name
         val id = emote.id
         val url = emote.imageUrl
         val markdownStr = "< :${emote.name}:${emote.idLong}>"
 
-        sendMsg(
-            ctx,
-            """**Emote:** $name
+        return """**Emote:** $name
             |**Id:** $id
             |**Markdown:** `$markdownStr`
             |**Url:** $url
             """.trimMargin()
-        )
     }
 
-    private fun normalEmoteMentioned(ctx: ICommandContext, variables: Variables, emote: String) {
+    private fun normalEmoteMentioned(variables: Variables, emote: String) = buildString {
         val joinedHex = StringBuilder()
-        val message = buildString {
-            appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
+        appendLine("Emoji/char info for ${emote.escapeMarkDown()}:")
 
-            emote.codePoints().forEach {
-                val chars = Character.toChars(it)
-                val hex = it.toHex().ensureFourHex()
+        emote.codePoints().forEach {
+            val chars = Character.toChars(it)
+            val hex = it.toHex().ensureFourHex()
 
-                append("`\\u$hex` ")
+            append("`\\u$hex` ")
 
-                if (chars.size > 1) {
-                    val extraHex = buildString {
-                        chars.forEach { c ->
-                            append("\\u${c.toHex().ensureFourHex()}")
-                        }
+            if (chars.size > 1) {
+                val extraHex = buildString {
+                    chars.forEach { c ->
+                        append("\\u${c.toHex().ensureFourHex()}")
                     }
-
-                    append("[`$extraHex`]")
-                    joinedHex.append(extraHex)
-                } else {
-                    joinedHex.append("\\u$hex")
                 }
 
-                appendLine(" _${it.getName()}_")
+                append("[`$extraHex`]")
+                joinedHex.append(extraHex)
+            } else {
+                joinedHex.append("\\u$hex")
             }
 
-            val emojiUrl = TwemojiParser.parseOne(emote)
-
-            if (emojiUrl != null) {
-                val shortUrl = shortenUrl(emojiUrl, variables.config.apis.googl, variables.jackson).execute()
-
-                appendLine("Image url (shortened): <$shortUrl>")
-            }
-
-            if (emote.codePointCount(0, emote.length) > 1) {
-                appendLine("\nCopy-paste string: `$joinedHex`")
-            }
+            appendLine(" _${it.getName()}_")
         }
 
-        sendMsg(ctx, message)
+        val emojiUrl = TwemojiParser.parseOne(emote)
+
+        if (emojiUrl != null) {
+            val shortUrl = shortenUrl(emojiUrl, variables.config.apis.googl, variables.jackson).execute()
+
+            appendLine("Image url (shortened): <$shortUrl>")
+        }
+
+        if (emote.codePointCount(0, emote.length) > 1) {
+            appendLine("\nCopy-paste string: `$joinedHex`")
+        }
     }
 
     private fun Int.toHex() = Integer.toHexString(this).uppercase()
@@ -141,13 +140,15 @@ class EmoteCommand : SlashSupport() {
         )
     }
 
-    override fun handleSlash(ctx: SlashCommandContext) {
-        val emote = ctx.event.getOption("emote")!!
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val emote = event.getOption("emote")!!
 
         val mentionedEmotes = emote.mentions.customEmojis
 
         if (mentionedEmotes.isNotEmpty()) {
-            customEmoteMentioned(ctx, mentionedEmotes[0])
+            event.reply(
+                customEmoteMentioned(mentionedEmotes[0])
+            ).queue()
             return
         }
 
@@ -155,10 +156,12 @@ class EmoteCommand : SlashSupport() {
 
         // ¯\_(ツ)_/¯
         if (arg.codePoints().count() > 10) {
-            sendMsg(ctx, "Invalid emote or input is too long")
+            event.reply("Invalid emote or input is too long").setEphemeral(true).queue()
             return
         }
 
-        normalEmoteMentioned(ctx, ctx.variables, stripVariants(arg))
+        event.reply(
+            normalEmoteMentioned(variables, stripVariants(arg))
+        ).queue()
     }
 }

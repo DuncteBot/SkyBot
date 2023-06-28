@@ -22,8 +22,8 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandCategory
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.Commands
-import ml.duncte123.skybot.objects.command.Command as SkyCommand
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import ml.duncte123.skybot.objects.command.Command as SkyCommand
 
 abstract class SlashSupport : SkyCommand() {
     protected abstract fun configureSlashSupport(baseData: SlashCommandData)
@@ -38,13 +38,5 @@ abstract class SlashSupport : SkyCommand() {
         return base
     }
 
-    fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
-        event.deferReply(false).queue { hook ->
-            hook.retrieveOriginal().queue { message ->
-                handleSlash(SlashCommandContext(event, message, variables))
-            }
-        }
-    }
-
-    protected abstract fun handleSlash(ctx: SlashCommandContext)
+    abstract fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables)
 }
