@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class EmoteCommand : SlashSupport() {
     init {
