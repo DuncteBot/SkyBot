@@ -21,10 +21,15 @@ package ml.duncte123.skybot.commands.music
 import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.extensions.isNSFW
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.CommandUtils
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
     private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
@@ -79,7 +84,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(toPlay, ctx)
+            val vidId = searchYt(toPlay, ctx.variables)
 
             if (vidId == null) {
                 MessageUtils.sendError(ctx.message)
@@ -112,8 +117,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return true
     }
 
-    private fun searchYt(search: String, ctx: CommandContext): String? {
-        val playlist = ctx.audioUtils.searchYoutube(search)
+    private fun searchYt(search: String, variables: Variables): String? {
+        val playlist = variables.audioUtils.searchYoutube(search)
 
         if (playlist == null || playlist.tracks.isEmpty()) {
             return null
@@ -130,5 +135,54 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
+    }
+
+    private fun handlePlay(toPlay: String, variables: Variables, event: SlashCommandInteractionEvent) {
+        if (toPlay.length > 1024) {
+            event.reply("Input cannot be longer than 1024 characters.").queue()
+            return
+        }
+
+        event.deferReply().queue()
+
+        // TODO: get rid of CTX
+        // variables.audioUtils.loadAndPlay(ctx, toPlay, true)
+    }
+
+    override fun getSubData(): SubcommandData {
+        return super.getSubData()
+            .addOption(
+                OptionType.STRING,
+                "item",
+                "A url or a search term to play.",
+                true
+            )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        var toPlay = event.getOption("item")!!.asString
+
+        if (toPlay.contains(PornHubAudioSourceManager.DOMAIN_REGEX.toRegex()) && !event.channel.isNSFW) {
+            event.reply("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW").queue()
+            return
+        }
+
+        if (skipParsing) {
+            handlePlay(toPlay, variables, event) // TODO
+            return
+        }
+
+        if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
+            val vidId = searchYt(toPlay, variables)
+
+            if (vidId == null) {
+                event.reply("No tracks were found").queue()
+                return
+            }
+
+            toPlay = "https://www.youtube.com/watch?v=$vidId"
+        }
+
+        handlePlay(toPlay, variables, event)
     }
 }

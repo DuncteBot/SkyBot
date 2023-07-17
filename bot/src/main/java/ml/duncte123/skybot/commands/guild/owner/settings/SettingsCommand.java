@@ -89,7 +89,6 @@ public class SettingsCommand extends SlashSupport {
         }
     }
 
-    // TODO: make this a slash command
     public SettingsCommand() {
         this.displayAliasesInHelp = true;
         // Override category here to make sure that we can hide all the other settings commands

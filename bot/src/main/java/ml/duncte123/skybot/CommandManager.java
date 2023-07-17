@@ -732,11 +732,17 @@ public class CommandManager {
             })
             .toList();*/
 
-        return this.commands.values().stream()
+        final List<SlashCommandData> commands = this.commands.values()
+            .stream()
             .filter((cmd) -> cmd instanceof SlashSupport)
             .map((cmd) -> (SlashSupport) cmd)
             .map(SlashSupport::getSlashData)
-            .toList();
+            .collect(Collectors.toList());
+
+        // Manually register some commands
+        commands.add(MusicCommand.getMusicCommandData(this));
+
+        return commands;
     }
 
     public void executeSlashCommand(SlashCommandInteractionEvent event) {

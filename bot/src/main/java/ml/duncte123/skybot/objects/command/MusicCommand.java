@@ -19,10 +19,16 @@
 package ml.duncte123.skybot.objects.command;
 
 import fredboat.audio.player.LavalinkManager;
+import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.CooldownScope;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -115,5 +121,25 @@ public abstract class MusicCommand extends Command {
 
     protected static LavalinkManager getLavalinkManager() {
         return LavalinkManager.INS;
+    }
+
+    @Nonnull
+    protected SubcommandData getSubData() {
+        return new SubcommandData(getName(), getHelp(getName(), "/"));
+    }
+
+    public void handleEvent(@Nonnull SlashCommandInteractionEvent event, @Nonnull Variables variables) {
+        //
+    }
+
+    public static SlashCommandData getMusicCommandData(CommandManager mngr) {
+        final var base = Commands.slash("music", "base command for music commands")
+            .setGuildOnly(true);
+
+        mngr.getCommands(CommandCategory.MUSIC).forEach((cmd) -> base.addSubcommands(
+            ((MusicCommand) cmd).getSubData()
+        ));
+
+        return base;
     }
 }
