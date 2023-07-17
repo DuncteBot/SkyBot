@@ -40,8 +40,8 @@ project.version = "${numberVersion}_${getGitHash()}"
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -100,7 +100,7 @@ build.apply {
 // TODO: remove, should be done from main build file
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "16"
+        jvmTarget = "17"
     }
 }
 

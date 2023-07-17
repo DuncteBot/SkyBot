@@ -25,7 +25,7 @@ plugins {
     kotlin("jvm") version "1.7.20" apply false
     id("org.liquibase.gradle") version "2.0.4" apply false
     id("org.jmailen.kotlinter") version "3.13.0" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false // TODO: upgrade to 8.1.1 after updating to gradle 8
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
     id("com.github.breadmoirai.github-release") version "2.2.12" apply false
 }
 
@@ -39,19 +39,18 @@ allprojects {
         maven("https://m2.duncte123.dev/releases")
         maven("https://repo.jenkins-ci.org/releases")
         maven("https://m2.duncte123.dev/snapshots")
-        maven("https://duncte123.jfrog.io/artifactory/maven")
         maven("https://jitpack.io")
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "7.6"
+        gradleVersion = "8.2.1"
         distributionType = Wrapper.DistributionType.BIN
     }
 }
 
 subprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "16"
+        kotlinOptions.jvmTarget = "17"
     }
 
     tasks.withType<JavaCompile> {

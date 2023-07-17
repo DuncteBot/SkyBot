@@ -22,7 +22,6 @@ include("bot")
 include("shared")
 include("dashboard")
 
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
@@ -68,7 +67,7 @@ fun VersionCatalogBuilder.bot() {
     library("youtube", "com.google.apis", "google-api-services-youtube").version("v3-rev222-1.25.0")
     library("expiringmap", "net.jodah", "expiringmap").version("0.5.9")
 
-    library("weebjava", "me.duncte123", "weebJava").version("3.0.1_4")
+    library("weebjava", "me.duncte123", "weebJava").version("3.0.1_7")
     library("loadingBar", "me.duncte123", "loadingbar").version("1.4.1_7")
     library("jagTag", "com.github.jagrosh", "JagTag").version("6dbe1ba")
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
@@ -94,7 +93,7 @@ fun VersionCatalogBuilder.database() {
 fun VersionCatalogBuilder.voice() {
     library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.0")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.3.99.2")
+    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.4.2")
 //    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
     library("lavalink-client", "com.github.freyacodes", "Lavalink-Client").version("cde746afc")
 }
