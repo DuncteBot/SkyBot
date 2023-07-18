@@ -32,6 +32,6 @@ application {
 
 tasks {
     shadowJar {
-        archiveClassifier.set("")
+        archiveClassifier.set("-all")
     }
 }

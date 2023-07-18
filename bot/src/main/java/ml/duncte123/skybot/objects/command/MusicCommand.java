@@ -128,6 +128,8 @@ public abstract class MusicCommand extends Command {
         return new SubcommandData(getName(), getHelp(getName(), "/"));
     }
 
+    // TODO: implement in all
+    @SuppressWarnings({"PMD.EmptyMethodInAbstractClassShouldBeAbstract"})
     public void handleEvent(@Nonnull SlashCommandInteractionEvent event, @Nonnull Variables variables) {
         //
     }
