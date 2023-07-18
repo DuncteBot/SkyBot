@@ -24,6 +24,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -170,6 +171,17 @@ public class CommandContext implements ICommandContext {
         return FinderUtils.searchMembers(this.getArgs().get(index), this);
     }
 
+    public AudioData getAudioData() {
+        return new AudioData(
+            this.getJDAGuild().getIdLong(),
+            this.getAuthor().getIdLong(),
+            this.getChannel().getIdLong(),
+            this.getMessage().getIdLong(),
+            this.getJDA(),
+            this.variables
+        );
+    }
+
     // --------------- Reaction processing methods --------------- //
 
     public ReactionHandler getReactionHandler() {
@@ -217,6 +229,10 @@ public class CommandContext implements ICommandContext {
     @Override
     public DunctebotGuild getGuild() {
         return this.duncteBotGuild;
+    }
+
+    public long getGuildId() {
+        return this.getGuild().getIdLong();
     }
 
     public Guild getJDAGuild() {

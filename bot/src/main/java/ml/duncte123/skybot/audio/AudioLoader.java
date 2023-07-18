@@ -24,14 +24,15 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.extensions.StringKt;
+import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
-import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -40,21 +41,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class AudioLoader implements AudioLoadResultHandler {
 
-    private final CommandContext ctx;
+    private final AudioData data;
     private final long requester;
     private final GuildMusicManager mng;
     private final boolean announce;
     private final String trackUrl;
     private final boolean isPatron;
 
-    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, boolean isPatron) {
-        this.ctx = ctx;
-        this.requester = ctx.getAuthor().getIdLong();
+    public AudioLoader(AudioData data, GuildMusicManager mng, boolean announce, String trackUrl, boolean isPatron) {
+        this.data = data;
+        this.requester = data.getUserId();
         this.mng = mng;
         this.announce = announce;
         this.trackUrl = trackUrl;
@@ -68,8 +68,12 @@ public class AudioLoader implements AudioLoadResultHandler {
         final TrackScheduler scheduler = this.mng.getScheduler();
 
         if (!this.isPatron && !scheduler.canQueue()) {
-            sendMsg(this.ctx, String.format("Could not queue track because limit of %d tracks has been reached.\n" +
-                "Consider supporting us on patreon to queue up unlimited songs.", TrackScheduler.MAX_QUEUE_SIZE));
+            sendMsg(new MessageConfig.Builder()
+                .setChannel(this.data.getChannel())
+                .replyTo(this.data.getReplyToMessage())
+                .setMessage(String.format("Could not queue track because limit of %d tracks has been reached.\n" +
+                    "Consider supporting us on patreon to queue up unlimited songs.", TrackScheduler.MAX_QUEUE_SIZE))
+                .build());
             return;
         }
 
@@ -85,24 +89,40 @@ public class AudioLoader implements AudioLoadResultHandler {
                     uri = info.uri;
                 }
 
-                final String title = getSteamTitle(track, info.title, this.ctx.getCommandManager());
+                final String title = getSteamTitle(track, info.title, this.data.getVariables().getCommandManager());
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + uri + ')';
 
-                sendEmbed(this.ctx,
-                    embedMessage(msg)
-                        .setThumbnail(AudioTrackKt.getImageUrl(track, true))
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(this.data.getChannel())
+                        .replyTo(this.data.getReplyToMessage())
+                        .setEmbeds(embedMessage(msg)
+                            .setThumbnail(AudioTrackKt.getImageUrl(track, true)))
+                        .build()
                 );
             }
         }
         catch (LimitReachedException e) {
-            sendMsg(this.ctx, String.format("You exceeded the maximum queue size of %s tracks", e.getSize()));
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setMessage(String.format("You exceeded the maximum queue size of %s tracks", e.getSize()))
+                    .build()
+            );
         }
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         if (playlist.getTracks().isEmpty()) {
-            sendEmbed(this.ctx, embedMessage("Error: This playlist is empty."));
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(embedMessage("Error: This playlist is empty."))
+                    .build()
+            );
 
             return;
         }
@@ -145,28 +165,55 @@ public class AudioLoader implements AudioLoadResultHandler {
                     playlist.getName()
                 );
 
-                sendEmbed(this.ctx, embedMessage(msg));
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(this.data.getChannel())
+                        .replyTo(this.data.getReplyToMessage())
+                        .setEmbeds(embedMessage(msg))
+                        .build()
+                );
             }
         }
         catch (LimitReachedException e) {
             if (this.announce) {
-                sendMsg(this.ctx, String.format("The first %s tracks from %s have been queued up\n" +
-                    "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlist.getName()));
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(this.data.getChannel())
+                        .replyTo(this.data.getReplyToMessage())
+                        .setMessage(String.format("The first %s tracks from %s have been queued up\n" +
+                            "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlist.getName()))
+                        .build()
+                );
             }
+
         }
     }
 
     @Override
     public void noMatches() {
         if (this.announce) {
-            sendEmbed(this.ctx, embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'));
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'))
+                    .build()
+            );
         }
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
         if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
-            sendMsg(this.ctx, String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize()));
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setMessage(
+                        String.format("%s, maximum of %d tracks exceeded", cause.getMessage(), cause.getSize())
+                    )
+                    .build()
+            );
 
             return;
         }
@@ -176,8 +223,16 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(this.ctx, embedMessage("Could not play: " + this.trackUrl
-                + "\nExternal playback of this video was blocked by YouTube."));
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(
+                        embedMessage("Could not play: " + this.trackUrl
+                            + "\nExternal playback of this video was blocked by YouTube.")
+                    )
+                    .build()
+            );
             return;
         }
 
@@ -187,8 +242,16 @@ public class AudioLoader implements AudioLoadResultHandler {
             root = exception;
         }
 
-        sendEmbed(this.ctx, embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
-            + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!"));
+        sendMsg(
+            new MessageConfig.Builder()
+                .setChannel(this.data.getChannel())
+                .replyTo(this.data.getReplyToMessage())
+                .setEmbeds(
+                    embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+                        + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!")
+                )
+                .build()
+        );
 
     }
 

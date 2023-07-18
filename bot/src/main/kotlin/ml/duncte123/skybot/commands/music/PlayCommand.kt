@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.isNSFW
+import ml.duncte123.skybot.objects.AudioData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
@@ -48,7 +49,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
                 return
             }
 
-            val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+            val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
             val player = mng.player
             val scheduler = mng.scheduler
 
@@ -134,7 +135,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
-        ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
+        ctx.audioUtils.loadAndPlay(ctx.audioData, toPlay, true)
     }
 
     private fun handlePlay(toPlay: String, variables: Variables, event: SlashCommandInteractionEvent) {
@@ -143,10 +144,10 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             return
         }
 
-        event.deferReply().queue()
+        // need to wait for this to send actually
+        event.reply("Loading your track!").complete()
 
-        // TODO: get rid of CTX
-        // variables.audioUtils.loadAndPlay(ctx, toPlay, true)
+        variables.audioUtils.loadAndPlay(AudioData.fromSlash(event, variables), toPlay, true)
     }
 
     override fun getSubData(): SubcommandData {
@@ -168,7 +169,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (skipParsing) {
-            handlePlay(toPlay, variables, event) // TODO
+            handlePlay(toPlay, variables, event)
             return
         }
 

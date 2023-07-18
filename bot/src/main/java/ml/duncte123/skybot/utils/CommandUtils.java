@@ -188,7 +188,11 @@ public class CommandUtils {
     }
 
     public static boolean isUserTagPatron(@Nonnull User user) {
-        return TAG_PATRONS.contains(user.getIdLong()) || isDev(user);
+        return isUserTagPatron(user.getIdLong());
+    }
+
+    public static boolean isUserTagPatron(long userId) {
+        return TAG_PATRONS.contains(userId) || isDev(userId);
     }
 
     private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx, boolean reply) {

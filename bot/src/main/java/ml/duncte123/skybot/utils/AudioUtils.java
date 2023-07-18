@@ -38,6 +38,7 @@ import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
@@ -91,9 +92,15 @@ public class AudioUtils {
         return null;
     }
 
+    @Deprecated
     public Future<Void> loadAndPlay(final CommandContext ctx, final String trackUrlRaw,
                                     final boolean announce) {
-        final boolean isPatron = CommandUtils.isUserTagPatron(ctx.getAuthor());
+        return loadAndPlay(ctx.getAudioData(), trackUrlRaw, announce);
+    }
+
+    public Future<Void> loadAndPlay(final AudioData data, final String trackUrlRaw,
+                                    final boolean announce) {
+        final boolean isPatron = CommandUtils.isUserTagPatron(data.getUserId());
 //        final boolean isPatron = false;
         final String trackUrl;
 
@@ -104,14 +111,15 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        final GuildMusicManager mng = getMusicManager(ctx.getJDAGuild());
-        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, isPatron);
+        final GuildMusicManager mng = getMusicManager(data.getGuildId());
+        final AudioLoader loader = new AudioLoader(data, mng, announce, trackUrl, isPatron);
         final DBAudioRef reference = new DBAudioRef(trackUrl, null, isPatron);
 
         return getPlayerManager().loadItemOrdered(mng, reference, loader);
     }
 
     // transition period
+    @Deprecated
     public GuildMusicManager getMusicManager(Guild guild) {
         return getMusicManager(guild.getIdLong());
     }

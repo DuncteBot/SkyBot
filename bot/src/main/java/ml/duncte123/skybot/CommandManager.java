@@ -746,6 +746,19 @@ public class CommandManager {
     }
 
     public void executeSlashCommand(SlashCommandInteractionEvent event) {
+        final String fullCommandName = event.getFullCommandName();
+
+        if (fullCommandName.startsWith("music")) {
+            final String musicName = fullCommandName.replace("music", "").trim();
+            final MusicCommand command = (MusicCommand) this.getCommand(musicName);
+
+            if (command != null) {
+                command.handleEvent(event, variables);
+            }
+
+            return;
+        }
+
         final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
 
         if (command != null) {

@@ -186,7 +186,7 @@ public abstract class Command implements ICommand<CommandContext> {
 
     @Override
     public String toString() {
-        return "Command[" + this.name + ']';
+        return "Command[" + this.getName() + ']';
     }
 
     @Override
