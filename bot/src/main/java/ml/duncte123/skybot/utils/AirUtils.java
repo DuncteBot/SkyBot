@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.limiter.RateLimiter;
@@ -359,54 +358,6 @@ public class AirUtils {
                         }
 
                         return response.get("shortUrl").asText();
-                    },
-                    WebParserUtils::handleError
-                );
-        }
-        catch (JsonProcessingException e) {
-            e.printStackTrace();
-
-            // Return a fake pending request to make sure that things don't break
-            return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
-        }
-    }
-
-    // TODO: find replacement for firebase
-    @Deprecated
-    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
-        return shortenUrl(url, googleKey, mapper, "duncte.bot");
-    }
-
-    @Deprecated
-    @Nonnull
-    public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper, String prefix) {
-        final ObjectNode json = mapper.createObjectNode();
-
-        json.set("dynamicLinkInfo",
-            mapper.createObjectNode()
-                .put("domainUriPrefix", prefix)
-                .put("link", url)
-        );
-        json.set("suffix",
-            mapper.createObjectNode()
-                .put("option", "SHORT") // SHORT or UNGUESSABLE
-        );
-
-        try {
-            return WebUtils.ins.postRequest(
-                "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + googleKey,
-                JSONRequestBody.fromJackson(json)
-            )
-                .setRateLimiter(RateLimiter.directLimiter())
-                .build(
-                    (r) -> {
-                        final ObjectNode response = toJSONObject(r, mapper);
-
-                        if (response == null) {
-                            return "Google did a fucky wucky and send invalid json";
-                        }
-
-                        return response.get("shortLink").asText();
                     },
                     WebParserUtils::handleError
                 );
