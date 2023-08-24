@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import me.duncte123.botcommons.StringUtils;

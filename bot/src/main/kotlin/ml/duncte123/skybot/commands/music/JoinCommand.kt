@@ -96,7 +96,6 @@ class JoinCommand : MusicCommand() {
             return
         }
 
-
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
 
         mng.latestChannelId = event.channel.idLong

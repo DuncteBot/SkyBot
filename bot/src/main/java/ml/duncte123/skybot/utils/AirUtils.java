@@ -351,8 +351,6 @@ public class AirUtils {
                     (r) -> {
                         final ObjectNode response = toJSONObject(r, mapper);
 
-                        System.out.println(response);
-
                         if (response == null) {
                             return "Shorten did a fucky wucky and send invalid json";
                         }

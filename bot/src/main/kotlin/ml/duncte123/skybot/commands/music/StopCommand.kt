@@ -87,8 +87,10 @@ class StopCommand : MusicCommand() {
             return
         }
 
-        event.reply("Only the person that started this track " +
-            "or people with the `Manage Server` permission can stop this track\n" +
-            "(this behaviour can be altered in the dashboard)").queue()
+        event.reply(
+            "Only the person that started this track " +
+                "or people with the `Manage Server` permission can stop this track\n" +
+                "(this behaviour can be altered in the dashboard)"
+        ).queue()
     }
 }

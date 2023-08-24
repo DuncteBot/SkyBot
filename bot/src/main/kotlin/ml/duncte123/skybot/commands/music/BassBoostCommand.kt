@@ -95,7 +95,7 @@ class BassBoostCommand : MusicCommand() {
                     "level",
                     "How strong should the bass boost be",
                     true,
-                    false,
+                    false
                 )
                     .addChoice("high", "high")
                     .addChoice("med", "med")
@@ -125,7 +125,7 @@ class BassBoostCommand : MusicCommand() {
 
             else -> {
                 event.reply(
-                    "(this should never happen) Unknown bassboost preset ${arg}, please choose from high/med/low/off"
+                    "(this should never happen) Unknown bassboost preset $arg, please choose from high/med/low/off"
                 ).queue()
                 -1.0f
             }
@@ -135,7 +135,7 @@ class BassBoostCommand : MusicCommand() {
             return
         }
 
-        event.reply("Set the bassboost to `${arg}`").queue()
+        event.reply("Set the bassboost to `$arg`").queue()
         setLavalinkEQ(gain, variables, event.guild!!.idLong)
     }
 }
