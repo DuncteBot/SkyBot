@@ -20,6 +20,7 @@ services:
             - API_YOUTUBECACHE_ENDPOINT=
             - API_YOUTUBECACHE_TOKEN=
             - API_GOOGLE=
+            - API_SHORTEN=
             - API_WEEBSH=
             - API_KSOFT=
             - API_SPOTIFY_CLIENT_ID=

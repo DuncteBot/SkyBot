@@ -20,8 +20,10 @@ package ml.duncte123.skybot.commands.music
 
 import lavalink.client.io.filters.Karaoke
 import lavalink.client.io.filters.Rotation
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class TestFilterCommand : MusicCommand() {
     init {
@@ -37,6 +39,10 @@ class TestFilterCommand : MusicCommand() {
         }
 
         player.filters.commit()
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 
     override fun getName(): String = "testfilter"

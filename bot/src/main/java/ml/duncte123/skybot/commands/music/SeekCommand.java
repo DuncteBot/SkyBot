@@ -20,8 +20,10 @@ package ml.duncte123.skybot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lavalink.client.player.LavalinkPlayer;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.internal.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,6 +124,11 @@ public class SeekCommand extends MusicCommand {
             sendNowPlaying(ctx);
         }
 
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 
     private void handleOverSkip(@NotNull CommandContext ctx, LavalinkPlayer player, String arg0, Supplier<Long> trackDuration) {

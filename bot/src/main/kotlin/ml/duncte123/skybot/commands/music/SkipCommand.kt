@@ -21,10 +21,14 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.Settings.YES_STATIC
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import kotlin.math.ceil
 
 class SkipCommand : MusicCommand() {
@@ -36,66 +40,72 @@ class SkipCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        skipHandler(ctx.variables, ctx.guild, ctx.author) { sendMsg(ctx, it) }
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.deferReply().queue()
+
+        skipHandler(variables, event.guild!!, event.user) { event.hook.sendMessage(it).queue() }
+    }
+
+    private fun skipHandler(variables: Variables, guild: Guild, user: User, sendMessage: (String) -> Unit) {
+        val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val player = mng.player
 
         if (player.playingTrack == null) {
-            sendMsg(ctx, "The player is not playing.")
+            sendMessage("The player is not playing.")
             return
         }
 
         if (!player.playingTrack.isSeekable) {
-            sendMsg(ctx, "This track is not seekable")
+            sendMessage("This track is not seekable")
             return
         }
 
-        val author = ctx.author
         val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
 
-        if (trackData.requester == author.idLong) {
-            doSkip(ctx, mng)
+        if (trackData.requester == user.idLong) {
+            doSkip(mng, sendMessage)
             return
         }
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
         val listeners = getLavalinkManager()
-            .getConnectedChannel(ctx.guild)
+            .getConnectedChannel(guild)
             .members.filter {
                 !it.user.isBot && !(it.voiceState?.isDeafened ?: false)
             }.count()
 
         val votes = trackData.votes
 
-        var msg = if (votes.contains(author.idLong)) {
+        var msg = if (votes.contains(user.idLong)) {
             "$NO_STATIC You already voted to skip this song `["
         } else {
-            votes.add(author.idLong)
+            votes.add(user.idLong)
             "$YES_STATIC Successfully voted to skip the song `["
         }
 
-        val skippers = getLavalinkManager().getConnectedChannel(ctx.guild)
-            .members.filter { votes.contains(it.idLong) }.count()
+        val skippers = getLavalinkManager().getConnectedChannel(guild)
+            .members.count { votes.contains(it.idLong) }
         val required = ceil(listeners * .55).toInt()
 
         msg += "$skippers votes, $required/$listeners needed]`"
 
-        sendMsg(ctx, msg)
+        sendMessage(msg)
 
         if (skippers >= required) {
-            doSkip(ctx, mng)
+            doSkip(mng, sendMessage)
         }
     }
 
-    private fun doSkip(ctx: CommandContext, mng: GuildMusicManager) {
+    private fun doSkip(mng: GuildMusicManager, sendMessage: (String) -> Unit) {
         val player = mng.player
-
-//        player.seekTo(player.playingTrack.duration)
 
         mng.scheduler.specialSkipCase()
 
         if (player.playingTrack == null) {
-            sendMsg(
-                ctx,
+            sendMessage(
                 "Successfully skipped the track.\n" +
                     "Queue is now empty."
             )

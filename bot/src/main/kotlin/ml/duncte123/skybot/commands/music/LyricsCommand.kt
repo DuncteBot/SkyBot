@@ -25,9 +25,15 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -44,11 +50,18 @@ class LyricsCommand : MusicCommand() {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
-            handleSearch(ctx.argsRaw, ctx)
+            handleSearch(ctx.argsRaw, ctx.config) {
+                if (it == null) {
+                    sendMsg(ctx, "There where no lyrics found for `${ctx.argsRaw}`")
+                    return@handleSearch
+                }
+
+                sendEmbed(ctx, it)
+            }
             return
         }
 
-        val player = ctx.audioUtils.getMusicManager(ctx.guild).player
+        val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
         val playingTrack = player.playingTrack
 
         if (playingTrack == null) {
@@ -56,19 +69,80 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        // just search for the title, the author might be a weird youtube channel
-        handleSearch(playingTrack.info.title.trim(), ctx)
-    }
+        val search = playingTrack.info.title.trim()
 
-    private fun handleSearch(search: String, ctx: CommandContext) {
-        searchForSong(search, ctx.config) {
+        // just search for the title, the author might be a weird youtube channel
+        handleSearch(search, ctx.config) {
             if (it == null) {
                 sendMsg(ctx, "There where no lyrics found for `$search`")
+                return@handleSearch
+            }
+
+            sendEmbed(ctx, it)
+        }
+    }
+
+    override fun getSubData(): SubcommandData {
+        return super.getSubData()
+            .addOption(
+                OptionType.STRING,
+                "song",
+                "The song to search for",
+                false
+            )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val opt = event.getOption("song")
+
+        if (opt == null) {
+            val player = variables.audioUtils.getMusicManager(event.guild!!.idLong).player
+            val playingTrack = player.playingTrack
+
+            if (playingTrack == null) {
+                event.reply("The player is not currently playing anything!").queue()
+                return
+            }
+
+            event.deferReply().queue()
+
+            val search = playingTrack.info.title.trim()
+
+            // just search for the title, the author might be a weird youtube channel
+            handleSearch(search, variables.config) {
+                if (it == null) {
+                    event.hook.sendMessage("There where no lyrics found for `$search`").queue()
+                    return@handleSearch
+                }
+
+                event.hook.sendMessageEmbeds(it.build()).queue()
+            }
+
+            return
+        }
+
+        event.deferReply().queue()
+
+        val search = opt.asString
+
+        handleSearch(search, variables.config) {
+            if (it == null) {
+                event.hook.sendMessage("There where no lyrics found for `$search`").queue()
+                return@handleSearch
+            }
+
+            event.hook.sendMessageEmbeds(it.build()).queue()
+        }
+    }
+
+    private fun handleSearch(search: String, config: DunctebotConfig, cb: (EmbedBuilder?) -> Unit) {
+        searchForSong(search, config) {
+            if (it == null) {
+                cb(null)
                 return@searchForSong
             }
 
-            sendEmbed(
-                ctx,
+            cb(
                 EmbedUtils.getDefaultEmbed()
                     .setTitle("Lyrics for $search", it.url)
                     .setThumbnail(it.art)

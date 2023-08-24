@@ -22,9 +22,11 @@ import com.github.natanbc.reliqua.limiter.RateLimiter
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.web.WebUtils
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class RadioCommand : MusicCommand() {
     var radioStreams = arrayListOf<RadioStream>()
@@ -70,6 +72,10 @@ class RadioCommand : MusicCommand() {
                 audioUtils.loadAndPlay(ctx, radio.url, true)
             }
         }
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 
     private fun sendRadioSender(ctx: CommandContext) {

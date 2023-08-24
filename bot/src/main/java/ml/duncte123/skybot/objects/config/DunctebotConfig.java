@@ -60,6 +60,7 @@ public class DunctebotConfig {
         public final String alexflipnote;
         public final Cache youtubeCache;
         public final String googl;
+        public final String shroten;
         public final String weebSh;
         public final String ksoft;
         public final String genius;
@@ -69,12 +70,13 @@ public class DunctebotConfig {
         public final String thecatapi;
 
         public Apis(
-            String alexflipnote, Cache youtubeCache, String googl, String weebSh, String ksoft, String genius,
-            Spotify spotify, String blargbot, String wolframalpha, String thecatapi
+            String alexflipnote, Cache youtubeCache, String googl, String shorten, String weebSh, String ksoft,
+            String genius, Spotify spotify, String blargbot, String wolframalpha, String thecatapi
         ) {
             this.alexflipnote = alexflipnote;
             this.youtubeCache = youtubeCache;
             this.googl = googl;
+            this.shroten = shorten;
             this.weebSh = weebSh;
             this.ksoft = ksoft;
             this.genius = genius;
@@ -175,6 +177,7 @@ public class DunctebotConfig {
             System.getenv("API_ALEXFLIPNOTE"),
             youtubeCache,
             System.getenv("API_GOOGLE"),
+            System.getenv("API_SHORTEN"),
             System.getenv("API_WEEBSH"),
             System.getenv("API_KSOFT"),
             System.getenv("API_GENIUS"),

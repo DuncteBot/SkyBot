@@ -115,7 +115,7 @@ class EmoteCommand : SlashSupport() {
         val emojiUrl = TwemojiParser.parseOne(emote)
 
         if (emojiUrl != null) {
-            val shortUrl = shortenUrl(emojiUrl, variables.config.apis.googl, variables.jackson).execute()
+            val shortUrl = shortenUrl(emojiUrl, variables, false).execute()
 
             appendLine("Image url (shortened): <$shortUrl>")
         }

@@ -18,10 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -53,6 +56,10 @@ public class ForceDisconnectCommand extends MusicCommand {
         getLavalinkManager().closeConnection(guild);
 
         sendMsg(ctx, "Successfully sent the disconnect signal to the server");
+    }
 
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 }

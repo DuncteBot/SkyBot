@@ -19,9 +19,11 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.toEmoji
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class RepeatCommand : MusicCommand() {
 
@@ -89,5 +91,9 @@ class RepeatCommand : MusicCommand() {
             "Player is now set to: **${if (scheduler.isLooping) "" else "not "}repeating" +
                 "${if (wasLoopingQueue) " the current queue" else ""}**"
         )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 }

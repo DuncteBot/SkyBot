@@ -20,8 +20,10 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class LeaveCommand : MusicCommand() {
 
@@ -46,5 +48,20 @@ class LeaveCommand : MusicCommand() {
         guild.audioManager.sendingHandler = null
 
         sendSuccess(ctx.message)
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val guild = event.guild!!
+
+        if (!getLavalinkManager().isConnected(guild)) {
+            event.reply("I'm not connected to any channels.").queue()
+            return
+        }
+
+        variables.audioUtils.removeMusicManager(guild)
+        getLavalinkManager().closeConnection(guild)
+        guild.audioManager.sendingHandler = null
+
+        event.reply("Left the voice channel.").queue()
     }
 }

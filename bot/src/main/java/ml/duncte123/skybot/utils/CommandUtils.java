@@ -23,6 +23,7 @@ import com.jagrosh.jagtag.Parser;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.set.TLongSet;
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.api.AllPatronsData;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -32,20 +33,19 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.Settings.PATREON;
 
 /**
@@ -145,7 +145,7 @@ public class CommandUtils {
         return parsed;
     }
 
-    private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx) {
+    private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel) {
         // Developers have access to paton features
         if (isDev(user) || PATRONS.contains(user.getIdLong())) {
             return true;
@@ -163,21 +163,29 @@ public class CommandUtils {
 
         // If the member is not in our guild we tell them to join it
         if (member == null) {
-            if (ctx != null) {
-                sendEmbed(ctx, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                    "are not one of our patrons.\n" +
-                    "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
-                    "You will also need to join our discord server [here](https://duncte.bot/server)"), false);
+            if (replyChannel != null) {
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(replyChannel)
+                        .setEmbeds(EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+                            "are not one of our patrons.\n" +
+                            "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
+                            "You will also need to join our discord server [here](https://duncte.bot/server)"))
+                );
             }
             return false;
         }
 
         // If the member is not a patron tell them to become one
         if (!member.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
-            if (ctx != null) {
-                sendEmbed(ctx, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                    "are not one of our patrons.\n" +
-                    "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."), false);
+            if (replyChannel != null) {
+                sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(replyChannel)
+                        .setEmbeds(EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+                            "are not one of our patrons.\n" +
+                            "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."))
+                );
             }
             return false;
         }
@@ -195,9 +203,9 @@ public class CommandUtils {
         return TAG_PATRONS.contains(userId) || isDev(userId);
     }
 
-    private static boolean isPatron(@Nonnull User user, @Nullable CommandContext ctx, boolean reply) {
-        final CommandContext context = reply ? ctx : null;
-        return isPatron(user, context) || isUserTagPatron(user);
+    private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel, boolean reply) {
+        final MessageChannel channel = reply ? replyChannel : null;
+        return isPatron(user, channel) || isUserTagPatron(user);
     }
 
     public static boolean isGuildPatron(@Nonnull Guild guild) {
@@ -235,8 +243,20 @@ public class CommandUtils {
     }
 
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx, boolean reply) {
-        final boolean isGuild = isGuildPatron(ctx.getAuthor(), ctx.getGuild());
-        return isGuild || isPatron(ctx.getAuthor(), ctx, reply);
+        return isUserOrGuildPatron(ctx.getAuthor(), ctx.getGuild(), ctx.getChannel(), reply);
+    }
+
+    public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event, boolean reply) {
+        return isUserOrGuildPatron(event.getUser(), Objects.requireNonNull(event.getGuild()), event.getChannel(), reply);
+    }
+
+    public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event) {
+        return isUserOrGuildPatron(event, true);
+    }
+
+    public static boolean isUserOrGuildPatron(@Nonnull User author, @Nonnull Guild guild, @Nonnull MessageChannel channel, boolean reply) {
+        final boolean isGuild = isGuildPatron(author, guild);
+        return isGuild || isPatron(author, channel, reply);
     }
 
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx) {

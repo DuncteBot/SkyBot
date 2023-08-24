@@ -21,9 +21,13 @@ package ml.duncte123.skybot.commands.music
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils.getTimestamp
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.apache.commons.lang3.StringUtils
 import java.util.*
 import kotlin.math.min
@@ -31,24 +35,36 @@ import kotlin.math.min
 class QueueCommand : MusicCommand() {
 
     init {
-        this.name = "list"
-        this.aliases = arrayOf("queue", "q")
+        this.name = "queue"
+        this.aliases = arrayOf("list", "q")
         this.help = "Shows the current queue"
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val mng = ctx.audioUtils.getMusicManager(event.guild)
+        val embed = generateQueueEmbed(ctx.variables, ctx.guild, ctx.prefix)
+
+        sendEmbed(ctx, embed)
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val embed = generateQueueEmbed(variables, event.guild!!, "/")
+
+        event.replyEmbeds(embed.build()).queue()
+    }
+
+    private fun generateQueueEmbed(variables: Variables, guild: Guild, prefix: String): EmbedBuilder {
+        val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val scheduler = mng.scheduler
         val queue: Queue<AudioTrack> = scheduler.queue
         val playingTrack = mng.player.playingTrack
+        var embed: EmbedBuilder
 
         synchronized(queue) {
             val playing = if (playingTrack == null) "Nothing" else "${playingTrack.info.title} by ${playingTrack.info.author}"
             val current = "**Currently playing:** $playing"
 
             if (queue.isEmpty()) {
-                sendEmbed(ctx, EmbedUtils.embedMessage("$current\n**Queue:** Empty"))
+                embed = EmbedUtils.embedMessage("$current\n**Queue:** Empty")
             } else {
                 val queueLength = queue.sumOf { it.duration }
                 val maxTracks = 10
@@ -65,11 +81,13 @@ class QueueCommand : MusicCommand() {
                     }
 
                     appendLine("Total Queue Time Length: ${getTimestamp(queueLength)}")
-                    appendLine("Hint: Use `${ctx.prefix}save` to save the current queue to a file that you can re-import")
+                    appendLine("Hint: Use `${prefix}save` to save the current queue to a file that you can re-import")
                 }
 
-                sendEmbed(ctx, EmbedUtils.embedMessage(queueText))
+                embed = EmbedUtils.embedMessage(queueText)
             }
         }
+
+        return embed
     }
 }

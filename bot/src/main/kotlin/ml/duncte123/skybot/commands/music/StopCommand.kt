@@ -19,10 +19,13 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class StopCommand : MusicCommand() {
 
@@ -32,8 +35,7 @@ class StopCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val guild = ctx.jdaGuild
-        val mng = ctx.audioUtils.getMusicManager(guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
         val track = player.playingTrack
 
@@ -60,5 +62,33 @@ class StopCommand : MusicCommand() {
                 "or people with the `Manage Server` permission can stop this track\n" +
                 "(this behaviour can be altered in the dashboard)"
         )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
+        val player = mng.player
+        val track = player.playingTrack
+
+        if (track == null) {
+            event.reply("The player is not playing.").queue()
+            return
+        }
+
+        val trackData: TrackUserData? = track.getUserData(TrackUserData::class.java)
+        val dbg = DunctebotGuild(event.guild!!, variables)
+
+        if (dbg.settings.isAllowAllToStop || trackData?.requester == event.user.idLong || event.member!!.hasPermission(Permission.MANAGE_SERVER)) {
+            mng.scheduler.queue.clear()
+            player.stopTrack()
+            player.isPaused = false
+
+            event.reply("Playback has been completely stopped and the queue has been cleared.").queue()
+
+            return
+        }
+
+        event.reply("Only the person that started this track " +
+            "or people with the `Manage Server` permission can stop this track\n" +
+            "(this behaviour can be altered in the dashboard)").queue()
     }
 }

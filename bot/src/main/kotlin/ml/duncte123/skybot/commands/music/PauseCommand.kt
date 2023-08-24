@@ -19,8 +19,10 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class PauseCommand : MusicCommand() {
 
@@ -31,7 +33,7 @@ class PauseCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
 
         if (player.playingTrack == null) {
@@ -41,5 +43,18 @@ class PauseCommand : MusicCommand() {
 
         player.isPaused = !player.isPaused
         sendMsg(ctx, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
+        val player = mng.player
+
+        if (player.playingTrack == null) {
+            event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
+            return
+        }
+
+        player.isPaused = !player.isPaused
+        event.reply("The player has ${if (player.isPaused) "been paused" else "resumed playing"}.").queue()
     }
 }

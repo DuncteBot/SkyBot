@@ -19,8 +19,10 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class ShuffleCommand : MusicCommand() {
 
@@ -41,5 +43,9 @@ class ShuffleCommand : MusicCommand() {
         scheduler.shuffle()
 
         MessageUtils.sendMsg(ctx, "The queue has been shuffled!")
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 }

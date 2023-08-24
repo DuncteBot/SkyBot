@@ -43,9 +43,7 @@ class ShortenCommand : Command() {
             return
         }
 
-        val prefix = if (isDev(ctx.author)) "duncte.bot" else "dunctebot.page.link"
-
-        shortenUrl(args[0], ctx.config.apis.googl, ctx.variables.jackson, prefix).async(
+        shortenUrl(args[0], ctx.variables, isDev(ctx.author)).async(
             {
                 sendMsg(ctx, "Here is your shortened url: <$it>")
             },

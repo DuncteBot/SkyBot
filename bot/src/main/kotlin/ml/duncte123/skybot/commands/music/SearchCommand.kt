@@ -21,11 +21,13 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 import ml.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -107,5 +109,9 @@ class SearchCommand : MusicCommand() {
                 }
                 .build()
         )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 }

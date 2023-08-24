@@ -22,10 +22,12 @@ import com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat
 import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.FileUpload
 import java.time.ZonedDateTime
 
@@ -45,6 +47,10 @@ class SaveCommand : MusicCommand() {
                 )
             )
             .queue()
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 
     private fun toByteArray(guild: Guild, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {

@@ -759,10 +759,14 @@ public class CommandManager {
             return;
         }
 
-        final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
+        try {
+            final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
 
-        if (command != null) {
-            command.handleEvent(event, variables);
+            if (command != null) {
+                command.handleEvent(event, variables);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

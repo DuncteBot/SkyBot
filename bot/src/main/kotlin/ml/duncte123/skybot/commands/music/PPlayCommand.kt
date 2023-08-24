@@ -20,8 +20,10 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendError
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class PPlayCommand : MusicCommand() {
 
@@ -33,6 +35,8 @@ class PPlayCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
+        sendMsg(ctx, "Hey, this command will be going away soon. Please use the `/play` command instead.")
+
         if (ctx.args.isEmpty()) {
             sendMsg(ctx, "To few arguments, use `${ctx.prefix}$name <media link>`")
             return
@@ -52,6 +56,10 @@ class PPlayCommand : MusicCommand() {
                 "This may take a while depending on the size."
         )
 
-        ctx.audioUtils.loadAndPlay(ctx, toPlay, true)
+        ctx.audioUtils.loadAndPlay(ctx.audioData, toPlay, true)
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        event.reply("This command will be going away soon. Please use the `/play` command instead.").queue()
     }
 }

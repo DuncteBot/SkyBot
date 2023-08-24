@@ -22,12 +22,16 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.getImageUrl
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.user.UnknownUser
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class ForceSkip : MusicCommand() {
 
@@ -42,7 +46,7 @@ class ForceSkip : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
 
         if (player.playingTrack == null) {
@@ -90,5 +94,19 @@ class ForceSkip : MusicCommand() {
             )
                 .setThumbnail(track.getImageUrl())
         )
+    }
+
+    override fun getSubData(): SubcommandData {
+        return super.getSubData()
+            .addOption(
+                OptionType.INTEGER,
+                "skip_count",
+                "The number of tracks to skip",
+                false
+            )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        //
     }
 }

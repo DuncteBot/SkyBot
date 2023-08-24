@@ -20,9 +20,11 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.extensions.toEmbed
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class NowPlayingCommand : MusicCommand() {
 
@@ -33,8 +35,7 @@ class NowPlayingCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val mng = ctx.audioUtils.getMusicManager(event.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
 
         sendEmbed(
@@ -45,5 +46,18 @@ class NowPlayingCommand : MusicCommand() {
                 else -> embedMessage("The player is not currently playing anything!")
             }
         )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
+        val player = mng.player
+
+        event.replyEmbeds(
+            when {
+                player.playingTrack != null -> player.playingTrack.toEmbed(mng, event.jda.shardManager!!)
+
+                else -> embedMessage("The player is not currently playing anything!")
+            }.build()
+        ).queue()
     }
 }

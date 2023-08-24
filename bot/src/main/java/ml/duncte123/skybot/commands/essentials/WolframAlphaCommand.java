@@ -25,6 +25,7 @@ import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -61,7 +62,7 @@ public class WolframAlphaCommand extends Command {
         this.usage = "<query>";
     }
 
-    private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, String googleKey, ObjectMapper mapper) {
+    private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, Variables variables) {
         final Member member = ctx.getMember();
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed();
         embed.setAuthor(member.getEffectiveName(), PATREON, member.getUser().getAvatarUrl());
@@ -86,7 +87,7 @@ public class WolframAlphaCommand extends Command {
                 for (final Visitable variable : sp.getContents()) {
                     if (variable instanceof final WAImage image) {
                         builder.append("[Image by text](")
-                            .append(shortenUrl(image.getURL(), googleKey, mapper).execute())
+                            .append(shortenUrl(image.getURL(), variables, false).execute())
                             .append(')');
                     } else if (variable instanceof final WAInfo info) {
                         builder.append(parseString(info.getText()));
@@ -97,12 +98,12 @@ public class WolframAlphaCommand extends Command {
                         builder.append('[')
                             .append(parseString(link.getText()))
                             .append("](")
-                            .append(shortenUrl(link.getURL(), googleKey, mapper).execute())
+                            .append(shortenUrl(link.getURL(), variables, false).execute())
                             .append(')');
                     } else if (variable instanceof final WAPlainText plainText) {
                         builder.append(parseString(plainText.getText()));
                     } else if (variable instanceof final WASound sound) {
-                        builder.append(shortenUrl(sound.getURL(), googleKey, mapper).execute());
+                        builder.append(shortenUrl(sound.getURL(), variables, false).execute());
                     }
 
                     builder.append("\n\n");
@@ -159,7 +160,7 @@ public class WolframAlphaCommand extends Command {
 
         editMsg(message, ctx.getChannel(), new MessageEditBuilder().setContent("Result:")
             .setEmbeds(
-                generateEmbed(ctx, result, ctx.getConfig().apis.googl, ctx.getVariables().getJackson())
+                generateEmbed(ctx, result, ctx.getVariables())
             ).build());
     }
 

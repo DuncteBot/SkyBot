@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.natanbc.reliqua.limiter.RateLimiter;
 import com.github.natanbc.reliqua.request.PendingRequest;
@@ -34,6 +35,7 @@ import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.requests.JSONRequestBody;
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.database.AbstractDatabase;
 import ml.duncte123.skybot.entities.jda.FakeMember;
@@ -323,10 +325,59 @@ public class AirUtils {
         ((JDAImpl) jda).setContext();
     }
 
+    public static PendingRequest<String> shortenUrl(String url, Variables variables, boolean duncteBotDomain) {
+        final JsonMapper mapper = variables.getJackson();
+        final ObjectNode json = mapper.createObjectNode();
+
+        json.set("destinations",
+            mapper.createArrayNode()
+                .add(
+                    mapper.createObjectNode()
+                        .put("url", url)
+                        .putNull("country")
+                        .putNull("os")
+                )
+        );
+
+        final var domainNamePart = duncteBotDomain ? "&domainName=duncte.bot" : "";
+
+        try {
+            return WebUtils.ins.postRequest(
+                    "https://api.shorten.rest/aliases?aliasName=@rnd" + domainNamePart,
+                    JSONRequestBody.fromJackson(json),
+                    (r) -> r.header("x-api-key", variables.getConfig().apis.shroten)
+                )
+                .setRateLimiter(RateLimiter.directLimiter())
+                .build(
+                    (r) -> {
+                        final ObjectNode response = toJSONObject(r, mapper);
+
+                        System.out.println(response);
+
+                        if (response == null) {
+                            return "Shorten did a fucky wucky and send invalid json";
+                        }
+
+                        return response.get("shortUrl").asText();
+                    },
+                    WebParserUtils::handleError
+                );
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+
+            // Return a fake pending request to make sure that things don't break
+            return new FakePendingRequest<>("JSON PARSING FAILED: " + e.getMessage());
+        }
+    }
+
+    // TODO: find replacement for firebase
+    @Deprecated
     public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper) {
         return shortenUrl(url, googleKey, mapper, "duncte.bot");
     }
 
+    @Deprecated
     @Nonnull
     public static PendingRequest<String> shortenUrl(String url, String googleKey, ObjectMapper mapper, String prefix) {
         final ObjectNode json = mapper.createObjectNode();
