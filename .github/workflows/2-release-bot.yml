@@ -47,7 +47,7 @@ jobs:
     build_docker:
         runs-on: ubuntu-latest
         concurrency:
-            group: ${{ github.ref }}
+            group: ${{ github.ref }}-docker
             cancel-in-progress: true
         steps:
             - uses: actions/checkout@v3
