@@ -33,7 +33,7 @@ plugins {
     id("com.github.breadmoirai.github-release")
 }
 
-val numberVersion = "3.107.2"
+val numberVersion = "3.108.0"
 
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
