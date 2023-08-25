@@ -16,7 +16,7 @@ jobs:
         runs-on: ubuntu-latest
 
         concurrency:
-            group: ${{ github.ref }}
+            group: ${{ github.ref }}-release
             cancel-in-progress: true
 
         steps:
@@ -47,7 +47,7 @@ jobs:
     build_docker:
         runs-on: ubuntu-latest
         concurrency:
-            group: ${{ github.ref }}-docker
+            group: ${{ github.ref }}-docker-release
             cancel-in-progress: true
         steps:
             - uses: actions/checkout@v3

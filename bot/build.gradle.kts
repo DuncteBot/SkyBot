@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -75,6 +76,7 @@ dependencies {
 val compileKotlin: KotlinCompile by tasks
 val compileJava: JavaCompile by tasks
 val shadowJar: ShadowJar by tasks
+val githubRelease: GithubReleaseTask by tasks
 val clean: Task by tasks
 val build: Task by tasks
 val jar: Jar by tasks
@@ -95,6 +97,10 @@ build.apply {
     dependsOn(jar)
 
     jar.mustRunAfter(clean)
+}
+
+githubRelease.apply {
+    dependsOn(shadowJar)
 }
 
 // TODO: remove, should be done from main build file
