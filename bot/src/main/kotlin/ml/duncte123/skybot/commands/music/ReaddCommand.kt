@@ -36,12 +36,11 @@ class ReaddCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val manager = ctx.audioUtils.getMusicManager(event.guild)
+        val manager = ctx.audioUtils.getMusicManager(ctx.guildId)
         val track = manager.player.playingTrack
 
         if (track == null) {
-            sendError(event.message)
+            sendError(ctx.message)
             sendMsg(ctx, "No tracks in queue")
             return
         }
@@ -65,7 +64,7 @@ class ReaddCommand : MusicCommand() {
 
         try {
             manager.scheduler.addToQueue(clone, isUserTagPatron(ctx.author))
-            sendSuccess(event.message)
+            sendSuccess(ctx.message)
             sendEmbed(ctx, EmbedUtils.embedMessage(msg))
         } catch (e: LimitReachedException) {
             sendMsg(ctx, "You exceeded the maximum queue size of ${e.size} tracks")

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.FileUpload
 import java.time.ZonedDateTime
@@ -42,7 +41,7 @@ class SaveCommand : MusicCommand() {
         ctx.channel.sendMessage("${ctx.author.asTag}, here is the queue which can be re-imported with `${ctx.prefix}load`")
             .addFiles(
                 FileUpload.fromData(
-                    toByteArray(ctx.guild, ctx.audioUtils, ctx.variables.jackson),
+                    toByteArray(ctx.guildId, ctx.audioUtils, ctx.variables.jackson),
                     "playlist-${getDatabaseDateFormat(ZonedDateTime.now())}.json"
                 )
             )
@@ -53,9 +52,9 @@ class SaveCommand : MusicCommand() {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 
-    private fun toByteArray(guild: Guild, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {
+    private fun toByteArray(guildId: Long, audioUtils: AudioUtils, mapper: ObjectMapper): ByteArray {
         val array = mapper.createArrayNode()
-        val manager = audioUtils.getMusicManager(guild)
+        val manager = audioUtils.getMusicManager(guildId)
 
         val urls = manager.scheduler.queue
             .map {

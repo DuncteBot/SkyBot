@@ -86,7 +86,7 @@ class ReactionHandler : EventListener {
                 return
             }
 
-            ctx.audioUtils.loadAndPlay(ctx, "https://www.youtube.com/watch?v=$selectedId", true)
+            ctx.audioUtils.loadAndPlay(ctx.audioData, "https://www.youtube.com/watch?v=$selectedId", true)
             channel.deleteMessageById(cacheElement.msgID)
                 .queue(null, ignore(UNKNOWN_MESSAGE)) // Ignore the error if the message has already been deleted
         }

@@ -66,7 +66,7 @@ public class SeekCommand extends MusicCommand {
     }
 
     public void run0(@Nonnull CommandContext ctx) throws NumberFormatException {
-        final LavalinkPlayer player = ctx.getAudioUtils().getMusicManager(ctx.getGuild()).player;
+        final LavalinkPlayer player = ctx.getAudioUtils().getMusicManager(ctx.getGuildId()).player;
         final AudioTrack currentTrack = player.getPlayingTrack();
 
         if (currentTrack == null) {

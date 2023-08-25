@@ -33,7 +33,7 @@ class RepeatQueueCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val scheduler = mng.scheduler
 
         if (scheduler.isLooping) {

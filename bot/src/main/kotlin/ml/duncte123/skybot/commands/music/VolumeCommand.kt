@@ -43,7 +43,7 @@ class VolumeCommand : MusicCommand() {
             return
         }
 
-        val mng = ctx.audioUtils.getMusicManager(ctx.guild)
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
         val args = ctx.args
 

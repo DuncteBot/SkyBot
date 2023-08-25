@@ -62,14 +62,14 @@ class RadioCommand : MusicCommand() {
                 }
 
                 val audioUtils = ctx.audioUtils
-                val mng = audioUtils.getMusicManager(ctx.jdaGuild)
+                val mng = audioUtils.getMusicManager(ctx.guildId)
                 val player = mng.player
 
                 player.stopTrack()
                 player.isPaused = false
                 mng.scheduler.queue.clear()
 
-                audioUtils.loadAndPlay(ctx, radio.url, true)
+                audioUtils.loadAndPlay(ctx.audioData, radio.url, true)
             }
         }
     }

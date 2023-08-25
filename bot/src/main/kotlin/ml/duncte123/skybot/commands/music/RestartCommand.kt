@@ -32,11 +32,10 @@ class RestartCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val event = ctx.event
-        val player = ctx.audioUtils.getMusicManager(event.guild).player
+        val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
 
         if (player.playingTrack == null) {
-            sendError(event.message)
+            sendError(ctx.message)
             sendMsg(ctx, "No track currently playing")
             return
         }
@@ -48,7 +47,7 @@ class RestartCommand : MusicCommand() {
 
         player.seekTo(0)
 
-        sendSuccess(event.message)
+        sendSuccess(ctx.message)
     }
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
