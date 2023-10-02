@@ -42,7 +42,7 @@ fun VersionCatalogBuilder.common() {
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
     library("org-json", "org.json", "json").version("20220924")
 
-    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.13")
+    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.15")
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
