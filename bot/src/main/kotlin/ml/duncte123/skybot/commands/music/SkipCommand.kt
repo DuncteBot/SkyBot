@@ -69,11 +69,16 @@ class SkipCommand : MusicCommand() {
             doSkip(mng, sendMessage)
             return
         }
+		
+		val vc = getLavalinkManager().getConnectedChannel(guild)
+		
+		if (vc == null) {
+		    sendMessage("Somehow I am not connected to a voice channel? Probably a bug, please report this!")
+		    return
+		}
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        val listeners = getLavalinkManager()
-            .getConnectedChannel(guild)
-            .members.filter {
+        val listeners = vc.members.filter {
                 !it.user.isBot && !(it.voiceState?.isDeafened ?: false)
             }.count()
 
@@ -86,8 +91,7 @@ class SkipCommand : MusicCommand() {
             "$YES_STATIC Successfully voted to skip the song `["
         }
 
-        val skippers = getLavalinkManager().getConnectedChannel(guild)
-            .members.count { votes.contains(it.idLong) }
+        val skippers = vc.members.count { votes.contains(it.idLong) }
         val required = ceil(listeners * .55).toInt()
 
         msg += "$skippers votes, $required/$listeners needed]`"
