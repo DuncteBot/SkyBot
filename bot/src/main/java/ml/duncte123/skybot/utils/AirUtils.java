@@ -245,9 +245,10 @@ public class AirUtils {
                 reminder.getReminder().trim()
             );
 
+            final long channelId = reminder.getChannel_id();
+
             // If we have a channel send the message to that
-            if (reminder.getIn_channel()) {
-                final long channelId = reminder.getChannel_id();
+            if (reminder.getIn_channel() && channelId > 0) {
                 final TextChannel channel = shardManager.getTextChannelById(channelId);
 
                 // If we don't have any channel information we will continue at the end

@@ -52,9 +52,9 @@ fun ResultSet.toReminderMySQL() = Reminder(
     this.getString("reminder"),
     this.getString("remind_create_date").toJavaDate(),
     this.getString("remind_date").toJavaDate(),
-    this.getString("channel_id").toLong(),
-    this.getString("message_id").toLong(),
-    this.getString("guild_id").toLong(),
+    this.getString("channel_id")?.toLong() ?: 0,
+    this.getString("message_id")?.toLong() ?: 0,
+    this.getString("guild_id")?.toLong() ?: 0,
     this.getBoolean("in_channel")
 )
 
