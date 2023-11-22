@@ -42,7 +42,7 @@ fun VersionCatalogBuilder.common() {
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
     library("org-json", "org.json", "json").version("20220924")
 
-    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.15")
+    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.18")
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
@@ -91,7 +91,7 @@ fun VersionCatalogBuilder.database() {
 }
 
 fun VersionCatalogBuilder.voice() {
-    library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.0")
+    library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.5")
 //    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
     library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.4.2")
 //    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
