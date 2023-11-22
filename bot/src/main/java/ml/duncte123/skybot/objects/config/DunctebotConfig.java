@@ -117,11 +117,13 @@ public class DunctebotConfig {
         }
 
         public static class LavalinkNode {
+            public final String name;
             public final String wsurl;
             public final String pass;
             public final String region;
 
-            public LavalinkNode(String wsurl, String pass, String region) {
+            public LavalinkNode(String name, String wsurl, String pass, String region) {
+                this.name = name;
                 this.wsurl = wsurl;
                 this.pass = pass;
                 this.region = region;
@@ -202,7 +204,14 @@ public class DunctebotConfig {
                     throw new IllegalArgumentException("Missing configuration for LAVALINK_NODE_"+i+". Please check the config");
                 }
 
+                final String name = System.getenv("LAVALINK_NODE_" + i + "_NAME");
+
+                if (name == null) {
+                    throw new IllegalArgumentException("Missing name for LAVALINK_NODE_"+i+". Please check the config");
+                }
+
                 nodes[i] = new Lavalink.LavalinkNode(
+                    name,
                     host,
                     System.getenv("LAVALINK_NODE_"+i+"_PASS"),
                     System.getenv("LAVALINK_NODE_"+i+"_REGION")

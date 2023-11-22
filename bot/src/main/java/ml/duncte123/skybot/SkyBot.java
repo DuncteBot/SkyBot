@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageConfig;
@@ -133,7 +134,9 @@ public final class SkyBot {
 
         // If lavalink is enabled we will hook it into jda
         if (LavalinkManager.INS.isEnabled()) {
-            builder.setVoiceDispatchInterceptor(LavalinkManager.INS.getLavalink().getVoiceInterceptor());
+            builder.setVoiceDispatchInterceptor(
+                new JDAVoiceUpdateListener(LavalinkManager.INS.getLavalink())
+            );
         }
 
         this.shardManager = builder.build();

@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
-import lavalink.client.player.LavalinkPlayer;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -30,15 +29,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 public class GuildMusicManager {
-    public final LavalinkPlayer player;
+    private final LocalPlayer player = new LocalPlayer();
+    private final long guildId;
     private final TrackScheduler scheduler;
     private final AtomicLong latestChannel = new AtomicLong(-1);
     private final Supplier<Boolean> announceTracksSupplier;
 
     public GuildMusicManager(long guildId, Variables variables) {
-        this.player = LavalinkManager.INS.createPlayer(guildId);
-        this.scheduler = new TrackScheduler(this.player, this);
-        this.player.addListener(this.scheduler);
+        this.guildId = guildId;
+        this.scheduler = new TrackScheduler(this);
         this.announceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
     }
 
@@ -60,15 +59,15 @@ public class GuildMusicManager {
     }
 
     public void stopAndClear() {
-        final TrackScheduler scheduler = this.getScheduler();
-        this.player.removeListener(scheduler);
-        this.player.setPaused(false);
+        LavalinkManager.INS.getLavalink()
+            .getLink(this.guildId)
+            .updatePlayer(
+                (player) -> player.setPaused(false)
+                    .setEncodedTrack(null)
+            )
+            .subscribe();
 
-        if (this.player.getPlayingTrack() != null) {
-            this.player.stopTrack();
-        }
-
-        scheduler.queue.clear();
+        this.scheduler.getQueue().clear();
     }
 
     @Nullable
@@ -80,5 +79,9 @@ public class GuildMusicManager {
         }
 
         return SkyBot.getInstance().getShardManager().getChannelById(MessageChannel.class, last);
+    }
+
+    public LocalPlayer getPlayer() {
+        return this.player;
     }
 }

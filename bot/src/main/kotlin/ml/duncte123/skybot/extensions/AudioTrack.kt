@@ -28,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import dev.arbjerg.lavalink.protocol.v4.Track
 import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.web.WebUtils
@@ -37,6 +38,38 @@ import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
 import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
+
+fun Track.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
+    val userData: TrackUserData? = this.getUserData(TrackUserData::class.java)
+    var requester = "Unknown"
+
+    if (userData != null) {
+        val userId = userData.requester
+        val user = shardManager.getUserById(userId)
+
+        if (user != null) {
+            requester = user.asTag
+        }
+    }
+
+    val uri = this.info.uri
+
+    if (this.info.isStream) {
+        return embedMessage(
+            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+            |**Requester:** $requester
+            """.trimMargin()
+        )
+            .setThumbnail(this.info.artworkUrl)
+    }
+
+    return embedMessage(
+        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+            |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
+        """.trimMargin()
+    )
+        .setThumbnail(this.info.artworkUrl)
+}
 
 fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
     val userData = this.getUserData(TrackUserData::class.java)

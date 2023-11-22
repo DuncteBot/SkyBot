@@ -23,8 +23,9 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.AudioEventAdapterWrapped;
+import dev.arbjerg.lavalink.protocol.v4.PlayerState;
+import dev.arbjerg.lavalink.protocol.v4.Track;
+import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
@@ -43,26 +44,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
-public class TrackScheduler extends AudioEventAdapterWrapped {
+// TODO: player events
+public class TrackScheduler {
 
+    // TODO: keep track of user-data per track identifier
     public static final int MAX_QUEUE_SIZE = 100;
-    public final Queue<AudioTrack> queue;
+    private final Queue<Track> queue;
+
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
-    private final LavalinkPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
     private boolean looping = false;
     private boolean loopingQueue = false;
 
-    /* package */ TrackScheduler(LavalinkPlayer player, GuildMusicManager guildMusicManager) {
-        this.player = player;
+    /* package */ TrackScheduler(GuildMusicManager guildMusicManager) {
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) -> {
@@ -84,12 +87,16 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         return this.queue.size() < MAX_QUEUE_SIZE;
     }
 
-    public void addToQueue(AudioTrack track, boolean isPatron) throws LimitReachedException {
+    public Queue<Track> getQueue() {
+        return queue;
+    }
+
+    public void addToQueue(Track track, boolean isPatron) throws LimitReachedException {
         if (queue.size() + 1 >= MAX_QUEUE_SIZE && !isPatron) {
             throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 
-        if (player.getPlayingTrack() == null) {
+        if (this.guildMusicManager.getPlayer().getCurrentTrack() == null) {
             this.play(track);
         } else {
             queue.offer(track);
@@ -102,13 +109,17 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     public void specialSkipCase() {
         // Get the currently playing track
-        final AudioTrack playingTrack = this.player.getPlayingTrack();
+        final Track playingTrack = this.guildMusicManager.getPlayer().getCurrentTrack();
         // Set in the data that it was from a skip
         playingTrack.getUserData(TrackUserData.class).setWasFromSkip(true);
 
         // We trigger a fake on track end here to make it adhere to the normal loop flow
         // and inject a boolean for forcing the announcement on skip
-        this.onTrackEnd(null, playingTrack, AudioTrackEndReason.FINISHED);
+        this.onTrackEnd(playingTrack, AudioTrackEndReason.FINISHED);
+    }
+
+    public void skipCurrentTrack() {
+        // TODO: update player with the next track.
     }
 
     private void skipTrack(boolean wasFromSkip) {
@@ -116,7 +127,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     public void skipTracks(int count, boolean wasFromSkip) {
-        AudioTrack nextTrack = null;
+        Track nextTrack = null;
 
         for (int i = 0; i < count; i++) {
             nextTrack = queue.poll();
@@ -137,8 +148,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    @Override
-    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+    public void onTrackStart(Track track) {
         final TrackUserData data = track.getUserData(TrackUserData.class);
 
         // If the track was a skipped track, or we announce tracks
@@ -164,8 +174,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
+    public void onTrackEnd(Track lastTrack, AudioTrackEndReason endReason) {
         LOGGER.debug("track ended");
 
         if (!endReason.mayStartNext) {
@@ -241,14 +250,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         return newData;
     }
 
-    @Override
-    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+    public void onTrackException(Track track, FriendlyException exception) {
         final Throwable rootCause = ExceptionUtils.getRootCause(exception);
         final Throwable finalCause = rootCause == null ? exception : rootCause;
-        final AudioTrackInfo info = track.getInfo();
+        final TrackInfo info = track.getInfo();
 
         if (finalCause == null || finalCause.getMessage() == null) {
-            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + info.identifier +
+            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + info.getIdentifier() +
                 "`\nPlease contact the developers asap with the identifier in the message above");
             return;
         }
@@ -258,39 +266,18 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
 
         if (finalCause.getMessage().contains("age-restricted")) {
-            this.messageDebouncer.accept("Cannot play `" + info.title + "` because it is age-restricted");
+            this.messageDebouncer.accept("Cannot play `" + info.getTitle() + "` because it is age-restricted");
             return;
         }
 
         this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
-            info.identifier
+            info.getIdentifier()
             + "`, please contact the devs if this happens a lot.\n" +
             "Details: " + finalCause);
-
-        // old shit
-        /*if (exception.severity != FriendlyException.Severity.COMMON) {
-            final TextChannel tc = guildMusicManager.getLatestChannel();
-            final Guild g = tc == null ? null : tc.getGuild();
-
-            if (g != null) {
-                final AudioTrackInfo info = track.getInfo();
-                final String error = String.format(
-                    "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s) (%s)",
-                    g.getName(),
-                    g.getId(),
-                    info.title,
-                    info.author,
-                    track.getSourceManager().getSourceName(),
-                    info.identifier
-                );
-
-                logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            }
-
-        }*/
     }
 
-    public void play(AudioTrack track) {
+    @Deprecated
+    private void play(Track track) {
         // load the youtube identifier before we play the track
         if (track instanceof SpotifyAudioTrack) {
             track.getIdentifier();

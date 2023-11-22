@@ -52,26 +52,27 @@ class SkipCommand : MusicCommand() {
     private fun skipHandler(variables: Variables, guild: Guild, user: User, sendMessage: (String) -> Unit) {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val player = mng.player
+        val currentTrack = player.currentTrack
 
-        if (player.playingTrack == null) {
+        if (currentTrack == null) {
             sendMessage("The player is not playing.")
             return
         }
 
-        if (!player.playingTrack.isSeekable) {
+        if (!currentTrack.info.isSeekable) {
             sendMessage("This track is not seekable")
             return
         }
 
-        val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
+        val trackData = currentTrack.getUserData(TrackUserData::class.java)
 
         if (trackData.requester == user.idLong) {
             doSkip(mng, sendMessage)
             return
         }
-		
+
         val vc = getLavalinkManager().getConnectedChannel(guild)
-		
+
         if (vc == null) {
             sendMessage("Somehow I am not connected to a voice channel? Probably a bug, please report this!")
             return
@@ -104,11 +105,11 @@ class SkipCommand : MusicCommand() {
     }
 
     private fun doSkip(mng: GuildMusicManager, sendMessage: (String) -> Unit) {
-        val player = mng.player
+        val nextTrack = mng.scheduler.queue.peek()
 
-        mng.scheduler.specialSkipCase()
+        mng.scheduler.skipCurrentTrack()
 
-        if (player.playingTrack == null) {
+        if (nextTrack == null) {
             sendMessage(
                 "Successfully skipped the track.\n" +
                     "Queue is now empty."
