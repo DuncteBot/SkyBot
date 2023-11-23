@@ -18,16 +18,11 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import dev.arbjerg.lavalink.protocol.v4.PlayerState;
+import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
 import dev.arbjerg.lavalink.protocol.v4.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
@@ -39,12 +34,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.SkyBot.getInstance;
@@ -54,9 +45,10 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 // TODO: player events
 public class TrackScheduler {
 
-    // TODO: keep track of user-data per track identifier
+    // TODO: keep track of user-data per track (need something unique)
     public static final int MAX_QUEUE_SIZE = 100;
-    private final Queue<Track> queue;
+    private final Queue<Track> queue = new LinkedList<>();
+    private final Map<String, TrackUserData> userData = new HashMap<>();
 
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
@@ -66,7 +58,6 @@ public class TrackScheduler {
     private boolean loopingQueue = false;
 
     /* package */ TrackScheduler(GuildMusicManager guildMusicManager) {
-        this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) -> {
             final MessageChannel latestChannel = guildMusicManager.getLatestChannel();
@@ -111,7 +102,7 @@ public class TrackScheduler {
         // Get the currently playing track
         final Track playingTrack = this.guildMusicManager.getPlayer().getCurrentTrack();
         // Set in the data that it was from a skip
-        playingTrack.getUserData(TrackUserData.class).setWasFromSkip(true);
+        getUserData(playingTrack).setWasFromSkip(true);
 
         // We trigger a fake on track end here to make it adhere to the normal loop flow
         // and inject a boolean for forcing the announcement on skip
@@ -119,7 +110,7 @@ public class TrackScheduler {
     }
 
     public void skipCurrentTrack() {
-        // TODO: update player with the next track.
+        this.skipTrack(true);
     }
 
     private void skipTrack(boolean wasFromSkip) {
@@ -134,7 +125,7 @@ public class TrackScheduler {
         }
 
         if (nextTrack == null) {
-            player.stopTrack();
+            this.guildMusicManager.getPlayer().stopPlayback();
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(guildMusicManager.getLatestChannel())
@@ -142,15 +133,16 @@ public class TrackScheduler {
             );
         } else {
             // Make sure to cary over the skip state, we want to announce skipped tracks
-            nextTrack.getUserData(TrackUserData.class).setWasFromSkip(wasFromSkip);
+            getUserData(nextTrack).setWasFromSkip(wasFromSkip);
 
             this.play(nextTrack);
         }
     }
 
     public void onTrackStart(Track track) {
-        final TrackUserData data = track.getUserData(TrackUserData.class);
+        final TrackUserData data = getUserData(track);
 
+        // TODO: do I still need "wasFromSkip" status tracking?
         // If the track was a skipped track, or we announce tracks
         if (data != null && data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
@@ -177,36 +169,33 @@ public class TrackScheduler {
     public void onTrackEnd(Track lastTrack, AudioTrackEndReason endReason) {
         LOGGER.debug("track ended");
 
-        if (!endReason.mayStartNext) {
+        if (!endReason.getMayStartNext()) {
             LOGGER.debug("Cannot start next");
             return;
         }
 
         // Get if the track was from a skip event
-        final Object userData = lastTrack.getUserData();
-        final boolean wasFromSkip;
-
-        if (userData instanceof TrackUserData data) {
-            wasFromSkip = data.getWasFromSkip();
-        } else {
-            wasFromSkip = false;
-        }
+        final TrackUserData userData = getUserData(lastTrack);
+        final boolean wasFromSkip = userData.getWasFromSkip();
 
         if (this.looping) {
             LOGGER.debug("repeating the current song");
 
-            final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            final Track clone = TrackUtilsKt.makeClone(lastTrack);
+            storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
             this.play(clone);
 
             return;
         } else if (this.loopingQueue) {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
-            final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            final Track clone = TrackUtilsKt.makeClone(lastTrack);
+            storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
             queue.offer(clone);
         }
+
+        // clean up the old track's userdata
+        removeUserData(lastTrack);
 
         LOGGER.debug("can start next track");
 
@@ -233,8 +222,8 @@ public class TrackScheduler {
         Collections.shuffle((List<?>) queue);
     }
 
-    private TrackUserData createNewTrackData(AudioTrack track, boolean wasFromSkip) {
-        final TrackUserData oldData = track.getUserData(TrackUserData.class);
+    private TrackUserData createNewTrackData(Track track, boolean wasFromSkip) {
+        final TrackUserData oldData = getUserData(track);
         final TrackUserData newData;
 
         // If we did not have old data (unlikely) we will create it
@@ -276,13 +265,24 @@ public class TrackScheduler {
             "Details: " + finalCause);
     }
 
-    @Deprecated
-    private void play(Track track) {
-        // load the youtube identifier before we play the track
-        if (track instanceof SpotifyAudioTrack) {
-            track.getIdentifier();
-        }
+    public TrackUserData getUserData(Track track) {
+        throw new UnsupportedOperationException("TODO: implement this method");
+    }
 
-        this.player.playTrack(track);
+    public void storeUserData(Track track, TrackUserData data) {
+        throw new UnsupportedOperationException("TODO: implement this method");
+    }
+
+    public void removeUserData(Track track) {
+        throw new UnsupportedOperationException("TODO: implement this method");
+    }
+
+    private void play(Track track) {
+        this.guildMusicManager.getPlayer()
+            .getLink()
+            .updatePlayer(
+                (builder) -> builder.setEncodedTrack(track.getEncoded())
+            )
+            .subscribe();
     }
 }

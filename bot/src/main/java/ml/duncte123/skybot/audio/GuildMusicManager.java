@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.audio;
 
-import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -29,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 public class GuildMusicManager {
-    private final LocalPlayer player = new LocalPlayer();
+    private final LocalPlayer player;
     private final long guildId;
     private final TrackScheduler scheduler;
     private final AtomicLong latestChannel = new AtomicLong(-1);
@@ -37,6 +36,7 @@ public class GuildMusicManager {
 
     public GuildMusicManager(long guildId, Variables variables) {
         this.guildId = guildId;
+        player = new LocalPlayer(guildId);
         this.scheduler = new TrackScheduler(this);
         this.announceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
     }
@@ -59,13 +59,7 @@ public class GuildMusicManager {
     }
 
     public void stopAndClear() {
-        LavalinkManager.INS.getLavalink()
-            .getLink(this.guildId)
-            .updatePlayer(
-                (player) -> player.setPaused(false)
-                    .setEncodedTrack(null)
-            )
-            .subscribe();
+        this.player.stopPlayback();
 
         this.scheduler.getQueue().clear();
     }

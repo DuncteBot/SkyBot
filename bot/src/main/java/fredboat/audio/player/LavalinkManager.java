@@ -20,7 +20,6 @@ package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -66,7 +65,7 @@ public final class LavalinkManager {
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                mng.getPlayer().updatePlayerState(stats.getEvent().getState());
+                mng.getPlayer().updateLocalPlayerState(stats.getEvent().getState());
             }
         });
 
