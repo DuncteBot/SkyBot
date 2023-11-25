@@ -19,6 +19,7 @@
 package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
+import dev.arbjerg.lavalink.protocol.v4.Message;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -47,7 +48,7 @@ public final class LavalinkManager {
     private LavalinkManager() {
     }
 
-    public void start(SkyBot skybot, DunctebotConfig config, AudioUtils audioUtils) {
+    public void start(DunctebotConfig config, AudioUtils audioUtils) {
         this.config = config;
         this.audioUtils = audioUtils;
 
@@ -59,15 +60,11 @@ public final class LavalinkManager {
 
         lavalink = new LavalinkClient(userId);
 
-        lavalink.on(PlayerUpdateEvent.class).subscribe((stats) -> {
-            // TODO extract method
-            final long guildIdLong = Long.parseUnsignedLong(stats.getEvent().getGuildId());
-            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
-
-            if (mng != null) {
-                mng.getPlayer().updateLocalPlayerState(stats.getEvent().getState());
-            }
-        });
+        this.registerPlayerUpdateEvent();
+        this.registerTrackStartEvent();
+        this.registerTrackEndEvent();
+        this.registerTrackExceptionEvent();
+        this.registerTrackStuckEvent();
 
         loadNodes();
     }
@@ -75,17 +72,11 @@ public final class LavalinkManager {
     @SuppressWarnings("unused") // we need it from eval
     public void forceEnable(boolean enabled) {
         if (enabled) {
-            this.loadNodes();
+            this.start(this.config, this.audioUtils);
         } else {
             AirUtils.stopMusic(this.audioUtils);
 
-            // TODO: fix
-            // disconnect all links
-            this.lavalink.getLinks().forEach(Link::destroy);
-            // close all connections to all nodes
-            for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
-                this.lavalink.removeNode(i);
-            }
+            this.lavalink.close();
         }
 
         // Do this last, otherwise we can't disconnect
@@ -165,4 +156,53 @@ public final class LavalinkManager {
             lavalink.addNode(node.name, URI.create(node.wsurl), node.pass);
         }
     }
+
+    private void registerPlayerUpdateEvent() {
+        lavalink.on(PlayerUpdateEvent.class).subscribe((stats) -> {
+            final long guildIdLong = Long.parseUnsignedLong(stats.getEvent().getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getPlayer().updateLocalPlayerState(stats.getEvent().getState());
+            }
+        });
+    }
+
+    private void registerTrackStartEvent() {
+        lavalink.on(TrackStartEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getScheduler().onTrackStart(event.getTrack());
+            }
+        });
+    }
+
+    private void registerTrackEndEvent() {
+        lavalink.on(TrackEndEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getScheduler().onTrackEnd(event.getTrack(), event.getReason());
+            }
+        });
+    }
+
+    private void registerTrackExceptionEvent() {
+        lavalink.on(TrackExceptionEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getScheduler().onTrackException(event.getTrack(), event.getException());
+            }
+        });
+    }
+
+    private void registerTrackStuckEvent() {}
 }

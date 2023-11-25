@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import dev.arbjerg.lavalink.protocol.v4.Exception;
 import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
 import dev.arbjerg.lavalink.protocol.v4.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
@@ -30,11 +30,9 @@ import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -240,22 +238,15 @@ public class TrackScheduler {
         return newData;
     }
 
-    public void onTrackException(Track track, FriendlyException exception) {
-        final Throwable rootCause = ExceptionUtils.getRootCause(exception);
-        final Throwable finalCause = rootCause == null ? exception : rootCause;
+    public void onTrackException(Track track, Exception exception) {
+        final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
         final TrackInfo info = track.getInfo();
 
-        if (finalCause == null || finalCause.getMessage() == null) {
-            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + info.getIdentifier() +
-                "`\nPlease contact the developers asap with the identifier in the message above");
+        if (finalCause.contains("Something went wrong when decoding the track.")) {
             return;
         }
 
-        if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
-            return;
-        }
-
-        if (finalCause.getMessage().contains("age-restricted")) {
+        if (finalCause.contains("age-restricted")) {
             this.messageDebouncer.accept("Cannot play `" + info.getTitle() + "` because it is age-restricted");
             return;
         }
@@ -267,9 +258,11 @@ public class TrackScheduler {
     }
 
     // TODO: these use the identifier for now, we need to use something more unique
-    @Nullable
     public TrackUserData getUserData(Track track) {
-        return this.userData.get(track.getInfo().getIdentifier());
+        return Objects.requireNonNull(
+            this.userData.get(track.getInfo().getIdentifier()),
+            "Somehow, userdata was null for " + track.getInfo()
+        );
     }
 
     public void storeUserData(Track track, TrackUserData data) {

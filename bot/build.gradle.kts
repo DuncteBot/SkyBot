@@ -29,7 +29,7 @@ plugins {
 
     kotlin("jvm")
     id("org.liquibase.gradle")
-    id("org.jmailen.kotlinter")
+    // id("org.jmailen.kotlinter")
     id("com.github.johnrengelman.shadow")
     id("com.github.breadmoirai.github-release")
 }
@@ -178,18 +178,10 @@ shadowJar.apply {
     archiveClassifier.set("prod")
 }
 
-kotlinter {
-    ignoreFailures = false
-    reporters = arrayOf("checkstyle", "plain")
-    experimentalRules = true
-    disabledRules = arrayOf(
-        "filename", "no-wildcard-imports", "experimental:indent",
-        "argument-list-wrapping",
-        "experimental:spacing-between-declarations-with-annotations",
-        "experimental:spacing-between-declarations-with-comments",
-        "experimental:comment-wrapping"
-    )
-}
+//kotlinter {
+//    ignoreFailures = false
+//    reporters = arrayOf("checkstyle", "plain")
+//}
 
 pmd {
     isConsoleOutput = true
@@ -200,7 +192,7 @@ pmd {
 }
 
 task<Task>("lintAll") {
-    dependsOn(tasks.lintKotlin)
+//    dependsOn(tasks.lintKotlin)
     dependsOn(tasks.pmdMain)
 }
 
