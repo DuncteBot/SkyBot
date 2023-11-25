@@ -34,6 +34,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -265,16 +266,18 @@ public class TrackScheduler {
             "Details: " + finalCause);
     }
 
+    // TODO: these use the identifier for now, we need to use something more unique
+    @Nullable
     public TrackUserData getUserData(Track track) {
-        throw new UnsupportedOperationException("TODO: implement this method");
+        return this.userData.get(track.getInfo().getIdentifier());
     }
 
     public void storeUserData(Track track, TrackUserData data) {
-        throw new UnsupportedOperationException("TODO: implement this method");
+        this.userData.put(track.getInfo().getIdentifier(), data);
     }
 
     public void removeUserData(Track track) {
-        throw new UnsupportedOperationException("TODO: implement this method");
+        this.userData.remove(track.getInfo().getIdentifier());
     }
 
     private void play(Track track) {
