@@ -62,12 +62,12 @@ class SearchCommand : MusicCommand() {
         val toPlay = ctx.argsRaw
         val res = ctx.audioUtils.searchYoutube(ctx.guildId, toPlay)
 
-        if (res == null || res.tracks.isEmpty()) {
+        if (res.isNullOrEmpty()) {
             sendMsg(ctx, "$SEARCH_EMOTE No results found.")
             return
         }
 
-        val tracks = res.tracks.take(searchLimit)
+        val tracks = res.take(searchLimit)
 
         val string = buildString {
             tracks.map { it.info.title }.forEachIndexed { index: Int, s: String ->

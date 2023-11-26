@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import dev.arbjerg.lavalink.protocol.v4.LoadResult;
-import dev.arbjerg.lavalink.protocol.v4.Playlist;
+import dev.arbjerg.lavalink.protocol.v4.Track;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Variables;
@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.AudioData;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -41,15 +42,15 @@ public class AudioUtils {
         this.variables = variables;
     }
 
-    @Nullable("If the playlist is not a basic audio playlist")
-    public Playlist searchYoutube(long guildId, String query) {
+    @Nullable("If the playlist is not a search result")
+    public List<Track> searchYoutube(long guildId, String query) {
         final LoadResult result = LavalinkManager.INS.getLavalink()
             .getLink(guildId)
             .loadItem("ytsearch:" + query)
             .block();
 
-        if (result instanceof LoadResult.PlaylistLoaded playlist) {
-            return playlist.getData();
+        if (result instanceof LoadResult.SearchResult playlist) {
+            return playlist.getData().getTracks();
         }
 
         return null;

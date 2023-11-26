@@ -121,11 +121,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     private fun searchYt(guildId: Long, search: String, variables: Variables): String? {
         val playlist = variables.audioUtils.searchYoutube(guildId, search)
 
-        if (playlist == null || playlist.tracks.isEmpty()) {
+        if (playlist.isNullOrEmpty()) {
             return null
         }
 
-        return playlist.tracks[0].info.identifier
+        return playlist[0].info.identifier
     }
 
     private fun handlePlay(toPlay: String, ctx: CommandContext) {
