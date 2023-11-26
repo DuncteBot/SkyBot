@@ -20,6 +20,7 @@ package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
 import dev.arbjerg.lavalink.protocol.v4.Message;
+import dev.arbjerg.lavalink.protocol.v4.Track;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -170,12 +171,15 @@ public final class LavalinkManager {
 
     private void registerTrackStartEvent() {
         lavalink.on(TrackStartEvent.class).subscribe((data) -> {
+            System.out.println("Track start event: " + data);
             final var event = data.getEvent();
             final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                mng.getScheduler().onTrackStart(event.getTrack());
+                final Track track = event.getTrack();
+                mng.getPlayer().updateCurrentTrack(track);
+                mng.getScheduler().onTrackStart(track);
             }
         });
     }
@@ -187,6 +191,7 @@ public final class LavalinkManager {
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
+                mng.getPlayer().updateCurrentTrack(null);
                 mng.getScheduler().onTrackEnd(event.getTrack(), event.getReason());
             }
         });
@@ -199,6 +204,7 @@ public final class LavalinkManager {
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
+                mng.getPlayer().updateCurrentTrack(null);
                 mng.getScheduler().onTrackException(event.getTrack(), event.getException());
             }
         });

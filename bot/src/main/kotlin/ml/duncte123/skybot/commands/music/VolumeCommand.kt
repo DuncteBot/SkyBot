@@ -44,7 +44,7 @@ class VolumeCommand : MusicCommand() {
         }
 
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player
+        val player = mng.player.lavalinkPlayer.block()!!
         val args = ctx.args
 
         if (args.isEmpty()) {
@@ -57,7 +57,7 @@ class VolumeCommand : MusicCommand() {
             val newVolume = max(0, min(1000, userInput))
             val oldVolume = player.volume
 
-            player.volume = newVolume
+            player.setVolume(newVolume).asMono().subscribe()
 
             sendMsg(ctx, "Player volume changed from **$oldVolume%** to **$newVolume%**")
         } catch (e: NumberFormatException) {
@@ -85,7 +85,7 @@ class VolumeCommand : MusicCommand() {
         }
 
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
-        val player = mng.player
+        val player = mng.player.lavalinkPlayer.block()!!
         val volumeOpt = event.getOption("volume")
 
         if (volumeOpt == null) {
@@ -98,7 +98,7 @@ class VolumeCommand : MusicCommand() {
             val newVolume = max(0, min(1000, userInput))
             val oldVolume = player.volume
 
-            player.volume = newVolume
+            player.setVolume(newVolume).asMono().subscribe()
 
             event.reply("Player volume changed from **$oldVolume%** to **$newVolume%**").queue()
         } catch (e: NumberFormatException) {

@@ -50,17 +50,17 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             }
 
             val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-            val player = mng.player
+            val player = mng.player.lavalinkPlayer.block()!!
             val scheduler = mng.scheduler
 
             when {
-                player.isPaused -> {
-                    player.isPaused = false
+                player.paused -> {
+                    player.setPaused(false).asMono().subscribe()
 
                     sendMsg(ctx, "Playback has been resumed.")
                 }
 
-                player.playingTrack != null -> sendMsg(ctx, "Player is already playing!")
+                player.track != null -> sendMsg(ctx, "Player is already playing!")
 
                 scheduler.queue.isEmpty() -> sendMsg(
                     ctx,

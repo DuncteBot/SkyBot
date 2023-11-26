@@ -34,13 +34,18 @@ import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
-import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
+import ml.duncte123.skybot.utils.MusicEmbedUtils.createPlayerString
 import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 
-fun Track.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
-    val userData: TrackUserData? = this.getUserData(TrackUserData::class.java)
+fun Track.toEmbed(
+    mng: GuildMusicManager,
+    shardManager: ShardManager,
+    withPlayer: Boolean = true,
+    callback: (EmbedBuilder) -> Unit
+) {
+    val userData: TrackUserData? = mng.scheduler.getUserData(this)
     var requester = "Unknown"
 
     if (userData != null) {
@@ -55,52 +60,27 @@ fun Track.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer
     val uri = this.info.uri
 
     if (this.info.isStream) {
-        return embedMessage(
-            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester
-            """.trimMargin()
+        callback(
+            embedMessage(
+                """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+                |**Requester:** $requester
+                """.trimMargin()
+            )
+                .setThumbnail(this.info.artworkUrl)
         )
-            .setThumbnail(this.info.artworkUrl)
+        return
     }
 
-    return embedMessage(
-        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
-        """.trimMargin()
-    )
-        .setThumbnail(this.info.artworkUrl)
-}
-
-fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
-    val userData = this.getUserData(TrackUserData::class.java)
-    var requester = "Unknown"
-
-    if (userData != null) {
-        val userId = userData.requester
-        val user = shardManager.getUserById(userId)
-
-        if (user != null) {
-            requester = user.asTag
-        }
-    }
-
-    val uri = if (this is IWillUseIdentifierInstead) this.info.identifier else this.info.uri
-
-    if (this.info.isStream) {
-        return embedMessage(
-            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester
-            """.trimMargin()
+    createPlayerString(mng) { playerState ->
+        callback(
+            embedMessage(
+                """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+                |**Requester:** $requester${if (withPlayer) "\n" + playerState else ""}
+                """.trimMargin()
+            )
+                .setThumbnail(this.info.artworkUrl)
         )
-            .setThumbnail(this.getImageUrl())
     }
-
-    return embedMessage(
-        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
-        """.trimMargin()
-    )
-        .setThumbnail(this.getImageUrl())
 }
 
 /**
@@ -149,7 +129,8 @@ fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
         if (this is SoundCloudAudioTrack ||
             (this is HttpAudioTrack && this.info.uri.startsWith("https://www.pornhub.com/"))
         ) {
-            val page = WebUtils.ins.scrapeWebPage(this.info.uri) { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
+            val page =
+                WebUtils.ins.scrapeWebPage(this.info.uri) { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
             val elems = page.select("meta[property=og:image]")
 
             if (!elems.isEmpty()) {

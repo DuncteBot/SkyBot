@@ -18,13 +18,10 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.extensions.getImageUrl
-import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.user.UnknownUser
@@ -49,7 +46,7 @@ class ForceSkip : MusicCommand() {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
 
-        if (player.playingTrack == null) {
+        if (player.currentTrack == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
@@ -67,14 +64,14 @@ class ForceSkip : MusicCommand() {
             1
         }
 
-        val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
+        val trackData = scheduler.getUserData(player.currentTrack)
 
         scheduler.skipTracks(count, false)
 
         // Return the console user if the requester is null
         val user = ctx.jda.getUserById(trackData.requester) ?: UnknownUser()
 
-        val track: AudioTrack? = player.playingTrack
+        val track = player.currentTrack
 
         if (track == null) {
             sendMsg(
@@ -92,7 +89,7 @@ class ForceSkip : MusicCommand() {
                     "Now playing: ${track.info.title}\n" +
                     "Requester: ${user.asTag}"
             )
-                .setThumbnail(track.getImageUrl())
+                .setThumbnail(track.info.artworkUrl)
         )
     }
 

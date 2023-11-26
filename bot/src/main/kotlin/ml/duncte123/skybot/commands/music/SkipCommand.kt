@@ -53,6 +53,7 @@ class SkipCommand : MusicCommand() {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val player = mng.player
         val currentTrack = player.currentTrack
+        val scheduler = mng.scheduler
 
         if (currentTrack == null) {
             sendMessage("The player is not playing.")
@@ -64,7 +65,7 @@ class SkipCommand : MusicCommand() {
             return
         }
 
-        val trackData = currentTrack.getUserData(TrackUserData::class.java)
+        val trackData = scheduler.getUserData(currentTrack)
 
         if (trackData.requester == user.idLong) {
             doSkip(mng, sendMessage)

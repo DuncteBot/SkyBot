@@ -33,14 +33,15 @@ class RestartCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
+        val currentTrack = player.currentTrack
 
-        if (player.playingTrack == null) {
+        if (currentTrack == null) {
             sendError(ctx.message)
             sendMsg(ctx, "No track currently playing")
             return
         }
 
-        if (!player.playingTrack.isSeekable) {
+        if (!currentTrack.info.isSeekable) {
             sendMsg(ctx, "This track is not seekable")
             return
         }

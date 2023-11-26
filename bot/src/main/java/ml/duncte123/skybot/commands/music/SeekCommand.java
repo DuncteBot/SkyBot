@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.music;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import lavalink.client.player.LavalinkPlayer;
+import dev.arbjerg.lavalink.protocol.v4.Track;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.audio.LocalPlayer;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -66,15 +66,15 @@ public class SeekCommand extends MusicCommand {
     }
 
     public void run0(@Nonnull CommandContext ctx) throws NumberFormatException {
-        final LavalinkPlayer player = ctx.getAudioUtils().getMusicManager(ctx.getGuildId()).player;
-        final AudioTrack currentTrack = player.getPlayingTrack();
+        final var player = ctx.getAudioUtils().getMusicManager(ctx.getGuildId()).getPlayer();
+        final Track currentTrack = player.getCurrentTrack();
 
         if (currentTrack == null) {
             sendMsg(ctx, "The player is currently not playing anything");
             return;
         }
 
-        if (!currentTrack.isSeekable()) {
+        if (!currentTrack.getInfo().isSeekable()) {
             sendMsg(ctx, "This track is not seekable");
             return;
         }
@@ -95,7 +95,7 @@ public class SeekCommand extends MusicCommand {
         }
 
         // To hopefully prevent race conditions
-        final Supplier<Long> trackDuration = () -> player.getPlayingTrack().getDuration();
+        final Supplier<Long> trackDuration = () -> player.getCurrentTrack().getInfo().getLength();
 
         int seconds = Integer.parseInt(seekTime) * 1000;
 
@@ -109,7 +109,7 @@ public class SeekCommand extends MusicCommand {
             seconds = ~seconds;
         }
 
-        final Supplier<Long> trackPosition = () -> player.getPlayingTrack().getPosition();
+        final Supplier<Long> trackPosition = player::getPosition;
         final long currentPosition = trackPosition.get();
         final long newPosition = currentPosition + seconds;
 
@@ -131,7 +131,7 @@ public class SeekCommand extends MusicCommand {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 
-    private void handleOverSkip(@NotNull CommandContext ctx, LavalinkPlayer player, String arg0, Supplier<Long> trackDuration) {
+    private void handleOverSkip(@NotNull CommandContext ctx, LocalPlayer player, String arg0, Supplier<Long> trackDuration) {
         if (arg0.charAt(0) == '-') {
             sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
             return;
@@ -141,7 +141,7 @@ public class SeekCommand extends MusicCommand {
         player.seekTo(trackDuration.get());
     }
 
-    private void handleTimeSkip(@NotNull CommandContext ctx, LavalinkPlayer player, Matcher matcher) {
+    private void handleTimeSkip(@NotNull CommandContext ctx, LocalPlayer player, Matcher matcher) {
         final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
         final long seconds = Long.parseLong(matcher.group(2)) * 1000;
 

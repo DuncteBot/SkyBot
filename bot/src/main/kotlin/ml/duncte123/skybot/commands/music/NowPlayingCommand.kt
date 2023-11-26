@@ -37,27 +37,35 @@ class NowPlayingCommand : MusicCommand() {
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
+        val currentTrack = player.currentTrack
 
-        sendEmbed(
-            ctx,
-            when {
-                player.playingTrack != null -> player.playingTrack.toEmbed(mng, ctx.shardManager)
+        if (currentTrack == null) {
+            sendEmbed(
+                ctx,
+                embedMessage("The player is not currently playing anything!")
+            )
+            return
+        }
 
-                else -> embedMessage("The player is not currently playing anything!")
-            }
-        )
+        currentTrack.toEmbed(mng, ctx.shardManager) { message ->
+            sendEmbed(ctx, message)
+        }
     }
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val player = mng.player
+        val currentTrack = player.currentTrack
 
-        event.replyEmbeds(
-            when {
-                player.playingTrack != null -> player.playingTrack.toEmbed(mng, event.jda.shardManager!!)
+        if (currentTrack == null) {
+            event.replyEmbeds(
+                embedMessage("The player is not currently playing anything!").build()
+            ).queue()
+            return
+        }
 
-                else -> embedMessage("The player is not currently playing anything!")
-            }.build()
-        ).queue()
+        currentTrack.toEmbed(mng, event.jda.shardManager!!) { message ->
+            event.replyEmbeds(message.build()).queue()
+        }
     }
 }

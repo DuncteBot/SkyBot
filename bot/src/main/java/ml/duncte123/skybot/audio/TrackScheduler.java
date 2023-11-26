@@ -97,17 +97,6 @@ public class TrackScheduler {
      * This is a special case for the skip command where it has to announce the next track
      * due to it being a user interaction
      */
-    public void specialSkipCase() {
-        // Get the currently playing track
-        final Track playingTrack = this.guildMusicManager.getPlayer().getCurrentTrack();
-        // Set in the data that it was from a skip
-        getUserData(playingTrack).setWasFromSkip(true);
-
-        // We trigger a fake on track end here to make it adhere to the normal loop flow
-        // and inject a boolean for forcing the announcement on skip
-        this.onTrackEnd(playingTrack, AudioTrackEndReason.FINISHED);
-    }
-
     public void skipCurrentTrack() {
         this.skipTrack(true);
     }
@@ -149,18 +138,20 @@ public class TrackScheduler {
                 data.setWasFromSkip(false);
             }
 
-            final EmbedBuilder message = AudioTrackKt.toEmbed(
+            AudioTrackKt.toEmbed(
                 track,
                 this.guildMusicManager,
                 getInstance().getShardManager(),
-                false
-            );
+                false,
+                (message) -> {
+                    sendMsg(
+                        new MessageConfig.Builder()
+                            .setChannel(guildMusicManager.getLatestChannel())
+                            .setEmbeds(false, message)
+                    );
 
-
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(guildMusicManager.getLatestChannel())
-                    .setEmbeds(false, message)
+                    return null;
+                }
             );
         }
     }

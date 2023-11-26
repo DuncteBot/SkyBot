@@ -31,8 +31,8 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
+import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
-import lavalink.client.LavalinkUtil;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -43,6 +43,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class AudioUtils {
@@ -66,7 +67,6 @@ public class AudioUtils {
         playerManager.registerSourceManager(this.youtubeManager);
 
         DuncteBotSources.registerDuncteBot(playerManager, "en-AU", 6);
-        DuncteBotSources.registerDuncteBot(LavalinkUtil.getPlayerManager(), "en-AU", 6);
 
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
@@ -106,9 +106,18 @@ public class AudioUtils {
 
         final GuildMusicManager mng = getMusicManager(data.getGuildId());
         final AudioLoader loader = new AudioLoader(data, mng, announce, trackUrl, isPatron);
-        final DBAudioRef reference = new DBAudioRef(trackUrl, null, isPatron);
+//        final DBAudioRef reference = new DBAudioRef(trackUrl, null, isPatron);
+        final CompletableFuture<Void> future = new CompletableFuture<>();
 
-        return getPlayerManager().loadItemOrdered(mng, reference, loader);
+        LavalinkManager.INS.getLavalink()
+            .getLink(data.getGuildId())
+            .loadItem(trackUrl)
+            .subscribe((result) -> {
+                future.complete(null);
+                loader.accept(result);
+            });
+
+        return future;
     }
 
     public GuildMusicManager getMusicManager(long guildId) {

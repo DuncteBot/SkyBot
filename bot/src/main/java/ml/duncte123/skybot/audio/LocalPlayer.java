@@ -18,10 +18,13 @@
 
 package ml.duncte123.skybot.audio;
 
+import dev.arbjerg.lavalink.client.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.Link;
+import dev.arbjerg.lavalink.protocol.v4.Filters;
 import dev.arbjerg.lavalink.protocol.v4.PlayerState;
 import dev.arbjerg.lavalink.protocol.v4.Track;
 import fredboat.audio.player.LavalinkManager;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
@@ -39,6 +42,10 @@ public class LocalPlayer {
         return LavalinkManager.INS.getLavalink().getLink(this.guildId);
     }
 
+    public Mono<LavalinkPlayer> getLavalinkPlayer() {
+        return this.getLink().getPlayer();
+    }
+
     public void stopPlayback() {
         this.getLink()
             .updatePlayer(
@@ -46,6 +53,22 @@ public class LocalPlayer {
                     .setEncodedTrack(null)
             )
             .subscribe();
+    }
+
+    public void setFilters(Filters filters) {
+        this.getLink()
+            .updatePlayer(
+                (player) -> player.setFilters(filters)
+            )
+            .subscribe();
+    }
+
+    public void seekTo(long position) {
+        this.getLink()
+           .updatePlayer(
+                (player) -> player.setPosition(position)
+            )
+           .subscribe();
     }
 
     @Nullable
@@ -71,5 +94,9 @@ public class LocalPlayer {
 
     public void updateLocalPlayerState(PlayerState state) {
         this.state.set(state);
+    }
+
+    public void updateCurrentTrack(Track track) {
+        this.currentTrack.set(track);
     }
 }

@@ -65,8 +65,7 @@ class RadioCommand : MusicCommand() {
                 val mng = audioUtils.getMusicManager(ctx.guildId)
                 val player = mng.player
 
-                player.stopTrack()
-                player.isPaused = false
+                player.stopPlayback()
                 mng.scheduler.queue.clear()
 
                 audioUtils.loadAndPlay(ctx.audioData, radio.url, true)

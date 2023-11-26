@@ -54,7 +54,7 @@ class JoinCommand : MusicCommand() {
 
         val lavalink = getLavalinkManager()
 
-        if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
+        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
             val channel = lavalink.getConnectedChannel(event.guild)
 
             if (channel == null) {
@@ -102,7 +102,7 @@ class JoinCommand : MusicCommand() {
 
         val lavalink = getLavalinkManager()
 
-        if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
+        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
             val channel = lavalink.getConnectedChannel(event.guild!!)
 
             if (channel == null) {

@@ -121,7 +121,7 @@ class StatsCommand : Command() {
             return
         }
 
-        val availableNodes = llm.lavalink.nodes.filter { it.isAvailable }
+        val availableNodes = llm.lavalink.nodes.filter { it.available }
 
         val embed = EmbedUtils.getDefaultEmbed()
             .setFooter("Available nodes: ${availableNodes.size}")
@@ -132,10 +132,10 @@ class StatsCommand : Command() {
             embed.addField(
                 "Lavalink node #$index",
                 """**Uptime:** ${AirUtils.getUptime(stats.uptime)}
-                    |**CPU cores:** ${stats.cpuCores}
-                    |**System Load:** ${stats.systemLoad}%
-                    |**Used memory:** ${stats.memUsed shr 20}MB
-                    |**Free memory:** ${stats.memFree shr 20}MB
+                    |**CPU cores:** ${stats.cpu.cores}
+                    |**System Load:** ${stats.cpu.systemLoad}%
+                    |**Used memory:** ${stats.memory.used shr 20}MB
+                    |**Free memory:** ${stats.memory.free shr 20}MB
                     |**Players:** ${stats.players}
                     |**Players playing:** ${stats.playingPlayers}
                 """.trimMargin(),

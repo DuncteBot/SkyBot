@@ -33,6 +33,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -75,8 +76,7 @@ public class AudioLoader implements Consumer<LoadResult> {
     private void trackLoaded(LoadResult.TrackLoaded data) {
         final Track track = data.getData();
 
-        // TODO: Find a way to keep track of user-data
-        track.setUserData(new TrackUserData(this.requester));
+        mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
 
         final TrackScheduler scheduler = this.mng.getScheduler();
 
@@ -150,7 +150,7 @@ public class AudioLoader implements Consumer<LoadResult> {
 
             final List<Track> tracks = tracksRaw.stream().peek((track) -> {
                 // don't store this externally since it will cause issues
-                track.setUserData(new TrackUserData(this.requester));
+                mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
             }).toList();
 
             for (final Track track : tracks) {
@@ -158,19 +158,8 @@ public class AudioLoader implements Consumer<LoadResult> {
             }
 
             if (this.announce) {
-                final String sizeMsg;
-
-                if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
-                    sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
-                } else {
-                    sizeMsg = String.valueOf(tracks.size());
-                }
-
-                final String msg = String.format(
-                    "Adding **%s** tracks to the queue from **%s**",
-                    sizeMsg,
-                    playlistInfo.getName()
-                );
+                // TODO: find a way to fix up BigChungusPlaylist
+                final String msg = getPlaylistMsg(tracks, playlistInfo);
 
                 sendMsg(
                     new MessageConfig.Builder()
@@ -196,6 +185,22 @@ public class AudioLoader implements Consumer<LoadResult> {
         }
     }
 
+    private String getPlaylistMsg(List<Track> tracks, PlaylistInfo playlistInfo) {
+        final String sizeMsg = String.valueOf(tracks.size());
+
+        /*if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
+            sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
+        } else {
+            sizeMsg = String.valueOf(tracks.size());
+        }*/
+
+        return String.format(
+            "Adding **%s** tracks to the queue from **%s**",
+            sizeMsg,
+            playlistInfo.getName()
+        );
+    }
+
     private void searchLoaded(LoadResult.SearchResult searchResult) {
         // TODO: common method for handling playlists
     }
@@ -213,7 +218,7 @@ public class AudioLoader implements Consumer<LoadResult> {
     }
 
     private void loadFailed(Exception exception) {
-        if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
+        /*if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -225,13 +230,15 @@ public class AudioLoader implements Consumer<LoadResult> {
             );
 
             return;
-        }
+        }*/
 
         if (!this.announce) {
             return;
         }
 
-        if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
+        final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
+
+        if (finalCause.endsWith("Playback on other websites has been disabled by the video owner.")) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -245,18 +252,12 @@ public class AudioLoader implements Consumer<LoadResult> {
             return;
         }
 
-        @Nullable Throwable root = ExceptionUtils.getRootCause(exception);
-
-        if (root == null) {
-            root = exception;
-        }
-
         sendMsg(
             new MessageConfig.Builder()
                 .setChannel(this.data.getChannel())
                 .replyTo(this.data.getReplyToMessage())
                 .setEmbeds(
-                    embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+                    embedMessage("Could not play: " + StringKt.abbreviate(finalCause, MessageEmbed.VALUE_MAX_LENGTH)
                         + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!")
                 )
                 .build()
