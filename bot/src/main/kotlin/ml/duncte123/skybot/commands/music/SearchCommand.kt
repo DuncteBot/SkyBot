@@ -60,7 +60,7 @@ class SearchCommand : MusicCommand() {
         val searchLimit = if (isPatron) 20 else 5
 
         val toPlay = ctx.argsRaw
-        val res = ctx.audioUtils.searchYoutube(toPlay)
+        val res = ctx.audioUtils.searchYoutube(ctx.guildId, toPlay)
 
         if (res == null || res.tracks.isEmpty()) {
             sendMsg(ctx, "$SEARCH_EMOTE No results found.")

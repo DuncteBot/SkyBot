@@ -146,7 +146,6 @@ public class AirUtils {
     public static void stop(AudioUtils audioUtils) {
         stopMusic(audioUtils);
 
-        audioUtils.getPlayerManager().shutdown();
         LavalinkManager.INS.shutdown();
     }
 

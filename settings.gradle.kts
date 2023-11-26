@@ -91,9 +91,6 @@ fun VersionCatalogBuilder.database() {
 }
 
 fun VersionCatalogBuilder.voice() {
-    library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.5")
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.4.2")
     library("lavalink-client", "dev.arbjerg", "lavalink-client").version("0.0.1")
 }
 

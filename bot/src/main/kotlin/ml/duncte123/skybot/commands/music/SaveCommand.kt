@@ -19,9 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat
-import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand

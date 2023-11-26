@@ -50,8 +50,6 @@ dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-    implementation(libs.sourceManagers)
-    implementation(libs.lavaplayer)
     implementation(libs.lavalink.client) {
         exclude(module = "lavaplayer")
     }

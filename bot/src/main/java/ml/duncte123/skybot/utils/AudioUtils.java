@@ -18,28 +18,14 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.dunctebot.sourcemanagers.DuncteBotSources;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioItem;
-import com.sedmelluq.discord.lavaplayer.track.AudioReference;
-import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
+import dev.arbjerg.lavalink.protocol.v4.LoadResult;
+import dev.arbjerg.lavalink.protocol.v4.Playlist;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.AudioLoader;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.audio.sourcemanagers.DBAudioRef;
-import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.objects.AudioData;
-import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,44 +34,22 @@ import java.util.concurrent.Future;
 
 public class AudioUtils {
     // public static final String EMBED_TITLE = "AirPlayer";
-    private final TLongObjectMap<GuildMusicManager> musicManagers;
+    private final TLongObjectMap<GuildMusicManager> musicManagers = MapUtils.newLongObjectMap();
     private final Variables variables;
-    private final AudioPlayerManager playerManager;
-    private final YoutubeAudioSourceManager youtubeManager;
 
-    public AudioUtils(DunctebotConfig.Apis config, Variables variables) {
+    public AudioUtils(Variables variables) {
         this.variables = variables;
-        musicManagers = MapUtils.newLongObjectMap();
-
-        playerManager = new DefaultAudioPlayerManager();
-        //playerManager.enableGcMonitoring();
-
-//        this.youtubeManager = new YoutubeAudioSourceManagerOverride(config.googl);
-        this.youtubeManager = new YoutubeAudioSourceManager();
-
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(this.youtubeManager, config));
-        playerManager.registerSourceManager(this.youtubeManager);
-
-        DuncteBotSources.registerDuncteBot(playerManager, "en-AU", 6);
-
-        playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        playerManager.registerSourceManager(new BandcampAudioSourceManager());
-        playerManager.registerSourceManager(new VimeoAudioSourceManager());
-        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-        playerManager.registerSourceManager(new BeamAudioSourceManager());
-        playerManager.registerSourceManager(new HttpAudioSourceManager());
-    }
-
-    public AudioPlayerManager getPlayerManager() {
-        return this.playerManager;
     }
 
     @Nullable("If the playlist is not a basic audio playlist")
-    public BasicAudioPlaylist searchYoutube(String query) {
-        final AudioItem audioItem = this.youtubeManager.loadItem(null, new AudioReference("ytsearch:" + query, null));
+    public Playlist searchYoutube(long guildId, String query) {
+        final LoadResult result = LavalinkManager.INS.getLavalink()
+            .getLink(guildId)
+            .loadItem("ytsearch:" + query)
+            .block();
 
-        if (audioItem instanceof BasicAudioPlaylist playlist) {
-            return playlist;
+        if (result instanceof LoadResult.PlaylistLoaded playlist) {
+            return playlist.getData();
         }
 
         return null;

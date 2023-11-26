@@ -279,7 +279,6 @@ public class CommandManager {
         this.addCommand(new SkipCommand());
         this.addCommand(new SlowModeCommand());
         this.addCommand(new SoftbanCommand());
-        this.addCommand(new SPLookupCommand());
         this.addCommand(new StatsCommand());
         this.addCommand(new StopCommand());
         this.addCommand(new SuggestCommand());
