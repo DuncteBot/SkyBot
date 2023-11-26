@@ -31,6 +31,8 @@ import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -39,6 +41,7 @@ import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class AudioLoader implements Consumer<LoadResult> {
+    private static final Logger logger = LoggerFactory.getLogger(AudioLoader.class);
 
     private final AudioData data;
     private final long requester;
@@ -63,7 +66,15 @@ public class AudioLoader implements Consumer<LoadResult> {
         } else if (loadResult instanceof LoadResult.PlaylistLoaded playlistLoaded) {
             this.playlistLoaded(playlistLoaded);
         } else if (loadResult instanceof LoadResult.SearchResult searchResult) {
-            this.searchLoaded(searchResult);
+            logger.error("Search result not handled: {}", searchResult);
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(embedMessage("Error: Unhandled search result, please report this bug to the devs!"))
+                    .build()
+            );
+//            this.searchLoaded(searchResult);
         } else if (loadResult instanceof LoadResult.NoMatches) {
             this.noMatches();
         } else if (loadResult instanceof LoadResult.LoadFailed loadFailed) {
@@ -207,9 +218,9 @@ public class AudioLoader implements Consumer<LoadResult> {
         );
     }
 
-    private void searchLoaded(LoadResult.SearchResult searchResult) {
-        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
-    }
+//    private void searchLoaded(LoadResult.SearchResult searchResult) {
+//        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
+//    }
 
     private void noMatches() {
         if (this.announce) {
