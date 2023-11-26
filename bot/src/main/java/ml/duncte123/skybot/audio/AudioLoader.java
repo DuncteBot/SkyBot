@@ -41,7 +41,7 @@ import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class AudioLoader implements Consumer<LoadResult> {
-    private static final Logger logger = LoggerFactory.getLogger(AudioLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudioLoader.class);
 
     private final AudioData data;
     private final long requester;
@@ -66,7 +66,7 @@ public class AudioLoader implements Consumer<LoadResult> {
         } else if (loadResult instanceof LoadResult.PlaylistLoaded playlistLoaded) {
             this.playlistLoaded(playlistLoaded);
         } else if (loadResult instanceof LoadResult.SearchResult searchResult) {
-            logger.error("Search result not handled: {}", searchResult);
+            LOGGER.error("Search result not handled: {}", searchResult);
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
