@@ -171,7 +171,6 @@ public final class LavalinkManager {
 
     private void registerTrackStartEvent() {
         lavalink.on(TrackStartEvent.class).subscribe((data) -> {
-            System.out.println("Track start event: " + data);
             final var event = data.getEvent();
             final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);

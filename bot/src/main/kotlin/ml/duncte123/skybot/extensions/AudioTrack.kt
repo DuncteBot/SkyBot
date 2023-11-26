@@ -18,15 +18,11 @@
 
 package ml.duncte123.skybot.extensions
 
-import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
 import dev.arbjerg.lavalink.protocol.v4.Track
-import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.utils.MusicEmbedUtils.createPlayerString
-import ml.duncte123.skybot.utils.YoutubeUtils
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 
@@ -38,6 +34,7 @@ fun Track.toEmbed(
 ) {
     val userData: TrackUserData? = mng.scheduler.getUserData(this)
     var requester = "Unknown"
+    var voteSkipText = ""
 
     if (userData != null) {
         val userId = userData.requester
@@ -45,6 +42,10 @@ fun Track.toEmbed(
 
         if (user != null) {
             requester = user.asTag
+        }
+
+        if (!userData.votes.isEmpty) {
+            voteSkipText = "\n\n${userData.votes.size()} people voted to skip"
         }
     }
 
@@ -54,7 +55,7 @@ fun Track.toEmbed(
         callback(
             embedMessage(
                 """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-                |**Requester:** $requester
+                |**Requester:** $requester$voteSkipText
                 """.trimMargin()
             )
                 .setThumbnail(this.info.artworkUrl)
@@ -66,7 +67,7 @@ fun Track.toEmbed(
         callback(
             embedMessage(
                 """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-                |**Requester:** $requester${if (withPlayer) "\n" + playerState else ""}
+                |**Requester:** $requester${if (withPlayer) "\n" + playerState else ""}$voteSkipText
                 """.trimMargin()
             )
                 .setThumbnail(this.info.artworkUrl)

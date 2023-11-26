@@ -22,6 +22,8 @@ import dev.arbjerg.lavalink.protocol.v4.Exception;
 import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
 import dev.arbjerg.lavalink.protocol.v4.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
+import kotlinx.serialization.json.JsonObject;
+import kotlinx.serialization.json.JsonPrimitive;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
@@ -248,27 +250,29 @@ public class TrackScheduler {
             "Details: " + finalCause);
     }
 
-    // TODO: these use the identifier for now, we need to use something more unique
     public TrackUserData getUserData(Track track) {
-        return Objects.requireNonNull(
-            this.userData.get(track.getInfo().getIdentifier()),
-            "Somehow, userdata was null for " + track.getInfo()
-        );
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+
+        return this.userData.get(element.getContent());
     }
 
     public void storeUserData(Track track, TrackUserData data) {
-        this.userData.put(track.getInfo().getIdentifier(), data);
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+
+        this.userData.put(element.getContent(), data);
     }
 
     public void removeUserData(Track track) {
-        this.userData.remove(track.getInfo().getIdentifier());
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+
+        this.userData.remove(element.getContent());
     }
 
     private void play(Track track) {
         this.guildMusicManager.getPlayer()
             .getLink()
             .updatePlayer(
-                (builder) -> builder.setEncodedTrack(track.getEncoded())
+                (builder) -> builder.applyTrack(track)
             )
             .subscribe();
     }

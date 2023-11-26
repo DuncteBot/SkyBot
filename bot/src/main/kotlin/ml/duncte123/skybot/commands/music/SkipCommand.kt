@@ -80,9 +80,9 @@ class SkipCommand : MusicCommand() {
         }
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        val listeners = vc.members.filter {
+        val listeners = vc.members.count {
             !it.user.isBot && !(it.voiceState?.isDeafened ?: false)
-        }.count()
+        }
 
         val votes = trackData.votes
 

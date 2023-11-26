@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
-import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
+import dev.arbjerg.lavalink.LLClientInfo;
 import kotlin.KotlinVersion;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -68,7 +68,7 @@ public class BotinfoCommand extends Command {
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION +
-                "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
+                "\n**Lavalink-client version:** " + LLClientInfo.VERSION + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](" + PATREON + ").", false);

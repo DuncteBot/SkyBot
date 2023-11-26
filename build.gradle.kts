@@ -37,7 +37,8 @@ allprojects {
 
         maven("https://m2.dv8tion.net/releases")
         maven("https://m2.duncte123.dev/releases")
-        maven("https://maven.arbjerg.dev/releases")
+        maven("https://maven.lavalink.dev/releases")
+        maven("https://maven.lavalink.dev/snapshots")
         maven("https://repo.jenkins-ci.org/releases")
         maven("https://m2.duncte123.dev/snapshots")
         maven("https://jitpack.io")

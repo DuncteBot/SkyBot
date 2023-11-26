@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.audio;
 
-import dev.arbjerg.lavalink.protocol.v4.*;
 import dev.arbjerg.lavalink.protocol.v4.Exception;
+import dev.arbjerg.lavalink.protocol.v4.*;
+import kotlinx.serialization.json.JsonElementKt;
+import kotlinx.serialization.json.JsonObject;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -29,12 +31,8 @@ import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
@@ -74,7 +72,9 @@ public class AudioLoader implements Consumer<LoadResult> {
     }
 
     private void trackLoaded(LoadResult.TrackLoaded data) {
-        final Track track = data.getData();
+        final Track track = data.getData().copyWithUserData(new JsonObject(Map.of(
+            "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
+        )));
 
         mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
 
@@ -148,9 +148,14 @@ public class AudioLoader implements Consumer<LoadResult> {
                 tracksRaw = tracksRaw.subList(selectedTrackIndex, tracksRaw.size());
             }
 
-            final List<Track> tracks = tracksRaw.stream().peek((track) -> {
-                // don't store this externally since it will cause issues
+            final List<Track> tracks = tracksRaw.stream().map((track) -> {
+                track = track.copyWithUserData(new JsonObject(Map.of(
+                    "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
+                )));
+
                 mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
+
+                return track;
             }).toList();
 
             for (final Track track : tracks) {

@@ -19,7 +19,13 @@
 package ml.duncte123.skybot.audio
 
 import dev.arbjerg.lavalink.protocol.v4.Track
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import java.util.UUID
 
 fun Track.makeClone() = this.copy(
+    userData = JsonObject(mapOf(
+        "uuid" to JsonPrimitive(UUID.randomUUID().toString())
+    )),
     info = this.info.copy(position = 0L)
 )
