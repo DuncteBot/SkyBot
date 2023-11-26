@@ -22,20 +22,19 @@ import dev.arbjerg.lavalink.protocol.v4.Exception;
 import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
 import dev.arbjerg.lavalink.protocol.v4.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
-import kotlinx.serialization.json.JsonObject;
 import kotlinx.serialization.json.JsonPrimitive;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -49,7 +48,7 @@ public class TrackScheduler {
     // TODO: keep track of user-data per track (need something unique)
     public static final int MAX_QUEUE_SIZE = 100;
     private final Queue<Track> queue = new LinkedList<>();
-    private final Map<String, TrackUserData> userData = new HashMap<>();
+    private final Map<String, TrackUserData> userData = new ConcurrentHashMap<>();
 
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
@@ -233,11 +232,12 @@ public class TrackScheduler {
 
     public void onTrackException(Track track, Exception exception) {
         final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
-        final TrackInfo info = track.getInfo();
 
         if (finalCause.contains("Something went wrong when decoding the track.")) {
             return;
         }
+
+        final TrackInfo info = track.getInfo();
 
         if (finalCause.contains("age-restricted")) {
             this.messageDebouncer.accept("Cannot play `" + info.getTitle() + "` because it is age-restricted");

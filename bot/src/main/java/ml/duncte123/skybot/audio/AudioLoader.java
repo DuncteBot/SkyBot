@@ -122,9 +122,10 @@ public class AudioLoader implements Consumer<LoadResult> {
     }
 
     private void playlistLoaded(LoadResult.PlaylistLoaded playlistLoaded) {
-        Playlist playlist = playlistLoaded.getData();
+        final Playlist playlist = playlistLoaded.getData();
+        final List<Track> tracks = playlist.getTracks();
 
-        if (playlist.getTracks().isEmpty()) {
+        if (tracks.isEmpty()) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -141,14 +142,14 @@ public class AudioLoader implements Consumer<LoadResult> {
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
 
-            List<Track> tracksRaw = playlist.getTracks();
+            List<Track> tracksRaw = tracks;
             final int selectedTrackIndex = playlistInfo.getSelectedTrack();
 
             if (selectedTrackIndex > -1) {
                 tracksRaw = tracksRaw.subList(selectedTrackIndex, tracksRaw.size());
             }
 
-            final List<Track> tracks = tracksRaw.stream().map((track) -> {
+            final List<Track> limitedTracks = tracksRaw.stream().map((track) -> {
                 track = track.copyWithUserData(new JsonObject(Map.of(
                     "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
                 )));
@@ -158,7 +159,7 @@ public class AudioLoader implements Consumer<LoadResult> {
                 return track;
             }).toList();
 
-            for (final Track track : tracks) {
+            for (final Track track : limitedTracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
             }
 
@@ -207,7 +208,7 @@ public class AudioLoader implements Consumer<LoadResult> {
     }
 
     private void searchLoaded(LoadResult.SearchResult searchResult) {
-        // TODO: common method for handling playlists
+        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
     }
 
     private void noMatches() {

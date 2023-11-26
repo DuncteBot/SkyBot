@@ -29,7 +29,7 @@ plugins {
 
     kotlin("jvm")
     id("org.liquibase.gradle")
-    // id("org.jmailen.kotlinter")
+//    id("org.jmailen.kotlinter")
     id("com.github.johnrengelman.shadow")
     id("com.github.breadmoirai.github-release")
 }

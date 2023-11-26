@@ -78,4 +78,8 @@ public class GuildMusicManager {
     public LocalPlayer getPlayer() {
         return this.player;
     }
+
+    public long getGuildId() {
+        return guildId;
+    }
 }
