@@ -128,7 +128,7 @@ public class TrackScheduler {
     public void onTrackStart(Track track) {
         final TrackUserData data = getUserData(track);
 
-        if ((data != null && data.getForceAnnounce()) || this.guildMusicManager.isAnnounceTracks()) {
+        if (data != null && data.getForceAnnounce() || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
             if (data != null) {
                 data.setForceAnnounce(false);
