@@ -19,12 +19,24 @@
 package ml.duncte123.skybot.extensions
 
 import dev.arbjerg.lavalink.protocol.v4.Track
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.utils.MusicEmbedUtils.createPlayerString
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
+import java.util.*
+
+fun Track.makeClone() = this.copy(
+    userData = JsonObject(
+        mapOf(
+            "uuid" to JsonPrimitive(UUID.randomUUID().toString())
+        )
+    ),
+    info = this.info.copy(position = 0L)
+)
 
 fun Track.toEmbed(
     mng: GuildMusicManager,

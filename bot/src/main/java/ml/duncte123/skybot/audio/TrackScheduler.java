@@ -172,7 +172,7 @@ public class TrackScheduler {
         if (this.looping) {
             LOGGER.debug("repeating the current song");
 
-            final Track clone = TrackUtilsKt.makeClone(lastTrack);
+            final Track clone = AudioTrackKt.makeClone(lastTrack);
             storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
             this.play(clone);
 
@@ -180,7 +180,7 @@ public class TrackScheduler {
         } else if (this.loopingQueue) {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
-            final Track clone = TrackUtilsKt.makeClone(lastTrack);
+            final Track clone = AudioTrackKt.makeClone(lastTrack);
             storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
             queue.offer(clone);
         }

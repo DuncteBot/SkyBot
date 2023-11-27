@@ -21,8 +21,8 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.audio.makeClone
 import ml.duncte123.skybot.exceptions.LimitReachedException
+import ml.duncte123.skybot.extensions.makeClone
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron

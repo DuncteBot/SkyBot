@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.managers.AudioManager;
-import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
@@ -86,14 +85,6 @@ public final class LavalinkManager {
         return this.enabledOverride && config.lavalink.enable;
     }
 
-    public Mono<LavalinkPlayer> createPlayer(long guildId) {
-        if (!isEnabled()) {
-            throw new IllegalStateException("Music is not enabled right now");
-        }
-
-        return lavalink.getLink(guildId).getPlayer();
-    }
-
     public void openConnection(AudioChannel channel) {
         if (isEnabled()) {
             final AudioManager audioManager = channel.getGuild().getAudioManager();
@@ -109,11 +100,6 @@ public final class LavalinkManager {
         if (isEnabled()) {
             guild.getJDA().getDirectAudioController().disconnect(guild);
         }
-    }
-
-    @Deprecated
-    public void closeConnection(String guildId) {
-        throw new UnsupportedOperationException();
     }
 
     public boolean isConnected(Guild guild) {
