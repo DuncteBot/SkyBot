@@ -24,8 +24,10 @@ import kotlinx.serialization.json.JsonPrimitive
 import java.util.UUID
 
 fun Track.makeClone() = this.copy(
-    userData = JsonObject(mapOf(
-        "uuid" to JsonPrimitive(UUID.randomUUID().toString())
-    )),
+    userData = JsonObject(
+        mapOf(
+            "uuid" to JsonPrimitive(UUID.randomUUID().toString())
+        )
+    ),
     info = this.info.copy(position = 0L)
 )

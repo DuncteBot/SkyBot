@@ -23,7 +23,6 @@ import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class MeguminCommand : WeebCommandBase() {
-
     init {
         this.name = "megumin"
         this.help = "EXPLOSION!!!!!"

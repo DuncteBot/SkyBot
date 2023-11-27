@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class DanceCommand : WeebCommandBase() {
-
     init {
         this.name = "dance"
         this.help = "Do a little dance"

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class LewdNekoCommand : Command() {
-
     init {
         this.category = CommandCategory.NSFW
         this.name = "lewdneko"

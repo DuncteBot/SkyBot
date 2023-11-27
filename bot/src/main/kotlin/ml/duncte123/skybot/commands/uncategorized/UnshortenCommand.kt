@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 
 class UnshortenCommand : Command() {
-
     init {
         this.name = "unshorten"
         this.help = "Gets the long url from a shortened url"

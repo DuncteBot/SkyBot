@@ -16,29 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
-import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import ml.duncte123.skybot.objects.CooldownScope
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import java.util.concurrent.TimeUnit
+import ml.duncte123.skybot.utils.EarthUtils.sendYoungestOldesetEmbed
 
-class CoinCommand : Command() {
-
-    private val imagesArr = arrayOf("heads.png", "tails.png")
-
+class OldestCommand : Command() {
     init {
         this.category = CommandCategory.FUN
-        this.name = "coin"
-        this.aliases = arrayOf("coinflip", "cf", "flip")
-        this.help = "Flips a coin"
+        this.name = "oldest"
+        this.help = "Shows the oldest member in the server"
+        this.cooldown = 10
+        this.cooldownScope = CooldownScope.GUILD
+        this.cooldownKey = { _, _ -> "youngest|oldest" }
     }
 
     override fun execute(ctx: CommandContext) {
-        ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
-            sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
-        }
+        sendYoungestOldesetEmbed(ctx, true)
     }
 }

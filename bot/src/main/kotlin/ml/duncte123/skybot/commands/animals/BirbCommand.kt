@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class BirbCommand : Command() {
-
     init {
         this.category = CommandCategory.ANIMALS
         this.name = "bird"

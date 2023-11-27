@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 import ml.duncte123.skybot.utils.CommandUtils.isDev
 
 class ShortenCommand : Command() {
-
     init {
         this.requiresArgs = true
         this.name = "shorten"

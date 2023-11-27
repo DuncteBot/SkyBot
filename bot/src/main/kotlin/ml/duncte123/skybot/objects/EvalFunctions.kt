@@ -38,13 +38,6 @@ object EvalFunctions {
         return number % 2 == 0
     }
 
-    @Suppress("UnnecessaryVariable", "LocalVariableName")
-    @JvmStatic
-    fun quick_mafs(x: Int): Int {
-        val the_thing = x + 2 - 1
-        return the_thing
-    }
-
     @JvmStatic
     fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
         val embed = EmbedUtils.getDefaultEmbed()

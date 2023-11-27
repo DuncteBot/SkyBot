@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class InviteCommand : Command() {
-
     init {
         this.name = "invite"
         this.help = "Gives you the bot invite link"

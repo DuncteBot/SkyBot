@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import com.fasterxml.jackson.databind.JsonNode
 import me.duncte123.botcommons.messaging.EmbedUtils
@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
 class FakeWordCommand : SlashSupport() {
-
     init {
         this.category = CommandCategory.FUN
         this.name = "fakeword"

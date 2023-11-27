@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class NowPlayingCommand : MusicCommand() {
-
     init {
         this.name = "nowplaying"
         this.aliases = arrayOf("np", "song")

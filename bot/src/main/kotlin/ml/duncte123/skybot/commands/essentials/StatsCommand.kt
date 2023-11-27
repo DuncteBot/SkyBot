@@ -33,7 +33,6 @@ import java.text.DecimalFormat
 import kotlin.math.floor
 
 class StatsCommand : Command() {
-
     init {
         this.category = CommandCategory.UTILS
         this.name = "stats"

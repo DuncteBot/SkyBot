@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 
 class PatreonCheckCommand : Command() {
-
     init {
         this.category = CommandCategory.UNLISTED
         this.name = "patroncheck"

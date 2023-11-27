@@ -31,7 +31,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class VolumeCommand : MusicCommand() {
-
     init {
         this.name = "volume"
         this.help = "Sets the volume on the music player"

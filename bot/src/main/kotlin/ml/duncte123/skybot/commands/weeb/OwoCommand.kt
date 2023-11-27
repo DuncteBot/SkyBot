@@ -23,7 +23,6 @@ import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class OwoCommand : WeebCommandBase() {
-
     init {
         this.name = "owo"
         this.help = "OwO what's this"

@@ -83,7 +83,7 @@ class EmoteCommand : SlashSupport() {
             |**Id:** $id
             |**Markdown:** `$markdownStr`
             |**Url:** $url
-        """.trimMargin()
+            """.trimMargin()
     }
 
     private fun normalEmoteMentioned(variables: Variables, emote: String) = buildString {
@@ -126,8 +126,11 @@ class EmoteCommand : SlashSupport() {
     }
 
     private fun Int.toHex() = Integer.toHexString(this).uppercase()
+
     private fun Int.getName() = Character.getName(this)
+
     private fun Char.toHex() = this.code.toHex()
+
     private fun String.ensureFourHex() = "0000$this".substring(this.length.coerceAtMost(4))
 
     override fun configureSlashSupport(baseData: SlashCommandData) {

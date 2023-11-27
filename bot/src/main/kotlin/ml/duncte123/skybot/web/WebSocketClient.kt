@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
 
 class WebSocketClient(
     private val variables: Variables,
-    private val shardManager: ShardManager
+    private val shardManager: ShardManager,
 ) : WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
     private val executor = Executors.newSingleThreadExecutor {
@@ -92,7 +92,7 @@ class WebSocketClient(
         websocket: WebSocket,
         serverCloseFrame: WebSocketFrame?,
         clientCloseFrame: WebSocketFrame?,
-        closedByServer: Boolean
+        closedByServer: Boolean,
     ) {
         if (closedByServer && serverCloseFrame != null) {
             val reason = serverCloseFrame.closeReason ?: "<no reason given>"

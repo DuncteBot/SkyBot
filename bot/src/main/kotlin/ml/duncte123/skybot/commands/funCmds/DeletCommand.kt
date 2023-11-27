@@ -16,25 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.weeb
+package ml.duncte123.skybot.commands.funCmds
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.weebJava.configs.ImageConfig
+import ml.duncte123.skybot.commands.weeb.WeebCommandBase
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class ShrugCommand : WeebCommandBase() {
+class DeletCommand : WeebCommandBase() {
     init {
-        this.name = "shrug"
-        this.help = "¯\\\\_(ツ)\\_/¯"
+        this.displayAliasesInHelp = false
+        this.category = CommandCategory.FUN
+        this.name = "delet"
+        this.aliases = arrayOf("deletthis", "deletethis")
+        this.help = "Delet this"
     }
 
     override fun execute(ctx: CommandContext) {
-        sendEmbed(
-            ctx,
-            getWeebEmbedImageAndDesc(
-                "${ctx.member!!.asMention} shrugs",
-                ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("shrug").build()).execute().url
-            )
-        )
+        // delet_this
+        ctx.weebApi.getRandomImage(
+            ImageConfig.Builder()
+                .setType("delet_this")
+                .build()
+        ).async { sendEmbed(ctx, getWeebEmbedImage(it.url)) }
     }
 }

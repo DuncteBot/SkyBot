@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.Settings.YES_STATIC
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.audio.GuildMusicManager
-import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.entities.Guild
@@ -32,7 +31,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import kotlin.math.ceil
 
 class SkipCommand : MusicCommand() {
-
     init {
         this.name = "skip"
         this.aliases = arrayOf("next", "nexttrack", "skiptrack")

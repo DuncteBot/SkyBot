@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.exceptions.PermissionException
 
 class JoinCommand : MusicCommand() {
-
     init {
         this.justRunLmao = true
 

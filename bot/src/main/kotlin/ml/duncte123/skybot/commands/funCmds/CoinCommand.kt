@@ -16,25 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
+import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.configs.ImageConfig
-import ml.duncte123.skybot.commands.weeb.WeebCommandBase
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import java.util.concurrent.TimeUnit
 
-class EveryoneCommand : WeebCommandBase() {
+class CoinCommand : Command() {
+    private val imagesArr = arrayOf("heads.png", "tails.png")
 
     init {
         this.category = CommandCategory.FUN
-        this.name = "everyone"
-        this.help = "Useful for when everyone is being pinged again"
+        this.name = "coin"
+        this.aliases = arrayOf("coinflip", "cf", "flip")
+        this.help = "Flips a coin"
     }
 
     override fun execute(ctx: CommandContext) {
-        ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("everyone")).build()).async {
-            sendEmbed(ctx, getWeebEmbedImage(it.url))
+        ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
+            sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
         }
     }
 }

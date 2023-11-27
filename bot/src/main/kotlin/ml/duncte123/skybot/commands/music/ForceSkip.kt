@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class ForceSkip : MusicCommand() {
-
     init {
         this.name = "forceskip"
         this.aliases = arrayOf("modskip")

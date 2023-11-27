@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 class SearchCommand : MusicCommand() {
-
     init {
         this.mayAutoJoin = true
         this.name = "search"
@@ -91,7 +90,8 @@ class SearchCommand : MusicCommand() {
             menu.addOption(
                 "${index + 1}) ${title.substring(0, min(title.length, 20)).trim()}",
                 track.info.identifier,
-                title.substring(0, min(title.length, 50)).trim() // TODO: full title or url?
+                // TODO: full title or url?
+                title.substring(0, min(title.length, 50)).trim()
             )
         }
 

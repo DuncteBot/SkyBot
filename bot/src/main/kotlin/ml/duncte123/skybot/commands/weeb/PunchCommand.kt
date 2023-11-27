@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class PunchCommand : WeebCommandBase() {
-
     init {
         this.name = "punch"
         this.help = "Punch someone in their face"

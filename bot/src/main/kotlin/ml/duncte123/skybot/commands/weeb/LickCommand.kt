@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class LickCommand : WeebCommandBase() {
-
     init {
         this.name = "lick"
         this.help = "Lick someone"

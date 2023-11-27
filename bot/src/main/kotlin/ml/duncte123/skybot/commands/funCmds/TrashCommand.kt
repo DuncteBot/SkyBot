@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand
@@ -24,7 +24,6 @@ import ml.duncte123.skybot.extensions.getStaticAvatarUrl
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class TrashCommand : NoPatronImageCommand() {
-
     init {
         this.requiresArgs = true
         this.name = "trash"

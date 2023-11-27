@@ -27,7 +27,7 @@ import ml.duncte123.skybot.commands.admin.VcAutoRoleCommand;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.*;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
-import ml.duncte123.skybot.commands.fun.*;
+import ml.duncte123.skybot.commands.funCmds.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.GuildJoinsCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;

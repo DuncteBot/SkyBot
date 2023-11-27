@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.weebJava.configs.ImageConfig
@@ -24,21 +24,16 @@ import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class DeletCommand : WeebCommandBase() {
+class EveryoneCommand : WeebCommandBase() {
     init {
-        this.displayAliasesInHelp = false
         this.category = CommandCategory.FUN
-        this.name = "delet"
-        this.aliases = arrayOf("deletthis", "deletethis")
-        this.help = "Delet this"
+        this.name = "everyone"
+        this.help = "Useful for when everyone is being pinged again"
     }
 
     override fun execute(ctx: CommandContext) {
-        // delet_this
-        ctx.weebApi.getRandomImage(
-            ImageConfig.Builder()
-                .setType("delet_this")
-                .build()
-        ).async { sendEmbed(ctx, getWeebEmbedImage(it.url)) }
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("everyone")).build()).async {
+            sendEmbed(ctx, getWeebEmbedImage(it.url))
+        }
     }
 }

@@ -30,7 +30,7 @@ fun Track.toEmbed(
     mng: GuildMusicManager,
     shardManager: ShardManager,
     withPlayer: Boolean = true,
-    callback: (EmbedBuilder) -> Unit
+    callback: (EmbedBuilder) -> Unit,
 ) {
     val userData: TrackUserData? = mng.scheduler.getUserData(this)
     var requester = "Unknown"

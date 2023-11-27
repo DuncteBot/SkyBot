@@ -28,7 +28,6 @@ import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.utils.TimeFormat
 
 class RemindersCommand : Command() {
-
     init {
         this.name = "reminders"
         this.aliases = arrayOf("remindmanager", "reminder")

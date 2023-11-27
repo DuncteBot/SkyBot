@@ -42,7 +42,8 @@ import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
 class UserinfoCommand : Command() {
-    private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")**"
+    private val nitroUserLink = "**[Nitro User:](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 " +
+        "\"Click for more info on the nitro user check\")**"
 
     init {
         this.name = "userinfo"

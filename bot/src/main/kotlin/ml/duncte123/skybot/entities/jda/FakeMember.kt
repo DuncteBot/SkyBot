@@ -137,6 +137,7 @@ class FakeMember(private val name: String) : Member {
     }
 
     override fun hasTimeJoined() = false
+
     override fun isPending() = false
 
     override fun canSync(targetChannel: IPermissionContainer, syncSource: IPermissionContainer) = false

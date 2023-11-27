@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.utils.FileUpload
 import java.time.ZonedDateTime
 
 class SaveCommand : MusicCommand() {
-
     init {
         this.name = "save"
         this.help = "Saves a playlist into a file with can be loaded with `{prefix}load`"

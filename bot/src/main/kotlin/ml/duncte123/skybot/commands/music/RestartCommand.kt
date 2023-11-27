@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class RestartCommand : MusicCommand() {
-
     init {
         this.name = "restart"
         this.help = "Start the current track from the beginning"

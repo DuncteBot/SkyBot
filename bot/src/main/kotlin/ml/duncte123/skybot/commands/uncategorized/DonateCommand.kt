@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class DonateCommand : Command() {
-
     init {
         this.name = "donate"
         this.help = "Help to keep the bot online by donating"

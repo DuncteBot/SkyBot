@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class StopCommand : MusicCommand() {
-
     init {
         this.name = "stop"
         this.help = "Stops the music"
@@ -47,7 +46,11 @@ class StopCommand : MusicCommand() {
 
         val trackData: TrackUserData = scheduler.getUserData(track)
 
-        if (ctx.guild.settings.isAllowAllToStop || trackData.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+        if (
+            ctx.guild.settings.isAllowAllToStop ||
+            trackData.requester == ctx.author.idLong ||
+            ctx.member.hasPermission(Permission.MANAGE_SERVER)
+        ) {
             mng.scheduler.queue.clear()
             player.stopPlayback()
 
@@ -78,7 +81,11 @@ class StopCommand : MusicCommand() {
         val trackData: TrackUserData = scheduler.getUserData(track)
         val dbg = DunctebotGuild(event.guild!!, variables)
 
-        if (dbg.settings.isAllowAllToStop || trackData.requester == event.user.idLong || event.member!!.hasPermission(Permission.MANAGE_SERVER)) {
+        if (
+            dbg.settings.isAllowAllToStop ||
+            trackData.requester == event.user.idLong ||
+            event.member!!.hasPermission(Permission.MANAGE_SERVER)
+        ) {
             mng.scheduler.queue.clear()
             player.stopPlayback()
 

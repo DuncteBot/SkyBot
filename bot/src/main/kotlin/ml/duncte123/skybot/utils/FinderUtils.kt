@@ -211,7 +211,11 @@ object FinderUtils {
                     .queue(
                         { retrieveFuture.complete(listOf(it)) },
                         {
-                            if (it is ErrorResponseException && it.errorResponse != ErrorResponse.UNKNOWN_USER && it.errorResponse != ErrorResponse.UNKNOWN_MEMBER) {
+                            if (
+                                it is ErrorResponseException &&
+                                it.errorResponse != ErrorResponse.UNKNOWN_USER &&
+                                it.errorResponse != ErrorResponse.UNKNOWN_MEMBER
+                            ) {
                                 // only log if it's not unknown user/member
                                 logger.error("Failed to retrieve member by id", it)
                             }

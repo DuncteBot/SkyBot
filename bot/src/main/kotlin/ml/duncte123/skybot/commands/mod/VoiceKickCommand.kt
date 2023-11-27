@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
 
 class VoiceKickCommand : ModBaseCommand() {
-
     init {
         this.requiresArgs = true
         this.name = "voicekick"

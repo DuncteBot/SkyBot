@@ -29,7 +29,6 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 class RolesCommand : Command() {
-
     init {
         this.name = "roles"
         this.help = "Returns a list of roles on the server"

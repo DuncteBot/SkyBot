@@ -1,9 +1,0 @@
-[*.{kt,kts}]
-# ktlint_code_style = ktlint_official
-ktlint_standard = enabled # Disable all rules from the `standard` rule set provided by KtLint
-ktlint_experimental = disabled # Enable all `experimental` rules from all rule sets provided by KtLint or other rule providers
-ktlint_custom-rule-set = disabled # Enable all rules in the `custom-rule-set` rule set (not provided by KtLint)
-klint_standard_no-wildcard-imports = disabled
-klint_standard_function-signature = disabled
-klint_standard_trailing-comma-on-call-site = disabled
-klint_standard_multiline-expression-wrapping = disabled

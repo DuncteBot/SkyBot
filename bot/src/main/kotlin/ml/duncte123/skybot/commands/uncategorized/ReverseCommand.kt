@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class ReverseCommand : Command() {
-
     init {
         this.name = "reverse"
         this.help = "Reverses a string"

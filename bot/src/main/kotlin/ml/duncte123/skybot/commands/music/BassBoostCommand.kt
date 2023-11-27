@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class BassBoostCommand : MusicCommand() {
-
     init {
         this.name = "bassboost"
         this.aliases = arrayOf("bb", "baseboost")
@@ -87,9 +86,11 @@ class BassBoostCommand : MusicCommand() {
             bands.add(Band(i, gain))
         }
 
-        player.setFilters(Filters(
-            equalizer = bands.toOmissible()
-        ))
+        player.setFilters(
+            Filters(
+                equalizer = bands.toOmissible()
+            )
+        )
     }
 
     override fun getSubData(): SubcommandData {

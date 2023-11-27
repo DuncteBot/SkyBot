@@ -33,7 +33,6 @@ import java.util.*
 import kotlin.math.min
 
 class QueueCommand : MusicCommand() {
-
     init {
         this.name = "queue"
         this.aliases = arrayOf("list", "q")

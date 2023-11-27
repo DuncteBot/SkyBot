@@ -38,7 +38,6 @@ import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 import java.util.concurrent.TimeUnit
 
 class WarnCommand : ModBaseCommand() {
-
     init {
         this.requiresArgs = true
         this.name = "warn"
@@ -155,7 +154,12 @@ class WarnCommand : ModBaseCommand() {
         if ((action.type == WarnAction.Type.MUTE || action.type == WarnAction.Type.TEMP_MUTE) &&
             !muteRoleCheck(guild)
         ) {
-            modLog("[warn actions] Failed to apply automatic mute `${targetUser.asTag}` as there is no mute role set in the settings of this server", guild)
+            modLog(
+                "[warn actions] Failed to apply automatic mute `${
+                    targetUser.asTag
+                }` as there is no mute role set in the settings of this server",
+                guild
+            )
             return
         }
 
@@ -211,7 +215,12 @@ class WarnCommand : ModBaseCommand() {
         val role = guild.getRoleById(roleId)
 
         if (role == null) {
-            modLog("[warn actions] Failed to apply automatic mute `${target.user.asTag}` as I could not find the role that is specified in the settings", guild)
+            modLog(
+                "[warn actions] Failed to apply automatic mute `${
+                    target.user.asTag
+                }` as I could not find the role that is specified in the settings",
+                guild
+            )
             return
         }
 

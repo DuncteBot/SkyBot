@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import java.util.stream.Collectors
 
 class VcAutoRoleCommand : ModBaseCommand() {
-
     init {
         this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
