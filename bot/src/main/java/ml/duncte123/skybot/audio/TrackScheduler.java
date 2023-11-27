@@ -99,11 +99,11 @@ public class TrackScheduler {
         this.skipTrack(true);
     }
 
-    private void skipTrack(boolean wasFromSkip) {
-        skipTracks(1, wasFromSkip);
+    private void skipTrack(boolean forceAnnounce) {
+        skipTracks(1, forceAnnounce);
     }
 
-    public void skipTracks(int count, boolean wasFromSkip) {
+    public void skipTracks(int count, boolean forceAnnounce) {
         Track nextTrack = null;
 
         for (int i = 0; i < count; i++) {
@@ -119,7 +119,7 @@ public class TrackScheduler {
             );
         } else {
             // Make sure to cary over the skip state, we want to announce skipped tracks
-            getUserData(nextTrack).setWasFromSkip(wasFromSkip);
+            getUserData(nextTrack).setForceAnnounce(forceAnnounce);
 
             this.play(nextTrack);
         }
@@ -128,12 +128,10 @@ public class TrackScheduler {
     public void onTrackStart(Track track) {
         final TrackUserData data = getUserData(track);
 
-        // TODO: do I still need "wasFromSkip" status tracking?
-        // If the track was a skipped track, or we announce tracks
-        if (data != null && data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
+        if ((data != null && data.getForceAnnounce()) || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
             if (data != null) {
-                data.setWasFromSkip(false);
+                data.setForceAnnounce(false);
             }
 
             AudioTrackKt.toEmbed(
@@ -164,13 +162,13 @@ public class TrackScheduler {
 
         // Get if the track was from a skip event
         final TrackUserData userData = getUserData(lastTrack);
-        final boolean wasFromSkip = userData.getWasFromSkip();
+        final boolean wasForceAnnounce = userData.getForceAnnounce();
 
         if (this.looping) {
             LOGGER.debug("repeating the current song");
 
             final Track clone = AudioTrackKt.makeClone(lastTrack);
-            storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
+            storeUserData(clone, createNewTrackData(lastTrack, wasForceAnnounce));
             this.play(clone);
 
             return;
@@ -178,7 +176,7 @@ public class TrackScheduler {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
             final Track clone = AudioTrackKt.makeClone(lastTrack);
-            storeUserData(clone, createNewTrackData(lastTrack, wasFromSkip));
+            storeUserData(clone, createNewTrackData(lastTrack, wasForceAnnounce));
             queue.offer(clone);
         }
 
@@ -187,7 +185,7 @@ public class TrackScheduler {
 
         LOGGER.debug("can start next track");
 
-        skipTrack(wasFromSkip);
+        skipTrack(wasForceAnnounce);
     }
 
     public boolean isLooping() {
@@ -210,7 +208,7 @@ public class TrackScheduler {
         Collections.shuffle((List<?>) queue);
     }
 
-    private TrackUserData createNewTrackData(Track track, boolean wasFromSkip) {
+    private TrackUserData createNewTrackData(Track track, boolean wasForceAnnounce) {
         final TrackUserData oldData = getUserData(track);
         final TrackUserData newData;
 
@@ -222,7 +220,7 @@ public class TrackScheduler {
         }
 
         // Set the was from skip status on the track
-        newData.setWasFromSkip(wasFromSkip);
+        newData.setForceAnnounce(wasForceAnnounce);
 
         return newData;
     }

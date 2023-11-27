@@ -23,5 +23,5 @@ import gnu.trove.list.array.TLongArrayList
 
 data class TrackUserData(val requester: Long) {
     val votes: TLongList = TLongArrayList()
-    var wasFromSkip: Boolean = false
+    var forceAnnounce: Boolean = false
 }
