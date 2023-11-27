@@ -42,10 +42,7 @@ import static ml.duncte123.skybot.SkyBot.getInstance;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
-// TODO: player events
 public class TrackScheduler {
-
-    // TODO: keep track of user-data per track (need something unique)
     public static final int MAX_QUEUE_SIZE = 100;
     private final Queue<Track> queue = new LinkedList<>();
     private final Map<String, TrackUserData> userData = new ConcurrentHashMap<>();

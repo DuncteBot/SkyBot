@@ -108,7 +108,6 @@ public class ReadyShutdownListener extends MessageListener {
         }
     }
 
-    // TODO: get access to JDA, somehow
     private void onShutdown() {
         if (!arePoolsRunning.get()) {
             return;

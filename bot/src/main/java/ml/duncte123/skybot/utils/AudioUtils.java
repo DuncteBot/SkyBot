@@ -34,7 +34,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class AudioUtils {
-    // public static final String EMBED_TITLE = "AirPlayer";
     private final TLongObjectMap<GuildMusicManager> musicManagers = MapUtils.newLongObjectMap();
     private final Variables variables;
 
@@ -71,7 +70,6 @@ public class AudioUtils {
 
         final GuildMusicManager mng = getMusicManager(data.getGuildId());
         final AudioLoader loader = new AudioLoader(data, mng, announce, trackUrl, isPatron);
-//        final DBAudioRef reference = new DBAudioRef(trackUrl, null, isPatron);
         final CompletableFuture<Void> future = new CompletableFuture<>();
 
         LavalinkManager.INS.getLavalink()
