@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
@@ -52,6 +53,9 @@ class ChatCommand : Command() {
         "In this server my prefix is *`{PREFIX}`*"
     )
 
+    // The size should match the usage for stability but not more than 4.
+    private val cleanupService = Executors.newSingleThreadScheduledExecutor()
+
     init {
         this.category = CommandCategory.FUN
         this.name = "chat"
@@ -62,7 +66,7 @@ class ChatCommand : Command() {
             Permission.MESSAGE_HISTORY
         )
 
-        SERVICE.scheduleAtFixedRate(
+        cleanupService.scheduleAtFixedRate(
             {
                 val temp = TLongObjectHashMap(sessions)
                 val now = Date()

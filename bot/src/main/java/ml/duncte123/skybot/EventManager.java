@@ -48,12 +48,9 @@ public class EventManager implements IEventManager {
     private final InviteTrackingListener inviteTracker;
     private final List<EventListener> listeners = new ArrayList<>();
 
-    private final ExecutorService eventExecutor = Executors.newSingleThreadExecutor((r) -> {
-        final Thread thread = new Thread(r, "Dunctebot-Event-Thread");
-        thread.setDaemon(true);
-
-        return thread;
-    });
+    private final ExecutorService eventExecutor = Executors.newThreadPerTaskExecutor(
+        (r) -> Thread.ofVirtual().name("Dunctebot-Event-Thread").start(r)
+    );
 
     /* package */ EventManager(Variables variables) {
         final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);

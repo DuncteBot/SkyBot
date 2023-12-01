@@ -103,11 +103,9 @@ public class CommandManager {
         thread.setDaemon(true);
         return thread;
     });
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
-        final Thread thread = new Thread(r, "Command-execute-thread");
-        thread.setDaemon(true);
-        return thread;
-    });
+    private final ExecutorService commandThread = Executors.newThreadPerTaskExecutor(
+        (r) -> Thread.ofVirtual().name("Command-execute-thread").start(r)
+    );
     private final Map<String, ICommand<CommandContext>> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();

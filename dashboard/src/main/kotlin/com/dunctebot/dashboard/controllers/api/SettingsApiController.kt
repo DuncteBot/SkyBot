@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.utils.TimeUtil.DISCORD_EPOCH
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 
-private val executor = Executors.newSingleThreadExecutor()
+private val executor = Executors.newVirtualThreadPerTaskExecutor()
 
 fun getSettings(ctx: Context) {
     val future = CompletableFuture.supplyAsync({

@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock
 class DataUpdateHandler(private val variables: Variables, client: WebSocketClient) : SocketHandler(client) {
     private val jackson = variables.jackson
     private val updateLock = ReentrantLock()
-    private val thread = Executors.newSingleThreadExecutor()
+    private val thread = Executors.newVirtualThreadPerTaskExecutor()
 
     override fun handleInternally(data: JsonNode) {
         // swallow the update if locked

@@ -21,22 +21,18 @@ package ml.duncte123.skybot.database
 import com.dunctebot.models.settings.GuildSetting
 import com.dunctebot.models.settings.WarnAction
 import io.sentry.Sentry
+import jdk.internal.vm.ThreadContainer
 import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.ZonedDateTime
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, Int) -> Unit) : AutoCloseable {
-    private val databaseThread = Executors.newFixedThreadPool(threads) {
-        val t = Thread(it, "DatabaseThread")
-        t.isDaemon = true
-        t
-    } as ThreadPoolExecutor
+    private val databaseThread = Executors.newThreadPerTaskExecutor{
+        Thread.ofVirtual().name("DatabaseThread").start(it)
+    } as ThreadContainer
     private val databaseKiller = Executors.newScheduledThreadPool(threads) {
         val t = Thread(it, "Database-kill-Thread")
         t.isDaemon = true

@@ -40,10 +40,10 @@ class WebSocketClient(
     private val shardManager: ShardManager,
 ) : WebSocketAdapter(), WebSocketListener {
     private val log = LoggerFactory.getLogger(WebSocketClient::class.java)
-    private val executor = Executors.newSingleThreadExecutor {
-        val t = Thread(it, "DB-SendThread")
-        t.isDaemon = true
-        return@newSingleThreadExecutor t
+    private val executor = Executors.newThreadPerTaskExecutor {
+        Thread.ofVirtual()
+            .name("DB-SendThread")
+            .start(it)
     }
 
     private val reconnectThread = Executors.newSingleThreadScheduledExecutor {
