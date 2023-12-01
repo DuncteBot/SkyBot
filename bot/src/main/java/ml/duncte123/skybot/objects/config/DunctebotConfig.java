@@ -58,52 +58,28 @@ public class DunctebotConfig {
     @SuppressWarnings("PMD.ShortClassName")
     public static class Apis {
         public final String alexflipnote;
-        public final Cache youtubeCache;
         public final String googl;
         public final String shroten;
         public final String weebSh;
         public final String ksoft;
         public final String genius;
-        public final Spotify spotify;
         public final String blargbot;
         public final String wolframalpha;
         public final String thecatapi;
 
         public Apis(
-            String alexflipnote, Cache youtubeCache, String googl, String shorten, String weebSh, String ksoft,
-            String genius, Spotify spotify, String blargbot, String wolframalpha, String thecatapi
+            String alexflipnote, String googl, String shorten, String weebSh, String ksoft,
+            String genius, String blargbot, String wolframalpha, String thecatapi
         ) {
             this.alexflipnote = alexflipnote;
-            this.youtubeCache = youtubeCache;
             this.googl = googl;
             this.shroten = shorten;
             this.weebSh = weebSh;
             this.ksoft = ksoft;
             this.genius = genius;
-            this.spotify = spotify;
             this.blargbot = blargbot;
             this.wolframalpha = wolframalpha;
             this.thecatapi = thecatapi;
-        }
-
-        public static class Cache {
-            public final String endpoint;
-            public final String token;
-
-            public Cache(String endpoint, String token) {
-                this.endpoint = endpoint;
-                this.token = token;
-            }
-        }
-
-        public static class Spotify {
-            public final String clientId;
-            public final String clientSecret;
-
-            public Spotify(String clientId, String clientSecret) {
-                this.clientId = clientId;
-                this.clientSecret = clientSecret;
-            }
         }
     }
 
@@ -167,23 +143,13 @@ public class DunctebotConfig {
             System.getenv("BOT_TOKEN")
         );
 
-        final Apis.Cache youtubeCache = new Apis.Cache(
-            System.getenv("API_YOUTUBECACHE_ENDPOINT"),
-            System.getenv("API_YOUTUBECACHE_TOKEN")
-        );
-        final Apis.Spotify spotify = new Apis.Spotify(
-            System.getenv("API_SPOTIFY_CLIENT_ID"),
-            System.getenv("API_SPOTIFY_CLIENT_SECRET")
-        );
         final Apis apis = new Apis(
             System.getenv("API_ALEXFLIPNOTE"),
-            youtubeCache,
             System.getenv("API_GOOGLE"),
             System.getenv("API_SHORTEN"),
             System.getenv("API_WEEBSH"),
             System.getenv("API_KSOFT"),
             System.getenv("API_GENIUS"),
-            spotify,
             System.getenv("API_BLARGBOT"),
             System.getenv("API_WOLFRAMALPHA"),
             System.getenv("API_THECATAPI")

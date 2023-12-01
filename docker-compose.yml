@@ -23,8 +23,6 @@ services:
             - API_SHORTEN=
             - API_WEEBSH=
             - API_KSOFT=
-            - API_SPOTIFY_CLIENT_ID=
-            - API_SPOTIFY_CLIENT_SECRET=
             - API_BLARGBOT=
             - API_WOLFRAMALPHA=
             - API_THECATAPI=

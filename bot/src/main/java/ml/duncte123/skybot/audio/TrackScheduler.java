@@ -168,7 +168,7 @@ public class TrackScheduler {
             LOGGER.debug("repeating the current song");
 
             final Track clone = AudioTrackKt.makeClone(lastTrack);
-            storeUserData(clone, createNewTrackData(lastTrack, wasForceAnnounce));
+            storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             this.play(clone);
 
             return;
@@ -176,7 +176,7 @@ public class TrackScheduler {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
             final Track clone = AudioTrackKt.makeClone(lastTrack);
-            storeUserData(clone, createNewTrackData(lastTrack, wasForceAnnounce));
+            storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             queue.offer(clone);
         }
 
@@ -208,7 +208,7 @@ public class TrackScheduler {
         Collections.shuffle((List<?>) queue);
     }
 
-    private TrackUserData createNewTrackData(Track track, boolean wasForceAnnounce) {
+    private TrackUserData copyTrackDataOrCreateNew(Track track, boolean wasForceAnnounce) {
         final TrackUserData oldData = getUserData(track);
         final TrackUserData newData;
 
