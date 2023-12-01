@@ -1,0 +1,96 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    color: #FFFFFF;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.promo {
+    width: 100%;
+}
+
+.promo i {
+    margin: 40px 0;
+    color: var(--color);
+    font-size: 7rem;
+    display: block;
+}
+
+.bg {
+    background: var(--color) !important;
+}
+
+.bg:hover {
+    background: #052e6a !important;
+}
+
+.promo-caption {
+    font-size: 1.7rem;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.delay-1 {
+    animation-delay: 300ms;
+}
+
+.delay-2 {
+    animation-delay: 600ms;
+}
+
+.delay-3 {
+    animation-delay: 900ms;
+}
+
+.collection .collection-item:nth-child(even) {
+    background-color: #6f7b82;
+}
+
+table.striped > tbody > tr > th {
+    background-color: #36393f;
+}
+
+table.striped > tbody > tr:nth-child(odd) > td {
+    background-color: #6f7b82;
+}
+
+.input-field.textarea {
+    border: 1px solid #99AAB5;
+}
+
+.toast {
+    background-color: #626161 !important;
+}
+
+button, input, optgroup, select, textarea {
+    color: #ffffff;
+}
+
+code {
+    background: #23272A;
+}
+
+/* Stolen from discordapp.com */
+pre.code-block {
+    background: #2f3136;
+    border-color: rgba(32,34,37,.3);
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 2px;
+    white-space: pre-wrap;
+    padding: .5em;
+}
+
+pre.code-block code {
+    background: #2f3136;
+    color: #839496;
+}
+
+/*.oh {
+    overflow: hidden;
+}*/

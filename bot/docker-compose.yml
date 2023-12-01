@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+    skybot:
+        container_name: skybot
+        build:
+            context: .
+            args:
+                - is_ci=true
+                - git_sha=DEV
+        environment:
+            # Bot settings
+            - BOT_ADMINS=191231307290771456,311769499995209728
+            - BOT_PREFIX=db!
+            - BOT_TOTAL_SHARDS=1
+            - BOT_TOKEN=
+
+            # Api settings
+            - API_ALEXFLIPNOTE=
+            - API_YOUTUBECACHE_ENDPOINT=
+            - API_YOUTUBECACHE_TOKEN=
+            - API_GOOGLE=
+            - API_WEEBSH=
+            - API_KSOFT=
+            - API_BLARGBOT=
+            - API_WOLFRAMALPHA=
+            - API_THECATAPI=
+            - API_GENIUS=
+
+            # Lavalink settings
+            - LAVALINK_ENABLE=false
+            - LAVALINK_NODE_COUNT=1
+            - LAVALINK_NODE_0_HOST=
+            - LAVALINK_NODE_0_PASS=
+            - LAVALINK_NODE_0_REGION=
+
+            # Sentry settings
+            - SENTRY_ENABLED=false
+            - SENTRY_DSN=
+
+            # Websocket settings
+            - WEBSOCKET_URL=
+            - WEBSOCKET_PASSWORD=admin123
+            - WEBSOCKET_ENABLE=false
+
+            # Options are: psql, web
+            - USE_DATABASE=psql
+            - JDBC_URI=jdbc:postgresql://localhost:5432/skybot?user=root&password=root
+#            - REDIS_HOST=localhost
+            - REDIS_HOST=disabled

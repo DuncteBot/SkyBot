@@ -1,9 +1,13 @@
-version: "3.7"
+version: "3.9"
 services:
     skybot:
         container_name: skybot
         build:
-            context: .
+            dockerfile: ./bot/Dockerfile
+            context: ./
+            args:
+                - is_ci=true
+                - git_sha=DEV
         environment:
             # Bot settings
             - BOT_ADMINS=191231307290771456,311769499995209728
@@ -16,13 +20,13 @@ services:
             - API_YOUTUBECACHE_ENDPOINT=
             - API_YOUTUBECACHE_TOKEN=
             - API_GOOGLE=
+            - API_SHORTEN=
             - API_WEEBSH=
             - API_KSOFT=
-            - API_SPOTIFY_CLIENT_ID=
-            - API_SPOTIFY_CLIENT_SECRET=
             - API_BLARGBOT=
             - API_WOLFRAMALPHA=
             - API_THECATAPI=
+            - API_GENIUS=
 
             # Lavalink settings
             - LAVALINK_ENABLE=false
@@ -37,7 +41,29 @@ services:
 
             # Websocket settings
             - WEBSOCKET_URL=
+            - WEBSOCKET_PASSWORD=admin123
             - WEBSOCKET_ENABLE=false
 
-            # And finally
-            - USE_DATABASE=false
+            # Options are: psql, web
+            - USE_DATABASE=psql
+            - JDBC_URI=jdbc:postgresql://localhost:5432/skybot?user=root&password=root
+            # - REDIS_HOST=localhost
+            - REDIS_HOST=disabled
+    dashboard:
+        container_name: dashboard
+        build:
+            dockerfile: ./dashboard/Dockerfile
+            context: ./
+        ports:
+            - "2000:4567"
+        environment:
+            - IS_LOCAL=false
+            # set to dash_is_server to disable ws client and start ws server from dashboard
+            - WS_URL=ws://localhost:3748/
+            - WS_SERVER_TOKEN=admin123
+            - BOT_TOKEN=
+            - OAUTH_CLIENT_ID=
+            - OAUTH_CLIENT_SECRET=
+            - OAUTH_REDIRECT_URI=
+            - CAPTCHA_SITEKEY=
+            - CAPTCHA_SECRET=

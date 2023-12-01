@@ -1,4 +1,3 @@
-
 root = true
 
 [*]
@@ -10,3 +9,16 @@ indent_size = 4
 
 [gradlew]
 end_of_line = lf
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+ktlint_standard = enabled
+ktlint_experimental = disabled
+ktlint_custom-rule-set = disabled
+ktlint_standard_filename = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_argument-list-wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
