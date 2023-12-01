@@ -42,11 +42,14 @@ class JDARestClient(token: String) {
         val authConfig = AuthorizationConfig(token)
         val threadConfig = ThreadingConfig.getDefault()
 
-        threadConfig.setRateLimitScheduler(Executors.newScheduledThreadPool(5) {
+        val sched = Executors.newScheduledThreadPool(5) {
             val t = Thread(it, "dunctebot-rest-thread")
             t.isDaemon = true
             return@newScheduledThreadPool t
-        }, true)
+        }
+
+        threadConfig.setRateLimitScheduler(sched, true)
+        threadConfig.setRateLimitElastic(sched, true)
 
         jda = JDAImpl(authConfig, null, threadConfig, null, null)
 

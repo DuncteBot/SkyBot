@@ -250,7 +250,7 @@ Vue.component('app-settings-custom-commands', {
 
             toast("Adding command....");
 
-            doFetch('POST', command, () => {
+            this.doFetch('POST', command, () => {
                 toast('Command added');
                 this.$nextTick(() => {
                     this.hideEditor();
@@ -269,7 +269,7 @@ Vue.component('app-settings-custom-commands', {
 
             toast(`Deleting "${name}"!`);
 
-            doFetch('DELETE', {invoke: name}, () => {
+            this.doFetch('DELETE', {invoke: name}, () => {
                 toast("Deleted!");
                 this.clearEditor();
                 this.$nextTick(() => {
