@@ -45,6 +45,6 @@ jobs:
               run: echo ${{ steps.docker_build.outputs.digest }}
 
             - name: Trigger webhook
-              uses: zzzze/webhook-trigger@v1.0.0
-              with:
-                  webhook_url: ${{ secrets.DASH_WEBHOOK_URL }}
+              uses: distributhor/workflow-webhook@v3
+              env:
+                webhook_url: ${{ secrets.DASH_WEBHOOK_URL }}
