@@ -4,6 +4,7 @@ import com.dunctebot.dashboard.*
 import com.dunctebot.dashboard.WebServer.Companion.SESSION_ID
 import com.dunctebot.dashboard.WebServer.Companion.USER_ID
 import com.dunctebot.dashboard.constants.ContentType
+import com.dunctebot.dashboard.controllers.DashboardController
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -15,11 +16,14 @@ object CustomCommandController {
     fun before(ctx: Context) {
         val attributes = ctx.sessionAttributeMap()
 
-        if (!(attributes.contains(USER_ID) && attributes.contains(SESSION_ID))) {
-            ctx.contentType(ContentType.JSON)
+        ctx.contentType(ContentType.JSON)
 
+        if (!(attributes.contains(USER_ID) && attributes.contains(SESSION_ID))) {
             throw UnauthorizedResponse("Invalid session")
         }
+
+        // run the same checks as on the view to ensure that the member has permission to perform this action.
+        DashboardController.before(ctx)
     }
 
     fun show(ctx: Context) {

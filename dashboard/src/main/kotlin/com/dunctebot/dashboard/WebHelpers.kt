@@ -6,6 +6,7 @@ import com.dunctebot.dashboard.WebServer.Companion.USER_ID
 import com.fasterxml.jackson.databind.JsonNode
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
+import io.javalin.http.ContentType
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
 import io.javalin.http.UnauthorizedResponse
@@ -65,10 +66,19 @@ fun String?.toSafeLong(): Long {
 }
 
 fun haltDiscordError(ctx: Context, error: DiscordError, guildId: String = ""): ForbiddenResponse {
-    VueComponent(error.component, mapOf(
-        "title" to error.title,
-        "guildId" to guildId,
-    )).handle(ctx)
+    if (ctx.contentType() == ContentType.JSON) {
+        ctx.json(
+            jsonMapper.createObjectNode()
+                .put("success", false)
+                .put("message", error.title)
+                .put("code", 403)
+        )
+    } else {
+        VueComponent(error.component, mapOf(
+            "title" to error.title,
+            "guildId" to guildId,
+        )).handle(ctx)
+    }
 
     throw ForbiddenResponse()
 }
