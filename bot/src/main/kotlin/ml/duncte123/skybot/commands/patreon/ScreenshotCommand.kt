@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.utils.FileUpload
 
 class ScreenshotCommand : Command() {
-
     init {
         this.requiresArgs = true
         this.category = CommandCategory.PATRON

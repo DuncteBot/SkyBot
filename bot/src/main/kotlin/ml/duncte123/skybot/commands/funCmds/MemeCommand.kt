@@ -16,25 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
-import ml.duncte123.skybot.objects.CooldownScope
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils
+import ml.duncte123.skybot.extensions.abbreviate
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.EarthUtils.sendYoungestOldesetEmbed
+import net.dv8tion.jda.api.entities.MessageEmbed
 
-class OldestCommand : Command() {
+class MemeCommand : Command() {
     init {
         this.category = CommandCategory.FUN
-        this.name = "oldest"
-        this.help = "Shows the oldest member in the server"
-        this.cooldown = 10
-        this.cooldownScope = CooldownScope.GUILD
-        this.cooldownKey = { _, _ -> "youngest|oldest" }
+        this.name = "meme"
+        this.help = "See a funny meme"
     }
 
     override fun execute(ctx: CommandContext) {
-        sendYoungestOldesetEmbed(ctx, true)
+        val json = ctx.apis.executeDefaultGetRequest("meme", false)["data"]
+
+        val embed = EmbedUtils.getDefaultEmbed()
+            .setTitle(json["title"].asText().abbreviate(MessageEmbed.TITLE_MAX_LENGTH), json["url"].asText())
+            .setDescription(json["body"].asText().abbreviate(MessageEmbed.TEXT_MAX_LENGTH))
+
+        if (json.has("image")) {
+            embed.setImage(json["image"].asText())
+        }
+
+        MessageUtils.sendEmbed(ctx, embed)
     }
 }

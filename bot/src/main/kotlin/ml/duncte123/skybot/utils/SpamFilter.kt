@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
 class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
-
     private lateinit var rates: LongArray
     private val database = variables.database
     private val logger = LoggerFactory.getLogger(SpamFilter::class.java)
@@ -158,7 +157,10 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
                     ModerationUtils.muteUser(guild, author, textChannel, "Spam", ratelimit, false)
                 }
 
-                val clearable = textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
+                val clearable = textChannel.iterableHistory.stream()
+                    .filter { it.author == author.user }
+                    .limit(9)
+                    .collect(Collectors.toList())
 
                 textChannel.deleteMessages(clearable).queue {
                     this[guild.idLong]?.get(author.user.idLong)?.grep { value -> !clearable.map { l -> l.idLong }.contains(value) }

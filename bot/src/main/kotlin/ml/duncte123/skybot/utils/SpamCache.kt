@@ -23,7 +23,6 @@ import gnu.trove.list.array.TLongArrayList
 import gnu.trove.map.hash.TLongObjectHashMap
 
 class SpamCache : TLongObjectHashMap<TLongList>() {
-
     @Throws(IllegalArgumentException::class)
     fun update(longs: LongArray, updateMode: Int = 0): SpamCache {
         when {

@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class StopCommand : MusicCommand() {
-
     init {
         this.name = "stop"
         this.help = "Stops the music"
@@ -37,19 +36,23 @@ class StopCommand : MusicCommand() {
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val player = mng.player
-        val track = player.playingTrack
+        val scheduler = mng.scheduler
+        val track = player.currentTrack
 
         if (track == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
 
-        val trackData: TrackUserData? = track.getUserData(TrackUserData::class.java)
+        val trackData: TrackUserData = scheduler.getUserData(track)
 
-        if (ctx.guild.settings.isAllowAllToStop || trackData?.requester == ctx.author.idLong || ctx.member.hasPermission(Permission.MANAGE_SERVER)) {
+        if (
+            ctx.guild.settings.isAllowAllToStop ||
+            trackData.requester == ctx.author.idLong ||
+            ctx.member.hasPermission(Permission.MANAGE_SERVER)
+        ) {
             mng.scheduler.queue.clear()
-            player.stopTrack()
-            player.isPaused = false
+            player.stopPlayback()
 
             sendMsg(ctx, "Playback has been completely stopped and the queue has been cleared.")
 
@@ -67,20 +70,24 @@ class StopCommand : MusicCommand() {
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val player = mng.player
-        val track = player.playingTrack
+        val scheduler = mng.scheduler
+        val track = player.currentTrack
 
         if (track == null) {
             event.reply("The player is not playing.").queue()
             return
         }
 
-        val trackData: TrackUserData? = track.getUserData(TrackUserData::class.java)
+        val trackData: TrackUserData = scheduler.getUserData(track)
         val dbg = DunctebotGuild(event.guild!!, variables)
 
-        if (dbg.settings.isAllowAllToStop || trackData?.requester == event.user.idLong || event.member!!.hasPermission(Permission.MANAGE_SERVER)) {
+        if (
+            dbg.settings.isAllowAllToStop ||
+            trackData.requester == event.user.idLong ||
+            event.member!!.hasPermission(Permission.MANAGE_SERVER)
+        ) {
             mng.scheduler.queue.clear()
-            player.stopTrack()
-            player.isPaused = false
+            player.stopPlayback()
 
             event.reply("Playback has been completely stopped and the queue has been cleared.").queue()
 

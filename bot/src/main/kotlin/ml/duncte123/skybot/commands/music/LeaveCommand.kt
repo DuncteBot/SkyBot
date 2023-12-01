@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class LeaveCommand : MusicCommand() {
-
     init {
         this.name = "leave"
         this.aliases = arrayOf("disconnect", "exit", "fuckoff")

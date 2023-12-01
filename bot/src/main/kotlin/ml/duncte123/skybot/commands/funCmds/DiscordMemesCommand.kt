@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.weebJava.configs.ImageConfig
@@ -24,16 +24,17 @@ import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
-class EveryoneCommand : WeebCommandBase() {
-
+class DiscordMemesCommand : WeebCommandBase() {
     init {
+        this.displayAliasesInHelp = false
         this.category = CommandCategory.FUN
-        this.name = "everyone"
-        this.help = "Useful for when everyone is being pinged again"
+        this.name = "discordmeme"
+        this.aliases = arrayOf("dmeme", "discordmemes", "dmemes")
+        this.help = "Shows a discord meme"
     }
 
     override fun execute(ctx: CommandContext) {
-        ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("everyone")).build()).async {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("discord_memes").build()).async {
             sendEmbed(ctx, getWeebEmbedImage(it.url))
         }
     }

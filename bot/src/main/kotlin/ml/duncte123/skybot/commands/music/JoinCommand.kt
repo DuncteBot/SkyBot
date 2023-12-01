@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.exceptions.PermissionException
 
 class JoinCommand : MusicCommand() {
-
     init {
         this.justRunLmao = true
 
@@ -54,7 +53,7 @@ class JoinCommand : MusicCommand() {
 
         val lavalink = getLavalinkManager()
 
-        if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
+        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
             val channel = lavalink.getConnectedChannel(event.guild)
 
             if (channel == null) {
@@ -102,7 +101,7 @@ class JoinCommand : MusicCommand() {
 
         val lavalink = getLavalinkManager()
 
-        if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
+        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
             val channel = lavalink.getConnectedChannel(event.guild!!)
 
             if (channel == null) {

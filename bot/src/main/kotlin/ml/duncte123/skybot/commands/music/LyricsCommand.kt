@@ -61,7 +61,7 @@ class LyricsCommand : MusicCommand() {
         }
 
         val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
-        val playingTrack = player.playingTrack
+        val playingTrack = player.currentTrack
 
         if (playingTrack == null) {
             sendMsg(ctx, "The player is not currently playing anything!")
@@ -96,7 +96,7 @@ class LyricsCommand : MusicCommand() {
 
         if (opt == null) {
             val player = variables.audioUtils.getMusicManager(event.guild!!.idLong).player
-            val playingTrack = player.playingTrack
+            val playingTrack = player.currentTrack
 
             if (playingTrack == null) {
                 event.reply("The player is not currently playing anything!").queue()

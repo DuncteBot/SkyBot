@@ -16,34 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music
+package ml.duncte123.skybot.commands.funCmds
 
-import lavalink.client.io.filters.Karaoke
-import lavalink.client.io.filters.Rotation
-import ml.duncte123.skybot.Variables
+import me.duncte123.botcommons.messaging.EmbedUtils.embedImage
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.objects.command.MusicCommand
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import java.util.concurrent.TimeUnit
 
-class TestFilterCommand : MusicCommand() {
+class CoinCommand : Command() {
+    private val imagesArr = arrayOf("heads.png", "tails.png")
+
     init {
-        this.displayAliasesInHelp = false
+        this.category = CommandCategory.FUN
+        this.name = "coin"
+        this.aliases = arrayOf("coinflip", "cf", "flip")
+        this.help = "Flips a coin"
     }
 
-    override fun run(ctx: CommandContext) {
-        val player = getLavalinkManager().lavalink.getLink(ctx.guild).player
-
-        player.filters.rotation = Rotation()
-        player.filters.karaoke = Karaoke().apply {
-            level = 3f
+    override fun execute(ctx: CommandContext) {
+        ctx.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
+            sendEmbed(ctx, embedImage("https://duncte123.me/img/coin/${imagesArr[ctx.random.nextInt(2)]}"))
         }
-
-        player.filters.commit()
     }
-
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
-        event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
-    }
-
-    override fun getName(): String = "testfilter"
 }

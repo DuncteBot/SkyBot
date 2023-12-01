@@ -33,7 +33,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class RestartShardCommand : Command() {
-
     private val thread = Executors.newSingleThreadExecutor()
     private val restartInSec = 5L
 

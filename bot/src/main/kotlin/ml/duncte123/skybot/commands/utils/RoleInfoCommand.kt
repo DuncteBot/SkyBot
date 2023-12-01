@@ -31,7 +31,6 @@ import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import net.dv8tion.jda.api.entities.Role
 
 class RoleInfoCommand : Command() {
-
     init {
         this.category = CommandCategory.UTILS
         this.name = "roleinfo"

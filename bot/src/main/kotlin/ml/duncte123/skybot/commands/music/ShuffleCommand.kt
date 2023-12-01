@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class ShuffleCommand : MusicCommand() {
-
     init {
         this.name = "shuffle"
         this.help = "Shuffles the current queue"

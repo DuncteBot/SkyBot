@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class LewdCommand : WeebCommandBase() {
-
     init {
         this.name = "lewd"
         this.help = "Someone's being a bit lewd"

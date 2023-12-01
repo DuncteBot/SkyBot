@@ -28,7 +28,11 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.data.DataArray
 import net.dv8tion.jda.api.utils.data.DataObject
 
-class RequestHandler(private val variables: Variables, private val shardManager: ShardManager, client: WebSocketClient) : SocketHandler(client) {
+class RequestHandler(
+    private val variables: Variables,
+    private val shardManager: ShardManager,
+    client: WebSocketClient,
+) : SocketHandler(client) {
     override fun handleInternally(data: JsonNode) {
         val responseData = DataObject.empty()
             .put("identifier", data["identifier"].asText())

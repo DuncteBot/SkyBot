@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 
 class SlowModeCommand : ModBaseCommand() {
-
     init {
         this.name = "slowmode"
         this.aliases = arrayOf("sm")
@@ -77,7 +76,12 @@ class SlowModeCommand : ModBaseCommand() {
         }
 
         if (intDelay < 0 || intDelay > TextChannel.MAX_SLOWMODE) {
-            sendMsg(ctx, "$intDelay is not valid, a valid delay is a number in the range 0-${TextChannel.MAX_SLOWMODE} (21600 is 6 hours in seconds)")
+            sendMsg(
+                ctx,
+                "$intDelay is not valid, a valid delay is a number in the range 0-${
+                    TextChannel.MAX_SLOWMODE
+                } (21600 is 6 hours in seconds)"
+            )
             return
         }
 

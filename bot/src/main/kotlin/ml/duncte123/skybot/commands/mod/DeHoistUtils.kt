@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameE
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class DeHoistCommand : ModBaseCommand() {
-
     init {
         this.requiresArgs = true
         this.name = "dehoist"
@@ -69,7 +68,6 @@ class DeHoistCommand : ModBaseCommand() {
 }
 
 class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
-
     private val regex = "[!\"#\$%&'()*+,-./](?:.*)".toRegex()
     private val dehoistChar = "▪"
 
@@ -100,6 +98,6 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
             !memberName.startsWith(dehoistChar) && matcher &&
                 member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
                 GuildSettingsUtils.getGuild(member.guild.idLong, this.variables).isAutoDeHoist
-            )
+        )
     }
 }

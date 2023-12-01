@@ -18,10 +18,8 @@
 
 package fredboat.audio.player;
 
-import lavalink.client.io.Link;
-import lavalink.client.io.jda.JdaLavalink;
-import lavalink.client.player.LavalinkPlayer;
-import ml.duncte123.skybot.SkyBot;
+import dev.arbjerg.lavalink.client.*;
+import dev.arbjerg.lavalink.protocol.v4.Track;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -32,7 +30,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
-import java.util.Base64;
 
 /**
  * This class has been taken from
@@ -41,7 +38,7 @@ import java.util.Base64;
  */
 public final class LavalinkManager {
     public static final LavalinkManager INS = new LavalinkManager();
-    private JdaLavalink lavalink = null;
+    private LavalinkClient lavalink = null;
     private DunctebotConfig config = null;
     private AudioUtils audioUtils;
     private boolean enabledOverride = true;
@@ -49,7 +46,7 @@ public final class LavalinkManager {
     private LavalinkManager() {
     }
 
-    public void start(SkyBot skybot, DunctebotConfig config, AudioUtils audioUtils) {
+    public void start(DunctebotConfig config, AudioUtils audioUtils) {
         this.config = config;
         this.audioUtils = audioUtils;
 
@@ -57,13 +54,15 @@ public final class LavalinkManager {
             return;
         }
 
-        final String userId = getIdFromToken(this.config.discord.token);
+        final long userId = Helpers.getUserIdFromToken(this.config.discord.token);
 
-        lavalink = new JdaLavalink(
-            userId,
-            this.config.discord.totalShards,
-            shardId -> skybot.getShardManager().getShardById(shardId)
-        );
+        lavalink = new LavalinkClient(userId);
+
+        this.registerPlayerUpdateEvent();
+        this.registerTrackStartEvent();
+        this.registerTrackEndEvent();
+        this.registerTrackExceptionEvent();
+        this.registerTrackStuckEvent();
 
         loadNodes();
     }
@@ -71,16 +70,11 @@ public final class LavalinkManager {
     @SuppressWarnings("unused") // we need it from eval
     public void forceEnable(boolean enabled) {
         if (enabled) {
-            this.loadNodes();
+            this.start(this.config, this.audioUtils);
         } else {
             AirUtils.stopMusic(this.audioUtils);
 
-            // disconnect all links
-            this.lavalink.getLinks().forEach(Link::destroy);
-            // close all connections to all nodes
-            for (int i = 0; i < this.lavalink.getNodes().size(); i++) {
-                this.lavalink.removeNode(i);
-            }
+            this.lavalink.close();
         }
 
         // Do this last, otherwise we can't disconnect
@@ -91,14 +85,6 @@ public final class LavalinkManager {
         return this.enabledOverride && config.lavalink.enable;
     }
 
-    public LavalinkPlayer createPlayer(long guildId) {
-        if (!isEnabled()) {
-            throw new IllegalStateException("Music is not enabled right now");
-        }
-
-        return lavalink.getLink(String.valueOf(guildId)).getPlayer();
-    }
-
     public void openConnection(AudioChannel channel) {
         if (isEnabled()) {
             final AudioManager audioManager = channel.getGuild().getAudioManager();
@@ -106,30 +92,26 @@ public final class LavalinkManager {
             // Turn on the deafen icon for the bot
             audioManager.setSelfDeafened(true);
 
-            lavalink.getLink(channel.getGuild()).connect(channel);
+            channel.getJDA().getDirectAudioController().connect(channel);
         }
     }
 
     public void closeConnection(Guild guild) {
-        closeConnection(guild.getId());
-    }
-
-    public void closeConnection(String guildId) {
         if (isEnabled()) {
-            lavalink.getLink(guildId).destroy();
+            guild.getJDA().getDirectAudioController().disconnect(guild);
         }
     }
 
     public boolean isConnected(Guild guild) {
-        return isConnected(guild.getId());
+        return isConnected(guild.getIdLong());
     }
 
-    public boolean isConnected(String guildId) {
+    public boolean isConnected(long guildId) {
         if (!isEnabled()) {
             return false;
         }
 
-        return lavalink.getLink(guildId).getState() == Link.State.CONNECTED;
+        return lavalink.getLink(guildId).getState() == LinkState.CONNECTED;
     }
 
     @SuppressWarnings("ConstantConditions") // cache is enabled
@@ -143,27 +125,73 @@ public final class LavalinkManager {
 
     public void shutdown() {
         if (isEnabled()) {
-            this.lavalink.shutdown();
+            this.lavalink.close();
         }
     }
 
-    public JdaLavalink getLavalink() {
+    public LavalinkClient getLavalink() {
         return lavalink;
     }
 
     private void loadNodes() {
-        final JdaLavalink lavalink = getLavalink();
+        final LavalinkClient lavalink = getLavalink();
 
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
-            lavalink.addNode(URI.create(node.wsurl), node.pass);
+            // TODO: region filter mapping
+            lavalink.addNode(node.name, URI.create(node.wsurl), node.pass);
         }
     }
 
-    private String getIdFromToken(String token) {
-        return new String(
-            Base64.getDecoder().decode(
-                token.split("\\.")[0]
-            )
-        );
+    private void registerPlayerUpdateEvent() {
+        lavalink.on(PlayerUpdateEvent.class).subscribe((stats) -> {
+            final long guildIdLong = Long.parseUnsignedLong(stats.getEvent().getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getPlayer().updateLocalPlayerState(stats.getEvent().getState());
+            }
+        });
     }
+
+    private void registerTrackStartEvent() {
+        lavalink.on(TrackStartEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                final Track track = event.getTrack();
+                mng.getPlayer().updateCurrentTrack(track);
+                mng.getScheduler().onTrackStart(track);
+            }
+        });
+    }
+
+    private void registerTrackEndEvent() {
+        lavalink.on(TrackEndEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getPlayer().updateCurrentTrack(null);
+                mng.getScheduler().onTrackEnd(event.getTrack(), event.getReason());
+            }
+        });
+    }
+
+    private void registerTrackExceptionEvent() {
+        lavalink.on(TrackExceptionEvent.class).subscribe((data) -> {
+            final var event = data.getEvent();
+            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
+
+            if (mng != null) {
+                mng.getPlayer().updateCurrentTrack(null);
+                mng.getScheduler().onTrackException(event.getTrack(), event.getException());
+            }
+        });
+    }
+
+    private void registerTrackStuckEvent() {}
 }

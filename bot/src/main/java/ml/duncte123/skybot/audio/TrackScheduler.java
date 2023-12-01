@@ -18,30 +18,23 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.AudioEventAdapterWrapped;
+import dev.arbjerg.lavalink.protocol.v4.Exception;
+import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
+import dev.arbjerg.lavalink.protocol.v4.Track;
+import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
+import kotlinx.serialization.json.JsonPrimitive;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import ml.duncte123.skybot.audio.sourcemanagers.spotify.SpotifyAudioTrack;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.utils.Debouncer;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -49,21 +42,19 @@ import static ml.duncte123.skybot.SkyBot.getInstance;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
-public class TrackScheduler extends AudioEventAdapterWrapped {
-
+public class TrackScheduler {
     public static final int MAX_QUEUE_SIZE = 100;
-    public final Queue<AudioTrack> queue;
+    private final Queue<Track> queue = new LinkedList<>();
+    private final Map<String, TrackUserData> userData = new ConcurrentHashMap<>();
+
     private static final long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
-    private final LavalinkPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Debouncer<String> messageDebouncer;
     private boolean looping = false;
     private boolean loopingQueue = false;
 
-    /* package */ TrackScheduler(LavalinkPlayer player, GuildMusicManager guildMusicManager) {
-        this.player = player;
-        this.queue = new LinkedList<>();
+    /* package */ TrackScheduler(GuildMusicManager guildMusicManager) {
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) -> {
             final MessageChannel latestChannel = guildMusicManager.getLatestChannel();
@@ -84,12 +75,16 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         return this.queue.size() < MAX_QUEUE_SIZE;
     }
 
-    public void addToQueue(AudioTrack track, boolean isPatron) throws LimitReachedException {
+    public Queue<Track> getQueue() {
+        return queue;
+    }
+
+    public void addToQueue(Track track, boolean isPatron) throws LimitReachedException {
         if (queue.size() + 1 >= MAX_QUEUE_SIZE && !isPatron) {
             throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 
-        if (player.getPlayingTrack() == null) {
+        if (this.guildMusicManager.getPlayer().getCurrentTrack() == null) {
             this.play(track);
         } else {
             queue.offer(track);
@@ -100,30 +95,23 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * This is a special case for the skip command where it has to announce the next track
      * due to it being a user interaction
      */
-    public void specialSkipCase() {
-        // Get the currently playing track
-        final AudioTrack playingTrack = this.player.getPlayingTrack();
-        // Set in the data that it was from a skip
-        playingTrack.getUserData(TrackUserData.class).setWasFromSkip(true);
-
-        // We trigger a fake on track end here to make it adhere to the normal loop flow
-        // and inject a boolean for forcing the announcement on skip
-        this.onTrackEnd(null, playingTrack, AudioTrackEndReason.FINISHED);
+    public void skipCurrentTrack() {
+        this.skipTrack(true);
     }
 
-    private void skipTrack(boolean wasFromSkip) {
-        skipTracks(1, wasFromSkip);
+    private void skipTrack(boolean forceAnnounce) {
+        skipTracks(1, forceAnnounce);
     }
 
-    public void skipTracks(int count, boolean wasFromSkip) {
-        AudioTrack nextTrack = null;
+    public void skipTracks(int count, boolean forceAnnounce) {
+        Track nextTrack = null;
 
         for (int i = 0; i < count; i++) {
             nextTrack = queue.poll();
         }
 
         if (nextTrack == null) {
-            player.stopTrack();
+            this.guildMusicManager.getPlayer().stopPlayback();
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(guildMusicManager.getLatestChannel())
@@ -131,77 +119,73 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             );
         } else {
             // Make sure to cary over the skip state, we want to announce skipped tracks
-            nextTrack.getUserData(TrackUserData.class).setWasFromSkip(wasFromSkip);
+            getUserData(nextTrack).setForceAnnounce(forceAnnounce);
 
             this.play(nextTrack);
         }
     }
 
-    @Override
-    public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        final TrackUserData data = track.getUserData(TrackUserData.class);
+    public void onTrackStart(Track track) {
+        final TrackUserData data = getUserData(track);
 
-        // If the track was a skipped track, or we announce tracks
-        if (data != null && data.getWasFromSkip() || this.guildMusicManager.isAnnounceTracks()) {
+        if (data != null && data.getForceAnnounce() || this.guildMusicManager.isAnnounceTracks()) {
             // Reset the was from skip status
             if (data != null) {
-                data.setWasFromSkip(false);
+                data.setForceAnnounce(false);
             }
 
-            final EmbedBuilder message = AudioTrackKt.toEmbed(
+            AudioTrackKt.toEmbed(
                 track,
                 this.guildMusicManager,
                 getInstance().getShardManager(),
-                false
-            );
+                false,
+                (message) -> {
+                    sendMsg(
+                        new MessageConfig.Builder()
+                            .setChannel(guildMusicManager.getLatestChannel())
+                            .setEmbeds(false, message)
+                    );
 
-
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(guildMusicManager.getLatestChannel())
-                    .setEmbeds(false, message)
+                    return null;
+                }
             );
         }
     }
 
-    @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
+    public void onTrackEnd(Track lastTrack, AudioTrackEndReason endReason) {
         LOGGER.debug("track ended");
 
-        if (!endReason.mayStartNext) {
+        if (!endReason.getMayStartNext()) {
             LOGGER.debug("Cannot start next");
             return;
         }
 
         // Get if the track was from a skip event
-        final Object userData = lastTrack.getUserData();
-        final boolean wasFromSkip;
-
-        if (userData instanceof TrackUserData data) {
-            wasFromSkip = data.getWasFromSkip();
-        } else {
-            wasFromSkip = false;
-        }
+        final TrackUserData userData = getUserData(lastTrack);
+        final boolean wasForceAnnounce = userData.getForceAnnounce();
 
         if (this.looping) {
             LOGGER.debug("repeating the current song");
 
-            final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            final Track clone = AudioTrackKt.makeClone(lastTrack);
+            storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             this.play(clone);
 
             return;
         } else if (this.loopingQueue) {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
-            final AudioTrack clone = lastTrack.makeClone();
-            clone.setUserData(createNewTrackData(lastTrack, wasFromSkip));
+            final Track clone = AudioTrackKt.makeClone(lastTrack);
+            storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             queue.offer(clone);
         }
 
+        // clean up the old track's userdata
+        removeUserData(lastTrack);
+
         LOGGER.debug("can start next track");
 
-        skipTrack(wasFromSkip);
+        skipTrack(wasForceAnnounce);
     }
 
     public boolean isLooping() {
@@ -224,8 +208,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         Collections.shuffle((List<?>) queue);
     }
 
-    private TrackUserData createNewTrackData(AudioTrack track, boolean wasFromSkip) {
-        final TrackUserData oldData = track.getUserData(TrackUserData.class);
+    private TrackUserData copyTrackDataOrCreateNew(Track track, boolean wasForceAnnounce) {
+        final TrackUserData oldData = getUserData(track);
         final TrackUserData newData;
 
         // If we did not have old data (unlikely) we will create it
@@ -236,66 +220,55 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
 
         // Set the was from skip status on the track
-        newData.setWasFromSkip(wasFromSkip);
+        newData.setForceAnnounce(wasForceAnnounce);
 
         return newData;
     }
 
-    @Override
-    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        final Throwable rootCause = ExceptionUtils.getRootCause(exception);
-        final Throwable finalCause = rootCause == null ? exception : rootCause;
-        final AudioTrackInfo info = track.getInfo();
+    public void onTrackException(Track track, Exception exception) {
+        final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
 
-        if (finalCause == null || finalCause.getMessage() == null) {
-            this.messageDebouncer.accept("Something went terribly wrong when playing track with identifier `" + info.identifier +
-                "`\nPlease contact the developers asap with the identifier in the message above");
+        if (finalCause.contains("Something went wrong when decoding the track.")) {
             return;
         }
 
-        if (finalCause.getMessage().contains("Something went wrong when decoding the track.")) {
-            return;
-        }
+        final TrackInfo info = track.getInfo();
 
-        if (finalCause.getMessage().contains("age-restricted")) {
-            this.messageDebouncer.accept("Cannot play `" + info.title + "` because it is age-restricted");
+        if (finalCause.contains("age-restricted")) {
+            this.messageDebouncer.accept("Cannot play `" + info.getTitle() + "` because it is age-restricted");
             return;
         }
 
         this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
-            info.identifier
+            info.getIdentifier()
             + "`, please contact the devs if this happens a lot.\n" +
             "Details: " + finalCause);
-
-        // old shit
-        /*if (exception.severity != FriendlyException.Severity.COMMON) {
-            final TextChannel tc = guildMusicManager.getLatestChannel();
-            final Guild g = tc == null ? null : tc.getGuild();
-
-            if (g != null) {
-                final AudioTrackInfo info = track.getInfo();
-                final String error = String.format(
-                    "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s) (%s)",
-                    g.getName(),
-                    g.getId(),
-                    info.title,
-                    info.author,
-                    track.getSourceManager().getSourceName(),
-                    info.identifier
-                );
-
-                logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            }
-
-        }*/
     }
 
-    public void play(AudioTrack track) {
-        // load the youtube identifier before we play the track
-        if (track instanceof SpotifyAudioTrack) {
-            track.getIdentifier();
-        }
+    public TrackUserData getUserData(Track track) {
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
 
-        this.player.playTrack(track);
+        return this.userData.get(element.getContent());
+    }
+
+    public void storeUserData(Track track, TrackUserData data) {
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+
+        this.userData.put(element.getContent(), data);
+    }
+
+    public void removeUserData(Track track) {
+        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+
+        this.userData.remove(element.getContent());
+    }
+
+    private void play(Track track) {
+        this.guildMusicManager.getPlayer()
+            .getLink()
+            .updatePlayer(
+                (builder) -> builder.applyTrack(track)
+            )
+            .subscribe();
     }
 }

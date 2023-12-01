@@ -19,9 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat
-import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -31,7 +29,6 @@ import net.dv8tion.jda.api.utils.FileUpload
 import java.time.ZonedDateTime
 
 class SaveCommand : MusicCommand() {
-
     init {
         this.name = "save"
         this.help = "Saves a playlist into a file with can be loaded with `{prefix}load`"
@@ -58,12 +55,14 @@ class SaveCommand : MusicCommand() {
 
         val urls = manager.scheduler.queue
             .map {
-                it.lpUrl()
+                it.info.uri
             }
             .toMutableList()
 
-        if (manager.player.playingTrack != null) {
-            urls.add(0, manager.player.playingTrack.lpUrl())
+        val currentTrack = manager.player.currentTrack
+
+        if (currentTrack != null) {
+            urls.add(0, currentTrack.info.uri)
         }
 
         for (url in urls) {
@@ -71,10 +70,5 @@ class SaveCommand : MusicCommand() {
         }
 
         return mapper.writeValueAsBytes(array)
-    }
-
-    private fun AudioTrack.lpUrl() = when (this) {
-        is IWillUseIdentifierInstead -> this.info.identifier
-        else -> this.info.uri
     }
 }

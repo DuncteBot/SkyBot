@@ -18,29 +18,35 @@
 
 package ml.duncte123.skybot.extensions
 
-import com.dunctebot.sourcemanagers.AudioTrackInfoWithImage
-import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead
-import com.dunctebot.sourcemanagers.getyarn.GetyarnAudioTrack
-import com.github.natanbc.reliqua.limiter.RateLimiter
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import io.sentry.Sentry
+import dev.arbjerg.lavalink.protocol.v4.Track
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.TrackUserData
-import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
-import ml.duncte123.skybot.utils.YoutubeUtils
+import ml.duncte123.skybot.utils.MusicEmbedUtils.createPlayerString
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
+import java.util.*
 
-fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withPlayer: Boolean = true): EmbedBuilder {
-    val userData = this.getUserData(TrackUserData::class.java)
+fun Track.makeClone() = this.copy(
+    userData = JsonObject(
+        mapOf(
+            "uuid" to JsonPrimitive(UUID.randomUUID().toString())
+        )
+    ),
+    info = this.info.copy(position = 0L)
+)
+
+fun Track.toEmbed(
+    mng: GuildMusicManager,
+    shardManager: ShardManager,
+    withPlayer: Boolean = true,
+    callback: (EmbedBuilder) -> Unit,
+) {
+    val userData: TrackUserData? = mng.scheduler.getUserData(this)
     var requester = "Unknown"
+    var voteSkipText = ""
 
     if (userData != null) {
         val userId = userData.requester
@@ -49,81 +55,34 @@ fun AudioTrack.toEmbed(mng: GuildMusicManager, shardManager: ShardManager, withP
         if (user != null) {
             requester = user.asTag
         }
+
+        if (!userData.votes.isEmpty) {
+            voteSkipText = "\n\n${userData.votes.size()} people voted to skip"
+        }
     }
 
-    val uri = if (this is IWillUseIdentifierInstead) this.info.identifier else this.info.uri
+    val uri = this.info.uri
 
     if (this.info.isStream) {
-        return embedMessage(
-            """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester
-            """.trimMargin()
+        callback(
+            embedMessage(
+                """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+                |**Requester:** $requester$voteSkipText
+                """.trimMargin()
+            )
+                .setThumbnail(this.info.artworkUrl)
         )
-            .setThumbnail(this.getImageUrl())
+        return
     }
 
-    return embedMessage(
-        """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
-            |**Requester:** $requester${if (withPlayer) "\n" + playerEmbed(mng) else ""}
-        """.trimMargin()
-    )
-        .setThumbnail(this.getImageUrl())
-}
-
-/**
- * @param onlyStatic If we only should return thumbnails that do not require an http request
- */
-fun AudioTrack.getImageUrl(onlyStatic: Boolean = false): String? {
-    if (this.info is AudioTrackInfoWithImage) {
-        return (this.info as AudioTrackInfoWithImage).image
+    createPlayerString(mng) { playerState ->
+        callback(
+            embedMessage(
+                """**Currently playing** [${this.info.title}]($uri) by ${this.info.author}
+                |**Requester:** $requester${if (withPlayer) "\n" + playerState else ""}$voteSkipText
+                """.trimMargin()
+            )
+                .setThumbnail(this.info.artworkUrl)
+        )
     }
-
-    if (this is YoutubeAudioTrack) {
-        return YoutubeUtils.getThumbnail(this.info.identifier)
-    }
-
-    if (this is TwitchStreamAudioTrack) {
-        return "https://static-cdn.jtvnw.net/previews-ttv/live_user_${this.info.author}-320x180.jpg?r=${System.currentTimeMillis()}"
-    }
-
-    /*if (this is BeamAudioTrack) {
-        val id = this.identifier.substring(0, this.identifier.indexOf('|'))
-
-        return "https://thumbs.mixer.com/channel/$id.small.jpg?r=${System.currentTimeMillis()}"
-    }*/
-
-    if (this is GetyarnAudioTrack) {
-        // Gif url https://y.yarn.co/{id}_text.gif
-        return "https://y.yarn.co/${this.info.identifier}_screenshot.jpg"
-    }
-
-    // The following make a REST request for the thumbnail
-    if (!onlyStatic) {
-        if (this is VimeoAudioTrack) {
-            return try {
-                val info = this.info
-                val id = info.identifier.substring(info.identifier.lastIndexOf('/') + 1)
-                val url = "https://vimeo.com/api/v2/video/$id.json"
-                val json = WebUtils.ins.getJSONArray(url).execute()[0]
-
-                json["thumbnail_small"].asText()
-            } catch (e: Exception) {
-                Sentry.captureException(e)
-                null
-            }
-        }
-
-        if (this is SoundCloudAudioTrack ||
-            (this is HttpAudioTrack && this.info.uri.startsWith("https://www.pornhub.com/"))
-        ) {
-            val page = WebUtils.ins.scrapeWebPage(this.info.uri) { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
-            val elems = page.select("meta[property=og:image]")
-
-            if (!elems.isEmpty()) {
-                return elems.first()!!.attr("content")
-            }
-        }
-    }
-
-    return null
 }

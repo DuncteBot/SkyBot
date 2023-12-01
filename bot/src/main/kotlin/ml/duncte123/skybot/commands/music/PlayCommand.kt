@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.dunctebot.sourcemanagers.pornhub.PornHubAudioSourceManager
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Variables
@@ -33,6 +32,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
+    private val pornhubRegex = "https?://([a-z]+\\.)?pornhub\\.(com|net|org)"
     private val acceptedExtensions = listOf("wav", "mkv", "mp4", "flac", "ogg", "mp3", "aac", "ts")
 
     init {
@@ -50,17 +50,17 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             }
 
             val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-            val player = mng.player
+            val player = mng.player.lavalinkPlayer.block()!!
             val scheduler = mng.scheduler
 
             when {
-                player.isPaused -> {
-                    player.isPaused = false
+                player.paused -> {
+                    player.setPaused(false).asMono().subscribe()
 
                     sendMsg(ctx, "Playback has been resumed.")
                 }
 
-                player.playingTrack != null -> sendMsg(ctx, "Player is already playing!")
+                player.track != null -> sendMsg(ctx, "Player is already playing!")
 
                 scheduler.queue.isEmpty() -> sendMsg(
                     ctx,
@@ -74,7 +74,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
         var toPlay = ctx.argsRaw
 
-        if (toPlay.contains(PornHubAudioSourceManager.DOMAIN_REGEX.toRegex()) && !ctx.isChannelNSFW) {
+        if (toPlay.contains(pornhubRegex.toRegex()) && !ctx.isChannelNSFW) {
             sendMsg(ctx, "Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
             return
         }
@@ -85,7 +85,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(toPlay, ctx.variables)
+            val vidId = searchYt(ctx.guildId, toPlay, ctx.variables)
 
             if (vidId == null) {
                 MessageUtils.sendError(ctx.message)
@@ -118,14 +118,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return true
     }
 
-    private fun searchYt(search: String, variables: Variables): String? {
-        val playlist = variables.audioUtils.searchYoutube(search)
+    private fun searchYt(guildId: Long, search: String, variables: Variables): String? {
+        val playlist = variables.audioUtils.searchYoutube(guildId, search)
 
-        if (playlist == null || playlist.tracks.isEmpty()) {
+        if (playlist.isNullOrEmpty()) {
             return null
         }
 
-        return playlist.tracks[0].identifier
+        return playlist[0].info.identifier
     }
 
     private fun handlePlay(toPlay: String, ctx: CommandContext) {
@@ -163,7 +163,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         var toPlay = event.getOption("item")!!.asString
 
-        if (toPlay.contains(PornHubAudioSourceManager.DOMAIN_REGEX.toRegex()) && !event.channel.isNSFW) {
+        if (toPlay.contains(pornhubRegex.toRegex()) && !event.channel.isNSFW) {
             event.reply("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW").queue()
             return
         }
@@ -174,7 +174,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(toPlay, variables)
+            val vidId = searchYt(event.guild!!.idLong, toPlay, variables)
 
             if (vidId == null) {
                 event.reply("No tracks were found").queue()

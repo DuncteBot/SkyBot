@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import fredboat.audio.player.LavalinkManager;
 import io.sentry.Sentry;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
@@ -71,10 +70,6 @@ public class EventManager implements IEventManager {
         this.listeners.add(reactionHandler);
         this.listeners.add(shardWatcher);
         this.listeners.add(inviteTracker);
-
-        if (LavalinkManager.INS.isEnabled()) {
-            this.listeners.add(LavalinkManager.INS.getLavalink());
-        }
     }
 
     @Override

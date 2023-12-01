@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class PauseCommand : MusicCommand() {
-
     init {
         this.name = "pause"
         this.aliases = arrayOf("resume")
@@ -34,27 +33,31 @@ class PauseCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player
+        val localPlayer = mng.player
+        val player = localPlayer.lavalinkPlayer.block()!!
 
-        if (player.playingTrack == null) {
+        if (player.track == null) {
             sendMsg(ctx, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
-        player.isPaused = !player.isPaused
-        sendMsg(ctx, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        player.setPaused(!player.paused).asMono().subscribe {
+            sendMsg(ctx, "The player has ${if (it.paused) "been paused" else "resumed playing"}.")
+        }
     }
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
-        val player = mng.player
+        val localPlayer = mng.player
+        val player = localPlayer.lavalinkPlayer.block()!!
 
-        if (player.playingTrack == null) {
+        if (player.track == null) {
             event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
             return
         }
 
-        player.isPaused = !player.isPaused
-        event.reply("The player has ${if (player.isPaused) "been paused" else "resumed playing"}.").queue()
+        player.setPaused(!player.paused).asMono().subscribe {
+            event.reply("The player has ${if (it.paused) "been paused" else "resumed playing"}.").queue()
+        }
     }
 }

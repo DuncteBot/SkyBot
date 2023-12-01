@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import dev.arbjerg.lavalink.protocol.v4.Track
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Variables
@@ -33,7 +33,6 @@ import java.util.*
 import kotlin.math.min
 
 class QueueCommand : MusicCommand() {
-
     init {
         this.name = "queue"
         this.aliases = arrayOf("list", "q")
@@ -55,8 +54,8 @@ class QueueCommand : MusicCommand() {
     private fun generateQueueEmbed(variables: Variables, guild: Guild, prefix: String): EmbedBuilder {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val scheduler = mng.scheduler
-        val queue: Queue<AudioTrack> = scheduler.queue
-        val playingTrack = mng.player.playingTrack
+        val queue: Queue<Track> = scheduler.queue
+        val playingTrack = mng.player.currentTrack
         var embed: EmbedBuilder
 
         synchronized(queue) {
@@ -66,7 +65,7 @@ class QueueCommand : MusicCommand() {
             if (queue.isEmpty()) {
                 embed = EmbedUtils.embedMessage("$current\n**Queue:** Empty")
             } else {
-                val queueLength = queue.sumOf { it.duration }
+                val queueLength = queue.sumOf { it.info.length }
                 val maxTracks = 10
                 val queueText = buildString {
                     appendLine(current)
@@ -77,7 +76,7 @@ class QueueCommand : MusicCommand() {
                             break
                         }
 
-                        appendLine(StringUtils.abbreviate("`[${getTimestamp(track.duration)}]` ${track.info.title}", 60))
+                        appendLine(StringUtils.abbreviate("`[${getTimestamp(track.info.length)}]` ${track.info.title}", 60))
                     }
 
                     appendLine("Total Queue Time Length: ${getTimestamp(queueLength)}")

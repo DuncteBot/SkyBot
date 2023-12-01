@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Settings.NO_STATIC
 import ml.duncte123.skybot.Settings.YES_STATIC
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.audio.GuildMusicManager
-import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.entities.Guild
@@ -32,7 +31,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import kotlin.math.ceil
 
 class SkipCommand : MusicCommand() {
-
     init {
         this.name = "skip"
         this.aliases = arrayOf("next", "nexttrack", "skiptrack")
@@ -52,35 +50,37 @@ class SkipCommand : MusicCommand() {
     private fun skipHandler(variables: Variables, guild: Guild, user: User, sendMessage: (String) -> Unit) {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val player = mng.player
+        val currentTrack = player.currentTrack
+        val scheduler = mng.scheduler
 
-        if (player.playingTrack == null) {
+        if (currentTrack == null) {
             sendMessage("The player is not playing.")
             return
         }
 
-        if (!player.playingTrack.isSeekable) {
+        if (!currentTrack.info.isSeekable) {
             sendMessage("This track is not seekable")
             return
         }
 
-        val trackData = player.playingTrack.getUserData(TrackUserData::class.java)
+        val trackData = scheduler.getUserData(currentTrack)
 
         if (trackData.requester == user.idLong) {
             doSkip(mng, sendMessage)
             return
         }
-		
+
         val vc = getLavalinkManager().getConnectedChannel(guild)
-		
+
         if (vc == null) {
             sendMessage("Somehow I am not connected to a voice channel? Probably a bug, please report this!")
             return
         }
 
         // https://github.com/jagrosh/MusicBot/blob/master/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
-        val listeners = vc.members.filter {
+        val listeners = vc.members.count {
             !it.user.isBot && !(it.voiceState?.isDeafened ?: false)
-        }.count()
+        }
 
         val votes = trackData.votes
 
@@ -104,11 +104,11 @@ class SkipCommand : MusicCommand() {
     }
 
     private fun doSkip(mng: GuildMusicManager, sendMessage: (String) -> Unit) {
-        val player = mng.player
+        val nextTrack = mng.scheduler.queue.peek()
 
-        mng.scheduler.specialSkipCase()
+        mng.scheduler.skipCurrentTrack()
 
-        if (player.playingTrack == null) {
+        if (nextTrack == null) {
             sendMessage(
                 "Successfully skipped the track.\n" +
                     "Queue is now empty."

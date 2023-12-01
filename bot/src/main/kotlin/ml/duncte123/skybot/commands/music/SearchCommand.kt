@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 class SearchCommand : MusicCommand() {
-
     init {
         this.mayAutoJoin = true
         this.name = "search"
@@ -60,14 +59,14 @@ class SearchCommand : MusicCommand() {
         val searchLimit = if (isPatron) 20 else 5
 
         val toPlay = ctx.argsRaw
-        val res = ctx.audioUtils.searchYoutube(toPlay)
+        val res = ctx.audioUtils.searchYoutube(ctx.guildId, toPlay)
 
-        if (res == null || res.tracks.isEmpty()) {
+        if (res.isNullOrEmpty()) {
             sendMsg(ctx, "$SEARCH_EMOTE No results found.")
             return
         }
 
-        val tracks = res.tracks.take(searchLimit)
+        val tracks = res.take(searchLimit)
 
         val string = buildString {
             tracks.map { it.info.title }.forEachIndexed { index: Int, s: String ->
@@ -91,7 +90,8 @@ class SearchCommand : MusicCommand() {
             menu.addOption(
                 "${index + 1}) ${title.substring(0, min(title.length, 20)).trim()}",
                 track.info.identifier,
-                title.substring(0, min(title.length, 50)).trim() // TODO: full title or url?
+                // TODO: full title or url?
+                title.substring(0, min(title.length, 50)).trim()
             )
         }
 

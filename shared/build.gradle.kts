@@ -27,10 +27,8 @@ plugins {
     idea
     java
     `java-library`
-    `maven-publish`
 
     kotlin("jvm")
-    id("com.github.breadmoirai.github-release")
 }
 
 group = "com.dunctebot"
@@ -64,7 +62,6 @@ val compileJava: JavaCompile by tasks
 val javadoc: Javadoc by tasks
 val jar: Jar by tasks
 val build: Task by tasks
-val publish: Task by tasks
 val clean: Task by tasks
 val test: Task by tasks
 val check: Task by tasks
@@ -78,66 +75,6 @@ val javadocJar = task<Jar>("javadocJar") {
     dependsOn(javadoc)
     archiveClassifier.set("javadoc")
     from(javadoc.destinationDir)
-}
-
-// TODO: remove!!!
-publishing {
-    repositories {
-        maven {
-            name = "jfrog"
-            url = uri("https://duncte123.jfrog.io/artifactory/maven/")
-            credentials {
-                username = System.getenv("JFROG_USERNAME")
-                password = System.getenv("JFROG_TOKEN")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("jfrog") {
-            pom {
-                name.set(archivesBaseName)
-                description.set("A helper package for shared models")
-                url.set("https://github.com/DuncteBot/models")
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("duncte123")
-                        name.set("Duncan Sterken")
-                        email.set("contact@duncte123.me")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/DuncteBot/models.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:DuncteBot/models.git")
-                    url.set("https://github.com/DuncteBot/models")
-                }
-            }
-
-            from(components["java"])
-
-            artifactId = archivesBaseName
-            groupId = project.group as String
-            version = project.version as String
-
-            artifact(javadocJar)
-            artifact(sourcesJar)
-        }
-    }
-}
-
-githubRelease {
-    token(System.getenv("GITHUB_TOKEN"))
-    owner("DuncteBot")
-    repo("models")
-    tagName(project.version as String)
-    overwrite(false)
-    prerelease(false)
-    body(changelog())
 }
 
 build.apply {

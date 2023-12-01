@@ -16,27 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funcmds;
 
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.configs.ImageConfig
-import ml.duncte123.skybot.commands.weeb.WeebCommandBase
-import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.objects.command.CommandContext
+import me.duncte123.botcommons.messaging.EmbedUtils;
+import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 
-class DiscordMemesCommand : WeebCommandBase() {
+import javax.annotation.Nonnull;
 
-    init {
-        this.displayAliasesInHelp = false
-        this.category = CommandCategory.FUN
-        this.name = "discordmeme"
-        this.aliases = arrayOf("dmeme", "discordmemes", "dmemes")
-        this.help = "Shows a discord meme"
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+
+public class OrlyCommand extends Command {
+    public OrlyCommand() {
+        this.category = CommandCategory.FUN;
+        this.name = "orly";
+        this.help = "Shows a random O Rly image from @ThePracticalDev on twitter";
     }
 
-    override fun execute(ctx: CommandContext) {
-        ctx.weebApi.getRandomImage(ImageConfig.Builder().setType("discord_memes").build()).async {
-            sendEmbed(ctx, getWeebEmbedImage(it.url))
-        }
+    @Override
+    public void execute(@Nonnull CommandContext ctx) {
+        final String imageUrl = ctx.getApis().getOrlyImage();
+
+        sendEmbed(ctx, EmbedUtils.embedImage(imageUrl));
     }
 }

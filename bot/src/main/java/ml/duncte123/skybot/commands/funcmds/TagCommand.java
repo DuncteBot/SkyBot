@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.funcmds;
 
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Settings;

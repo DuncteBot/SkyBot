@@ -29,7 +29,7 @@ data class AudioData(
     val channelId: Long,
     val replyToMessage: Long,
     val jda: JDA,
-    val variables: Variables
+    val variables: Variables,
 ) {
     fun getChannel() = jda.getChannelById(MessageChannelUnion::class.java, channelId)!!
 

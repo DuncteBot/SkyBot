@@ -28,7 +28,6 @@ import java.time.Month
 import java.time.OffsetDateTime
 
 class QuoteCommand : Command() {
-
     init {
         this.name = "quote"
         this.help = "Shows an inspiring quote"

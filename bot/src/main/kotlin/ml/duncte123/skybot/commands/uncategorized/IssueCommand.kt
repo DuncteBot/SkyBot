@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer
 
 class IssueCommand : Command() {
-
     val regex = "\\s+".toRegex()
 
     init {
@@ -60,7 +59,9 @@ class IssueCommand : Command() {
                     val cmds = issue.lastCommands.map {
                         if (it.contains(regex)) {
                             val split = it.split(regex)
-                            return@map split[0] + " " + split.takeLastWhile { s -> split.indexOf(s) != 0 }.joinToString(separator = " ", transform = { "<$it>" })
+                            return@map split[0] + " " + split.takeLastWhile { s ->
+                                split.indexOf(s) != 0
+                            }.joinToString(separator = " ", transform = { "<$it>" })
                         } else {
                             return@map it
                         }
@@ -68,7 +69,10 @@ class IssueCommand : Command() {
 
                     var invite = issue.inv
 
-                    if (invite.isNullOrEmpty() && ctx.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.CREATE_INSTANT_INVITE)) {
+                    if (
+                        invite.isNullOrEmpty() &&
+                        ctx.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.CREATE_INSTANT_INVITE)
+                    ) {
                         val chan = event.channel
 
                         if (chan is IInviteContainer) {

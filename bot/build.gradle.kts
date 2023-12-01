@@ -50,8 +50,6 @@ dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-    implementation(libs.sourceManagers)
-    implementation(libs.lavaplayer)
     implementation(libs.lavalink.client) {
         exclude(module = "lavaplayer")
     }
@@ -181,14 +179,6 @@ shadowJar.apply {
 kotlinter {
     ignoreFailures = false
     reporters = arrayOf("checkstyle", "plain")
-    experimentalRules = true
-    disabledRules = arrayOf(
-        "filename", "no-wildcard-imports", "experimental:indent",
-        "argument-list-wrapping",
-        "experimental:spacing-between-declarations-with-annotations",
-        "experimental:spacing-between-declarations-with-comments",
-        "experimental:comment-wrapping"
-    )
 }
 
 pmd {

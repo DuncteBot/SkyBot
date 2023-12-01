@@ -25,7 +25,6 @@ import ml.duncte123.skybot.utils.AirUtils
 import java.lang.management.ManagementFactory
 
 class UptimeCommand : Command() {
-
     init {
         this.name = "uptime"
         this.help = "Shows the bot's uptime"

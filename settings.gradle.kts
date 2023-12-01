@@ -91,11 +91,8 @@ fun VersionCatalogBuilder.database() {
 }
 
 fun VersionCatalogBuilder.voice() {
-    library("sourceManagers", "com.dunctebot", "sourcemanagers").version("1.8.5")
-//    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.78")
-    library("lavaplayer", "com.github.walkyst", "lavaplayer-fork").version("1.4.2")
-//    library("lavalink-client", "com.github.DuncteBot", "Lavalink-Client").version("c1d8b73")
-    library("lavalink-client", "com.github.freyacodes", "Lavalink-Client").version("cde746afc")
+//    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("0.0.1")
+    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("0f716127212f8f5d52b215db85f64e3a94c41c75-SNAPSHOT")
 }
 
 fun VersionCatalogBuilder.dashboard() {

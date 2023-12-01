@@ -23,7 +23,6 @@ import me.duncte123.weebJava.configs.ImageConfig
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class B1nzyCommand : WeebCommandBase() {
-
     init {
         this.name = "b1nzy"
         this.help = "Shows a b1nzy meme"

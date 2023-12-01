@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.commands.music
 
+import dev.arbjerg.lavalink.protocol.v4.Band
+import dev.arbjerg.lavalink.protocol.v4.Filters
+import dev.arbjerg.lavalink.protocol.v4.toOmissible
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -29,7 +32,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class BassBoostCommand : MusicCommand() {
-
     init {
         this.name = "bassboost"
         this.aliases = arrayOf("bb", "baseboost")
@@ -78,13 +80,17 @@ class BassBoostCommand : MusicCommand() {
 
     private fun setLavalinkEQ(gain: Float, variable: Variables, guildId: Long) {
         val player = variable.audioUtils.getMusicManager(guildId).player
-        val filters = player.filters
+        val bands = mutableListOf<Band>()
 
         for (i in 0..2) {
-            filters.setBand(i, gain)
+            bands.add(Band(i, gain))
         }
 
-        filters.commit()
+        player.setFilters(
+            Filters(
+                equalizer = bands.toOmissible()
+            )
+        )
     }
 
     override fun getSubData(): SubcommandData {

@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class RepeatCommand : MusicCommand() {
-
     init {
         this.name = "repeat"
         this.aliases = arrayOf("loop")

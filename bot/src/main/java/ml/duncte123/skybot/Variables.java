@@ -89,7 +89,7 @@ public final class Variables {
         this.apis = new DuncteApis("Bot " + this.config.discord.token, this.mapper);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(this.config.apis.blargbot, this.mapper);
-        this.audioUtils = new AudioUtils(this.config.apis, this);
+        this.audioUtils = new AudioUtils(this);
         this.alexflipnote = new Alexflipnote(this.mapper, this.config.apis.alexflipnote);
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
             .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")

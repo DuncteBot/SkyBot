@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class ShootCommand : WeebCommandBase() {
-
     init {
         this.name = "shoot"
         this.help = "Shoot someone"

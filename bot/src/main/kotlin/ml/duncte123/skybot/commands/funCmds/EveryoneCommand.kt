@@ -16,19 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.audio.sourcemanagers;
+package ml.duncte123.skybot.commands.funCmds
 
-import com.sedmelluq.discord.lavaplayer.track.AudioReference;
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.weebJava.configs.ImageConfig
+import ml.duncte123.skybot.commands.weeb.WeebCommandBase
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 
-public class DBAudioRef extends AudioReference {
-    private final boolean patron;
-
-    public DBAudioRef(String identifier, String title, boolean patron) {
-        super(identifier, title);
-        this.patron = patron;
+class EveryoneCommand : WeebCommandBase() {
+    init {
+        this.category = CommandCategory.FUN
+        this.name = "everyone"
+        this.help = "Useful for when everyone is being pinged again"
     }
 
-    public boolean isPatron() {
-        return this.patron;
+    override fun execute(ctx: CommandContext) {
+        ctx.weebApi.getRandomImage(ImageConfig.Builder().setTags(listOf("everyone")).build()).async {
+            sendEmbed(ctx, getWeebEmbedImage(it.url))
+        }
     }
 }

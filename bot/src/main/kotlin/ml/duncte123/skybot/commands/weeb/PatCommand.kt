@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class PatCommand : WeebCommandBase() {
-
     init {
         this.name = "pat"
         this.help = "Pat someone"

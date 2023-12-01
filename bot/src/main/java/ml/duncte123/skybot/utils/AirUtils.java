@@ -146,7 +146,6 @@ public class AirUtils {
     public static void stop(AudioUtils audioUtils) {
         stopMusic(audioUtils);
 
-        audioUtils.getPlayerManager().shutdown();
         LavalinkManager.INS.shutdown();
     }
 
@@ -166,13 +165,6 @@ public class AirUtils {
         }
 
         mng.stopAndClear();
-
-        final LavalinkManager lavalinkManager = LavalinkManager.INS;
-        final String guildIdString = Long.toString(guildId);
-
-        if (lavalinkManager.isConnected(guildIdString)) {
-            lavalinkManager.closeConnection(guildIdString);
-        }
     }
 
     @Nullable

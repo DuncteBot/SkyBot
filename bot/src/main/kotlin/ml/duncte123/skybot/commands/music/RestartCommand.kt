@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class RestartCommand : MusicCommand() {
-
     init {
         this.name = "restart"
         this.help = "Start the current track from the beginning"
@@ -33,14 +32,15 @@ class RestartCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
+        val currentTrack = player.currentTrack
 
-        if (player.playingTrack == null) {
+        if (currentTrack == null) {
             sendError(ctx.message)
             sendMsg(ctx, "No track currently playing")
             return
         }
 
-        if (!player.playingTrack.isSeekable) {
+        if (!currentTrack.info.isSeekable) {
             sendMsg(ctx, "This track is not seekable")
             return
         }

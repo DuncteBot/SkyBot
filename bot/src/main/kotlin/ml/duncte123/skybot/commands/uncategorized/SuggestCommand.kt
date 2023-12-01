@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class SuggestCommand : Command() {
-
     init {
         this.name = "suggest"
         this.help = "Suggest a new feature for DuncteBot!"

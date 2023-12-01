@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class CookieCommand : Command() {
-
     init {
         this.name = "cookie"
         this.help = "blobnomcookie"

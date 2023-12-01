@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.weeb
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class HugCommand : WeebCommandBase() {
-
     init {
         this.name = "hug"
         this.help = "Hug a user"

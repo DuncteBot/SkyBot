@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.messaging.MessageConfig
@@ -42,9 +42,8 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 class ChatCommand : Command() {
-
     private val sessions = MapUtils.newLongObjectMap<ChatSession>()
-    private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
+    private val maxDuration = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
         "My prefix in this guild is *`{PREFIX}`*",
         "Thanks for asking, my prefix here is *`{PREFIX}`*",
@@ -70,7 +69,7 @@ class ChatCommand : Command() {
                 var cleared = 0
                 for (it in temp.keys()) {
                     val duration = now.time - sessions.get(it).time.time
-                    if (duration >= MAX_DURATION) {
+                    if (duration >= maxDuration) {
                         sessions.remove(it)
                         cleared++
                     }
@@ -125,7 +124,10 @@ class ChatCommand : Command() {
                 sendMsg(
                     MessageConfig.Builder.fromCtx(ctx)
                         .replyTo(ctx.message)
-                        .setMessage("$NO_STATIC Chatbot error: no content returned, this is likely due to the chatbot banning you (we are working on a fix)")
+                        .setMessage(
+                            "$NO_STATIC Chatbot error: no content returned, " +
+                                "this is likely due to the chatbot banning you (we are working on a fix)"
+                        )
                 )
                 return@think
             }

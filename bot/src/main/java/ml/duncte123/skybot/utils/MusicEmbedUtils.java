@@ -18,50 +18,72 @@
 
 package ml.duncte123.skybot.utils;
 
+import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 
+import java.util.function.Consumer;
+
 public class MusicEmbedUtils {
+    private static final String ICON_PAUSE = "⏸";
+    private static final String ICON_PLAY = "▶";
+    private static final String ICON_PROGRESS_THUMB = "\uD83D\uDD18";
+    private static final char ICON_PROGRESS_BAR = '▬';
+    private static final String ICON_SPEAKER_MUTE = "\uD83D\uDD07";
+    private static final String ICON_SPEAKER_LOW = "\uD83D\uDD08";
+    private static final String ICON_SPEAKER_MED = "\uD83D\uDD09";
+    private static final String ICON_SPEAKER_FULL = "\uD83D\uDD0A";
+    private static final String ICON_EXPLOSION_EAR = "\uD83D\uDCA5\uD83D\uDC42";
 
     private MusicEmbedUtils() {}
 
-    public static String playerEmbed(GuildMusicManager mng) {
-        return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
-            generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
-            + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
-            + getVolumeIcon(mng.player.getVolume());
+    public static void createPlayerString(GuildMusicManager mng, Consumer<String> callback) {
+        mng.getPlayer().getLavalinkPlayer().subscribe((player) -> {
+            final TrackInfo trackInfo = player.getTrack().getInfo();
+            final long position = player.getPosition();
+            final long duration = trackInfo.getLength();
+
+            callback.accept(
+                "%s %s `[%s/%s]` %s".formatted(
+                    player.getPaused() ? ICON_PAUSE : ICON_PLAY,
+                    generateProgressBar((double) position / duration),
+                    formatTime(position),
+                    formatTime(duration),
+                    getVolumeIcon(player.getVolume())
+                )
+            );
+        });
     }
 
     private static String generateProgressBar(double percent) {
         final StringBuilder str = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             if (i == (int) (percent * 8)) {
-                str.append("\uD83D\uDD18");
+                str.append(ICON_PROGRESS_THUMB);
             } else {
-                str.append('▬');
+                str.append(ICON_PROGRESS_BAR);
             }
         }
         return str.toString();
     }
 
-    private static String getVolumeIcon(float volume) {
-        if (volume == 0.0) {
-            return "\uD83D\uDD07";
+    private static String getVolumeIcon(int volume) {
+        if (volume == 0) {
+            return ICON_SPEAKER_MUTE;
         }
 
-        if (volume < 0.33) {
-            return "\uD83D\uDD08";
+        if (volume < 33) {
+            return ICON_SPEAKER_LOW;
         }
 
-        if (volume < 0.67) {
-            return "\uD83D\uDD09";
+        if (volume < 67) {
+            return ICON_SPEAKER_MED;
         }
 
-        if (volume > 1) {
-            // explosion ear
-            return "\uD83D\uDCA5\uD83D\uDC42";
+        if (volume > 100) {
+            return ICON_EXPLOSION_EAR;
         }
 
-        return "\uD83D\uDD0A";
+        return ICON_SPEAKER_FULL;
     }
 
     private static String formatTime(long duration) {

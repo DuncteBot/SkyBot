@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.funCmds
 
 import com.github.natanbc.reliqua.limiter.RateLimiter
 import com.github.natanbc.reliqua.request.RequestException
@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 
 class AdviceCommand : Command() {
-
     init {
         this.category = CommandCategory.FUN
         this.name = "advice"
@@ -37,7 +36,9 @@ class AdviceCommand : Command() {
 
     override fun execute(ctx: CommandContext) {
         try {
-            val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
+            val json = WebUtils.ins.getJSONObject("https://api.adviceslip.com/advice") {
+                it.setRateLimiter(RateLimiter.directLimiter())
+            }.execute()
 
             if (json.has("message")) {
                 val type = json["message"]["type"].asText()

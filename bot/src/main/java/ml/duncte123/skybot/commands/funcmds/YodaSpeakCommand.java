@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.funcmds;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.sentry.Sentry;

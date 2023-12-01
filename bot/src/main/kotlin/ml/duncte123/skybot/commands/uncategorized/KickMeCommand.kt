@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.Permission
 import java.util.concurrent.TimeUnit
 
 class KickMeCommand : Command() {
-
     init {
         this.name = "kickme"
         this.help = "Kicks you off the server"

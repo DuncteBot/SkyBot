@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.utils.FileUpload
 import java.util.concurrent.atomic.AtomicLong
 
 class BlackListCommand : ModBaseCommand() {
-
     init {
         this.requiresArgs = true
         this.category = CommandCategory.ADMINISTRATION
@@ -166,7 +165,7 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        ctx: CommandContext
+        ctx: CommandContext,
     ) {
         val list = guild.settings.blacklistedWords
 
@@ -187,7 +186,7 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        ctx: CommandContext
+        ctx: CommandContext,
     ) {
         val list = guild.settings.blacklistedWords
 

@@ -22,14 +22,13 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.exceptions.LimitReachedException
-import ml.duncte123.skybot.objects.TrackUserData
+import ml.duncte123.skybot.extensions.makeClone
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class ReaddCommand : MusicCommand() {
-
     init {
         this.name = "readd"
         this.help = "Adds the currently playing track to the end of the queue"
@@ -37,7 +36,7 @@ class ReaddCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val manager = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val track = manager.player.playingTrack
+        val track = manager.player.currentTrack
 
         if (track == null) {
             sendError(ctx.message)
@@ -46,7 +45,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         val clone = track.makeClone()
-        clone.userData = track.getUserData(TrackUserData::class.java).copy()
+        manager.scheduler.storeUserData(clone, manager.scheduler.getUserData(track).copy())
 
         // This is from AudioUtils.java but in Kotlin
         var title = clone.info.title
@@ -58,7 +57,7 @@ class ReaddCommand : MusicCommand() {
             }
         }
         var msg = "Adding to queue: $title"
-        if (manager.player.playingTrack == null) {
+        if (manager.player.currentTrack == null) {
             msg += "\nand the Player has started playing;"
         }
 

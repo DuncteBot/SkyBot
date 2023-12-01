@@ -18,32 +18,30 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.dunctebot.sourcemanagers.IWillUseIdentifierInstead;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import dev.arbjerg.lavalink.protocol.v4.Exception;
+import dev.arbjerg.lavalink.protocol.v4.*;
+import kotlinx.serialization.json.JsonElementKt;
+import kotlinx.serialization.json.JsonObject;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
-import ml.duncte123.skybot.extensions.AudioTrackKt;
 import ml.duncte123.skybot.extensions.StringKt;
 import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class AudioLoader implements AudioLoadResultHandler {
+public class AudioLoader implements Consumer<LoadResult> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudioLoader.class);
 
     private final AudioData data;
     private final long requester;
@@ -62,8 +60,34 @@ public class AudioLoader implements AudioLoadResultHandler {
     }
 
     @Override
-    public void trackLoaded(AudioTrack track) {
-        track.setUserData(new TrackUserData(this.requester));
+    public void accept(LoadResult loadResult) {
+        if (loadResult instanceof LoadResult.TrackLoaded trackLoaded) {
+            this.trackLoaded(trackLoaded);
+        } else if (loadResult instanceof LoadResult.PlaylistLoaded playlistLoaded) {
+            this.playlistLoaded(playlistLoaded);
+        } else if (loadResult instanceof LoadResult.SearchResult searchResult) {
+            LOGGER.error("Search result not handled: {}", searchResult);
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(embedMessage("Error: Unhandled search result, please report this bug to the devs!"))
+                    .build()
+            );
+//            this.searchLoaded(searchResult);
+        } else if (loadResult instanceof LoadResult.NoMatches) {
+            this.noMatches();
+        } else if (loadResult instanceof LoadResult.LoadFailed loadFailed) {
+            this.loadFailed(loadFailed.getData());
+        }
+    }
+
+    private void trackLoaded(LoadResult.TrackLoaded data) {
+        final Track track = data.getData().copyWithUserData(new JsonObject(Map.of(
+            "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
+        )));
+
+        mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
 
         final TrackScheduler scheduler = this.mng.getScheduler();
 
@@ -81,15 +105,10 @@ public class AudioLoader implements AudioLoadResultHandler {
             scheduler.addToQueue(track, this.isPatron);
 
             if (this.announce) {
-                final AudioTrackInfo info = track.getInfo();
-                final String uri;
-                if (track instanceof IWillUseIdentifierInstead) {
-                    uri = info.identifier;
-                } else {
-                    uri = info.uri;
-                }
+                final TrackInfo info = track.getInfo();
+                final String uri = info.getUri();
 
-                final String title = getSteamTitle(track, info.title, this.data.getVariables().getCommandManager());
+                final String title = getSteamTitle(track, info.getTitle(), this.data.getVariables().getCommandManager());
                 final String msg = "Adding to queue: [" + StringKt.abbreviate(title, 500) + "](" + uri + ')';
 
                 sendMsg(
@@ -97,7 +116,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                         .setChannel(this.data.getChannel())
                         .replyTo(this.data.getReplyToMessage())
                         .setEmbeds(embedMessage(msg)
-                            .setThumbnail(AudioTrackKt.getImageUrl(track, true)))
+                            .setThumbnail(track.getInfo().getArtworkUrl()))
                         .build()
                 );
             }
@@ -113,9 +132,11 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
     }
 
-    @Override
-    public void playlistLoaded(AudioPlaylist playlist) {
-        if (playlist.getTracks().isEmpty()) {
+    private void playlistLoaded(LoadResult.PlaylistLoaded playlistLoaded) {
+        final Playlist playlist = playlistLoaded.getData();
+        final List<Track> tracks = playlist.getTracks();
+
+        if (tracks.isEmpty()) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -127,43 +148,35 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
+        final PlaylistInfo playlistInfo = playlist.getInfo();
+
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
 
-            List<AudioTrack> tracksRaw = playlist.getTracks();
-            final AudioTrack selectedTrack = playlist.getSelectedTrack();
+            List<Track> tracksRaw = tracks;
+            final int selectedTrackIndex = playlistInfo.getSelectedTrack();
 
-            if (selectedTrack != null) {
-                final int index = tracksRaw.indexOf(selectedTrack);
-
-                if (index > -1) {
-                    tracksRaw = tracksRaw.subList(index, tracksRaw.size());
-                }
+            if (selectedTrackIndex > -1) {
+                tracksRaw = tracksRaw.subList(selectedTrackIndex, tracksRaw.size());
             }
 
-            final List<AudioTrack> tracks = tracksRaw.stream().peek((track) -> {
-                // don't store this externally since it will cause issues
-                track.setUserData(new TrackUserData(this.requester));
+            final List<Track> limitedTracks = tracksRaw.stream().map((track) -> {
+                track = track.copyWithUserData(new JsonObject(Map.of(
+                    "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
+                )));
+
+                mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
+
+                return track;
             }).toList();
 
-            for (final AudioTrack track : tracks) {
+            for (final Track track : limitedTracks) {
                 trackScheduler.addToQueue(track, this.isPatron);
             }
 
             if (this.announce) {
-                final String sizeMsg;
-
-                if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
-                    sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
-                } else {
-                    sizeMsg = String.valueOf(tracks.size());
-                }
-
-                final String msg = String.format(
-                    "Adding **%s** tracks to the queue from **%s**",
-                    sizeMsg,
-                    playlist.getName()
-                );
+                // TODO: find a way to fix up BigChungusPlaylist
+                final String msg = getPlaylistMsg(tracks, playlistInfo);
 
                 sendMsg(
                     new MessageConfig.Builder()
@@ -181,7 +194,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                         .setChannel(this.data.getChannel())
                         .replyTo(this.data.getReplyToMessage())
                         .setMessage(String.format("The first %s tracks from %s have been queued up\n" +
-                            "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlist.getName()))
+                            "Consider supporting us on patreon to queue up unlimited songs.", e.getSize(), playlistInfo.getName()))
                         .build()
                 );
             }
@@ -189,8 +202,27 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
     }
 
-    @Override
-    public void noMatches() {
+    private String getPlaylistMsg(List<Track> tracks, PlaylistInfo playlistInfo) {
+        final String sizeMsg = String.valueOf(tracks.size());
+
+        /*if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
+            sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
+        } else {
+            sizeMsg = String.valueOf(tracks.size());
+        }*/
+
+        return String.format(
+            "Adding **%s** tracks to the queue from **%s**",
+            sizeMsg,
+            playlistInfo.getName()
+        );
+    }
+
+//    private void searchLoaded(LoadResult.SearchResult searchResult) {
+//        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
+//    }
+
+    private void noMatches() {
         if (this.announce) {
             sendMsg(
                 new MessageConfig.Builder()
@@ -202,9 +234,8 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
     }
 
-    @Override
-    public void loadFailed(FriendlyException exception) {
-        if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
+    private void loadFailed(Exception exception) {
+        /*if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -216,13 +247,15 @@ public class AudioLoader implements AudioLoadResultHandler {
             );
 
             return;
-        }
+        }*/
 
         if (!this.announce) {
             return;
         }
 
-        if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
+        final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
+
+        if (finalCause.endsWith("Playback on other websites has been disabled by the video owner.")) {
             sendMsg(
                 new MessageConfig.Builder()
                     .setChannel(this.data.getChannel())
@@ -236,18 +269,12 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        @Nullable Throwable root = ExceptionUtils.getRootCause(exception);
-
-        if (root == null) {
-            root = exception;
-        }
-
         sendMsg(
             new MessageConfig.Builder()
                 .setChannel(this.data.getChannel())
                 .replyTo(this.data.getReplyToMessage())
                 .setEmbeds(
-                    embedMessage("Could not play: " + StringKt.abbreviate(root.getMessage(), MessageEmbed.VALUE_MAX_LENGTH)
+                    embedMessage("Could not play: " + StringKt.abbreviate(finalCause, MessageEmbed.VALUE_MAX_LENGTH)
                         + "\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!")
                 )
                 .build()
@@ -255,14 +282,14 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     }
 
-    private static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {
+    private static String getSteamTitle(Track track, String rawTitle, CommandManager commandManager) {
         String title = rawTitle;
 
-        if (track.getInfo().isStream) {
+        if (track.getInfo().isStream()) {
             final Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
                 .getRadioStreams()
                 .stream()
-                .filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                .filter(s -> s.getUrl().equals(track.getInfo().getUri())).findFirst();
 
             if (stream.isPresent()) {
                 title = stream.get().getName();
