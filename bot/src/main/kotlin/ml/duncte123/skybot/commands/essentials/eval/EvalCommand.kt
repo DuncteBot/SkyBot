@@ -46,6 +46,8 @@ class EvalCommand : Command() {
 
         return@newSingleThreadExecutor thread
     }
+
+    // a little help from minn :)
     private val engine: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByExtension("kts")!!.apply {
             val packageImports = listOf(
@@ -205,7 +207,6 @@ class EvalCommand : Command() {
         return writer.toString()
     }
 
-    @Suppress("SameParameterValue")
     private fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): PendingRequest<String> {
         val base = "https://spectre.duncte123.dev"
         val body = FormRequestBody()
