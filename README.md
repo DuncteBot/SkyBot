@@ -27,6 +27,8 @@ Go to [`https://duncte.bot/invite`][inviteLink] and follow the steps on the webs
 While self-hosting is very much possible with Docker, please note that no support will be provided with self-hosting.
 The code of this bot was made public for people who want to see how the bot works or want to contribute to it.
 
+# Used external libraries
+Skybot relies on [this lib](https://github.com/sot-tech/LottieConverter/releases/tag/r0.2) for lottie conversion.
 
 # Support
 [![Support Server](https://discord.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://duncte.bot/server)

@@ -36,6 +36,9 @@ import net.dv8tion.jda.api.entities.sticker.StickerItem;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -59,12 +62,22 @@ public class EnlargeCommand extends Command {
             final StickerItem sticker = stickers.get(0);
             final StickerFormat formatType = sticker.getFormatType();
 
-            if (formatType == StickerFormat.UNKNOWN || formatType == StickerFormat.LOTTIE) {
-                sendMsg(ctx, "The sticker supplied could not be rendered");
-                return;
+            switch (formatType) {
+                case GIF:
+                    this.uploadFile(sticker.getIconUrl(), ctx);
+                    break;
+                case PNG:
+                case APNG:
+                    this.uploadFile(sticker.getIconUrl().replace("apng", "png"), ctx);
+                    break;
+                case LOTTIE:
+                    this.sendLottieGif(sticker.getIconUrl(), sticker.getName(), ctx);
+                    break;
+                default:
+                    sendMsg(ctx, "The sticker supplied could not be rendered");
+                    break;
             }
 
-            this.uploadFile(sticker.getIconUrl().replace("apng", "png"), ctx);
             return;
         }
 
@@ -112,6 +125,52 @@ public class EnlargeCommand extends Command {
         }
 
         this.uploadFile(emojiUrl, ctx);
+    }
+
+    // TODO: use virtual threads
+    private void sendLottieGif(final String lottieUrl, final String stickerName, final CommandContext ctx) {
+        WebUtils.ins.getText(lottieUrl, (it) -> it.setRateLimiter(RateLimiter.directLimiter())).async(
+            (lottieJson) -> {
+                try {
+                    final var bytes = this.renderLottie(lottieJson);
+
+                    ctx.getChannel()
+                        .sendFiles(
+                            FileUpload.fromData(bytes, "%s.gif".formatted(stickerName))
+                        )
+                        .setMessageReference(ctx.getMessage())
+                        .queue();
+                } catch (final IOException e) {
+                    LOGGER.error("Failed to render lottie", e);
+                    sendMsg(ctx, "Failed to render lottie: " + e.getMessage());
+                }
+            },
+            (error) -> {
+                Sentry.captureException(error);
+                sendMsg(ctx, "Failed to render lottie: " + error.getMessage());
+            }
+        );
+    }
+
+    private byte[] renderLottie(final String lottieJson) throws IOException {
+        final var tmpFile = File.createTempFile("lottie-json", ".json");
+
+        try (var writer = Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8)) {
+            writer.write(lottieJson);
+        }
+
+        final var programFile = new File("assets/lottieconverter");
+        final var process = new ProcessBuilder()
+            .command(
+                programFile.getAbsolutePath(),
+                "-", "-", "gif", "512x512", "60"
+            )
+            .redirectInput(ProcessBuilder.Redirect.from(tmpFile))
+            .start();
+
+        try (var stream = process.getInputStream()) {
+            return stream.readAllBytes();
+        }
     }
 
     private void uploadFile(final String url, final CommandContext ctx) {

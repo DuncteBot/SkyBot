@@ -49,6 +49,9 @@ class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> 
         }
 
     init {
+        // Needed for docker it seems
+        Class.forName("org.postgresql.ds.PGSimpleDataSource")
+
         val config = HikariConfig()
 
         // IT IS postgresql:// NOT psql://
