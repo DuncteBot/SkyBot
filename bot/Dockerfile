@@ -17,6 +17,8 @@ FROM azul/zulu-openjdk-alpine:19-jre
 # also add some fonts
 RUN apk add --no-cache libstdc++ fontconfig font-noto
 
+COPY ./assets/lottieconverter_musl /skybot/assets/lottieconverter
+
 WORKDIR /skybot
 COPY --from=builder /skybot/bot/build/libs/bot*-prod.jar ./skybot.jar
 
