@@ -170,6 +170,8 @@ public class EnlargeCommand extends Command {
 
         try (var stream = process.getInputStream()) {
             return stream.readAllBytes();
+        } finally {
+            tmpFile.delete();
         }
     }
 
