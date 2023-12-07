@@ -92,7 +92,7 @@ fun VersionCatalogBuilder.database() {
 
 fun VersionCatalogBuilder.voice() {
 //    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("0.0.1")
-    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("0f716127212f8f5d52b215db85f64e3a94c41c75-SNAPSHOT")
+    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("1.0.0")
 }
 
 fun VersionCatalogBuilder.dashboard() {

@@ -66,6 +66,10 @@ val clean: Task by tasks
 val test: Task by tasks
 val check: Task by tasks
 
+jar.apply {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 val sourcesJar = task<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allJava)
