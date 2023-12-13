@@ -39,6 +39,8 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual;
+
 public class ReadyShutdownListener extends MessageListener {
     // Using an atomic boolean because multiple shards are writing to it
     private final AtomicBoolean arePoolsRunning = new AtomicBoolean(false);
@@ -83,7 +85,7 @@ public class ReadyShutdownListener extends MessageListener {
         //Start the timers if they have not been started yet
         if (!arePoolsRunning.get()) {
             LOGGER.info("Starting spam-cache-cleaner!");
-            systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
+            SkyBot.SYSTEM_POOL.scheduleAtFixedRate(() -> runOnVirtual(spamFilter::clearMessages), 20, 13, TimeUnit.SECONDS);
 
             if (
                 "psql".equals(this.variables.getConfig().useDatabase) ||
@@ -129,7 +131,7 @@ public class ReadyShutdownListener extends MessageListener {
         LOGGER.info("Music system shutdown");
 
         // Kill all threads
-        this.systemPool.shutdown();
+        SkyBot.SYSTEM_POOL.shutdown();
         LOGGER.info("System pool shutdown");
 
         // kill the websocket

@@ -18,9 +18,11 @@
 
 package ml.duncte123.skybot
 
-import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.events.GenericEvent
@@ -28,17 +30,11 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ReactionHandler : EventListener {
     private val requirementsCache = arrayListOf<ReactionCacheElement>()
     private val consumerCache = hashMapOf<String, CommandContext>()
-    private val executor = Executors.newScheduledThreadPool(2) { r ->
-        val t = Thread(r, "ReactionAwaiter")
-        t.isDaemon = true
-        return@newScheduledThreadPool t
-    }
 
     private fun MessageChannelUnion.editMsg(id: Long, msg: String) = this.asGuildMessageChannel()
         .editMessageById(id, msg)
@@ -98,16 +94,18 @@ class ReactionHandler : EventListener {
         requirementsCache.add(cacheElement)
         consumerCache[componentId] = ctx.applySentId(userId)
 
-        executor.schedule(
+        SkyBot.SYSTEM_POOL.schedule(
             {
-                try {
-                    if (requirementsCache.contains(cacheElement)) {
-                        requirementsCache.remove(cacheElement)
-                        consumerCache.remove(componentId)
-                        ctx.channel.editMsg(msg.idLong, "$SEARCH_EMOTE Search timed out")
+                runOnVirtual {
+                    try {
+                        if (requirementsCache.contains(cacheElement)) {
+                            requirementsCache.remove(cacheElement)
+                            consumerCache.remove(componentId)
+                            ctx.channel.editMsg(msg.idLong, "$SEARCH_EMOTE Search timed out")
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             },
             timeoutInMillis, TimeUnit.MILLISECONDS

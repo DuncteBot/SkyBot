@@ -25,16 +25,17 @@ import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.requests.FormRequestBody
 import ml.duncte123.skybot.Settings.NO_STATIC
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MapUtils
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jsoup.Jsoup
 import java.io.InputStream
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
@@ -53,9 +54,6 @@ class ChatCommand : Command() {
         "In this server my prefix is *`{PREFIX}`*"
     )
 
-    // The size should match the usage for stability but not more than 4.
-    private val cleanupService = Executors.newSingleThreadScheduledExecutor()
-
     init {
         this.category = CommandCategory.FUN
         this.name = "chat"
@@ -66,19 +64,9 @@ class ChatCommand : Command() {
             Permission.MESSAGE_HISTORY
         )
 
-        cleanupService.scheduleAtFixedRate(
+        SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
             {
-                val temp = TLongObjectHashMap(sessions)
-                val now = Date()
-                var cleared = 0
-                for (it in temp.keys()) {
-                    val duration = now.time - sessions.get(it).time.time
-                    if (duration >= maxDuration) {
-                        sessions.remove(it)
-                        cleared++
-                    }
-                }
-                LOGGER.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
+                AirUtils.runOnVirtual(this::doCleanup)
             },
             1L, 1L, TimeUnit.HOURS
         )
@@ -105,7 +93,7 @@ class ChatCommand : Command() {
         val time = System.currentTimeMillis()
         var message = ctx.argsJoined
 
-        message = replaceStuff(event, message)
+        message = replaceMentionsWithText(event, message)
 
         if (!sessions.containsKey(event.author.idLong)) {
             sessions.put(event.author.idLong, ChatSession(event.author.idLong))
@@ -155,7 +143,7 @@ class ChatCommand : Command() {
         return response1
     }
 
-    private fun replaceStuff(event: MessageReceivedEvent, m: String): String {
+    private fun replaceMentionsWithText(event: MessageReceivedEvent, m: String): String {
         var message = m
         val mentions = event.message.mentions
 
@@ -173,6 +161,20 @@ class ChatCommand : Command() {
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
         return message
+    }
+
+    private fun doCleanup() {
+        val temp = TLongObjectHashMap(sessions)
+        val now = Date()
+        var cleared = 0
+        for (it in temp.keys()) {
+            val duration = now.time - sessions.get(it).time.time
+            if (duration >= maxDuration) {
+                sessions.remove(it)
+                cleared++
+            }
+        }
+        LOGGER.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
     }
 }
 

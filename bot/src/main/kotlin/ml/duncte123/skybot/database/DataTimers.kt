@@ -19,24 +19,25 @@
 package ml.duncte123.skybot.database
 
 import io.sentry.Sentry
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnban
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnmute
 import org.slf4j.Logger
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object DataTimers {
-    private val pool = Executors.newSingleThreadScheduledExecutor()
-
     @JvmStatic
     fun startUnbanTimer(variables: Variables, logger: Logger) {
         logger.info("Starting unban timer")
 
-        pool.scheduleAtFixedRate(
+        SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
             {
-                checkUnbansAndUnmutes(variables)
+                runOnVirtual {
+                    checkUnbansAndUnmutes(variables)
+                }
             },
             0L,
             1L,
@@ -48,13 +49,15 @@ object DataTimers {
     fun startReminderTimer(variables: Variables, logger: Logger) {
         logger.info("Starting reminder timer")
 
-        pool.scheduleAtFixedRate(
+        SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
             {
-                val db = variables.database
+                runOnVirtual {
+                    val db = variables.database
 
-                db.getExpiredReminders().thenAccept {
-                    if (it.isNotEmpty()) {
-                        AirUtils.handleExpiredReminders(it, db)
+                    db.getExpiredReminders().thenAccept {
+                        if (it.isNotEmpty()) {
+                            AirUtils.handleExpiredReminders(it, db)
+                        }
                     }
                 }
             },
@@ -68,11 +71,13 @@ object DataTimers {
     fun startWarningTimer(variables: Variables, logger: Logger) {
         logger.info("Starting warning timer")
 
-        pool.scheduleAtFixedRate(
+        SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
             {
-                val db = variables.database
+                runOnVirtual {
+                    val db = variables.database
 
-                db.purgeExpiredWarnings()
+                    db.purgeExpiredWarnings()
+                }
             },
             0L,
             1L,

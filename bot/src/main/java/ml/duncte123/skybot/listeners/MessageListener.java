@@ -35,8 +35,8 @@ import ml.duncte123.skybot.database.RedisDB;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.CustomCommand;
+import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.discord.MessageData;
 import ml.duncte123.skybot.objects.user.UnknownUser;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -45,7 +45,10 @@ import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
@@ -63,8 +66,6 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -85,8 +86,6 @@ public abstract class MessageListener extends BaseListener {
     protected final CommandManager commandManager = variables.getCommandManager();
     private static final String PROFANITY_DISABLE = "--no-filter";
     protected final SpamFilter spamFilter = new SpamFilter(variables);
-    protected final ScheduledExecutorService systemPool = Executors.newSingleThreadScheduledExecutor(
-        (r) -> new Thread(r, "Bot-Service-Thread"));
 
     protected MessageListener(Variables variables) {
         super(variables);

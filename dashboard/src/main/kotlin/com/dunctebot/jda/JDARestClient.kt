@@ -42,14 +42,17 @@ class JDARestClient(token: String) {
         val authConfig = AuthorizationConfig(token)
         val threadConfig = ThreadingConfig.getDefault()
 
-        val sched = Executors.newScheduledThreadPool(5) {
+        val jdaVirtualThread = Executors.newVirtualThreadPerTaskExecutor()
+        val sched = Executors.newSingleThreadScheduledExecutor {
             val t = Thread(it, "dunctebot-rest-thread")
             t.isDaemon = true
-            return@newScheduledThreadPool t
+            return@newSingleThreadScheduledExecutor t
         }
 
         threadConfig.setRateLimitScheduler(sched, true)
-        threadConfig.setRateLimitElastic(sched, true)
+        threadConfig.setRateLimitElastic(jdaVirtualThread, true)
+        threadConfig.setEventPool(jdaVirtualThread, true)
+        threadConfig.setCallbackPool(jdaVirtualThread, true)
 
         jda = JDAImpl(authConfig, null, threadConfig, null, null)
 
