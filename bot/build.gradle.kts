@@ -103,7 +103,7 @@ githubRelease.apply {
 // TODO: remove, should be done from main build file
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -182,7 +182,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.34.0"
+    toolVersion = "6.55.0"
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))

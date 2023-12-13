@@ -29,8 +29,8 @@ import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MapUtils
+import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jsoup.Jsoup
@@ -66,7 +66,7 @@ class ChatCommand : Command() {
 
         SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
             {
-                AirUtils.runOnVirtual(this::doCleanup)
+                runOnVirtual(this::doCleanup)
             },
             1L, 1L, TimeUnit.HOURS
         )

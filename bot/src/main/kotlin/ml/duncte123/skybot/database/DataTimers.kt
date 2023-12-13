@@ -22,9 +22,9 @@ import io.sentry.Sentry
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnban
 import ml.duncte123.skybot.utils.ModerationUtils.handleUnmute
+import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import org.slf4j.Logger
 import java.util.concurrent.TimeUnit
 
