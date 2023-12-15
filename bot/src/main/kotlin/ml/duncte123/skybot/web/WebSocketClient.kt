@@ -43,7 +43,7 @@ class WebSocketClient(
     private val executor = Executors.newThreadPerTaskExecutor {
         Thread.ofVirtual()
             .name("DB-SendThread")
-            .start(it)
+            .unstarted(it)
     }
 
     private val reconnectThread = Executors.newSingleThreadScheduledExecutor {

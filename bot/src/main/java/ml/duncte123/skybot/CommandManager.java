@@ -100,7 +100,7 @@ public class CommandManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     private final ExecutorService commandThread = Executors.newThreadPerTaskExecutor(
-        (r) -> Thread.ofVirtual().name("Command-execute-thread").start(r)
+        (r) -> Thread.ofVirtual().name("Command-execute-thread").unstarted(r)
     );
     private final Map<String, ICommand<CommandContext>> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();

@@ -49,7 +49,7 @@ public class EventManager implements IEventManager {
     private final List<EventListener> listeners = new ArrayList<>();
 
     private final ExecutorService eventExecutor = Executors.newThreadPerTaskExecutor(
-        (r) -> Thread.ofVirtual().name("Dunctebot-Event-Thread").start(r)
+        (r) -> Thread.ofVirtual().name("Dunctebot-Event-Thread").unstarted(r)
     );
 
     /* package */ EventManager(Variables variables) {

@@ -43,7 +43,7 @@ class EvalCommand : Command() {
     private val evalThread = Executors.newThreadPerTaskExecutor {
         Thread.ofVirtual()
             .name("eval-thread")
-            .start(it)
+            .unstarted(it)
     }
 
     private val engine: ScriptEngine by lazy {

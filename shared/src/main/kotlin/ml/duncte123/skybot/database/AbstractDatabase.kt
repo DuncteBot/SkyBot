@@ -28,9 +28,9 @@ import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.ZonedDateTime
 import java.util.concurrent.*
 
-abstract class AbstractDatabase() : AutoCloseable {
+abstract class AbstractDatabase : AutoCloseable {
     private val databaseThread = Executors.newThreadPerTaskExecutor{
-        Thread.ofVirtual().name("DatabaseThread").start(it)
+        Thread.ofVirtual().name("DatabaseThread").unstarted(it)
     }
     private val databaseKiller = Executors.newSingleThreadScheduledExecutor {
         val t = Thread(it, "Database-kill-Thread")
