@@ -26,32 +26,16 @@ import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.command.CommandResult
 import ml.duncte123.skybot.objects.command.CustomCommand
 import java.time.ZonedDateTime
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
-abstract class AbstractDatabase(threads: Int = 2, private val ohShitFn: (Int, Int) -> Unit) : AutoCloseable {
-    private val databaseThread = Executors.newFixedThreadPool(threads) {
-        val t = Thread(it, "DatabaseThread")
-        t.isDaemon = true
-        t
-    } as ThreadPoolExecutor
-    private val databaseKiller = Executors.newScheduledThreadPool(threads) {
+abstract class AbstractDatabase : AutoCloseable {
+    private val databaseThread = Executors.newThreadPerTaskExecutor{
+        Thread.ofVirtual().name("DatabaseThread").unstarted(it)
+    }
+    private val databaseKiller = Executors.newSingleThreadScheduledExecutor {
         val t = Thread(it, "Database-kill-Thread")
         t.isDaemon = true
         t
-    }
-
-    // Monitor the thread, hopefully this can help us
-    init {
-        databaseKiller.scheduleAtFixedRate(
-            {
-                if (databaseThread.queue.size > 10) {
-                    this.ohShitFn(databaseThread.queue.size, databaseThread.activeCount)
-                }
-            }, 1L, 1L, TimeUnit.DAYS
-        )
     }
 
     // ////////////////

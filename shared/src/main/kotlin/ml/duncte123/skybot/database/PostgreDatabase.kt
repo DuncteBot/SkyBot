@@ -41,7 +41,7 @@ import java.sql.Types
 import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 
-class PostgreDatabase(jdbcURI: String, ohShitFn: (Int, Int) -> Unit = { _, _ -> }) : AbstractDatabase(2, ohShitFn) {
+class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
     private val ds: HikariDataSource
     private val connection: Connection
         get() {

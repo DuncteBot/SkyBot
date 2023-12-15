@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
@@ -54,6 +56,12 @@ import static net.dv8tion.jda.api.utils.MemberCachePolicy.DEFAULT;
 import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
+    public static ScheduledExecutorService SYSTEM_POOL = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread t = new Thread(r, "System Pool");
+        t.setDaemon(true);
+        return t;
+    });
+
     private static SkyBot instance;
     private static final MemberCachePolicy PATRON_POLICY = (member) -> {
         // Member needs to be cached for JDA to fire role update event
@@ -100,6 +108,8 @@ public final class SkyBot {
         logger.info("{} commands with {} aliases loaded.", commandCount.getFirst(), commandCount.getSecond());
         LavalinkManager.INS.start(config, variables.getAudioUtils());
 
+        final var jdaVirtualPool = Executors.newVirtualThreadPerTaskExecutor();
+
         final EventManager eventManager = new EventManager(variables);
         // Build our shard manager
         final DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(
@@ -130,7 +140,11 @@ public final class SkyBot {
             // Can't enable CLIENT_STATUS because we don't have GatewayIntent.GUILD_PRESENCES
             // (is it worth it to enable it for one command?)
             .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.SCHEDULED_EVENTS)
-            .setGatewayEncoding(GatewayEncoding.ETF);
+            .setGatewayEncoding(GatewayEncoding.ETF)
+            // Configure JDA to use virtual threads/project loom
+            .setCallbackPool(jdaVirtualPool, true)
+            .setEventPool(jdaVirtualPool, true)
+            .setRateLimitElastic(jdaVirtualPool, true);
 
         // If lavalink is enabled we will hook it into jda
         if (LavalinkManager.INS.isEnabled()) {

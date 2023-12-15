@@ -29,12 +29,9 @@ import java.util.concurrent.Executors;
 
 public abstract class BaseListener implements EventListener {
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseListener.class);
-    // TODO: use a scheduler instead
-    protected final ExecutorService handlerThread = Executors.newCachedThreadPool((r) -> {
-        final Thread thread = new Thread(r, "Listener-handle-thread");
-        thread.setDaemon(true);
-        return thread;
-    });
+    protected final ExecutorService handlerThread = Executors.newThreadPerTaskExecutor(
+        (r) -> Thread.ofVirtual().name("Listener-handle-thread").unstarted(r)
+    );
     protected final Variables variables;
     // A list of servers that list bots
     /*private static final TLongList BOT_LISTS = new TLongArrayList(

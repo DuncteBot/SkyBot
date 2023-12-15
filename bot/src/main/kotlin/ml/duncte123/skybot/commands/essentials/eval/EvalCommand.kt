@@ -40,12 +40,12 @@ import javax.script.ScriptEngineManager
 import kotlin.system.measureTimeMillis
 
 class EvalCommand : Command() {
-    private val evalThread = Executors.newSingleThreadExecutor {
-        val thread = Thread(it, "eval-thread")
-        thread.isDaemon = true
-
-        return@newSingleThreadExecutor thread
+    private val evalThread = Executors.newThreadPerTaskExecutor {
+        Thread.ofVirtual()
+            .name("eval-thread")
+            .unstarted(it)
     }
+
     private val engine: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByExtension("kts")!!.apply {
             val packageImports = listOf(

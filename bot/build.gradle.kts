@@ -39,10 +39,9 @@ val numberVersion = "3.108.0"
 project.group = "ml.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
 
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -104,7 +103,7 @@ githubRelease.apply {
 // TODO: remove, should be done from main build file
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -183,7 +182,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.34.0"
+    toolVersion = "6.55.0"
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))

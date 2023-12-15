@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
@@ -41,13 +39,6 @@ import static ml.duncte123.skybot.utils.AirUtils.parsePerms;
 @SuppressWarnings({"SameParameterValue", "PMD.TooManyFields"})
 public abstract class Command implements ICommand<CommandContext> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
-    // The size should match the usage for stability but not more than 4.
-    protected static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(3,
-        (r) -> {
-            final Thread thread = new Thread(r, "Command-Thread");
-            thread.setDaemon(true);
-            return thread;
-        });
     protected boolean requiresArgs = false;
     protected int requiredArgCount = 1;
     protected boolean displayAliasesInHelp = false;

@@ -30,12 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static gnu.trove.impl.Constants.DEFAULT_CAPACITY;
 import static gnu.trove.impl.Constants.DEFAULT_LOAD_FACTOR;
+import static ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 
 public class ShardWatcher implements EventListener {
@@ -48,13 +47,7 @@ public class ShardWatcher implements EventListener {
             -1, -1
         );
 
-        @SuppressWarnings("PMD.CloseResource")
-        final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor((r) -> {
-            final Thread thread = new Thread(r, "Shard-watcher");
-            thread.setDaemon(true);
-            return thread;
-        });
-        service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
+        SkyBot.SYSTEM_POOL.scheduleAtFixedRate(() -> runOnVirtual("Shard-watcher", this::checkShards), 5, 5, TimeUnit.MINUTES);
     }
 
     @Override

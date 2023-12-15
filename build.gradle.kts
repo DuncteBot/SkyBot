@@ -52,7 +52,7 @@ allprojects {
 
 subprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "21"
     }
 
     tasks.withType<JavaCompile> {

@@ -25,10 +25,8 @@ class WebsocketClient(app: Javalin) : WebSocketAdapter(), WebSocketListener {
     private val logger = LoggerFactory.getLogger(WebsocketClient::class.java)
     val handlersMap = mutableMapOf<String, SocketHandler>()
 
-    private val executor = Executors.newSingleThreadExecutor {
-        val t = Thread(it, "WS-SendThread")
-        t.isDaemon = true
-        return@newSingleThreadExecutor t
+    private val executor = Executors.newThreadPerTaskExecutor {
+        Thread.ofVirtual().name("WS-SendThread").unstarted(it)
     }
 
     private val reconnectThread = Executors.newSingleThreadScheduledExecutor {

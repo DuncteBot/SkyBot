@@ -90,6 +90,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual;
 import static ml.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_ACCESS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
@@ -98,42 +99,40 @@ public class CommandManager {
     private static final TObjectLongMap<String> COOLDOWNS = MapUtils.newObjectLongMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
-    private static final ScheduledExecutorService COOLDOWN_THREAD = Executors.newSingleThreadScheduledExecutor((r) -> {
-        final Thread thread = new Thread(r, "Command-cooldown-thread");
-        thread.setDaemon(true);
-        return thread;
-    });
-    private final ExecutorService commandThread = Executors.newCachedThreadPool((r) -> {
-        final Thread thread = new Thread(r, "Command-execute-thread");
-        thread.setDaemon(true);
-        return thread;
-    });
+    private final ExecutorService commandThread = Executors.newThreadPerTaskExecutor(
+        (r) -> Thread.ofVirtual().name("Command-execute-thread").unstarted(r)
+    );
     private final Map<String, ICommand<CommandContext>> commands = new ConcurrentHashMap<>();
     private final Map<String, String> aliases = new ConcurrentHashMap<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
     private final Variables variables;
 
     static {
-        COOLDOWN_THREAD.scheduleWithFixedDelay(() -> {
-            try {
-                // Loop over all cooldowns with a 5 minute interval
-                // This makes sure that we don't have any useless cooldowns in the system hogging up memory
-                COOLDOWNS.forEachEntry((key, val) -> {
-                    final long remaining = calcTimeRemaining(val);
+        SkyBot.SYSTEM_POOL.scheduleWithFixedDelay(
+            () -> runOnVirtual(CommandManager::handleCooldowns),
+            5, 5, TimeUnit.MINUTES
+        );
+    }
 
-                    // Remove the value from the cooldowns if it is less or equal to 0
-                    if (remaining <= 0) {
-                        COOLDOWNS.remove(key);
-                    }
+    private static void handleCooldowns() {
+        try {
+            // Loop over all cooldowns with a 5 minute interval
+            // This makes sure that we don't have any useless cooldowns in the system hogging up memory
+            COOLDOWNS.forEachEntry((key, val) -> {
+                final long remaining = calcTimeRemaining(val);
 
-                    // Return true to indicate that we are allowed to continue the loop
-                    return true;
-                });
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, 5, 5, TimeUnit.MINUTES);
+                // Remove the value from the cooldowns if it is less or equal to 0
+                if (remaining <= 0) {
+                    COOLDOWNS.remove(key);
+                }
+
+                // Return true to indicate that we are allowed to continue the loop
+                return true;
+            });
+        }
+        catch (Exception e) {
+            LOGGER.error("Parsing cooldowns failed", e);
+        }
     }
 
     public CommandManager(Variables variables) {
@@ -765,7 +764,8 @@ public class CommandManager {
             if (command != null) {
                 command.handleEvent(event, variables);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
