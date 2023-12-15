@@ -18,11 +18,10 @@
 
 package ml.duncte123.skybot.audio;
 
-import dev.arbjerg.lavalink.protocol.v4.Exception;
+import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.client.protocol.TrackException;
 import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
-import dev.arbjerg.lavalink.protocol.v4.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
-import kotlinx.serialization.json.JsonPrimitive;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.exceptions.LimitReachedException;
 import ml.duncte123.skybot.extensions.AudioTrackKt;
@@ -167,7 +166,7 @@ public class TrackScheduler {
         if (this.looping) {
             LOGGER.debug("repeating the current song");
 
-            final Track clone = AudioTrackKt.makeClone(lastTrack);
+            final Track clone = AudioTrackKt.internalClone(lastTrack);
             storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             this.play(clone);
 
@@ -175,7 +174,7 @@ public class TrackScheduler {
         } else if (this.loopingQueue) {
             LOGGER.debug("repeating the queue");
             //Offer it to the queue to prevent the player from playing it
-            final Track clone = AudioTrackKt.makeClone(lastTrack);
+            final Track clone = AudioTrackKt.internalClone(lastTrack);
             storeUserData(clone, copyTrackDataOrCreateNew(lastTrack, wasForceAnnounce));
             queue.offer(clone);
         }
@@ -225,7 +224,7 @@ public class TrackScheduler {
         return newData;
     }
 
-    public void onTrackException(Track track, Exception exception) {
+    public void onTrackException(Track track, TrackException exception) {
         final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
 
         if (finalCause.contains("Something went wrong when decoding the track.")) {
@@ -246,28 +245,28 @@ public class TrackScheduler {
     }
 
     public TrackUserData getUserData(Track track) {
-        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+        final var element = Objects.requireNonNull(track.getUserData().get("uuid"));
 
-        return this.userData.get(element.getContent());
+        return this.userData.get(element.asText());
     }
 
     public void storeUserData(Track track, TrackUserData data) {
-        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+        final var element = Objects.requireNonNull(track.getUserData().get("uuid"));
 
-        this.userData.put(element.getContent(), data);
+        this.userData.put(element.asText(), data);
     }
 
     public void removeUserData(Track track) {
-        final var element = Objects.requireNonNull((JsonPrimitive) track.getUserData().get("uuid"));
+        final var element = Objects.requireNonNull(track.getUserData().get("uuid"));
 
-        this.userData.remove(element.getContent());
+        this.userData.remove(element.asText());
     }
 
     private void play(Track track) {
         this.guildMusicManager.getPlayer()
             .getLink()
             .updatePlayer(
-                (builder) -> builder.applyTrack(track)
+                (builder) -> builder.setTrack(track)
             )
             .subscribe();
     }

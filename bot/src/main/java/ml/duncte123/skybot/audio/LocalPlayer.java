@@ -22,7 +22,7 @@ import dev.arbjerg.lavalink.client.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.protocol.v4.Filters;
 import dev.arbjerg.lavalink.protocol.v4.PlayerState;
-import dev.arbjerg.lavalink.protocol.v4.Track;
+import dev.arbjerg.lavalink.client.protocol.Track;
 import fredboat.audio.player.LavalinkManager;
 import reactor.core.publisher.Mono;
 

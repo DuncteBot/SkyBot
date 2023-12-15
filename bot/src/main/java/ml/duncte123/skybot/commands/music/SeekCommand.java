@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music;
 
-import dev.arbjerg.lavalink.protocol.v4.Track;
+import dev.arbjerg.lavalink.client.protocol.Track;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.LocalPlayer;
 import ml.duncte123.skybot.objects.command.CommandContext;

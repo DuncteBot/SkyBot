@@ -19,7 +19,7 @@
 package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
-import dev.arbjerg.lavalink.protocol.v4.Track;
+import dev.arbjerg.lavalink.client.protocol.Track;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -143,20 +143,19 @@ public final class LavalinkManager {
     }
 
     private void registerPlayerUpdateEvent() {
-        lavalink.on(PlayerUpdateEvent.class).subscribe((stats) -> {
-            final long guildIdLong = Long.parseUnsignedLong(stats.getEvent().getGuildId());
+        lavalink.on(PlayerUpdateEvent.class).subscribe((event) -> {
+            final long guildIdLong = event.getGuildId();
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                mng.getPlayer().updateLocalPlayerState(stats.getEvent().getState());
+                mng.getPlayer().updateLocalPlayerState(event.getState());
             }
         });
     }
 
     private void registerTrackStartEvent() {
-        lavalink.on(TrackStartEvent.class).subscribe((data) -> {
-            final var event = data.getEvent();
-            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+        lavalink.on(TrackStartEvent.class).subscribe((event) -> {
+            final long guildIdLong = event.getGuildId();
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
@@ -168,22 +167,20 @@ public final class LavalinkManager {
     }
 
     private void registerTrackEndEvent() {
-        lavalink.on(TrackEndEvent.class).subscribe((data) -> {
-            final var event = data.getEvent();
-            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+        lavalink.on(TrackEndEvent.class).subscribe((event) -> {
+            final long guildIdLong = event.getGuildId();
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
                 mng.getPlayer().updateCurrentTrack(null);
-                mng.getScheduler().onTrackEnd(event.getTrack(), event.getReason());
+                mng.getScheduler().onTrackEnd(event.getTrack(), event.getEndReason());
             }
         });
     }
 
     private void registerTrackExceptionEvent() {
-        lavalink.on(TrackExceptionEvent.class).subscribe((data) -> {
-            final var event = data.getEvent();
-            final long guildIdLong = Long.parseUnsignedLong(event.getGuildId());
+        lavalink.on(TrackExceptionEvent.class).subscribe((event) -> {
+            final long guildIdLong = event.getGuildId();
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {

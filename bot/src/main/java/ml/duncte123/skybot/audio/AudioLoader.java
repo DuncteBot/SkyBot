@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.audio;
 
-import dev.arbjerg.lavalink.protocol.v4.Exception;
-import dev.arbjerg.lavalink.protocol.v4.*;
-import kotlinx.serialization.json.JsonElementKt;
-import kotlinx.serialization.json.JsonObject;
+import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler;
+import dev.arbjerg.lavalink.client.protocol.*;
+import dev.arbjerg.lavalink.protocol.v4.PlaylistInfo;
+import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -31,16 +31,18 @@ import ml.duncte123.skybot.objects.AudioData;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class AudioLoader implements Consumer<LoadResult> {
+public class AudioLoader extends AbstractAudioLoadResultHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioLoader.class);
 
     private final AudioData data;
@@ -60,32 +62,10 @@ public class AudioLoader implements Consumer<LoadResult> {
     }
 
     @Override
-    public void accept(LoadResult loadResult) {
-        if (loadResult instanceof LoadResult.TrackLoaded trackLoaded) {
-            this.trackLoaded(trackLoaded);
-        } else if (loadResult instanceof LoadResult.PlaylistLoaded playlistLoaded) {
-            this.playlistLoaded(playlistLoaded);
-        } else if (loadResult instanceof LoadResult.SearchResult searchResult) {
-            LOGGER.error("Search result not handled: {}", searchResult);
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(this.data.getChannel())
-                    .replyTo(this.data.getReplyToMessage())
-                    .setEmbeds(embedMessage("Error: Unhandled search result, please report this bug to the devs!"))
-                    .build()
-            );
-//            this.searchLoaded(searchResult);
-        } else if (loadResult instanceof LoadResult.NoMatches) {
-            this.noMatches();
-        } else if (loadResult instanceof LoadResult.LoadFailed loadFailed) {
-            this.loadFailed(loadFailed.getData());
-        }
-    }
+    public void ontrackLoaded(@NotNull TrackLoaded trackLoaded) {
+        final Track track = trackLoaded.getTrack();
 
-    private void trackLoaded(LoadResult.TrackLoaded data) {
-        final Track track = data.getData().copyWithUserData(new JsonObject(Map.of(
-            "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
-        )));
+        track.setUserData(new UUIDUserData());
 
         mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
 
@@ -132,9 +112,9 @@ public class AudioLoader implements Consumer<LoadResult> {
         }
     }
 
-    private void playlistLoaded(LoadResult.PlaylistLoaded playlistLoaded) {
-        final Playlist playlist = playlistLoaded.getData();
-        final List<Track> tracks = playlist.getTracks();
+    @Override
+    public void onPlaylistLoaded(@NotNull PlaylistLoaded playlistLoaded) {
+        final List<Track> tracks = playlistLoaded.getTracks();
 
         if (tracks.isEmpty()) {
             sendMsg(
@@ -148,7 +128,7 @@ public class AudioLoader implements Consumer<LoadResult> {
             return;
         }
 
-        final PlaylistInfo playlistInfo = playlist.getInfo();
+        final PlaylistInfo playlistInfo = playlistLoaded.getInfo();
 
         try {
             final TrackScheduler trackScheduler = this.mng.getScheduler();
@@ -160,14 +140,10 @@ public class AudioLoader implements Consumer<LoadResult> {
                 tracksRaw = tracksRaw.subList(selectedTrackIndex, tracksRaw.size());
             }
 
-            final List<Track> limitedTracks = tracksRaw.stream().map((track) -> {
-                track = track.copyWithUserData(new JsonObject(Map.of(
-                    "uuid", JsonElementKt.JsonPrimitive(UUID.randomUUID().toString())
-                )));
+            final List<Track> limitedTracks = tracksRaw.stream().peek((track) -> {
+                track.setUserData(new UUIDUserData());
 
                 mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
-
-                return track;
             }).toList();
 
             for (final Track track : limitedTracks) {
@@ -202,39 +178,20 @@ public class AudioLoader implements Consumer<LoadResult> {
         }
     }
 
-    private String getPlaylistMsg(List<Track> tracks, PlaylistInfo playlistInfo) {
-        final String sizeMsg = String.valueOf(tracks.size());
-
-        /*if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
-            sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
-        } else {
-            sizeMsg = String.valueOf(tracks.size());
-        }*/
-
-        return String.format(
-            "Adding **%s** tracks to the queue from **%s**",
-            sizeMsg,
-            playlistInfo.getName()
+    @Override
+    public void onSearchResultLoaded(@NotNull SearchResult searchResult) {
+        LOGGER.error("Search result not handled: {}", searchResult);
+        sendMsg(
+            new MessageConfig.Builder()
+                .setChannel(this.data.getChannel())
+                .replyTo(this.data.getReplyToMessage())
+                .setEmbeds(embedMessage("Error: Unhandled search result, please report this bug to the devs!"))
+                .build()
         );
     }
 
-//    private void searchLoaded(LoadResult.SearchResult searchResult) {
-//        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
-//    }
-
-    private void noMatches() {
-        if (this.announce) {
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(this.data.getChannel())
-                    .replyTo(this.data.getReplyToMessage())
-                    .setEmbeds(embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'))
-                    .build()
-            );
-        }
-    }
-
-    private void loadFailed(Exception exception) {
+    @Override
+    public void loadFailed(@NotNull LoadFailed loadFailed) {
         /*if (exception.getCause() != null && exception.getCause() instanceof final LimitReachedException cause) {
             sendMsg(
                 new MessageConfig.Builder()
@@ -252,6 +209,8 @@ public class AudioLoader implements Consumer<LoadResult> {
         if (!this.announce) {
             return;
         }
+
+        final TrackException exception = loadFailed.getException();
 
         final String finalCause = Objects.requireNonNullElse(exception.getMessage(), exception.getCause());
 
@@ -279,7 +238,39 @@ public class AudioLoader implements Consumer<LoadResult> {
                 )
                 .build()
         );
+    }
 
+    private String getPlaylistMsg(List<Track> tracks, PlaylistInfo playlistInfo) {
+        final String sizeMsg = String.valueOf(tracks.size());
+
+        /*if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
+            sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
+        } else {
+            sizeMsg = String.valueOf(tracks.size());
+        }*/
+
+        return String.format(
+            "Adding **%s** tracks to the queue from **%s**",
+            sizeMsg,
+            playlistInfo.getName()
+        );
+    }
+
+//    private void searchLoaded(LoadResult.SearchResult searchResult) {
+//        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
+//    }
+
+    @Override
+    public void noMatches() {
+        if (this.announce) {
+            sendMsg(
+                new MessageConfig.Builder()
+                    .setChannel(this.data.getChannel())
+                    .replyTo(this.data.getReplyToMessage())
+                    .setEmbeds(embedMessage("Nothing found by *" + StringKt.abbreviate(this.trackUrl, MessageEmbed.VALUE_MAX_LENGTH) + '*'))
+                    .build()
+            );
+        }
     }
 
     private static String getSteamTitle(Track track, String rawTitle, CommandManager commandManager) {
