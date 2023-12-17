@@ -48,27 +48,24 @@ public class LocalPlayer {
 
     public void stopPlayback() {
         this.getLink()
-            .updatePlayer(
-                (player) -> player.setPaused(false)
-                    .setEncodedTrack(null)
-            )
+            .createOrUpdatePlayer()
+            .setPaused(false)
+            .setEncodedTrack(null)
             .subscribe();
     }
 
     public void setFilters(Filters filters) {
         this.getLink()
-            .updatePlayer(
-                (player) -> player.setFilters(filters)
-            )
+            .createOrUpdatePlayer()
+            .setFilters(filters)
             .subscribe();
     }
 
     public void seekTo(long position) {
         this.getLink()
-           .updatePlayer(
-                (player) -> player.setPosition(position)
-            )
-           .subscribe();
+            .createOrUpdatePlayer()
+            .setPosition(position)
+            .subscribe();
     }
 
     @Nullable

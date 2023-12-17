@@ -24,8 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.ZonedDateTime
 
-data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
-
 // data class WarnObject(val userId: String, val warnings: List<Warning>)
 // TODO: insert user id here
 data class Warning(
