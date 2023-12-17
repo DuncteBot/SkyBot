@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.Message;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
@@ -65,7 +66,7 @@ public class CustomCommandCommand extends Command {
         final CommandManager manager = ctx.getCommandManager();
 
         switch (args.size()) {
-            case 1 -> listCustomCommands(args.get(0), ctx, manager);
+            case 1 -> listCustomCommands(args.getFirst(), ctx, manager);
             case 2 -> deleteOrShowCustomCommand(args, ctx, manager, ctx.getPrefix());
             default -> addOrEditCustomCommand(args, ctx, manager, ctx.getPrefix());
         }
@@ -75,15 +76,21 @@ public class CustomCommandCommand extends Command {
         if ("list".equalsIgnoreCase(arg)) {
             final GuildSetting setting = ctx.getGuildSettings();
             final StringBuilder builder = new StringBuilder();
+            final Set<CustomCommand> cmds = manager.getCustomCommands();
 
-            manager.getCustomCommands().stream()
+            if (cmds.isEmpty()) {
+                sendMsg(ctx, "This server has no custom commands.");
+                return;
+            }
+
+            cmds.stream()
                 .filter(c -> c.getGuildId() == ctx.getGuild().getIdLong())
                 .forEach(cmd -> builder.append(setting.getCustomPrefix())
                     .append(cmd.getName())
                     .append('\n')
                 );
 
-            sendMsg(ctx, "Custom Commands for this server\n```ldif\n"+ builder.toString() + "\n```");
+            sendMsg(ctx, "Custom Commands for this server\n```ldif\n"+ builder + "\n```");
         } else {
             sendMsg(ctx, "Insufficient arguments use `" + ctx.getPrefix() + "help customcommand`");
         }
