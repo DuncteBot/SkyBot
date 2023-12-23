@@ -35,9 +35,20 @@ public class RedisConnection implements RedisDB {
     private static final long TWO_WEEKS_IN_SECONDS = 60L * 60L * 24L * 14L;
     private static final long ONE_MONTH_IN_SECONDS = 60L * 60L * 24L * 31L;
 
-    private final JedisPool pool;
+    @SuppressWarnings("NotNullFieldNotInitialized")
+    @NotNull
+    private JedisPool pool;
+    private boolean canConnect = true;
 
     public RedisConnection() {
+        connect();
+    }
+
+    private void connect() {
+        if (!canConnect) {
+            throw new RuntimeException("Shutdown method was called, new connection not allowed");
+        }
+
         String host = System.getenv("REDIS_HOST");
         int port = Protocol.DEFAULT_PORT;
 
@@ -55,9 +66,17 @@ public class RedisConnection implements RedisDB {
         this.pool = new JedisPool(new JedisPoolConfig(), host, port);
     }
 
+    private Jedis getResource() {
+        if (this.pool.isClosed()) {
+            connect();
+        }
+
+        return this.pool.getResource();
+    }
+
     @Override
     public void storeMessage(@NotNull MessageData data, boolean isPatron) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
                 data.getMessageIdString(),
@@ -72,7 +91,7 @@ public class RedisConnection implements RedisDB {
     @Override
     @Nullable
     public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             // update the data after getting it
@@ -91,7 +110,7 @@ public class RedisConnection implements RedisDB {
     @Override
     @Nullable
     public MessageData getAndDeleteMessage(@NotNull String messageId) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             if (response.isEmpty()) {
@@ -107,7 +126,7 @@ public class RedisConnection implements RedisDB {
     @Override
     @NotNull
     public List<MessageData> getAndDeleteMessages(@NotNull List<String> messageIds) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             final List<MessageData> response = new ArrayList<>();
 
             for (final String messageId : messageIds) {
@@ -131,14 +150,14 @@ public class RedisConnection implements RedisDB {
 
     @Override
     public void deleteMessage(@NotNull String messageId) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             jedis.del(messageId);
         }
     }
 
     @Override
     public void deleteMessages(@NotNull List<String> messageIds) {
-        try (Jedis jedis = this.pool.getResource()) {
+        try (Jedis jedis = this.getResource()) {
             final String[] idArray = messageIds.toArray(String[]::new);
 
             jedis.del(idArray);
@@ -147,6 +166,7 @@ public class RedisConnection implements RedisDB {
 
     @Override
     public void shutdown() {
+        this.canConnect = false;
         this.pool.close();
     }
 }

@@ -90,7 +90,9 @@ public abstract class MessageListener extends BaseListener {
     protected MessageListener(Variables variables) {
         super(variables);
 
-        if ("disabled".equalsIgnoreCase(System.getenv("REDIS_HOST"))) {
+        final var redisHost = System.getenv("REDIS_HOST");
+
+        if ("disabled".equalsIgnoreCase(redisHost) || redisHost == null || redisHost.isBlank()) {
             this.redis = new DummyRedisConnection();
         } else {
             this.redis = new RedisConnection();
