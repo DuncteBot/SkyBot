@@ -36,7 +36,7 @@ plugins {
 
 val numberVersion = "3.108.0"
 
-project.group = "ml.duncte123.skybot"
+project.group = "me.duncte123.skybot"
 project.version = "${numberVersion}_${getGitHash()}"
 
 java {
@@ -168,7 +168,7 @@ compileJava.apply {
 }
 
 application {
-    mainClass.set("ml.duncte123.skybot.SkyBot")
+    mainClass.set("me.duncte123.skybot.SkyBot")
 }
 
 shadowJar.apply {

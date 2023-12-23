@@ -30,14 +30,14 @@
             <level>ERROR</level>
         </filter>
 
-        <filter class="ml.duncte123.skybot.logging.SentryFilter"/>
+        <filter class="me.duncte123.skybot.logging.SentryFilter"/>
 
         <!--<encoder>
             <pattern>SENTRY - %msg%n</pattern>
         </encoder>-->
     </appender>
 
-    <logger name="ml.duncte123.skybot.ShardWatcher" level="off" />
+    <logger name="me.duncte123.skybot.ShardWatcher" level="off" />
     <logger name="net.notfab.caching.client.CacheClient" level="off" />
 
     <root level="info">

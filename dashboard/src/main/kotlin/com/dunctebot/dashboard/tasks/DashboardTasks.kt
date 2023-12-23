@@ -4,7 +4,7 @@ import com.dunctebot.dashboard.controllers.GuildController
 import com.dunctebot.dashboard.server
 import com.dunctebot.dashboard.systemPool
 import com.dunctebot.jda.oauth.OauthSessionController
-import ml.duncte123.skybot.utils.ThreadUtils.runOnVirtual
+import me.duncte123.skybot.utils.ThreadUtils.runOnVirtual
 import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 

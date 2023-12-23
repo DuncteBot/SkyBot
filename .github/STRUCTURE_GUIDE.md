@@ -191,7 +191,7 @@ a hyperlink.
      *         Multiple throwables are to be documented in one "block"
      *
      * @see    Void
-     * @see    ml.duncte123.skybot.SkyBot
+     * @see    me.duncte123.skybot.SkyBot
      *
      * @since  3.0
      *

@@ -20,9 +20,9 @@ package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
 import dev.arbjerg.lavalink.client.protocol.Track;
-import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.AudioUtils;
+import me.duncte123.skybot.objects.config.DunctebotConfig;
+import me.duncte123.skybot.utils.AirUtils;
+import me.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;

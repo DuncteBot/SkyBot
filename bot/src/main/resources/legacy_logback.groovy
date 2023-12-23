@@ -42,7 +42,7 @@ appender("Sentry", SentryAppender) {
     filter(EvaluatorFilter) {
         evaluator(GEventEvaluator) {
             // Stuff to ignore
-            expression = """e.loggerName == 'ml.duncte123.skybot.ShardWatcher' ||
+            expression = """e.loggerName == 'me.duncte123.skybot.ShardWatcher' ||
                             e.loggerName == 'net.notfab.caching.client.CacheClient' ||
                             e.formattedMessage.startsWith('Got disconnected from WebSocket') || 
                             e.message.contains('Ignoring deprecated socket close linger time') ||
