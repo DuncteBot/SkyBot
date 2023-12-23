@@ -554,7 +554,6 @@ class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
                             res.getInt("id"),
                             res.getLong("mod_id"),
                             res.getLong("user_id"),
-                            "",
                             res.getLong("guild_id")
                         )
                     }
@@ -699,11 +698,9 @@ class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
                         bans.add(
                             Ban(
                                 res.getInt("id"),
-                                res.getString("mod_id"),
+                                res.getLong("mod_id"),
                                 res.getLong("user_id"),
-                                "Deleted User",
-                                "0000",
-                                res.getString("guild_id")
+                                res.getLong("guild_id")
                             )
                         )
                     }
@@ -718,7 +715,6 @@ class PostgreDatabase(jdbcURI: String) : AbstractDatabase() {
                                 res.getInt("id"),
                                 res.getLong("mod_id"),
                                 res.getLong("user_id"),
-                                "Deleted User#0000",
                                 res.getLong("guild_id")
                             )
                         )

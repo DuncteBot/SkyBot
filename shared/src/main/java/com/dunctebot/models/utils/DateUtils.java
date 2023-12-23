@@ -62,6 +62,7 @@ public class DateUtils {
         final var shouldWork = zonedDate.toString()
             .replace("Z", "")
             .replace("T", " ")
+            .split("\\[")[0]
             .split("\\+")[0];
 
         return Timestamp.valueOf(shouldWork);

@@ -547,7 +547,6 @@ class MariaDBDatabase(jdbcURI: String) : AbstractDatabase() {
                             res.getInt("id"),
                             res.getString("mod_id").toLong(),
                             res.getString("user_id").toLong(),
-                            "",
                             res.getString("guild_id").toLong()
                         )
                     }
@@ -694,11 +693,9 @@ class MariaDBDatabase(jdbcURI: String) : AbstractDatabase() {
                         bans.add(
                             Ban(
                                 res.getInt("id"),
-                                res.getString("modUserId"),
+                                res.getString("modUserId").toLong(),
                                 res.getString("userId").toLong(),
-                                "Deleted User",
-                                "0000",
-                                res.getString("guildId")
+                                res.getString("guildId").toLong()
                             )
                         )
                     }
@@ -713,7 +710,6 @@ class MariaDBDatabase(jdbcURI: String) : AbstractDatabase() {
                                 res.getInt("id"),
                                 res.getString("mod_id").toLong(),
                                 res.getString("user_id").toLong(),
-                                "Deleted User#0000",
                                 res.getString("guild_id").toLong()
                             )
                         )

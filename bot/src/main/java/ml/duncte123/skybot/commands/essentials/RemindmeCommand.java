@@ -117,8 +117,14 @@ public class RemindmeCommand extends Command {
     }
 
     private Optional<ParsedDuration> getDuration(Map<String, List<String>> flags) {
+        final var durationText = String.join("", flags.get("t"));
+
+        if (durationText.isBlank()) {
+            return Optional.empty();
+        }
+
         try {
-            return DurationParser.parse(String.join("", flags.get("t")));
+            return DurationParser.parse(durationText);
         }
         catch (IllegalArgumentException ignored) {
             return Optional.empty();
@@ -152,6 +158,10 @@ public class RemindmeCommand extends Command {
             } else {
                 sendMsg(ctx, "Something went wrong while creating the reminder, try again later");
             }
+        }).exceptionally((ex) -> {
+            sendMsg(ctx, "Something went wrong while creating the reminder, try again later\nDetails: " + ex.getMessage());
+
+            return null;
         });
     }
 }

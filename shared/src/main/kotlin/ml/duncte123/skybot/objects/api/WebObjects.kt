@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.objects.api
 
 import com.dunctebot.models.utils.DateUtils
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
 import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.ZonedDateTime
 
@@ -34,30 +32,23 @@ data class Warning(
     val guildId: Long
 )
 
-// TODO: make sure id props are longs
-data class Ban
-@JsonCreator constructor(
-    @JsonProperty("id") val id: Int,
-    @JsonProperty("modUserId") val modId: String,
-    @JsonProperty("userId") val userId: Long,
-    @Deprecated("Useless") @JsonProperty("Username") val userName: String,
-    @Deprecated("Useless") @JsonProperty("discriminator") val discriminator: String,
-    @JsonProperty("guildId") val guildId: String
+data class Ban(
+    val id: Int,
+    val modId: Long,
+    val userId: Long,
+    val guildId: Long
 )
 
-data class BanBypas
-@JsonCreator constructor(
-    @JsonProperty("guild_id") val guildId: Long,
-    @JsonProperty("user_id") val userId: Long
+data class BanBypas(
+    val guildId: Long,
+    val userId: Long
 )
 
-data class Mute
-@JsonCreator constructor(
-    @JsonProperty("id") val id: Int,
-    @JsonProperty("mod_id") val modId: Long,
-    @JsonProperty("user_id") val userId: Long,
-    @Deprecated("Useless") @JsonProperty("user_tag") val userTag: String,
-    @JsonProperty("guild_id") val guildId: Long
+data class Mute(
+    val id: Int,
+    val modId: Long,
+    val userId: Long,
+    val guildId: Long
 )
 
 data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
@@ -73,38 +64,21 @@ data class Reminder(
     val guild_id: Long,
     val in_channel: Boolean
 ) {
-    @JsonCreator
-    constructor(
-        @JsonProperty("id") id: Int,
-        @JsonProperty("user_id") user_id: Long,
-        @JsonProperty("reminder") reminder: String,
-        @JsonProperty("remind_create_date") create_date: String,
-        @JsonProperty("remind_date") reminder_date: String,
-        @JsonProperty("channel_id") channel_id: Long,
-        @JsonProperty("message_id") message_id: Long,
-        @JsonProperty("guild_id") guild_id: Long,
-        @JsonProperty("in_channel") in_channel: Boolean
-    ) :
-        this(
-            id, user_id, reminder, DateUtils.fromDatabaseFormat(create_date),
-            DateUtils.fromDatabaseFormat(reminder_date), channel_id, message_id, guild_id, in_channel
-        )
-
     val reminderDateDate: String = DateUtils.makeDatePretty(reminder_date)
     val reminderCreateDateDate: String = DateUtils.makeDatePretty(create_date)
 
     val jumpUrl = "https://discord.com/channels/$guild_id/$channel_id/$message_id"
 
     override fun toString(): String {
+        // TODO: this is an hour behind
         return "$id) `$reminder` on ${TimeFormat.DATE_TIME_LONG.format(reminder_date)}"
     }
 }
 
-data class Patron
-@JsonCreator constructor(
-    @JsonProperty("type") val type: Type,
-    @JsonProperty("user_id") val userId: Long,
-    @JsonProperty("guild_id") val guildId: Long?
+data class Patron(
+    val type: Type,
+    val userId: Long,
+    val guildId: Long?
 ) {
     enum class Type {
         NORMAL,
@@ -114,11 +88,11 @@ data class Patron
     }
 }
 
-data class AllPatronsData @JsonCreator constructor(
-    @JsonProperty("patrons") val patrons: List<Patron>,
-    @JsonProperty("tag_patrons") val tagPatrons: List<Patron>,
-    @JsonProperty("one_guild_patrons") val oneGuildPatrons: List<Patron>,
-    @JsonProperty("guild_patrons") val guildPatrons: List<Patron>
+data class AllPatronsData(
+    val patrons: List<Patron>,
+    val tagPatrons: List<Patron>,
+    val oneGuildPatrons: List<Patron>,
+    val guildPatrons: List<Patron>
 ) {
     companion object {
         @JvmStatic
