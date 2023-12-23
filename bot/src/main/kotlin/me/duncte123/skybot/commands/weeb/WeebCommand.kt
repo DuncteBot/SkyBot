@@ -21,10 +21,10 @@ package me.duncte123.skybot.commands.weeb
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.weebJava.configs.ImageConfig
 import me.duncte123.weebJava.configs.TypesConfig
 import me.duncte123.weebJava.types.HiddenMode
-import me.duncte123.skybot.objects.command.CommandContext
 
 class WeebCommand : WeebCommandBase() {
     private val weebTags = ArrayList<String>()

@@ -19,8 +19,8 @@
 package me.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.configs.ImageConfig
 import me.duncte123.skybot.objects.command.CommandContext
+import me.duncte123.weebJava.configs.ImageConfig
 
 class ShrugCommand : WeebCommandBase() {
     init {

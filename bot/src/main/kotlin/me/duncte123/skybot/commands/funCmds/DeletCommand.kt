@@ -19,10 +19,10 @@
 package me.duncte123.skybot.commands.funCmds
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.configs.ImageConfig
 import me.duncte123.skybot.commands.weeb.WeebCommandBase
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
+import me.duncte123.weebJava.configs.ImageConfig
 
 class DeletCommand : WeebCommandBase() {
     init {

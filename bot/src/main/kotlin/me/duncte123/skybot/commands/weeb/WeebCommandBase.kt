@@ -20,10 +20,10 @@ package me.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.weebJava.configs.ImageConfig
 import me.duncte123.skybot.objects.command.Command
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
+import me.duncte123.weebJava.configs.ImageConfig
 import net.dv8tion.jda.api.EmbedBuilder
 
 abstract class WeebCommandBase : Command() {
