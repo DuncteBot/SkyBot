@@ -264,10 +264,8 @@ public class TrackScheduler {
 
     private void play(Track track) {
         this.guildMusicManager.getPlayer()
-            .getLink()
-            .updatePlayer(
-                (builder) -> builder.setTrack(track)
-            )
+            .update()
+            .setTrack(track)
             .subscribe();
     }
 }

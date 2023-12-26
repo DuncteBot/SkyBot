@@ -18,6 +18,7 @@
 
 package me.duncte123.skybot.audio;
 
+import dev.arbjerg.lavalink.client.IUpdatablePlayer;
 import dev.arbjerg.lavalink.client.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.protocol.v4.Filters;
@@ -42,28 +43,29 @@ public class LocalPlayer {
         return LavalinkManager.INS.getLavalink().getLink(this.guildId);
     }
 
+    public IUpdatablePlayer update() {
+        return this.getLink().createOrUpdatePlayer();
+    }
+
     public Mono<LavalinkPlayer> getLavalinkPlayer() {
         return this.getLink().getPlayer();
     }
 
     public void stopPlayback() {
-        this.getLink()
-            .createOrUpdatePlayer()
+        this.update()
             .setPaused(false)
             .setEncodedTrack(null)
             .subscribe();
     }
 
     public void setFilters(Filters filters) {
-        this.getLink()
-            .createOrUpdatePlayer()
+        this.update()
             .setFilters(filters)
             .subscribe();
     }
 
     public void seekTo(long position) {
-        this.getLink()
-            .createOrUpdatePlayer()
+        this.update()
             .setPosition(position)
             .subscribe();
     }
