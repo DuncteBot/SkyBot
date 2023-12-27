@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.logback.newSlf4j)
     implementation(libs.spotify)
     implementation(libs.youtube)
+    implementation(libs.javaLyrics)
     implementation(libs.bundles.featureLibs)
 
     implementation(kotlin("stdlib"))

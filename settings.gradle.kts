@@ -76,6 +76,8 @@ fun VersionCatalogBuilder.bot() {
     library("botCommons", "me.duncte123", "botCommons").version("3.0.16")
 
     bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
+
+    library("javaLyrics", "com.github.DuncteBot.java-timed-lyrics", "protocol").version("1.2.0")
 }
 
 fun VersionCatalogBuilder.database() {

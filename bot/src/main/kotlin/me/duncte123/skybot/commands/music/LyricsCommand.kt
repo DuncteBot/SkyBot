@@ -19,20 +19,25 @@
 package me.duncte123.skybot.commands.music
 
 import com.github.natanbc.reliqua.limiter.RateLimiter
-import me.duncte123.botcommons.StringUtils
+import dev.arbjerg.lavalink.client.Link
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.lyrics.model.Lyrics
+import me.duncte123.lyrics.model.TextLyrics
+import me.duncte123.lyrics.model.TimedLyrics
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.objects.config.DunctebotConfig
+import me.duncte123.skybot.utils.chunkForEmbed
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import reactor.core.scheduler.Schedulers
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -49,6 +54,7 @@ class LyricsCommand : MusicCommand() {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
+            // TODO: search with lavalink for lyrics
             handleSearch(ctx.argsRaw, ctx.config) {
                 if (it == null) {
                     sendMsg(ctx, "There where no lyrics found for `${ctx.argsRaw}`")
@@ -68,13 +74,20 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        val search = playingTrack.info.title.trim()
-
-        // just search for the title, the author might be a weird youtube channel
-        handleSearch(search, ctx.config) {
+        loadLyricsFromLavalink(player.link) {
             if (it == null) {
-                sendMsg(ctx, "There where no lyrics found for `$search`")
-                return@handleSearch
+        // TODO: fallback for genius
+                val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+
+                handleSearch(searchItem, ctx.config) { embed ->
+                    if (embed == null) {
+                        sendMsg(ctx, "There where no lyrics found for `${playingTrack.info.title}`")
+                        return@handleSearch
+                    }
+
+                    sendEmbed(ctx, embed)
+                }
+                return@loadLyricsFromLavalink
             }
 
             sendEmbed(ctx, it)
@@ -105,18 +118,24 @@ class LyricsCommand : MusicCommand() {
 
             event.deferReply().queue()
 
-            val search = playingTrack.info.title.trim()
-
-            // just search for the title, the author might be a weird youtube channel
-            handleSearch(search, variables.config) {
+            loadLyricsFromLavalink(player.link) {
                 if (it == null) {
-                    event.hook.sendMessage("There where no lyrics found for `$search`").queue()
-                    return@handleSearch
+                    val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+
+                    handleSearch(searchItem, variables.config) { embed ->
+                        if (embed == null) {
+                            event.hook.sendMessage("There where no lyrics found for `${playingTrack.info.title}`")
+                                .queue()
+                            return@handleSearch
+                        }
+
+                        event.hook.sendMessageEmbeds(embed.build()).queue()
+                    }
+                    return@loadLyricsFromLavalink
                 }
 
                 event.hook.sendMessageEmbeds(it.build()).queue()
             }
-
             return
         }
 
@@ -124,6 +143,7 @@ class LyricsCommand : MusicCommand() {
 
         val search = opt.asString
 
+        // TODO: search with lavalink for lyrics
         handleSearch(search, variables.config) {
             if (it == null) {
                 event.hook.sendMessage("There where no lyrics found for `$search`").queue()
@@ -134,6 +154,68 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
+    private fun loadLyricsFromLavalink(link: Link, cb: (EmbedBuilder?) -> Unit) {
+        val sessionId = link.node.sessionId!!
+        val guildId = link.guildId
+
+        link.node.customJsonRequest(Lyrics::class.java) {
+            it.path("/v4/sessions/$sessionId/players/$guildId/lyrics")
+        }
+            .publishOn(Schedulers.boundedElastic())
+            .doOnError { cb(null) }
+            .doOnSuccess {
+                val lyricInfo = when (it) {
+                    is TimedLyrics -> {
+                        // Block is safe here, player is already cached
+                        val position = link.getPlayer().block()!!.state.position
+
+                        val text = buildString {
+                            it.lines.forEach { line ->
+                                if (line.range.start <= position && position <= line.range.end) {
+                                    append("__**${line.line}**__\n")
+                                } else {
+                                    append("${line.line}\n")
+                                }
+                            }
+                        }
+
+                        LyricInfo(
+                            it.track.albumArt.last().url,
+                            it.track.title,
+                            null,
+                            text
+                        )
+                    }
+
+                    is TextLyrics -> LyricInfo(
+                        it.track.albumArt.last().url,
+                        it.track.title,
+                        null,
+                        it.text
+                    )
+
+                    else -> null
+                }
+
+                lyricInfo?.let { info ->
+                    cb(buildLyricsEmbed(info))
+                }
+            }
+            .subscribe()
+    }
+
+    private fun buildLyricsEmbed(data: LyricInfo): EmbedBuilder {
+        val builder = EmbedUtils.getDefaultEmbed()
+            .setTitle("Lyrics for ${data.title}", data.url)
+            .setThumbnail(data.artUrl)
+
+        data.lyrics.chunkForEmbed(450).forEachIndexed { index, chunk ->
+            builder.addField("**[${index + 1}]**", chunk, true)
+        }
+
+        return builder
+    }
+
     private fun handleSearch(search: String, config: DunctebotConfig, cb: (EmbedBuilder?) -> Unit) {
         searchForSong(search, config) {
             if (it == null) {
@@ -141,14 +223,7 @@ class LyricsCommand : MusicCommand() {
                 return@searchForSong
             }
 
-            cb(
-                EmbedUtils.getDefaultEmbed()
-                    .setTitle("Lyrics for $search", it.url)
-                    .setThumbnail(it.art)
-                    .setDescription(StringUtils.abbreviate(it.lyrics, 1900))
-                    .appendDescription("\n\n Full lyrics on [genuis.com](${it.url})")
-                    .setFooter("Powered by genuis.com")
-            )
+            cb(buildLyricsEmbed(it))
         }
     }
 
@@ -189,6 +264,7 @@ class LyricsCommand : MusicCommand() {
                     callback(
                         LyricInfo(
                             data["song_art_image_url"].asText(),
+                            "",
                             data["url"].asText(),
                             lyrics
                         )
@@ -205,7 +281,7 @@ class LyricsCommand : MusicCommand() {
                 val text = lyricsContainer.first()!!
                     .wholeText()
                     .replace("<br>", "\n")
-                    .replace("\n\n\n", "\n\n")
+                    .replace("\n\n\n", "\n")
                     .trim()
 
                 callback(text)
@@ -214,5 +290,5 @@ class LyricsCommand : MusicCommand() {
             }
     }
 
-    private data class LyricInfo(val art: String, val url: String, val lyrics: String)
+    private data class LyricInfo(val artUrl: String, val title: String, val url: String?, val lyrics: String)
 }
