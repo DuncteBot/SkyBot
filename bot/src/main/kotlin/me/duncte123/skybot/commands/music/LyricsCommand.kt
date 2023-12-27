@@ -76,7 +76,6 @@ class LyricsCommand : MusicCommand() {
 
         loadLyricsFromLavalink(player.link) {
             if (it == null) {
-        // TODO: fallback for genius
                 val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
 
                 handleSearch(searchItem, ctx.config) { embed ->
