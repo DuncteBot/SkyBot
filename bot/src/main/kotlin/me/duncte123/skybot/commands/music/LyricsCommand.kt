@@ -182,6 +182,7 @@ class LyricsCommand : MusicCommand() {
                             it.track.albumArt.last().url,
                             it.track.title,
                             null,
+                            it.source,
                             text
                         )
                     }
@@ -190,6 +191,7 @@ class LyricsCommand : MusicCommand() {
                         it.track.albumArt.last().url,
                         it.track.title,
                         null,
+                        it.source,
                         it.text
                     )
 
@@ -211,6 +213,8 @@ class LyricsCommand : MusicCommand() {
         data.lyrics.chunkForEmbed(450).forEachIndexed { index, chunk ->
             builder.addField("**[${index + 1}]**", chunk, true)
         }
+
+        builder.setFooter("Lyrics provided by ${data.source}")
 
         return builder
     }
@@ -265,6 +269,7 @@ class LyricsCommand : MusicCommand() {
                             data["song_art_image_url"].asText(),
                             "",
                             data["url"].asText(),
+                            "genius.com",
                             lyrics
                         )
                     )
@@ -289,5 +294,5 @@ class LyricsCommand : MusicCommand() {
             }
     }
 
-    private data class LyricInfo(val artUrl: String, val title: String, val url: String?, val lyrics: String)
+    private data class LyricInfo(val artUrl: String, val title: String, val url: String?, val source: String, val lyrics: String)
 }
