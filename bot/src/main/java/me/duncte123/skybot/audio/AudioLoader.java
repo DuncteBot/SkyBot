@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -140,19 +141,17 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
                 tracksRaw = tracksRaw.subList(selectedTrackIndex, tracksRaw.size());
             }
 
-            final List<Track> limitedTracks = tracksRaw.stream().peek((track) -> {
+            final List<Track> userTracks = tracksRaw.stream().peek((track) -> {
                 track.setUserData(new UUIDUserData());
 
                 mng.getScheduler().storeUserData(track, new TrackUserData(this.requester));
             }).toList();
+            final var tracksCopy = new ArrayList<>(userTracks);
 
-            for (final Track track : limitedTracks) {
-                trackScheduler.addToQueue(track, this.isPatron);
-            }
+            final int totalTracksQueued = trackScheduler.queuePlaylistTracks(tracksCopy, this.isPatron);
 
             if (this.announce) {
-                // TODO: find a way to fix up BigChungusPlaylist
-                final String msg = getPlaylistMsg(tracks, playlistInfo);
+                final String msg = getPlaylistMsg(tracks, totalTracksQueued, playlistInfo);
 
                 sendMsg(
                     new MessageConfig.Builder()
@@ -240,22 +239,6 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
         );
     }
 
-    private String getPlaylistMsg(List<Track> tracks, PlaylistInfo playlistInfo) {
-        final String sizeMsg = String.valueOf(tracks.size());
-
-        /*if (playlist instanceof BigChungusPlaylist bigBoi && bigBoi.isBig()) {
-            sizeMsg = tracks.size() + "/" + bigBoi.getOriginalSize();
-        } else {
-            sizeMsg = String.valueOf(tracks.size());
-        }*/
-
-        return String.format(
-            "Adding **%s** tracks to the queue from **%s**",
-            sizeMsg,
-            playlistInfo.getName()
-        );
-    }
-
 //    private void searchLoaded(LoadResult.SearchResult searchResult) {
 //        System.out.println("WARNING A SEARCH RESULT WAS TRIGGERED " + searchResult);
 //    }
@@ -271,6 +254,22 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
                     .build()
             );
         }
+    }
+
+    private String getPlaylistMsg(List<Track> tracks, int totalTracksAdded, PlaylistInfo playlistInfo) {
+        final String sizeMsg;
+
+        if (tracks.size() < totalTracksAdded) {
+            sizeMsg = totalTracksAdded + "/" + tracks.size();
+        } else {
+            sizeMsg = String.valueOf(tracks.size());
+        }
+
+        return String.format(
+            "Adding **%s** tracks to the queue from **%s**",
+            sizeMsg,
+            playlistInfo.getName()
+        );
     }
 
     private static String getSteamTitle(Track track, String rawTitle, CommandManager commandManager) {

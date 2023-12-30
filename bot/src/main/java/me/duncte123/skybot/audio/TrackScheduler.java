@@ -91,6 +91,31 @@ public class TrackScheduler {
     }
 
     /**
+     *
+     * @param tracks
+     * @param isPatron
+     * @return The total amount of tracks that were added to the queue.
+     * @throws LimitReachedException
+     */
+    public int queuePlaylistTracks(List<Track> tracks, boolean isPatron) throws LimitReachedException {
+        final List<Track> tmpQueue = new ArrayList<>();
+
+        while (!tracks.isEmpty() && (tmpQueue.size() + queue.size() + 1 < MAX_QUEUE_SIZE || isPatron)) {
+            tmpQueue.add(tracks.removeFirst());
+        }
+
+        final int tracksAdded = tmpQueue.size();
+
+        if (this.guildMusicManager.getPlayer().getCurrentTrack() == null) {
+            this.play(tmpQueue.removeFirst());
+        }
+
+        queue.addAll(tmpQueue);
+
+        return tracksAdded;
+    }
+
+    /**
      * This is a special case for the skip command where it has to announce the next track
      * due to it being a user interaction
      */
