@@ -37,7 +37,6 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
-import reactor.core.scheduler.Schedulers
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
