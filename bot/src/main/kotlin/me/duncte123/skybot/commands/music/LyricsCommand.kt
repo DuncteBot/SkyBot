@@ -76,7 +76,9 @@ class LyricsCommand : MusicCommand() {
 
         loadLyricsFromLavalink(player.link) {
             if (it == null) {
-                val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+                // TODO: figure out why the search is not executing.
+                sendMsg(ctx, "There where no lyrics found for `${playingTrack.info.title}`")
+                /*val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
 
                 handleSearch(searchItem, ctx.config) { embed ->
                     if (embed == null) {
@@ -85,7 +87,7 @@ class LyricsCommand : MusicCommand() {
                     }
 
                     sendEmbed(ctx, embed)
-                }
+                }*/
                 return@loadLyricsFromLavalink
             }
 
@@ -119,7 +121,10 @@ class LyricsCommand : MusicCommand() {
 
             loadLyricsFromLavalink(player.link) {
                 if (it == null) {
-                    val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+                    event.hook.sendMessage("There where no lyrics found for `${playingTrack.info.title}`")
+                        .queue()
+
+                    /*val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
 
                     handleSearch(searchItem, variables.config) { embed ->
                         if (embed == null) {
@@ -129,7 +134,7 @@ class LyricsCommand : MusicCommand() {
                         }
 
                         event.hook.sendMessageEmbeds(embed.build()).queue()
-                    }
+                    }*/
                     return@loadLyricsFromLavalink
                 }
 
@@ -160,9 +165,7 @@ class LyricsCommand : MusicCommand() {
         link.node.customJsonRequest(Lyrics::class.java) {
             it.path("/v4/sessions/$sessionId/players/$guildId/lyrics")
         }
-            .publishOn(Schedulers.boundedElastic())
-            .doOnError { cb(null) }
-            .doOnSuccess {
+            .subscribe({
                 val lyricInfo = when (it) {
                     is TimedLyrics -> {
                         // Block is safe here, player is already cached
@@ -201,8 +204,9 @@ class LyricsCommand : MusicCommand() {
                 lyricInfo?.let { info ->
                     cb(buildLyricsEmbed(info))
                 }
+            }) {
+                cb(null)
             }
-            .subscribe()
     }
 
     private fun buildLyricsEmbed(data: LyricInfo): EmbedBuilder {
