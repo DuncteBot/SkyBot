@@ -53,7 +53,7 @@ class LyricsCommand : MusicCommand() {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
-            // TODO: search with lavalink for lyrics
+            // TODO: search with lavalink for lyrics?
             handleSearch(ctx.argsRaw, ctx.config) {
                 if (it == null) {
                     sendMsg(ctx, "There where no lyrics found for `${ctx.argsRaw}`")
@@ -75,9 +75,7 @@ class LyricsCommand : MusicCommand() {
 
         loadLyricsFromLavalink(player.link) {
             if (it == null) {
-                // TODO: figure out why the search is not executing.
-                sendMsg(ctx, "There where no lyrics found for `${playingTrack.info.title}`")
-                /*val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+                val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
 
                 handleSearch(searchItem, ctx.config) { embed ->
                     if (embed == null) {
@@ -86,7 +84,7 @@ class LyricsCommand : MusicCommand() {
                     }
 
                     sendEmbed(ctx, embed)
-                }*/
+                }
                 return@loadLyricsFromLavalink
             }
 
@@ -120,10 +118,7 @@ class LyricsCommand : MusicCommand() {
 
             loadLyricsFromLavalink(player.link) {
                 if (it == null) {
-                    event.hook.sendMessage("There where no lyrics found for `${playingTrack.info.title}`")
-                        .queue()
-
-                    /*val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
+                    val searchItem = "${playingTrack.info.title} - ${playingTrack.info.author}"
 
                     handleSearch(searchItem, variables.config) { embed ->
                         if (embed == null) {
@@ -133,7 +128,7 @@ class LyricsCommand : MusicCommand() {
                         }
 
                         event.hook.sendMessageEmbeds(embed.build()).queue()
-                    }*/
+                    }
                     return@loadLyricsFromLavalink
                 }
 
@@ -146,7 +141,7 @@ class LyricsCommand : MusicCommand() {
 
         val search = opt.asString
 
-        // TODO: search with lavalink for lyrics
+        // TODO: search with lavalink for lyrics?
         handleSearch(search, variables.config) {
             if (it == null) {
                 event.hook.sendMessage("There where no lyrics found for `$search`").queue()
@@ -270,7 +265,7 @@ class LyricsCommand : MusicCommand() {
                     callback(
                         LyricInfo(
                             data["song_art_image_url"].asText(),
-                            "",
+                            data["full_title"].asText(),
                             data["url"].asText(),
                             "genius.com",
                             lyrics
@@ -282,9 +277,9 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun loadLyrics(path: String, callback: (String?) -> Unit) {
-        WebUtils.ins.scrapeWebPage("https://genius.com/amp$path") { it.setRateLimiter(RateLimiter.directLimiter()) }
+        WebUtils.ins.scrapeWebPage("https://genius.com$path") { it.setRateLimiter(RateLimiter.directLimiter()) }
             .async({
-                val lyricsContainer = it.select("div.lyrics")
+                val lyricsContainer = it.select("div[data-lyrics-container]")
                 val text = lyricsContainer.first()!!
                     .wholeText()
                     .replace("<br>", "\n")
@@ -293,6 +288,7 @@ class LyricsCommand : MusicCommand() {
 
                 callback(text)
             }) {
+                LOGGER.error("Loading lyrics from genius.com failed!", it)
                 callback(null)
             }
     }
