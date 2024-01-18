@@ -62,7 +62,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-        /* package */ boolean passes(CommandContext ctx) {
+    /* package */ boolean passes(CommandContext ctx) {
         return passes(ctx, true);
     }
 
@@ -120,18 +120,18 @@ public abstract class ImageCommandBase extends Command {
 
         // I hate this so much
         // But I won't change one pmd rule just for the sake of using !isEmpty here
-        if (ctx.getMessage().getAttachments().size() > 0) {
+        if (ctx.getMessage().getAttachments().isEmpty()) {
             url = tryGetAttachment(ctx);
         } else if (!mentionedUsers.isEmpty()) {
-            url = getAvatarUrl(mentionedUsers.get(0));
+            url = getAvatarUrl(mentionedUsers.getFirst());
         } else if (!args.isEmpty()) {
-            if (AirUtils.isURL(args.get(0))) {
-                url = tryGetUrl(ctx, args.get(0));
+            if (AirUtils.isURL(args.getFirst())) {
+                url = tryGetUrl(ctx, args.getFirst());
             } else {
                 final List<Member> textMentions = FinderUtils.searchMembers(ctx.getArgsJoined(), ctx);
 
                 if (!textMentions.isEmpty()) {
-                    url = getAvatarUrl(textMentions.get(0).getUser());
+                    url = getAvatarUrl(textMentions.getFirst().getUser());
                 }
             }
         }
@@ -145,7 +145,7 @@ public abstract class ImageCommandBase extends Command {
 
     @Nullable
     private String tryGetAttachment(CommandContext ctx) {
-        final Attachment attachment = ctx.getMessage().getAttachments().get(0);
+        final Attachment attachment = ctx.getMessage().getAttachments().getFirst();
 
         try (attachment) {
             final File file = new File(attachment.getFileName());
@@ -200,7 +200,7 @@ public abstract class ImageCommandBase extends Command {
             return null;
         }
 
-        if ("".equals(split[0].trim()) || "".equals(split[1].trim())) {
+        if (split[0].isBlank() || split[1].isBlank()) {
             sendMsg(ctx, "Missing arguments, check `" + ctx.getPrefix() + "help " + getName() + '`');
             return null;
         }

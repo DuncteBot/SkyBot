@@ -56,7 +56,9 @@ public class PerspectiveApi {
                     return 0f;
                 }
 
-                throw new HttpException("Error while handling perspective api request: " + json);
+                Sentry.captureException(new HttpException("Error while handling perspective api request: " + json));
+
+                return 0f;
             }
 
             final JsonNode score = json.get("attributeScores")
@@ -67,7 +69,6 @@ public class PerspectiveApi {
         }
         catch (Exception e) {
             Sentry.captureException(e);
-            e.printStackTrace();
 
             return 0f;
         }

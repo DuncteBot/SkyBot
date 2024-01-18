@@ -44,6 +44,7 @@ public class RedisConnection implements RedisDB {
         connect();
     }
 
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     private void connect() {
         if (!canConnect) {
             throw new RuntimeException("Shutdown method was called, new connection not allowed");

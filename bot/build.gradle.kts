@@ -34,6 +34,8 @@ plugins {
     id("com.github.breadmoirai.github-release")
 }
 
+val pmdVersion = "7.0.0-rc4"
+
 val numberVersion = "3.108.0"
 
 project.group = "me.duncte123.skybot"
@@ -69,6 +71,9 @@ dependencies {
     implementation(libs.redis)
     implementation(libs.mariadb)
     implementation(libs.bundles.database)
+
+    pmd("net.sourceforge.pmd:pmd-ant:$pmdVersion")
+    pmd("net.sourceforge.pmd:pmd-java:$pmdVersion")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -183,7 +188,7 @@ kotlinter {
 
 pmd {
     isConsoleOutput = true
-    toolVersion = "6.55.0"
+    toolVersion = pmdVersion
     rulesMinimumPriority.set(5)
     ruleSets = listOf()
     ruleSetFiles(File("linters/pmd.xml"))

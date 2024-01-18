@@ -118,8 +118,8 @@ public class AudioUtils {
 
     public static String getTimestamp(long milliseconds) {
         final int seconds = (int) (milliseconds / 1000) % 60;
-        final int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-        final int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+        final int minutes = (int) (milliseconds / (1000 * 60)) % 60;
+        final int hours = (int) (milliseconds / (1000 * 60 * 60)) % 24;
 
         if (hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);

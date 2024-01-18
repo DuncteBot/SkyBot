@@ -43,7 +43,8 @@
         <exclude name="OnlyOneReturn"/>
         <exclude name="UseUnderscoresInNumericLiterals"/>
         <exclude name="TooManyStaticImports"/>
-        <exclude name="DefaultPackage"/>
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="UselessParentheses"/>
         <exclude name="LinguisticNaming"/>
     </rule>
 
@@ -66,11 +67,32 @@
         <exclude name="TooManyMethods"/>
         <exclude name="NcssCount"/>
         <exclude name="ExcessiveMethodLength"/>
+        <exclude name="MutableStaticState"/>
     </rule>
 
     <rule ref="category/java/design.xml/NPathComplexity">
         <properties>
             <property name="reportLevel" value="550" />
+        </properties>
+    </rule>
+
+    <!-- TODO: make sure this is as low as you can get it -->
+    <rule ref="category/java/design.xml/CognitiveComplexity">
+        <properties>
+            <property name="reportLevel" value="40" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/LooseCoupling">
+        <properties>
+            <property name="allowedTypes" value="java.util.Properties,com.jagrosh.jagtag.Environment,me.duncte123.skybot.objects.DBMap" />
+        </properties>
+    </rule>
+
+    <!-- TODO: make sure this is as low as you can get it -->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="threshold" value="40" />
         </properties>
     </rule>
 
@@ -89,6 +111,7 @@
 
     <rule ref="category/java/errorprone.xml">
         <exclude name="AvoidCatchingThrowable"/>
+        <exclude name="AssignmentToNonFinalStatic"/>
         <exclude name="CallSuperFirst"/>
         <exclude name="CallSuperLast"/>
         <exclude name="CloseResource"/>
@@ -96,11 +119,11 @@
         <exclude name="DoNotTerminateVM"/>
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="OverrideBothEqualsAndHashcode"/>
-        <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
         <exclude name="UseLocaleWithCaseConversions"/>
         <exclude name="AvoidDuplicateLiterals"/>
         <exclude name="SimpleDateFormatNeedsLocale"/>
+        <exclude name="ReturnEmptyCollectionRatherThanNull"/>
     </rule>
 
     <rule ref="category/java/multithreading.xml">

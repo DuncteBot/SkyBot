@@ -217,11 +217,7 @@ public class CommandContext implements ICommandContext {
     }
 
     public boolean isChannelNSFW() {
-        if (getChannel() instanceof IAgeRestrictedChannel channel) {
-            return channel.isNSFW();
-        }
-
-        return false;
+        return (getChannel() instanceof IAgeRestrictedChannel channel) && channel.isNSFW();
     }
 
     // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //

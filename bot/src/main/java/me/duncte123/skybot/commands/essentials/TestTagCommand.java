@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class TestTagCommand extends Command {
 
     public TestTagCommand() {

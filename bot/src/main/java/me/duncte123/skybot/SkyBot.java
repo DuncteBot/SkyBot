@@ -56,10 +56,10 @@ import static net.dv8tion.jda.api.utils.MemberCachePolicy.DEFAULT;
 import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
-    public static ScheduledExecutorService SYSTEM_POOL = Executors.newSingleThreadScheduledExecutor((r) -> {
-        final Thread t = new Thread(r, "System Pool");
-        t.setDaemon(true);
-        return t;
+    public static final ScheduledExecutorService SYSTEM_POOL = Executors.newSingleThreadScheduledExecutor((r) -> {
+        final Thread thread = new Thread(r, "System Pool");
+        thread.setDaemon(true);
+        return thread;
     });
 
     private static SkyBot instance;

@@ -88,7 +88,7 @@ public class FakeUser implements User {
     @Nonnull
     @Override
     public String getDefaultAvatarUrl() {
-        return String.format(User.DEFAULT_AVATAR_URL, getDefaultAvatarId());
+        return String.format(DEFAULT_AVATAR_URL, getDefaultAvatarId());
     }
 
     @Nonnull

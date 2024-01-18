@@ -384,6 +384,7 @@ public abstract class MessageListener extends BaseListener {
         }
     }
 
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     private boolean doesNotStartWithPrefix(long selfId, String raw, String customPrefix) {
         final String rwLower = raw.toLowerCase();
 
@@ -418,11 +419,7 @@ public abstract class MessageListener extends BaseListener {
             getCommandName(customPrefix, raw).toLowerCase()
         );
 
-        if (command == null) {
-            return false;
-        }
-
-        return command.getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
+        return command == null || command.getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
     }
 
     @SuppressWarnings("ConstantConditions")

@@ -20,7 +20,6 @@ package me.duncte123.skybot.utils;
 
 import io.sentry.Sentry;
 import me.duncte123.skybot.database.AbstractDatabase;
-import me.duncte123.skybot.objects.DBMap;
 import me.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
@@ -33,15 +32,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class GuildUtils {
-    public static final DBMap<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = new DBMap<>(ExpiringMap.builder()
+    public static final Map<Long, GuildMemberInfo> GUILD_MEMBER_COUNTS = ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(1, TimeUnit.HOURS)
-        .build());
+        .build();
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildUtils.class);
 
     private GuildUtils() {}
@@ -73,7 +73,7 @@ public class GuildUtils {
             }
         }
 
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {
@@ -105,10 +105,10 @@ public class GuildUtils {
         final double botCount = counts[1];
 
         //percent in users
-        final double userCountP = (userCount / totalCount) * 100;
+        final double userCountP = userCount / totalCount * 100;
 
         //percent in bots
-        final double botCountP = (botCount / totalCount) * 100;
+        final double botCountP = botCount / totalCount * 100;
 
         LOGGER.debug("In the guild {}({} Members), {}% are users, {}% are bots",
             guild.getName(),
@@ -125,7 +125,7 @@ public class GuildUtils {
     }
 
     public static long getNitroUserCountCache(Guild guild) {
-        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.getIfPresent(guild.getIdLong());
+        final GuildMemberInfo guildCount = GUILD_MEMBER_COUNTS.get(guild.getIdLong());
 
         // This should never happen
         if (guildCount == null) {

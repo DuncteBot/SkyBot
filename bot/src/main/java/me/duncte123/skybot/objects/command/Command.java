@@ -182,15 +182,7 @@ public abstract class Command implements ICommand<CommandContext> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof final Command command)) {
-            return false;
-        }
-
-        return this.name.equals(command.getName());
+        return (obj instanceof final Command command) && this.name.equals(command.getName());
     }
 
     private String getCooldownKey(CommandContext ctx) {

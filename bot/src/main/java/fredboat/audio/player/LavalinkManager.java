@@ -107,11 +107,7 @@ public final class LavalinkManager {
     }
 
     public boolean isConnected(long guildId) {
-        if (!isEnabled()) {
-            return false;
-        }
-
-        return lavalink.getLink(guildId).getState() == LinkState.CONNECTED;
+        return !isEnabled() || lavalink.getLink(guildId).getState() == LinkState.CONNECTED;
     }
 
     @SuppressWarnings("ConstantConditions") // cache is enabled
