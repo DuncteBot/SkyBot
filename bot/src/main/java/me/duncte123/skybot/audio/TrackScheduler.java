@@ -27,7 +27,6 @@ import me.duncte123.skybot.exceptions.LimitReachedException;
 import me.duncte123.skybot.extensions.AudioTrackKt;
 import me.duncte123.skybot.objects.TrackUserData;
 import me.duncte123.skybot.utils.Debouncer;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,17 +55,12 @@ public class TrackScheduler {
     /* package */ TrackScheduler(GuildMusicManager guildMusicManager) {
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer<>((msg) -> {
-            final MessageChannel latestChannel = guildMusicManager.getLatestChannel();
-
-            if (latestChannel == null) {
-                return;
-            }
-
-            sendMsg(new MessageConfig.Builder()
-                .setChannel(latestChannel)
-                .setMessage(msg)
-                .setFailureAction(new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_PERMISSIONS))
-                .build());
+            guildMusicManager.getLatestChannel()
+                .ifPresent((latestChannel) ->  sendMsg(new MessageConfig.Builder()
+                    .setChannel(latestChannel)
+                    .setMessage(msg)
+                    .setFailureAction(new ErrorHandler().ignore(UNKNOWN_CHANNEL, MISSING_PERMISSIONS))
+                    .build()));
         }, DEBOUNCE_INTERVAL);
     }
 
@@ -92,10 +86,10 @@ public class TrackScheduler {
 
     /**
      *
-     * @param tracks
-     * @param isPatron
+     * @param tracks The tracks to be added to the queue.
+     * @param isPatron if this user is a supporter of the bot.
      * @return The total amount of tracks that were added to the queue.
-     * @throws LimitReachedException
+     * @throws LimitReachedException When the free limit has been reached.
      */
     public int queuePlaylistTracks(List<Track> tracks, boolean isPatron) throws LimitReachedException {
         final List<Track> tmpQueue = new ArrayList<>();
@@ -136,11 +130,13 @@ public class TrackScheduler {
 
         if (nextTrack == null) {
             this.guildMusicManager.getPlayer().stopPlayback();
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(guildMusicManager.getLatestChannel())
-                    .setMessage("Queue concluded")
-            );
+
+            guildMusicManager.getLatestChannel()
+                .ifPresent((channel) -> sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(channel)
+                        .setMessage("Queue concluded")
+                ));
         } else {
             // Make sure to cary over the skip state, we want to announce skipped tracks
             getUserData(nextTrack).setForceAnnounce(forceAnnounce);
@@ -158,21 +154,22 @@ public class TrackScheduler {
                 data.setForceAnnounce(false);
             }
 
-            AudioTrackKt.toEmbed(
-                track,
-                this.guildMusicManager,
-                getInstance().getShardManager(),
-                false,
-                (message) -> {
-                    sendMsg(
-                        new MessageConfig.Builder()
-                            .setChannel(guildMusicManager.getLatestChannel())
-                            .setEmbeds(false, message)
-                    );
+            guildMusicManager.getLatestChannel()
+                .ifPresent((latestChannel) -> AudioTrackKt.toEmbed(
+                    track,
+                    this.guildMusicManager,
+                    getInstance().getShardManager(),
+                    false,
+                    (message) -> {
+                        sendMsg(
+                            new MessageConfig.Builder()
+                                .setChannel(latestChannel)
+                                .setEmbeds(false, message)
+                        );
 
-                    return null;
-                }
-            );
+                        return null;
+                    }
+                ));
         }
     }
 

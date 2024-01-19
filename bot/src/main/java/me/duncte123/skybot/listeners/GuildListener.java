@@ -57,18 +57,15 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof GuildJoinEvent guildJoin) {
-            this.onGuildJoin(guildJoin);
-        } else if (event instanceof GuildLeaveEvent guildLeave) {
-            this.onGuildLeave(guildLeave);
-        } else if (event instanceof GuildVoiceUpdateEvent guildVoiceMove) {
-            this.onGuildVoiceMove(guildVoiceMove);
-        } else if (event instanceof GuildBanEvent guildBan) {
-            this.onGuildBan(guildBan);
-        } else if (event instanceof GuildUnbanEvent guildUnban) {
-            this.onGuildUnban(guildUnban);
-        } else if (event instanceof GuildReadyEvent guildReady) {
-            this.onGuildReady(guildReady);
+        switch (event) {
+            case GuildJoinEvent guildJoin -> this.onGuildJoin(guildJoin);
+            case GuildLeaveEvent guildLeave -> this.onGuildLeave(guildLeave);
+            case GuildVoiceUpdateEvent guildVoiceMove -> this.onGuildVoiceMove(guildVoiceMove);
+            case GuildBanEvent guildBan -> this.onGuildBan(guildBan);
+            case GuildUnbanEvent guildUnban -> this.onGuildUnban(guildUnban);
+            case GuildReadyEvent guildReady -> this.onGuildReady(guildReady);
+            default -> {
+            }
         }
     }
 
@@ -333,22 +330,18 @@ public class GuildListener extends BaseListener {
             guild.requestToSpeak();
         } else {
             final GuildMusicManager musicManager = this.variables.getAudioUtils().getMusicManager(guild.getIdLong());
-            final MessageChannel textChan = musicManager.getLatestChannel();
 
-            if (textChan == null) {
-                return;
-            }
-
-            sendMsg(
-                new MessageConfig.Builder()
-                    .setChannel(textChan)
-                    .setMessageFormat(
-                        "In order for stage channels to work properly, I need to be able to request to speak.\n" +
-                            "Alternatively, you could give me the %s permission so I can unmute myself or invite me to speak on this stage.",
-                        Permission.VOICE_MUTE_OTHERS.getName()
-                    )
-                    .build()
-            );
+            musicManager.getLatestChannel()
+                .ifPresent((textChan) -> sendMsg(
+                    new MessageConfig.Builder()
+                        .setChannel(textChan)
+                        .setMessageFormat(
+                            "In order for stage channels to work properly, I need to be able to request to speak.\n" +
+                                "Alternatively, you could give me the %s permission so I can unmute myself or invite me to speak on this stage.",
+                            Permission.VOICE_MUTE_OTHERS.getName()
+                        )
+                        .build()
+                ));
         }
     }
 }

@@ -23,7 +23,8 @@ import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
@@ -64,15 +65,17 @@ public class GuildMusicManager {
         this.scheduler.getQueue().clear();
     }
 
-    @Nullable
-    public MessageChannel getLatestChannel() {
+    @Nonnull
+    public Optional<MessageChannel> getLatestChannel() {
         final long last = this.getLatestChannelId();
 
         if (last == -1 || last == 0) {
-            return null;
+            return Optional.empty();
         }
 
-        return SkyBot.getInstance().getShardManager().getChannelById(MessageChannel.class, last);
+        return Optional.ofNullable(
+            SkyBot.getInstance().getShardManager().getChannelById(MessageChannel.class, last)
+        );
     }
 
     public LocalPlayer getPlayer() {
