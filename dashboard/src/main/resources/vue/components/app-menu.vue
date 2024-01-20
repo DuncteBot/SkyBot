@@ -4,7 +4,7 @@
             <nav class="indigo">
                 <div class="nav-wrapper container">
                     <a href="#" data-target="server-setting-tabs" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                    <a v-if="guildName" href="/resources/public" class="brand-logo truncate">
+                    <a v-if="guildName" href="/" class="brand-logo truncate">
                         <i class="material-icons">arrow_back</i>  Editing {{ guildName }}
                     </a>
                 </div>
