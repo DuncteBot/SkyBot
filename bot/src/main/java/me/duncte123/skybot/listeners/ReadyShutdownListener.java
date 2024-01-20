@@ -61,20 +61,16 @@ public class ReadyShutdownListener extends MessageListener {
 
     @Override
     public void onEvent(@Nonnull GenericEvent event) {
-        if (event instanceof MessageUpdateEvent messageUpdate) {
-            this.onGuildMessageUpdate(messageUpdate);
-        } else if (event instanceof MessageReceivedEvent messageReceived) {
-            this.onGuildMessageReceived(messageReceived);
-        } else if (event instanceof SlashCommandInteractionEvent slashEvent) {
-            this.onSlashCommandInteraction(slashEvent);
-        } else if (event instanceof MessageDeleteEvent delete) {
-            this.onGuildMessageDelete(delete);
-        } else if (event instanceof MessageBulkDeleteEvent bulkDelete) {
-            this.onMessageBulkDelete(bulkDelete);
-        } else if (event instanceof ReadyEvent ready) {
-            this.onReady(ready);
-        } else if (event instanceof ShutdownEvent) {
-            this.onShutdown();
+        switch (event) {
+            case MessageUpdateEvent messageUpdate -> this.onGuildMessageUpdate(messageUpdate);
+            case MessageReceivedEvent messageReceived -> this.onGuildMessageReceived(messageReceived);
+            case SlashCommandInteractionEvent slashEvent -> this.onSlashCommandInteraction(slashEvent);
+            case MessageDeleteEvent delete -> this.onGuildMessageDelete(delete);
+            case MessageBulkDeleteEvent bulkDelete -> this.onMessageBulkDelete(bulkDelete);
+            case ReadyEvent ready -> this.onReady(ready);
+            case ShutdownEvent shutdownEvent -> this.onShutdown();
+            default -> {
+            }
         }
     }
 
@@ -86,6 +82,12 @@ public class ReadyShutdownListener extends MessageListener {
         if (!arePoolsRunning.get()) {
             LOGGER.info("Starting spam-cache-cleaner!");
             SkyBot.SYSTEM_POOL.scheduleAtFixedRate(() -> runOnVirtual(spamFilter::clearMessages), 20, 13, TimeUnit.SECONDS);
+
+            // Reset our activity every day
+            SkyBot.SYSTEM_POOL.scheduleAtFixedRate(
+                () -> jda.getShardManager().setActivityProvider(SkyBot.ACTIVITY_PROVIDER),
+                1, 1, TimeUnit.DAYS
+            );
 
             if (
                 "psql".equals(this.variables.getConfig().useDatabase) ||

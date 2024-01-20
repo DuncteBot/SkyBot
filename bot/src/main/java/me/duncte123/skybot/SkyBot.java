@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 
 import static net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
@@ -56,6 +57,9 @@ import static net.dv8tion.jda.api.utils.MemberCachePolicy.DEFAULT;
 import static net.dv8tion.jda.api.utils.MemberCachePolicy.PENDING;
 
 public final class SkyBot {
+    public static final IntFunction<Activity> ACTIVITY_PROVIDER = (shardId) -> Activity.playing(
+        Settings.PREFIX + "help | Shard " + (shardId + 1)
+    );
     public static final ScheduledExecutorService SYSTEM_POOL = Executors.newSingleThreadScheduledExecutor((r) -> {
         final Thread thread = new Thread(r, "System Pool");
         thread.setDaemon(true);
@@ -123,9 +127,7 @@ public final class SkyBot {
             )
             .setToken(token)
             .setShardsTotal(totalShards)
-            .setActivityProvider((shardId) -> Activity.playing(
-                Settings.PREFIX + "help | Shard " + (shardId + 1)
-            ))
+            .setActivityProvider(ACTIVITY_PROVIDER)
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             // Keep guild owners, voice members and patrons in cache
