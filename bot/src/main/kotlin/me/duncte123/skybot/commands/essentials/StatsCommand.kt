@@ -128,8 +128,10 @@ class StatsCommand : Command() {
         availableNodes.forEachIndexed { index, node ->
             val stats = node.stats ?: return@forEachIndexed
 
+            val nodeInfo = node.getNodeInfo().block()!!
+
             embed.addField(
-                "Lavalink node #$index",
+                "Node #$index ${node.name} (v${nodeInfo.version.semver}/jvm ${nodeInfo.jvm}/LP ${nodeInfo.lavaplayer})",
                 """**Uptime:** ${AirUtils.getUptime(stats.uptime)}
                     |**CPU cores:** ${stats.cpu.cores}
                     |**System Load:** ${stats.cpu.systemLoad}%
@@ -137,6 +139,7 @@ class StatsCommand : Command() {
                     |**Free memory:** ${stats.memory.free shr 20}MB
                     |**Players:** ${stats.players}
                     |**Players playing:** ${stats.playingPlayers}
+                    |**Sources:** ${nodeInfo.sourceManagers.joinToString()}
                 """.trimMargin(),
                 true
             )
