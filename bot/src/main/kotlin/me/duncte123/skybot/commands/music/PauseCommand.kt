@@ -53,7 +53,7 @@ class PauseCommand : MusicCommand() {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val localPlayer = mng.player
 
-        localPlayer.ifPresentOrElse({player ->
+        localPlayer.ifPresentOrElse({ player ->
             if (player.track == null) {
                 event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
                 return@ifPresentOrElse

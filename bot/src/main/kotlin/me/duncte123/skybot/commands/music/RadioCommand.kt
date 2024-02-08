@@ -27,7 +27,6 @@ import me.duncte123.skybot.objects.RadioStream
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import kotlin.jvm.optionals.getOrNull
 
 class RadioCommand : MusicCommand() {
     var radioStreams = arrayListOf<RadioStream>()
