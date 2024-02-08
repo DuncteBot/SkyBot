@@ -30,6 +30,7 @@ import me.duncte123.skybot.utils.CommandUtils
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import kotlin.jvm.optionals.getOrNull
 
 open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand() {
     private val pornhubRegex = "https?://([a-z]+\\.)?pornhub\\.(com|net|org)"
@@ -50,23 +51,28 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             }
 
             val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-            val player = mng.player.lavalinkPlayer.block()!!
-            val scheduler = mng.scheduler
+            val player = mng.player.lavalinkPlayer.getOrNull()
 
-            when {
-                player.paused -> {
-                    player.setPaused(false).asMono().subscribe()
+            if (player == null) {
+                sendMsg(ctx, "Nothing is playing currently, add an argument to play something.")
+            } else {
+                val scheduler = mng.scheduler
 
-                    sendMsg(ctx, "Playback has been resumed.")
+                when {
+                    player.paused -> {
+                        player.setPaused(false).subscribe()
+
+                        sendMsg(ctx, "Playback has been resumed.")
+                    }
+
+                    player.track != null -> sendMsg(ctx, "Player is already playing!")
+
+                    scheduler.queue.isEmpty() -> sendMsg(
+                        ctx,
+                        "The current audio queue is empty! Add something to the queue first!\n" +
+                            "For example `${ctx.prefix}play https://www.youtube.com/watch?v=KKOBXrRzZwA`"
+                    )
                 }
-
-                player.track != null -> sendMsg(ctx, "Player is already playing!")
-
-                scheduler.queue.isEmpty() -> sendMsg(
-                    ctx,
-                    "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example `${ctx.prefix}play https://www.youtube.com/watch?v=KKOBXrRzZwA`"
-                )
             }
 
             return
@@ -75,7 +81,10 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         var toPlay = ctx.argsRaw
 
         if (toPlay.contains(pornhubRegex.toRegex()) && !ctx.isChannelNSFW) {
-            sendMsg(ctx, "Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
+            sendMsg(
+                ctx,
+                "Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW"
+            )
             return
         }
 
@@ -164,7 +173,8 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         var toPlay = event.getOption("item")!!.asString
 
         if (toPlay.contains(pornhubRegex.toRegex()) && !event.channel.isNSFW) {
-            event.reply("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW").queue()
+            event.reply("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
+                .queue()
             return
         }
 

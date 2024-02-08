@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 import kotlin.math.min
 
@@ -43,24 +44,28 @@ class VolumeCommand : MusicCommand() {
         }
 
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player.lavalinkPlayer.block()!!
-        val args = ctx.args
 
-        if (args.isEmpty()) {
-            sendMsg(ctx, "The current volume is **${player.volume}%**")
-            return
-        }
+        mng.player.lavalinkPlayer.ifPresentOrElse({ player ->
+            val args = ctx.args
 
-        try {
-            val userInput = args[0].toInt()
-            val newVolume = max(0, min(1000, userInput))
-            val oldVolume = player.volume
+            if (args.isEmpty()) {
+                sendMsg(ctx, "The current volume is **${player.volume}%**")
+                return@ifPresentOrElse
+            }
 
-            player.setVolume(newVolume).asMono().subscribe()
+            try {
+                val userInput = args[0].toInt()
+                val newVolume = max(0, min(1000, userInput))
+                val oldVolume = player.volume
 
-            sendMsg(ctx, "Player volume changed from **$oldVolume%** to **$newVolume%**")
-        } catch (e: NumberFormatException) {
-            sendMsg(ctx, "**${args[0]}** is not a valid integer. (0 - 1000)")
+                player.setVolume(newVolume).subscribe()
+
+                sendMsg(ctx, "Player volume changed from **$oldVolume%** to **$newVolume%**")
+            } catch (e: NumberFormatException) {
+                sendMsg(ctx, "**${args[0]}** is not a valid integer. (0 - 1000)")
+            }
+        }) {
+            sendMsg(ctx, "There is no player connected to this guild")
         }
     }
 
@@ -84,24 +89,28 @@ class VolumeCommand : MusicCommand() {
         }
 
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
-        val player = mng.player.lavalinkPlayer.block()!!
-        val volumeOpt = event.getOption("volume")
 
-        if (volumeOpt == null) {
-            event.reply("The current volume is **${player.volume}%**").queue()
-            return
-        }
+        mng.player.lavalinkPlayer.ifPresentOrElse({ player ->
+            val volumeOpt = event.getOption("volume")
 
-        try {
-            val userInput = volumeOpt.asInt
-            val newVolume = max(0, min(1000, userInput))
-            val oldVolume = player.volume
+            if (volumeOpt == null) {
+                event.reply("The current volume is **${player.volume}%**").queue()
+                return@ifPresentOrElse
+            }
 
-            player.setVolume(newVolume).asMono().subscribe()
+            try {
+                val userInput = volumeOpt.asInt
+                val newVolume = max(0, min(1000, userInput))
+                val oldVolume = player.volume
 
-            event.reply("Player volume changed from **$oldVolume%** to **$newVolume%**").queue()
-        } catch (e: NumberFormatException) {
-            event.reply("**${volumeOpt.asString}** is not a valid integer. (0 - 1000)").queue()
+                player.setVolume(newVolume).subscribe()
+
+                event.reply("Player volume changed from **$oldVolume%** to **$newVolume%**").queue()
+            } catch (e: NumberFormatException) {
+                event.reply("**${volumeOpt.asString}** is not a valid integer. (0 - 1000)").queue()
+            }
+        }) {
+            event.reply("There is no player connected to this guild").queue()
         }
     }
 }

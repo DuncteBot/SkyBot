@@ -58,7 +58,6 @@ public final class LavalinkManager {
 
         lavalink = new LavalinkClient(userId);
 
-        this.registerPlayerUpdateEvent();
         this.registerTrackStartEvent();
         this.registerTrackEndEvent();
         this.registerTrackExceptionEvent();
@@ -138,26 +137,13 @@ public final class LavalinkManager {
         }
     }
 
-    private void registerPlayerUpdateEvent() {
-        lavalink.on(PlayerUpdateEvent.class).subscribe((event) -> {
-            final long guildIdLong = event.getGuildId();
-            final var mng = audioUtils.getMusicManagers().get(guildIdLong);
-
-            if (mng != null) {
-                mng.getPlayer().updateLocalPlayerState(event.getState());
-            }
-        });
-    }
-
     private void registerTrackStartEvent() {
         lavalink.on(TrackStartEvent.class).subscribe((event) -> {
             final long guildIdLong = event.getGuildId();
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                final Track track = event.getTrack();
-                mng.getPlayer().updateCurrentTrack(track);
-                mng.getScheduler().onTrackStart(track);
+                mng.getScheduler().onTrackStart(event.getTrack());
             }
         });
     }
@@ -168,7 +154,6 @@ public final class LavalinkManager {
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                mng.getPlayer().updateCurrentTrack(null);
                 mng.getScheduler().onTrackEnd(event.getTrack(), event.getEndReason());
             }
         });
@@ -180,7 +165,6 @@ public final class LavalinkManager {
             final var mng = audioUtils.getMusicManagers().get(guildIdLong);
 
             if (mng != null) {
-                mng.getPlayer().updateCurrentTrack(null);
                 mng.getScheduler().onTrackException(event.getTrack(), event.getException());
             }
         });

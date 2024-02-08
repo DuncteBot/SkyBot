@@ -37,7 +37,7 @@ public class MusicEmbedUtils {
     private MusicEmbedUtils() {}
 
     public static void createPlayerString(GuildMusicManager mng, Consumer<String> callback) {
-        mng.getPlayer().getLavalinkPlayer().subscribe((player) -> {
+        mng.getPlayer().getLavalinkPlayer().ifPresentOrElse((player) -> {
             final TrackInfo trackInfo = player.getTrack().getInfo();
             final long position = player.getPosition();
             final long duration = trackInfo.getLength();
@@ -51,7 +51,7 @@ public class MusicEmbedUtils {
                     getVolumeIcon(player.getVolume())
                 )
             );
-        });
+        }, () -> callback.accept("Not playing anything."));
     }
 
     private static String generateProgressBar(double percent) {

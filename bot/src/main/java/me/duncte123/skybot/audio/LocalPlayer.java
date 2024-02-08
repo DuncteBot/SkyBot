@@ -21,19 +21,15 @@ package me.duncte123.skybot.audio;
 import dev.arbjerg.lavalink.client.IUpdatablePlayer;
 import dev.arbjerg.lavalink.client.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.Link;
-import dev.arbjerg.lavalink.protocol.v4.Filters;
-import dev.arbjerg.lavalink.protocol.v4.PlayerState;
 import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.protocol.v4.Filters;
 import fredboat.audio.player.LavalinkManager;
-import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 
 public class LocalPlayer {
     private final long guildId;
-    private final AtomicReference<Track> currentTrack = new AtomicReference<>(null);
-    private final AtomicReference<PlayerState> state = new AtomicReference<>(null);
 
     public LocalPlayer(long guildId) {
         this.guildId = guildId;
@@ -47,8 +43,10 @@ public class LocalPlayer {
         return this.getLink().createOrUpdatePlayer();
     }
 
-    public Mono<LavalinkPlayer> getLavalinkPlayer() {
-        return this.getLink().getPlayer();
+    public Optional<LavalinkPlayer> getLavalinkPlayer() {
+        return Optional.ofNullable(
+            this.getLink().getCachedPlayer()
+        );
     }
 
     public void stopPlayback() {
@@ -72,30 +70,22 @@ public class LocalPlayer {
 
     @Nullable
     public Track getCurrentTrack() {
-        return this.currentTrack.get();
+        final LavalinkPlayer player = this.getLink().getCachedPlayer();
+
+        if (player == null) {
+            return null;
+        }
+
+        return player.getTrack();
     }
 
     public long getPosition() {
-        final var currentState = this.state.get();
+        final LavalinkPlayer player = this.getLink().getCachedPlayer();
 
-        if (currentState == null) {
-            final Track currentTrack = getCurrentTrack();
-
-            if (currentTrack == null) {
-                return 0;
-            }
-
-            return currentTrack.getInfo().getPosition();
+        if (player == null) {
+            return -1;
         }
 
-        return currentState.getPosition();
-    }
-
-    public void updateLocalPlayerState(PlayerState state) {
-        this.state.set(state);
-    }
-
-    public void updateCurrentTrack(Track track) {
-        this.currentTrack.set(track);
+        return player.getPosition();
     }
 }

@@ -34,30 +34,36 @@ class PauseCommand : MusicCommand() {
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val localPlayer = mng.player
-        val player = localPlayer.lavalinkPlayer.block()!!
 
-        if (player.track == null) {
+        localPlayer.lavalinkPlayer.ifPresentOrElse({ player ->
+            if (player.track == null) {
+                sendMsg(ctx, "Cannot pause or resume player because no track is loaded for playing.")
+                return@ifPresentOrElse
+            }
+
+            player.setPaused(!player.paused).subscribe {
+                sendMsg(ctx, "The player has ${if (it.paused) "been paused" else "resumed playing"}.")
+            }
+        }) {
             sendMsg(ctx, "Cannot pause or resume player because no track is loaded for playing.")
-            return
-        }
-
-        player.setPaused(!player.paused).asMono().subscribe {
-            sendMsg(ctx, "The player has ${if (it.paused) "been paused" else "resumed playing"}.")
         }
     }
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val localPlayer = mng.player
-        val player = localPlayer.lavalinkPlayer.block()!!
 
-        if (player.track == null) {
+        localPlayer.lavalinkPlayer.ifPresentOrElse({player ->
+            if (player.track == null) {
+                event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
+                return@ifPresentOrElse
+            }
+
+            player.setPaused(!player.paused).subscribe {
+                event.reply("The player has ${if (it.paused) "been paused" else "resumed playing"}.").queue()
+            }
+        }) {
             event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
-            return
-        }
-
-        player.setPaused(!player.paused).asMono().subscribe {
-            event.reply("The player has ${if (it.paused) "been paused" else "resumed playing"}.").queue()
         }
     }
 }
