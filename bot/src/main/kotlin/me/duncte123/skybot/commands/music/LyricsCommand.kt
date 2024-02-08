@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import kotlin.jvm.optionals.getOrNull
 
 class LyricsCommand : MusicCommand() {
     init {
@@ -59,15 +60,17 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
-        val playingTrack = player.currentTrack
+        val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
+        mng.latestChannelId = ctx.channel.idLong
+        val player = mng.player.getOrNull()
+        val playingTrack = player?.track
 
         if (playingTrack == null) {
             sendMsg(ctx, "The player is not currently playing anything!")
             return
         }
 
-        loadLyricsFromLavalink(player.link) {
+        loadLyricsFromLavalink(mng.link) {
             if (it == null) {
                 sendMsg(ctx, "There where no lyrics found for `${playingTrack.info.title}`")
                 return@loadLyricsFromLavalink
@@ -91,8 +94,10 @@ class LyricsCommand : MusicCommand() {
         val opt = event.getOption("song")
 
         if (opt == null) {
-            val player = variables.audioUtils.getMusicManager(event.guild!!.idLong).player
-            val playingTrack = player.currentTrack
+            val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
+            mng.latestChannelId = event.channel.idLong
+            val player = mng.player.getOrNull()
+            val playingTrack = player?.track
 
             if (playingTrack == null) {
                 event.reply("The player is not currently playing anything!").queue()
@@ -101,7 +106,7 @@ class LyricsCommand : MusicCommand() {
 
             event.deferReply().queue()
 
-            loadLyricsFromLavalink(player.link) {
+            loadLyricsFromLavalink(mng.link) {
                 if (it == null) {
                     event.hook.sendMessage("There where no lyrics found for `${playingTrack.info.title}`")
                         .queue()

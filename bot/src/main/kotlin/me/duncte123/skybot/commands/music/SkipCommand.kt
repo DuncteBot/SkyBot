@@ -28,6 +28,7 @@ import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.ceil
 
 class SkipCommand : MusicCommand() {
@@ -49,8 +50,8 @@ class SkipCommand : MusicCommand() {
 
     private fun skipHandler(variables: Variables, guild: Guild, user: User, sendMessage: (String) -> Unit) {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
-        val player = mng.player
-        val currentTrack = player.currentTrack
+        val player = mng.player.getOrNull()
+        val currentTrack = player?.track
         val scheduler = mng.scheduler
 
         if (currentTrack == null) {

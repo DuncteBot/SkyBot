@@ -51,7 +51,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             }
 
             val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-            val player = mng.player.lavalinkPlayer.getOrNull()
+            val player = mng.player.getOrNull()
 
             if (player == null) {
                 sendMsg(ctx, "Nothing is playing currently, add an argument to play something.")

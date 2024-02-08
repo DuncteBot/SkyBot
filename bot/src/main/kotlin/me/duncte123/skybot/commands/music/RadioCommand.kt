@@ -27,6 +27,7 @@ import me.duncte123.skybot.objects.RadioStream
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 
 class RadioCommand : MusicCommand() {
     var radioStreams = arrayListOf<RadioStream>()
@@ -63,9 +64,10 @@ class RadioCommand : MusicCommand() {
 
                 val audioUtils = ctx.audioUtils
                 val mng = audioUtils.getMusicManager(ctx.guildId)
-                val player = mng.player
 
-                player.stopPlayback()
+                mng.player.ifPresent {
+                    it.setPaused(false).setEncodedTrack(null).subscribe()
+                }
                 mng.scheduler.queue.clear()
 
                 audioUtils.loadAndPlay(ctx.audioData, radio.url, true)

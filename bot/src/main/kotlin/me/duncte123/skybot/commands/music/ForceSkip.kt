@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import kotlin.jvm.optionals.getOrNull
 
 class ForceSkip : MusicCommand() {
     init {
@@ -43,9 +44,10 @@ class ForceSkip : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player
+        val player = mng.player.getOrNull()
+        val currTrack = player?.track
 
-        if (player.currentTrack == null) {
+        if (currTrack == null) {
             sendMsg(ctx, "The player is not playing.")
             return
         }
@@ -63,16 +65,16 @@ class ForceSkip : MusicCommand() {
             1
         }
 
-        val trackData = scheduler.getUserData(player.currentTrack)
+        val trackData = scheduler.getUserData(currTrack)
 
         scheduler.skipTracks(count, false)
 
         // Return the console user if the requester is null
         val user = ctx.jda.getUserById(trackData.requester) ?: UnknownUser()
 
-        val track = player.currentTrack
+        val newTrack = player.track
 
-        if (track == null) {
+        if (newTrack == null) {
             sendMsg(
                 ctx,
                 "Successfully skipped $count tracks.\n" +
@@ -85,10 +87,10 @@ class ForceSkip : MusicCommand() {
             ctx,
             EmbedUtils.embedMessage(
                 "Successfully skipped $count tracks.\n" +
-                    "Now playing: ${track.info.title}\n" +
+                    "Now playing: ${newTrack.info.title}\n" +
                     "Requester: ${user.asTag}"
             )
-                .setThumbnail(track.info.artworkUrl)
+                .setThumbnail(newTrack.info.artworkUrl)
         )
     }
 

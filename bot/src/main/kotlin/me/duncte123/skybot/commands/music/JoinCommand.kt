@@ -25,6 +25,7 @@ import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.exceptions.PermissionException
+import kotlin.jvm.optionals.getOrNull
 
 class JoinCommand : MusicCommand() {
     init {
@@ -52,25 +53,28 @@ class JoinCommand : MusicCommand() {
         mng.latestChannelId = event.channel.idLong
 
         val lavalink = getLavalinkManager()
+        val player = mng.player.getOrNull()
 
-        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
-            val channel = lavalink.getConnectedChannel(event.guild)
+        if (player != null) {
+            if (lavalink.isConnected(event.guild) && player.track != null) {
+                val channel = lavalink.getConnectedChannel(event.guild)
 
-            if (channel == null) {
-                sendMsg(ctx, "I am already playing music in a channel, but somehow discord did not tell me what channel I am in.")
+                if (channel == null) {
+                    sendMsg(ctx, "I am already playing music in a channel, but somehow discord did not tell me what channel I am in.")
+                    return
+                }
+
+                val channelId = channel.idLong
+
+                sendMsg(ctx, "I am already playing music in <#$channelId>.")
                 return
             }
 
-            val channelId = channel.idLong
+            if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
+                sendMsg(ctx, "I cannot join to <#${vc.idLong}> because I am missing the permission to do so.")
 
-            sendMsg(ctx, "I am already playing music in <#$channelId>.")
-            return
-        }
-
-        if (!ctx.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-            sendMsg(ctx, "I cannot join to <#${vc.idLong}> because I am missing the permission to do so.")
-
-            return
+                return
+            }
         }
 
         try {
@@ -100,31 +104,33 @@ class JoinCommand : MusicCommand() {
         mng.latestChannelId = event.channel.idLong
 
         val lavalink = getLavalinkManager()
+        val player = mng.player.getOrNull()
+        val vc = memberVoice.channel!!
 
-        if (lavalink.isConnected(event.guild) && mng.player.currentTrack != null) {
-            val channel = lavalink.getConnectedChannel(event.guild!!)
+        if (player != null) {
+            if (lavalink.isConnected(event.guild) && player.track != null) {
+                val channel = lavalink.getConnectedChannel(event.guild!!)
 
-            if (channel == null) {
+                if (channel == null) {
+                    event.reply(
+                        "I am already playing music in a channel, but somehow discord did not tell me what channel I am in."
+                    ).queue()
+                    return
+                }
+
                 event.reply(
-                    "I am already playing music in a channel, but somehow discord did not tell me what channel I am in."
+                    "I am already playing music in ${channel.asMention}."
                 ).queue()
                 return
             }
 
-            event.reply(
-                "I am already playing music in ${channel.asMention}."
-            ).queue()
-            return
-        }
+            if (!event.guild!!.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
+                event.reply(
+                    "I cannot join to ${vc.asMention} because I am missing the permission to do so."
+                ).queue()
 
-        val vc = memberVoice.channel!!
-
-        if (!event.guild!!.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-            event.reply(
-                "I cannot join to ${vc.asMention} because I am missing the permission to do so."
-            ).queue()
-
-            return
+                return
+            }
         }
 
         try {

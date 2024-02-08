@@ -45,7 +45,7 @@ class VolumeCommand : MusicCommand() {
 
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
 
-        mng.player.lavalinkPlayer.ifPresentOrElse({ player ->
+        mng.player.ifPresentOrElse({ player ->
             val args = ctx.args
 
             if (args.isEmpty()) {
@@ -90,7 +90,7 @@ class VolumeCommand : MusicCommand() {
 
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
 
-        mng.player.lavalinkPlayer.ifPresentOrElse({ player ->
+        mng.player.ifPresentOrElse({ player ->
             val volumeOpt = event.getOption("volume")
 
             if (volumeOpt == null) {

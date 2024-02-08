@@ -23,6 +23,7 @@ import me.duncte123.skybot.Variables
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 
 class RestartCommand : MusicCommand() {
     init {
@@ -31,8 +32,8 @@ class RestartCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        val player = ctx.audioUtils.getMusicManager(ctx.guildId).player
-        val currentTrack = player.currentTrack
+        val player = ctx.audioUtils.getMusicManager(ctx.guildId).player.getOrNull()
+        val currentTrack = player?.track
 
         if (currentTrack == null) {
             sendError(ctx.message)
@@ -45,7 +46,7 @@ class RestartCommand : MusicCommand() {
             return
         }
 
-        player.seekTo(0)
+        player.setPosition(0).subscribe()
 
         sendSuccess(ctx.message)
     }

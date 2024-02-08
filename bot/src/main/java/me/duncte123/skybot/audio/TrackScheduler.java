@@ -77,11 +77,14 @@ public class TrackScheduler {
             throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 
-        if (this.guildMusicManager.getPlayer().getCurrentTrack() == null) {
-            this.play(track);
-        } else {
-            queue.offer(track);
-        }
+        this.guildMusicManager.getPlayer()
+            .ifPresentOrElse((player) -> {
+                if (player.getTrack() == null) {
+                    this.play(track);
+                } else {
+                    queue.offer(track);
+                }
+            }, () -> this.play(track));
     }
 
     /**
@@ -100,9 +103,12 @@ public class TrackScheduler {
 
         final int tracksAdded = tmpQueue.size();
 
-        if (this.guildMusicManager.getPlayer().getCurrentTrack() == null) {
-            this.play(tmpQueue.removeFirst());
-        }
+        this.guildMusicManager.getPlayer()
+            .ifPresentOrElse((player) -> {
+                if (player.getTrack() == null) {
+                    this.play(tmpQueue.removeFirst());
+                }
+            }, () -> this.play(tmpQueue.removeFirst()));
 
         queue.addAll(tmpQueue);
 
@@ -129,7 +135,9 @@ public class TrackScheduler {
         }
 
         if (nextTrack == null) {
-            this.guildMusicManager.getPlayer().stopPlayback();
+            this.guildMusicManager.getPlayer().ifPresent((player) ->
+                player.setPaused(false).setEncodedTrack(null).subscribe()
+            );
 
             guildMusicManager.getLatestChannel()
                 .ifPresent((channel) -> sendMsg(
@@ -285,8 +293,8 @@ public class TrackScheduler {
     }
 
     private void play(Track track) {
-        this.guildMusicManager.getPlayer()
-            .update()
+        this.guildMusicManager.getLink()
+            .createOrUpdatePlayer()
             .setTrack(track)
             .subscribe();
     }

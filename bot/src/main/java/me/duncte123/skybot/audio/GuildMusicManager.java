@@ -18,6 +18,9 @@
 
 package me.duncte123.skybot.audio;
 
+import dev.arbjerg.lavalink.client.LavalinkPlayer;
+import dev.arbjerg.lavalink.client.Link;
+import fredboat.audio.player.LavalinkManager;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.utils.GuildSettingsUtils;
@@ -29,7 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 public class GuildMusicManager {
-    private final LocalPlayer player;
     private final long guildId;
     private final TrackScheduler scheduler;
     private final AtomicLong latestChannel = new AtomicLong(-1);
@@ -37,7 +39,6 @@ public class GuildMusicManager {
 
     public GuildMusicManager(long guildId, Variables variables) {
         this.guildId = guildId;
-        player = new LocalPlayer(guildId);
         this.scheduler = new TrackScheduler(this);
         this.announceTracksSupplier = () -> GuildSettingsUtils.getGuild(guildId, variables).isAnnounceTracks();
     }
@@ -60,7 +61,9 @@ public class GuildMusicManager {
     }
 
     public void stopAndClear() {
-        this.player.stopPlayback();
+        this.getPlayer().ifPresent(
+            (player) -> player.setPaused(false).setEncodedTrack(null).subscribe()
+        );
 
         this.scheduler.getQueue().clear();
     }
@@ -78,8 +81,14 @@ public class GuildMusicManager {
         );
     }
 
-    public LocalPlayer getPlayer() {
-        return this.player;
+    public Link getLink() {
+        return LavalinkManager.INS.getLavalink().getLink(this.guildId);
+    }
+
+    public Optional<LavalinkPlayer> getPlayer() {
+        return Optional.ofNullable(
+            this.getLink().getCachedPlayer()
+        );
     }
 
     public long getGuildId() {

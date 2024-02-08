@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.apache.commons.lang3.StringUtils
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 
 class QueueCommand : MusicCommand() {
@@ -55,7 +56,7 @@ class QueueCommand : MusicCommand() {
         val mng = variables.audioUtils.getMusicManager(guild.idLong)
         val scheduler = mng.scheduler
         val queue: Queue<Track> = scheduler.queue
-        val playingTrack = mng.player.currentTrack
+        val playingTrack = mng.player.getOrNull()?.track
         var embed: EmbedBuilder
 
         synchronized(queue) {

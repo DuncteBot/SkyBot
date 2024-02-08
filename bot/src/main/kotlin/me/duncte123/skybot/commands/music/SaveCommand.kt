@@ -27,6 +27,7 @@ import me.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.FileUpload
 import java.time.ZonedDateTime
+import kotlin.jvm.optionals.getOrNull
 
 class SaveCommand : MusicCommand() {
     init {
@@ -59,7 +60,7 @@ class SaveCommand : MusicCommand() {
             }
             .toMutableList()
 
-        val currentTrack = manager.player.currentTrack
+        val currentTrack = manager.player.getOrNull()?.track
 
         if (currentTrack != null) {
             urls.add(0, currentTrack.info.uri)

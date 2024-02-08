@@ -26,6 +26,7 @@ import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 
 class StopCommand : MusicCommand() {
     init {
@@ -35,9 +36,9 @@ class StopCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player
+        val player = mng.player.getOrNull()
         val scheduler = mng.scheduler
-        val track = player.currentTrack
+        val track = player?.track
 
         if (track == null) {
             sendMsg(ctx, "The player is not playing.")
@@ -52,7 +53,7 @@ class StopCommand : MusicCommand() {
             ctx.member.hasPermission(Permission.MANAGE_SERVER)
         ) {
             mng.scheduler.queue.clear()
-            player.stopPlayback()
+            player.setPaused(false).setEncodedTrack(null).subscribe()
 
             sendMsg(ctx, "Playback has been completely stopped and the queue has been cleared.")
 
@@ -69,9 +70,9 @@ class StopCommand : MusicCommand() {
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
-        val player = mng.player
+        val player = mng.player.getOrNull()
         val scheduler = mng.scheduler
-        val track = player.currentTrack
+        val track = player?.track
 
         if (track == null) {
             event.reply("The player is not playing.").queue()
@@ -87,7 +88,7 @@ class StopCommand : MusicCommand() {
             event.member!!.hasPermission(Permission.MANAGE_SERVER)
         ) {
             mng.scheduler.queue.clear()
-            player.stopPlayback()
+            player.setPaused(false).setEncodedTrack(null).subscribe()
 
             event.reply("Playback has been completely stopped and the queue has been cleared.").queue()
 

@@ -26,6 +26,7 @@ import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 
 class ReaddCommand : MusicCommand() {
     init {
@@ -35,7 +36,8 @@ class ReaddCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val manager = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val track = manager.player.currentTrack
+        val player = manager.player.getOrNull()
+        val track = player?.track
 
         if (track == null) {
             sendError(ctx.message)
@@ -56,7 +58,7 @@ class ReaddCommand : MusicCommand() {
             }
         }
         var msg = "Adding to queue: $title"
-        if (manager.player.currentTrack == null) {
+        if (manager.player.getOrNull()?.track == null) {
             msg += "\nand the Player has started playing;"
         }
 

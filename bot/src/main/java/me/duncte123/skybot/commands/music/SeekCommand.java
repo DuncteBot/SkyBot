@@ -18,9 +18,9 @@
 
 package me.duncte123.skybot.commands.music;
 
+import dev.arbjerg.lavalink.client.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.protocol.Track;
 import me.duncte123.skybot.Variables;
-import me.duncte123.skybot.audio.LocalPlayer;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -61,13 +61,19 @@ public class SeekCommand extends MusicCommand {
         try {
             this.run0(ctx);
         } catch (NumberFormatException e) {
-            sendMsg(ctx, "Your input \"" + ctx.getArgs().get(0) + "\" is not a valid number.");
+            sendMsg(ctx, "Your input \"" + ctx.getArgs().getFirst() + "\" is not a valid number.");
         }
     }
 
     public void run0(@Nonnull CommandContext ctx) throws NumberFormatException {
-        final var player = ctx.getAudioUtils().getMusicManager(ctx.getGuildId()).getPlayer();
-        final Track currentTrack = player.getCurrentTrack();
+        final var optionalPlayer = ctx.getAudioUtils().getMusicManager(ctx.getGuildId()).getPlayer();
+
+        if (optionalPlayer.isEmpty()) {
+            return;
+        }
+
+        final var player = optionalPlayer.get();
+        final Track currentTrack = player.getTrack();
 
         if (currentTrack == null) {
             sendMsg(ctx, "The player is currently not playing anything");
@@ -80,7 +86,7 @@ public class SeekCommand extends MusicCommand {
         }
 
         final List<String> args = ctx.getArgs();
-        final String arg0 = args.get(0);
+        final String arg0 = args.getFirst();
         final String seekTime = arg0.replaceFirst("-", "");
         final Matcher matcher = TIME_REGEX.matcher(seekTime);
 
@@ -95,7 +101,7 @@ public class SeekCommand extends MusicCommand {
         }
 
         // To hopefully prevent race conditions
-        final Supplier<Long> trackDuration = () -> player.getCurrentTrack().getInfo().getLength();
+        final Supplier<Long> trackDuration = () -> player.getTrack().getInfo().getLength();
 
         int seconds = Integer.parseInt(seekTime) * 1000;
 
@@ -118,11 +124,11 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
-        player.seekTo(newPosition);
-
-        if (newPosition < trackDuration.get()) {
-            sendNowPlaying(ctx);
-        }
+        player.setPosition(newPosition).subscribe((p) -> {
+            if (newPosition < trackDuration.get()) {
+                sendNowPlaying(ctx);
+            }
+        });
 
     }
 
@@ -131,29 +137,28 @@ public class SeekCommand extends MusicCommand {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 
-    private void handleOverSkip(@NotNull CommandContext ctx, LocalPlayer player, String arg0, Supplier<Long> trackDuration) {
+    private void handleOverSkip(@NotNull CommandContext ctx, LavalinkPlayer player, String arg0, Supplier<Long> trackDuration) {
         if (arg0.charAt(0) == '-') {
             sendMsg(ctx, "You're trying to skip more than the length of the track into the negatives?");
             return;
         }
 
         // No need to announce as we just skip to the end
-        player.seekTo(trackDuration.get());
+        player.setPosition(trackDuration.get()).subscribe();
     }
 
-    private void handleTimeSkip(@NotNull CommandContext ctx, LocalPlayer player, Matcher matcher) {
+    private void handleTimeSkip(@NotNull CommandContext ctx, LavalinkPlayer player, Matcher matcher) {
         final long minutes = Long.parseLong(matcher.group(1)) * 60 * 1000;
         final long seconds = Long.parseLong(matcher.group(2)) * 1000;
 
         final long finalTime = minutes + seconds;
 
-        player.seekTo(finalTime);
-        sendNowPlaying(ctx);
+        player.setPosition(finalTime).subscribe((p) -> sendNowPlaying(ctx));
     }
 
     private void sendNowPlaying(CommandContext ctx) {
         try {
-            // Race condition
+            // TODO: is this still needed?
             Thread.sleep(700);
         }
         catch (InterruptedException ignored) {

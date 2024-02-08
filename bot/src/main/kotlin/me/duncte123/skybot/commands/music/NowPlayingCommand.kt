@@ -25,6 +25,7 @@ import me.duncte123.skybot.extensions.toEmbed
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import kotlin.jvm.optionals.getOrNull
 
 class NowPlayingCommand : MusicCommand() {
     init {
@@ -35,8 +36,8 @@ class NowPlayingCommand : MusicCommand() {
 
     override fun run(ctx: CommandContext) {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
-        val player = mng.player
-        val currentTrack = player.currentTrack
+        val player = mng.player.getOrNull()
+        val currentTrack = player?.track
 
         if (currentTrack == null) {
             sendEmbed(
@@ -53,8 +54,8 @@ class NowPlayingCommand : MusicCommand() {
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
-        val player = mng.player
-        val currentTrack = player.currentTrack
+        val player = mng.player.getOrNull()
+        val currentTrack = player?.track
 
         if (currentTrack == null) {
             event.replyEmbeds(

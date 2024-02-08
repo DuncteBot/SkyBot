@@ -35,7 +35,7 @@ class PauseCommand : MusicCommand() {
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
         val localPlayer = mng.player
 
-        localPlayer.lavalinkPlayer.ifPresentOrElse({ player ->
+        localPlayer.ifPresentOrElse({ player ->
             if (player.track == null) {
                 sendMsg(ctx, "Cannot pause or resume player because no track is loaded for playing.")
                 return@ifPresentOrElse
@@ -53,7 +53,7 @@ class PauseCommand : MusicCommand() {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val localPlayer = mng.player
 
-        localPlayer.lavalinkPlayer.ifPresentOrElse({player ->
+        localPlayer.ifPresentOrElse({player ->
             if (player.track == null) {
                 event.reply("Cannot pause or resume player because no track is loaded for playing.").queue()
                 return@ifPresentOrElse

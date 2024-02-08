@@ -37,7 +37,7 @@ public class MusicEmbedUtils {
     private MusicEmbedUtils() {}
 
     public static void createPlayerString(GuildMusicManager mng, Consumer<String> callback) {
-        mng.getPlayer().getLavalinkPlayer().ifPresentOrElse((player) -> {
+        mng.getPlayer().ifPresentOrElse((player) -> {
             final TrackInfo trackInfo = player.getTrack().getInfo();
             final long position = player.getPosition();
             final long duration = trackInfo.getLength();

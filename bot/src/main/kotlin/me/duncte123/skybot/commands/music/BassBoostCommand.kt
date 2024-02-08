@@ -80,17 +80,20 @@ class BassBoostCommand : MusicCommand() {
 
     private fun setLavalinkEQ(gain: Float, variable: Variables, guildId: Long) {
         val player = variable.audioUtils.getMusicManager(guildId).player
-        val bands = mutableListOf<Band>()
 
-        for (i in 0..2) {
-            bands.add(Band(i, gain))
+        player.ifPresent {
+            val bands = mutableListOf<Band>()
+
+            for (i in 0..2) {
+                bands.add(Band(i, gain))
+            }
+
+            it.setFilters(
+                Filters(
+                    equalizer = bands.toOmissible()
+                )
+            ).subscribe()
         }
-
-        player.setFilters(
-            Filters(
-                equalizer = bands.toOmissible()
-            )
-        )
     }
 
     override fun getSubData(): SubcommandData {
