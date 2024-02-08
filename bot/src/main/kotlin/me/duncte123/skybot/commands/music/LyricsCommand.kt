@@ -70,7 +70,7 @@ class LyricsCommand : MusicCommand() {
             return
         }
 
-        loadLyricsFromLavalink(mng.link) {
+        loadLyricsFromLavalink(mng.link!!) {
             if (it == null) {
                 sendMsg(ctx, "There where no lyrics found for `${playingTrack.info.title}`")
                 return@loadLyricsFromLavalink
@@ -106,7 +106,7 @@ class LyricsCommand : MusicCommand() {
 
             event.deferReply().queue()
 
-            loadLyricsFromLavalink(mng.link) {
+            loadLyricsFromLavalink(mng.link!!) {
                 if (it == null) {
                     event.hook.sendMessage("There where no lyrics found for `${playingTrack.info.title}`")
                         .queue()

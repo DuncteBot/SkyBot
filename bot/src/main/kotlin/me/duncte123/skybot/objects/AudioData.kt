@@ -20,7 +20,7 @@ package me.duncte123.skybot.objects
 
 import me.duncte123.skybot.Variables
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 data class AudioData(
@@ -31,7 +31,8 @@ data class AudioData(
     val jda: JDA,
     val variables: Variables,
 ) {
-    fun getChannel() = jda.getChannelById(MessageChannelUnion::class.java, channelId)!!
+    val channel: MessageChannel
+        get() = jda.getChannelById(MessageChannel::class.java, channelId)!!
 
     companion object {
         fun fromSlash(event: SlashCommandInteractionEvent, variables: Variables): AudioData = AudioData(

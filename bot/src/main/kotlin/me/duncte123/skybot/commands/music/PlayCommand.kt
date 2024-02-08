@@ -170,6 +170,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     }
 
     override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        if (!event.member!!.voiceState!!.inAudioChannel()) {
+            event.reply("Auto-join is not yet supported for slash commands. Sorry about that").queue()
+            return
+        }
+
         var toPlay = event.getOption("item")!!.asString
 
         if (toPlay.contains(pornhubRegex.toRegex()) && !event.channel.isNSFW) {

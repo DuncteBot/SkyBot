@@ -27,6 +27,7 @@ import me.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
@@ -81,14 +82,19 @@ public class GuildMusicManager {
         );
     }
 
+    @Nullable
     public Link getLink() {
-        return LavalinkManager.INS.getLavalink().getLink(this.guildId);
+        return LavalinkManager.INS.getLavalink().getLinkIfCached(this.guildId);
     }
 
     public Optional<LavalinkPlayer> getPlayer() {
-        return Optional.ofNullable(
-            this.getLink().getCachedPlayer()
-        );
+        final var link = this.getLink();
+
+        if (link == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(link.getCachedPlayer());
     }
 
     public long getGuildId() {
