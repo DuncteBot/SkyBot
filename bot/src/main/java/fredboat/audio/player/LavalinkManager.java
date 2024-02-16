@@ -19,6 +19,7 @@
 package fredboat.audio.player;
 
 import dev.arbjerg.lavalink.client.*;
+import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.objects.config.DunctebotConfig;
 import me.duncte123.skybot.utils.AirUtils;
 import me.duncte123.skybot.utils.AudioUtils;
@@ -26,8 +27,11 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.URI;
 
 /**
@@ -36,6 +40,10 @@ import java.net.URI;
  * and has been modified to fit my needs
  */
 public final class LavalinkManager {
+    private static final int AUDIO_SESSION_INVALID = 4006;
+
+    private static final Logger log = LoggerFactory.getLogger(LavalinkManager.class);
+
     public static final LavalinkManager INS = new LavalinkManager();
     private LavalinkClient lavalink = null;
     private DunctebotConfig config = null;
@@ -61,6 +69,7 @@ public final class LavalinkManager {
         this.registerTrackEndEvent();
         this.registerTrackExceptionEvent();
         this.registerTrackStuckEvent();
+        this.registerWebsocketClosedEvent();
 
         loadNodes();
     }
@@ -114,6 +123,7 @@ public final class LavalinkManager {
         return link != null && link.getState() == LinkState.CONNECTED;
     }
 
+    @Nullable
     @SuppressWarnings("ConstantConditions") // cache is enabled
     public AudioChannelUnion getConnectedChannel(@Nonnull Guild guild) {
         // NOTE: never use the local audio manager, since the audio connection may be remote
@@ -176,4 +186,27 @@ public final class LavalinkManager {
     }
 
     private void registerTrackStuckEvent() {}
+
+    private void registerWebsocketClosedEvent() {
+        lavalink.on(WebSocketClosedEvent.class).subscribe((event) -> {
+            if (event.getCode() == AUDIO_SESSION_INVALID) {
+                final long guildIdLong = event.getGuildId();
+                final var guild = SkyBot.getInstance().getShardManager().getGuildById(guildIdLong);
+
+                if (guild == null) {
+                    log.debug("Not reconnecting invalid session for {}, getGuildById returned null", guildIdLong);
+                    return;
+                }
+
+                final var connectedChannel = getConnectedChannel(guild);
+
+                if (connectedChannel == null) {
+                    log.debug("Not reconnecting invalid session for {}, we're not connected to any channels", guildIdLong);
+                    return;
+                }
+
+                guild.getJDA().getDirectAudioController().reconnect(connectedChannel);
+            }
+        });
+    }
 }
