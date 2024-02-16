@@ -42,7 +42,7 @@ import java.net.URI;
 public final class LavalinkManager {
     private static final int AUDIO_SESSION_INVALID = 4006;
 
-    private static final Logger log = LoggerFactory.getLogger(LavalinkManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LavalinkManager.class);
 
     public static final LavalinkManager INS = new LavalinkManager();
     private LavalinkClient lavalink = null;
@@ -194,14 +194,14 @@ public final class LavalinkManager {
                 final var guild = SkyBot.getInstance().getShardManager().getGuildById(guildIdLong);
 
                 if (guild == null) {
-                    log.debug("Not reconnecting invalid session for {}, getGuildById returned null", guildIdLong);
+                    LOG.debug("Not reconnecting invalid session for {}, getGuildById returned null", guildIdLong);
                     return;
                 }
 
                 final var connectedChannel = getConnectedChannel(guild);
 
                 if (connectedChannel == null) {
-                    log.debug("Not reconnecting invalid session for {}, we're not connected to any channels", guildIdLong);
+                    LOG.debug("Not reconnecting invalid session for {}, we're not connected to any channels", guildIdLong);
                     return;
                 }
 
