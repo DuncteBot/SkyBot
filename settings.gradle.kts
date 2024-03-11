@@ -73,7 +73,7 @@ fun VersionCatalogBuilder.bot() {
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
     library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
-    library("botCommons", "me.duncte123", "botCommons").version("3.0.16")
+    library("botCommons", "me.duncte123", "botCommons").version("3.1.17")
 
     bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
 

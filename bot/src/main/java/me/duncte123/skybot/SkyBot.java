@@ -194,8 +194,6 @@ public final class SkyBot {
         RestAction.setDefaultFailure(ignore(UNKNOWN_MESSAGE));
         // If any rest-action doesn't get executed within 2 minutes we will mark it as failed
         RestAction.setDefaultTimeout(2L, TimeUnit.MINUTES);
-        // TODO: might wanna fix this in the lib
-        MessageConfig.setNonceSupplier((c) -> null);
     }
 
     public ShardManager getShardManager() {
