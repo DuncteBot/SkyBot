@@ -42,7 +42,7 @@ fun VersionCatalogBuilder.common() {
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
     library("org-json", "org.json", "json").version("20220924")
 
-    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.20")
+    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.21")
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
@@ -94,7 +94,7 @@ fun VersionCatalogBuilder.database() {
 
 fun VersionCatalogBuilder.voice() {
 //    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("64f8b44e8164f5873ab107f453b58b1a99a8bc13-SNAPSHOT")
-    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("2.3.1")
+    library("lavalink-client", "dev.arbjerg", "lavalink-client").version("2.4.0")
 }
 
 fun VersionCatalogBuilder.dashboard() {

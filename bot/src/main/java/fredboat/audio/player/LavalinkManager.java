@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.URI;
 
 /**
  * This class has been taken from
@@ -148,7 +147,13 @@ public final class LavalinkManager {
 
         for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
             // TODO: region filter mapping
-            lavalink.addNode(node.name, URI.create(node.wsurl), node.pass);
+            lavalink.addNode(
+                new NodeOptions.Builder()
+                    .setName(node.name)
+                    .setServerUri(node.wsurl)
+                    .setPassword(node.pass)
+                    .build()
+            );
         }
     }
 
