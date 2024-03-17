@@ -18,7 +18,7 @@
 
 package me.duncte123.skybot.audio;
 
-import dev.arbjerg.lavalink.client.LavalinkPlayer;
+import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.Link;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.skybot.SkyBot;
@@ -63,7 +63,9 @@ public class GuildMusicManager {
 
     public void stopAndClear() {
         this.getPlayer().ifPresent(
-            (player) -> player.setPaused(false).setEncodedTrack(null).subscribe()
+            (player) -> player.setPaused(false)
+                .setTrack(null)
+                .subscribe()
         );
 
         this.scheduler.getQueue().clear();

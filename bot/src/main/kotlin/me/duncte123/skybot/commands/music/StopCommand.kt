@@ -53,7 +53,7 @@ class StopCommand : MusicCommand() {
             ctx.member.hasPermission(Permission.MANAGE_SERVER)
         ) {
             mng.scheduler.queue.clear()
-            player.setPaused(false).setEncodedTrack(null).subscribe()
+            player.setPaused(false).setTrack(null).subscribe()
 
             sendMsg(ctx, "Playback has been completely stopped and the queue has been cleared.")
 
@@ -88,7 +88,7 @@ class StopCommand : MusicCommand() {
             event.member!!.hasPermission(Permission.MANAGE_SERVER)
         ) {
             mng.scheduler.queue.clear()
-            player.setPaused(false).setEncodedTrack(null).subscribe()
+            player.setPaused(false).setTrack(null).subscribe()
 
             event.reply("Playback has been completely stopped and the queue has been cleared.").queue()
 

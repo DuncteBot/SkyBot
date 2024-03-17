@@ -18,9 +18,9 @@
 
 package me.duncte123.skybot.utils;
 
-import dev.arbjerg.lavalink.client.protocol.LavalinkLoadResult;
-import dev.arbjerg.lavalink.client.protocol.SearchResult;
-import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.client.player.LavalinkLoadResult;
+import dev.arbjerg.lavalink.client.player.SearchResult;
+import dev.arbjerg.lavalink.client.player.Track;
 import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongObjectMap;
 import me.duncte123.skybot.Variables;
@@ -45,7 +45,7 @@ public class AudioUtils {
     @Nullable("If the playlist is not a search result")
     public List<Track> searchYoutube(long guildId, String query) {
         final LavalinkLoadResult result = LavalinkManager.INS.getLavalink()
-            .getLink(guildId)
+            .getOrCreateLink(guildId)
             .loadItem("ytsearch:" + query)
             .block();
 
@@ -74,7 +74,7 @@ public class AudioUtils {
         final CompletableFuture<Void> future = new CompletableFuture<>();
 
         LavalinkManager.INS.getLavalink()
-            .getLink(data.getGuildId())
+            .getLinkIfCached(data.getGuildId())
             .loadItem(trackUrl)
             .subscribe((result) -> {
                 future.complete(null);

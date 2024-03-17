@@ -65,7 +65,7 @@ class RadioCommand : MusicCommand() {
                 val mng = audioUtils.getMusicManager(ctx.guildId)
 
                 mng.player.ifPresent {
-                    it.setPaused(false).setEncodedTrack(null).subscribe()
+                    it.setPaused(false).setTrack(null).subscribe()
                 }
                 mng.scheduler.queue.clear()
 

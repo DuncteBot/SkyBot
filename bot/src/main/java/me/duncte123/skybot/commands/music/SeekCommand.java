@@ -18,8 +18,8 @@
 
 package me.duncte123.skybot.commands.music;
 
-import dev.arbjerg.lavalink.client.LavalinkPlayer;
-import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
+import dev.arbjerg.lavalink.client.player.Track;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.MusicCommand;

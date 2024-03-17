@@ -18,7 +18,7 @@
 
 package me.duncte123.skybot.extensions
 
-import dev.arbjerg.lavalink.client.protocol.Track
+import dev.arbjerg.lavalink.client.player.Track
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.skybot.audio.GuildMusicManager
 import me.duncte123.skybot.audio.UUIDUserData

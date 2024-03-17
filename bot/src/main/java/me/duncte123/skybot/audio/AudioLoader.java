@@ -19,7 +19,7 @@
 package me.duncte123.skybot.audio;
 
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler;
-import dev.arbjerg.lavalink.client.protocol.*;
+import dev.arbjerg.lavalink.client.player.*;
 import dev.arbjerg.lavalink.protocol.v4.PlaylistInfo;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import me.duncte123.botcommons.messaging.MessageConfig;

@@ -18,8 +18,8 @@
 
 package me.duncte123.skybot.audio;
 
-import dev.arbjerg.lavalink.client.protocol.Track;
-import dev.arbjerg.lavalink.client.protocol.TrackException;
+import dev.arbjerg.lavalink.client.player.Track;
+import dev.arbjerg.lavalink.client.player.TrackException;
 import dev.arbjerg.lavalink.protocol.v4.Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import me.duncte123.botcommons.messaging.MessageConfig;
@@ -136,7 +136,7 @@ public class TrackScheduler {
 
         if (nextTrack == null) {
             this.guildMusicManager.getPlayer().ifPresent((player) ->
-                player.setPaused(false).setEncodedTrack(null).subscribe()
+                player.setPaused(false).setTrack(null).subscribe()
             );
 
             guildMusicManager.getLatestChannel()

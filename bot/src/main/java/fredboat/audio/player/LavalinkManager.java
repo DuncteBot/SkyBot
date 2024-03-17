@@ -18,7 +18,11 @@
 
 package fredboat.audio.player;
 
-import dev.arbjerg.lavalink.client.*;
+import dev.arbjerg.lavalink.client.Helpers;
+import dev.arbjerg.lavalink.client.LavalinkClient;
+import dev.arbjerg.lavalink.client.LinkState;
+import dev.arbjerg.lavalink.client.NodeOptions;
+import dev.arbjerg.lavalink.client.event.*;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.objects.config.DunctebotConfig;
 import me.duncte123.skybot.utils.AirUtils;
