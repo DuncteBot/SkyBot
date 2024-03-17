@@ -21,7 +21,6 @@ package me.duncte123.skybot;
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.skybot.objects.config.DunctebotConfig;
