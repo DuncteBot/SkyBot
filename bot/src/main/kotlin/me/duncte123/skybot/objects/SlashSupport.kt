@@ -21,6 +21,7 @@ package me.duncte123.skybot.objects
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.objects.command.CommandCategory
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
@@ -41,6 +42,7 @@ abstract class SlashSupport : SkyCommand() {
         )
             .setGuildOnly(true)
             .setNSFW(category == CommandCategory.NSFW)
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.userPermissions.toList()))
 
         configureSlashSupport(base)
 
