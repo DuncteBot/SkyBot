@@ -187,6 +187,13 @@ class LyricsCommand : MusicCommand() {
             }
     }
 
+    // TODO: enable genius on node
+    /*private fun searchForLyrics(link: Link, q: String, cb: (EmbedBuilder?) -> Unit) {
+        link.node.customJsonRequest(Lyrics::class.java) {
+            it.path("v4/lyrics/search?source=genius&query=$q")
+        }
+    }*/
+
     private fun buildLyricsEmbed(data: LyricInfo): EmbedBuilder {
         val builder = EmbedUtils.getDefaultEmbed()
             .setTitle("Lyrics for ${data.title}", data.url)
