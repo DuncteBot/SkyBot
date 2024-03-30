@@ -20,7 +20,6 @@ package me.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.objects.SlashSupport;
-import me.duncte123.skybot.objects.command.Command;
 import me.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -34,8 +33,9 @@ public abstract class ModBaseCommand extends SlashSupport {
     }
 
     @Override
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
-
+        // Nothing needed right now
     }
 
     @Override
