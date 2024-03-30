@@ -30,10 +30,12 @@ import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.chunkForEmbed
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.min
 
 class LyricsCommand : MusicCommand() {
     init {
@@ -180,6 +182,7 @@ class LyricsCommand : MusicCommand() {
                     cb(buildLyricsEmbed(info))
                 }
             }) {
+                it.printStackTrace()
                 cb(null)
             }
     }
@@ -189,11 +192,16 @@ class LyricsCommand : MusicCommand() {
             .setTitle("Lyrics for ${data.title}", data.url)
             .setThumbnail(data.artUrl)
 
-        data.lyrics.chunkForEmbed(450).forEachIndexed { index, chunk ->
+        val lyrics = data.lyrics
+        val trimmedLyrics = lyrics.substring(
+            0 until min(lyrics.length, 5800) // seems like a good max length
+        )
+
+        trimmedLyrics.chunkForEmbed(450).forEachIndexed { index, chunk ->
             builder.addField("**[${index + 1}]**", chunk, true)
         }
 
-        builder.setFooter("Lyrics provided by ${data.source}")
+        builder.setFooter("Source: ${data.source}")
 
         return builder
     }
