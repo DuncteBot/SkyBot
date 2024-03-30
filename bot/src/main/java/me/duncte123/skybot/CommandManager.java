@@ -762,7 +762,7 @@ public class CommandManager {
             final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
 
             if (command != null) {
-                command.handleEvent(event, variables);
+                command.executeEventWithChecks(event, variables);
             }
         }
         catch (Exception e) {

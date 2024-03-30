@@ -20,6 +20,7 @@ package me.duncte123.skybot.objects
 
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.objects.command.CommandCategory
+import me.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -47,6 +48,30 @@ abstract class SlashSupport : SkyCommand() {
         configureSlashSupport(base)
 
         return base
+    }
+
+    fun executeEventWithChecks(event: SlashCommandInteractionEvent, variables: Variables) {
+        if (event.isFromGuild) {
+            val self = event.guild!!.selfMember
+
+            if (this.botPermissions.isNotEmpty() && !self.hasPermission(this.botPermissions.toList())) {
+                val permissionsWord = "permission${if (this.botPermissions.size > 1) "s" else ""}"
+                val permsList = AirUtils.parsePerms(this.botPermissions)
+
+                event.reply(
+                    "I need the `$permsList` $permissionsWord for this command to work\n" +
+                        "Please contact your server administrator about this."
+                )
+                    .setEphemeral(false)
+                    .queue()
+            }
+
+            // TODO: cooldowns
+
+            handleEvent(event, variables)
+        } else {
+            handleEvent(event, variables)
+        }
     }
 
     abstract fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables)
