@@ -37,6 +37,7 @@ import java.io.StringWriter
 import java.util.concurrent.*
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
+import javax.script.SimpleBindings
 import kotlin.system.measureTimeMillis
 
 class EvalCommand : Command() {
@@ -115,30 +116,32 @@ class EvalCommand : Command() {
                 .replace("\n?```".toRegex(), "")
         }
 
-        engine.put("commandManager", ctx.commandManager)
-        engine.put("message", ctx.message)
-        engine.put("channel", ctx.message.channel)
-        engine.put("guild", ctx.guild)
-        engine.put("member", ctx.member)
-        engine.put("author", ctx.author)
-        engine.put("jda", ctx.jda)
-        engine.put("shardManager", ctx.jda.shardManager)
-        engine.put("event", ctx.event)
+        val bindings = SimpleBindings()
 
-        engine.put("args", ctx.args)
-        engine.put("ctx", ctx)
-        engine.put("variables", ctx.variables)
+        bindings["commandManager"] = ctx.commandManager
+        bindings["message"] = ctx.message
+        bindings["channel"] = ctx.message.channel
+        bindings["guild"] = ctx.guild
+        bindings["member"] = ctx.member
+        bindings["author"] = ctx.author
+        bindings["jda"] = ctx.jda
+        bindings["shardManager"] = ctx.jda.shardManager
+        bindings["event"] = ctx.event
 
-        eval(ctx, userIn)
+        bindings["args"] = ctx.args
+        bindings["ctx"] = ctx
+        bindings["variables"] = ctx.variables
+
+        eval(ctx, userIn, bindings)
     }
 
-    private fun eval(ctx: CommandContext, script: String) {
+    private fun eval(ctx: CommandContext, script: String, bindings: SimpleBindings) {
         val time = measureTimeMillis {
             val future: Future<*> = this.evalThread.submit(
                 Callable {
                     try {
                         // NOTE: while(true) loops and sleeps do not trigger a timeout
-                        return@Callable engine.eval(script)
+                        return@Callable engine.eval(script, bindings)
                     } catch (ex: Throwable) {
                         return@Callable ex
                     }
