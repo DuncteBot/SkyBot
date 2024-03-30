@@ -18,13 +18,28 @@
 
 package me.duncte123.skybot.commands.guild.mod;
 
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.objects.SlashSupport;
 import me.duncte123.skybot.objects.command.Command;
 import me.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class ModBaseCommand extends Command {
+public abstract class ModBaseCommand extends SlashSupport {
     public ModBaseCommand() {
         this.category = CommandCategory.MODERATION;
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
+    }
+
+    @Override
+    protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
+
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+        event.reply("Soontm").queue();
     }
 }

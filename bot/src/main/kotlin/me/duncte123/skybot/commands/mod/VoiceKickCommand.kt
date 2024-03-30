@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import me.duncte123.skybot.objects.command.CommandContext
-import me.duncte123.skybot.objects.command.ISlashCommand
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -31,7 +30,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-class VoiceKickCommand : ModBaseCommand(), ISlashCommand {
+class VoiceKickCommand : ModBaseCommand() {
     init {
         this.requiresArgs = true
         this.name = "voicekick"
@@ -76,27 +75,24 @@ class VoiceKickCommand : ModBaseCommand(), ISlashCommand {
         sendMsg(ctx, "I could not find any Voice Channel or member to kick from voice")
     }
 
-    override fun getDescription(): String = this.help
-
-    override fun getSlashData(): SlashCommandData {
-        return super.getSlashData()
-            .addOptions(
-                OptionData(
-                    OptionType.CHANNEL,
-                    "voice_channel",
-                    "The voice channel to kick ALL users from.",
-                    false
-                ),
-                OptionData(
-                    OptionType.USER,
-                    "user",
-                    "The user to kick from the voice channel they are currently in.",
-                    false
-                ),
-            )
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addOptions(
+            OptionData(
+                OptionType.CHANNEL,
+                "voice_channel",
+                "The voice channel to kick ALL users from.",
+                false
+            ),
+            OptionData(
+                OptionType.USER,
+                "user",
+                "The user to kick from the voice channel they are currently in.",
+                false
+            ),
+        )
     }
 
-    override fun handleSlashEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
         val vc = event.getOption("voice_channel")?.asChannel
 
         if (vc != null) {
@@ -122,8 +118,6 @@ class VoiceKickCommand : ModBaseCommand(), ISlashCommand {
         val member = event.getOption("user")?.asMember
 
         if (member != null) {
-            val memberChannel = member.voiceState?.channel
-
             // We have to "== true" here because the return type is a nullable boolean
             if (member.voiceState?.inAudioChannel() == true) {
                 event.guild!!.kickVoiceMember(member).queue()
