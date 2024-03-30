@@ -270,7 +270,7 @@ public class TrackScheduler {
 
         this.messageDebouncer.accept("Something went wrong while playing track with identifier `" +
             info.getIdentifier()
-            + "`, please contact the devs if this happens a lot.\n" +
+            + "`\nIf this happens often try another link or join our [discord server](https://duncte.bot/server) to get help!\n" +
             "Details: " + finalCause);
     }
 
