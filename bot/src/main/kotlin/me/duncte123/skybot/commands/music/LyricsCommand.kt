@@ -30,7 +30,6 @@ import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.chunkForEmbed
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -182,17 +181,19 @@ class LyricsCommand : MusicCommand() {
                     cb(buildLyricsEmbed(info))
                 }
             }) {
-                it.printStackTrace()
+                LOGGER.error("Failed to generate lyrics embed", it)
                 cb(null)
             }
     }
 
     // TODO: enable genius on node
-    /*private fun searchForLyrics(link: Link, q: String, cb: (EmbedBuilder?) -> Unit) {
+    /*
+    private fun searchForLyrics(link: Link, q: String, cb: (EmbedBuilder?) -> Unit) {
         link.node.customJsonRequest(Lyrics::class.java) {
             it.path("v4/lyrics/search?source=genius&query=$q")
         }
-    }*/
+    }
+     */
 
     private fun buildLyricsEmbed(data: LyricInfo): EmbedBuilder {
         val builder = EmbedUtils.getDefaultEmbed()
