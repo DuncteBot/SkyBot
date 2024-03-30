@@ -20,11 +20,18 @@ package me.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import me.duncte123.skybot.objects.command.CommandContext
+import me.duncte123.skybot.objects.command.ISlashCommand
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-class VoiceKickCommand : ModBaseCommand() {
+class VoiceKickCommand : ModBaseCommand(), ISlashCommand {
     init {
         this.requiresArgs = true
         this.name = "voicekick"
@@ -67,5 +74,71 @@ class VoiceKickCommand : ModBaseCommand() {
         }
 
         sendMsg(ctx, "I could not find any Voice Channel or member to kick from voice")
+    }
+
+    override fun getDescription(): String = this.help
+
+    override fun getSlashData(): SlashCommandData {
+        return super.getSlashData()
+            .addOptions(
+                OptionData(
+                    OptionType.CHANNEL,
+                    "voice_channel",
+                    "The voice channel to kick ALL users from.",
+                    false
+                ),
+                OptionData(
+                    OptionType.USER,
+                    "user",
+                    "The user to kick from the voice channel they are currently in.",
+                    false
+                ),
+            )
+    }
+
+    override fun handleSlashEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        val vc = event.getOption("voice_channel")?.asChannel
+
+        if (vc != null) {
+            if (vc.type == ChannelType.VOICE) {
+                event.reply("Kicking all users from `${vc.name}`, please wait...")
+                    .setEphemeral(false)
+                    .queue()
+
+                vc.asVoiceChannel().createCopy().queue {
+                    vc.delete().reason("Kicking all users from voice (${event.user.asTag})").queue()
+
+                    event.hook.editOriginal("Kicked all users from `${vc.name}`").queue()
+                }
+                return
+            }
+
+            event.reply("Can't voice kick from a text channel, sorry")
+                .setEphemeral(true)
+                .queue()
+            return
+        }
+
+        val member = event.getOption("user")?.asMember
+
+        if (member != null) {
+            val memberChannel = member.voiceState?.channel
+
+            // We have to "== true" here because the return type is a nullable boolean
+            if (member.voiceState?.inAudioChannel() == true) {
+                event.guild!!.kickVoiceMember(member).queue()
+                event.reply("Kicked ${member.user.asTag} from voice").setEphemeral(false).queue()
+                return
+            }
+
+            event.reply("That user is not in a voice channel")
+                .setEphemeral(true)
+                .queue()
+
+            return
+        }
+
+        event.reply("Please either specify a voice channel or a user to kick from the voice channel.")
+            .queue()
     }
 }
