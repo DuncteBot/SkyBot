@@ -62,6 +62,14 @@ class BlackListCommand : ModBaseCommand() {
 
     override fun execute(ctx: CommandContext) {
         val args = ctx.args
+        val sendMsg: (MessageCreateBuilder) -> Unit = {
+            sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                .setMessageBuilder(it)
+                .setFailureAction { thr ->
+                    sendMsg(ctx, "Failed to send (attach file permission missing???): ${thr.message}")
+                }
+                .build())
+        }
 
         when (args[0]) {
             "list", "export" -> {
@@ -77,17 +85,26 @@ class BlackListCommand : ModBaseCommand() {
                     guild.settings.blacklistedWords,
                     guild,
                     ctx.author,
-                    ctx.variables.jackson
-                ) {
-                    sendMsg(MessageConfig.Builder.fromCtx(ctx)
-                        .setMessageBuilder(it)
-                        .build())
-                }
+                    ctx.variables.jackson,
+                    sendMsg
+                )
                 return
             }
 
             "clear" -> {
-                clearBlacklist(ctx.database, ctx.guild, ctx)
+                if (!ctx.guild.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+                    sendMsg(ctx, "This command requires me to be able to upload files to this channel")
+
+                    return
+                }
+
+
+                clearBlacklist(
+                    ctx.database,
+                    ctx.guild,
+                    ctx.variables.jackson,
+                    sendMsg
+                )
                 return
             }
 
@@ -171,6 +188,16 @@ class BlackListCommand : ModBaseCommand() {
                 }
             }
 
+            "blacklist clear" -> {
+                clearBlacklist(
+                    variables.database,
+                    guild,
+                    variables.jackson
+                ) {
+                    event.reply(it.build()).queue()
+                }
+            }
+
             else -> event.reply("NO! (also gg on breaking discord)").queue()
         }
     }
@@ -204,27 +231,41 @@ class BlackListCommand : ModBaseCommand() {
                     )
                 )
         )
-
-        /*ctx.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
-            .addFiles(
-                FileUpload.fromData(
-                    listBytes,
-                    "blacklist_${guild.id}.json"
-                )
-            )
-            .queue(null) {
-                sendMsg(ctx, "This command requires me to be able to upload files to this channel")
-            }*/
     }
 
-    private fun clearBlacklist(database: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {
+    private fun clearBlacklist(
+        database: AbstractDatabase,
+        guild: DunctebotGuild,
+        jackson: ObjectMapper,
+        sendMsg: (MessageCreateBuilder) -> Unit
+    ) {
+        val blacklist = guild.settings.blacklistedWords
+
+        if (blacklist.isEmpty()) {
+            sendMsg(
+                MessageCreateBuilder()
+                    .setContent("The current blacklist is already empty")
+            )
+            return
+        }
+
         database.clearBlacklist(guild.idLong)
+
+        // backup blacklist before fully removing it.
+        val listBytes = jackson.writeValueAsBytes(blacklist)
 
         guild.settings.blacklistedWords.clear()
 
-        // TODO: give export so people can import in case it was a mistake
-
-        sendMsg(ctx, "The blacklist has been cleared")
+        sendMsg(
+            MessageCreateBuilder()
+                .setContent("The blacklist has been cleared!\nYou can use the file attached to import your old blacklist in case this was a mistake.")
+                .addFiles(
+                    FileUpload.fromData(
+                        listBytes,
+                        "blacklist_${guild.id}.json"
+                    )
+                )
+        )
     }
 
     private fun importBlackList(ctx: CommandContext) {

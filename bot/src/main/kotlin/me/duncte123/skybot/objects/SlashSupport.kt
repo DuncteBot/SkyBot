@@ -34,12 +34,12 @@ abstract class SlashSupport : SkyCommand() {
     protected abstract fun configureSlashSupport(baseData: SlashCommandData)
 
     fun getSlashData(): SlashCommandData {
-        val help = getHelp("", "/")
+        val help = getHelp("", "/").split("\n").first()
 
         val base = Commands.slash(
             name,
             help.substring(
-                0 until min(help.length, CommandData.MAX_DESCRIPTION_LENGTH)
+                0, min(help.length, CommandData.MAX_DESCRIPTION_LENGTH)
             )
         )
             .setGuildOnly(true)
@@ -65,6 +65,8 @@ abstract class SlashSupport : SkyCommand() {
                 )
                     .setEphemeral(false)
                     .queue()
+
+                return
             }
 
             // TODO: cooldowns

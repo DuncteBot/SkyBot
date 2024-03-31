@@ -924,7 +924,6 @@ public class SettingsCommand extends SlashSupport {
 
         final OptionMapping option = event.getOption("set");
         final boolean shouldSet = option != null;
-        final var guild = new DunctebotGuild(jdaGuild, variables);
 
         final var messageHandler = new MessageHandler() {
             @Override
