@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
 import dev.arbjerg.lavalink.client.player.Track;
 import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -133,7 +134,7 @@ public class SeekCommand extends MusicCommand {
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, DunctebotGuild guild, @NotNull Variables variables) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 

@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -49,7 +50,11 @@ class LeaveCommand : MusicCommand() {
         sendSuccess(ctx.message)
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables
+    ) {
         val guild = event.guild!!
 
         if (!getLavalinkManager().isConnected(guild)) {

@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.extensions.isNSFW
 import me.duncte123.skybot.objects.AudioData
 import me.duncte123.skybot.objects.command.CommandContext
@@ -169,7 +170,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables
+    ) {
         if (!event.member!!.voiceState!!.inAudioChannel()) {
             event.reply("Auto-join is not yet supported for slash commands. Sorry about that").queue()
             return

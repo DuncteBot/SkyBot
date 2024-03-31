@@ -900,7 +900,7 @@ public class SettingsCommand extends SlashSupport {
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
         final Guild jdaGuild = event.getGuild();
 
         if (jdaGuild == null) {

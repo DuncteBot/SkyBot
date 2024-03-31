@@ -23,6 +23,7 @@ import me.duncte123.skybot.Settings.NO_STATIC
 import me.duncte123.skybot.Settings.YES_STATIC
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.audio.GuildMusicManager
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.entities.Guild
@@ -42,7 +43,11 @@ class SkipCommand : MusicCommand() {
         skipHandler(ctx.variables, ctx.guild, ctx.author) { sendMsg(ctx, it) }
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables
+    ) {
         event.deferReply().queue()
 
         skipHandler(variables, event.guild!!, event.user) { event.hook.sendMessage(it).queue() }

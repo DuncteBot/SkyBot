@@ -30,12 +30,15 @@ import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.utils.FileUpload
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import java.util.concurrent.atomic.AtomicLong
 
 class BlackListCommand : ModBaseCommand() {
@@ -62,7 +65,24 @@ class BlackListCommand : ModBaseCommand() {
 
         when (args[0]) {
             "list", "export" -> {
-                listBlackList(ctx.guild.settings.blacklistedWords, ctx, ctx.variables.jackson)
+                val guild = ctx.guild
+
+                if (!guild.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+                    sendMsg(ctx, "This command requires me to be able to upload files to this channel")
+
+                    return
+                }
+
+                listBlackList(
+                    guild.settings.blacklistedWords,
+                    guild,
+                    ctx.author,
+                    ctx.variables.jackson
+                ) {
+                    sendMsg(MessageConfig.Builder.fromCtx(ctx)
+                        .setMessageBuilder(it)
+                        .build())
+                }
                 return
             }
 
@@ -136,36 +156,65 @@ class BlackListCommand : ModBaseCommand() {
         )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
-        TODO("Not yet implemented")
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        when (event.fullCommandName) {
+            "blacklist list" -> {
+                val blacklist = guild.settings.blacklistedWords
+
+                listBlackList(
+                    blacklist,
+                    guild,
+                    event.user,
+                    variables.jackson
+                ) {
+                    event.reply(it.build()).queue()
+                }
+            }
+
+            else -> event.reply("NO! (also gg on breaking discord)").queue()
+        }
     }
 
-    private fun listBlackList(blacklist: List<String>, ctx: CommandContext, jackson: ObjectMapper) {
+    private fun listBlackList(
+        blacklist: List<String>,
+        guild: Guild,
+        author: User,
+        jackson: ObjectMapper,
+        sendMsg: (MessageCreateBuilder) -> Unit
+    ) {
         if (blacklist.isEmpty()) {
-            sendMsg(ctx, "The current blacklist is empty")
-
-            return
-        }
-
-        if (!ctx.guild.selfMember.hasPermission(ctx.channel.asGuildMessageChannel(), Permission.MESSAGE_ATTACH_FILES)) {
-            sendMsg(ctx, "This command requires me to be able to upload files to this channel")
+            sendMsg(
+                MessageCreateBuilder()
+                    .setContent("The current blacklist is empty")
+            )
 
             return
         }
 
         val listBytes = jackson.writeValueAsBytes(blacklist)
-        val isOwner = ctx.author.idLong == ctx.guild.ownerIdLong
+        val isOwner = author.idLong == guild.ownerIdLong
 
-        ctx.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
+        sendMsg(
+            MessageCreateBuilder()
+                .setContent("Here is the current black list for ${if (isOwner) "your" else "this"} server")
+                .addFiles(
+                    FileUpload.fromData(
+                        listBytes,
+                        "blacklist_${guild.id}.json"
+                    )
+                )
+        )
+
+        /*ctx.channel.sendMessage("Here is the current black list for ${if (isOwner) "your" else "this"} server")
             .addFiles(
                 FileUpload.fromData(
                     listBytes,
-                    "blacklist_${ctx.guild.id}.json"
+                    "blacklist_${guild.id}.json"
                 )
             )
             .queue(null) {
                 sendMsg(ctx, "This command requires me to be able to upload files to this channel")
-            }
+            }*/
     }
 
     private fun clearBlacklist(database: AbstractDatabase, guild: DunctebotGuild, ctx: CommandContext) {

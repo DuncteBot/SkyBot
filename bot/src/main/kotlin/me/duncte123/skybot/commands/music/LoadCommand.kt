@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.AudioData
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
@@ -108,7 +109,11 @@ class LoadCommand : MusicCommand() {
             )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables
+    ) {
         val attachment = event.getOption("file")!!.asAttachment
 
         attachment.proxy.download().thenAcceptAsync {
