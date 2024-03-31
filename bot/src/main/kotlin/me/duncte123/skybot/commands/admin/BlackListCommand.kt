@@ -23,12 +23,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.sentry.Sentry
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import me.duncte123.skybot.database.AbstractDatabase
 import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.utils.FileUpload
 import java.util.concurrent.atomic.AtomicLong
 
@@ -84,6 +90,56 @@ class BlackListCommand : ModBaseCommand() {
         }
     }
 
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addSubcommands(
+            SubcommandData(
+                "add",
+                "Add a word to the blacklist"
+            ).addOptions(
+                OptionData(
+                    OptionType.STRING,
+                    "word",
+                    "The word to add to the blacklist",
+                    true
+                )
+            ),
+            SubcommandData(
+                "remove",
+                "Remove a word from the blacklist"
+            ).addOptions(
+                OptionData(
+                    OptionType.STRING,
+                    "word",
+                    "The word to add to the blacklist",
+                    true
+                )
+            ),
+            SubcommandData(
+                "list",
+                "Export the current blacklist to a list"
+            ),
+            SubcommandData(
+                "import",
+                "Import an exported blacklist"
+            ).addOptions(
+                OptionData(
+                    OptionType.ATTACHMENT,
+                    "file",
+                    "The file created by running the list command.",
+                    true
+                )
+            ),
+            SubcommandData(
+                "clear",
+                "Clears the blacklist"
+            ),
+        )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+        TODO("Not yet implemented")
+    }
+
     private fun listBlackList(blacklist: List<String>, ctx: CommandContext, jackson: ObjectMapper) {
         if (blacklist.isEmpty()) {
             sendMsg(ctx, "The current blacklist is empty")
@@ -116,6 +172,8 @@ class BlackListCommand : ModBaseCommand() {
         database.clearBlacklist(guild.idLong)
 
         guild.settings.blacklistedWords.clear()
+
+        // TODO: give export so people can import in case it was a mistake
 
         sendMsg(ctx, "The blacklist has been cleared")
     }
