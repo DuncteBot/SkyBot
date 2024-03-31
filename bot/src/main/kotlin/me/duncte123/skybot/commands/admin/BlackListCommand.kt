@@ -31,8 +31,10 @@ import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message.Attachment
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
@@ -209,7 +211,23 @@ class BlackListCommand : ModBaseCommand() {
             }
 
             "blacklist import" -> {
-                //
+                // TODO: can this be ever null??
+                val option = event.getOption("file")
+
+                if (option == null) {
+                    event.reply("Somehow you did not upload a file???").queue()
+                    return
+                }
+
+                event.deferReply().queue()
+
+                importBlackListSlash(
+                    event.hook,
+                    guild,
+                    variables.database,
+                    variables.jackson,
+                    option.asAttachment
+                )
             }
 
             "blacklist clear" -> {
@@ -290,6 +308,32 @@ class BlackListCommand : ModBaseCommand() {
                     )
                 )
         )
+    }
+
+    private fun importBlackListSlash(
+        hook: InteractionHook,
+        guild: DunctebotGuild,
+        database: AbstractDatabase,
+        jackson: ObjectMapper,
+        attachment: Attachment
+    ) {
+        attachment.proxy.download().thenAccept { file ->
+            try {
+                val current = guild.settings.blacklistedWords
+                val importedBlacklist = jackson.readValue(file, object : TypeReference<List<String>>() {})
+                val filtered = importedBlacklist.filter { w -> !current.contains(w) }
+
+                current.addAll(filtered)
+                database.addWordsToBlacklist(guild.idLong, filtered)
+
+                hook.sendMessage("Blacklist successfully imported").queue()
+            } catch (e: Exception) {
+                Sentry.captureException(e)
+                hook.sendMessage("Error whilst importing the blacklist: ${e.message}").queue()
+            } finally {
+                file.close()
+            }
+        }
     }
 
     private fun importBlackList(ctx: CommandContext) {
