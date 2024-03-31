@@ -122,7 +122,7 @@ class BlackListCommand : ModBaseCommand() {
 
         when (args[0]) {
             "add" -> addWordToBlacklist(args[1].lowercase(), ctx.database, ctx.guild) { sendMsg(ctx, it) }
-            "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.database, ctx.guild, ctx)
+            "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.database, ctx.guild) { sendMsg(ctx, it) }
             else -> sendMsg(ctx, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
     }
@@ -177,7 +177,7 @@ class BlackListCommand : ModBaseCommand() {
         when (event.fullCommandName) {
             "blacklist add" -> {
                 addWordToBlacklist(
-                    event.getOption("word")!!.asString,
+                    event.getOption("word")!!.asString.lowercase(),
                     variables.database,
                     guild
                 ) {
@@ -186,7 +186,13 @@ class BlackListCommand : ModBaseCommand() {
             }
 
             "blacklist remove" -> {
-                //
+                removeWordFromBlacklist(
+                    event.getOption("word")!!.asString.lowercase(),
+                    variables.database,
+                    guild
+                ) {
+                    event.reply(it).queue()
+                }
             }
 
             "blacklist list" -> {
@@ -352,12 +358,12 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        ctx: CommandContext,
+        sendMsg: (String) -> Unit
     ) {
         val list = guild.settings.blacklistedWords
 
         if (!list.contains(word)) {
-            sendMsg(ctx, "This word is not in the blacklist")
+            sendMsg("This word is not in the blacklist")
 
             return
         }
@@ -366,7 +372,7 @@ class BlackListCommand : ModBaseCommand() {
 
         database.removeWordFromBlacklist(guild.idLong, word)
 
-        sendMsg(ctx, "`$word` has been removed from the blacklist")
+        sendMsg("`$word` has been removed from the blacklist")
     }
 
     private fun CommandContext.edit(id: AtomicLong, content: String) {
