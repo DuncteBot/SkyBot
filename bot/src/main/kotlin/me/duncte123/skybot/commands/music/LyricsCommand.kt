@@ -18,7 +18,9 @@
 
 package me.duncte123.skybot.commands.music
 
+import dev.arbjerg.lavalink.client.LavalinkNode
 import dev.arbjerg.lavalink.client.Link
+import fredboat.audio.player.LavalinkManager
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
@@ -49,15 +51,16 @@ class LyricsCommand : MusicCommand() {
         val args = ctx.args
 
         if (args.isNotEmpty()) {
-            sendMsg(ctx, "Search is not supported atm, sorry")
-            /*handleSearch(ctx.argsRaw, ctx.config) {
+            val randomNode = LavalinkManager.INS.lavalink.nodes.random()
+
+            searchForLyrics(randomNode, ctx.argsRaw) {
                 if (it == null) {
                     sendMsg(ctx, "There where no lyrics found for `${ctx.argsRaw}`")
-                    return@handleSearch
+                    return@searchForLyrics
                 }
 
                 sendEmbed(ctx, it)
-            }*/
+            }
             return
         }
 
@@ -122,16 +125,16 @@ class LyricsCommand : MusicCommand() {
         event.deferReply().queue()
 
         val search = opt.asString
+        val randomNode = LavalinkManager.INS.lavalink.nodes.random()
 
-        /*handleSearch(search, variables.config) {
+        searchForLyrics(randomNode, search) {
             if (it == null) {
                 event.hook.sendMessage("There where no lyrics found for `$search`").queue()
-                return@handleSearch
+                return@searchForLyrics
             }
 
             event.hook.sendMessageEmbeds(it.build()).queue()
-        }*/
-        event.hook.sendMessage("Search is not supported atm, sorry").queue()
+        }
     }
 
     private fun loadLyricsFromLavalink(link: Link, cb: (EmbedBuilder?) -> Unit) {
@@ -186,14 +189,27 @@ class LyricsCommand : MusicCommand() {
             }
     }
 
-    // TODO: enable genius on node
-    /*
-    private fun searchForLyrics(link: Link, q: String, cb: (EmbedBuilder?) -> Unit) {
-        link.node.customJsonRequest(Lyrics::class.java) {
-            it.path("v4/lyrics/search?source=genius&query=$q")
+    private fun searchForLyrics(node: LavalinkNode, q: String, cb: (EmbedBuilder?) -> Unit) {
+        node.customJsonRequest(Lyrics::class.java) {
+            it.path("/v4/lyrics/search?source=genius&query=$q")
         }
+            .subscribe({
+                it as TextLyrics // We always get text lyrics here since we are using genius.
+
+                cb(buildLyricsEmbed(
+                    LyricInfo(
+                        it.track.albumArt.last().url,
+                        it.track.title,
+                        null,
+                        it.source,
+                        it.text
+                    )
+                ))
+            }) {
+                LOGGER.error("Failed searching lyrics for genius", it)
+                cb(null)
+            }
     }
-     */
 
     private fun buildLyricsEmbed(data: LyricInfo): EmbedBuilder {
         val builder = EmbedUtils.getDefaultEmbed()
