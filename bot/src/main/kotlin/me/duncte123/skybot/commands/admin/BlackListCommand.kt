@@ -121,7 +121,7 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         when (args[0]) {
-            "add" -> addWordToBlacklist(args[1].lowercase(), ctx.database, ctx.guild, ctx)
+            "add" -> addWordToBlacklist(args[1].lowercase(), ctx.database, ctx.guild) { sendMsg(ctx, it) }
             "remove" -> removeWordFromBlacklist(args[1].lowercase(), ctx.database, ctx.guild, ctx)
             else -> sendMsg(ctx, "Unknown argument `${args[0]}` check `${ctx.prefix}help $name`")
         }
@@ -175,6 +175,20 @@ class BlackListCommand : ModBaseCommand() {
 
     override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
         when (event.fullCommandName) {
+            "blacklist add" -> {
+                addWordToBlacklist(
+                    event.getOption("word")!!.asString,
+                    variables.database,
+                    guild
+                ) {
+                    event.reply(it).queue()
+                }
+            }
+
+            "blacklist remove" -> {
+                //
+            }
+
             "blacklist list" -> {
                 val blacklist = guild.settings.blacklistedWords
 
@@ -186,6 +200,10 @@ class BlackListCommand : ModBaseCommand() {
                 ) {
                     event.reply(it.build()).queue()
                 }
+            }
+
+            "blacklist import" -> {
+                //
             }
 
             "blacklist clear" -> {
@@ -313,12 +331,12 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        ctx: CommandContext,
+        sendMsg: (String) -> Unit
     ) {
         val list = guild.settings.blacklistedWords
 
         if (list.contains(word)) {
-            sendMsg(ctx, "This word is already in the blacklist")
+            sendMsg("This word is already in the blacklist")
 
             return
         }
@@ -327,7 +345,7 @@ class BlackListCommand : ModBaseCommand() {
 
         database.addWordToBlacklist(guild.idLong, word)
 
-        sendMsg(ctx, "`$word` has been added to the blacklist")
+        sendMsg("`$word` has been added to the blacklist")
     }
 
     private fun removeWordFromBlacklist(
