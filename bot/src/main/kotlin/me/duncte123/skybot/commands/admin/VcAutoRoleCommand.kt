@@ -23,13 +23,32 @@ import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.utils.FinderUtils
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.Role
+import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
 import java.util.stream.Collectors
+
+const val RES_OK = 0
+const val RES_NO_CHAN = -1
+const val RES_NO_ROLE = -2
+const val RES_ROLE_NOT_INTERACT = -3
 
 class VcAutoRoleCommand : ModBaseCommand() {
     init {
@@ -59,7 +78,9 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             if (args[0] == "list") {
-                listAutoVcRoles(ctx)
+                val embed = listAutoVcRoles(guild, ctx.variables)
+
+                sendEmbed(ctx, embed)
                 return
             }
 
@@ -88,6 +109,79 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
 
         sendMsg(ctx, "Unknown operation, check `${ctx.prefix}$name`")
+    }
+
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData
+            .addSubcommands(
+                SubcommandData(
+                    "add",
+                    "Link a role and a voice channel together"
+                ).addOptions(
+                    OptionData(
+                        OptionType.ROLE,
+                        "role",
+                        "The role to unlink from the voice channel",
+                        true
+                    ),
+                    OptionData(
+                        OptionType.CHANNEL,
+                        "voice_channel",
+                        "The voice channel to unlink all roles from",
+                        true
+                    ),
+                ),
+                SubcommandData(
+                    "add-all",
+                    "Link a role to ALL voice channels"
+                ).addOptions(
+                    OptionData(
+                        OptionType.ROLE,
+                        "role",
+                        "The role to unlink from the voice channel",
+                        true
+                    ),
+                ),
+                SubcommandData(
+                    "remove",
+                    "Unlink a voice channel from a role"
+                ).addOptions(
+                    OptionData(
+                        OptionType.CHANNEL,
+                        "voice_channel",
+                        "The voice channel to unlink all roles from",
+                        true
+                    ),
+                    OptionData(
+                        OptionType.ROLE,
+                        "role",
+                        "The role to unlink from the voice channel",
+                        false
+                    ),
+                ),
+                SubcommandData(
+                    "off",
+                    "Unlink **ALL** voice channels from **ALL** roles"
+                ),
+                SubcommandData(
+                    "list",
+                    "List your current configuration"
+                ),
+            )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        when (event.subcommandName) {
+            "list" -> {
+                val embed = listAutoVcRoles(guild, variables)
+
+                event.replyEmbeds(embed.build()).queue()
+            }
+
+            "add" -> addSingleVcAutoRoleFromSlashEvent(event, guild, variables)
+
+            else -> event.reply("mi ne kompreni").queue()
+        }
     }
 
     private fun removeVcAutoRole(ctx: CommandContext) {
@@ -191,9 +285,80 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
     }
 
-    private fun listAutoVcRoles(ctx: CommandContext) {
-        val items = ctx.variables.vcAutoRoleCache.get(ctx.guild.idLong)
-        val embed = EmbedUtils.getDefaultEmbed()
+    private fun addSingleVcAutoRoleFromSlashEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        val channel = event.getOption("voice_channel")!!.asChannel
+
+        if (channel.type != ChannelType.VOICE && channel.type != ChannelType.STAGE) {
+            event.reply("The specified channel is not valid, you can only specify stage or voice channels.").queue()
+            return
+        }
+
+        val role = event.getOption("role")!!.asRole
+
+        if (!guild.selfMember.canInteract(role)) {
+            event.reply("I cannot interact with that role, make sure that it is below my highest role!").queue()
+            return
+        }
+
+        val audioChannel = channel.asAudioChannel()
+
+        val result = addSingleVcAutoRole(
+            audioChannel,
+            role,
+            guild,
+            variables
+        )
+
+        when (result) {
+            RES_OK -> {
+                event.reply(
+                    "Role <@&${role.id}> will now be applied to a user when they join <#${audioChannel.id}>"
+                ).queue()
+            }
+
+            RES_ROLE_NOT_INTERACT -> {
+                event.reply("I cannot interact with that role, make sure that it is below my highest role!").queue()
+            }
+
+            else -> event.reply("Something went wrong!").queue()
+        }
+    }
+
+    private fun addSingleVcAutoRole(
+        channel: AudioChannel,
+        role: Role,
+        guild: Guild,
+        variables: Variables
+    ): Int {
+        if (!guild.selfMember.canInteract(role)) {
+            return RES_ROLE_NOT_INTERACT
+        }
+
+        val vcAutoRoleCache = variables.vcAutoRoleCache
+        val cache: TLongLongMap = vcAutoRoleCache.putIfAbsent(guild.idLong, TLongLongHashMap())
+        val targetChannel = channel.idLong
+        val targetRole = role.idLong
+
+        cache.put(targetChannel, targetRole)
+        variables.database.setVcAutoRole(guild.idLong, targetChannel, targetRole)
+
+        return RES_OK
+    }
+
+    private fun listAutoVcRoles(
+        guild: Guild,
+        variables: Variables
+    ): EmbedBuilder {
+        val cache = variables.vcAutoRoleCache
+        val guildId = guild.idLong
+
+        if (!cache.containsKey(guildId)) {
+            return  EmbedUtils.getDefaultEmbed(guildId)
+                .setDescription("No vc autorole has been set for this server")
+        }
+
+        val items = cache.get(guildId)
+        val embed = EmbedUtils.getDefaultEmbed(guildId)
             .setDescription("List of vc auto roles:\n")
 
         items.forEachEntry { vc, role ->
@@ -203,6 +368,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
             return@forEachEntry true
         }
 
-        sendEmbed(ctx, embed)
+
+        return embed
     }
 }
