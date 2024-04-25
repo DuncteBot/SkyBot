@@ -196,15 +196,17 @@ class LyricsCommand : MusicCommand() {
             .subscribe({
                 it as TextLyrics // We always get text lyrics here since we are using genius.
 
-                cb(buildLyricsEmbed(
-                    LyricInfo(
-                        it.track.albumArt.last().url,
-                        it.track.title,
-                        null,
-                        it.source,
-                        it.text
+                cb(
+                    buildLyricsEmbed(
+                        LyricInfo(
+                            it.track.albumArt.last().url,
+                            it.track.title,
+                            null,
+                            it.source,
+                            it.text
+                        )
                     )
-                ))
+                )
             }) {
                 LOGGER.error("Failed searching lyrics for genius", it)
                 cb(null)
