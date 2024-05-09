@@ -152,12 +152,13 @@ class VcAutoRoleCommand : ModBaseCommand() {
                         "The voice channel to unlink all roles from",
                         true
                     ),
-                    OptionData(
+                    // TODO: option not valid yet
+                    /*OptionData(
                         OptionType.ROLE,
                         "role",
                         "The role to unlink from the voice channel",
                         false
-                    ),
+                    ),*/
                 ),
                 SubcommandData(
                     "off",
@@ -179,6 +180,17 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             "add" -> addSingleVcAutoRoleFromSlashEvent(event, guild, variables)
+
+            "add-all" -> addVcAutoRoleToAllChannels(event, guild, variables)
+
+            "remove" -> removeSingleVcAutoRoleFromSlashEvent(event, guild, variables)
+
+            "off" -> {
+                variables.vcAutoRoleCache.remove(guild.idLong)
+                variables.database.removeVcAutoRoleForGuild(guild.idLong)
+
+                event.reply("All vc autoroles removed for this server!").queue()
+            }
 
             else -> event.reply("mi ne kompreni").queue()
         }
@@ -324,6 +336,64 @@ class VcAutoRoleCommand : ModBaseCommand() {
         }
     }
 
+    private fun addVcAutoRoleToAllChannels(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        val role = event.getOption("role")!!.asRole
+
+        if (!guild.selfMember.canInteract(role)) {
+            event.reply("I cannot interact with that role, make sure that it is below my highest role!").queue()
+            return
+        }
+
+
+        val vcAutoRoleCache = variables.vcAutoRoleCache
+        val cache: TLongLongMap = vcAutoRoleCache.putIfAbsent(guild.idLong, TLongLongHashMap())
+        val targetRole = role.idLong
+
+        // TODO: include other audio channels as well
+        val ids = guild.voiceChannelCache.applyStream {
+            it.map(VoiceChannel::getIdLong).toList()
+        }!!
+
+        variables.database.setVcAutoRoleBatch(guild.idLong, ids, targetRole)
+        ids.forEach { cache.put(it, targetRole) }
+
+        event.reply(
+            "Role <@&$targetRole> will now be applied to a user when they join any voice channel " +
+                "(excluding ones that are created after the command was ran)"
+        ).queue()
+    }
+
+    private fun removeSingleVcAutoRoleFromSlashEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        val channel = event.getOption("voice_channel")!!.asChannel
+
+        if (channel.type != ChannelType.VOICE && channel.type != ChannelType.STAGE) {
+            event.reply("The specified channel is not valid, you can only specify stage or voice channels.").queue()
+            return
+        }
+
+        val audioChannel = channel.asAudioChannel()
+
+        val result = removeSingleVcAutoRole(
+            audioChannel,
+            guild,
+            variables
+        )
+
+        when (result) {
+            RES_OK -> {
+                event.reply(
+                    "All autoroles removed from <#${audioChannel.id}>"
+                ).queue()
+            }
+
+            RES_NO_CHAN -> {
+                event.reply("That channel did not have any autoroles set").queue()
+            }
+
+            else -> event.reply("Something went wrong!").queue()
+        }
+    }
+
     private fun addSingleVcAutoRole(
         channel: AudioChannel,
         role: Role,
@@ -341,6 +411,25 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
         cache.put(targetChannel, targetRole)
         variables.database.setVcAutoRole(guild.idLong, targetChannel, targetRole)
+
+        return RES_OK
+    }
+
+    private fun removeSingleVcAutoRole(
+        channel: AudioChannel,
+        guild: Guild,
+        variables: Variables
+    ): Int {
+        val vcAutoRoleCache = variables.vcAutoRoleCache
+        val cache: TLongLongMap = vcAutoRoleCache.putIfAbsent(guild.idLong, TLongLongHashMap())
+        val targetChannel = channel.idLong
+
+        if (!cache.containsKey(targetChannel)) {
+            return RES_NO_CHAN
+        }
+
+        cache.remove(targetChannel)
+        variables.database.removeVcAutoRole(targetChannel)
 
         return RES_OK
     }
