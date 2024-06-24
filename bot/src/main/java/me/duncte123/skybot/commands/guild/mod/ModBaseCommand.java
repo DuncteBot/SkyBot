@@ -33,6 +33,7 @@ public abstract class ModBaseCommand extends SlashSupport {
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
 
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
         // NO

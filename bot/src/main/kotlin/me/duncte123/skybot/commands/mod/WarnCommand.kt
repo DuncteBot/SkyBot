@@ -20,8 +20,6 @@ package me.duncte123.skybot.commands.mod
 
 import com.dunctebot.models.settings.WarnAction
 import com.dunctebot.models.utils.DateUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
@@ -93,7 +91,6 @@ class WarnCommand : ModBaseCommand() {
             return
         }
 
-
         val moderator = event.member!!
         val channel = event.channel
 
@@ -109,7 +106,7 @@ class WarnCommand : ModBaseCommand() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        event.deferReply().queue();
+        event.deferReply().queue()
 
         // add the new warning to the database
         val future = variables.database.createWarning(
@@ -164,7 +161,14 @@ class WarnCommand : ModBaseCommand() {
             .find { threshold >= it.threshold }
     }
 
-    private fun invokeAction(warnings: Int, action: WarnAction, modUser: User, target: Member, guild: DunctebotGuild, variables: Variables) {
+    private fun invokeAction(
+        warnings: Int,
+        action: WarnAction,
+        modUser: User,
+        target: Member,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         val targetUser = target.user
 
         if ((action.type == WarnAction.Type.MUTE || action.type == WarnAction.Type.TEMP_MUTE) &&
