@@ -108,7 +108,7 @@ class ForceSkip : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         //
     }

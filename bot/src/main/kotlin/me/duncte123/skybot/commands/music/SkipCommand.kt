@@ -46,7 +46,7 @@ class SkipCommand : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         event.deferReply().queue()
 

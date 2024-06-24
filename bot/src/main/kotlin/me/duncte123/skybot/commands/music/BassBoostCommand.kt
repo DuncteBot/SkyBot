@@ -117,7 +117,7 @@ class BassBoostCommand : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         if (!isUserOrGuildPatron(event)) {
             return

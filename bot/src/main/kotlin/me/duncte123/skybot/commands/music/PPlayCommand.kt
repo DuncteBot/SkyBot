@@ -62,7 +62,7 @@ class PPlayCommand : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         event.reply("This command will be going away soon. Please use the `/play` command instead.").queue()
     }

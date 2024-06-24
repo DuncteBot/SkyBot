@@ -95,7 +95,7 @@ class JoinCommand : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         val memberVoice = event.member!!.voiceState!!
 

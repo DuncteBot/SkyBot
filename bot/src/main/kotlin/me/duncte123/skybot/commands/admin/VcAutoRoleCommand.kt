@@ -32,7 +32,6 @@ import me.duncte123.skybot.utils.FinderUtils
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
@@ -42,7 +41,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
 import java.util.stream.Collectors
 
 const val RES_OK = 0
@@ -153,12 +151,14 @@ class VcAutoRoleCommand : ModBaseCommand() {
                         true
                     ),
                     // TODO: option not valid yet
-                    /*OptionData(
+                    /*
+                    OptionData(
                         OptionType.ROLE,
                         "role",
                         "The role to unlink from the voice channel",
                         false
-                    ),*/
+                    ),
+                     */
                 ),
                 SubcommandData(
                     "off",
@@ -344,7 +344,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
             return
         }
 
-
         val vcAutoRoleCache = variables.vcAutoRoleCache
         val cache: TLongLongMap = vcAutoRoleCache.putIfAbsent(guild.idLong, TLongLongHashMap())
         val targetRole = role.idLong
@@ -398,7 +397,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         channel: AudioChannel,
         role: Role,
         guild: Guild,
-        variables: Variables
+        variables: Variables,
     ): Int {
         if (!guild.selfMember.canInteract(role)) {
             return RES_ROLE_NOT_INTERACT
@@ -418,7 +417,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
     private fun removeSingleVcAutoRole(
         channel: AudioChannel,
         guild: Guild,
-        variables: Variables
+        variables: Variables,
     ): Int {
         val vcAutoRoleCache = variables.vcAutoRoleCache
         val cache: TLongLongMap = vcAutoRoleCache.putIfAbsent(guild.idLong, TLongLongHashMap())
@@ -436,13 +435,13 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
     private fun listAutoVcRoles(
         guild: Guild,
-        variables: Variables
+        variables: Variables,
     ): EmbedBuilder {
         val cache = variables.vcAutoRoleCache
         val guildId = guild.idLong
 
         if (!cache.containsKey(guildId)) {
-            return  EmbedUtils.getDefaultEmbed(guildId)
+            return EmbedUtils.getDefaultEmbed(guildId)
                 .setDescription("No vc autorole has been set for this server")
         }
 
@@ -456,7 +455,6 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
             return@forEachEntry true
         }
-
 
         return embed
     }

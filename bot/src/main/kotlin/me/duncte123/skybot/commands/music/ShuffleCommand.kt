@@ -47,7 +47,7 @@ class ShuffleCommand : MusicCommand() {
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }

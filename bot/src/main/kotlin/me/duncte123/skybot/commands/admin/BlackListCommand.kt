@@ -65,12 +65,14 @@ class BlackListCommand : ModBaseCommand() {
     override fun execute(ctx: CommandContext) {
         val args = ctx.args
         val sendMsg: (MessageCreateBuilder) -> Unit = {
-            sendMsg(MessageConfig.Builder.fromCtx(ctx)
-                .setMessageBuilder(it)
-                .setFailureAction { thr ->
-                    sendMsg(ctx, "Failed to send (attach file permission missing???): ${thr.message}")
-                }
-                .build())
+            sendMsg(
+                MessageConfig.Builder.fromCtx(ctx)
+                    .setMessageBuilder(it)
+                    .setFailureAction { thr ->
+                        sendMsg(ctx, "Failed to send (attach file permission missing???): ${thr.message}")
+                    }
+                    .build()
+            )
         }
 
         when (args[0]) {
@@ -99,7 +101,6 @@ class BlackListCommand : ModBaseCommand() {
 
                     return
                 }
-
 
                 clearBlacklist(
                     ctx.database,
@@ -249,7 +250,7 @@ class BlackListCommand : ModBaseCommand() {
         guild: Guild,
         author: User,
         jackson: ObjectMapper,
-        sendMsg: (MessageCreateBuilder) -> Unit
+        sendMsg: (MessageCreateBuilder) -> Unit,
     ) {
         if (blacklist.isEmpty()) {
             sendMsg(
@@ -279,7 +280,7 @@ class BlackListCommand : ModBaseCommand() {
         database: AbstractDatabase,
         guild: DunctebotGuild,
         jackson: ObjectMapper,
-        sendMsg: (MessageCreateBuilder) -> Unit
+        sendMsg: (MessageCreateBuilder) -> Unit,
     ) {
         val blacklist = guild.settings.blacklistedWords
 
@@ -300,7 +301,10 @@ class BlackListCommand : ModBaseCommand() {
 
         sendMsg(
             MessageCreateBuilder()
-                .setContent("The blacklist has been cleared!\nYou can use the file attached to import your old blacklist in case this was a mistake.")
+                .setContent(
+                    "The blacklist has been cleared!\n" +
+                        "You can use the file attached to import your old blacklist in case this was a mistake."
+                )
                 .addFiles(
                     FileUpload.fromData(
                         listBytes,
@@ -315,7 +319,7 @@ class BlackListCommand : ModBaseCommand() {
         guild: DunctebotGuild,
         database: AbstractDatabase,
         jackson: ObjectMapper,
-        attachment: Attachment
+        attachment: Attachment,
     ) {
         attachment.proxy.download().thenAccept { file ->
             try {
@@ -381,7 +385,7 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        sendMsg: (String) -> Unit
+        sendMsg: (String) -> Unit,
     ) {
         val list = guild.settings.blacklistedWords
 
@@ -402,7 +406,7 @@ class BlackListCommand : ModBaseCommand() {
         word: String,
         database: AbstractDatabase,
         guild: DunctebotGuild,
-        sendMsg: (String) -> Unit
+        sendMsg: (String) -> Unit,
     ) {
         val list = guild.settings.blacklistedWords
 

@@ -173,7 +173,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
     override fun handleEvent(
         event: SlashCommandInteractionEvent,
         guild: DunctebotGuild,
-        variables: Variables
+        variables: Variables,
     ) {
         if (!event.member!!.voiceState!!.inAudioChannel()) {
             event.reply("Auto-join is not yet supported for slash commands. Sorry about that").queue()
