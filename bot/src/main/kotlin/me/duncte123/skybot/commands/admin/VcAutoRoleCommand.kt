@@ -150,8 +150,8 @@ class VcAutoRoleCommand : ModBaseCommand() {
                         "The voice channel to unlink all roles from",
                         true
                     ),
-                    // TODO: option not valid yet
                     /*
+                    // TODO: option not valid yet
                     OptionData(
                         OptionType.ROLE,
                         "role",
