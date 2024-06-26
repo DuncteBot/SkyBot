@@ -271,7 +271,9 @@ public class GuildListener extends BaseListener {
             final Member self = guild.getSelfMember();
             final Role role = guild.getRoleById(vcToRolePair.get(channel.getIdLong()));
 
-            if (role != null && self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
+            // TODO: seems like self.canInteract(member) is not needed here.
+
+            if (role != null && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
                 if (remove) {
                     guild
                         .removeRoleFromMember(member, role)

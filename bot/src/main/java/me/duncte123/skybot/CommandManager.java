@@ -57,6 +57,7 @@ import me.duncte123.skybot.commands.utils.EmoteCommand;
 import me.duncte123.skybot.commands.utils.EnlargeCommand;
 import me.duncte123.skybot.commands.utils.RoleInfoCommand;
 import me.duncte123.skybot.commands.weeb.*;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.SlashSupport;
 import me.duncte123.skybot.objects.command.*;
 import me.duncte123.skybot.objects.pairs.LongLongPair;
@@ -745,29 +746,48 @@ public class CommandManager {
     }
 
     public void executeSlashCommand(SlashCommandInteractionEvent event) {
-        final String fullCommandName = event.getFullCommandName();
+        this.commandThread.submit(() -> {
+            try {
+                MDC.put("command.invoke", event.getFullCommandName());
+                MDC.put("user.tag", event.getUser().getAsTag());
+                MDC.put("user.name", event.getUser().getEffectiveName());
+                MDC.put("user.id", event.getUser().getId());
+                MDC.put("guild", event.isFromGuild() ? event.getGuild().toString() : "(not in guild)");
+                setJDAContext(event.getJDA());
 
-        if (fullCommandName.startsWith("music")) {
-            final String musicName = fullCommandName.replace("music", "").trim();
-            final MusicCommand command = (MusicCommand) this.getCommand(musicName);
+                final var guild = new DunctebotGuild(event.getGuild(), variables);
 
-            if (command != null) {
-                command.handleEvent(event, variables);
+                final String fullCommandName = event.getFullCommandName();
+
+                if (fullCommandName.startsWith("music")) {
+                    final String musicName = fullCommandName.replace("music", "").trim();
+                    final MusicCommand command = (MusicCommand) this.getCommand(musicName);
+
+                    if (command != null) {
+                        command.handleEvent(event, guild, variables);
+                    }
+
+                    return;
+                }
+
+                final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
+
+                if (command != null) {
+                    command.executeEventWithChecks(event, guild, variables);
+                }
             }
-
-            return;
-        }
-
-        try {
-            final SlashSupport command = (SlashSupport) this.getCommand(event.getName());
-
-            if (command != null) {
-                command.executeEventWithChecks(event, variables);
+            catch (Exception e) {
+                event.reply(
+                    "Failed to run command: %s\nPlease join [my discord server](https://duncte.bot/discord) if this happens a lot.".formatted(
+                        e.getMessage()
+                    )
+                ).queue();
+                LOGGER.error(
+                    "Error in '%s'".formatted(event.getCommandString()),
+                    e
+                );
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private static long calcTimeRemaining(long startTime) {

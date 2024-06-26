@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import com.dunctebot.models.utils.DateUtils.getDatabaseDateFormat
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.AudioUtils
@@ -46,7 +47,11 @@ class SaveCommand : MusicCommand() {
             .queue()
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 

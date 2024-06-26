@@ -19,6 +19,7 @@
 package me.duncte123.skybot.commands.guild.owner;
 
 import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.api.Permission;
@@ -59,7 +60,7 @@ public class ForceDisconnectCommand extends MusicCommand {
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, DunctebotGuild guild, @NotNull Variables variables) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue();
     }
 }

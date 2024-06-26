@@ -20,6 +20,7 @@ package me.duncte123.skybot.commands.utils
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.extensions.escapeMarkDown
 import me.duncte123.skybot.objects.SlashSupport
 import me.duncte123.skybot.objects.command.CommandCategory
@@ -142,7 +143,7 @@ class EmoteCommand : SlashSupport() {
         )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
         val emote = event.getOption("emote")!!
 
         val mentionedEmotes = emote.mentions.customEmojis

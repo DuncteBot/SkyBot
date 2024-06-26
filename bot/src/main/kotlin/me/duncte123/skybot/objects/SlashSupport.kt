@@ -19,6 +19,7 @@
 package me.duncte123.skybot.objects
 
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -33,12 +34,12 @@ abstract class SlashSupport : SkyCommand() {
     protected abstract fun configureSlashSupport(baseData: SlashCommandData)
 
     fun getSlashData(): SlashCommandData {
-        val help = getHelp("", "/")
+        val help = getHelp("", "/").split("\n").first()
 
         val base = Commands.slash(
             name,
             help.substring(
-                0 until min(help.length, CommandData.MAX_DESCRIPTION_LENGTH)
+                0, min(help.length, CommandData.MAX_DESCRIPTION_LENGTH)
             )
         )
             .setGuildOnly(true)
@@ -50,9 +51,9 @@ abstract class SlashSupport : SkyCommand() {
         return base
     }
 
-    fun executeEventWithChecks(event: SlashCommandInteractionEvent, variables: Variables) {
+    fun executeEventWithChecks(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
         if (event.isFromGuild) {
-            val self = event.guild!!.selfMember
+            val self = guild.selfMember
 
             if (this.botPermissions.isNotEmpty() && !self.hasPermission(this.botPermissions.toList())) {
                 val permissionsWord = "permission${if (this.botPermissions.size > 1) "s" else ""}"
@@ -64,15 +65,17 @@ abstract class SlashSupport : SkyCommand() {
                 )
                     .setEphemeral(false)
                     .queue()
+
+                return
             }
 
             // TODO: cooldowns
 
-            handleEvent(event, variables)
+            handleEvent(event, guild, variables)
         } else {
-            handleEvent(event, variables)
+            handleEvent(event, guild, variables)
         }
     }
 
-    abstract fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables)
+    abstract fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables)
 }

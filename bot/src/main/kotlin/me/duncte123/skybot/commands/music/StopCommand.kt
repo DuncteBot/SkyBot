@@ -68,7 +68,11 @@ class StopCommand : MusicCommand() {
         )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val player = mng.player.getOrNull()
         val scheduler = mng.scheduler
