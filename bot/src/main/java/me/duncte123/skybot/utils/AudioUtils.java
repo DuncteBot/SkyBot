@@ -74,7 +74,7 @@ public class AudioUtils {
         final CompletableFuture<Void> future = new CompletableFuture<>();
 
         LavalinkManager.INS.getLavalink()
-            .getLinkIfCached(data.getGuildId())
+            .getOrCreateLink(data.getGuildId())
             .loadItem(trackUrl)
             .subscribe((result) -> {
                 future.complete(null);
