@@ -20,9 +20,8 @@ package me.duncte123.skybot.commands.mod
 
 import com.dunctebot.models.settings.WarnAction
 import com.dunctebot.models.utils.DateUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import me.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import me.duncte123.skybot.entities.jda.DunctebotGuild
@@ -33,7 +32,11 @@ import me.duncte123.skybot.utils.ModerationUtils.*
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException.ignore
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.requests.ErrorResponse.CANNOT_SEND_TO_USER
 import java.util.concurrent.TimeUnit
 
@@ -54,50 +57,59 @@ class WarnCommand : ModBaseCommand() {
         )
     }
 
-    override fun execute(ctx: CommandContext) {
-        val mentioned = ctx.getMentionedArg(0)
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addOptions(
+            OptionData(
+                OptionType.USER,
+                "user",
+                "The user to warn",
+                true
+            ),
+            OptionData(
+                OptionType.STRING,
+                "reason",
+                "Why is this user getting warned?",
+                false,
+            )
+        )
+    }
 
-        if (mentioned.isEmpty()) {
-            sendMsg(ctx, "I could not find any members with name ${ctx.args[0]}")
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        val target = event.getOption("user")!!.asMember
+
+        if (target == null) {
+            event.reply("No user found for your input?")
+                .setEphemeral(true)
+                .queue()
             return
         }
 
-        val target = mentioned[0]
-        val targetUser = target.user
+        val selfUser = event.jda.selfUser
 
-        // The bot cannot be warned
-        if (targetUser == ctx.jda.selfUser) {
-            sendErrorWithMessage(ctx.message, "You can not warn me")
+        if (target.idLong == selfUser.idLong) {
+            event.reply("What did I do wrong? \uD83D\uDE22").queue()
             return
         }
 
-        val guild = ctx.guild
-        val moderator = ctx.member
-        val channel = ctx.channel
-        val modUser = ctx.author
+        val moderator = event.member!!
+        val channel = event.channel
 
         // Check if we can interact
         if (!canInteract(moderator, target, "warn", channel)) {
             return
         }
 
-        var reason = ""
-        val flags = ctx.getParsedFlags(this)
-        val args = ctx.args
-
-        if (flags.containsKey("r")) {
-            reason = flags["r"]!!.joinToString(" ")
-        } else if (args.size > 1) {
-            val example = "\nExample: `${ctx.prefix}warn ${args[0]} -r ${args.subList(1, args.size).joinToString(" ")}`"
-            sendMsg(ctx, "Hint: if you want to set a reason, use the `-r` flag$example")
-        }
-
+        val modUser = moderator.user
+        val reason = event.getOption("reason")?.asString ?: ""
+        val targetUser = target.user
         val dmMessage = """You have been warned by ${modUser.asTag}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
+        event.deferReply().queue()
+
         // add the new warning to the database
-        val future = ctx.database.createWarning(
+        val future = variables.database.createWarning(
             modUser.idLong,
             target.idLong,
             guild.idLong,
@@ -113,22 +125,24 @@ class WarnCommand : ModBaseCommand() {
                 .queue(null, ignore(CANNOT_SEND_TO_USER))
         }
 
-        MessageUtils.sendSuccess(ctx.message)
+        event.hook.editOriginal("Warned ${target.user.asTag}").queue()
 
         // Wait for the request to pass and then get the updated warn count
         future.get()
 
-        val warnCount = ctx.database.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
-        val action = getSelectedWarnAction(warnCount, ctx)
+        val warnCount = variables.database.getWarningCountForUser(targetUser.idLong, guild.idLong).get()
+        val action = getSelectedWarnAction(warnCount, guild)
 
         if (action != null) {
-            invokeAction(warnCount, action, modUser, target, ctx)
+            invokeAction(warnCount, action, modUser, target, guild, variables)
         }
     }
 
-    private fun getSelectedWarnAction(threshold: Int, ctx: CommandContext): WarnAction? {
-        val guild = ctx.guild
+    override fun execute(ctx: CommandContext) {
+        sendMsg(ctx, "This is a slash command now :)")
+    }
 
+    private fun getSelectedWarnAction(threshold: Int, guild: DunctebotGuild): WarnAction? {
         if (!CommandUtils.isGuildPatron(guild)) {
             val action = guild.settings.warnActions.firstOrNull()
 
@@ -147,8 +161,14 @@ class WarnCommand : ModBaseCommand() {
             .find { threshold >= it.threshold }
     }
 
-    private fun invokeAction(warnings: Int, action: WarnAction, modUser: User, target: Member, ctx: CommandContext) {
-        val guild = ctx.guild
+    private fun invokeAction(
+        warnings: Int,
+        action: WarnAction,
+        modUser: User,
+        target: Member,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         val targetUser = target.user
 
         if ((action.type == WarnAction.Type.MUTE || action.type == WarnAction.Type.TEMP_MUTE) &&
@@ -174,7 +194,7 @@ class WarnCommand : ModBaseCommand() {
 
                 val (finalDate, dur) = "${action.duration}m".toDuration()
 
-                ctx.database.createMute(
+                variables.database.createMute(
                     modUser.idLong,
                     targetUser.idLong,
                     targetUser.asTag,
@@ -185,25 +205,25 @@ class WarnCommand : ModBaseCommand() {
                 modLog(modUser, targetUser, "muted", "Reached $warnings warnings", dur, guild)
             }
             WarnAction.Type.KICK -> {
-                ctx.jdaGuild.kick(target).reason("Reached $warnings warnings").queue()
+                guild.kick(target).reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "kicked", "Reached $warnings warnings", null, guild)
             }
             WarnAction.Type.TEMP_BAN -> {
                 val (finalUnbanDate, dur) = "${action.duration}d".toDuration()
 
-                ctx.database.createBan(
+                variables.database.createBan(
                     modUser.idLong,
                     targetUser.idLong,
                     finalUnbanDate,
                     guild.idLong
                 )
 
-                ctx.jdaGuild.ban(target, 0, TimeUnit.DAYS)
+                guild.ban(target, 0, TimeUnit.DAYS)
                     .reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "banned", "Reached $warnings warnings", dur, guild)
             }
             WarnAction.Type.BAN -> {
-                ctx.jdaGuild.ban(target, 0, TimeUnit.DAYS)
+                guild.ban(target, 0, TimeUnit.DAYS)
                     .reason("Reached $warnings warnings").queue()
                 modLog(modUser, targetUser, "banned", "Reached $warnings warnings", null, guild)
             }

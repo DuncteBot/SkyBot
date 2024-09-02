@@ -19,15 +19,25 @@
 package me.duncte123.skybot.commands.guild.mod;
 
 import com.dunctebot.models.settings.GuildSetting;
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
@@ -54,6 +64,62 @@ public class MuteCommand extends ModBaseCommand {
                 "Sets the reason for this mute"
             ),
         };
+    }
+
+    @Override
+    protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
+        baseData.addOptions(
+            new OptionData(
+                OptionType.USER,
+                "user",
+                "The user to mute.",
+                true
+            ),
+            new OptionData(
+                OptionType.STRING,
+                "reason",
+                "Reason for muting",
+                false
+            )
+        );
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        final GuildSetting settings = guild.getSettings();
+
+        if (settings.getMuteRoleId() <= 0) {
+            event.reply("No mute/spamrole is currently set. Use `/settings muteRole set:@role` to set one")
+                .setEphemeral(true)
+                .queue();
+            return;
+        }
+
+        final Member mod = event.getMember();
+        final Member self = guild.getSelfMember();
+        final Member toMute = event.getOption("user").getAsMember();
+        final Role role = guild.getRoleById(settings.getMuteRoleId());
+
+        if (canNotProceed(event, mod, toMute, role, self)) {
+            return;
+        }
+
+        event.deferReply().queue();
+
+        final var reason = Optional.ofNullable(event.getOption("reason"))
+            .map(OptionMapping::getAsString)
+            .orElse("No reason given");
+
+        final User user = event.getUser();
+
+        guild.addRoleToMember(toMute, role)
+            .reason("Muted by " + String.format("%#s: %s", user, reason)).queue(success -> {
+                    ModerationUtils.modLog(user, toMute.getUser(), "muted", null, null, guild);
+                    event.getHook()
+                        .editOriginal("User has been muted")
+                        .queue();
+                }
+            );
     }
 
     @Override

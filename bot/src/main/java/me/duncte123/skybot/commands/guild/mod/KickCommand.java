@@ -19,15 +19,24 @@
 package me.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.MessageUtils;
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.skybot.utils.ModerationUtils.canInteract;
@@ -53,6 +62,47 @@ public class KickCommand extends ModBaseCommand {
                 "Sets the reason for this kick"
             ),
         };
+    }
+
+    @Override
+    protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
+        baseData.addOptions(
+            new OptionData(
+                OptionType.USER,
+                "user",
+                "The user to kick.",
+                true
+            ),
+            new OptionData(
+                OptionType.STRING,
+                "reason",
+                "Reason for kicking",
+                false
+            )
+        );
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        final var toKickMember = event.getOption("user").getAsMember();
+        final var moderator = event.getMember();
+
+        if (!canInteract(moderator, toKickMember, "kick", event.getChannel())) {
+            return;
+        }
+
+        final var reason = Optional.ofNullable(event.getOption("reason"))
+            .map(OptionMapping::getAsString)
+            .orElse("No reason given");
+
+        guild.kick(toKickMember)
+            .reason(String.format("%#s: %s", moderator, reason))
+            .queue(
+                (ignored) -> {
+                    ModerationUtils.modLog(moderator.getUser(), toKickMember.getUser(), "kicked", reason, null, guild);
+                    event.reply("User has been kicked").queue();
+                }
+            );
     }
 
     @Override

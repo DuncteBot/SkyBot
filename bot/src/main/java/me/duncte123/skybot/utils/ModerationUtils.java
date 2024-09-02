@@ -56,11 +56,13 @@ public class ModerationUtils {
     public static final int COLOUR_LEAVE = 0xcf362b;
 
     private static final String[] PROFESSIONAL_RESPONSES = {
-        "WHy?",
+        "Why?",
         "Nope",
         "LOL no",
         "YoU cAnNoT iNtErAcT wItH ThIs MeMbEr",
-        "<a:mmLol3d:394951523836362773>"
+        "<a:mmLol3d:394951523836362773>",
+        "Ok, but why would you ever want to {{ action }} yourself?",
+        "Computer says no"
     };
 
     private static final Logger LOG = LoggerFactory.getLogger(ModerationUtils.class);

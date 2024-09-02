@@ -19,12 +19,16 @@
 package me.duncte123.skybot.commands.guild.mod;
 
 import com.dunctebot.models.settings.GuildSetting;
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -51,6 +55,11 @@ public class UnmuteCommand extends ModBaseCommand {
                 "Sets the reason for this umnute"
             ),
         };
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        event.reply("This command does not yet support slash commands").setEphemeral(true).queue();
     }
 
     @Override

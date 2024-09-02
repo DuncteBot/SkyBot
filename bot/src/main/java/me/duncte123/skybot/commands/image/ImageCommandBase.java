@@ -39,7 +39,8 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -120,7 +121,7 @@ public abstract class ImageCommandBase extends Command {
 
         // I hate this so much
         // But I won't change one pmd rule just for the sake of using !isEmpty here
-        if (ctx.getMessage().getAttachments().isEmpty()) {
+        if (!ctx.getMessage().getAttachments().isEmpty()) {
             url = tryGetAttachment(ctx);
         } else if (!mentionedUsers.isEmpty()) {
             url = getAvatarUrl(mentionedUsers.getFirst());
@@ -173,9 +174,9 @@ public abstract class ImageCommandBase extends Command {
     @Nullable
     private String tryGetUrl(CommandContext ctx, String url) {
         try {
-            return new URL(url).toString();
+            return new URI(url).toURL().toString();
         }
-        catch (MalformedURLException ignored) {
+        catch (MalformedURLException | URISyntaxException ignored) {
             sendMsg(ctx, "That does not look like a valid url");
             return null;
         }

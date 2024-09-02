@@ -19,6 +19,7 @@
 package me.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.SlashSupport;
 import me.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.api.Permission;
@@ -32,14 +33,12 @@ public abstract class ModBaseCommand extends SlashSupport {
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
 
-    @Override
     @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+    @Override
     protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
-        // Nothing needed right now
+        // NO
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
-        event.reply("Soontm").queue();
-    }
+    public abstract void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables);
 }

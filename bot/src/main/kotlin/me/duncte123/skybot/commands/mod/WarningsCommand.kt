@@ -19,11 +19,16 @@
 package me.duncte123.skybot.commands.mod
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
 class WarningsCommand : ModBaseCommand() {
     init {
@@ -35,27 +40,35 @@ class WarningsCommand : ModBaseCommand() {
     }
 
     override fun execute(ctx: CommandContext) {
-        val mentioned = ctx.getMentionedArg(0)
-        val db = ctx.database
+        sendMsg(ctx, "This is a slash command now, sorry not sorry")
+    }
 
-        if (mentioned.isEmpty()) {
-            this.sendUsageInstructions(ctx)
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addOptions(
+            OptionData(
+                OptionType.USER,
+                "user",
+                "The user to check warnings for",
+                true
+            )
+        )
+    }
 
-            return
-        }
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        event.deferReply().queue()
 
-        val member = mentioned[0]
+        val user = event.getOption("user")!!.asUser
 
-        db.getWarningsForUser(member.idLong, ctx.guild.idLong).thenAccept { warnings ->
+        variables.database.getWarningsForUser(user.idLong, guild.idLong).thenAccept { warnings ->
             if (warnings.isEmpty()) {
-                sendMsg(ctx, "This member has no active warnings")
+                event.hook.editOriginal("This member has no active warnings").queue()
 
                 return@thenAccept
             }
 
             val out = buildString {
                 warnings.forEach {
-                    val mod = ctx.jda.getUserById(it.modId)
+                    val mod = event.jda.getUserById(it.modId)
                     val modName = mod?.asTag ?: "Unknown#0000"
                     val reason = if (it.reason.isNotBlank()) it.reason else "None"
 
@@ -63,7 +76,9 @@ class WarningsCommand : ModBaseCommand() {
                 }
             }
 
-            sendEmbed(ctx, EmbedUtils.embedMessage(out))
+            event.hook.editOriginalEmbeds(
+                EmbedUtils.embedMessage(out).setColor(guild.color).build()
+            ).queue()
         }
     }
 }

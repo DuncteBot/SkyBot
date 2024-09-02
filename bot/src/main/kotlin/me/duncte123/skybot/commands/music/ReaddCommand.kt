@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.exceptions.LimitReachedException
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
@@ -71,7 +72,11 @@ class ReaddCommand : MusicCommand() {
         }
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 }

@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils.sendError
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -58,7 +59,11 @@ class PPlayCommand : MusicCommand() {
         ctx.audioUtils.loadAndPlay(ctx.audioData, toPlay, true)
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         event.reply("This command will be going away soon. Please use the `/play` command instead.").queue()
     }
 }

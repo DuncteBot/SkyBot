@@ -900,7 +900,7 @@ public class SettingsCommand extends SlashSupport {
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull Variables variables) {
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
         final Guild jdaGuild = event.getGuild();
 
         if (jdaGuild == null) {
@@ -924,7 +924,6 @@ public class SettingsCommand extends SlashSupport {
 
         final OptionMapping option = event.getOption("set");
         final boolean shouldSet = option != null;
-        final var guild = new DunctebotGuild(jdaGuild, variables);
 
         final var messageHandler = new MessageHandler() {
             @Override

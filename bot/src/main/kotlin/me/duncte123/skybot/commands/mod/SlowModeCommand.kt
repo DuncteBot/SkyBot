@@ -21,12 +21,19 @@ package me.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import me.duncte123.durationparser.DurationParser
+import me.duncte123.skybot.Variables
 import me.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 class SlowModeCommand : ModBaseCommand() {
     init {
@@ -87,5 +94,67 @@ class SlowModeCommand : ModBaseCommand() {
 
         txtChan.manager.setSlowmode(intDelay.toInt()).reason("Requested by ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
+    }
+
+    override fun configureSlashSupport(baseData: SlashCommandData) {
+        baseData.addSubcommands(
+            SubcommandData(
+                "off",
+                "Disables slowmode in the current channel"
+            ),
+            SubcommandData(
+                "set",
+                "Turn slowmode on, or change it in the current channel",
+            )
+                .addOptions(
+                    OptionData(
+                        OptionType.INTEGER,
+                        "seconds",
+                        "The amount of seconds to set the slowmode to",
+                        true
+                    )
+                        .setMinValue(0)
+                        .setMaxValue(TextChannel.MAX_SLOWMODE.toLong())
+                )
+        )
+    }
+
+    override fun handleEvent(event: SlashCommandInteractionEvent, guild: DunctebotGuild, variables: Variables) {
+        val txtChan = event.channel
+
+        if (txtChan !is ISlowmodeChannel) {
+            event.reply("This channel does not accept slowmode")
+                .setEphemeral(true)
+                .queue()
+            return
+        }
+
+        when (event.fullCommandName) {
+            "${this.name} off" -> {
+                txtChan.manager.setSlowmode(0)
+                    .reason("Requested by ${event.user.asTag}")
+                    .queue()
+                event.reply("Slowmode has been disabled")
+                    .setEphemeral(true)
+                    .queue()
+            }
+            "${this.name} set" -> {
+                val newSlowmode = event.getOption("seconds")!!.asInt
+
+                txtChan.manager.setSlowmode(newSlowmode)
+                    .reason("Requested by ${event.user.asTag}")
+                    .queue()
+
+                event.reply(
+                    "Slowmode has been ${if (newSlowmode == 0) "disabled" else "set to $newSlowmode seconds"}"
+                )
+                    .setEphemeral(true)
+                    .queue()
+            }
+
+            else -> {
+                event.reply("invalid command").setEphemeral(true).queue()
+            }
+        }
     }
 }

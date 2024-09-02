@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageConfig
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
@@ -59,7 +60,7 @@ class SearchCommand : MusicCommand() {
         val searchLimit = if (isPatron) 20 else 5
 
         val toPlay = ctx.argsRaw
-        val res = ctx.audioUtils.searchYoutube(ctx.guildId, toPlay)
+        val res = ctx.audioUtils.searchForSong(ctx.guildId, toPlay)
 
         if (res.isNullOrEmpty()) {
             sendMsg(ctx, "$SEARCH_EMOTE No results found.")
@@ -111,7 +112,11 @@ class SearchCommand : MusicCommand() {
         )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         event.reply("Slash command not supported yet, sorry. Please report this issue.").queue()
     }
 }

@@ -21,6 +21,7 @@ package me.duncte123.skybot.objects.command;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.skybot.CommandManager;
 import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.CooldownScope;
 import me.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
@@ -128,7 +129,7 @@ public abstract class MusicCommand extends Command {
         return new SubcommandData(getName(), getHelp(getName(), "/"));
     }
 
-    public abstract void handleEvent(@Nonnull SlashCommandInteractionEvent event, @Nonnull Variables variables);
+    public abstract void handleEvent(@Nonnull SlashCommandInteractionEvent event, DunctebotGuild guild, @Nonnull Variables variables);
 
     public static SlashCommandData getMusicCommandData(CommandManager mngr) {
         final var base = Commands.slash("music", "base command for music commands")

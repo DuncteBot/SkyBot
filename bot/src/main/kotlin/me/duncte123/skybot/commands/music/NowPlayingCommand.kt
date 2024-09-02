@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.extensions.toEmbed
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
@@ -52,7 +53,11 @@ class NowPlayingCommand : MusicCommand() {
         }
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
         val player = mng.player.getOrNull()
         val currentTrack = player?.track

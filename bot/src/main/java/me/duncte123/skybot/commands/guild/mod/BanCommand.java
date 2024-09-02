@@ -18,14 +18,23 @@
 
 package me.duncte123.skybot.commands.guild.mod;
 
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -58,6 +67,59 @@ public class BanCommand extends ModBaseCommand {
                 "Prevents the deletion of any messages"
             ),
         };
+    }
+
+    @Override
+    protected void configureSlashSupport(@NotNull SlashCommandData baseData) {
+        baseData.addOptions(
+            new OptionData(
+                OptionType.USER,
+                "user",
+                "The user that you want to ban.",
+                true
+            ),
+            new OptionData(
+                OptionType.STRING,
+                "reason",
+                "The reason for this ban",
+                false
+            ),
+            new OptionData(
+                OptionType.BOOLEAN,
+                "nodel",
+                "Prevents the deletion of any messages",
+                false
+            )
+        );
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        final var toBanMember = event.getOption("user").getAsMember();
+        final var moderator = event.getMember();
+
+        if (!canInteract(moderator, toBanMember, "ban", event.getChannel())) {
+            return;
+        }
+
+        final var reason = Optional.ofNullable(event.getOption("reason"))
+            .map(OptionMapping::getAsString)
+            .orElse("No reason given");
+        final var nodel = Optional.ofNullable(event.getOption("nodel"))
+            .map(OptionMapping::getAsBoolean)
+            .orElse(false);
+
+        final int delDays = nodel ? 0 : 1;
+        final var modUser = moderator.getUser();
+
+        guild.ban(toBanMember, delDays, TimeUnit.DAYS)
+            .reason(String.format("%#s: %s", modUser, reason))
+            .queue(
+                (m) -> {
+                    modLog(modUser, toBanMember.getUser(), "banned", reason, null, guild);
+                    event.reply("User has been banned").queue();
+                }
+            );
     }
 
     @Override

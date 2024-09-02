@@ -42,8 +42,7 @@ fun VersionCatalogBuilder.common() {
     library("sentry", "io.sentry", "sentry-logback").version("5.4.0")
     library("org-json", "org.json", "json").version("20220924")
 
-//    library("jda", "net.dv8tion", "JDA").version("5.0.0-beta.23")
-    library("jda", "com.github.discord-jda", "JDA").version("e82f4dc")
+    library("jda", "net.dv8tion", "JDA").version("5.1.0")
 
     library("trove", "net.sf.trove4j", "trove4j").version("3.0.3")
 
@@ -74,7 +73,7 @@ fun VersionCatalogBuilder.bot() {
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
     library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
-    library("botCommons", "me.duncte123", "botCommons").version("3.1.17")
+    library("botCommons", "me.duncte123", "botCommons").version("3.1.18")
 
     bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
 

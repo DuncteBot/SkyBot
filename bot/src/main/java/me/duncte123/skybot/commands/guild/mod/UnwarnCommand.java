@@ -18,11 +18,14 @@
 
 package me.duncte123.skybot.commands.guild.mod;
 
+import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -39,6 +42,11 @@ public class UnwarnCommand extends ModBaseCommand {
         this.userPermissions = new Permission[]{
             Permission.KICK_MEMBERS,
         };
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        event.reply("This command does not yet support slash commands").setEphemeral(true).queue();
     }
 
     @Override

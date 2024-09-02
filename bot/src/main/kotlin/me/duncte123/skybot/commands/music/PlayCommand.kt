@@ -21,6 +21,7 @@ package me.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
+import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.extensions.isNSFW
 import me.duncte123.skybot.objects.AudioData
 import me.duncte123.skybot.objects.command.CommandContext
@@ -94,14 +95,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(ctx.guildId, toPlay, ctx.variables)
+            val songUrl = searchSong(ctx.guildId, toPlay, ctx.variables)
 
-            if (vidId == null) {
+            if (songUrl == null) {
                 MessageUtils.sendError(ctx.message)
                 sendMsg(ctx, "No tracks were found")
                 return
             }
-            toPlay = "https://www.youtube.com/watch?v=$vidId"
+            toPlay = songUrl
         }
 
         handlePlay(toPlay, ctx)
@@ -127,14 +128,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return true
     }
 
-    private fun searchYt(guildId: Long, search: String, variables: Variables): String? {
-        val playlist = variables.audioUtils.searchYoutube(guildId, search)
+    private fun searchSong(guildId: Long, search: String, variables: Variables): String? {
+        val playlist = variables.audioUtils.searchForSong(guildId, search)
 
         if (playlist.isNullOrEmpty()) {
             return null
         }
 
-        return playlist[0].info.identifier
+        return playlist[0].info.uri
     }
 
     private fun handlePlay(toPlay: String, ctx: CommandContext) {
@@ -169,7 +170,11 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             )
     }
 
-    override fun handleEvent(event: SlashCommandInteractionEvent, variables: Variables) {
+    override fun handleEvent(
+        event: SlashCommandInteractionEvent,
+        guild: DunctebotGuild,
+        variables: Variables,
+    ) {
         if (!event.member!!.voiceState!!.inAudioChannel()) {
             event.reply("Auto-join is not yet supported for slash commands. Sorry about that").queue()
             return
@@ -189,14 +194,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(event.guild!!.idLong, toPlay, variables)
+            val songUrl = searchSong(event.guild!!.idLong, toPlay, variables)
 
-            if (vidId == null) {
+            if (songUrl == null) {
                 event.reply("No tracks were found").queue()
                 return
             }
 
-            toPlay = "https://www.youtube.com/watch?v=$vidId"
+            toPlay = songUrl
         }
 
         handlePlay(toPlay, variables, event)
