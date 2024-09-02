@@ -43,10 +43,10 @@ public class AudioUtils {
     }
 
     @Nullable("If the playlist is not a search result")
-    public List<Track> searchYoutube(long guildId, String query) {
+    public List<Track> searchForSong(long guildId, String query) {
         final LavalinkLoadResult result = LavalinkManager.INS.getLavalink()
             .getOrCreateLink(guildId)
-            .loadItem("ytsearch:" + query)
+            .loadItem("dzsearch:" + query)
             .block();
 
         if (result instanceof SearchResult playlist) {

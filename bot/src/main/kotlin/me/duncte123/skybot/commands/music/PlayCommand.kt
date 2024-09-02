@@ -95,14 +95,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(ctx.guildId, toPlay, ctx.variables)
+            val songUrl = searchSong(ctx.guildId, toPlay, ctx.variables)
 
-            if (vidId == null) {
+            if (songUrl == null) {
                 MessageUtils.sendError(ctx.message)
                 sendMsg(ctx, "No tracks were found")
                 return
             }
-            toPlay = "https://www.youtube.com/watch?v=$vidId"
+            toPlay = songUrl
         }
 
         handlePlay(toPlay, ctx)
@@ -128,14 +128,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         return true
     }
 
-    private fun searchYt(guildId: Long, search: String, variables: Variables): String? {
-        val playlist = variables.audioUtils.searchYoutube(guildId, search)
+    private fun searchSong(guildId: Long, search: String, variables: Variables): String? {
+        val playlist = variables.audioUtils.searchForSong(guildId, search)
 
         if (playlist.isNullOrEmpty()) {
             return null
         }
 
-        return playlist[0].info.identifier
+        return playlist[0].info.uri
     }
 
     private fun handlePlay(toPlay: String, ctx: CommandContext) {
@@ -194,14 +194,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         }
 
         if (!AirUtils.isURL(toPlay) && !toPlay.startsWith("OCR", true)) {
-            val vidId = searchYt(event.guild!!.idLong, toPlay, variables)
+            val songUrl = searchSong(event.guild!!.idLong, toPlay, variables)
 
-            if (vidId == null) {
+            if (songUrl == null) {
                 event.reply("No tracks were found").queue()
                 return
             }
 
-            toPlay = "https://www.youtube.com/watch?v=$vidId"
+            toPlay = songUrl
         }
 
         handlePlay(toPlay, variables, event)

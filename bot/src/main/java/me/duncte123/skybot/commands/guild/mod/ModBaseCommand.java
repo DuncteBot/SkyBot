@@ -40,7 +40,5 @@ public abstract class ModBaseCommand extends SlashSupport {
     }
 
     @Override
-    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
-        event.reply("soontm").queue();
-    }
+    public abstract void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables);
 }

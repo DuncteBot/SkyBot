@@ -82,6 +82,10 @@ private fun shouldDehoist(member: Member): Boolean {
 }
 
 private fun canAutoDehoist(member: Member, variables: Variables): Boolean {
+    if (member.user.isBot) {
+        return false
+    }
+
     return shouldDehoist(member) && GuildSettingsUtils.getGuild(member.guild.idLong, variables).isAutoDeHoist
 }
 

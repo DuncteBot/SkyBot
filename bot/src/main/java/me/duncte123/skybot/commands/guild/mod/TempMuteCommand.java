@@ -20,6 +20,8 @@ package me.duncte123.skybot.commands.guild.mod;
 
 import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.durationparser.ParsedDuration;
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.utils.ModerationUtils;
@@ -28,6 +30,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -60,6 +64,11 @@ public class TempMuteCommand extends ModBaseCommand {
                 "Sets the reason for this mute"
             ),
         };
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        event.reply("This command does not yet support slash commands").setEphemeral(true).queue();
     }
 
     @Override
@@ -160,6 +169,30 @@ public class TempMuteCommand extends ModBaseCommand {
 
         if (!self.canInteract(role)) {
             sendMsg(ctx, "I cannot mute this member, is the mute role above mine?");
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /* package */ static boolean canNotProceed(@Nonnull SlashCommandInteractionEvent event, Member mod, Member toMute, Role role, Member self) {
+        if (role == null) {
+            event.reply("The current mute role does not exist on this server, please contact your server administrator about this.")
+                .setEphemeral(true)
+                .queue();
+
+            return true;
+        }
+
+        if (!canInteract(mod, toMute, "mute", event.getChannel())) {
+            return true;
+        }
+
+        if (!self.canInteract(role)) {
+            event.reply("I cannot mute this member, is the mute role above mine? If so, please move it below my role.")
+                .setEphemeral(true)
+                .queue();
 
             return true;
         }

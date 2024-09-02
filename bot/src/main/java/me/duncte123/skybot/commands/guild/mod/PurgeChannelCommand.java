@@ -19,9 +19,13 @@
 package me.duncte123.skybot.commands.guild.mod;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import me.duncte123.skybot.Variables;
+import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -44,6 +48,11 @@ public class PurgeChannelCommand extends ModBaseCommand {
             Permission.MANAGE_SERVER,
             Permission.MANAGE_PERMISSIONS,
         };
+    }
+
+    @Override
+    public void handleEvent(@NotNull SlashCommandInteractionEvent event, @NotNull DunctebotGuild guild, @NotNull Variables variables) {
+        event.reply("This command does not yet support slash commands").setEphemeral(true).queue();
     }
 
     @Override
