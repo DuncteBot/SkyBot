@@ -111,13 +111,45 @@ public abstract class MusicCommand extends Command {
         return true;
     }
 
-    private boolean isAbleToJoinChannel(CommandContext ctx) {
-        if (isUserOrGuildPatron(ctx, false)) {
-            return ctx.getMember().getVoiceState().inAudioChannel() &&
-                !getLavalinkManager().isConnected(ctx.getGuild());
+    private boolean canRunSlashCommand(SlashCommandInteractionEvent event, DunctebotGuild guild, AudioUtils audioUtils) {
+        if (!event.getMember().getVoiceState().inAudioChannel()) {
+            event.reply("Please join a voice channel first").setEphemeral(true).queue();
+            return false;
         }
 
-        return false;
+        final LavalinkManager lavalinkManager = getLavalinkManager();
+
+        if (!lavalinkManager.isConnected(guild)) {
+            event.reply("I'm not in a voice channel, use `/join` to make me join a channel")
+                .setEphemeral(true)
+                .queue();
+
+            return false;
+        }
+
+        final AudioChannelUnion connectedChannel = lavalinkManager.getConnectedChannel(guild);
+
+        if (connectedChannel != null && !connectedChannel.getMembers().contains(event.getMember())) {
+            event.reply("I'm sorry, but you have to be in the same channel as me to use any music related commands")
+                .setEphemeral(true)
+                .queue();
+
+            return false;
+        }
+
+        audioUtils.getMusicManager(guild.getIdLong()).setLatestChannelId(event.getChannel().getIdLong());
+        return true;
+    }
+
+    private boolean isAbleToJoinChannel(CommandContext ctx) {
+        // if (isUserOrGuildPatron(ctx, false)) {
+        //     return ctx.getMember().getVoiceState().inAudioChannel() &&
+        //         !getLavalinkManager().isConnected(ctx.getGuild());
+        // }
+
+        // return false
+        return ctx.getMember().getVoiceState().inAudioChannel() &&
+            !getLavalinkManager().isConnected(ctx.getGuild());
     }
 
     protected static LavalinkManager getLavalinkManager() {
@@ -127,6 +159,21 @@ public abstract class MusicCommand extends Command {
     @Nonnull
     protected SubcommandData getSubData() {
         return new SubcommandData(getName(), getHelp(getName(), "/"));
+    }
+
+    public void handleSlashWithAutoJoin(@Nonnull SlashCommandInteractionEvent event, DunctebotGuild guild, @Nonnull Variables variables) {
+        if (this.mayAutoJoin) {
+            // TODO: this will cause issues with the event not working properly, need to find a way to resolve this
+            ((MusicCommand) variables.getCommandManager()
+                .getCommand("join"))
+                .handleEvent(event, guild, variables);
+            this.handleEvent(event, guild, variables);
+            return;
+        }
+
+        if (this.justRunLmao || canRunSlashCommand(event, guild, variables.getAudioUtils())) {
+            this.handleEvent(event, guild, variables);
+        }
     }
 
     public abstract void handleEvent(@Nonnull SlashCommandInteractionEvent event, DunctebotGuild guild, @Nonnull Variables variables);

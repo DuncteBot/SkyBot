@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class ForceSkip : MusicCommand() {
@@ -110,6 +111,46 @@ class ForceSkip : MusicCommand() {
         guild: DunctebotGuild,
         variables: Variables,
     ) {
-        //
+        val mng = variables.audioUtils.getMusicManager(guild.idLong)
+
+        val player = mng.player.getOrNull()
+        val currTrack = player?.track
+
+        if (currTrack == null) {
+            event.reply("The player is not playing.").queue()
+            return
+        }
+
+        val skipCount = Optional.ofNullable(event.getOption("skip_count"))
+            .map { it.asInt }
+            .orElse(1)
+        val scheduler = mng.scheduler
+
+        val trackData = scheduler.getUserData(currTrack)
+
+        scheduler.skipTracks(skipCount, false)
+
+        // Return the console user if the requester is null
+        val user = event.jda.getUserById(trackData.requester) ?: UnknownUser()
+
+        val newTrack = player.track
+
+        if (newTrack == null) {
+            event.reply(
+                "Successfully skipped $skipCount tracks.\n" +
+                    "Queue is now empty."
+            ).queue()
+            return
+        }
+
+        event.replyEmbeds(
+            EmbedUtils.embedMessage(
+                "Successfully skipped $skipCount tracks.\n" +
+                    "Now playing: ${newTrack.info.title}\n" +
+                    "Requester: ${user.asTag}"
+            )
+                .setThumbnail(newTrack.info.artworkUrl)
+                .build()
+        ).queue()
     }
 }

@@ -55,8 +55,6 @@ class LeaveCommand : MusicCommand() {
         guild: DunctebotGuild,
         variables: Variables,
     ) {
-        val guild = event.guild!!
-
         if (!getLavalinkManager().isConnected(guild)) {
             event.reply("I'm not connected to any channels.").queue()
             return

@@ -18,7 +18,6 @@
 
 package me.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils.sendError
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.entities.jda.DunctebotGuild
@@ -35,28 +34,7 @@ class PPlayCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        sendMsg(ctx, "Hey, this command will be going away soon. Please use the `/play` command instead.")
-
-        if (ctx.args.isEmpty()) {
-            sendMsg(ctx, "To few arguments, use `${ctx.prefix}$name <media link>`")
-            return
-        }
-
-        val toPlay = ctx.argsRaw
-
-        if (toPlay.length > 1024) {
-            sendError(ctx.message)
-            sendMsg(ctx, "Input cannot be longer than 1024 characters.")
-            return
-        }
-
-        sendMsg(
-            ctx,
-            "Loading playlist.......\n" +
-                "This may take a while depending on the size."
-        )
-
-        ctx.audioUtils.loadAndPlay(ctx.audioData, toPlay, true)
+        sendMsg(ctx, "This command has been removed. Please use the `/play` command instead.")
     }
 
     override fun handleEvent(
@@ -64,6 +42,6 @@ class PPlayCommand : MusicCommand() {
         guild: DunctebotGuild,
         variables: Variables,
     ) {
-        event.reply("This command will be going away soon. Please use the `/play` command instead.").queue()
+        event.reply("This command has been removed. Please use the `/play` command instead.").queue()
     }
 }

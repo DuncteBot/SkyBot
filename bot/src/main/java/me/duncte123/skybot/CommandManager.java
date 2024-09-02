@@ -764,7 +764,7 @@ public class CommandManager {
                     final MusicCommand command = (MusicCommand) this.getCommand(musicName);
 
                     if (command != null) {
-                        command.handleEvent(event, guild, variables);
+                        command.handleSlashWithAutoJoin(event, guild, variables);
                     }
 
                     return;
