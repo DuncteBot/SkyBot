@@ -34,10 +34,22 @@ public class TwemojiParser {
 
     private TwemojiParser() {}
 
+    /**
+     * Parses a single emoji in the given text and returns its corresponding URL.
+     * The URL is based on the Twitter Twemoji project and is in 72x72 resolution.
+     *
+     * @param text
+     *     The text containing the emoji to be parsed.
+     *
+     * @return A URL representing the emoji in the given text.
+     * Returns null if no emoji is found in the text.
+     *
+     * @see <a href="https://github.com/twitter/twemoji">Twitter Twemoji</a>
+     */
     public static String parseOne(String text) {
         final List<Emoji> emojis = EmojiManager.extractEmojisInOrder(stripVariants(text));
 
-        if  (!emojis.isEmpty()) {
+        if (!emojis.isEmpty()) {
             final String iconId = grabTheRightIcon(emojis.getFirst());
 
             return BASE_URL + iconId + ".png";
@@ -46,7 +58,18 @@ public class TwemojiParser {
         return null;
     }
 
-    // for future use
+    /**
+     * Parses all emojis in the given text and returns a list of their corresponding URLs.
+     * The URLs are based on the Twitter Twemoji project and are in 72x72 resolution.
+     *
+     * @param text
+     *     The text containing emojis to be parsed.
+     *
+     * @return A list of URLs representing the emojis in the given text.
+     * Returns null if no emojis are found in the text.
+     *
+     * @see <a href="https://github.com/twitter/twemoji">Twitter Twemoji</a>
+     */
     public static List<String> parseAll(String text) {
         final List<Emoji> emojis = EmojiManager.extractEmojisInOrder(stripVariants(text));
 
