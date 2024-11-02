@@ -72,10 +72,11 @@ fun VersionCatalogBuilder.bot() {
     library("jagTag", "com.github.jagrosh", "JagTag").version("6dbe1ba")
     library("wolfram-alpha", "com.github.DuncteBot", "wolfram-alpha-java-binding").version("5c123ae")
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
-    library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
+//    library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
+    library("jemoji", "net.fellbaum", "jemoji").version("1.5.2")
     library("botCommons", "me.duncte123", "botCommons").version("3.1.18")
 
-    bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "emoji-java"))
+    bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "jemoji"))
 
     library("javaLyrics", "com.github.DuncteBot.java-timed-lyrics", "protocol").version("1.2.0")
 }
