@@ -20,18 +20,12 @@ package me.duncte123.skybot.utils;
 
 import com.jagrosh.jagtag.JagTag;
 import com.jagrosh.jagtag.Parser;
-import gnu.trove.map.TLongLongMap;
-import gnu.trove.set.TLongSet;
-import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.skybot.Settings;
 import me.duncte123.skybot.objects.api.AllPatronsData;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.objects.jagtag.DiscordMethods;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -42,11 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.skybot.Settings.PATREON;
 
 /**
  * The {@link #parseInput(Flag[], List)} method has been rewritten in java from
@@ -54,12 +44,6 @@ import static me.duncte123.skybot.Settings.PATREON;
  * The original method is available at <a href="https://github.com/blargbot/blargbot/">https://github.com/blargbot/blargbot/</a>
  */
 public class CommandUtils {
-    public static final TLongSet PATRONS = MapUtils.newLongSet();
-    public static final TLongSet GUILD_PATRONS = MapUtils.newLongSet();
-    // Key: user_id Value: guild_id
-    public static final TLongLongMap ONEGUILD_PATRONS = MapUtils.newLongLongMap();
-    public static final TLongSet TAG_PATRONS = MapUtils.newLongSet();
-
     public static final Supplier<Parser> PARSER_SUPPLIER = () -> JagTag.newDefaultBuilder()
         .addMethods(DiscordMethods.getMethods())
         .build();
@@ -145,62 +129,19 @@ public class CommandUtils {
         return parsed;
     }
 
+    @Deprecated
     private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel) {
-        // Developers have access to paton features
-        if (isDev(user) || PATRONS.contains(user.getIdLong())) {
-            return true;
-        }
-
-        //noinspection ConstantConditions
-        final Guild supportGuild = user.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
-
-        // If the guild is not in cache (cuz discord) ignore the rest of the checks
-        if (supportGuild == null) {
-            return false;
-        }
-
-        final Member member = supportGuild.getMember(user);
-
-        // If the member is not in our guild we tell them to join it
-        if (member == null) {
-            if (replyChannel != null) {
-                sendMsg(
-                    new MessageConfig.Builder()
-                        .setChannel(replyChannel)
-                        .setEmbeds(EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                            "are not one of our patrons.\n" +
-                            "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ").\n" +
-                            "You will also need to join our discord server [here](https://duncte.bot/server)"))
-                );
-            }
-            return false;
-        }
-
-        // If the member is not a patron tell them to become one
-        if (!member.getRoles().contains(supportGuild.getRoleById(Settings.PATRONS_ROLE))) {
-            if (replyChannel != null) {
-                sendMsg(
-                    new MessageConfig.Builder()
-                        .setChannel(replyChannel)
-                        .setEmbeds(EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                            "are not one of our patrons.\n" +
-                            "For only $1 per month you can have access to this and many other commands [click here link to get started](" + PATREON + ")."))
-                );
-            }
-            return false;
-        }
-
-        PATRONS.add(user.getIdLong());
-
-        return true;
+        return false;
     }
 
+    @Deprecated
     public static boolean isUserTagPatron(@Nonnull User user) {
         return isUserTagPatron(user.getIdLong());
     }
 
+    @Deprecated
     public static boolean isUserTagPatron(long userId) {
-        return TAG_PATRONS.contains(userId) || isDev(userId);
+        return false;
     }
 
     private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel, boolean reply) {
@@ -208,57 +149,40 @@ public class CommandUtils {
         return isPatron(user, channel) || isUserTagPatron(user);
     }
 
+    @Deprecated
     public static boolean isGuildPatron(@Nonnull Guild guild) {
-        return ONEGUILD_PATRONS.containsValue(guild.getIdLong()) || shouldGuildBeConsideredPremium(guild);
+        return false;
     }
 
     // FIXME: Do new patron checks for guilds
+    @Deprecated
     private static boolean isGuildPatron(@Nonnull User user, @Nonnull Guild guild) {
-        // Check if the guild is a patron either via user-being admin or as a one-guild patron
-        if (ONEGUILD_PATRONS.containsValue(guild.getIdLong()) || shouldGuildBeConsideredPremium(guild)) {
-            return true;
-        }
 
-        //noinspection ConstantConditions
-        final Guild supportGuild = user.getJDA().getShardManager().getGuildById(Settings.SUPPORT_GUILD_ID);
-
-        if (supportGuild == null) {
-            return false;
-        }
-
-        final Member member = supportGuild.getMember(user);
-
-        if (member == null) {
-            return false;
-        }
-
-        if (!member.getRoles().contains(supportGuild.getRoleById(Settings.GUILD_PATRONS_ROLE))) {
-            return false;
-        }
-
-        // We're adding the user here to make the checks easier
-        GUILD_PATRONS.add(user.getIdLong());
-
-        return true;
+        return false;
     }
 
+    @Deprecated
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx, boolean reply) {
         return isUserOrGuildPatron(ctx.getAuthor(), ctx.getGuild(), ctx.getChannel(), reply);
     }
 
+    @Deprecated
     public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event, boolean reply) {
         return isUserOrGuildPatron(event.getUser(), Objects.requireNonNull(event.getGuild()), event.getChannel(), reply);
     }
 
+    @Deprecated
     public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event) {
         return isUserOrGuildPatron(event, true);
     }
 
+    @Deprecated
     public static boolean isUserOrGuildPatron(@Nonnull User author, @Nonnull Guild guild, @Nonnull MessageChannel channel, boolean reply) {
         final boolean isGuild = isGuildPatron(author, guild);
         return isGuild || isPatron(author, channel, reply);
     }
 
+    @Deprecated
     public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx) {
         return isUserOrGuildPatron(ctx, true);
     }
@@ -277,86 +201,18 @@ public class CommandUtils {
         return false;
     }
 
-    private static boolean shouldGuildBeConsideredPremium(@Nonnull Guild guild) {
-        final AtomicBoolean foundPatron = new AtomicBoolean(false);
-
-        GUILD_PATRONS.forEach((userId) -> {
-            // Check if we have the member in the guild and if they are an admin
-            final Member member = guild.getMemberById(userId);
-            final boolean userInGuild = member != null && member.hasPermission(Permission.ADMINISTRATOR);
-
-            // Only set if we found a patron
-            if (userInGuild) {
-                foundPatron.set(true);
-            }
-
-            // return false to stop looping
-            return !userInGuild;
-        });
-
-        return foundPatron.get();
-    }
-
+    @Deprecated
     public static List<Long> getPatronGuildIds(long userId, ShardManager shardManager) {
-        if (ONEGUILD_PATRONS.containsKey(userId)) {
-            return List.of(ONEGUILD_PATRONS.get(userId));
-        }
-
-        final List<Long> guildIds = new ArrayList<>();
-
-        shardManager.getGuildCache().acceptStream((stream) ->
-            stream.filter(
-                (guild) -> {
-                    final Member member = guild.getMemberById(userId);
-
-                    return member != null && member.hasPermission(Permission.ADMINISTRATOR);
-                }
-            )
-            .forEach(
-                (guild) -> guildIds.add(guild.getIdLong())
-            )
-        );
-
-        return guildIds;
+        return List.of();
     }
 
+    @Deprecated
     public static void addPatronsFromData(@Nonnull AllPatronsData data) {
         Checks.notNull(data, "data");
-
-        data.getPatrons().forEach(
-            (patron) -> PATRONS.add(patron.getUserId())
-        );
-
-        data.getTagPatrons().forEach(
-            (patron) -> TAG_PATRONS.add(patron.getUserId())
-        );
-
-        data.getOneGuildPatrons().forEach(
-            (patron) -> ONEGUILD_PATRONS.put(patron.getUserId(), patron.getGuildId())
-        );
-
-        data.getGuildPatrons().forEach(
-            (patron) -> GUILD_PATRONS.add(patron.getUserId())
-        );
     }
 
+    @Deprecated
     public static void removePatronsFromData(@Nonnull AllPatronsData data) {
         Checks.notNull(data, "data");
-
-        data.getPatrons().forEach(
-            (patron) -> PATRONS.remove(patron.getUserId())
-        );
-
-        data.getTagPatrons().forEach(
-            (patron) -> TAG_PATRONS.remove(patron.getUserId())
-        );
-
-        data.getOneGuildPatrons().forEach(
-            (patron) -> ONEGUILD_PATRONS.remove(patron.getUserId())
-        );
-
-        data.getGuildPatrons().forEach(
-            (patron) -> GUILD_PATRONS.remove(patron.getUserId())
-        );
     }
 }

@@ -158,37 +158,8 @@ public class GuildUtils {
         };
     }
 
+    @Deprecated
     public static void loadAllPatrons(@Nonnull AbstractDatabase databasee) {
         LOGGER.info("(Re)loading patrons");
-
-        databasee.loadAllPatrons().thenAccept((data) -> {
-            data.getPatrons().forEach(
-                (patron) -> CommandUtils.PATRONS.add(patron.getUserId())
-            );
-
-            LOGGER.info("Loaded {} normal patrons", CommandUtils.PATRONS.size());
-
-            data.getTagPatrons().forEach(
-                (patron) -> CommandUtils.TAG_PATRONS.add(patron.getUserId())
-            );
-
-            LOGGER.info("Loaded {} tag patrons", CommandUtils.TAG_PATRONS.size());
-
-            data.getOneGuildPatrons().forEach((patron) -> {
-                final long userId = patron.getUserId();
-                // The guild id is never null here, and if it is something is terribly wrong
-                @SuppressWarnings("ConstantConditions") final long guildId = patron.getGuildId();
-
-                CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
-            });
-
-            LOGGER.info("Loaded {} one guild patrons", CommandUtils.ONEGUILD_PATRONS.size());
-
-            data.getGuildPatrons().forEach(
-                (patron) -> CommandUtils.GUILD_PATRONS.add(patron.getUserId())
-            );
-
-            LOGGER.info("Loaded {} guild patrons", CommandUtils.GUILD_PATRONS.size());
-        });
     }
 }

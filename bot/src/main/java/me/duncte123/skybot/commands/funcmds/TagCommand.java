@@ -19,7 +19,6 @@
 package me.duncte123.skybot.commands.funcmds;
 
 import gnu.trove.map.TLongObjectMap;
-import me.duncte123.skybot.Settings;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.objects.Tag;
 import me.duncte123.skybot.objects.command.Command;
@@ -28,7 +27,6 @@ import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.utils.FileUpload;
 
@@ -41,7 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.skybot.Settings.PATREON;
-import static me.duncte123.skybot.utils.CommandUtils.*;
+import static me.duncte123.skybot.utils.CommandUtils.isDev;
+import static me.duncte123.skybot.utils.CommandUtils.parseJagTag;
 
 public class TagCommand extends Command {
 
@@ -310,26 +309,8 @@ public class TagCommand extends Command {
         });
     }
 
+    @Deprecated
     private boolean isTagPatron(Member member) {
-        final User user = member.getUser();
-
-        if (isUserTagPatron(user)) {
-            return true;
-        }
-
-        if (member.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
-            return false;
-        }
-
-        final boolean hasRole = member.getRoles()
-            .stream()
-            .map(Role::getIdLong)
-            .anyMatch((it) -> it == Settings.TAG_PATRONS_ROLE);
-
-        if (hasRole) {
-            TAG_PATRONS.add(user.getIdLong());
-        }
-
-        return hasRole;
+        return false;
     }
 }

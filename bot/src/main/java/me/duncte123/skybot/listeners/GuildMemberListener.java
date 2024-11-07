@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting;
 import com.jagrosh.jagtag.Parser;
 import kotlin.Pair;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import me.duncte123.skybot.EventManager;
 import me.duncte123.skybot.Settings;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.database.AbstractDatabase;
@@ -30,8 +29,6 @@ import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.extensions.Time4JKt;
 import me.duncte123.skybot.extensions.UserKt;
 import me.duncte123.skybot.objects.GuildMemberInfo;
-import me.duncte123.skybot.objects.api.AllPatronsData;
-import me.duncte123.skybot.objects.api.Patron;
 import me.duncte123.skybot.utils.CommandUtils;
 import me.duncte123.skybot.utils.GuildSettingsUtils;
 import me.duncte123.skybot.utils.GuildUtils;
@@ -41,7 +38,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -60,7 +57,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -194,7 +190,7 @@ public class GuildMemberListener extends BaseListener {
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
             // If we have a message and the text channel is not null
-            if (!msg.isEmpty() && !"".equals(msg.trim()) && channel != null) {
+            if (!msg.isEmpty() && !msg.trim().isEmpty() && channel != null) {
                 sendMsg(
                     new MessageConfig.Builder()
                         .setChannel(channel)
@@ -208,72 +204,14 @@ public class GuildMemberListener extends BaseListener {
         }
     }
 
+    @Deprecated
     private void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
-        if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
-            return;
-        }
-
-        final boolean patronRemoved = event.getRoles()
-            .stream()
-            .map(Role::getIdLong)
-            .anyMatch(
-                (roleId) -> roleId == Settings.PATRONS_ROLE || roleId == Settings.TAG_PATRONS_ROLE ||
-                    roleId == Settings.GUILD_PATRONS_ROLE || roleId == Settings.ONE_GUILD_PATRONS_ROLE
-            );
-
-        if (patronRemoved) {
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA());
-        }
+        //
     }
 
+    @Deprecated
     private void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
-        if (event.getGuild().getIdLong() != Settings.SUPPORT_GUILD_ID) {
-            return;
-        }
-
-        final long userId = event.getUser().getIdLong();
-        final AtomicReference<Patron.Type> typeToSet = new AtomicReference<>(null);
-
-        event.getRoles()
-            .stream()
-            .map(Role::getIdLong)
-            .forEach((roleId) -> {
-                // All guild patron
-                if (roleId == Settings.GUILD_PATRONS_ROLE) {
-                    CommandUtils.GUILD_PATRONS.add(userId);
-                    typeToSet.set(Patron.Type.ALL_GUILD);
-                    return;
-                }
-
-                // One guild patron
-                if (roleId == Settings.ONE_GUILD_PATRONS_ROLE) {
-                    CommandUtils.PATRONS.remove(userId);
-                    handleNewOneGuildPatron(userId);
-                    // We assume that the patron already did the steps to register
-                    typeToSet.set(null);
-                    return;
-                }
-
-                // Tag patron
-                if (roleId == Settings.TAG_PATRONS_ROLE) {
-                    CommandUtils.PATRONS.remove(userId);
-                    CommandUtils.TAG_PATRONS.add(userId);
-                    typeToSet.set(Patron.Type.TAG);
-                    return;
-                }
-
-                // Normal patron
-                if (roleId == Settings.PATRONS_ROLE) {
-                    CommandUtils.PATRONS.add(userId);
-                    typeToSet.set(Patron.Type.NORMAL);
-                }
-            });
-
-        // if we have a type set it in the database
-        // Type is set in the database here to prevent un-needed updates
-        if (typeToSet.get() != null) {
-            variables.getDatabase().createOrUpdatePatron(typeToSet.get(), userId, null);
-        }
+        //
     }
 
     private void logMemberNotification(User user, Guild guild, String titlePart, String bodyPart, int colour) {
@@ -442,66 +380,14 @@ public class GuildMemberListener extends BaseListener {
         return message;
     }
 
+    @Deprecated
     private void handlePatronRemoval(long userId, JDA jda) {
-        // Remove the user from the patrons list
-        final boolean hadNormalRank = CommandUtils.PATRONS.remove(userId);
-
-        // If the main patron role is removed we can just remove the patron from the database
-        if (hadNormalRank) {
-            variables.getDatabase().removePatron(userId);
-            return;
-        }
-
-        final boolean hadTag = CommandUtils.TAG_PATRONS.remove(userId);
-        Patron.Type newType = null;
-
-        if (hadTag) {
-            newType = Patron.Type.NORMAL;
-        }
-
-        boolean hadOneGuild = false;
-        final InviteTrackingListener tracker = ((EventManager) jda.getEventManager()).getInviteTracker();
-
-        if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
-            // Remove the user from the one guild patrons
-            final long guildId = CommandUtils.ONEGUILD_PATRONS.remove(userId);
-
-            // invalidate the invite cache for this guild
-            tracker.clearInvites(guildId);
-
-            hadOneGuild = true;
-        }
-
-        final boolean hadGuildPatron = CommandUtils.GUILD_PATRONS.remove(userId);
-
-        if (hadGuildPatron) {
-            // clear the invite cache for all guilds of this user since they aren't a patreon anymore
-            // this has to be it's own check or it will do a possibly useless/wrong check for removing logging access
-            CommandUtils.getPatronGuildIds(userId, jda.getShardManager())
-                .forEach(tracker::clearInvites);
-        }
-
-        if (hadOneGuild || hadGuildPatron) {
-            newType = Patron.Type.TAG;
-        }
-
-        // Remove when null?
-        if (newType != null) {
-            final Patron patron = new Patron(newType, userId, null);
-
-            variables.getDatabase().createOrUpdatePatron(patron);
-            CommandUtils.addPatronsFromData(AllPatronsData.fromSinglePatron(patron));
-        }
+        //
     }
 
+    @Deprecated
     private void handleNewOneGuildPatron(long userId) {
-        variables.getDatabase()
-            .getOneGuildPatron(userId)
-            .thenAccept((guildId) -> {
-                if (guildId != null) {
-                    CommandUtils.ONEGUILD_PATRONS.put(userId, guildId);
-                }
-            });
+       //
     }
 
     private void applyAutoRole(Guild guild, Member member, GuildSetting settings) {

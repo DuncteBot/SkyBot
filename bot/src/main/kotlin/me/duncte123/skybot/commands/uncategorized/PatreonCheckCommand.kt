@@ -23,7 +23,8 @@ import me.duncte123.skybot.objects.command.Command
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.utils.CommandUtils
-import me.duncte123.skybot.utils.CommandUtils.*
+import me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
+import me.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
@@ -45,7 +46,7 @@ class PatreonCheckCommand : Command() {
             |${isUserTagPatron(user).a("tag_patron")}
             |${getIsGuildPatronStatus(user, guild).a("guild_patron")}
             |${getIsGuildPremium(guild).a("guild_premium")}
-            |${ONEGUILD_PATRONS.containsValue(guild.idLong).a("guild_one_guild")}
+            |${false.a("guild_one_guild")}
             |${isUserOrGuildPatron(ctx, false).a("isUserOrGuildPatron (should be true if any is true)")}
             |```
         """.trimMargin()

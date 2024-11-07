@@ -21,8 +21,6 @@ package me.duncte123.skybot.web.handlers
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import io.sentry.Sentry
-import me.duncte123.skybot.Settings
-import me.duncte123.skybot.SkyBot
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.objects.api.AllPatronsData
 import me.duncte123.skybot.objects.api.Ban
@@ -33,7 +31,7 @@ import me.duncte123.skybot.utils.CommandUtils
 import me.duncte123.skybot.utils.ModerationUtils
 import me.duncte123.skybot.web.WebSocketClient
 import me.duncte123.skybot.websocket.SocketHandler
-import net.dv8tion.jda.api.entities.Role
+import java.lang.Deprecated
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
@@ -81,29 +79,12 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
         }
     }
 
+    @Deprecated
     private fun handleNewOneGuild(data: JsonNode) {
-        val userId = data["user_id"].asLong()
-        val guildId = data["guild_id"].asLong()
-
-        if (CommandUtils.ONEGUILD_PATRONS.containsKey(userId)) {
-            return
-        }
-
-        variables.database.addOneGuildPatrons(userId, guildId).thenAccept { (_, _) ->
-            val instance = SkyBot.getInstance()
-            val dbGuild = instance.shardManager.getGuildById(Settings.SUPPORT_GUILD_ID) ?: return@thenAccept
-            val newPatron = dbGuild.getMemberById(userId) ?: return@thenAccept
-
-            val hasRole = newPatron.roles
-                .map(Role::getIdLong)
-                .any { it == Settings.ONE_GUILD_PATRONS_ROLE }
-
-            if (hasRole) {
-                CommandUtils.ONEGUILD_PATRONS.put(userId, guildId)
-            }
-        }
+        //
     }
 
+    @Deprecated
     private fun handlePatrons(patrons: JsonNode) {
         if (patrons.has("add")) {
             val addedPatrons = jackson.readValue(patrons["add"].traverse(), AllPatronsData::class.java)
