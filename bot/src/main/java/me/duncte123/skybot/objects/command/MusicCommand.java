@@ -39,9 +39,7 @@ import static me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @SuppressWarnings("ConstantConditions")
 public abstract class MusicCommand extends Command {
-
     protected boolean mayAutoJoin = false;
-    protected boolean justRunLmao = false;
 
     public static final Function<String, String> KEY_GEN = (guildId) -> "musicCommand|" + guildId;
     public static final int MUSIC_COOLDOWN = 12;
@@ -63,11 +61,7 @@ public abstract class MusicCommand extends Command {
             return;
         }
 
-        if (this.mayAutoJoin) {
-            runWithAutoJoin(ctx);
-        } else if (this.justRunLmao || channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
-            run(ctx);
-        }
+        runWithAutoJoin(ctx);
     }
 
     public abstract void run(@Nonnull CommandContext ctx);
@@ -75,14 +69,14 @@ public abstract class MusicCommand extends Command {
     private void runWithAutoJoin(@Nonnull CommandContext ctx) {
         if (isAbleToJoinChannel(ctx)) {
             ctx.getCommandManager().getCommand("join").executeCommand(ctx);
-        } else if (!channelChecks(ctx, ctx.getAudioUtils(), ctx.getPrefix())) {
+        } else if (!channelChecks(ctx, ctx.getAudioUtils())) {
             return;
         }
 
         run(ctx);
     }
 
-    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils, String prefix) {
+    private boolean channelChecks(CommandContext ctx, AudioUtils audioUtils) {
         if (!ctx.getMember().getVoiceState().inAudioChannel()) {
             sendMsg(ctx, "Please join a voice channel first");
             return false;
@@ -90,14 +84,6 @@ public abstract class MusicCommand extends Command {
 
         final LavalinkManager lavalinkManager = getLavalinkManager();
         final Guild guild = ctx.getGuild();
-
-        if (!lavalinkManager.isConnected(guild)) {
-            sendMsg(ctx, "I'm not in a voice channel, use `" + prefix + "join` to make me join a channel\n\n" +
-                "Want to have the bot automatically join your channel? Consider supporting us on patreon.");
-
-            return false;
-        }
-
         final AudioChannelUnion connectedChannel = lavalinkManager.getConnectedChannel(guild);
 
         if (connectedChannel != null && !connectedChannel.getMembers().contains(ctx.getMember())) {
@@ -118,15 +104,6 @@ public abstract class MusicCommand extends Command {
         }
 
         final LavalinkManager lavalinkManager = getLavalinkManager();
-
-        if (!lavalinkManager.isConnected(guild)) {
-            event.reply("I'm not in a voice channel, use `/join` to make me join a channel")
-                .setEphemeral(true)
-                .queue();
-
-            return false;
-        }
-
         final AudioChannelUnion connectedChannel = lavalinkManager.getConnectedChannel(guild);
 
         if (connectedChannel != null && !connectedChannel.getMembers().contains(event.getMember())) {
@@ -142,13 +119,7 @@ public abstract class MusicCommand extends Command {
     }
 
     private boolean isAbleToJoinChannel(CommandContext ctx) {
-        // if (isUserOrGuildPatron(ctx, false)) {
-        //     return ctx.getMember().getVoiceState().inAudioChannel() &&
-        //         !getLavalinkManager().isConnected(ctx.getGuild());
-        // }
-
-        // return false
-        return ctx.getMember().getVoiceState().inAudioChannel() &&
+        return this.mayAutoJoin && ctx.getMember().getVoiceState().inAudioChannel() &&
             !getLavalinkManager().isConnected(ctx.getGuild());
     }
 
@@ -162,16 +133,13 @@ public abstract class MusicCommand extends Command {
     }
 
     public void handleSlashWithAutoJoin(@Nonnull SlashCommandInteractionEvent event, DunctebotGuild guild, @Nonnull Variables variables) {
-        if (this.mayAutoJoin) {
-            // TODO: this will cause issues with the event not working properly, need to find a way to resolve this
-            ((MusicCommand) variables.getCommandManager()
-                .getCommand("join"))
-                .handleEvent(event, guild, variables);
-            this.handleEvent(event, guild, variables);
-            return;
-        }
+        if (canRunSlashCommand(event, guild, variables.getAudioUtils())) {
+            if (this.mayAutoJoin) {
+                ((MusicCommand) variables.getCommandManager()
+                    .getCommand("join"))
+                    .handleEvent(event, guild, variables);
+            }
 
-        if (this.justRunLmao || canRunSlashCommand(event, guild, variables.getAudioUtils())) {
             this.handleEvent(event, guild, variables);
         }
     }

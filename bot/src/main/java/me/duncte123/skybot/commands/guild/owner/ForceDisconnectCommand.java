@@ -35,8 +35,6 @@ import static me.duncte123.skybot.utils.CommandUtils.isDev;
 public class ForceDisconnectCommand extends MusicCommand {
 
     public ForceDisconnectCommand() {
-        this.justRunLmao = true;
-
         this.name = "forcedisconnect";
         this.aliases = new String[]{
             "forceleave",

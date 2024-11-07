@@ -41,8 +41,6 @@ import kotlin.math.min
 
 class LyricsCommand : MusicCommand() {
     init {
-        this.justRunLmao = true
-
         this.name = "lyrics"
         this.help = "Search for song lyrics or show the ones for the currently playing song"
         this.usage = "[song name]"
