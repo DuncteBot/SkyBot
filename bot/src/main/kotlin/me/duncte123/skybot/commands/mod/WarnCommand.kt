@@ -27,8 +27,8 @@ import me.duncte123.skybot.commands.guild.mod.TempBanCommand.getDuration
 import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.Flag
-import me.duncte123.skybot.utils.CommandUtils
-import me.duncte123.skybot.utils.ModerationUtils.*
+import me.duncte123.skybot.utils.ModerationUtils.canInteract
+import me.duncte123.skybot.utils.ModerationUtils.modLog
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
@@ -143,15 +143,15 @@ class WarnCommand : ModBaseCommand() {
     }
 
     private fun getSelectedWarnAction(threshold: Int, guild: DunctebotGuild): WarnAction? {
-        if (!CommandUtils.isGuildPatron(guild)) {
-            val action = guild.settings.warnActions.firstOrNull()
-
-            return if (action != null && threshold >= action.threshold) {
-                action
-            } else {
-                null
-            }
-        }
+//        if (!CommandUtils.isGuildPatron(guild)) {
+//            val action = guild.settings.warnActions.firstOrNull()
+//
+//            return if (action != null && threshold >= action.threshold) {
+//                action
+//            } else {
+//                null
+//            }
+//        }
 
         return guild.settings
             .warnActions

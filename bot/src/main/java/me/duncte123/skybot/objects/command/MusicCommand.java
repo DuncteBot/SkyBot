@@ -35,7 +35,6 @@ import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 @SuppressWarnings("ConstantConditions")
 public abstract class MusicCommand extends Command {
@@ -51,7 +50,7 @@ public abstract class MusicCommand extends Command {
         this.cooldownScope = CooldownScope.GUILD;
         this.cooldownKey = (cmdName, ctx) -> KEY_GEN.apply(ctx.getGuild().getId());
         // Patrons have no cooldown
-        this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx, false);
+//        this.overridesCooldown = (ctx) -> isUserOrGuildPatron(ctx, false);
     }
 
     @Override

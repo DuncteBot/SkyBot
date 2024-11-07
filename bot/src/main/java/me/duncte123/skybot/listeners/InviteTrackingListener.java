@@ -248,10 +248,6 @@ public class InviteTrackingListener extends BaseListener {
     }
 
     private boolean isInviteLoggingEnabled(final Guild guild) {
-        if (!CommandUtils.isGuildPatron(guild)) {
-            return false;
-        }
-
         final GuildSetting guildSetting = GuildSettingsUtils.getGuild(guild.getIdLong(), variables);
 
         return guildSetting.isFilterInvites();

@@ -20,7 +20,6 @@ package me.duncte123.skybot.web.handlers
 
 import com.fasterxml.jackson.databind.JsonNode
 import me.duncte123.skybot.Variables
-import me.duncte123.skybot.utils.CommandUtils
 import me.duncte123.skybot.web.SocketTypes
 import me.duncte123.skybot.web.WebSocketClient
 import me.duncte123.skybot.websocket.SocketHandler
@@ -88,7 +87,8 @@ class RequestHandler(
                 return@forEach
             }
 
-            ret.put(it.asText(), CommandUtils.isGuildPatron(guild))
+//            ret.put(it.asText(), CommandUtils.isGuildPatron(guild))
+            ret.put(it.asText(), false)
         }
 
         return ret

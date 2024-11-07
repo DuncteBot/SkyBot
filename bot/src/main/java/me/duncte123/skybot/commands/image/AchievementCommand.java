@@ -33,7 +33,7 @@ public class AchievementCommand extends NoPatronImageCommand {
     @Override
     public void execute(@Nonnull CommandContext ctx) {
 
-        if (!passes(ctx, false)) {
+        if (!passes(ctx)) {
             return;
         }
 

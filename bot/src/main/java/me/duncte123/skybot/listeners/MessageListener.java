@@ -75,7 +75,6 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.skybot.utils.AirUtils.setJDAContext;
 import static me.duncte123.skybot.utils.CommandUtils.isDev;
-import static me.duncte123.skybot.utils.CommandUtils.isGuildPatron;
 import static me.duncte123.skybot.utils.ModerationUtils.modLog;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
@@ -123,7 +122,7 @@ public abstract class MessageListener extends BaseListener {
 
                 if (settings.isMessageLogging()) {
                     final MessageData edited = MessageData.from(message);
-                    final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited, isGuildPatron(guild));
+                    final MessageData original = this.redis.getAndUpdateMessage(message.getId(), edited);
 
                     // data will be null if the message expired
                     if (original != null) {
@@ -335,7 +334,7 @@ public abstract class MessageListener extends BaseListener {
         if (settings.isMessageLogging()) {
             final MessageData data = MessageData.from(message);
 
-            this.redis.storeMessage(data, isGuildPatron(guild));
+            this.redis.storeMessage(data);
         }
 
         if (!commandManager.isCommand(customPrefix, raw) && doAutoModChecks(event, settings, raw)) {
@@ -673,7 +672,7 @@ public abstract class MessageListener extends BaseListener {
                 .setColor(0xF1C40F)
                 .setAuthor(
                     "%s (%s)".formatted(user.getAsTag(), edited.getAuthorId()),
-                    "https://duncte.bot/patreon",
+                    "https://duncte.bot/",
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(
@@ -717,7 +716,7 @@ public abstract class MessageListener extends BaseListener {
                 .setColor(0xFF0000)
                 .setAuthor(
                     "%s (%s)".formatted(user.getAsTag(), data.getAuthorId()),
-                    "https://duncte.bot/patreon",
+                    "https://duncte.bot/",
                     user.getEffectiveAvatarUrl().replace(".gif", ".png")
                 )
                 .setDescription(

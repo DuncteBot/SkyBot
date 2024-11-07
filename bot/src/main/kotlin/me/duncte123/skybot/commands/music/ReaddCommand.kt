@@ -25,7 +25,6 @@ import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.exceptions.LimitReachedException
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.skybot.utils.CommandUtils.isUserTagPatron
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import kotlin.jvm.optionals.getOrNull
 
@@ -64,7 +63,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         try {
-            manager.scheduler.addToQueue(clone, isUserTagPatron(ctx.author))
+            manager.scheduler.addToQueue(clone)
             sendSuccess(ctx.message)
             sendEmbed(ctx, EmbedUtils.embedMessage(msg))
         } catch (e: LimitReachedException) {

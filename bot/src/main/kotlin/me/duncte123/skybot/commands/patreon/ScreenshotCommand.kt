@@ -23,10 +23,7 @@ import me.duncte123.skybot.objects.CooldownScope
 import me.duncte123.skybot.objects.command.Command
 import me.duncte123.skybot.objects.command.CommandCategory
 import me.duncte123.skybot.objects.command.CommandContext
-import me.duncte123.skybot.utils.AirUtils
-import me.duncte123.skybot.utils.CommandUtils
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.utils.FileUpload
 
 class ScreenshotCommand : Command() {
     init {
@@ -41,22 +38,24 @@ class ScreenshotCommand : Command() {
     }
 
     override fun execute(ctx: CommandContext) {
-        if (!CommandUtils.isUserOrGuildPatron(ctx)) {
-            return
-        }
+        sendMsg(ctx, "This command is for removal")
 
-        val url = ctx.argsRaw
-
-        if (!AirUtils.isURL(url)) {
-            sendMsg(ctx, "`$url` is not a valid link")
-            return
-        }
-
-        // decode base64 to byte array
-        val base64 = ctx.apis.screenshotWebsite(url)
-
-        ctx.channel.sendFiles(FileUpload.fromData(base64, "screenshot.png"))
-            .addContent("><").addContent(url).addContent(">")
-            .queue()
+//        if (!CommandUtils.isUserOrGuildPatron(ctx)) {
+//            return
+//        }
+//
+//        val url = ctx.argsRaw
+//
+//        if (!AirUtils.isURL(url)) {
+//            sendMsg(ctx, "`$url` is not a valid link")
+//            return
+//        }
+//
+//        // decode base64 to byte array
+//        val base64 = ctx.apis.screenshotWebsite(url)
+//
+//        ctx.channel.sendFiles(FileUpload.fromData(base64, "screenshot.png"))
+//            .addContent("><").addContent(url).addContent(">")
+//            .queue()
     }
 }

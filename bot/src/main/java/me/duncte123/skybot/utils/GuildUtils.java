@@ -19,7 +19,6 @@
 package me.duncte123.skybot.utils;
 
 import io.sentry.Sentry;
-import me.duncte123.skybot.database.AbstractDatabase;
 import me.duncte123.skybot.objects.GuildMemberInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
@@ -30,7 +29,6 @@ import net.jodah.expiringmap.ExpiringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -156,10 +154,5 @@ public class GuildUtils {
             case VERY_HIGH -> "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
             default -> "None";
         };
-    }
-
-    @Deprecated
-    public static void loadAllPatrons(@Nonnull AbstractDatabase databasee) {
-        LOGGER.info("(Re)loading patrons");
     }
 }

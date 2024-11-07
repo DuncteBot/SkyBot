@@ -22,9 +22,9 @@ import dev.arbjerg.lavalink.LLClientInfo;
 import kotlin.KotlinVersion;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
-import me.duncte123.weebJava.WeebInfo;
 import me.duncte123.skybot.objects.command.Command;
 import me.duncte123.skybot.objects.command.CommandContext;
+import me.duncte123.weebJava.WeebInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.User;
@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
-import static me.duncte123.skybot.Settings.PATREON;
 
 public class BotinfoCommand extends Command {
     public BotinfoCommand() {
@@ -69,9 +68,7 @@ public class BotinfoCommand extends Command {
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION +
                 "\n**Lavalink-client version:** " + LLClientInfo.VERSION + "\n" +
-                "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
-            .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
-                "[becoming a patron](" + PATREON + ").", false);
+                "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false);
 
         sendEmbed(ctx, builder);
     }

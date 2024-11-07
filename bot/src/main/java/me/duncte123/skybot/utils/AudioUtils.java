@@ -58,8 +58,6 @@ public class AudioUtils {
 
     public Future<Void> loadAndPlay(final AudioData data, final String trackUrlRaw,
                                     final boolean announce) {
-        final boolean isPatron = CommandUtils.isUserTagPatron(data.getUserId());
-//        final boolean isPatron = false;
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -70,7 +68,7 @@ public class AudioUtils {
         }
 
         final GuildMusicManager mng = getMusicManager(data.getGuildId());
-        final AudioLoader loader = new AudioLoader(data, mng, announce, trackUrl, isPatron);
+        final AudioLoader loader = new AudioLoader(data, mng, announce, trackUrl);
         final CompletableFuture<Void> future = new CompletableFuture<>();
 
         LavalinkManager.INS.getLavalink()

@@ -45,7 +45,6 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 public abstract class ImageCommandBase extends Command {
 
@@ -62,13 +61,8 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    /* package */ boolean passes(CommandContext ctx) {
-        return passes(ctx, true);
-    }
-
-    protected boolean passes(CommandContext ctx, boolean patron) {
-        return canSendFile(ctx) && (!patron || isUserOrGuildPatron(ctx));
+    protected boolean passes(CommandContext ctx) {
+        return canSendFile(ctx);
     }
 
     private String getFileName() {

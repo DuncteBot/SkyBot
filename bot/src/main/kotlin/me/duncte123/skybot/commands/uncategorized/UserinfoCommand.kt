@@ -21,7 +21,6 @@ package me.duncte123.skybot.commands.uncategorized
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.skybot.Settings.PATREON
 import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.extensions.*
 import me.duncte123.skybot.objects.CooldownScope
@@ -148,7 +147,7 @@ class UserinfoCommand : Command() {
         appendLine()
 
         if (joins[index] == member) {
-            append("[${joins[index].effectiveName.escapeMarkDown()}]($PATREON)")
+            append("[${joins[index].effectiveName.escapeMarkDown()}](https://duncte.bot/)")
         } else {
             append(joins[index].effectiveName.escapeMarkDown())
         }
@@ -162,7 +161,7 @@ class UserinfoCommand : Command() {
             var usrName = mbr.effectiveName.escapeMarkDown()
 
             if (mbr == member) {
-                usrName = "[$usrName]($PATREON)"
+                usrName = "[$usrName](https://duncte.bot/)"
             }
 
             append(" \\> ")

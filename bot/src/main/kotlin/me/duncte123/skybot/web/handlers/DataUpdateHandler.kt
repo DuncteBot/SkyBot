@@ -22,16 +22,13 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import io.sentry.Sentry
 import me.duncte123.skybot.Variables
-import me.duncte123.skybot.objects.api.AllPatronsData
 import me.duncte123.skybot.objects.api.Ban
 import me.duncte123.skybot.objects.api.Mute
 import me.duncte123.skybot.objects.api.Reminder
 import me.duncte123.skybot.utils.AirUtils
-import me.duncte123.skybot.utils.CommandUtils
 import me.duncte123.skybot.utils.ModerationUtils
 import me.duncte123.skybot.web.WebSocketClient
 import me.duncte123.skybot.websocket.SocketHandler
-import java.lang.Deprecated
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
@@ -50,14 +47,6 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             updateLock.lock()
 
             try {
-                if (data.has("new_one_guild")) {
-                    handleNewOneGuild(data["new_one_guild"])
-                }
-
-                if (data.has("patrons")) {
-                    handlePatrons(data["patrons"])
-                }
-
                 if (data.has("unbans")) {
                     handleUnbans(data["unbans"])
                 }
@@ -76,26 +65,6 @@ class DataUpdateHandler(private val variables: Variables, client: WebSocketClien
             } finally {
                 updateLock.unlock()
             }
-        }
-    }
-
-    @Deprecated
-    private fun handleNewOneGuild(data: JsonNode) {
-        //
-    }
-
-    @Deprecated
-    private fun handlePatrons(patrons: JsonNode) {
-        if (patrons.has("add")) {
-            val addedPatrons = jackson.readValue(patrons["add"].traverse(), AllPatronsData::class.java)
-
-            CommandUtils.addPatronsFromData(addedPatrons)
-        }
-
-        if (patrons.has("remove")) {
-            val removedPatrons = jackson.readValue(patrons["remove"].traverse(), AllPatronsData::class.java)
-
-            CommandUtils.removePatronsFromData(removedPatrons)
         }
     }
 

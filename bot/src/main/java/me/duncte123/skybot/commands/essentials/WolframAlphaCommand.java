@@ -22,7 +22,6 @@ import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import me.duncte123.botcommons.StringUtils;
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.objects.command.Command;
@@ -34,15 +33,12 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.duncte123.skybot.Settings.PATREON;
 import static me.duncte123.skybot.utils.AirUtils.shortenUrl;
-import static me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron;
 
 public class WolframAlphaCommand extends Command {
 
@@ -64,7 +60,7 @@ public class WolframAlphaCommand extends Command {
     private MessageEmbed generateEmbed(CommandContext ctx, WAQueryResult result, Variables variables) {
         final Member member = ctx.getMember();
         final EmbedBuilder embed = EmbedUtils.getDefaultEmbed();
-        embed.setAuthor(member.getEffectiveName(), PATREON, member.getUser().getAvatarUrl());
+        embed.setAuthor(member.getEffectiveName(), "https://duncte.bot/", member.getUser().getAvatarUrl());
 
         embed.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
@@ -119,48 +115,50 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public void execute(@Nonnull CommandContext ctx) {
-        if (!isUserOrGuildPatron(ctx)) {
-            return;
-        }
+        MessageUtils.sendMsg(ctx, "This command is scheduled for removal");
 
-        final WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
-
-        if (engine == null) {
-            MessageUtils.sendMsg(ctx, ":x: Wolfram|Alpha function unavailable!");
-            return;
-        }
-
-        final AtomicReference<Message> message = new AtomicReference<>();
-
-        MessageUtils.sendMsg(MessageConfig.Builder.fromCtx(ctx)
-            .setMessage("Calculating.....")
-            .setSuccessAction(message::set)
-            .build());
-
-        final String queryString = ctx.getArgsRaw();
-        final WAQuery query = engine.createQuery(queryString);
-        final WAQueryResult result;
-
-        try {
-            result = engine.performQuery(query);
-        }
-        catch (WAException e) {
-            editMsg(message, ctx.getChannel(), new MessageEditBuilder()
-                .setContent(
-                    ":x: Error: " +
-                        e.getClass().getSimpleName() +
-                        ": " +
-                        e.getMessage()
-                )
-                .build());
-            e.printStackTrace();
-            return;
-        }
-
-        editMsg(message, ctx.getChannel(), new MessageEditBuilder().setContent("Result:")
-            .setEmbeds(
-                generateEmbed(ctx, result, ctx.getVariables())
-            ).build());
+//        if (!isUserOrGuildPatron(ctx)) {
+//            return;
+//        }
+//
+//        final WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
+//
+//        if (engine == null) {
+//            MessageUtils.sendMsg(ctx, ":x: Wolfram|Alpha function unavailable!");
+//            return;
+//        }
+//
+//        final AtomicReference<Message> message = new AtomicReference<>();
+//
+//        MessageUtils.sendMsg(MessageConfig.Builder.fromCtx(ctx)
+//            .setMessage("Calculating.....")
+//            .setSuccessAction(message::set)
+//            .build());
+//
+//        final String queryString = ctx.getArgsRaw();
+//        final WAQuery query = engine.createQuery(queryString);
+//        final WAQueryResult result;
+//
+//        try {
+//            result = engine.performQuery(query);
+//        }
+//        catch (WAException e) {
+//            editMsg(message, ctx.getChannel(), new MessageEditBuilder()
+//                .setContent(
+//                    ":x: Error: " +
+//                        e.getClass().getSimpleName() +
+//                        ": " +
+//                        e.getMessage()
+//                )
+//                .build());
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        editMsg(message, ctx.getChannel(), new MessageEditBuilder().setContent("Result:")
+//            .setEmbeds(
+//                generateEmbed(ctx, result, ctx.getVariables())
+//            ).build());
     }
 
     private void editMsg(AtomicReference<Message> ref, MessageChannelUnion channel, MessageEditData message) {

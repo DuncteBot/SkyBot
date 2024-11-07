@@ -25,7 +25,6 @@ import me.duncte123.skybot.SkyBot
 import me.duncte123.skybot.Variables
 import me.duncte123.skybot.extensions.isUnavailable
 import me.duncte123.skybot.listeners.InviteTrackingListener
-import me.duncte123.skybot.utils.CommandUtils
 import me.duncte123.skybot.web.WebSocketClient
 import me.duncte123.skybot.websocket.SocketHandler
 import net.dv8tion.jda.api.entities.Guild
@@ -62,9 +61,7 @@ class GuildSettingsHandler(private val variables: Variables, client: WebSocketCl
 
                     // setting was turned on
                     if (oldSetting?.isFilterInvites == false && setting.isFilterInvites) {
-                        if (CommandUtils.isGuildPatron(guild)) {
-                            tracker.attemptInviteCaching(guild)
-                        }
+                        tracker.attemptInviteCaching(guild)
                         // setting was turned off
                     } else if (oldSetting?.isFilterInvites == true && !setting.isFilterInvites) {
                         tracker.clearInvites(setting.guildId)

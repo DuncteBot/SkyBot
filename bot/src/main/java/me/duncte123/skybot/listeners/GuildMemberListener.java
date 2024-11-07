@@ -60,7 +60,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.skybot.Settings.PATREON;
 import static me.duncte123.skybot.utils.ModerationUtils.*;
 import static net.dv8tion.jda.api.requests.ErrorResponse.*;
 
@@ -219,7 +218,7 @@ public class GuildMemberListener extends BaseListener {
         final EmbedBuilder embed = new EmbedBuilder()
             .setColor(colour)
             .setThumbnail(UserKt.getStaticAvatarUrl(user))
-            .setTitle(titlePart + " Notification", PATREON)
+            .setTitle(titlePart + " Notification", "https://duncte.bot/")
             .setDescription(String.format(
                 "%s (`%s`/%s) has %s the server!",
                 user.getAsMention(),

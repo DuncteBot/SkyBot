@@ -26,13 +26,13 @@ import java.util.List;
 
 public class DummyRedisConnection implements RedisDB {
     @Override
-    public void storeMessage(@NotNull MessageData data, boolean isPatron) {
+    public void storeMessage(@NotNull MessageData data) {
 
     }
 
     @Nullable
     @Override
-    public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron) {
+    public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData) {
         return null;
     }
 

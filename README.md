@@ -5,10 +5,8 @@
 [discord]: https://discord.com/api/guilds/191245668617158656/embed.png
 [discordLink]: https://duncte.bot/server
 [inviteLink]: https://duncte.bot/invite
-[patronLink]: https://patreon.com/DuncteBot
-[patronImage]: https://img.shields.io/badge/Donate-Patreon-orange.svg
 
-[![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Patreon][patronImage]][patronLink] [![Support Guild][discord]][discordLink]
+[![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Support Guild][discord]][discordLink]
 
 # SkyBot 
 SkyBot is an LGBT-friendly multipurpose discord bot with features such as music and moderation.
@@ -16,7 +14,6 @@ SkyBot is an LGBT-friendly multipurpose discord bot with features such as music 
 
 # Support
 If you need any support please join our [Discord server][discordLink] <br />
-If you want to support development of the bot [consider to become a patron][patronLink]
 
 
 # How to invite the bot to a server?

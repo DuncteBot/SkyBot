@@ -25,9 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface RedisDB {
-    void storeMessage(@NotNull MessageData data, boolean isPatron);
+    void storeMessage(@NotNull MessageData data);
     @Nullable
-    MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron);
+    MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData);
     @Nullable
     MessageData getAndDeleteMessage(@NotNull String messageId);
     @NotNull

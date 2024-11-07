@@ -53,13 +53,13 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
     private final String trackUrl;
     private final boolean isPatron;
 
-    public AudioLoader(AudioData data, GuildMusicManager mng, boolean announce, String trackUrl, boolean isPatron) {
+    public AudioLoader(AudioData data, GuildMusicManager mng, boolean announce, String trackUrl) {
         this.data = data;
         this.requester = data.getUserId();
         this.mng = mng;
         this.announce = announce;
         this.trackUrl = trackUrl;
-        this.isPatron = isPatron;
+        this.isPatron = false;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
         }
 
         try {
-            scheduler.addToQueue(track, this.isPatron);
+            scheduler.addToQueue(track);
 
             if (this.announce) {
                 final TrackInfo info = track.getInfo();

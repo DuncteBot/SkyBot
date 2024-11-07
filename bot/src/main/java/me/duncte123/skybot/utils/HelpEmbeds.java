@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.getDefaultEmbed;
-import static me.duncte123.skybot.Settings.PATREON;
 
 @SuppressWarnings("PMD")
 public class HelpEmbeds {
@@ -54,7 +53,7 @@ public class HelpEmbeds {
 
     public static EmbedBuilder generateCommandEmbed(@Nonnull String prefix, @Nullable CommandCategory category) {
         final EmbedBuilder embed = getDefaultEmbed()
-            .setTitle("Use `" + prefix + "help [command/category]` to get more info about a command\n", PATREON);
+            .setTitle("Use `" + prefix + "help [command/category]` to get more info about a command\n");
 
         if (category == null) {
             addAllCategoriesToEmbed(embed);
@@ -64,7 +63,6 @@ public class HelpEmbeds {
 
         return embed.addField("Important links",
             "Discord server: [duncte.bot/server](https://duncte.bot/server)\n" +
-                "Support development of this bot: [" + PATREON + "](" + PATREON + ")\n" +
                 "Privacy policy: [duncte.bot/privacy](https://duncte.bot/privacy)", false);
     }
 

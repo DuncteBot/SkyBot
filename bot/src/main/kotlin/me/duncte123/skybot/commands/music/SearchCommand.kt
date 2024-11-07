@@ -26,8 +26,6 @@ import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.skybot.utils.CommandUtils.isDev
-import me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import java.util.*
@@ -49,15 +47,10 @@ class SearchCommand : MusicCommand() {
         }
 
         val handler = ctx.reactionHandler
-        val isPatron = isUserOrGuildPatron(ctx, false)
         val userId = ctx.author.idLong
 
-        val timeout = when {
-            isDev(userId) || isPatron -> 60L
-            else -> 15L
-        }
-
-        val searchLimit = if (isPatron) 20 else 5
+        val timeout = 60L
+        val searchLimit = 20
 
         val toPlay = ctx.argsRaw
         val res = ctx.audioUtils.searchForSong(ctx.guildId, toPlay)
@@ -76,9 +69,6 @@ class SearchCommand : MusicCommand() {
 
             append("\n\n")
             append("Click the button with the number of the song that you want to play, or click `cancel` to cancel your search")
-            if (!isPatron) {
-                append("\n(hint: patron supporters get access to more search results to pick from)")
-            }
         }
 
         val componentId = "search-menu:${UUID.randomUUID()}:$userId"

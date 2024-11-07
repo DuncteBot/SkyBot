@@ -72,8 +72,8 @@ public class TrackScheduler {
         return queue;
     }
 
-    public void addToQueue(Track track, boolean isPatron) throws LimitReachedException {
-        if (queue.size() + 1 >= MAX_QUEUE_SIZE && !isPatron) {
+    public void addToQueue(Track track) throws LimitReachedException {
+        if (queue.size() + 1 >= MAX_QUEUE_SIZE) {
             throw new LimitReachedException("The queue is full", MAX_QUEUE_SIZE);
         }
 

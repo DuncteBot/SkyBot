@@ -23,7 +23,6 @@ import me.duncte123.skybot.Variables
 import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.skybot.utils.CommandUtils.isUserOrGuildPatron
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
@@ -39,10 +38,6 @@ class VolumeCommand : MusicCommand() {
     }
 
     override fun run(ctx: CommandContext) {
-        if (!isUserOrGuildPatron(ctx)) {
-            return
-        }
-
         val mng = ctx.audioUtils.getMusicManager(ctx.guildId)
 
         mng.player.ifPresentOrElse({ player ->
@@ -88,10 +83,6 @@ class VolumeCommand : MusicCommand() {
         guild: DunctebotGuild,
         variables: Variables,
     ) {
-        if (!isUserOrGuildPatron(event)) {
-            return
-        }
-
         val mng = variables.audioUtils.getMusicManager(event.guild!!.idLong)
 
         mng.player.ifPresentOrElse({ player ->

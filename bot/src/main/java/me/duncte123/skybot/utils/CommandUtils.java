@@ -21,20 +21,16 @@ package me.duncte123.skybot.utils;
 import com.jagrosh.jagtag.JagTag;
 import com.jagrosh.jagtag.Parser;
 import me.duncte123.skybot.Settings;
-import me.duncte123.skybot.objects.api.AllPatronsData;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.Flag;
 import me.duncte123.skybot.objects.jagtag.DiscordMethods;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -129,64 +125,6 @@ public class CommandUtils {
         return parsed;
     }
 
-    @Deprecated
-    private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel) {
-        return false;
-    }
-
-    @Deprecated
-    public static boolean isUserTagPatron(@Nonnull User user) {
-        return isUserTagPatron(user.getIdLong());
-    }
-
-    @Deprecated
-    public static boolean isUserTagPatron(long userId) {
-        return false;
-    }
-
-    private static boolean isPatron(@Nonnull User user, @Nullable MessageChannel replyChannel, boolean reply) {
-        final MessageChannel channel = reply ? replyChannel : null;
-        return isPatron(user, channel) || isUserTagPatron(user);
-    }
-
-    @Deprecated
-    public static boolean isGuildPatron(@Nonnull Guild guild) {
-        return false;
-    }
-
-    // FIXME: Do new patron checks for guilds
-    @Deprecated
-    private static boolean isGuildPatron(@Nonnull User user, @Nonnull Guild guild) {
-
-        return false;
-    }
-
-    @Deprecated
-    public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx, boolean reply) {
-        return isUserOrGuildPatron(ctx.getAuthor(), ctx.getGuild(), ctx.getChannel(), reply);
-    }
-
-    @Deprecated
-    public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event, boolean reply) {
-        return isUserOrGuildPatron(event.getUser(), Objects.requireNonNull(event.getGuild()), event.getChannel(), reply);
-    }
-
-    @Deprecated
-    public static boolean isUserOrGuildPatron(@Nonnull SlashCommandInteractionEvent event) {
-        return isUserOrGuildPatron(event, true);
-    }
-
-    @Deprecated
-    public static boolean isUserOrGuildPatron(@Nonnull User author, @Nonnull Guild guild, @Nonnull MessageChannel channel, boolean reply) {
-        final boolean isGuild = isGuildPatron(author, guild);
-        return isGuild || isPatron(author, channel, reply);
-    }
-
-    @Deprecated
-    public static boolean isUserOrGuildPatron(@Nonnull CommandContext ctx) {
-        return isUserOrGuildPatron(ctx, true);
-    }
-
     public static boolean isDev(@Nonnull User user) {
         return isDev(user.getIdLong());
     }
@@ -199,20 +137,5 @@ public class CommandUtils {
         }
 
         return false;
-    }
-
-    @Deprecated
-    public static List<Long> getPatronGuildIds(long userId, ShardManager shardManager) {
-        return List.of();
-    }
-
-    @Deprecated
-    public static void addPatronsFromData(@Nonnull AllPatronsData data) {
-        Checks.notNull(data, "data");
-    }
-
-    @Deprecated
-    public static void removePatronsFromData(@Nonnull AllPatronsData data) {
-        Checks.notNull(data, "data");
     }
 }

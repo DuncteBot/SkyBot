@@ -76,7 +76,7 @@ public class RedisConnection implements RedisDB {
     }
 
     @Override
-    public void storeMessage(@NotNull MessageData data, boolean isPatron) {
+    public void storeMessage(@NotNull MessageData data) {
         try (Jedis jedis = this.getResource()) {
             // Long hset(String key, Map<String, String> hash);
             jedis.hset(
@@ -84,21 +84,20 @@ public class RedisConnection implements RedisDB {
                 data.toMap()
             );
             // normal 2 weeks, patreon 1 month
-            final long seconds = isPatron ? ONE_MONTH_IN_SECONDS : TWO_WEEKS_IN_SECONDS;
-            jedis.expire(data.getMessageIdString(), seconds);
+            jedis.expire(data.getMessageIdString(), ONE_MONTH_IN_SECONDS);
         }
     }
 
     @Override
     @Nullable
-    public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData, boolean isPatron) {
+    public MessageData getAndUpdateMessage(@NotNull String messageId, @NotNull MessageData updateData) {
         try (Jedis jedis = this.getResource()) {
             final Map<String, String> response = jedis.hgetAll(messageId);
 
             // update the data after getting it
             jedis.hset(messageId, updateData.toMap());
             // update timeout
-            jedis.expire(messageId, isPatron ? ONE_MONTH_IN_SECONDS : TWO_WEEKS_IN_SECONDS);
+            jedis.expire(messageId, ONE_MONTH_IN_SECONDS);
 
             if (response.isEmpty()) {
                 return null;

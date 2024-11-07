@@ -176,7 +176,6 @@ public class CommandManager {
         this.addCommand(new DidYouMeanCommand());
         this.addCommand(new DiscordMemesCommand());
         this.addCommand(new DogCommand());
-        this.addCommand(new DonateCommand());
         this.addCommand(new DrakeCommand());
         this.addCommand(new EmoteCommand());
         this.addCommand(new EnlargeCommand());
@@ -226,8 +225,6 @@ public class CommandManager {
         this.addCommand(new OrlyCommand());
         this.addCommand(new OwoCommand());
         this.addCommand(new PatCommand());
-        // TODO: remove some day, can't do any harm really
-        this.addCommand(new PatreonCheckCommand());
         this.addCommand(new PauseCommand());
         this.addCommand(new PcCheckCommand());
         this.addCommand(new PingCommand());

@@ -27,7 +27,6 @@ import me.duncte123.skybot.objects.AudioData
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.AirUtils
-import me.duncte123.skybot.utils.CommandUtils
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -115,12 +114,6 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         if (file == null) {
             sendMsg(ctx, "Cannot play that file, please attach an audio file instead")
             return false
-        }
-
-        // returning true here to prevent going to the pause toggle
-        if (!CommandUtils.isUserOrGuildPatron(ctx, false)) {
-            sendMsg(ctx, "Sorry but this feature is only available to patrons")
-            return true
         }
 
         handlePlay(file.url, ctx)
