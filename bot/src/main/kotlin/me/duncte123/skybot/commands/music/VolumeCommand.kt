@@ -64,19 +64,17 @@ class VolumeCommand : MusicCommand() {
         }
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOptions(
-                OptionData(
-                    OptionType.INTEGER,
-                    "volume",
-                    "Sets the volume on the music player (0-1000 where 100 is 100%)",
-                    false
-                )
-                    .setMinValue(0)
-                    .setMinValue(1000)
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOptions(
+            OptionData(
+                OptionType.INTEGER,
+                "volume",
+                "Sets the volume on the music player (0-1000 where 100 is 100%)",
+                false
             )
-    }
+                .setMinValue(0)
+                .setMinValue(1000)
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

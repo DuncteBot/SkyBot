@@ -96,15 +96,13 @@ class ForceSkip : MusicCommand() {
         )
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOption(
-                OptionType.INTEGER,
-                "skip_count",
-                "The number of tracks to skip",
-                false
-            )
-    }
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOption(
+            OptionType.INTEGER,
+            "skip_count",
+            "The number of tracks to skip",
+            false
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

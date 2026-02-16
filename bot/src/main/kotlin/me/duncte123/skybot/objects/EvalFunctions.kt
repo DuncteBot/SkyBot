@@ -34,9 +34,7 @@ import net.dv8tion.jda.api.sharding.ShardManager
 @Suppress("unused")
 object EvalFunctions {
     @JvmStatic
-    fun isEven(number: Int): Boolean {
-        return number % 2 == 0
-    }
+    fun isEven(number: Int): Boolean = number % 2 == 0
 
     @JvmStatic
     fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
@@ -49,9 +47,7 @@ object EvalFunctions {
     }
 
     @JvmStatic
-    fun getSharedGuilds(event: MessageReceivedEvent): String {
-        return getSharedGuilds(event.jda, event.member!!)
-    }
+    fun getSharedGuilds(event: MessageReceivedEvent): String = getSharedGuilds(event.jda, event.member!!)
 
     @JvmStatic
     fun getSharedGuilds(jda: JDA, member: Member): String {

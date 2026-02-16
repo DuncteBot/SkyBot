@@ -81,15 +81,13 @@ class CommandDumpCommand : Command() {
         return s
     }
 
-    private fun String.mdToHtml(): String {
-        return this.replace("&".toRegex(), "&amp;")
-            .replace("<".toRegex(), "&lt;")
-            .replace(">".toRegex(), "&gt;")
-            .replace("\\n".toRegex(), "<br />")
-            .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
-            .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
-            .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
-    }
+    private fun String.mdToHtml(): String = this.replace("&".toRegex(), "&amp;")
+        .replace("<".toRegex(), "&lt;")
+        .replace(">".toRegex(), "&gt;")
+        .replace("\\n".toRegex(), "<br />")
+        .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
+        .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
+        .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
 
     private fun Command.toJson(mapper: JsonMapper): ObjectNode {
         val obj = mapper.createObjectNode()
@@ -104,7 +102,5 @@ class CommandDumpCommand : Command() {
         return obj
     }
 
-    private fun CommandManager.getFilteredCommands(): List<Command> {
-        return this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
-    }
+    private fun CommandManager.getFilteredCommands(): List<Command> = this.commands.filter { it.category != CommandCategory.UNLISTED }.map { it as Command }
 }

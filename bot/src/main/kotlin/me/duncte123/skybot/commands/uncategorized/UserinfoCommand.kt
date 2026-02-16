@@ -169,12 +169,10 @@ class UserinfoCommand : Command() {
         }
     }
 
-    private fun getJoinPosition(members: List<Member>, member: Member): Long {
-        return members.stream().sorted(Comparator.comparing(Member::getTimeJoined))
-            .takeWhile {
-                it != member
-            }.count() + 1
-    }
+    private fun getJoinPosition(members: List<Member>, member: Member): Long = members.stream().sorted(Comparator.comparing(Member::getTimeJoined))
+        .takeWhile {
+            it != member
+        }.count() + 1
 
     private fun renderMemberEmbed(event: MessageReceivedEvent, member: Member, ctx: CommandContext) {
         val user = member.user
@@ -264,27 +262,25 @@ class UserinfoCommand : Command() {
     private val User.badgeLine: String
         get() = this.flags.mapNotNull { it.toEmote() }.joinToString(" ")
 
-    private fun UserFlag.toEmote(): String? {
-        return when (this) {
-            UserFlag.STAFF -> DISCORD_STAFF
-            UserFlag.PARTNER -> DISCORD_PARTNER
+    private fun UserFlag.toEmote(): String? = when (this) {
+        UserFlag.STAFF -> DISCORD_STAFF
+        UserFlag.PARTNER -> DISCORD_PARTNER
 
-            UserFlag.HYPESQUAD -> DISCORD_HYPESQUAD
-            UserFlag.HYPESQUAD_BRAVERY -> DISCORD_HYPESQUAD_BRAVERY
-            UserFlag.HYPESQUAD_BRILLIANCE -> DISCORD_HYPESQUAD_BRILLIANCE
-            UserFlag.HYPESQUAD_BALANCE -> DISCORD_HYPESQUAD_BALANCE
+        UserFlag.HYPESQUAD -> DISCORD_HYPESQUAD
+        UserFlag.HYPESQUAD_BRAVERY -> DISCORD_HYPESQUAD_BRAVERY
+        UserFlag.HYPESQUAD_BRILLIANCE -> DISCORD_HYPESQUAD_BRILLIANCE
+        UserFlag.HYPESQUAD_BALANCE -> DISCORD_HYPESQUAD_BALANCE
 
-            UserFlag.BUG_HUNTER_LEVEL_1 -> DISCORD_BUG_HUNTER_1
-            UserFlag.BUG_HUNTER_LEVEL_2 -> DISCORD_BUG_HUNTER_2
+        UserFlag.BUG_HUNTER_LEVEL_1 -> DISCORD_BUG_HUNTER_1
+        UserFlag.BUG_HUNTER_LEVEL_2 -> DISCORD_BUG_HUNTER_2
 
-            UserFlag.EARLY_SUPPORTER -> DISCORD_EARLY_SUPPORTER
-            // No emotes / not needed
+        UserFlag.EARLY_SUPPORTER -> DISCORD_EARLY_SUPPORTER
+        // No emotes / not needed
 //            UserFlag.TEAM_USER -> ""
 //            UserFlag.SYSTEM -> ""
 //            UserFlag.VERIFIED_BOT -> ""
-            UserFlag.VERIFIED_DEVELOPER -> DISCORD_VERIFIED_DEVELOPER
-            else -> null
-        }
+        UserFlag.VERIFIED_DEVELOPER -> DISCORD_VERIFIED_DEVELOPER
+        else -> null
     }
 
     /*private fun OnlineStatus.toEmote() = when (this) {
@@ -295,20 +291,18 @@ class UserinfoCommand : Command() {
         else -> "<:offline2:464520569929334784>"
     }*/
 
-    private fun OffsetDateTime.toBoostEmote(): String {
-        return when (this.until(OffsetDateTime.now(), ChronoUnit.MONTHS)) {
-            0L, 1L -> {
-                "<:booster:738374009300975686>"
-            }
-            2L -> {
-                "<:booster2:738374044247654480>"
-            }
-            3L -> {
-                "<:booster3:738374173159850054>"
-            }
-            else -> {
-                "<:booster4:738374213970165782>"
-            }
+    private fun OffsetDateTime.toBoostEmote(): String = when (this.until(OffsetDateTime.now(), ChronoUnit.MONTHS)) {
+        0L, 1L -> {
+            "<:booster:738374009300975686>"
+        }
+        2L -> {
+            "<:booster2:738374044247654480>"
+        }
+        3L -> {
+            "<:booster3:738374173159850054>"
+        }
+        else -> {
+            "<:booster4:738374213970165782>"
         }
     }
 }

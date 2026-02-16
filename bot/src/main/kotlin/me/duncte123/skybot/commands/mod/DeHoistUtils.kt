@@ -49,17 +49,15 @@ private val allowedUnicodeBlocks = setOf(
     UnicodeBlock.THAI,
 )
 
-private fun cleanUsername(username: String): String {
-    return Normalizer.normalize(username, Normalizer.Form.NFKC)
-        // TODO: is turning this into a char array more efficient?
-        .toCharArray()
-        .filter { it.isWhitespace() || it.isLetterOrDigit() || UnicodeBlock.of(it) in allowedUnicodeBlocks }
+private fun cleanUsername(username: String): String = Normalizer.normalize(username, Normalizer.Form.NFKC)
+    // TODO: is turning this into a char array more efficient?
+    .toCharArray()
+    .filter { it.isWhitespace() || it.isLetterOrDigit() || UnicodeBlock.of(it) in allowedUnicodeBlocks }
 //        .map { if (it.isTitleCase()) it.lowercase() else it }
-        .joinToString("") {
-            if (it.isTitleCase()) it.lowercase() else it.toString()
-        }
-        .trim()
-}
+    .joinToString("") {
+        if (it.isTitleCase()) it.lowercase() else it.toString()
+    }
+    .trim()
 
 private val Member.cleanedDisplayName: String
     get() {
@@ -76,10 +74,8 @@ private val Member.cleanedDisplayName: String
         return cleanedName
     }
 
-private fun shouldDehoist(member: Member): Boolean {
-    return member.cleanedDisplayName != member.effectiveName &&
-        member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)
-}
+private fun shouldDehoist(member: Member): Boolean = member.cleanedDisplayName != member.effectiveName &&
+    member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)
 
 private fun canAutoDehoist(member: Member, variables: Variables): Boolean {
     if (member.user.isBot) {

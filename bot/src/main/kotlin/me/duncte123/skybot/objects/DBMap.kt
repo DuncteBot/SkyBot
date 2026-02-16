@@ -24,11 +24,9 @@ import net.jodah.expiringmap.ExpiringMap
  * Custom wrapper for [ExpiringMap] that has a nullable getter for [getIfPresent]
  */
 class DBMap<K, V>(private val realMap: ExpiringMap<K, V>) : MutableMap<K, V> by realMap {
-    fun getIfPresent(key: K): V? {
-        return if (realMap.containsKey(key)) {
-            realMap[key]
-        } else {
-            null
-        }
+    fun getIfPresent(key: K): V? = if (realMap.containsKey(key)) {
+        realMap[key]
+    } else {
+        null
     }
 }

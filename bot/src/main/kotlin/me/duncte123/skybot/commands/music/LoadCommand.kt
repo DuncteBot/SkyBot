@@ -99,15 +99,13 @@ class LoadCommand : MusicCommand() {
         }
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOption(
-                OptionType.ATTACHMENT,
-                "file",
-                "The file created by running the save command.",
-                true
-            )
-    }
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOption(
+            OptionType.ATTACHMENT,
+            "file",
+            "The file created by running the save command.",
+            true
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

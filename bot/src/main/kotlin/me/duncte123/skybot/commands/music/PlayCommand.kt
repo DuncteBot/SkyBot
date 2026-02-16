@@ -153,15 +153,13 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         variables.audioUtils.loadAndPlay(AudioData.fromSlash(event, variables), toPlay, true)
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOption(
-                OptionType.STRING,
-                "item",
-                "A url or a search term to play.",
-                true
-            )
-    }
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOption(
+            OptionType.STRING,
+            "item",
+            "A url or a search term to play.",
+            true
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

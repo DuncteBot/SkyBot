@@ -20,6 +20,4 @@ package me.duncte123.skybot.extensions
 
 import net.dv8tion.jda.api.sharding.ShardManager
 
-fun ShardManager.isUnavailable(guildId: Long): Boolean {
-    return this.shardCache.any { it.isUnavailable(guildId) }
-}
+fun ShardManager.isUnavailable(guildId: Long): Boolean = this.shardCache.any { it.isUnavailable(guildId) }

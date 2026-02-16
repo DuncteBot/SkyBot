@@ -39,7 +39,5 @@ class RadioStream(var name: String, val url: String, val website: String) {
         return result
     }
 
-    override fun toString(): String {
-        return "RadioStream(name='$name', url='$url', website=$website)"
-    }
+    override fun toString(): String = "RadioStream(name='$name', url='$url', website=$website)"
 }

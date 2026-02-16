@@ -92,22 +92,20 @@ class BassBoostCommand : MusicCommand() {
         }
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOptions(
-                OptionData(
-                    OptionType.STRING,
-                    "level",
-                    "How strong should the bass boost be",
-                    true,
-                    false
-                )
-                    .addChoice("high", "high")
-                    .addChoice("med", "med")
-                    .addChoice("low", "low")
-                    .addChoice("off", "off")
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOptions(
+            OptionData(
+                OptionType.STRING,
+                "level",
+                "How strong should the bass boost be",
+                true,
+                false
             )
-    }
+                .addChoice("high", "high")
+                .addChoice("med", "med")
+                .addChoice("low", "low")
+                .addChoice("off", "off")
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

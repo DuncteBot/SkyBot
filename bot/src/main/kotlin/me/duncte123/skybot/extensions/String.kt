@@ -37,11 +37,9 @@ fun String.stripFlags(command: Command): String {
 
 fun String.abbreviate(length: Int) = StringUtils.abbreviate(this, length)!!
 
-fun String.escapeMarkDown(): String {
-    return this.replace("_", "\\_")
-        .replace("*", "\\*")
-        .replace("`", "\\`")
-        .replace("|", "\\|")
-        .replace(">", "\\?")
-        .replace("~", "\\~")
-}
+fun String.escapeMarkDown(): String = this.replace("_", "\\_")
+    .replace("*", "\\*")
+    .replace("`", "\\`")
+    .replace("|", "\\|")
+    .replace(">", "\\?")
+    .replace("~", "\\~")

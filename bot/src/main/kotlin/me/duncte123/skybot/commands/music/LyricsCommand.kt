@@ -83,15 +83,13 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    override fun getSubData(): SubcommandData {
-        return super.getSubData()
-            .addOption(
-                OptionType.STRING,
-                "song",
-                "The song to search for",
-                false
-            )
-    }
+    override fun getSubData(): SubcommandData = super.getSubData()
+        .addOption(
+            OptionType.STRING,
+            "song",
+            "The song to search for",
+            false
+        )
 
     override fun handleEvent(
         event: SlashCommandInteractionEvent,

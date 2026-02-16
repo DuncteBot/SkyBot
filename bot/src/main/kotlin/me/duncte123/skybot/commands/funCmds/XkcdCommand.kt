@@ -64,20 +64,16 @@ class XkcdCommand : Command() {
         val embed = EmbedUtils.getDefaultEmbed()
             .setTitle(
                 it["safe_title"].asText(),
-                "http://xkcd.com/${it["num"].asInt()}/"
+                "https://xkcd.com/${it["num"].asInt()}/"
             )
             .setImage(it["img"].asText())
 
         sendEmbed(ctx, embed)
     }
 
-    private fun getInfo(id: Int): ObjectNode {
-        return WebUtils.ins.getJSONObject("http://xkcd.com/$id/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
-    }
+    private fun getInfo(id: Int): ObjectNode = WebUtils.ins.getJSONObject("https://xkcd.com/$id/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
 
-    private fun getLatest(): ObjectNode {
-        return WebUtils.ins.getJSONObject("http://xkcd.com/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
-    }
+    private fun getLatest(): ObjectNode = WebUtils.ins.getJSONObject("https://xkcd.com/info.0.json") { it.setRateLimiter(RateLimiter.directLimiter()) }.execute()
 
     private fun getRandom(): Int {
         val it = getLatest()

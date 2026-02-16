@@ -24,13 +24,9 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.utils.TimeFormat
 import java.time.OffsetDateTime
 
-fun ISnowflake.parseTimeCreated(): Pair<String, String> {
-    return this.timeCreated.parseTimes()
-}
+fun ISnowflake.parseTimeCreated(): Pair<String, String> = this.timeCreated.parseTimes()
 
-fun Member.parseTimeJoined(): Pair<String, String> {
-    return this.timeJoined.parseTimes()
-}
+fun Member.parseTimeJoined(): Pair<String, String> = this.timeJoined.parseTimes()
 
 fun OffsetDateTime.parseTimes(timeFormat: TimeFormat = TimeFormat.RELATIVE): Pair<String, String> {
     val createTimeFormat = DateUtils.makeDatePretty(this)
@@ -51,6 +47,4 @@ fun OffsetDateTime.parseTimes(timeFormat: TimeFormat = TimeFormat.RELATIVE): Pai
     return PrettyTime.of(Locale.ENGLISH).print(duration, textWidth) + " ago"
 }*/
 
-fun OffsetDateTime.humanize(timeFormat: TimeFormat = TimeFormat.RELATIVE): String {
-    return timeFormat.format(this)
-}
+fun OffsetDateTime.humanize(timeFormat: TimeFormat = TimeFormat.RELATIVE): String = timeFormat.format(this)

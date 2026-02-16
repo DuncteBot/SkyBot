@@ -35,18 +35,12 @@ abstract class WeebCommandBase : Command() {
         this.usage = if (userAction) "[@user]" else ""
     }
 
-    private fun getDefaultWeebEmbed(): EmbedBuilder {
-        return EmbedUtils.getDefaultEmbed()
-            .setFooter("Powered by weeb.sh", null)
-    }
+    private fun getDefaultWeebEmbed(): EmbedBuilder = EmbedUtils.getDefaultEmbed()
+        .setFooter("Powered by weeb.sh", null)
 
-    protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): EmbedBuilder {
-        return getDefaultWeebEmbed().setDescription(description).setImage(imageUrl)
-    }
+    protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): EmbedBuilder = getDefaultWeebEmbed().setDescription(description).setImage(imageUrl)
 
-    protected fun getWeebEmbedImage(imageUrl: String): EmbedBuilder {
-        return getDefaultWeebEmbed().setImage(imageUrl)
-    }
+    protected fun getWeebEmbedImage(imageUrl: String): EmbedBuilder = getDefaultWeebEmbed().setImage(imageUrl)
 
     protected fun singleAction(type: String, thing: String, ctx: CommandContext) {
         val args = ctx.args
