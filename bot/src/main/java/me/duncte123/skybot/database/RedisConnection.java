@@ -32,10 +32,8 @@ import java.util.Map;
 
 public class RedisConnection implements RedisDB {
     /* seconds * minutes * hours * days */
-    private static final long TWO_WEEKS_IN_SECONDS = 60L * 60L * 24L * 14L;
     private static final long ONE_MONTH_IN_SECONDS = 60L * 60L * 24L * 31L;
 
-    @SuppressWarnings("NotNullFieldNotInitialized")
     @NotNull
     private JedisPool pool;
     private boolean canConnect = true;
@@ -83,7 +81,6 @@ public class RedisConnection implements RedisDB {
                 data.getMessageIdString(),
                 data.toMap()
             );
-            // normal 2 weeks, patreon 1 month
             jedis.expire(data.getMessageIdString(), ONE_MONTH_IN_SECONDS);
         }
     }

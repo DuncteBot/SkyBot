@@ -74,7 +74,7 @@ fun VersionCatalogBuilder.bot() {
     library("duration-parser", "me.duncte123", "durationParser").version("1.1.3")
 //    library("emoji-java", "com.github.minndevelopment", "emoji-java").version("master-SNAPSHOT")
     library("jemoji", "net.fellbaum", "jemoji").version("1.5.2")
-    library("botCommons", "me.duncte123", "botCommons").version("3.1.18")
+    library("botCommons", "me.duncte123", "botCommons").version("3.2.19")
 
     bundle("featureLibs", listOf("botCommons", "weebjava", "loadingBar", "jagTag", "wolfram-alpha", "duration-parser", "jemoji"))
 

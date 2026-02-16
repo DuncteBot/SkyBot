@@ -88,14 +88,16 @@ public class HelpCommand extends Command {
     }
 
     private void sendHelp(CommandContext ctx, EmbedBuilder embed) {
-        ctx.getAuthor()
+        sendEmbed(ctx, embed);
+
+        /*ctx.getAuthor()
             .openPrivateChannel()
             .flatMap((pc) -> pc.sendMessageEmbeds(embed.build()))
             .queue(
                 (msg) -> sendMsg(ctx, ctx.getAuthor().getAsMention() + " help has been sent to your private messages"),
                 //When sending fails, send to the channel
                 (err) -> sendMsg(ctx, "You can check out my commands here:\nhttps://duncte.bot/commands")
-            );
+            );*/
     }
 
     private void sendCommandHelp(CommandContext ctx, String toSearch, CommandManager manager, String prefix) {

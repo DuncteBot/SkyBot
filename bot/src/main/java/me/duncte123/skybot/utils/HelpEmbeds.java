@@ -39,14 +39,14 @@ public class HelpEmbeds {
     private static String MAIN_COMMANDS = "";
     private static String MUSIC_COMMANDS = "";
     private static String ANIMALS_COMMANDS = "";
-    private static String WEEB_COMMANDS = "";
-    private static String LGBTQ_COMMANDS = "";
+//    private static String WEEB_COMMANDS = "";
+//    private static String LGBTQ_COMMANDS = "";
     private static String FUN_COMMANDS = "";
     private static String UTILS_COMMANDS = "";
     private static String MODERATION_COMMANDS = "";
     private static String ADMINISTRATION_COMMANDS = "";
-    private static String PATRON_COMMANDS = "";
-    private static String NSFW_COMMANDS = "";
+//    private static String PATRON_COMMANDS = "";
+//    private static String NSFW_COMMANDS = "";
     /// </editor-fold>
 
     private static final boolean INLINE = false;
@@ -97,10 +97,10 @@ public class HelpEmbeds {
                     case MODERATION -> MODERATION_COMMANDS = joinedCommands;
                     case ADMINISTRATION -> ADMINISTRATION_COMMANDS = joinedCommands;
                     case UTILS -> UTILS_COMMANDS = joinedCommands;
-                    case PATRON -> PATRON_COMMANDS = joinedCommands;
-                    case WEEB -> WEEB_COMMANDS = joinedCommands;
-                    case NSFW -> NSFW_COMMANDS = joinedCommands;
-                    case LGBTQ -> LGBTQ_COMMANDS = joinedCommands;
+//                    case PATRON -> PATRON_COMMANDS = joinedCommands;
+//                    case WEEB -> WEEB_COMMANDS = joinedCommands;
+//                    case NSFW -> NSFW_COMMANDS = joinedCommands;
+//                    case LGBTQ -> LGBTQ_COMMANDS = joinedCommands;
                 }
             }
             catch (Exception e) {
@@ -131,11 +131,11 @@ public class HelpEmbeds {
             case MODERATION -> MODERATION_COMMANDS;
             case ADMINISTRATION -> ADMINISTRATION_COMMANDS;
             case UTILS -> UTILS_COMMANDS;
-            case PATRON -> PATRON_COMMANDS;
-            case WEEB -> WEEB_COMMANDS;
-            case NSFW -> NSFW_COMMANDS;
-            case LGBTQ -> LGBTQ_COMMANDS;
-            case UNLISTED -> null;
+//            case PATRON -> PATRON_COMMANDS;
+//            case WEEB -> WEEB_COMMANDS;
+//            case NSFW -> NSFW_COMMANDS;
+//            case LGBTQ -> LGBTQ_COMMANDS;
+            default -> null;
         };
 
         if (commands == null) {
