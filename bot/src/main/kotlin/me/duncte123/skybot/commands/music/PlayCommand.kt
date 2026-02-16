@@ -27,6 +27,8 @@ import me.duncte123.skybot.objects.AudioData
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
 import me.duncte123.skybot.utils.AirUtils
+import me.duncte123.skybot.utils.sendMessage
+import me.duncte123.skybot.utils.sendMessageSync
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -143,12 +145,12 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
 
     private fun handlePlay(toPlay: String, variables: Variables, event: SlashCommandInteractionEvent) {
         if (toPlay.length > 1024) {
-            event.reply("Input cannot be longer than 1024 characters.").queue()
+            event.sendMessage("Input cannot be longer than 1024 characters.")
             return
         }
 
         // need to wait for this to send actually
-        event.reply("Loading your track!").complete()
+        event.sendMessageSync("Loading your track!")
 
         variables.audioUtils.loadAndPlay(AudioData.fromSlash(event, variables), toPlay, true)
     }
@@ -167,15 +169,14 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
         variables: Variables,
     ) {
         if (!event.member!!.voiceState!!.inAudioChannel()) {
-            event.reply("Auto-join is not yet supported for slash commands. Sorry about that").queue()
+            event.sendMessage("Auto-join is not yet supported for slash commands. Sorry about that")
             return
         }
 
         var toPlay = event.getOption("item")!!.asString
 
         if (toPlay.contains(pornhubRegex.toRegex()) && !event.channel.isNSFW) {
-            event.reply("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
-                .queue()
+            event.sendMessage("Because of thumbnails being loaded you can only use PornHub links in channels that are marked as NSFW")
             return
         }
 
@@ -188,7 +189,7 @@ open class PlayCommand(private val skipParsing: Boolean = false) : MusicCommand(
             val songUrl = searchSong(event.guild!!.idLong, toPlay, variables)
 
             if (songUrl == null) {
-                event.reply("No tracks were found").queue()
+                event.sendMessage("No tracks were found")
                 return
             }
 

@@ -23,6 +23,7 @@ import me.duncte123.skybot.Variables
 import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
+import me.duncte123.skybot.utils.sendMessage
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.exceptions.PermissionException
@@ -115,22 +116,22 @@ class JoinCommand : MusicCommand() {
                 val channel = lavalink.getConnectedChannel(event.guild!!)
 
                 if (channel == null) {
-                    event.reply(
+                    event.sendMessage(
                         "I am already playing music in a channel, but somehow discord did not tell me what channel I am in."
-                    ).queue()
+                    )
                     return
                 }
 
-                event.reply(
+                event.sendMessage(
                     "I am already playing music in ${channel.asMention}."
-                ).queue()
+                )
                 return
             }
 
             if (!event.guild!!.selfMember.hasPermission(vc, Permission.VOICE_CONNECT)) {
-                event.reply(
+                event.sendMessage(
                     "I cannot join to ${vc.asMention} because I am missing the permission to do so."
-                ).queue()
+                )
 
                 return
             }
@@ -138,23 +139,23 @@ class JoinCommand : MusicCommand() {
 
         try {
             lavalink.openConnection(vc)
-            event.reply(
+            event.sendMessage(
                 "Connected to ${vc.asMention}"
-            ).queue()
+            )
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                event.reply(
+                event.sendMessage(
                     "I don't have permission to join ${vc.asMention}"
-                ).queue()
+                )
             } else {
-                event.reply(
+                event.sendMessage(
                     "Error while joining channel ${vc.asMention}: ${e.message}"
-                ).queue()
+                )
             }
         } catch (other: Exception) {
-            event.reply(
+            event.sendMessage(
                 "Could not join channel: ${other.message}"
-            ).queue()
+            )
         }
     }
 }
