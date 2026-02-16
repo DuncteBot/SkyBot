@@ -26,11 +26,11 @@ import me.duncte123.skybot.objects.command.CommandCategory;
 import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.utils.MapUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import javax.annotation.Nonnull;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,7 +65,6 @@ public class TagCommand extends Command {
     }
 
     @Override
-    @SuppressWarnings("PMD.NPathComplexity") // this will be rewritten some day
     public void execute(@Nonnull CommandContext ctx) {
         if ("tags".equalsIgnoreCase(ctx.getInvoke())) {
             sendTagsList(ctx);
@@ -214,7 +213,7 @@ public class TagCommand extends Command {
             return;
         }
 
-        final byte[] tagContent = ("[\"" + String.join("\", \"", this.tagStore.keySet()) + "\"]").getBytes();
+        final byte[] tagContent = ("[\"" + String.join("\", \"", this.tagStore.keySet()) + "\"]").getBytes(StandardCharsets.UTF_8);
 
         ctx.getChannel()
             .sendFiles(FileUpload.fromData(
@@ -267,12 +266,6 @@ public class TagCommand extends Command {
     }
 
     private void createTag(CommandContext ctx) {
-        if (!isTagPatron(ctx.getMember())) {
-            sendMsg(ctx, "Sorry, this is no longer possible");
-
-            return;
-        }
-
         final List<String> args = ctx.getArgs();
         final String tagName = args.get(1);
 
@@ -305,10 +298,5 @@ public class TagCommand extends Command {
 
             sendMsg(ctx, String.format("Tag `%s` created", tagName));
         });
-    }
-
-    @Deprecated
-    private boolean isTagPatron(Member member) {
-        return false;
     }
 }

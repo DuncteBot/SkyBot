@@ -53,7 +53,6 @@ public class CustomCommandCommand extends Command {
     }
 
 
-    @SuppressWarnings("PMD.SwitchStmtsShouldHaveDefault") // SIGH, it has a default
     @Override
     public void execute(@Nonnull CommandContext ctx) {
         final List<String> args = ctx.getArgsWithQuotes();

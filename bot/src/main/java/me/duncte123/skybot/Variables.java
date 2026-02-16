@@ -66,7 +66,6 @@ public final class Variables {
     private final WeebApi weebApi;
     private final DunctebotConfig config;
     private AbstractDatabase database;
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final DBMap<Long, GuildSetting> guildSettingsCache = new DBMap<>(ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
         .expiration(12, TimeUnit.HOURS)

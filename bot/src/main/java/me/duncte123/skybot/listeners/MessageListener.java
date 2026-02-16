@@ -62,6 +62,7 @@ import net.dv8tion.jda.internal.entities.channel.mixin.attribute.ITopicChannelMi
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -211,7 +212,7 @@ public abstract class MessageListener extends BaseListener {
                         .setActionConfig(
                             (action) -> action.addFiles(
                                 FileUpload.fromData(
-                                    builder.toString().getBytes(),
+                                    builder.toString().getBytes(StandardCharsets.UTF_8),
                                     "bulk_delete_%s.txt".formatted(System.currentTimeMillis())
                                 )
                             )

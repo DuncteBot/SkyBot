@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.discord.InviteData;
-import me.duncte123.skybot.utils.CommandUtils;
 import me.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;

@@ -46,6 +46,7 @@
         <exclude name="CommentDefaultAccessModifier"/>
         <exclude name="UselessParentheses"/>
         <exclude name="LinguisticNaming"/>
+        <exclude name="UseExplicitTypes"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml/LongVariable">
@@ -66,8 +67,9 @@
         <exclude name="ExcessiveImports"/>
         <exclude name="TooManyMethods"/>
         <exclude name="NcssCount"/>
-        <exclude name="ExcessiveMethodLength"/>
+<!--        <exclude name="ExcessiveMethodLength"/>-->
         <exclude name="MutableStaticState"/>
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
     </rule>
 
     <rule ref="category/java/design.xml/NPathComplexity">
@@ -110,6 +112,7 @@
     </rule>-->
 
     <rule ref="category/java/errorprone.xml">
+        <exclude name="AvoidCatchingGenericException"/>
         <exclude name="AvoidCatchingThrowable"/>
         <exclude name="AssignmentToNonFinalStatic"/>
         <exclude name="CallSuperFirst"/>
@@ -128,6 +131,7 @@
 
     <rule ref="category/java/multithreading.xml">
         <exclude name="DoNotUseThreads"/>
+        <exclude name="AvoidSynchronizedStatement"/>
     </rule>
 
     <rule ref="category/java/performance.xml">

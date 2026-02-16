@@ -89,7 +89,6 @@ public class GuildInfoCommand extends Command {
             sendGuildInfoEmbed(ctx, "");
     }
 
-    @SuppressWarnings("PMD.ConfusingTernary")
     private void sendGuildInfoEmbed(CommandContext ctx, String inviteString) {
         final Guild guild = ctx.getJDAGuild();
         final double[] ratio = GuildUtils.getBotRatio(guild);

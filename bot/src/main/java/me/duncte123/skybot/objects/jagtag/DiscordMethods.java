@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_PERMISSIONS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
-@SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength"})
 public class DiscordMethods {
     private DiscordMethods() {}
 
@@ -94,7 +93,7 @@ public class DiscordMethods {
             ),
 
             new Method("creation", (env, in) -> {
-                long idLong;
+                final long idLong;
 
                 try {
                     idLong = Long.parseUnsignedLong(in[0]);

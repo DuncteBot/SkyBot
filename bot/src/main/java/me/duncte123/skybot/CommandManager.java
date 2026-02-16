@@ -24,11 +24,12 @@ import io.sentry.Sentry;
 import me.duncte123.botcommons.messaging.MessageConfig;
 import me.duncte123.skybot.commands.admin.BlackListCommand;
 import me.duncte123.skybot.commands.admin.VcAutoRoleCommand;
-import me.duncte123.skybot.commands.animals.*;
+import me.duncte123.skybot.commands.animals.SealCommand;
 import me.duncte123.skybot.commands.essentials.*;
 import me.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import me.duncte123.skybot.commands.funCmds.*;
-import me.duncte123.skybot.commands.funcmds.*;
+import me.duncte123.skybot.commands.funcmds.ExplosmCommand;
+import me.duncte123.skybot.commands.funcmds.LoadingBarCommand;
 import me.duncte123.skybot.commands.guild.GuildInfoCommand;
 import me.duncte123.skybot.commands.guild.GuildJoinsCommand;
 import me.duncte123.skybot.commands.guild.mod.*;
@@ -37,15 +38,12 @@ import me.duncte123.skybot.commands.guild.owner.ForceDisconnectCommand;
 import me.duncte123.skybot.commands.guild.owner.LockEmoteCommand;
 import me.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand;
 import me.duncte123.skybot.commands.guild.owner.settings.*;
-import me.duncte123.skybot.commands.image.*;
-import me.duncte123.skybot.commands.image.filter.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
 import me.duncte123.skybot.commands.uncategorized.*;
 import me.duncte123.skybot.commands.utils.EmoteCommand;
 import me.duncte123.skybot.commands.utils.EnlargeCommand;
 import me.duncte123.skybot.commands.utils.RoleInfoCommand;
-import me.duncte123.skybot.commands.weeb.*;
 import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.SlashSupport;
 import me.duncte123.skybot.objects.command.*;
@@ -80,8 +78,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.skybot.utils.ThreadUtils.runOnVirtual;
 import static me.duncte123.skybot.utils.AirUtils.setJDAContext;
+import static me.duncte123.skybot.utils.ThreadUtils.runOnVirtual;
 import static net.dv8tion.jda.api.requests.ErrorResponse.MISSING_ACCESS;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 
@@ -269,7 +267,7 @@ public class CommandManager {
         this.addCommand(new StatsCommand());
         this.addCommand(new StopCommand());
         this.addCommand(new SuggestCommand());
-        this.addCommand(new TagCommand(variables));
+//        this.addCommand(new TagCommand(variables));
         this.addCommand(new TempBanCommand());
         this.addCommand(new TempMuteCommand());
 //        this.addCommand(new TestFilterCommand());
@@ -317,7 +315,7 @@ public class CommandManager {
     public List<ICommand<CommandContext>> getCommands(CommandCategory category) {
         return this.commands.values()
             .stream()
-            .filter((c) -> c.getCategory().equals(category))
+            .filter((c) -> c.getCategory() == category)
             .collect(Collectors.toList());
     }
 

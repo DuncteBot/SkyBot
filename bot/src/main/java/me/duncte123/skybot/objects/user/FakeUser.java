@@ -175,7 +175,7 @@ public class FakeUser implements User {
         final boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         final boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
 
-        String out;
+        final String out;
         if (alt) {
             if (upper) {
                 out = getAsTag().toUpperCase();

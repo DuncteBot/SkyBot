@@ -80,6 +80,7 @@ public class TokenCommand extends Command {
         sendMsg(ctx, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
 
+    @SuppressWarnings("PMD.ReplaceJavaUtilCalendar") // will do in the future
     @Nullable
     private OffsetDateTime toTimeStamp(long input) {
         try {

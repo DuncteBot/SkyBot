@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static me.duncte123.skybot.utils.AirUtils.shortenUrl;
 
+@SuppressWarnings("PMD.UnusedPrivateMethod")
 public class WolframAlphaCommand extends Command {
 
     private WAEngine waEngine = null;

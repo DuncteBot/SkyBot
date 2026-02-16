@@ -31,7 +31,7 @@ import static me.duncte123.skybot.utils.CommandUtils.isDev;
 
 abstract class SettingsBase extends Command {
 
-    public SettingsBase() {
+    protected SettingsBase() {
         this.displayAliasesInHelp = true;
         // TODO: Delete this and all old settings commands in about a year
         this.category = CommandCategory.UNLISTED;

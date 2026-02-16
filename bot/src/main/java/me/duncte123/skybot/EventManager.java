@@ -80,7 +80,6 @@ public class EventManager implements IEventManager {
     }
 
 
-    @SuppressWarnings("PMD.InvalidLogMessageFormat") // /shrug
     @Override
     public void handle(@Nonnull GenericEvent event) {
         final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();

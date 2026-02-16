@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:21 AS builder
+FROM azul/zulu-openjdk-alpine:25 AS builder
 
 WORKDIR /skybot
 
@@ -11,7 +11,7 @@ ENV GIT_HASH=$git_sha
 COPY . .
 RUN ./gradlew --no-daemon :bot:build
 
-FROM azul/zulu-openjdk-alpine:21-jre
+FROM azul/zulu-openjdk-alpine:25-jre
 
 # add libstdc++ for playing back mp3's with lavaplayer
 # also add some fonts

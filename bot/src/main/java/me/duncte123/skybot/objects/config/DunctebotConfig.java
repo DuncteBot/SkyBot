@@ -21,7 +21,6 @@ package me.duncte123.skybot.objects.config;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-@SuppressWarnings("PMD.ExcessiveParameterList")
 public class DunctebotConfig {
     public final Discord discord;
     public final Apis apis;
@@ -131,7 +130,6 @@ public class DunctebotConfig {
 
     // TODO: redis settings
     @Nonnull
-    @SuppressWarnings("PMD.PrematureDeclaration") // fuck off <3
     public static DunctebotConfig fromEnv() {
         final long[] admins = Arrays.stream(System.getenv("BOT_ADMINS").split(","))
             .mapToLong(Long::parseLong)

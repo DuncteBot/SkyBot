@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 // Fuck off :)
-@SuppressWarnings({"PMD.NullAssignment", "PMD.UseConcurrentHashMap"})
+@SuppressWarnings({"PMD.UseConcurrentHashMap"})
 public class MessageData {
     private final long messageId;
     private final long authorId;

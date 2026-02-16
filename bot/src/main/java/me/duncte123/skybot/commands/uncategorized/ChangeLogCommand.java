@@ -93,6 +93,7 @@ public class ChangeLogCommand extends Command {
         });
     }
 
+    @SuppressWarnings("PMD.ReplaceJavaUtilDate") // in the future
     private long parseTimeStamp(String timestamp) {
         try {
             final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

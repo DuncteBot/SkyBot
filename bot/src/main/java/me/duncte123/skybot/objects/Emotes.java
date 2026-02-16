@@ -18,7 +18,6 @@
 
 package me.duncte123.skybot.objects;
 
-@SuppressWarnings({"PMD.LongVariable", "PMD.ClassNamingConventions"})
 public class Emotes {
     public static final String DISCORD_NITRO = "<:nitro:808005783841013790>";
     public static final String DISCORD_STAFF = "<:staff:738364360413675530>";

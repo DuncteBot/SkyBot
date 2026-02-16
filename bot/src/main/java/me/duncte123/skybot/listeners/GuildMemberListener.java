@@ -22,7 +22,6 @@ import com.dunctebot.models.settings.GuildSetting;
 import com.jagrosh.jagtag.Parser;
 import kotlin.Pair;
 import me.duncte123.botcommons.messaging.MessageConfig;
-import me.duncte123.skybot.Settings;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.database.AbstractDatabase;
 import me.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -33,7 +32,6 @@ import me.duncte123.skybot.utils.CommandUtils;
 import me.duncte123.skybot.utils.GuildSettingsUtils;
 import me.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -44,8 +42,6 @@ import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.utils.TimeFormat;
@@ -77,10 +73,6 @@ public class GuildMemberListener extends BaseListener {
             this.onGuildMemberUpdatePending(pendingUpdate);
         } else if (event instanceof GuildMemberRemoveEvent memberRemove) {
             this.onGuildMemberRemove(memberRemove);
-        } else if (event instanceof GuildMemberRoleRemoveEvent roleRemove) {
-            this.onGuildMemberRoleRemove(roleRemove);
-        } else if (event instanceof GuildMemberRoleAddEvent roleAdd) {
-            this.onGuildMemberRoleAdd(roleAdd);
         } else if (event instanceof GuildLeaveEvent guildLeave) {
             final Guild guild = guildLeave.getGuild();
             final long guildId = guild.getIdLong();
@@ -189,7 +181,7 @@ public class GuildMemberListener extends BaseListener {
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
             // If we have a message and the text channel is not null
-            if (!msg.isEmpty() && !msg.trim().isEmpty() && channel != null) {
+            if (!msg.isBlank() && channel != null) {
                 sendMsg(
                     new MessageConfig.Builder()
                         .setChannel(channel)
@@ -197,20 +189,6 @@ public class GuildMemberListener extends BaseListener {
                 );
             }
         }
-
-        if (guildId == Settings.SUPPORT_GUILD_ID) {
-            handlePatronRemoval(user.getIdLong(), event.getJDA());
-        }
-    }
-
-    @Deprecated
-    private void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
-        //
-    }
-
-    @Deprecated
-    private void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
-        //
     }
 
     private void logMemberNotification(User user, Guild guild, String titlePart, String bodyPart, int colour) {
@@ -377,16 +355,6 @@ public class GuildMemberListener extends BaseListener {
         parser.clear();
 
         return message;
-    }
-
-    @Deprecated
-    private void handlePatronRemoval(long userId, JDA jda) {
-        //
-    }
-
-    @Deprecated
-    private void handleNewOneGuildPatron(long userId) {
-       //
     }
 
     private void applyAutoRole(Guild guild, Member member, GuildSetting settings) {

@@ -23,7 +23,6 @@ import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.Variables;
 import me.duncte123.skybot.database.DataTimers;
 import me.duncte123.skybot.utils.AirUtils;
-import me.duncte123.skybot.utils.GuildUtils;
 import me.duncte123.skybot.web.WebSocketClient;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -68,7 +67,7 @@ public class ReadyShutdownListener extends MessageListener {
             case MessageDeleteEvent delete -> this.onGuildMessageDelete(delete);
             case MessageBulkDeleteEvent bulkDelete -> this.onMessageBulkDelete(bulkDelete);
             case ReadyEvent ready -> this.onReady(ready);
-            case ShutdownEvent shutdownEvent -> this.onShutdown();
+            case ShutdownEvent ignored -> this.onShutdown();
             default -> {
             }
         }

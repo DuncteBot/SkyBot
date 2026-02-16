@@ -18,7 +18,7 @@
 
 package me.duncte123.skybot;
 
-@SuppressWarnings({"PMD.FieldNamingConventions", "PMD.ClassNamingConventions"})
+@SuppressWarnings({"PMD.FieldNamingConventions"})
 public class Settings {
     public static String PREFIX = "db!";
     public static boolean AUTO_REBOOT_SHARDS = true; // set to false if shards are rebooted when they shouldn't be

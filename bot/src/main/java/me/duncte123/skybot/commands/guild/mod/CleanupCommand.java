@@ -277,7 +277,7 @@ public class CleanupCommand extends ModBaseCommand {
      *
      * @return the future with a different timeout
      */
-    @SuppressWarnings({"rawtypes", "unchecked", "PMD.AvoidAccessibilityAlteration"})
+    @SuppressWarnings({"rawtypes", "unchecked", "PMD.AvoidAccessibilityAlteration", "PMD.UnnecessaryCast"})
     private CompletableFuture<Void> hackTimeout(CompletableFuture<Void> future) {
         if (!(future instanceof RestFuture)) {
             // Ignore stuff that is not a rest future
