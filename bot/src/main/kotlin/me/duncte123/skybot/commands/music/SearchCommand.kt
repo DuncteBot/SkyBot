@@ -26,8 +26,9 @@ import me.duncte123.skybot.entities.jda.DunctebotGuild
 import me.duncte123.skybot.objects.Emotes.SEARCH_EMOTE
 import me.duncte123.skybot.objects.command.CommandContext
 import me.duncte123.skybot.objects.command.MusicCommand
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
@@ -93,7 +94,9 @@ class SearchCommand : MusicCommand() {
                 .setChannel(ctx.channel)
                 .addEmbed(EmbedUtils.embedMessage(string))
                 .configureMessageBuilder {
-                    it.addActionRow(menu.build())
+                    it.addComponents(
+                        ActionRow.of(menu.build())
+                    )
                 }
                 .setSuccessAction {
                     handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, componentId, userId, ctx)

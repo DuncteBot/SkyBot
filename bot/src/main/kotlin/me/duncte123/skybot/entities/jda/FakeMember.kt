@@ -63,6 +63,9 @@ class FakeMember(private val name: String) : Member {
     override fun getNickname(): String = throw NotImplementedError("An operation is not implemented: not implemented")
 
     override fun getRoles(): MutableList<Role> = throw NotImplementedError("An operation is not implemented: not implemented")
+    override fun getUnsortedRoles(): Set<Role?> = throw NotImplementedError("An operation is not implemented: not implemented")
+
+    override fun getColors(): RoleColors = throw NotImplementedError("An operation is not implemented: not implemented")
 
     override fun getColorRaw(): Int = throw NotImplementedError("An operation is not implemented: not implemented")
 
@@ -121,6 +124,10 @@ class FakeMember(private val name: String) : Member {
     override fun getFlagsRaw() = 0
 
     override fun getDefaultAvatarId(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun isDetached(): Boolean {
         TODO("Not yet implemented")
     }
 }

@@ -120,7 +120,7 @@ public final class SkyBot {
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_INVITES,
                 GatewayIntent.GUILD_MODERATION,
-                GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
+                GatewayIntent.GUILD_EXPRESSIONS,
                 GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES
             )

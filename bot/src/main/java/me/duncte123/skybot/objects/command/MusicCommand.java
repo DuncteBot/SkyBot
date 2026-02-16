@@ -27,6 +27,7 @@ import me.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -147,7 +148,7 @@ public abstract class MusicCommand extends Command {
 
     public static SlashCommandData getMusicCommandData(CommandManager mngr) {
         final var base = Commands.slash("music", "base command for music commands")
-            .setGuildOnly(true);
+            .setContexts(InteractionContextType.GUILD);
 
         mngr.getCommands(CommandCategory.MUSIC).forEach((cmd) -> base.addSubcommands(
             ((MusicCommand) cmd).getSubData()

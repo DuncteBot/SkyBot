@@ -39,7 +39,6 @@ import me.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand;
 import me.duncte123.skybot.commands.guild.owner.settings.*;
 import me.duncte123.skybot.commands.image.*;
 import me.duncte123.skybot.commands.image.filter.*;
-import me.duncte123.skybot.commands.lgbtq.SetPronounsCommand;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
 import me.duncte123.skybot.commands.uncategorized.*;

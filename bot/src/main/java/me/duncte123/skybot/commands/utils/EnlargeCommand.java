@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.entities.sticker.Sticker.StickerFormat;
 import net.dv8tion.jda.api.entities.sticker.StickerItem;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.ImageFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -91,7 +92,7 @@ public class EnlargeCommand extends Command {
         if (!emotes.isEmpty()) {
             final CustomEmoji emote = emotes.get(0);
 
-            this.uploadFile(emote.getImageUrl().replace("gif", "png"), ctx);
+            this.uploadFile(emote.getImageUrl(ImageFormat.PNG), ctx);
 
             return;
         }

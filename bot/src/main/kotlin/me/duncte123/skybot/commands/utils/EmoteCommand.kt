@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.utils.ImageFormat
 
 class EmoteCommand : SlashSupport() {
     init {
@@ -77,7 +78,7 @@ class EmoteCommand : SlashSupport() {
     private fun customEmoteMentioned(emote: CustomEmoji): String {
         val name = emote.name
         val id = emote.id
-        val url = emote.imageUrl
+        val url = emote.getImageUrl(ImageFormat.PNG)
         val markdownStr = "< :${emote.name}:${emote.idLong}>"
 
         return """**Emote:** $name

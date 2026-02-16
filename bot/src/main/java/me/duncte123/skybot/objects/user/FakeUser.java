@@ -165,6 +165,11 @@ public class FakeUser implements User {
     }
 
     @Override
+    public @org.jspecify.annotations.Nullable PrimaryGuild getPrimaryGuild() {
+        return null;
+    }
+
+    @Override
     public void formatTo(Formatter formatter, int flags, int width, int precision) {
         final boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
         final boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;

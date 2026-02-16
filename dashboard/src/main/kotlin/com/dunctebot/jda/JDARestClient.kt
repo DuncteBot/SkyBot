@@ -54,7 +54,7 @@ class JDARestClient(token: String) {
         threadConfig.setEventPool(jdaVirtualThread, true)
         threadConfig.setCallbackPool(jdaVirtualThread, true)
 
-        jda = JDAImpl(authConfig, null, threadConfig, null, null)
+        jda = JDAImpl(authConfig, null, threadConfig, null, null, null)
 
         jda.initRequester()
 
