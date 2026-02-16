@@ -2,7 +2,7 @@ plugins {
 //    java
     application
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 group = "com.dunctebot"

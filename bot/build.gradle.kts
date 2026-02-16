@@ -19,6 +19,7 @@
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import kotlin.math.min
@@ -30,7 +31,7 @@ plugins {
     kotlin("jvm")
     id("org.liquibase.gradle")
     id("org.jmailen.kotlinter")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
     id("com.github.breadmoirai.github-release")
 }
 
@@ -84,12 +85,45 @@ val clean: Task by tasks
 val build: Task by tasks
 val jar: Jar by tasks
 
-val printVersion = task<Task>("printVersion") {
-    println("CI: ${System.getenv("CI")}")
-    println(project.version)
+val getGitHashTask = tasks.register<Exec>("getGitHash") {
+    val envHash = System.getenv("GIT_HASH")
+
+    if (envHash != null) {
+        val getter: () -> String = {
+            envHash.substring(0, min(8, envHash.length))
+        }
+
+        ext.set("gitVersionOut", getter)
+
+        return@register
+    }
+
+    val stdout = ByteArrayOutputStream()
+
+    commandLine("git", "rev-parse", "--short", "HEAD")
+    standardOutput = stdout
+
+    val getter: () -> String = {
+        standardOutput.toString().trim()
+    }
+
+    ext.set("gitVersionOut", getter)
 }
 
-task<Exec>("botVersion") {
+val printVersion = tasks.register<Task>("printVersion") {
+    dependsOn(getGitHashTask)
+
+    doLast {
+        @Suppress("UNCHECKED_CAST") val versionGetter = project.ext.get("gitVersionOut") as () -> String
+
+        project.version = "${numberVersion}_${versionGetter()}"
+
+        println("CI: ${System.getenv("CI")}")
+        println(project.version)
+    }
+}
+
+tasks.register<Exec>("botVersion") {
     executable = "echo"
     args("v:", numberVersion)
 }
@@ -108,12 +142,12 @@ githubRelease.apply {
 
 // TODO: remove, should be done from main build file
 compileKotlin.apply {
-    kotlinOptions {
-        jvmTarget = "21"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
-val sourcesForRelease = task<Copy>("sourcesForRelease") {
+val sourcesForRelease = tasks.register<Copy>("sourcesForRelease") {
     from("src/main/java") {
         include("**/Settings.java")
 
@@ -151,12 +185,12 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
     includeEmptyDirs = false
 }
 
-val generateJavaSources = task<SourceTask>("generateJavaSources") {
+val generateJavaSources = tasks.register<SourceTask>("generateJavaSources") {
     val javaSources = sourceSets["main"].allJava.filter {
         !arrayOf("Settings.java", "VoteCommand.java").contains(it.name)
     }.asFileTree
 
-    source = javaSources + fileTree(sourcesForRelease.destinationDir)
+    source = javaSources + fileTree(sourcesForRelease.get().destinationDir)
 
     dependsOn(sourcesForRelease)
 }
@@ -168,7 +202,7 @@ tasks.withType<JavaCompile> {
 }
 
 compileJava.apply {
-    source = generateJavaSources.source
+    source = generateJavaSources.get().source
 
     dependsOn(generateJavaSources)
 }
@@ -182,7 +216,8 @@ shadowJar.apply {
 }
 
 kotlinter {
-    ignoreFailures = false
+    ignoreFormatFailures = false
+    ignoreLintFailures = false
     reporters = arrayOf("checkstyle", "plain")
 }
 
@@ -194,8 +229,8 @@ pmd {
     ruleSetFiles(File("linters/pmd.xml"))
 }
 
-task<Task>("lintAll") {
-    dependsOn(tasks.lintKotlin)
+tasks.register<Task>("lintAll") {
+//    dependsOn(tasks.lintKotlin)
     dependsOn(tasks.pmdMain)
 }
 
@@ -213,23 +248,5 @@ githubRelease {
 }
 
 fun getGitHash(): String {
-    val envHash = System.getenv("GIT_HASH")
-
-    if (envHash != null) {
-        return envHash.substring(0, min(8, envHash.length))
-    }
-
-    return try {
-        val stdout = ByteArrayOutputStream()
-
-        exec {
-            commandLine("git", "rev-parse", "--short", "HEAD")
-            standardOutput = stdout
-        }
-
-        stdout.toString().trim()
-    } catch (ignored: Throwable) {
-        // Ugly hacks 101 :D
-        return "dev"
-    }
+    return "NOPE"
 }

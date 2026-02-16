@@ -16,17 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    idea
 
-    kotlin("jvm") version "1.9.23" apply false
-    id("org.liquibase.gradle") version "2.0.4" apply false
-    id("org.jmailen.kotlinter") version "4.3.0" apply false
-    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    kotlin("jvm") version "2.3.10" apply false
+    id("org.liquibase.gradle") version "3.1.0" apply false
+    id("org.jmailen.kotlinter") version "5.4.2" apply false
+    id("com.gradleup.shadow") version "9.3.1" apply false
     id("com.github.breadmoirai.github-release") version "2.2.12" apply false
+}
+
+buildscript {
+    dependencies {
+        classpath("org.liquibase:liquibase-core:5.0.1")
+    }
 }
 
 allprojects {
@@ -45,14 +51,16 @@ allprojects {
     }
 
     tasks.withType<Wrapper> {
-        gradleVersion = "8.5"
+        gradleVersion = "9.3.1"
         distributionType = Wrapper.DistributionType.BIN
     }
 }
 
 subprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "21"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 
     tasks.withType<JavaCompile> {

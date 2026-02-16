@@ -51,7 +51,7 @@ public final class LavalinkManager {
     private LavalinkClient lavalink = null;
     private DunctebotConfig config = null;
     private AudioUtils audioUtils;
-    private boolean enabledOverride = true;
+    private boolean enabledOverride = false;
 
     private LavalinkManager() {
     }

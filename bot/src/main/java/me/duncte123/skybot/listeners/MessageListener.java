@@ -34,7 +34,6 @@ import me.duncte123.skybot.database.RedisConnection;
 import me.duncte123.skybot.database.RedisDB;
 import me.duncte123.skybot.entities.jda.DunctebotGuild;
 import me.duncte123.skybot.objects.command.CommandCategory;
-import me.duncte123.skybot.objects.command.CommandContext;
 import me.duncte123.skybot.objects.command.CustomCommand;
 import me.duncte123.skybot.objects.command.ICommand;
 import me.duncte123.skybot.objects.discord.MessageData;
@@ -365,11 +364,14 @@ public abstract class MessageListener extends BaseListener {
             return;
         }
 
-        if (doesNotStartWithPrefix(selfId, raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
+        if (doesNotStartWithPrefix(raw, customPrefix) || !canRunCommands(raw, customPrefix, event)) {
             return;
         }
 
-        if (raw.matches(selfRegex + "(.*)")) {
+        //Handle the command
+        commandManager.runCommand(event, customPrefix);
+
+        /*if (raw.matches(selfRegex + "(.*)")) {
             //Handle the chat command
             Objects.requireNonNull(commandManager.getCommand("chat")).executeCommand(new CommandContext(
                 "chat",
@@ -380,11 +382,11 @@ public abstract class MessageListener extends BaseListener {
         } else {
             //Handle the command
             commandManager.runCommand(event, customPrefix);
-        }
+        }*/
     }
 
     @SuppressWarnings("PMD.SimplifyBooleanReturns")
-    private boolean doesNotStartWithPrefix(long selfId, String raw, String customPrefix) {
+    private boolean doesNotStartWithPrefix(String raw, String customPrefix) {
         final String rwLower = raw.toLowerCase();
 
         if (rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
@@ -395,11 +397,7 @@ public abstract class MessageListener extends BaseListener {
             return false;
         }
 
-        if (rwLower.startsWith(customPrefix)) {
-            return false;
-        }
-
-        return !raw.matches("^<@!?" + selfId + "?.*$");
+        return rwLower.startsWith(customPrefix);
     }
 
     private String getCommandName(@Nonnull String customPrefix, @Nonnull String raw) {
