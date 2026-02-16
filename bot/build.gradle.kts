@@ -95,19 +95,24 @@ val getGitHashTask = tasks.register<Exec>("getGitHash") {
 
         ext.set("gitVersionOut", getter)
 
-        return@register
+        commandLine("echo", "'hi'")
+    } else {
+        val stdout = ByteArrayOutputStream()
+
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+        isIgnoreExitValue = true
+
+        val getter: () -> String = {
+            val item = standardOutput.toString().trim()
+
+            item.ifBlank {
+                "DEV"
+            }
+        }
+
+        ext.set("gitVersionOut", getter)
     }
-
-    val stdout = ByteArrayOutputStream()
-
-    commandLine("git", "rev-parse", "--short", "HEAD")
-    standardOutput = stdout
-
-    val getter: () -> String = {
-        standardOutput.toString().trim()
-    }
-
-    ext.set("gitVersionOut", getter)
 }
 
 val printVersion = tasks.register<Task>("printVersion") {
