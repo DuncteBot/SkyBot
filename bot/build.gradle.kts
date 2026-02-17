@@ -253,5 +253,11 @@ githubRelease {
 }
 
 fun getGitHash(): String {
-    return "NOPE"
+    val envHash = System.getenv("GIT_HASH")
+
+    if (envHash != null) {
+        return envHash.substring(0, min(8, envHash.length))
+    }
+
+    return "DEV"
 }

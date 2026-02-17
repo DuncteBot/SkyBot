@@ -398,7 +398,7 @@ public abstract class MessageListener extends BaseListener {
             return false;
         }
 
-        return rwLower.startsWith(customPrefix);
+        return !rwLower.startsWith(customPrefix);
     }
 
     private String getCommandName(@Nonnull String customPrefix, @Nonnull String raw) {
