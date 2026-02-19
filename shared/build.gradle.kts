@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.register
+
 /*
  * MIT License
  *
@@ -70,12 +72,12 @@ jar.apply {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-val sourcesJar = task<Jar>("sourcesJar") {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allJava)
 }
 
-val javadocJar = task<Jar>("javadocJar") {
+val javadocJar = tasks.register<Jar>("javadocJar") {
     dependsOn(javadoc)
     archiveClassifier.set("javadoc")
     from(javadoc.destinationDir)
@@ -87,6 +89,6 @@ build.apply {
     dependsOn(sourcesJar)
 
     jar.mustRunAfter(clean)
-    javadocJar.mustRunAfter(jar)
-    sourcesJar.mustRunAfter(javadocJar)
+    javadocJar.get().mustRunAfter(jar)
+    sourcesJar.get().mustRunAfter(javadocJar)
 }

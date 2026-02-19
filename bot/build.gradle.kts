@@ -21,7 +21,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 import kotlin.math.min
 
 plugins {
@@ -85,47 +84,9 @@ val clean: Task by tasks
 val build: Task by tasks
 val jar: Jar by tasks
 
-val getGitHashTask = tasks.register<Exec>("getGitHash") {
-    val envHash = System.getenv("GIT_HASH")
-
-    if (envHash != null) {
-        val getter: () -> String = {
-            envHash.substring(0, min(8, envHash.length))
-        }
-
-        ext.set("gitVersionOut", getter)
-
-        commandLine("echo", "'hi'")
-    } else {
-        val stdout = ByteArrayOutputStream()
-
-        commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-        isIgnoreExitValue = true
-
-        val getter: () -> String = {
-            val item = standardOutput.toString().trim()
-
-            item.ifBlank {
-                "DEV"
-            }
-        }
-
-        ext.set("gitVersionOut", getter)
-    }
-}
-
 val printVersion = tasks.register<Task>("printVersion") {
-    dependsOn(getGitHashTask)
-
-    doLast {
-        @Suppress("UNCHECKED_CAST") val versionGetter = project.ext.get("gitVersionOut") as () -> String
-
-        project.version = "${numberVersion}_${versionGetter()}"
-
-        println("CI: ${System.getenv("CI")}")
-        println(project.version)
-    }
+    println("CI: ${System.getenv("CI")}")
+    println(project.version)
 }
 
 tasks.register<Exec>("botVersion") {
@@ -236,20 +197,20 @@ pmd {
 
 tasks.register<Task>("lintAll") {
 //    dependsOn(tasks.lintKotlin)
-    dependsOn(tasks.pmdMain)
+    dependsOn("lintKotlin", tasks.pmdMain)
 }
 
 githubRelease {
     token(System.getenv("GITHUB_TOKEN"))
-    owner("DuncteBot")
-    repo("SkyBot")
-    tagName("v$numberVersion")
-    targetCommitish("main")
+    owner.set("DuncteBot")
+    repo.set("SkyBot")
+    tagName.set("v$numberVersion")
+    targetCommitish.set("main")
     releaseAssets(shadowJar.outputs.files.toList())
-    overwrite(false)
-    prerelease(false)
-    dryRun(false)
-    body(changelog())
+    overwrite.set(false)
+    prerelease.set(false)
+    dryRun.set(false)
+    body.set(provider(changelog()))
 }
 
 fun getGitHash(): String {
