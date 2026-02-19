@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static me.duncte123.skybot.utils.AirUtils.setJDAContext;
+
 public class EventManager implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
@@ -99,6 +101,7 @@ public class EventManager implements IEventManager {
         for (final EventListener listener : this.listeners) {
             eventExecutor.submit(() -> {
                 try {
+                    setJDAContext(event.getJDA());
                     listener.onEvent(event);
                 }
                 catch (Throwable thr) {

@@ -133,6 +133,11 @@ public abstract class MusicCommand extends Command {
     }
 
     public void handleSlashWithAutoJoin(@Nonnull SlashCommandInteractionEvent event, DunctebotGuild guild, @Nonnull Variables variables) {
+        if (!LavalinkManager.INS.isEnabled()) {
+            event.reply("The music feature is currently under maintenance.").queue();
+            return;
+        }
+
         if (canRunSlashCommand(event, guild, variables.getAudioUtils())) {
             if (this.mayAutoJoin) {
                 ((MusicCommand) variables.getCommandManager()
