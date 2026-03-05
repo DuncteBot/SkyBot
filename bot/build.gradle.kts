@@ -34,7 +34,7 @@ plugins {
     id("com.github.breadmoirai.github-release")
 }
 
-val pmdVersion = "7.21.0"
+val pmdVersion = "7.22.0"
 
 val numberVersion = "3.110.0"
 
