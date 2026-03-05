@@ -25,7 +25,7 @@ plugins {
     kotlin("jvm") version "2.3.10" apply false
     id("org.liquibase.gradle") version "3.1.0" apply false
     id("org.jmailen.kotlinter") version "5.4.2" apply false
-    id("com.gradleup.shadow") version "9.3.1" apply false
+    id("com.gradleup.shadow") version "9.3.2" apply false
     id("com.github.breadmoirai.github-release") version "2.5.2" apply false
 }
 
